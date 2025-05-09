@@ -1,0 +1,30 @@
+{
+  "common": {
+    "fetchErrors": {
+      "network": "خطای شبکه لطفا اتصال خود را بررسی کنید",
+      "timeout": "متاسفانه خطایی رخ داده است دوباره تلاش کنید"
+    }
+  },
+  "pages": {
+    "login": {
+      "title": "ورود",
+      "description": "به تورینگ چت خوش آمدید لطفا شماره تلفن خود را وارد کنید"
+    }
+  },
+  "feature": {
+    "login": {
+      "phoneNumber": {
+        "label": "شماره تلفن"
+      },
+      "sendOtp": "ارسال کد فعال سازی"
+    }
+  },
+  "components": {
+    "form": {
+      "rules": {
+        "required": "{{name}} الزامی است",
+        "incorrectRegex": "{{name}} نامعتبر است"
+      }
+    }
+  }
+}
