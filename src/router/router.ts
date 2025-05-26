@@ -1,23 +1,24 @@
-import { createBrowserRouter } from 'react-router'
+import { createBrowserRouter } from 'react-router';
 
-import RootPage from '../pages/root/page'
-import { ROUTE_KEYS } from '../utils'
-import LoginPage from '../pages/login/page'
+import RootPage from '../pages/root/page';
+import LoginPage from '../pages/login/page';
 
-import AppProvider from '@/hook/app-provider'
+import { ROUTES_KEY } from './routes';
+
+import RootLayout from '@/pages/root/layout';
 
 export const router = createBrowserRouter([
   {
-    Component: AppProvider,
+    Component: RootLayout,
     children: [
       {
-        path: ROUTE_KEYS.root.path,
+        path: ROUTES_KEY.root.path,
         Component: RootPage,
       },
       {
-        path: ROUTE_KEYS.login.path,
+        path: ROUTES_KEY.login.path,
         Component: LoginPage,
       },
     ],
   },
-])
+]);

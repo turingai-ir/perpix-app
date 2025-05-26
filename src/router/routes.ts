@@ -1,4 +1,4 @@
-export const ROUTE_KEYS = {
+export const ROUTES_KEY = {
   root: {
     path: '/',
   },

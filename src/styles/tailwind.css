@@ -1,0 +1,8 @@
+@tailwind utilities;
+
+.tw-ltr {
+  direction: ltr;
+}
+.tw-rtl {
+  direction: rtl;
+}

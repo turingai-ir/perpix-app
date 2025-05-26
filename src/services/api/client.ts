@@ -1,25 +1,40 @@
-import createFetch, { type Middleware } from 'openapi-fetch'
+import createFetch, { type Middleware } from 'openapi-fetch';
+import { cookies } from '@/utils/cookies';
 
-import { appFetchApiErrorQueue } from '../queue'
+import { appEventBus } from '../event-bus';
 
-import type { paths } from './api'
+import type { paths } from './api';
 
-import { APP_KEYS, createCustomFetch } from '@/utils'
-import {
-  FetchHttpError,
-  FetchNetworkError,
-  FetchTimeoutError,
-} from '@/utils/custom-fetch/fetch-errors'
+import { APP_KEYS, createCustomFetch, HttpStatus } from '@/utils';
+import { FetchHttpError } from '@/utils/custom-fetch/fetch-errors';
 
 export const apiClinet = createFetch<paths>({
   fetch: createCustomFetch(globalThis.fetch, { retryOnNetworkError: false, maxRetries: 0 }),
   baseUrl: APP_KEYS.API_BASE_URL,
-})
+});
 
 const errorMiddleware: Middleware = {
   onError: ({ error }) => {
-    appFetchApiErrorQueue.enqueue(error as FetchHttpError | FetchNetworkError | FetchTimeoutError)
-    throw error
+    appEventBus.emit('API_ERROR_EVENT', error);
+    throw error;
   },
-}
-apiClinet.use(errorMiddleware)
+};
+
+const tokenMiddleware: Middleware = {
+  onRequest: ({ request }) => {
+    const cookie = cookies();
+    const token = cookie.get(APP_KEYS.COOKIES.ACCESS_TOKEN);
+    if (token && typeof token === 'string') {
+      request.headers.set('Authorization', `Bearer ${token}`);
+    }
+    return request;
+  },
+  onResponse: ({ response }) => {
+    if (response instanceof FetchHttpError && response.status === HttpStatus.UNAUTHORIZED) {
+      const cookie = cookies();
+      cookie.remove(APP_KEYS.COOKIES.ACCESS_TOKEN);
+    }
+  },
+};
+apiClinet.use(tokenMiddleware);
+apiClinet.use(errorMiddleware);

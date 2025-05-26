@@ -97,11 +97,16 @@ export function createCustomFetch(
       ) as AbortSignal[]
       const combinedSignal = combineAbortSignals(signals)
 
-      try {
-        const response = await originalFetch(input, {
+      const request = {
+        input,
+        init: {
           ...init,
           signal: combinedSignal,
-        })
+        },
+      }
+
+      try {
+        const response = await originalFetch(request.input, request.init)
 
         if (response.ok) {
           return response
@@ -116,7 +121,7 @@ export function createCustomFetch(
         lastError = error
 
         if (isErrorAbortError(error)) {
-          lastError = timeoutTriggered ? new FetchTimeoutError(lastError) : error
+          lastError = timeoutTriggered ? new FetchTimeoutError(lastError, request.input) : error
           break
         }
 
@@ -125,7 +130,7 @@ export function createCustomFetch(
         }
 
         if (!retryOnNetworkError || retriesLeft === 0) {
-          lastError = new FetchNetworkError(lastError)
+          lastError = new FetchNetworkError(lastError, request.input)
           break
         }
       }
@@ -142,7 +147,7 @@ export function createCustomFetch(
     }
 
     if (lastError instanceof Response) {
-      lastError = new FetchHttpError(lastError)
+      lastError = new FetchHttpError(lastError, input)
     }
 
     onFinalError?.(lastError)

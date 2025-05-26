@@ -1,7 +1,7 @@
-import { HttpStatus } from './http-status'
+import { HttpStatus } from './http-status';
 
 export function fakeDelay(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms))
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 export function isRetryableStatus(status: number): boolean {
@@ -10,7 +10,7 @@ export function isRetryableStatus(status: number): boolean {
     HttpStatus.BAD_GATEWAY,
     HttpStatus.SERVICE_UNAVAILABLE,
     HttpStatus.GATEWAY_TIMEOUT,
-  ].includes(status as never)
+  ].includes(status as never);
 }
 
 /**
@@ -33,14 +33,14 @@ export function isRetryableStatus(status: number): boolean {
  */
 export function isNetworkError(error: unknown): boolean {
   if (!(error instanceof TypeError)) {
-    return false
+    return false;
   }
 
   if (typeof error?.message !== 'string') {
-    return false
+    return false;
   }
 
-  const msg = error?.message.toLowerCase()
+  const msg = error?.message.toLowerCase();
 
   return (
     msg.includes('failed to fetch') ||
@@ -49,55 +49,55 @@ export function isNetworkError(error: unknown): boolean {
     msg.includes('network request failed') ||
     msg.includes('the network connection was lost') ||
     msg.includes('socket closed')
-  )
+  );
 }
 
 export function isErrorAbortError(error: unknown): boolean {
   return (
     (error instanceof DOMException && error.name === 'AbortError') ||
     (error instanceof Error && error.name === 'AbortError')
-  )
+  );
 }
 
 export function creatTimeOutAbortController(
   timeoutMs: number,
   onTimeout?: () => void,
 ): AbortController {
-  const controller = new AbortController()
+  const controller = new AbortController();
   const timeoutId = setTimeout(() => {
-    if (onTimeout) onTimeout()
-    controller.abort()
-  }, timeoutMs)
+    if (onTimeout) onTimeout();
+    controller.abort();
+  }, timeoutMs);
 
   controller.signal.addEventListener('abort', () => {
-    clearTimeout(timeoutId)
-  })
+    clearTimeout(timeoutId);
+  });
 
-  return controller
+  return controller;
 }
 
 export function combineAbortSignals(signals: AbortSignal[]): AbortSignal {
-  const controller = new AbortController()
+  const controller = new AbortController();
 
   const onAbort = () => {
     if (!controller.signal.aborted) {
-      controller.abort()
+      controller.abort();
     }
-  }
+  };
 
   for (const signal of signals) {
     if (signal.aborted) {
-      controller.abort()
-      break
+      controller.abort();
+      break;
     }
-    signal.addEventListener('abort', onAbort, { once: true })
+    signal.addEventListener('abort', onAbort, { once: true });
   }
 
   controller.signal.addEventListener('abort', () => {
     for (const signal of signals) {
-      signal.removeEventListener('abort', onAbort)
+      signal.removeEventListener('abort', onAbort);
     }
-  })
+  });
 
-  return controller.signal
+  return controller.signal;
 }

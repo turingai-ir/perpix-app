@@ -1,71 +1,177 @@
-import type { FC } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
-import { Button, Flex, useToast } from '@chakra-ui/react'
+import { useState, type FC } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { Box, Button, Flex } from '@mantine/core';
+import { clsx } from 'clsx';
 
-import { PhoneNumberInput } from '@/components/form'
-import { useAppTranslate } from '@/hook'
-import { useReactQueryApi } from '@/hook/app'
+import { PhoneNumberInput, PinInput } from '@/components/form';
+import { useAppTranslate } from '@/hook';
+import { useReactQueryApi } from '@/hook/app';
+import { useCountdown } from '@/hook/use-count-down';
+import { useFormateTime } from '@/hook/use-formate-time';
+import { cookies } from '@/utils/cookies';
+import { APP_KEYS } from '@/utils';
 
-const countries = [{ value: '+98', label: 'IR' }]
+const countries = [{ value: '+98', label: 'IR' }];
 
-interface Inputs {
+interface PhoneInputs {
   phoneNumber: {
-    preCode: string
-    input: string
-  }
+    preCode: string;
+    input: string;
+  };
 }
-export const LoginFeature: FC = () => {
-  const form = useForm<Inputs>({
+
+interface OtpInputs {
+  pin: string;
+}
+const STEPS = {
+  phone: 0,
+  otp: 1,
+} as const;
+
+type Steps = (typeof STEPS)[keyof typeof STEPS];
+
+interface LoginFeatureProps {
+  onFinish: (token: string) => void;
+}
+export const LoginFeature: FC<LoginFeatureProps> = ({ onFinish }) => {
+  const phoneForm = useForm<PhoneInputs>({
     defaultValues: {
       phoneNumber: {
         preCode: countries[0].value,
         input: '',
       },
     },
-  })
-  const reactQueryApi = useReactQueryApi()
-  const sendOtpQuery = reactQueryApi.useMutation('post', '/user/login')
-  const { t } = useAppTranslate()
-  const toast = useToast()
+  });
 
-  // toast({
-  //   description: 'TEST',
-  //   status: 'error',
-  //   position: 'top-right',
-  //   isClosable: true,
-  //   variant: 'subtle',
-  // })
+  const otpForm = useForm<OtpInputs>({
+    defaultValues: {
+      pin: '',
+    },
+  });
 
-  const handleHandleSubmit = async (data: Inputs) => {
-    try {
-      const res = await sendOtpQuery.mutateAsync({
-        body: {
-          phoneNumber: data.phoneNumber.input,
-        },
-      })
-    } catch (error) {}
-  }
+  const cookie = cookies();
+
+  const reactQueryApi = useReactQueryApi();
+  const sendOtpQuery = reactQueryApi.useMutation('post', '/user/login');
+  const verifyOtp = reactQueryApi.useMutation('post', '/user/verify');
+
+  const { t } = useAppTranslate();
+  const { formate } = useFormateTime();
+
+  const [currentStep, setCurrentStep] = useState<Steps>(STEPS.phone);
+  const { count, startCountdown, resetCountdown, stopCountdown } = useCountdown(60 * 5);
+
+  const handlePhoneForm = async (data: PhoneInputs) => {
+    const res = await sendOtpQuery.mutateAsync({
+      body: {
+        phoneNumber: `${data.phoneNumber.preCode.replace('+98', '0')}${data.phoneNumber.input}`,
+      },
+    });
+    cookie.set(APP_KEYS.COOKIES.ACCESS_TOKEN, res.token);
+    resetCountdown();
+    startCountdown();
+    setCurrentStep(STEPS.otp);
+  };
+
+  const handlePinForm = async (data: OtpInputs) => {
+    const res = await verifyOtp.mutateAsync({
+      body: {
+        code: data.pin,
+      },
+    });
+    onFinish(res.token);
+    cookie.set(APP_KEYS.COOKIES.ACCESS_TOKEN, res.token);
+  };
+
+  const handleChangeNumber = () => {
+    stopCountdown();
+    setCurrentStep(STEPS.phone);
+  };
+
+  if (currentStep === STEPS.phone)
+    return (
+      <FormProvider {...phoneForm}>
+        <form onSubmit={phoneForm.handleSubmit(handlePhoneForm)} className="tw-w-full">
+          <Flex
+            gap={'xl'}
+            direction={'column'}
+            justify="center"
+            align={'center'}
+            className={clsx([
+              {
+                'tw-hidden': sendOtpQuery.isSuccess,
+              },
+            ])}
+          >
+            <PhoneNumberInput
+              control={phoneForm.control}
+              errors={phoneForm.formState.errors}
+              label={t('feature.login.phoneNumber.label')}
+              inputName="input"
+              preCodeName="preCode"
+              selectOptions={countries}
+              name="phoneNumber"
+            />
+            <Button
+              className="!tw-w-52"
+              loading={sendOtpQuery.isPending}
+              type="submit"
+              variant="filled"
+              color="blue"
+            >
+              {t('feature.login.sendOtp')}
+            </Button>
+          </Flex>
+        </form>
+      </FormProvider>
+    );
 
   return (
-    <FormProvider {...form}>
-      <form onSubmit={form.handleSubmit(handleHandleSubmit)}>
-        <Flex gap={4} direction={'column'}>
-          <PhoneNumberInput
-            control={form.control}
-            errors={form.formState.errors}
-            label={t('feature.login.phoneNumber.label')}
-            inputName="input"
-            preCodeName="preCode"
-            selectOptions={countries}
-            name="phoneNumber"
-          />
-          <Button isLoading={sendOtpQuery.isPending} type="submit" colorScheme="blue">
-            {t('feature.login.sendOtp')}
-          </Button>
+    <FormProvider {...otpForm}>
+      <form onSubmit={otpForm.handleSubmit(handlePinForm)} className="tw-w-full">
+        <Flex
+          gap={'xl'}
+          direction={'column'}
+          justify="center"
+          align={'center'}
+          className={clsx({
+            'tw-hidden': sendOtpQuery.isSuccess,
+          })}
+        >
+          <Box className="tw-w-fit">
+            <PinInput
+              name="pin"
+              control={otpForm.control}
+              errors={otpForm.formState.errors}
+              length={6}
+              label={t('feature.login.otp.label')}
+            />
+          </Box>
+          <Flex gap={'md'} direction={'column'} align={'center'}>
+            <Button
+              disabled={count !== 0}
+              variant="default"
+              color="blue"
+              loading={sendOtpQuery.isPending}
+            >
+              {`${t('feature.login.otp.resnew')} ${formate(count)}`}
+            </Button>
+            <Button type="submit" variant="filled" color="blue" className="!tw-w-52">
+              {t('feature.login.otp.login')}
+            </Button>
+            <Button
+              loading={verifyOtp.isPending}
+              onClick={handleChangeNumber}
+              color="blue"
+              variant="subtle"
+            >
+              {t('feature.login.otp.changeNumber')}
+            </Button>
+          </Flex>
         </Flex>
       </form>
     </FormProvider>
-  )
-}
+  );
+};
 
-export default LoginFeature
+export default LoginFeature;

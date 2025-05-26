@@ -1,55 +1,52 @@
+type Request = RequestInfo;
+type Response = globalThis.Response;
 export class FetchTimeoutError extends Error {
-  public originalError: unknown
-
-  constructor(originalError: unknown, message = 'Timeout error occurred') {
-    super(message)
-    this.originalError = originalError
-    this.name = 'TimeoutError'
-    Object.setPrototypeOf(this, FetchTimeoutError.prototype)
+  public originalError: unknown;
+  public request: Request;
+  constructor(originalError: unknown, request: Request, message = 'Timeout error occurred') {
+    super(message);
+    this.originalError = originalError;
+    this.request = request;
+    this.name = 'TimeoutError';
+    Object.setPrototypeOf(this, FetchTimeoutError.prototype);
 
     if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, FetchTimeoutError)
+      Error.captureStackTrace(this, FetchTimeoutError);
     }
   }
 }
 
 export class FetchNetworkError extends Error {
-  public originalError: unknown
+  public originalError: unknown;
+  public request: Request;
 
-  constructor(originalError: unknown, message = 'Network error occurred') {
-    super(message)
-    this.originalError = originalError
-    this.name = 'NetworkError'
-    Object.setPrototypeOf(this, FetchNetworkError.prototype)
+  constructor(originalError: unknown, request: Request, message = 'Network error occurred') {
+    super(message);
+    this.request = request;
+    this.originalError = originalError;
+    this.name = 'NetworkError';
+    Object.setPrototypeOf(this, FetchNetworkError.prototype);
 
     // Preserve the stack trace
     if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, FetchNetworkError)
+      Error.captureStackTrace(this, FetchNetworkError);
     }
   }
 }
 
-/**
- * Represents an HTTP error that occurs during a fetch request.
- * Extends the built-in `Error` class to provide additional context
- * about the HTTP response that caused the error.
- */
 export class FetchHttpError extends Error {
-  /**
-   * Creates an instance of `FetchHttpError`.
-   *
-   * @param response - The `Response` object associated with the HTTP error.
-   */
-  public response: Response
+  public response: Response;
+  public request: Request;
 
-  constructor(response: Response) {
-    super(`HTTP error: ${response.status}`)
-    this.response = response
-    this.name = 'HttpError'
-    Object.setPrototypeOf(this, FetchHttpError.prototype)
+  constructor(response: Response, request: Request) {
+    super(`HTTP error: ${response.status}`);
+    this.response = response;
+    this.request = request;
+    this.name = 'HttpError';
+    Object.setPrototypeOf(this, FetchHttpError.prototype);
 
     if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, FetchHttpError)
+      Error.captureStackTrace(this, FetchHttpError);
     }
   }
 
@@ -61,9 +58,9 @@ export class FetchHttpError extends Error {
    */
   public async parseJson(): Promise<unknown | undefined> {
     try {
-      return await this.response.clone().json()
+      return await this.response.clone().json();
     } catch {
-      return undefined
+      return undefined;
     }
   }
 }
