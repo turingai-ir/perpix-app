@@ -9,7 +9,7 @@ import { textLayoutState } from '../_state';
 
 import Aside from './aside';
 
-import { useBodyBackground } from '@/hook';
+import { useAppTranslate, useBodyBackground } from '@/hook';
 import { OPEN_AI_TEXT_MODELS } from '@/services/api';
 import { useReactQueryApi } from '@/hook/app';
 
@@ -18,6 +18,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   const [state, setState] = useAtom(textLayoutState);
   const [versionSelectorPopover, setVersionSelectorPopover] = useState(false);
   const reactQueryApi = useReactQueryApi();
+
+  const { t } = useAppTranslate();
 
   const allowedModels = [
     OPEN_AI_TEXT_MODELS.gpt_3_5_turbo,
@@ -150,6 +152,11 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             classNames={{
               body: 'tw-h-[calc(100%-60px)]',
             }}
+            title={
+              <Button variant="subtle" radius="xl" color="dark">
+                {t('common.image')}
+              </Button>
+            }
           >
             <Aside onClose={closeAside} />
           </Drawer>

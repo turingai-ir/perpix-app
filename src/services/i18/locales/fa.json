@@ -14,7 +14,9 @@
     "yesterday": "دیروز",
     "thisWeek": "این هفته",
     "thisMonth": "این ماه",
-    "older": "قدیمی تر"
+    "older": "قدیمی تر",
+    "chat": "چت",
+    "image": "عکس"
   },
   "pages": {
     "login": {
