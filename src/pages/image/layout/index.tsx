@@ -5,43 +5,33 @@ import clsx from 'clsx';
 import { useAtom } from 'jotai';
 import { useNavigate, useParams } from 'react-router';
 
-import { textLayoutState } from '../_state';
+import { imageLayoutState } from '../_state';
 
 import Aside from './aside';
 
 import { useAppTranslate, useBodyBackground } from '@/hook';
-import { OPEN_AI_TEXT_MODELS } from '@/services/api';
+import { OPEN_AI_IMAGE_MODELS } from '@/services/api';
 import { useReactQueryApi } from '@/hook/app';
 import { ROUTES_KEY } from '@/router';
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const [asideStatus, setAsideStatus] = useState(false);
-  const [state, setState] = useAtom(textLayoutState);
+  const [state, setState] = useAtom(imageLayoutState);
   const [versionSelectorPopover, setVersionSelectorPopover] = useState(false);
   const reactQueryApi = useReactQueryApi();
   const navigate = useNavigate();
 
   const { t } = useAppTranslate();
 
-  const allowedModels = [
-    OPEN_AI_TEXT_MODELS.gpt_3_5_turbo,
-    OPEN_AI_TEXT_MODELS.gpt_4,
-    OPEN_AI_TEXT_MODELS.gpt_4_turbo,
-    OPEN_AI_TEXT_MODELS.gpt_4o,
-    OPEN_AI_TEXT_MODELS.gpt_4o_search_preview,
-    OPEN_AI_TEXT_MODELS.o1,
-    OPEN_AI_TEXT_MODELS.o1_mini,
-    OPEN_AI_TEXT_MODELS.o1_preview,
-    OPEN_AI_TEXT_MODELS.o3_mini,
-  ];
+  const allowedModels = [OPEN_AI_IMAGE_MODELS.dall_e_2, OPEN_AI_IMAGE_MODELS.dall_e_3];
 
   const params = useParams();
 
   const getConversion = reactQueryApi.useQuery(
     'get',
-    '/open-ai/chat-completion/{chat_id}',
+    '/open-ai/image/{image_chat_id}',
     {
-      params: { path: { chat_id: params.id ?? '' } },
+      params: { path: { image_chat_id: params.id ?? '' } },
     },
     { enabled: !!params.id, retry: false },
   );
@@ -54,7 +44,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     }
   }, [getConversion.data, setState]);
 
-  const handleChangeVersion = (model: OPEN_AI_TEXT_MODELS) => {
+  const handleChangeVersion = (model: OPEN_AI_IMAGE_MODELS) => {
     setState((draft) => {
       draft.currentModel = model;
     });
@@ -160,10 +150,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 radius="xl"
                 color="dark"
                 onClick={() => {
-                  navigate(ROUTES_KEY.image.root.path);
+                  navigate(ROUTES_KEY.text.root.path);
                 }}
               >
-                {t('common.image')}
+                {t('common.chat')}
               </Button>
             }
           >

@@ -13,12 +13,14 @@ import { useAppTranslate } from '@/hook';
 import { ROUTES_KEY } from '@/router';
 import { MarkdownRenderer } from '@/components/markdown';
 import type { OPEN_AI_TEXT_MODELS } from '@/services/api';
+import { useEffect, useRef } from 'react';
 
 const TextPage = () => {
   const [state, setState] = useAtom(textPageState);
   const { t } = useAppTranslate();
   const reactQueryApi = useReactQueryApi();
   const [layoutState] = useAtom(textLayoutState);
+  const bottomRef = useRef<HTMLDivElement | null>(null);
 
   const createChat = reactQueryApi.useMutation('post', '/open-ai/chat-completion/create');
   const continueChat = reactQueryApi.useMutation('post', '/open-ai/chat-completion/{chat_id}');
@@ -37,6 +39,10 @@ const TextPage = () => {
   const dataConversion = getConversion.data?.messages.filter(
     (i) => i.role === 'user' || i.role === 'assistant',
   );
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [state.conversions, dataConversion]);
 
   const haveConversation = dataConversion?.length || state.conversions.length;
 
@@ -121,6 +127,9 @@ const TextPage = () => {
                       ])}
                     >
                       <MarkdownRenderer content={item.content} />
+                      {!state.conversions.length && index + 1 === dataConversion.length ? (
+                        <div ref={bottomRef} />
+                      ) : null}
                     </ChatBubble>
                   );
                 })}
@@ -134,6 +143,7 @@ const TextPage = () => {
                       ])}
                     >
                       <MarkdownRenderer content={item.content} />
+                      {index + 1 === state.conversions.length ? <div ref={bottomRef} /> : null}
                     </ChatBubble>
                   );
                 })}

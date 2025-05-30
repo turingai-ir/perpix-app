@@ -6,7 +6,7 @@ import { useInViewport, useThrottledCallback } from '@mantine/hooks';
 import { useEffect, type FC } from 'react';
 import { useAtom } from 'jotai';
 
-import { textLayoutState, textPageState } from '../../_state';
+import { imageLayoutState, imagePageState } from '../../_state';
 
 import { useAppTranslate } from '@/hook';
 import { ROUTES_KEY } from '@/router';
@@ -14,16 +14,16 @@ import { useReactQueryApi } from '@/hook/app';
 import {
   apiClinet,
   OPEN_AI_TEXT_MODELS,
-  type SchemaOpenAiChatCompletionCreateResponse,
+  type SchemaOpenAiMessageCompletionCreateResponse,
 } from '@/services/api';
 
-function categorizeChats(chats: SchemaOpenAiChatCompletionCreateResponse[]) {
+function categorizeChats(chats: SchemaOpenAiMessageCompletionCreateResponse[]) {
   const categories: {
-    today: SchemaOpenAiChatCompletionCreateResponse[];
-    yesterday: SchemaOpenAiChatCompletionCreateResponse[];
-    thisWeek: SchemaOpenAiChatCompletionCreateResponse[];
-    thisMonth: SchemaOpenAiChatCompletionCreateResponse[];
-    older: SchemaOpenAiChatCompletionCreateResponse[];
+    today: SchemaOpenAiMessageCompletionCreateResponse[];
+    yesterday: SchemaOpenAiMessageCompletionCreateResponse[];
+    thisWeek: SchemaOpenAiMessageCompletionCreateResponse[];
+    thisMonth: SchemaOpenAiMessageCompletionCreateResponse[];
+    older: SchemaOpenAiMessageCompletionCreateResponse[];
   } = {
     today: [],
     yesterday: [],
@@ -58,14 +58,14 @@ const Aside: FC<AsideProps> = ({ onClose }) => {
   const { t } = useAppTranslate();
   const navigate = useNavigate();
   const reactQueryApi = useReactQueryApi();
-  const [, setPageState] = useAtom(textPageState);
-  const [, setState] = useAtom(textLayoutState);
+  const [, setPageState] = useAtom(imagePageState);
+  const [, setState] = useAtom(imageLayoutState);
 
   const params = useParams();
 
   const chatsList = reactQueryApi.useInfiniteQuery(
     'get',
-    '/open-ai/chat-completion/list/',
+    '/open-ai/image/list/',
     {
       params: {
         query: {
@@ -76,7 +76,7 @@ const Aside: FC<AsideProps> = ({ onClose }) => {
     },
     {
       queryFn: async ({ pageParam = 1 }) => {
-        const response = await apiClinet.GET('/open-ai/chat-completion/list/', {
+        const response = await apiClinet.GET('/open-ai/image/list/', {
           params: {
             query: {
               page_number: pageParam,
@@ -109,7 +109,7 @@ const Aside: FC<AsideProps> = ({ onClose }) => {
       .map((i) => i.chats)
       .flat()
       .filter(
-        (chat): chat is SchemaOpenAiChatCompletionCreateResponse =>
+        (chat): chat is SchemaOpenAiMessageCompletionCreateResponse =>
           chat !== null && chat !== undefined,
       ) ?? [],
   );
@@ -129,20 +129,19 @@ const Aside: FC<AsideProps> = ({ onClose }) => {
 
   const handleNewChat = () => {
     setPageState((draft) => {
-      draft.conversions = [];
+      if (draft.conversions.length === 1 && !params.id) {
+        draft.conversions = [];
+      }
     });
     setState((draft) => {
       draft.currentModel = OPEN_AI_TEXT_MODELS.gpt_3_5_turbo;
     });
-    navigate(ROUTES_KEY.text.root.path);
+    navigate(ROUTES_KEY.image.root.path);
     onClose();
   };
 
   const handleSelectChat = (chatId: string) => {
-    setPageState((draft) => {
-      draft.conversions = [];
-    });
-    navigate(ROUTES_KEY.text.chat.path.replace(':id', chatId));
+    navigate(ROUTES_KEY.image.chat.path.replace(':id', chatId));
     onClose();
   };
   return (
@@ -160,7 +159,7 @@ const Aside: FC<AsideProps> = ({ onClose }) => {
         >
           <Flex justify="start" className="tw-w-full" gap="xs" align="center">
             <TbSquareRoundedPlus />
-            {t('pages.text.aside.newChat')}
+            {t('pages.image.aside.newChat')}
           </Flex>
         </Button>
         <Flex direction="column" className="tw-w-full" gap="md">
@@ -170,20 +169,20 @@ const Aside: FC<AsideProps> = ({ onClose }) => {
               <Flex direction="column" className="tw-w-full" gap="xs">
                 {categorizedChat.today.map((item) => (
                   <Button
-                    key={item.chat_id}
+                    key={item.image_chat_id}
                     onClick={() => {
-                      handleSelectChat(item.chat_id);
+                      handleSelectChat(item.image_chat_id);
                     }}
                     color="dark"
                     radius="xl"
                     justify="start"
-                    variant={params.id === item.chat_id ? 'light' : 'subtle'}
+                    variant={params.id === item.image_chat_id ? 'light' : 'subtle'}
                     type="button"
                   >
                     <Flex justify="start" className="tw-w-full" gap="xs" align="center">
-                      {item.messages[0].content.length > 30
-                        ? `${item.messages[0].content.substring(0, 30)} ...`
-                        : item.messages[0].content}
+                      {item.messages?.[0]?.message && item.messages[0]?.message.length > 30
+                        ? `${item.messages[0]?.message.substring(0, 30)} ...`
+                        : (item.messages?.[0]?.message ?? '')}
                     </Flex>
                   </Button>
                 ))}
@@ -196,20 +195,20 @@ const Aside: FC<AsideProps> = ({ onClose }) => {
               <Flex direction="column" className="tw-w-full" gap="xs">
                 {categorizedChat.yesterday.map((item) => (
                   <Button
-                    key={item.chat_id}
+                    key={item.image_chat_id}
                     onClick={() => {
-                      handleSelectChat(item.chat_id);
+                      handleSelectChat(item.image_chat_id);
                     }}
                     color="dark"
                     radius="xl"
                     justify="start"
-                    variant={params.id === item.chat_id ? 'light' : 'subtle'}
+                    variant={params.id === item.image_chat_id ? 'light' : 'subtle'}
                     type="button"
                   >
                     <Flex justify="start" className="tw-w-full" gap="xs" align="center">
-                      {item.messages[0].content.length > 30
-                        ? `${item.messages[0].content.substring(0, 30)} ...`
-                        : item.messages[0].content}
+                      {item.messages?.[0]?.message && item.messages[0]?.message.length > 30
+                        ? `${item.messages[0]?.message.substring(0, 30)} ...`
+                        : (item.messages?.[0]?.message ?? '')}
                     </Flex>
                   </Button>
                 ))}
@@ -222,20 +221,20 @@ const Aside: FC<AsideProps> = ({ onClose }) => {
               <Flex direction="column" className="tw-w-full" gap="xs">
                 {categorizedChat.thisWeek.map((item) => (
                   <Button
-                    key={item.chat_id}
+                    key={item.image_chat_id}
                     onClick={() => {
-                      handleSelectChat(item.chat_id);
+                      handleSelectChat(item.image_chat_id);
                     }}
                     color="dark"
                     radius="xl"
                     justify="start"
-                    variant={params.id === item.chat_id ? 'light' : 'subtle'}
+                    variant={params.id === item.image_chat_id ? 'light' : 'subtle'}
                     type="button"
                   >
                     <Flex justify="start" className="tw-w-full" gap="xs" align="center">
-                      {item.messages[0].content.length > 30
-                        ? `${item.messages[0].content.substring(0, 30)} ...`
-                        : item.messages[0].content}
+                      {item.messages?.[0]?.message && item.messages[0]?.message.length > 30
+                        ? `${item.messages[0]?.message.substring(0, 30)} ...`
+                        : (item.messages?.[0]?.message ?? '')}
                     </Flex>
                   </Button>
                 ))}
@@ -248,20 +247,20 @@ const Aside: FC<AsideProps> = ({ onClose }) => {
               <Flex direction="column" className="tw-w-full" gap="xs">
                 {categorizedChat.thisMonth.map((item) => (
                   <Button
-                    key={item.chat_id}
+                    key={item.image_chat_id}
                     onClick={() => {
-                      handleSelectChat(item.chat_id);
+                      handleSelectChat(item.image_chat_id);
                     }}
                     color="dark"
                     radius="xl"
                     justify="start"
-                    variant={params.id === item.chat_id ? 'light' : 'subtle'}
+                    variant={params.id === item.image_chat_id ? 'light' : 'subtle'}
                     type="button"
                   >
                     <Flex justify="start" className="tw-w-full" gap="xs" align="center">
-                      {item.messages[0].content.length > 30
-                        ? `${item.messages[0].content.substring(0, 30)} ...`
-                        : item.messages[0].content}
+                      {item.messages?.[0]?.message && item.messages[0]?.message.length > 30
+                        ? `${item.messages[0]?.message.substring(0, 30)} ...`
+                        : (item.messages?.[0]?.message ?? '')}
                     </Flex>
                   </Button>
                 ))}
@@ -274,20 +273,20 @@ const Aside: FC<AsideProps> = ({ onClose }) => {
               <Flex direction="column" className="tw-w-full" gap="xs">
                 {categorizedChat.older.map((item) => (
                   <Button
-                    key={item.chat_id}
+                    key={item.image_chat_id}
                     onClick={() => {
-                      handleSelectChat(item.chat_id);
+                      handleSelectChat(item.image_chat_id);
                     }}
                     color="dark"
                     radius="xl"
                     justify="start"
-                    variant={params.id === item.chat_id ? 'light' : 'subtle'}
+                    variant={params.id === item.image_chat_id ? 'light' : 'subtle'}
                     type="button"
                   >
                     <Flex justify="start" className="tw-w-full" gap="xs" align="center">
-                      {item.messages[0].content.length > 30
-                        ? `${item.messages[0].content.substring(0, 30)} ...`
-                        : item.messages[0].content}
+                      {item.messages?.[0]?.message && item.messages[0]?.message.length > 30
+                        ? `${item.messages[0]?.message.substring(0, 30)} ...`
+                        : (item.messages?.[0]?.message ?? '')}
                     </Flex>
                   </Button>
                 ))}

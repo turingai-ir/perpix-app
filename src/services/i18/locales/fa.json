@@ -16,7 +16,8 @@
     "thisMonth": "این ماه",
     "older": "قدیمی تر",
     "chat": "چت",
-    "image": "عکس"
+    "image": "عکس",
+    "download": "دانلود"
   },
   "pages": {
     "login": {
@@ -26,6 +27,25 @@
     "text": {
       "aside": {
         "newChat": "چت جدید"
+      },
+      "apiCallError": {
+        "content": "متاسفانه خطایی رخ داده است دوباره تلاش کنید",
+        "action": "تلاش مجدد"
+      },
+
+      "searchBox": {
+        "title": "چطور میتونم کمکت کنم؟",
+        "form": {
+          "input": {
+            "label": "جستجو",
+            "placeholder": "شروع به تایپ کنید..."
+          }
+        }
+      }
+    },
+    "image": {
+      "aside": {
+        "newChat": "عکس جدید"
       },
       "apiCallError": {
         "content": "متاسفانه خطایی رخ داده است دوباره تلاش کنید",

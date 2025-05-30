@@ -45,24 +45,22 @@ export const MarkdownRenderer: FC<MarkdownRendererProps> = ({ content }) => {
       rehypePlugins={[rehypeHighlight]}
       components={{
         // Headings
-        h1: ({ node, ...props }) => <Title order={1} mb="md" {...props} />,
-        h2: ({ node, ...props }) => <Title order={2} mb="md" {...props} />,
-        h3: ({ node, ...props }) => <Title order={3} mb="md" {...props} />,
-        h4: ({ node, ...props }) => <Title order={4} mb="md" {...props} />,
-        h5: ({ node, ...props }) => <Title order={5} mb="md" {...props} />,
-        h6: ({ node, ...props }) => <Title order={6} mb="md" {...props} />,
+        h1: ({ node, ...props }) => <Title order={1} {...props} />,
+        h2: ({ node, ...props }) => <Title order={2} {...props} />,
+        h3: ({ node, ...props }) => <Title order={3} {...props} />,
+        h4: ({ node, ...props }) => <Title order={4} {...props} />,
+        h5: ({ node, ...props }) => <Title order={5} {...props} />,
+        h6: ({ node, ...props }) => <Title order={6} {...props} />,
 
         // Text
-        p: ({ node, ...props }) => <Text mb="sm" {...props} />,
+        p: ({ node, ...props }) => <Text {...props} />,
         strong: ({ node, ...props }) => <Text component="strong" inherit {...props} />,
         em: ({ node, ...props }) => <Text component="em" inherit {...props} />,
         del: ({ node, ...props }) => <Text component="del" td="line-through" inherit {...props} />,
 
         // Lists
-        ul: ({ node, ...props }) => <List withPadding listStyleType="disc" mb="sm" {...props} />,
-        ol: ({ node, type, ...props }) => (
-          <List withPadding listStyleType="decimal" mb="sm" {...props} />
-        ),
+        ul: ({ node, ...props }) => <List withPadding listStyleType="disc" {...props} />,
+        ol: ({ node, type, ...props }) => <List withPadding listStyleType="decimal" {...props} />,
         li: ({ node, ...props }) => <ListItem {...props} />,
 
         // Code

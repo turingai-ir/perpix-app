@@ -13,4 +13,12 @@ export const ROUTES_KEY = {
       path: '/text/:id',
     },
   },
+  image: {
+    root: {
+      path: '/image',
+    },
+    chat: {
+      path: '/image/:id',
+    },
+  },
 } as const;

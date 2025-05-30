@@ -70,7 +70,7 @@ export interface paths {
     readonly patch?: never;
     readonly trace?: never;
   };
-  readonly '/open-aichat-completion/list': {
+  readonly '/open-ai/chat-completion/list/': {
     readonly parameters: {
       readonly query?: never;
       readonly header?: never;
@@ -78,7 +78,7 @@ export interface paths {
       readonly cookie?: never;
     };
     /** Chatcompletionlistget */
-    readonly get: operations['chatCompletionListGet_open_aichat_completion_list_get'];
+    readonly get: operations['chatCompletionListGet_open_ai_chat_completion_list__get'];
     readonly put?: never;
     readonly post?: never;
     readonly delete?: never;
@@ -121,7 +121,7 @@ export interface paths {
     readonly patch?: never;
     readonly trace?: never;
   };
-  readonly '/open-ai/image/chat/{image_chat_id}': {
+  readonly '/open-ai/image/{image_chat_id}': {
     readonly parameters: {
       readonly query?: never;
       readonly header?: never;
@@ -131,7 +131,24 @@ export interface paths {
       readonly cookie?: never;
     };
     /** Image Chat Get */
-    readonly get: operations['image_chat_get_open_ai_image_chat__image_chat_id__get'];
+    readonly get: operations['image_chat_get_open_ai_image__image_chat_id__get'];
+    readonly put?: never;
+    readonly post?: never;
+    readonly delete?: never;
+    readonly options?: never;
+    readonly head?: never;
+    readonly patch?: never;
+    readonly trace?: never;
+  };
+  readonly '/open-ai/image/list/': {
+    readonly parameters: {
+      readonly query?: never;
+      readonly header?: never;
+      readonly path?: never;
+      readonly cookie?: never;
+    };
+    /** Imagelistget */
+    readonly get: operations['ImageListGet_open_ai_image_list__get'];
     readonly put?: never;
     readonly post?: never;
     readonly delete?: never;
@@ -205,14 +222,21 @@ export interface components {
       /** System Message */
       readonly system_message: string | null;
     };
-    /** OpenAiChatCompletionsList */
-    readonly OpenAiChatCompletionsList: {
-      nextCursor: unknown;
-      prevCursor: unknown;
+    /** OpenAiChatCompletionsListResponse */
+    readonly OpenAiChatCompletionsListResponse: {
       /** Total */
       readonly total: number;
       /** Chats */
       readonly chats: readonly components['schemas']['OpenAiChatCompletionCreateResponse'][] | null;
+    };
+    /** OpenAiImageComppletionListResponse */
+    readonly OpenAiImageComppletionListResponse: {
+      /** Total */
+      readonly total: number;
+      /** Chats */
+      readonly chats:
+        | readonly components['schemas']['OpenAiMessageCompletionCreateResponse'][]
+        | null;
     };
     /** OpenAiImageCreateSchema */
     readonly OpenAiImageCreateSchema: {
@@ -246,6 +270,10 @@ export interface components {
       readonly model: string;
       /** Messages */
       readonly messages: readonly components['schemas']['OpenAiMessageCompletionCreateMessage'][];
+      /** Created At */
+      readonly created_at: string | null;
+      /** Updated At */
+      readonly updated_at: string | null;
     };
     /** UserLoginResponse */
     readonly UserLoginResponse: {
@@ -303,7 +331,10 @@ export type SchemaOpenAiChatCompletionCreateResponse =
   components['schemas']['OpenAiChatCompletionCreateResponse'];
 export type SchemaOpenAiChatCompletionCreateSchema =
   components['schemas']['OpenAiChatCompletionCreateSchema'];
-export type SchemaOpenAiChatCompletionsList = components['schemas']['OpenAiChatCompletionsList'];
+export type SchemaOpenAiChatCompletionsListResponse =
+  components['schemas']['OpenAiChatCompletionsListResponse'];
+export type SchemaOpenAiImageComppletionListResponse =
+  components['schemas']['OpenAiImageComppletionListResponse'];
 export type SchemaOpenAiImageCreateSchema = components['schemas']['OpenAiImageCreateSchema'];
 export type SchemaOpenAiMessageCompletionCreateMessage =
   components['schemas']['OpenAiMessageCompletionCreateMessage'];
@@ -483,7 +514,7 @@ export interface operations {
       };
     };
   };
-  readonly chatCompletionListGet_open_aichat_completion_list_get: {
+  readonly chatCompletionListGet_open_ai_chat_completion_list__get: {
     readonly parameters: {
       readonly query?: {
         readonly page_number?: number;
@@ -501,7 +532,7 @@ export interface operations {
           readonly [name: string]: unknown;
         };
         content: {
-          readonly 'application/json': components['schemas']['OpenAiChatCompletionsList'];
+          readonly 'application/json': components['schemas']['OpenAiChatCompletionsListResponse'];
         };
       };
       /** @description Validation Error */
@@ -581,7 +612,7 @@ export interface operations {
       };
     };
   };
-  readonly image_chat_get_open_ai_image_chat__image_chat_id__get: {
+  readonly image_chat_get_open_ai_image__image_chat_id__get: {
     readonly parameters: {
       readonly query?: never;
       readonly header?: never;
@@ -599,6 +630,38 @@ export interface operations {
         };
         content: {
           readonly 'application/json': components['schemas']['OpenAiMessageCompletionCreateResponse'];
+        };
+      };
+      /** @description Validation Error */
+      readonly 422: {
+        headers: {
+          readonly [name: string]: unknown;
+        };
+        content: {
+          readonly 'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  readonly ImageListGet_open_ai_image_list__get: {
+    readonly parameters: {
+      readonly query?: {
+        readonly page_number?: number;
+        readonly page_size?: number;
+      };
+      readonly header?: never;
+      readonly path?: never;
+      readonly cookie?: never;
+    };
+    readonly requestBody?: never;
+    readonly responses: {
+      /** @description Successful Response */
+      readonly 200: {
+        headers: {
+          readonly [name: string]: unknown;
+        };
+        content: {
+          readonly 'application/json': components['schemas']['OpenAiImageComppletionListResponse'];
         };
       };
       /** @description Validation Error */
@@ -636,8 +699,9 @@ export enum ApiPaths {
   chatCompletionContinuePost_open_ai_chat_completion__chat_id__post = '/open-ai/chat-completion/{chat_id}',
   // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   chatCompletionContinueGet_open_ai_chat_completion__chat_id__get = '/open-ai/chat-completion/{chat_id}',
-  chatCompletionListGet_open_aichat_completion_list_get = '/open-aichat-completion/list',
+  chatCompletionListGet_open_ai_chat_completion_list__get = '/open-ai/chat-completion/list/',
   imageCreatePost_open_ai_image_create_post = '/open-ai/image/create',
   imageEditPost_open_ai_image_edit_post = '/open-ai/image/edit',
-  image_chat_get_open_ai_image_chat__image_chat_id__get = '/open-ai/image/chat/{image_chat_id}',
+  image_chat_get_open_ai_image__image_chat_id__get = '/open-ai/image/{image_chat_id}',
+  ImageListGet_open_ai_image_list__get = '/open-ai/image/list/',
 }
