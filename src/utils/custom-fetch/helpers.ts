@@ -65,7 +65,9 @@ export function creatTimeOutAbortController(
 ): AbortController {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => {
-    if (onTimeout) onTimeout();
+    if (onTimeout) {
+      onTimeout();
+    }
     controller.abort();
   }, timeoutMs);
 

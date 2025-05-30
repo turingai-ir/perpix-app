@@ -1,4 +1,4 @@
-import { FetchHttpError, FetchNetworkError, FetchTimeoutError } from './fetch-errors'
+import { FetchHttpError, FetchNetworkError, FetchTimeoutError } from './fetch-errors';
 import {
   combineAbortSignals,
   creatTimeOutAbortController,
@@ -6,17 +6,17 @@ import {
   isErrorAbortError,
   isNetworkError,
   isRetryableStatus,
-} from './helpers'
+} from './helpers';
 
 interface CustomFetchOptions {
-  maxRetries?: number
-  retryDelayMs?: number
-  maxRetryDelayMs?: number
-  timeoutMs?: number
-  retryOnNetworkError?: boolean
-  onTimeout?: () => void
-  onRetryAttempt?: (info: { attempt: number; error: unknown; nextDelayMs: number }) => void
-  onFinalError?: (error: unknown) => void
+  maxRetries?: number;
+  retryDelayMs?: number;
+  maxRetryDelayMs?: number;
+  timeoutMs?: number;
+  retryOnNetworkError?: boolean;
+  onTimeout?: () => void;
+  onRetryAttempt?: (info: { attempt: number; error: unknown; nextDelayMs: number }) => void;
+  onFinalError?: (error: unknown) => void;
 }
 
 /**
@@ -70,32 +70,32 @@ export function createCustomFetch(
   options?: CustomFetchOptions,
 ) {
   return async (input: RequestInfo, init?: RequestInit): Promise<Response> => {
-    const userSignal = init?.signal
-    let lastError: unknown = null
-    let retriesLeft: number = options?.maxRetries ?? 0
-    let currentDelay: number = options?.retryDelayMs ?? 1000
-    const maxRetryDelay = options?.maxRetryDelayMs ?? 5000
-    const retryOnNetworkError = options?.retryOnNetworkError ?? false
-    const timeoutMs = options?.timeoutMs
+    const userSignal = init?.signal;
+    let lastError: unknown = null;
+    let retriesLeft: number = options?.maxRetries ?? 0;
+    let currentDelay: number = options?.retryDelayMs ?? 1000;
+    const maxRetryDelay = options?.maxRetryDelayMs ?? 5000;
+    const retryOnNetworkError = options?.retryOnNetworkError ?? false;
+    const timeoutMs = options?.timeoutMs;
 
-    let timeoutTriggered = false
+    let timeoutTriggered = false;
     const timeoutAbortController = timeoutMs
       ? creatTimeOutAbortController(timeoutMs, () => {
-          timeoutTriggered = true
-          options?.onTimeout?.()
+          timeoutTriggered = true;
+          options?.onTimeout?.();
         })
-      : null
+      : null;
 
-    const onRetryAttempt = options?.onRetryAttempt
-    const onFinalError = options?.onFinalError
+    const onRetryAttempt = options?.onRetryAttempt;
+    const onFinalError = options?.onFinalError;
 
     while (retriesLeft >= 0) {
-      const attempt = (options?.maxRetries ?? 0) - retriesLeft + 1
-      const attemptController = new AbortController()
+      const attempt = (options?.maxRetries ?? 0) - retriesLeft + 1;
+      const attemptController = new AbortController();
       const signals = [attemptController.signal, userSignal, timeoutAbortController?.signal].filter(
         Boolean,
-      ) as AbortSignal[]
-      const combinedSignal = combineAbortSignals(signals)
+      ) as AbortSignal[];
+      const combinedSignal = combineAbortSignals(signals);
 
       const request = {
         input,
@@ -103,54 +103,54 @@ export function createCustomFetch(
           ...init,
           signal: combinedSignal,
         },
-      }
+      };
 
       try {
-        const response = await originalFetch(request.input, request.init)
+        const response = await originalFetch(request.input, request.init);
 
         if (response.ok) {
-          return response
+          return response;
         }
 
-        lastError = response
+        lastError = response;
 
         if (!isRetryableStatus(response.status) || retriesLeft === 0) {
-          break
+          break;
         }
       } catch (error) {
-        lastError = error
+        lastError = error;
 
         if (isErrorAbortError(error)) {
-          lastError = timeoutTriggered ? new FetchTimeoutError(lastError, request.input) : error
-          break
+          lastError = timeoutTriggered ? new FetchTimeoutError(lastError, request.input) : error;
+          break;
         }
 
         if (!isNetworkError(error)) {
-          break
+          break;
         }
 
         if (!retryOnNetworkError || retriesLeft === 0) {
-          lastError = new FetchNetworkError(lastError, request.input)
-          break
+          lastError = new FetchNetworkError(lastError, request.input);
+          break;
         }
       }
 
-      await fakeDelay(currentDelay)
-      currentDelay = Math.min(currentDelay * 2, maxRetryDelay)
-      retriesLeft--
+      await fakeDelay(currentDelay);
+      currentDelay = Math.min(currentDelay * 2, maxRetryDelay);
+      retriesLeft--;
 
       onRetryAttempt?.({
         attempt,
         error: lastError,
         nextDelayMs: currentDelay,
-      })
+      });
     }
 
     if (lastError instanceof Response) {
-      lastError = new FetchHttpError(lastError, input)
+      lastError = new FetchHttpError(lastError, input);
     }
 
-    onFinalError?.(lastError)
-    throw lastError
-  }
+    onFinalError?.(lastError);
+    throw lastError;
+  };
 }

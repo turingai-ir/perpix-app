@@ -1,5 +1,4 @@
 import {
-  Box,
   Flex,
   NativeSelect,
   type NativeSelectProps,
@@ -60,7 +59,7 @@ export const PhoneNumberInput = <TControl extends FieldValues, TName extends Fie
   const finalInputName = `${name}.${inputName}` as Join<TName, 'input'>;
 
   return (
-    <Flex direction={'column'} gap="xs">
+    <Flex direction="column" gap="xs">
       <Text>{label}</Text>
       <Controller
         name={finalInputName as unknown as FieldPath<TControl>}
@@ -132,7 +131,7 @@ export const PhoneNumberInput = <TControl extends FieldValues, TName extends Fie
           />
         )}
       />
-      {!!errors?.[name] ? (
+      {errors?.[name] ? (
         <Text c="red" size="xs" mt={4}>
           {(errors?.[name] as any)?.input?.message ??
             (errors?.[name] as any)?.preCode?.message ??

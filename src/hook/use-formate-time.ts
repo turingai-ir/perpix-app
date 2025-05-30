@@ -21,11 +21,18 @@ export function useFormateTime() {
 
     const parts: string[] = [];
 
-    if (days > 0) parts.push(`${toLocalizedNumber(days)} ${labels.day}`);
-    if (hours > 0) parts.push(`${toLocalizedNumber(hours)} ${labels.hour}`);
-    if (minutes > 0) parts.push(`${toLocalizedNumber(minutes)} ${labels.minute}`);
-    if (seconds > 0 || parts.length === 0)
+    if (days > 0) {
+      parts.push(`${toLocalizedNumber(days)} ${labels.day}`);
+    }
+    if (hours > 0) {
+      parts.push(`${toLocalizedNumber(hours)} ${labels.hour}`);
+    }
+    if (minutes > 0) {
+      parts.push(`${toLocalizedNumber(minutes)} ${labels.minute}`);
+    }
+    if (seconds > 0 || parts.length === 0) {
       parts.push(`${toLocalizedNumber(seconds)} ${labels.second}`);
+    }
 
     return parts.join(` ${labels.and} `);
   };

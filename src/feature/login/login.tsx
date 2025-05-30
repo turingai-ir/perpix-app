@@ -88,15 +88,15 @@ export const LoginFeature: FC<LoginFeatureProps> = ({ onFinish }) => {
     setCurrentStep(STEPS.phone);
   };
 
-  if (currentStep === STEPS.phone)
+  if (currentStep === STEPS.phone) {
     return (
       <FormProvider {...phoneForm}>
         <form onSubmit={phoneForm.handleSubmit(handlePhoneForm)} className="tw-w-full">
           <Flex
-            gap={'xl'}
-            direction={'column'}
+            gap="xl"
+            direction="column"
             justify="center"
-            align={'center'}
+            align="center"
             className={clsx([
               {
                 'tw-hidden': sendOtpQuery.isSuccess,
@@ -113,11 +113,12 @@ export const LoginFeature: FC<LoginFeatureProps> = ({ onFinish }) => {
               name="phoneNumber"
             />
             <Button
+              radius="xl"
               className="!tw-w-52"
               loading={sendOtpQuery.isPending}
               type="submit"
               variant="filled"
-              color="blue"
+              color="dark"
             >
               {t('feature.login.sendOtp')}
             </Button>
@@ -125,15 +126,16 @@ export const LoginFeature: FC<LoginFeatureProps> = ({ onFinish }) => {
         </form>
       </FormProvider>
     );
+  }
 
   return (
     <FormProvider {...otpForm}>
       <form onSubmit={otpForm.handleSubmit(handlePinForm)} className="tw-w-full">
         <Flex
-          gap={'xl'}
-          direction={'column'}
+          gap="xl"
+          direction="column"
           justify="center"
-          align={'center'}
+          align="center"
           className={clsx({
             'tw-hidden': sendOtpQuery.isSuccess,
           })}
@@ -147,22 +149,24 @@ export const LoginFeature: FC<LoginFeatureProps> = ({ onFinish }) => {
               label={t('feature.login.otp.label')}
             />
           </Box>
-          <Flex gap={'md'} direction={'column'} align={'center'}>
+          <Flex gap="md" direction="column" align="center">
             <Button
+              radius="xl"
               disabled={count !== 0}
               variant="default"
-              color="blue"
+              color="dark"
               loading={sendOtpQuery.isPending}
             >
-              {`${t('feature.login.otp.resnew')} ${formate(count)}`}
+              {`${t('feature.login.otp.resend')} ${count ? formate(count) : ''}`}
             </Button>
-            <Button type="submit" variant="filled" color="blue" className="!tw-w-52">
+            <Button radius="xl" type="submit" variant="filled" color="dark" className="!tw-w-52">
               {t('feature.login.otp.login')}
             </Button>
             <Button
+              radius="xl"
               loading={verifyOtp.isPending}
               onClick={handleChangeNumber}
-              color="blue"
+              color="dark"
               variant="subtle"
             >
               {t('feature.login.otp.changeNumber')}

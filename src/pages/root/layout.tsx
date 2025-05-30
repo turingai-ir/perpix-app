@@ -1,5 +1,5 @@
 import { useEffect, type FC } from 'react';
-import { Outlet } from 'react-router';
+import { Outlet, useNavigate } from 'react-router';
 import { notifications } from '@mantine/notifications';
 import { Flex } from '@mantine/core';
 
@@ -8,12 +8,15 @@ import {
   FetchNetworkError,
   FetchTimeoutError,
 } from '@/utils/custom-fetch/fetch-errors';
-import { HttpStatus } from '@/utils';
+import { APP_KEYS, HttpStatus } from '@/utils';
 import { useAppTranslate } from '@/hook';
 import { appEventBus } from '@/services/event-bus';
+import { cookies } from '@/utils/cookies';
+import { ROUTES_KEY } from '@/router';
 
 const RootLayout: FC = () => {
   const { t } = useAppTranslate();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const errorhandler = async (error: unknown) => {
@@ -31,6 +34,13 @@ const RootLayout: FC = () => {
           color: 'red',
           message: t('common.fetchErrors.timeout'),
         });
+      }
+
+      // 401 error
+      if (error instanceof FetchHttpError && error.response.status === HttpStatus.UNAUTHORIZED) {
+        const cookie = cookies();
+        cookie.remove(APP_KEYS.COOKIES.ACCESS_TOKEN);
+        navigate(ROUTES_KEY.login.path);
       }
 
       if (
@@ -53,7 +63,7 @@ const RootLayout: FC = () => {
                 title: t('common.error'),
                 color: 'red',
                 message: (
-                  <Flex direction={'column'} gap={'xs'}>
+                  <Flex direction="column" gap="xs">
                     {messages.map((i, index) => (
                       <span key={index}>{i}</span>
                     ))}
@@ -62,7 +72,9 @@ const RootLayout: FC = () => {
               });
             }
             // eslint-disable-next-line unused-imports/no-unused-vars
-          } catch (_e) {}
+          } catch (_e) {
+            /* empty */
+          }
         }
         if (error.response.status === HttpStatus.BAD_REQUEST) {
           try {
@@ -72,13 +84,15 @@ const RootLayout: FC = () => {
                 title: t('common.error'),
                 color: 'red',
                 message: (
-                  <Flex direction={'column'} gap={'xs'}>
+                  <Flex direction="column" gap="xs">
                     <span>{parseError?.detail}</span>
                   </Flex>
                 ),
               });
             }
-          } catch (_e) {}
+          } catch (_e) {
+            /* empty */
+          }
         }
       }
     };
@@ -87,13 +101,9 @@ const RootLayout: FC = () => {
     return () => {
       appEventBusListener();
     };
-  }, [t]);
+  }, [navigate, t]);
 
-  return (
-    <>
-      <Outlet />
-    </>
-  );
+  return <Outlet />;
 };
 
 export default RootLayout;

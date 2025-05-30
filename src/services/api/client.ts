@@ -1,15 +1,19 @@
 import createFetch, { type Middleware } from 'openapi-fetch';
-import { cookies } from '@/utils/cookies';
 
 import { appEventBus } from '../event-bus';
 
 import type { paths } from './api';
 
-import { APP_KEYS, createCustomFetch, HttpStatus } from '@/utils';
-import { FetchHttpError } from '@/utils/custom-fetch/fetch-errors';
+import { cookies } from '@/utils/cookies';
+import { APP_KEYS, createCustomFetch } from '@/utils';
 
 export const apiClinet = createFetch<paths>({
-  fetch: createCustomFetch(globalThis.fetch, { retryOnNetworkError: false, maxRetries: 0 }),
+  fetch: createCustomFetch(globalThis.fetch, {
+    retryOnNetworkError: false,
+    maxRetries: 0,
+    maxRetryDelayMs: 0,
+    retryDelayMs: 0,
+  }),
   baseUrl: APP_KEYS.API_BASE_URL,
 });
 
@@ -29,12 +33,7 @@ const tokenMiddleware: Middleware = {
     }
     return request;
   },
-  onResponse: ({ response }) => {
-    if (response instanceof FetchHttpError && response.status === HttpStatus.UNAUTHORIZED) {
-      const cookie = cookies();
-      cookie.remove(APP_KEYS.COOKIES.ACCESS_TOKEN);
-    }
-  },
 };
+
 apiClinet.use(tokenMiddleware);
 apiClinet.use(errorMiddleware);

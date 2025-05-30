@@ -5,4 +5,12 @@ export const ROUTES_KEY = {
   login: {
     path: '/login',
   },
-} as const
+  text: {
+    root: {
+      path: '/text',
+    },
+    chat: {
+      path: '/text/:id',
+    },
+  },
+} as const;
