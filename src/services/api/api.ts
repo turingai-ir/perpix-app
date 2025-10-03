@@ -1,5 +1,22 @@
 export interface paths {
-  readonly '/user/login': {
+  readonly '/user/start/': {
+    readonly parameters: {
+      readonly query?: never;
+      readonly header?: never;
+      readonly path?: never;
+      readonly cookie?: never;
+    };
+    readonly get?: never;
+    readonly put?: never;
+    /** Start */
+    readonly post: operations['start_user_start__post'];
+    readonly delete?: never;
+    readonly options?: never;
+    readonly head?: never;
+    readonly patch?: never;
+    readonly trace?: never;
+  };
+  readonly '/user/login/': {
     readonly parameters: {
       readonly query?: never;
       readonly header?: never;
@@ -9,14 +26,14 @@ export interface paths {
     readonly get?: never;
     readonly put?: never;
     /** Login */
-    readonly post: operations['login_user_login_post'];
+    readonly post: operations['login_user_login__post'];
     readonly delete?: never;
     readonly options?: never;
     readonly head?: never;
     readonly patch?: never;
     readonly trace?: never;
   };
-  readonly '/user/verify': {
+  readonly '/user/reset-password/': {
     readonly parameters: {
       readonly query?: never;
       readonly header?: never;
@@ -25,15 +42,15 @@ export interface paths {
     };
     readonly get?: never;
     readonly put?: never;
-    /** Verify */
-    readonly post: operations['verify_user_verify_post'];
+    /** Reset Password */
+    readonly post: operations['reset_password_user_reset_password__post'];
     readonly delete?: never;
     readonly options?: never;
     readonly head?: never;
     readonly patch?: never;
     readonly trace?: never;
   };
-  readonly '/open-ai/chat-completion/create': {
+  readonly '/user/set-password/': {
     readonly parameters: {
       readonly query?: never;
       readonly header?: never;
@@ -42,43 +59,23 @@ export interface paths {
     };
     readonly get?: never;
     readonly put?: never;
-    /** Chatcompletioncreatepost */
-    readonly post: operations['chatCompletionCreatePost_open_ai_chat_completion_create_post'];
+    /** Set Password */
+    readonly post: operations['set_password_user_set_password__post'];
     readonly delete?: never;
     readonly options?: never;
     readonly head?: never;
     readonly patch?: never;
     readonly trace?: never;
   };
-  readonly '/open-ai/chat-completion/{chat_id}': {
-    readonly parameters: {
-      readonly query?: never;
-      readonly header?: never;
-      readonly path: {
-        readonly chat_id: string;
-      };
-      readonly cookie?: never;
-    };
-    /** Chatcompletioncontinueget */
-    readonly get: operations['chatCompletionContinueGet_open_ai_chat_completion__chat_id__get'];
-    readonly put?: never;
-    /** Chatcompletioncontinuepost */
-    readonly post: operations['chatCompletionContinuePost_open_ai_chat_completion__chat_id__post'];
-    readonly delete?: never;
-    readonly options?: never;
-    readonly head?: never;
-    readonly patch?: never;
-    readonly trace?: never;
-  };
-  readonly '/open-ai/chat-completion/list/': {
+  readonly '/user/get-info': {
     readonly parameters: {
       readonly query?: never;
       readonly header?: never;
       readonly path?: never;
       readonly cookie?: never;
     };
-    /** Chatcompletionlistget */
-    readonly get: operations['chatCompletionListGet_open_ai_chat_completion_list__get'];
+    /** Get Info */
+    readonly get: operations['get_info_user_get_info_get'];
     readonly put?: never;
     readonly post?: never;
     readonly delete?: never;
@@ -87,7 +84,7 @@ export interface paths {
     readonly patch?: never;
     readonly trace?: never;
   };
-  readonly '/open-ai/image/create': {
+  readonly '/user/edit-info': {
     readonly parameters: {
       readonly query?: never;
       readonly header?: never;
@@ -96,15 +93,15 @@ export interface paths {
     };
     readonly get?: never;
     readonly put?: never;
-    /** Imagecreatepost */
-    readonly post: operations['imageCreatePost_open_ai_image_create_post'];
+    readonly post?: never;
     readonly delete?: never;
     readonly options?: never;
     readonly head?: never;
-    readonly patch?: never;
+    /** Edit User Info */
+    readonly patch: operations['edit_user_info_user_edit_info_patch'];
     readonly trace?: never;
   };
-  readonly '/open-ai/image/edit': {
+  readonly '/admin/ai-provider/': {
     readonly parameters: {
       readonly query?: never;
       readonly header?: never;
@@ -113,25 +110,25 @@ export interface paths {
     };
     readonly get?: never;
     readonly put?: never;
-    /** Imageeditpost */
-    readonly post: operations['imageEditPost_open_ai_image_edit_post'];
+    /** Add Ai Router */
+    readonly post: operations['add_ai_router_admin_ai_provider__post'];
     readonly delete?: never;
     readonly options?: never;
     readonly head?: never;
     readonly patch?: never;
     readonly trace?: never;
   };
-  readonly '/open-ai/image/{image_chat_id}': {
+  readonly '/admin/ai-provider/{uuid}': {
     readonly parameters: {
       readonly query?: never;
       readonly header?: never;
       readonly path: {
-        readonly image_chat_id: string;
+        readonly uuid: string;
       };
       readonly cookie?: never;
     };
-    /** Image Chat Get */
-    readonly get: operations['image_chat_get_open_ai_image__image_chat_id__get'];
+    /** Get Ai Provider */
+    readonly get: operations['get_ai_provider_admin_ai_provider__uuid__get'];
     readonly put?: never;
     readonly post?: never;
     readonly delete?: never;
@@ -140,15 +137,172 @@ export interface paths {
     readonly patch?: never;
     readonly trace?: never;
   };
-  readonly '/open-ai/image/list/': {
+  readonly '/admin/ai-providers/': {
     readonly parameters: {
       readonly query?: never;
       readonly header?: never;
       readonly path?: never;
       readonly cookie?: never;
     };
-    /** Imagelistget */
-    readonly get: operations['ImageListGet_open_ai_image_list__get'];
+    /** Get Ai Providers */
+    readonly get: operations['get_ai_providers_admin_ai_providers__get'];
+    readonly put?: never;
+    readonly post?: never;
+    readonly delete?: never;
+    readonly options?: never;
+    readonly head?: never;
+    readonly patch?: never;
+    readonly trace?: never;
+  };
+  readonly '/admin/ai-model/': {
+    readonly parameters: {
+      readonly query?: never;
+      readonly header?: never;
+      readonly path?: never;
+      readonly cookie?: never;
+    };
+    readonly get?: never;
+    readonly put?: never;
+    /** Add Ai Model */
+    readonly post: operations['add_ai_model_admin_ai_model__post'];
+    readonly delete?: never;
+    readonly options?: never;
+    readonly head?: never;
+    readonly patch?: never;
+    readonly trace?: never;
+  };
+  readonly '/admin/ai-model/{uuid}': {
+    readonly parameters: {
+      readonly query?: never;
+      readonly header?: never;
+      readonly path: {
+        readonly uuid: string;
+      };
+      readonly cookie?: never;
+    };
+    /** Get Ai Model */
+    readonly get: operations['get_ai_model_admin_ai_model__uuid__get'];
+    readonly put?: never;
+    readonly post?: never;
+    readonly delete?: never;
+    readonly options?: never;
+    readonly head?: never;
+    readonly patch?: never;
+    readonly trace?: never;
+  };
+  readonly '/admin/ai-models/': {
+    readonly parameters: {
+      readonly query?: never;
+      readonly header?: never;
+      readonly path?: never;
+      readonly cookie?: never;
+    };
+    /** Get Ai Models */
+    readonly get: operations['get_ai_models_admin_ai_models__get'];
+    readonly put?: never;
+    readonly post?: never;
+    readonly delete?: never;
+    readonly options?: never;
+    readonly head?: never;
+    readonly patch?: never;
+    readonly trace?: never;
+  };
+  readonly '/admin/update-wallet-balance': {
+    readonly parameters: {
+      readonly query?: never;
+      readonly header?: never;
+      readonly path?: never;
+      readonly cookie?: never;
+    };
+    readonly get?: never;
+    readonly put?: never;
+    /** Update Wallet Balance */
+    readonly post: operations['update_wallet_balance_admin_update_wallet_balance_post'];
+    readonly delete?: never;
+    readonly options?: never;
+    readonly head?: never;
+    readonly patch?: never;
+    readonly trace?: never;
+  };
+  readonly '/admin/upload-to-statics': {
+    readonly parameters: {
+      readonly query?: never;
+      readonly header?: never;
+      readonly path?: never;
+      readonly cookie?: never;
+    };
+    readonly get?: never;
+    readonly put?: never;
+    /** Upload To Statics */
+    readonly post: operations['upload_to_statics_admin_upload_to_statics_post'];
+    readonly delete?: never;
+    readonly options?: never;
+    readonly head?: never;
+    readonly patch?: never;
+    readonly trace?: never;
+  };
+  readonly '/models/open-ai/images/generations': {
+    readonly parameters: {
+      readonly query?: never;
+      readonly header?: never;
+      readonly path?: never;
+      readonly cookie?: never;
+    };
+    readonly get?: never;
+    readonly put?: never;
+    /** Images Generation */
+    readonly post: operations['images_generation_models_open_ai_images_generations_post'];
+    readonly delete?: never;
+    readonly options?: never;
+    readonly head?: never;
+    readonly patch?: never;
+    readonly trace?: never;
+  };
+  readonly '/models/open-ai/images/edits': {
+    readonly parameters: {
+      readonly query?: never;
+      readonly header?: never;
+      readonly path?: never;
+      readonly cookie?: never;
+    };
+    readonly get?: never;
+    readonly put?: never;
+    /** Images Edits */
+    readonly post: operations['images_edits_models_open_ai_images_edits_post'];
+    readonly delete?: never;
+    readonly options?: never;
+    readonly head?: never;
+    readonly patch?: never;
+    readonly trace?: never;
+  };
+  readonly '/models/google/video/generations': {
+    readonly parameters: {
+      readonly query?: never;
+      readonly header?: never;
+      readonly path?: never;
+      readonly cookie?: never;
+    };
+    readonly get?: never;
+    readonly put?: never;
+    /** Video Generation */
+    readonly post: operations['video_generation_models_google_video_generations_post'];
+    readonly delete?: never;
+    readonly options?: never;
+    readonly head?: never;
+    readonly patch?: never;
+    readonly trace?: never;
+  };
+  readonly '/models/google/video/generations/result/{id}': {
+    readonly parameters: {
+      readonly query?: never;
+      readonly header?: never;
+      readonly path: {
+        readonly id: string;
+      };
+      readonly cookie?: never;
+    };
+    /** Video Generation Result */
+    readonly get: operations['video_generation_result_models_google_video_generations_result__id__get'];
     readonly put?: never;
     readonly post?: never;
     readonly delete?: never;
@@ -161,147 +315,641 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
-    /** Body_imageEditPost_open_ai_image_edit_post */
-    readonly Body_imageEditPost_open_ai_image_edit_post: {
-      /** Prompt */
-      readonly prompt: string;
+    /**
+     * AiChatRole
+     * @enum {integer}
+     */
+    readonly AiChatRole: AiChatRole;
+    /**
+     * AiModelGenerationTypeEnum
+     * @enum {string}
+     */
+    readonly AiModelGenerationTypeEnum: AiModelGenerationTypeEnum;
+    /** AiModelInList */
+    readonly AiModelInList: {
+      /** Uuid */
+      readonly uuid: string;
+      /** Model Name */
+      readonly model_name: string;
+      /** Display Name */
+      readonly display_name: string | null;
+      /** @default 0 */
+      readonly status: components['schemas']['AiStatusEnum'] | null;
+    };
+    /**
+     * AiModelOwnerEnum
+     * @enum {integer}
+     */
+    readonly AiModelOwnerEnum: AiModelOwnerEnum;
+    /**
+     * AiModelSupportedTypeEnum
+     * @enum {integer}
+     */
+    readonly AiModelSupportedTypeEnum: AiModelSupportedTypeEnum;
+    /** AiProviderInList */
+    readonly AiProviderInList: {
+      /** Uuid */
+      readonly uuid: string;
+      /** Name */
+      readonly name: string;
+      /** Display Name */
+      readonly display_name: string | null;
+      readonly status: components['schemas']['AiStatusEnum'];
+    };
+    /**
+     * AiStatusEnum
+     * @enum {integer}
+     */
+    readonly AiStatusEnum: AiStatusEnum;
+    /**
+     * AiVideoGenerationStatus
+     * @enum {integer}
+     */
+    readonly AiVideoGenerationStatus: AiVideoGenerationStatus;
+    /** Body_images_edits_models_open_ai_images_edits_post */
+    readonly Body_images_edits_models_open_ai_images_edits_post: {
+      /** Image */
+      readonly image: readonly string[];
+      /** Mask */
+      readonly mask?: string | null;
+      /** Ai Model Id */
+      readonly ai_model_id: string;
+      /** Ai Model Config */
+      readonly ai_model_config: string;
+    };
+    /** Body_upload_to_statics_admin_upload_to_statics_post */
+    readonly Body_upload_to_statics_admin_upload_to_statics_post: {
       /**
-       * Image
+       * File
        * Format: binary
        */
-      readonly image: string;
-      /** Model */
-      readonly model: string;
+      readonly file: string;
+    };
+    /** Body_video_generation_models_google_video_generations_post */
+    readonly Body_video_generation_models_google_video_generations_post: {
+      /** Reference Images */
+      readonly reference_images?: readonly string[] | null;
+      /** Ai Model Id */
+      readonly ai_model_id: string;
+      /** Ai Model Config */
+      readonly ai_model_config: string;
+    };
+    /** GetAdminAddProviderResponseBody */
+    readonly GetAdminAddProviderResponseBody: {
+      /** Uuid */
+      readonly uuid: string;
+      /** Name */
+      readonly name: string;
+      /** Display Name */
+      readonly display_name: string | null;
+      /** Api Url */
+      readonly api_url: string | null;
+      readonly status: components['schemas']['AiStatusEnum'];
+      /** Rate Limit Per Min */
+      readonly rate_limit_per_min: number | null;
+      /** Docs Url */
+      readonly docs_url: string | null;
+      /** Contact Info */
+      readonly contact_info: string | null;
+      /** Extra Data */
+      readonly extra_data: {
+        readonly [key: string]: unknown;
+      } | null;
+    };
+    /** GetAdminAddProvidersResponseBody */
+    readonly GetAdminAddProvidersResponseBody: {
+      /** Data */
+      readonly data: readonly components['schemas']['AiProviderInList'][];
+      /** Page */
+      readonly page: number;
+      /**
+       * Page Size
+       * @default 10
+       */
+      readonly page_size: number;
+      /** Total Count */
+      readonly total_count: number;
+    };
+    /** GetAdminAiModelResponseBody */
+    readonly GetAdminAiModelResponseBody: {
+      /** Uuid */
+      readonly uuid: string;
+      /** Provider Id */
+      readonly provider_id: number;
+      /** Model Name */
+      readonly model_name: string;
+      /** Display Name */
+      readonly display_name: string | null;
+      /** Fa Display Name */
+      readonly fa_display_name: string | null;
+      /** Description */
+      readonly description: string | null;
+      /** Version */
+      readonly version: string | null;
+      /** Icon Url */
+      readonly icon_url: string | null;
+      /** Tags */
+      readonly tags: readonly string[] | null;
+      /** Priority */
+      readonly priority: number | null;
+      /** Supported Inputs */
+      readonly supported_inputs: readonly components['schemas']['AiModelSupportedTypeEnum'][];
+      /** Supported Outputs */
+      readonly supported_outputs: readonly components['schemas']['AiModelSupportedTypeEnum'][];
+      /** Config Schema */
+      readonly config_schema: {
+        readonly [key: string]: unknown;
+      };
+      /** Config Defaults */
+      readonly config_defaults: {
+        readonly [key: string]: unknown;
+      };
+      /** @default 0 */
+      readonly status: components['schemas']['AiStatusEnum'] | null;
+      readonly model_owner: components['schemas']['AiModelOwnerEnum'];
+      /** Model Api Urls */
+      readonly model_api_urls: {
+        readonly [key: string]: string;
+      };
+      /** Pricing By */
+      readonly pricing_by: readonly string[];
+      /** Pricing Tiers */
+      readonly pricing_tiers: readonly {
+        readonly [key: string]: unknown;
+      }[];
+    };
+    /** GetAdminAiModelsResponseBody */
+    readonly GetAdminAiModelsResponseBody: {
+      /** Data */
+      readonly data: readonly components['schemas']['AiModelInList'][];
+      /** Page */
+      readonly page: number;
+      /**
+       * Page Size
+       * @default 10
+       */
+      readonly page_size: number;
+      /** Total Count */
+      readonly total_count: number;
     };
     /** HTTPValidationError */
     readonly HTTPValidationError: {
       /** Detail */
       readonly detail?: readonly components['schemas']['ValidationError'][];
     };
-    /**
-     * OPEN_AI_IMAGE_MODELS
-     * @enum {string}
-     */
-    readonly OPEN_AI_IMAGE_MODELS: OPEN_AI_IMAGE_MODELS;
-    /**
-     * OPEN_AI_TEXT_MODELS
-     * @enum {string}
-     */
-    readonly OPEN_AI_TEXT_MODELS: OPEN_AI_TEXT_MODELS;
-    /** OpenAiChatCompletionChoice */
-    readonly OpenAiChatCompletionChoice: {
-      /** Role */
-      readonly role: string;
-      /** Content */
-      readonly content: string;
+    /** PostAdminAddAiModelRequestBody */
+    readonly PostAdminAddAiModelRequestBody: {
+      /** Provider Uuid */
+      readonly provider_uuid: string;
+      /** Model Name */
+      readonly model_name: string;
+      /** Display Name */
+      readonly display_name?: string | null;
+      /** Fa Display Name */
+      readonly fa_display_name?: string | null;
+      /** Description */
+      readonly description?: string | null;
+      /** Version */
+      readonly version?: string | null;
+      /** Icon Url */
+      readonly icon_url?: string | null;
+      /** Tags */
+      readonly tags?: readonly string[] | null;
+      /** Priority */
+      readonly priority?: number | null;
+      /** Supported Inputs */
+      readonly supported_inputs: readonly components['schemas']['AiModelSupportedTypeEnum'][];
+      /** Supported Outputs */
+      readonly supported_outputs: readonly components['schemas']['AiModelSupportedTypeEnum'][];
+      /** Config Schema */
+      readonly config_schema: {
+        readonly [key: string]: unknown;
+      };
+      /**
+       * Config Defaults
+       * @default {}
+       */
+      readonly config_defaults: {
+        readonly [key: string]: unknown;
+      } | null;
+      /** @default 0 */
+      readonly status: components['schemas']['AiStatusEnum'] | null;
+      readonly model_owner: components['schemas']['AiModelOwnerEnum'];
+      /** Model Api Urls */
+      readonly model_api_urls: {
+        readonly [key: string]: string;
+      };
+      /** Pricing By */
+      readonly pricing_by: readonly string[];
+      /** Pricing Tiers */
+      readonly pricing_tiers: readonly {
+        readonly [key: string]: unknown;
+      }[];
     };
-    /** OpenAiChatCompletionContinueSchema */
-    readonly OpenAiChatCompletionContinueSchema: {
-      /** Input */
-      readonly input: string;
-      readonly model: components['schemas']['OPEN_AI_TEXT_MODELS'];
+    /** PostAdminAddAiModelResponseBody */
+    readonly PostAdminAddAiModelResponseBody: {
+      /** Uuid */
+      readonly uuid: string;
+      /** Provider Id */
+      readonly provider_id: number;
+      /** Model Name */
+      readonly model_name: string;
+      /** Display Name */
+      readonly display_name: string | null;
+      /** Fa Display Name */
+      readonly fa_display_name: string | null;
+      /** Description */
+      readonly description: string | null;
+      /** Version */
+      readonly version: string | null;
+      /** Icon Url */
+      readonly icon_url: string | null;
+      /** Tags */
+      readonly tags: readonly string[] | null;
+      /** Priority */
+      readonly priority: number | null;
+      /** Supported Inputs */
+      readonly supported_inputs: readonly components['schemas']['AiModelSupportedTypeEnum'][];
+      /** Supported Outputs */
+      readonly supported_outputs: readonly components['schemas']['AiModelSupportedTypeEnum'][];
+      /** Config Schema */
+      readonly config_schema: {
+        readonly [key: string]: unknown;
+      };
+      /** Config Defaults */
+      readonly config_defaults: {
+        readonly [key: string]: unknown;
+      };
+      /** @default 0 */
+      readonly status: components['schemas']['AiStatusEnum'] | null;
+      readonly model_owner: components['schemas']['AiModelOwnerEnum'];
+      /** Model Api Urls */
+      readonly model_api_urls: {
+        readonly [key: string]: string;
+      };
+      /** Pricing By */
+      readonly pricing_by: readonly string[];
+      /** Pricing Tiers */
+      readonly pricing_tiers: readonly {
+        readonly [key: string]: unknown;
+      }[];
     };
-    /** OpenAiChatCompletionCreateResponse */
-    readonly OpenAiChatCompletionCreateResponse: {
-      /** Messages */
-      readonly messages: readonly components['schemas']['OpenAiChatCompletionChoice'][];
-      /** Chat Id */
-      readonly chat_id: string;
-      /** Model */
-      readonly model: string;
-      /** Created At */
-      readonly created_at: string | null;
-      /** Updated At */
-      readonly updated_at: string | null;
-    };
-    /** OpenAiChatCompletionCreateSchema */
-    readonly OpenAiChatCompletionCreateSchema: {
-      /** Input */
-      readonly input: string;
-      readonly model: components['schemas']['OPEN_AI_TEXT_MODELS'];
-      /** System Message */
-      readonly system_message: string | null;
-    };
-    /** OpenAiChatCompletionsListResponse */
-    readonly OpenAiChatCompletionsListResponse: {
-      /** Total */
-      readonly total: number;
-      /** Chats */
-      readonly chats: readonly components['schemas']['OpenAiChatCompletionCreateResponse'][] | null;
-    };
-    /** OpenAiImageComppletionListResponse */
-    readonly OpenAiImageComppletionListResponse: {
-      /** Total */
-      readonly total: number;
-      /** Chats */
-      readonly chats:
-        | readonly components['schemas']['OpenAiMessageCompletionCreateResponse'][]
-        | null;
-    };
-    /** OpenAiImageCreateSchema */
-    readonly OpenAiImageCreateSchema: {
-      /** Input */
-      readonly input: string;
-      readonly model: components['schemas']['OPEN_AI_IMAGE_MODELS'];
-    };
-    /** OpenAiMessageCompletionCreateMessage */
-    readonly OpenAiMessageCompletionCreateMessage: {
-      /** Role */
-      readonly role: string;
-      /** Message */
-      readonly message: string | null;
-      /** Images */
-      readonly images:
-        | readonly components['schemas']['OpenAiMessageCompletionCreateMessageImage'][]
-        | null;
-    };
-    /** OpenAiMessageCompletionCreateMessageImage */
-    readonly OpenAiMessageCompletionCreateMessageImage: {
+    /** PostAdminAddProviderRequestBody */
+    readonly PostAdminAddProviderRequestBody: {
       /** Name */
       readonly name: string;
+      /** Display Name */
+      readonly display_name?: string | null;
+      /** Api Url */
+      readonly api_url?: string | null;
+      /** Api Key */
+      readonly api_key: string;
+      /** @default 0 */
+      readonly status: components['schemas']['AiStatusEnum'] | null;
+      /** Rate Limit Per Min */
+      readonly rate_limit_per_min?: number | null;
+      /** Docs Url */
+      readonly docs_url?: string | null;
+      /** Contact Info */
+      readonly contact_info?: string | null;
+      /** Extra Data */
+      readonly extra_data?: {
+        readonly [key: string]: unknown;
+      } | null;
+    };
+    /** PostAdminAddProviderResponseBody */
+    readonly PostAdminAddProviderResponseBody: {
+      /** Uuid */
+      readonly uuid: string;
+      /** Name */
+      readonly name: string;
+      /** Display Name */
+      readonly display_name: string | null;
+      /** Api Url */
+      readonly api_url: string | null;
+      readonly status: components['schemas']['AiStatusEnum'];
+      /** Rate Limit Per Min */
+      readonly rate_limit_per_min: number | null;
+      /** Docs Url */
+      readonly docs_url: string | null;
+      /** Contact Info */
+      readonly contact_info: string | null;
+      /** Extra Data */
+      readonly extra_data: {
+        readonly [key: string]: unknown;
+      } | null;
+    };
+    /** PostAdminUpdateWalletBalanceRequestBody */
+    readonly PostAdminUpdateWalletBalanceRequestBody: {
+      /** Wallet Uuid */
+      readonly wallet_uuid: string;
+      /** User Id */
+      readonly user_id: string;
+      /** Amount */
+      readonly amount: number;
+    };
+    /** PostAdminUpdateWalletBalanceResponseBody */
+    readonly PostAdminUpdateWalletBalanceResponseBody: {
+      /** Old Balance Usdmicro */
+      readonly old_balance_usdmicro: number;
+      /** Balance Usdmicro */
+      readonly balance_usdmicro: number;
+      /** Wallet Uuid */
+      readonly wallet_uuid: string;
+    };
+    /** PostAdminUploadResponseBody */
+    readonly PostAdminUploadResponseBody: {
       /** Url */
       readonly url: string;
     };
-    /** OpenAiMessageCompletionCreateResponse */
-    readonly OpenAiMessageCompletionCreateResponse: {
-      /** Image Chat Id */
-      readonly image_chat_id: string;
-      /** Model */
-      readonly model: string;
+    /** PostModlesGoogleVideosGenerationsResponseBody */
+    readonly PostModlesGoogleVideosGenerationsResponseBody: {
+      /** Ai Model Id */
+      readonly ai_model_id: string;
+      /** Wallet Blanace Usdmicro */
+      readonly wallet_blanace_usdmicro: number;
+      /** Ai Model Config */
+      readonly ai_model_config: {
+        readonly [key: string]: unknown;
+      };
       /** Messages */
-      readonly messages: readonly components['schemas']['OpenAiMessageCompletionCreateMessage'][];
-      /** Created At */
-      readonly created_at: string | null;
-      /** Updated At */
-      readonly updated_at: string | null;
+      readonly messages:
+        | readonly components['schemas']['PostModlesGoogleVideosGenerationsResponseBodyMessage'][]
+        | null;
+      /** Id */
+      readonly id: string;
+    };
+    /** PostModlesGoogleVideosGenerationsResponseBodyMessage */
+    readonly PostModlesGoogleVideosGenerationsResponseBodyMessage: {
+      /**
+       * Created At
+       * Format: date-time
+       */
+      readonly created_at: string;
+      /**
+       * Updated At
+       * Format: date-time
+       */
+      readonly updated_at: string;
+      /** Message */
+      readonly message: string | null;
+      /** Files Url */
+      readonly files_url:
+        | readonly {
+            readonly [key: string]: string;
+          }[]
+        | null;
+      readonly video_generation_status: components['schemas']['AiVideoGenerationStatus'] | null;
+      readonly role: components['schemas']['AiChatRole'];
+      /** Id */
+      readonly id: string;
+    };
+    /** PostModlesGoogleVideosGenerationsResultResponseBody */
+    readonly PostModlesGoogleVideosGenerationsResultResponseBody: {
+      /**
+       * Created At
+       * Format: date-time
+       */
+      readonly created_at: string;
+      /**
+       * Updated At
+       * Format: date-time
+       */
+      readonly updated_at: string;
+      /** Message */
+      readonly message: string | null;
+      /** Files Url */
+      readonly files_url:
+        | readonly {
+            readonly [key: string]: string;
+          }[]
+        | null;
+      readonly video_generation_status: components['schemas']['AiVideoGenerationStatus'] | null;
+      readonly role: components['schemas']['AiChatRole'];
+      /** Id */
+      readonly id: string;
+    };
+    /** PostModlesOpenAiImagesEditsResponseBody */
+    readonly PostModlesOpenAiImagesEditsResponseBody: {
+      /** Ai Model Id */
+      readonly ai_model_id: string;
+      /** Wallet Blanace Usdmicro */
+      readonly wallet_blanace_usdmicro: number;
+      /** Ai Model Config */
+      readonly ai_model_config: {
+        readonly [key: string]: unknown;
+      };
+      /** Messages */
+      readonly messages:
+        | readonly components['schemas']['PostModlesOpenAiImagesEditsResponseBodyMessage'][]
+        | null;
+      /** Id */
+      readonly id: string;
+    };
+    /** PostModlesOpenAiImagesEditsResponseBodyMessage */
+    readonly PostModlesOpenAiImagesEditsResponseBodyMessage: {
+      /**
+       * Created At
+       * Format: date-time
+       */
+      readonly created_at: string;
+      /**
+       * Updated At
+       * Format: date-time
+       */
+      readonly updated_at: string;
+      /** Message */
+      readonly message: string | null;
+      /** Files Url */
+      readonly files_url:
+        | readonly {
+            readonly [key: string]: string;
+          }[]
+        | null;
+      readonly role: components['schemas']['AiChatRole'];
+      /** Id */
+      readonly id: string;
+    };
+    /** PostModlesOpenAiImagesGenerationsRequestBody */
+    readonly PostModlesOpenAiImagesGenerationsRequestBody: {
+      /** Ai Model Id */
+      readonly ai_model_id: string;
+      /** Ai Model Config */
+      readonly ai_model_config: {
+        readonly [key: string]: unknown;
+      };
+    };
+    /** PostModlesOpenAiImagesGenerationsResponseBody */
+    readonly PostModlesOpenAiImagesGenerationsResponseBody: {
+      /** Ai Model Id */
+      readonly ai_model_id: string;
+      /** Wallet Blanace Usdmicro */
+      readonly wallet_blanace_usdmicro: number;
+      /** Ai Model Config */
+      readonly ai_model_config: {
+        readonly [key: string]: unknown;
+      };
+      /** Messages */
+      readonly messages:
+        | readonly components['schemas']['PostModlesOpenAiImagesGenerationsResponseBodyMessage'][]
+        | null;
+      /** Id */
+      readonly id: string;
+    };
+    /** PostModlesOpenAiImagesGenerationsResponseBodyMessage */
+    readonly PostModlesOpenAiImagesGenerationsResponseBodyMessage: {
+      /**
+       * Created At
+       * Format: date-time
+       */
+      readonly created_at: string;
+      /**
+       * Updated At
+       * Format: date-time
+       */
+      readonly updated_at: string;
+      /** Message */
+      readonly message: string | null;
+      /** Files Url */
+      readonly files_url:
+        | readonly {
+            readonly [key: string]: string;
+          }[]
+        | null;
+      readonly role: components['schemas']['AiChatRole'];
+      /** Id */
+      readonly id: string;
+    };
+    /**
+     * UploadedFileTypeEnum
+     * @enum {string}
+     */
+    readonly UploadedFileTypeEnum: UploadedFileTypeEnum;
+    /** UserGetInfoReponseDefaultWallet */
+    readonly UserGetInfoReponseDefaultWallet: {
+      /** Wallet Id */
+      readonly wallet_id: string;
+      /** Name */
+      readonly name: string;
+      /** Is Owner */
+      readonly is_owner: boolean;
+      /** Balance Usdmicro */
+      readonly balance_usdmicro: number;
+      /** Soft Limit Usdmicro */
+      readonly soft_limit_usdmicro: number | null;
+      readonly wallet_type: components['schemas']['WalletType'];
+      /** Is Active */
+      readonly is_active: boolean;
+      /** Is Locked */
+      readonly is_locked: boolean;
+      /** Extra Metadata */
+      readonly extra_metadata: {
+        readonly [key: string]: unknown;
+      } | null;
+      readonly user_role: components['schemas']['WalletMemberRole'];
+    };
+    /** UserGetInfoResponse */
+    readonly UserGetInfoResponse: {
+      /** User Id */
+      readonly user_id: string;
+      /** Email */
+      readonly email: string | null;
+      /** Name */
+      readonly name: string | null;
+      /** Phone Number */
+      readonly phone_number: string | null;
+      /** Scopes */
+      readonly scopes: readonly string[] | null;
+      readonly default_wallet: components['schemas']['UserGetInfoReponseDefaultWallet'] | null;
+    };
+    /** UserLoginBody */
+    readonly UserLoginBody: {
+      /**
+       * Password
+       * @example qwerQWER1234!!!!
+       */
+      readonly password: string;
     };
     /** UserLoginResponse */
     readonly UserLoginResponse: {
       /** Token */
       readonly token: string;
+      /** Phone Number */
+      readonly phone_number: string;
+      /** Email */
+      readonly email: string | null;
+      /** Name */
+      readonly name: string | null;
+      /** User Id */
+      readonly user_id: string;
     };
-    /** UserLoginSchema */
-    readonly UserLoginSchema: {
+    /** UserPatchEditInfoRequest */
+    readonly UserPatchEditInfoRequest: {
+      /** Email */
+      readonly email: string | null;
+      /** Name */
+      readonly name: string | null;
+    };
+    /** UserPatchEditInfoResponse */
+    readonly UserPatchEditInfoResponse: {
+      /** User Id */
+      readonly user_id: string;
+      /** Email */
+      readonly email: string | null;
+      /** Name */
+      readonly name: string | null;
+      /** Phone Number */
+      readonly phone_number: string | null;
+      /** Scopes */
+      readonly scopes: readonly string[] | null;
+      readonly default_wallet: components['schemas']['UserGetInfoReponseDefaultWallet'] | null;
+    };
+    /** UserResetPasswordBody */
+    readonly UserResetPasswordBody: {
       /**
-       * Phonenumber
-       * @description شماره تلفن معتبر نیست
+       * Phone Number
        * @example 09123456789
        */
-      readonly phoneNumber: string;
+      readonly phone_number: string;
     };
-    /** UserVerifyResponse */
-    readonly UserVerifyResponse: {
+    /** UserResetPasswordResponse */
+    readonly UserResetPasswordResponse: {
       /** Token */
       readonly token: string;
+      /** Is Verified */
+      readonly is_verified: boolean;
+      /** Next Otp At */
+      readonly next_otp_at: string | null;
     };
-    /** UserVerifySchema */
-    readonly UserVerifySchema: {
+    /** UserSetPasswordBody */
+    readonly UserSetPasswordBody: {
       /**
-       * Code
-       * @description کد تایید اشتباه است
+       * Password
+       * @example qwerQWER1234!!!!
+       */
+      readonly password: string;
+      /**
+       * Otp Code
        * @example 123456
        */
-      readonly code: string;
+      readonly otp_code: string;
+    };
+    /** UserStartBody */
+    readonly UserStartBody: {
+      /**
+       * Phone Number
+       * @example 09123456789
+       */
+      readonly phone_number: string;
+    };
+    /** UserStartResponse */
+    readonly UserStartResponse: {
+      /** Token */
+      readonly token: string;
+      /** Is Verified */
+      readonly is_verified: boolean;
+      /** Next Otp At */
+      readonly next_otp_at: string | null;
     };
     /** ValidationError */
     readonly ValidationError: {
@@ -312,6 +960,16 @@ export interface components {
       /** Error Type */
       readonly type: string;
     };
+    /**
+     * WalletMemberRole
+     * @enum {integer}
+     */
+    readonly WalletMemberRole: WalletMemberRole;
+    /**
+     * WalletType
+     * @enum {integer}
+     */
+    readonly WalletType: WalletType;
   };
   responses: never;
   parameters: never;
@@ -319,37 +977,69 @@ export interface components {
   headers: never;
   pathItems: never;
 }
-export type SchemaBodyImageEditPostOpenAiImageEditPost =
-  components['schemas']['Body_imageEditPost_open_ai_image_edit_post'];
+export type SchemaAiModelInList = components['schemas']['AiModelInList'];
+export type SchemaAiProviderInList = components['schemas']['AiProviderInList'];
+export type SchemaBodyImagesEditsModelsOpenAiImagesEditsPost =
+  components['schemas']['Body_images_edits_models_open_ai_images_edits_post'];
+export type SchemaBodyUploadToStaticsAdminUploadToStaticsPost =
+  components['schemas']['Body_upload_to_statics_admin_upload_to_statics_post'];
+export type SchemaBodyVideoGenerationModelsGoogleVideoGenerationsPost =
+  components['schemas']['Body_video_generation_models_google_video_generations_post'];
+export type SchemaGetAdminAddProviderResponseBody =
+  components['schemas']['GetAdminAddProviderResponseBody'];
+export type SchemaGetAdminAddProvidersResponseBody =
+  components['schemas']['GetAdminAddProvidersResponseBody'];
+export type SchemaGetAdminAiModelResponseBody =
+  components['schemas']['GetAdminAiModelResponseBody'];
+export type SchemaGetAdminAiModelsResponseBody =
+  components['schemas']['GetAdminAiModelsResponseBody'];
 export type SchemaHttpValidationError = components['schemas']['HTTPValidationError'];
-export type SchemaOpenAiImageModels = components['schemas']['OPEN_AI_IMAGE_MODELS'];
-export type SchemaOpenAiTextModels = components['schemas']['OPEN_AI_TEXT_MODELS'];
-export type SchemaOpenAiChatCompletionChoice = components['schemas']['OpenAiChatCompletionChoice'];
-export type SchemaOpenAiChatCompletionContinueSchema =
-  components['schemas']['OpenAiChatCompletionContinueSchema'];
-export type SchemaOpenAiChatCompletionCreateResponse =
-  components['schemas']['OpenAiChatCompletionCreateResponse'];
-export type SchemaOpenAiChatCompletionCreateSchema =
-  components['schemas']['OpenAiChatCompletionCreateSchema'];
-export type SchemaOpenAiChatCompletionsListResponse =
-  components['schemas']['OpenAiChatCompletionsListResponse'];
-export type SchemaOpenAiImageComppletionListResponse =
-  components['schemas']['OpenAiImageComppletionListResponse'];
-export type SchemaOpenAiImageCreateSchema = components['schemas']['OpenAiImageCreateSchema'];
-export type SchemaOpenAiMessageCompletionCreateMessage =
-  components['schemas']['OpenAiMessageCompletionCreateMessage'];
-export type SchemaOpenAiMessageCompletionCreateMessageImage =
-  components['schemas']['OpenAiMessageCompletionCreateMessageImage'];
-export type SchemaOpenAiMessageCompletionCreateResponse =
-  components['schemas']['OpenAiMessageCompletionCreateResponse'];
+export type SchemaPostAdminAddAiModelRequestBody =
+  components['schemas']['PostAdminAddAiModelRequestBody'];
+export type SchemaPostAdminAddAiModelResponseBody =
+  components['schemas']['PostAdminAddAiModelResponseBody'];
+export type SchemaPostAdminAddProviderRequestBody =
+  components['schemas']['PostAdminAddProviderRequestBody'];
+export type SchemaPostAdminAddProviderResponseBody =
+  components['schemas']['PostAdminAddProviderResponseBody'];
+export type SchemaPostAdminUpdateWalletBalanceRequestBody =
+  components['schemas']['PostAdminUpdateWalletBalanceRequestBody'];
+export type SchemaPostAdminUpdateWalletBalanceResponseBody =
+  components['schemas']['PostAdminUpdateWalletBalanceResponseBody'];
+export type SchemaPostAdminUploadResponseBody =
+  components['schemas']['PostAdminUploadResponseBody'];
+export type SchemaPostModlesGoogleVideosGenerationsResponseBody =
+  components['schemas']['PostModlesGoogleVideosGenerationsResponseBody'];
+export type SchemaPostModlesGoogleVideosGenerationsResponseBodyMessage =
+  components['schemas']['PostModlesGoogleVideosGenerationsResponseBodyMessage'];
+export type SchemaPostModlesGoogleVideosGenerationsResultResponseBody =
+  components['schemas']['PostModlesGoogleVideosGenerationsResultResponseBody'];
+export type SchemaPostModlesOpenAiImagesEditsResponseBody =
+  components['schemas']['PostModlesOpenAiImagesEditsResponseBody'];
+export type SchemaPostModlesOpenAiImagesEditsResponseBodyMessage =
+  components['schemas']['PostModlesOpenAiImagesEditsResponseBodyMessage'];
+export type SchemaPostModlesOpenAiImagesGenerationsRequestBody =
+  components['schemas']['PostModlesOpenAiImagesGenerationsRequestBody'];
+export type SchemaPostModlesOpenAiImagesGenerationsResponseBody =
+  components['schemas']['PostModlesOpenAiImagesGenerationsResponseBody'];
+export type SchemaPostModlesOpenAiImagesGenerationsResponseBodyMessage =
+  components['schemas']['PostModlesOpenAiImagesGenerationsResponseBodyMessage'];
+export type SchemaUserGetInfoReponseDefaultWallet =
+  components['schemas']['UserGetInfoReponseDefaultWallet'];
+export type SchemaUserGetInfoResponse = components['schemas']['UserGetInfoResponse'];
+export type SchemaUserLoginBody = components['schemas']['UserLoginBody'];
 export type SchemaUserLoginResponse = components['schemas']['UserLoginResponse'];
-export type SchemaUserLoginSchema = components['schemas']['UserLoginSchema'];
-export type SchemaUserVerifyResponse = components['schemas']['UserVerifyResponse'];
-export type SchemaUserVerifySchema = components['schemas']['UserVerifySchema'];
+export type SchemaUserPatchEditInfoRequest = components['schemas']['UserPatchEditInfoRequest'];
+export type SchemaUserPatchEditInfoResponse = components['schemas']['UserPatchEditInfoResponse'];
+export type SchemaUserResetPasswordBody = components['schemas']['UserResetPasswordBody'];
+export type SchemaUserResetPasswordResponse = components['schemas']['UserResetPasswordResponse'];
+export type SchemaUserSetPasswordBody = components['schemas']['UserSetPasswordBody'];
+export type SchemaUserStartBody = components['schemas']['UserStartBody'];
+export type SchemaUserStartResponse = components['schemas']['UserStartResponse'];
 export type SchemaValidationError = components['schemas']['ValidationError'];
 export type $defs = Record<string, never>;
 export interface operations {
-  readonly login_user_login_post: {
+  readonly start_user_start__post: {
     readonly parameters: {
       readonly query?: never;
       readonly header?: never;
@@ -358,7 +1048,40 @@ export interface operations {
     };
     readonly requestBody: {
       readonly content: {
-        readonly 'application/json': components['schemas']['UserLoginSchema'];
+        readonly 'application/json': components['schemas']['UserStartBody'];
+      };
+    };
+    readonly responses: {
+      /** @description Successful Response */
+      readonly 200: {
+        headers: {
+          readonly [name: string]: unknown;
+        };
+        content: {
+          readonly 'application/json': components['schemas']['UserStartResponse'];
+        };
+      };
+      /** @description Validation Error */
+      readonly 422: {
+        headers: {
+          readonly [name: string]: unknown;
+        };
+        content: {
+          readonly 'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  readonly login_user_login__post: {
+    readonly parameters: {
+      readonly query?: never;
+      readonly header?: never;
+      readonly path?: never;
+      readonly cookie?: never;
+    };
+    readonly requestBody: {
+      readonly content: {
+        readonly 'application/json': components['schemas']['UserLoginBody'];
       };
     };
     readonly responses: {
@@ -382,7 +1105,7 @@ export interface operations {
       };
     };
   };
-  readonly verify_user_verify_post: {
+  readonly reset_password_user_reset_password__post: {
     readonly parameters: {
       readonly query?: never;
       readonly header?: never;
@@ -391,7 +1114,7 @@ export interface operations {
     };
     readonly requestBody: {
       readonly content: {
-        readonly 'application/json': components['schemas']['UserVerifySchema'];
+        readonly 'application/json': components['schemas']['UserResetPasswordBody'];
       };
     };
     readonly responses: {
@@ -401,7 +1124,7 @@ export interface operations {
           readonly [name: string]: unknown;
         };
         content: {
-          readonly 'application/json': components['schemas']['UserVerifyResponse'];
+          readonly 'application/json': components['schemas']['UserResetPasswordResponse'];
         };
       };
       /** @description Validation Error */
@@ -415,7 +1138,7 @@ export interface operations {
       };
     };
   };
-  readonly chatCompletionCreatePost_open_ai_chat_completion_create_post: {
+  readonly set_password_user_set_password__post: {
     readonly parameters: {
       readonly query?: never;
       readonly header?: never;
@@ -424,7 +1147,7 @@ export interface operations {
     };
     readonly requestBody: {
       readonly content: {
-        readonly 'application/json': components['schemas']['OpenAiChatCompletionCreateSchema'];
+        readonly 'application/json': components['schemas']['UserSetPasswordBody'];
       };
     };
     readonly responses: {
@@ -434,7 +1157,7 @@ export interface operations {
           readonly [name: string]: unknown;
         };
         content: {
-          readonly 'application/json': components['schemas']['OpenAiChatCompletionCreateResponse'];
+          readonly 'application/json': components['schemas']['UserLoginResponse'];
         };
       };
       /** @description Validation Error */
@@ -448,12 +1171,98 @@ export interface operations {
       };
     };
   };
-  readonly chatCompletionContinueGet_open_ai_chat_completion__chat_id__get: {
+  readonly get_info_user_get_info_get: {
+    readonly parameters: {
+      readonly query?: never;
+      readonly header?: never;
+      readonly path?: never;
+      readonly cookie?: never;
+    };
+    readonly requestBody?: never;
+    readonly responses: {
+      /** @description Successful Response */
+      readonly 200: {
+        headers: {
+          readonly [name: string]: unknown;
+        };
+        content: {
+          readonly 'application/json': components['schemas']['UserGetInfoResponse'];
+        };
+      };
+    };
+  };
+  readonly edit_user_info_user_edit_info_patch: {
+    readonly parameters: {
+      readonly query?: never;
+      readonly header?: never;
+      readonly path?: never;
+      readonly cookie?: never;
+    };
+    readonly requestBody: {
+      readonly content: {
+        readonly 'application/json': components['schemas']['UserPatchEditInfoRequest'];
+      };
+    };
+    readonly responses: {
+      /** @description Successful Response */
+      readonly 200: {
+        headers: {
+          readonly [name: string]: unknown;
+        };
+        content: {
+          readonly 'application/json': components['schemas']['UserPatchEditInfoResponse'];
+        };
+      };
+      /** @description Validation Error */
+      readonly 422: {
+        headers: {
+          readonly [name: string]: unknown;
+        };
+        content: {
+          readonly 'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  readonly add_ai_router_admin_ai_provider__post: {
+    readonly parameters: {
+      readonly query?: never;
+      readonly header?: never;
+      readonly path?: never;
+      readonly cookie?: never;
+    };
+    readonly requestBody: {
+      readonly content: {
+        readonly 'application/json': components['schemas']['PostAdminAddProviderRequestBody'];
+      };
+    };
+    readonly responses: {
+      /** @description Successful Response */
+      readonly 200: {
+        headers: {
+          readonly [name: string]: unknown;
+        };
+        content: {
+          readonly 'application/json': components['schemas']['PostAdminAddProviderResponseBody'];
+        };
+      };
+      /** @description Validation Error */
+      readonly 422: {
+        headers: {
+          readonly [name: string]: unknown;
+        };
+        content: {
+          readonly 'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  readonly get_ai_provider_admin_ai_provider__uuid__get: {
     readonly parameters: {
       readonly query?: never;
       readonly header?: never;
       readonly path: {
-        readonly chat_id: string;
+        readonly uuid: string;
       };
       readonly cookie?: never;
     };
@@ -465,7 +1274,7 @@ export interface operations {
           readonly [name: string]: unknown;
         };
         content: {
-          readonly 'application/json': components['schemas']['OpenAiChatCompletionCreateResponse'];
+          readonly 'application/json': components['schemas']['GetAdminAddProviderResponseBody'];
         };
       };
       /** @description Validation Error */
@@ -479,45 +1288,10 @@ export interface operations {
       };
     };
   };
-  readonly chatCompletionContinuePost_open_ai_chat_completion__chat_id__post: {
-    readonly parameters: {
-      readonly query?: never;
-      readonly header?: never;
-      readonly path: {
-        readonly chat_id: string;
-      };
-      readonly cookie?: never;
-    };
-    readonly requestBody: {
-      readonly content: {
-        readonly 'application/json': components['schemas']['OpenAiChatCompletionContinueSchema'];
-      };
-    };
-    readonly responses: {
-      /** @description Successful Response */
-      readonly 200: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly 'application/json': components['schemas']['OpenAiChatCompletionCreateResponse'];
-        };
-      };
-      /** @description Validation Error */
-      readonly 422: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly 'application/json': components['schemas']['HTTPValidationError'];
-        };
-      };
-    };
-  };
-  readonly chatCompletionListGet_open_ai_chat_completion_list__get: {
+  readonly get_ai_providers_admin_ai_providers__get: {
     readonly parameters: {
       readonly query?: {
-        readonly page_number?: number;
+        readonly page?: number;
         readonly page_size?: number;
       };
       readonly header?: never;
@@ -532,7 +1306,7 @@ export interface operations {
           readonly [name: string]: unknown;
         };
         content: {
-          readonly 'application/json': components['schemas']['OpenAiChatCompletionsListResponse'];
+          readonly 'application/json': components['schemas']['GetAdminAddProvidersResponseBody'];
         };
       };
       /** @description Validation Error */
@@ -546,7 +1320,7 @@ export interface operations {
       };
     };
   };
-  readonly imageCreatePost_open_ai_image_create_post: {
+  readonly add_ai_model_admin_ai_model__post: {
     readonly parameters: {
       readonly query?: never;
       readonly header?: never;
@@ -555,7 +1329,7 @@ export interface operations {
     };
     readonly requestBody: {
       readonly content: {
-        readonly 'application/json': components['schemas']['OpenAiImageCreateSchema'];
+        readonly 'application/json': components['schemas']['PostAdminAddAiModelRequestBody'];
       };
     };
     readonly responses: {
@@ -565,7 +1339,7 @@ export interface operations {
           readonly [name: string]: unknown;
         };
         content: {
-          readonly 'application/json': components['schemas']['OpenAiMessageCompletionCreateResponse'];
+          readonly 'application/json': components['schemas']['PostAdminAddAiModelResponseBody'];
         };
       };
       /** @description Validation Error */
@@ -579,45 +1353,12 @@ export interface operations {
       };
     };
   };
-  readonly imageEditPost_open_ai_image_edit_post: {
-    readonly parameters: {
-      readonly query?: never;
-      readonly header?: never;
-      readonly path?: never;
-      readonly cookie?: never;
-    };
-    readonly requestBody: {
-      readonly content: {
-        readonly 'multipart/form-data': components['schemas']['Body_imageEditPost_open_ai_image_edit_post'];
-      };
-    };
-    readonly responses: {
-      /** @description Successful Response */
-      readonly 200: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly 'application/json': components['schemas']['OpenAiMessageCompletionCreateResponse'];
-        };
-      };
-      /** @description Validation Error */
-      readonly 422: {
-        headers: {
-          readonly [name: string]: unknown;
-        };
-        content: {
-          readonly 'application/json': components['schemas']['HTTPValidationError'];
-        };
-      };
-    };
-  };
-  readonly image_chat_get_open_ai_image__image_chat_id__get: {
+  readonly get_ai_model_admin_ai_model__uuid__get: {
     readonly parameters: {
       readonly query?: never;
       readonly header?: never;
       readonly path: {
-        readonly image_chat_id: string;
+        readonly uuid: string;
       };
       readonly cookie?: never;
     };
@@ -629,7 +1370,7 @@ export interface operations {
           readonly [name: string]: unknown;
         };
         content: {
-          readonly 'application/json': components['schemas']['OpenAiMessageCompletionCreateResponse'];
+          readonly 'application/json': components['schemas']['GetAdminAiModelResponseBody'];
         };
       };
       /** @description Validation Error */
@@ -643,10 +1384,10 @@ export interface operations {
       };
     };
   };
-  readonly ImageListGet_open_ai_image_list__get: {
+  readonly get_ai_models_admin_ai_models__get: {
     readonly parameters: {
       readonly query?: {
-        readonly page_number?: number;
+        readonly page?: number;
         readonly page_size?: number;
       };
       readonly header?: never;
@@ -661,7 +1402,203 @@ export interface operations {
           readonly [name: string]: unknown;
         };
         content: {
-          readonly 'application/json': components['schemas']['OpenAiImageComppletionListResponse'];
+          readonly 'application/json': components['schemas']['GetAdminAiModelsResponseBody'];
+        };
+      };
+      /** @description Validation Error */
+      readonly 422: {
+        headers: {
+          readonly [name: string]: unknown;
+        };
+        content: {
+          readonly 'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  readonly update_wallet_balance_admin_update_wallet_balance_post: {
+    readonly parameters: {
+      readonly query?: never;
+      readonly header?: never;
+      readonly path?: never;
+      readonly cookie?: never;
+    };
+    readonly requestBody: {
+      readonly content: {
+        readonly 'application/json': components['schemas']['PostAdminUpdateWalletBalanceRequestBody'];
+      };
+    };
+    readonly responses: {
+      /** @description Successful Response */
+      readonly 200: {
+        headers: {
+          readonly [name: string]: unknown;
+        };
+        content: {
+          readonly 'application/json': components['schemas']['PostAdminUpdateWalletBalanceResponseBody'];
+        };
+      };
+      /** @description Validation Error */
+      readonly 422: {
+        headers: {
+          readonly [name: string]: unknown;
+        };
+        content: {
+          readonly 'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  readonly upload_to_statics_admin_upload_to_statics_post: {
+    readonly parameters: {
+      readonly query?: never;
+      readonly header?: never;
+      readonly path?: never;
+      readonly cookie?: never;
+    };
+    readonly requestBody: {
+      readonly content: {
+        readonly 'multipart/form-data': components['schemas']['Body_upload_to_statics_admin_upload_to_statics_post'];
+      };
+    };
+    readonly responses: {
+      /** @description Successful Response */
+      readonly 200: {
+        headers: {
+          readonly [name: string]: unknown;
+        };
+        content: {
+          readonly 'application/json': components['schemas']['PostAdminUploadResponseBody'];
+        };
+      };
+      /** @description Validation Error */
+      readonly 422: {
+        headers: {
+          readonly [name: string]: unknown;
+        };
+        content: {
+          readonly 'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  readonly images_generation_models_open_ai_images_generations_post: {
+    readonly parameters: {
+      readonly query?: never;
+      readonly header?: never;
+      readonly path?: never;
+      readonly cookie?: never;
+    };
+    readonly requestBody: {
+      readonly content: {
+        readonly 'application/json': components['schemas']['PostModlesOpenAiImagesGenerationsRequestBody'];
+      };
+    };
+    readonly responses: {
+      /** @description Successful Response */
+      readonly 200: {
+        headers: {
+          readonly [name: string]: unknown;
+        };
+        content: {
+          readonly 'application/json': components['schemas']['PostModlesOpenAiImagesGenerationsResponseBody'];
+        };
+      };
+      /** @description Validation Error */
+      readonly 422: {
+        headers: {
+          readonly [name: string]: unknown;
+        };
+        content: {
+          readonly 'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  readonly images_edits_models_open_ai_images_edits_post: {
+    readonly parameters: {
+      readonly query?: never;
+      readonly header?: never;
+      readonly path?: never;
+      readonly cookie?: never;
+    };
+    readonly requestBody: {
+      readonly content: {
+        readonly 'multipart/form-data': components['schemas']['Body_images_edits_models_open_ai_images_edits_post'];
+      };
+    };
+    readonly responses: {
+      /** @description Successful Response */
+      readonly 200: {
+        headers: {
+          readonly [name: string]: unknown;
+        };
+        content: {
+          readonly 'application/json': components['schemas']['PostModlesOpenAiImagesEditsResponseBody'];
+        };
+      };
+      /** @description Validation Error */
+      readonly 422: {
+        headers: {
+          readonly [name: string]: unknown;
+        };
+        content: {
+          readonly 'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  readonly video_generation_models_google_video_generations_post: {
+    readonly parameters: {
+      readonly query?: never;
+      readonly header?: never;
+      readonly path?: never;
+      readonly cookie?: never;
+    };
+    readonly requestBody: {
+      readonly content: {
+        readonly 'multipart/form-data': components['schemas']['Body_video_generation_models_google_video_generations_post'];
+      };
+    };
+    readonly responses: {
+      /** @description Successful Response */
+      readonly 200: {
+        headers: {
+          readonly [name: string]: unknown;
+        };
+        content: {
+          readonly 'application/json': components['schemas']['PostModlesGoogleVideosGenerationsResponseBody'];
+        };
+      };
+      /** @description Validation Error */
+      readonly 422: {
+        headers: {
+          readonly [name: string]: unknown;
+        };
+        content: {
+          readonly 'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  readonly video_generation_result_models_google_video_generations_result__id__get: {
+    readonly parameters: {
+      readonly query?: never;
+      readonly header?: never;
+      readonly path: {
+        readonly id: string;
+      };
+      readonly cookie?: never;
+    };
+    readonly requestBody?: never;
+    readonly responses: {
+      /** @description Successful Response */
+      readonly 200: {
+        headers: {
+          readonly [name: string]: unknown;
+        };
+        content: {
+          readonly 'application/json': components['schemas']['PostModlesGoogleVideosGenerationsResultResponseBody'];
         };
       };
       /** @description Validation Error */
@@ -676,32 +1613,75 @@ export interface operations {
     };
   };
 }
-export enum OPEN_AI_IMAGE_MODELS {
-  dall_e_2 = 'dall-e-2',
-  dall_e_3 = 'dall-e-3',
+export enum AiChatRole {
+  Value0 = 0,
+  Value1 = 1,
+  Value2 = 2,
+  Value3 = 3,
+  Value4 = 4,
+  Value5 = 5,
 }
-export enum OPEN_AI_TEXT_MODELS {
-  gpt_3_5_turbo = 'gpt-3.5-turbo',
-  gpt_4 = 'gpt-4',
-  gpt_4_turbo = 'gpt-4-turbo',
-  gpt_4o = 'gpt-4o',
-  gpt_4o_mini = 'gpt-4o-mini',
-  gpt_4o_search_preview = 'gpt-4o-search-preview',
-  o1_mini = 'o1-mini',
-  o1 = 'o1',
-  o3_mini = 'o3-mini',
-  o1_preview = 'o1-preview',
+export enum AiModelGenerationTypeEnum {
+  TEXT_TO_IMAGE = 'TEXT_TO_IMAGE',
+  IMAGE_TO_IMAGE = 'IMAGE_TO_IMAGE',
+  TEXT_TO_VIDEO = 'TEXT_TO_VIDEO',
+  IMAGE_TO_VIDEO = 'IMAGE_TO_VIDEO',
+}
+export enum AiModelOwnerEnum {
+  Value0 = 0,
+  Value1 = 1,
+}
+export enum AiModelSupportedTypeEnum {
+  Value0 = 0,
+  Value1 = 1,
+  Value2 = 2,
+  Value3 = 3,
+}
+export enum AiStatusEnum {
+  Value0 = 0,
+  Value1 = 1,
+  Value2 = 2,
+}
+export enum AiVideoGenerationStatus {
+  Value0 = 0,
+  Value1 = 1,
+  Value2 = 2,
+  Value3 = 3,
+}
+export enum UploadedFileTypeEnum {
+  IMAGE_REFRENCE = 'IMAGE_REFRENCE',
+  IMAGE_MASK = 'IMAGE_MASK',
+  IMAGE_GENERATED = 'IMAGE_GENERATED',
+  VIDEO_GENERATED = 'VIDEO_GENERATED',
+  AUDIO_REFRENCE = 'AUDIO_REFRENCE',
+  DOCUMENT_REFRENCE = 'DOCUMENT_REFRENCE',
+  OTHER = 'OTHER',
+}
+export enum WalletMemberRole {
+  Value0 = 0,
+  Value1 = 1,
+}
+export enum WalletType {
+  Value0 = 0,
+  Value1 = 1,
 }
 export enum ApiPaths {
-  login_user_login_post = '/user/login',
-  verify_user_verify_post = '/user/verify',
-  chatCompletionCreatePost_open_ai_chat_completion_create_post = '/open-ai/chat-completion/create',
-  chatCompletionContinuePost_open_ai_chat_completion__chat_id__post = '/open-ai/chat-completion/{chat_id}',
-  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
-  chatCompletionContinueGet_open_ai_chat_completion__chat_id__get = '/open-ai/chat-completion/{chat_id}',
-  chatCompletionListGet_open_ai_chat_completion_list__get = '/open-ai/chat-completion/list/',
-  imageCreatePost_open_ai_image_create_post = '/open-ai/image/create',
-  imageEditPost_open_ai_image_edit_post = '/open-ai/image/edit',
-  image_chat_get_open_ai_image__image_chat_id__get = '/open-ai/image/{image_chat_id}',
-  ImageListGet_open_ai_image_list__get = '/open-ai/image/list/',
+  start_user_start__post = '/user/start/',
+  login_user_login__post = '/user/login/',
+  reset_password_user_reset_password__post = '/user/reset-password/',
+  set_password_user_set_password__post = '/user/set-password/',
+  get_info_user_get_info_get = '/user/get-info',
+  edit_user_info_user_edit_info_patch = '/user/edit-info',
+  add_ai_router_admin_ai_provider__post = '/admin/ai-provider/',
+  get_ai_provider_admin_ai_provider__uuid__get = '/admin/ai-provider/{uuid}',
+  get_ai_providers_admin_ai_providers__get = '/admin/ai-providers/',
+  add_ai_model_admin_ai_model__post = '/admin/ai-model/',
+  get_ai_model_admin_ai_model__uuid__get = '/admin/ai-model/{uuid}',
+  get_ai_models_admin_ai_models__get = '/admin/ai-models/',
+  update_wallet_balance_admin_update_wallet_balance_post = '/admin/update-wallet-balance',
+  upload_to_statics_admin_upload_to_statics_post = '/admin/upload-to-statics',
+  images_generation_models_open_ai_images_generations_post = '/models/open-ai/images/generations',
+  images_edits_models_open_ai_images_edits_post = '/models/open-ai/images/edits',
+  video_generation_models_google_video_generations_post = '/models/google/video/generations',
+  video_generation_result_models_google_video_generations_result__id__get = '/models/google/video/generations/result/{id}',
 }

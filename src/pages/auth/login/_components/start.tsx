@@ -1,0 +1,135 @@
+import type { FC } from 'react';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useImmerAtom } from 'jotai-immer';
+import { TbLoader2 } from 'react-icons/tb';
+
+import authLoginPageState from '../_state';
+
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useAppTranslate } from '@/hook';
+import { I18_KEYS } from '@/services/i18';
+import { Heading2, Muted, Paragraph } from '@/components/ui/typography';
+import { APP_KEYS, REGEX } from '@/utils';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { useReactQueryApi } from '@/hook/app';
+import { cookies } from '@/utils/cookies';
+
+const AuthLoginPageStart: FC = () => {
+  const [pageState, setPageState] = useImmerAtom(authLoginPageState);
+  const cookie = cookies();
+  const { t } = useAppTranslate(I18_KEYS.RESOURCES.MAIN);
+  const reactQueryApi = useReactQueryApi();
+  const formSchema = z.object({
+    mobile: z
+      .string({})
+      .transform((value) => {
+        let normalized = value.trim();
+
+        if (normalized.startsWith('+98')) {
+          normalized = normalized.replace('+98', '0');
+        }
+
+        if (normalized.startsWith('98')) {
+          normalized = normalized.replace('98', '0');
+        }
+
+        if (/^9\d{9}$/.test(normalized)) {
+          normalized = `0${normalized}`;
+        }
+
+        return normalized;
+      })
+      .refine((value) => REGEX.mobile.test(value), {
+        message: t('common.validationErrors.mobile'),
+      }),
+  });
+
+  const startQuery = reactQueryApi.useMutation('post', '/user/start/', {
+    onSuccess(data) {
+      cookie.set(APP_KEYS.COOKIES.ACCESS_TOKEN, data.token);
+
+      if (data.is_verified === true) {
+        setPageState((draft) => {
+          draft.currentView = 'PASSWORD';
+        });
+      } else {
+        setPageState((draft) => {
+          draft.currentView = 'SET_PASSWORD';
+        });
+      }
+    },
+  });
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      mobile: pageState.mobile,
+    },
+  });
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    await startQuery.mutateAsync({
+      body: {
+        phone_number: values.mobile,
+      },
+    });
+    setPageState((draft) => {
+      draft.mobile = values.mobile;
+    });
+  }
+
+  return (
+    <Card className="w-full max-w-sm">
+      <CardHeader>
+        <CardTitle>
+          <Heading2 className="text-center">{t('pages.auth.login.title')}</Heading2>
+        </CardTitle>
+        <CardDescription>
+          <Paragraph className="text-center">{t('pages.auth.login.description')}</Paragraph>
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <FormField
+              control={form.control}
+              name="mobile"
+              render={({ field, fieldState }) => (
+                <FormItem>
+                  <FormLabel>{t('pages.auth.login.startForm.mobile.label')}</FormLabel>
+                  <FormControl>
+                    <Input dir="ltr" type="number" placeholder="0912345678" {...field} />
+                  </FormControl>
+                  {fieldState.error ? (
+                    <FormMessage />
+                  ) : (
+                    <Muted>{t('pages.auth.login.startForm.mobile.description')}</Muted>
+                  )}
+                </FormItem>
+              )}
+            />
+            <Button className="w-full" type="submit" disabled={startQuery.isPending}>
+              {startQuery.isPending ? (
+                <TbLoader2 className="animate-spin" />
+              ) : (
+                t('pages.auth.login.startForm.submit')
+              )}
+            </Button>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
+  );
+};
+
+export default AuthLoginPageStart;

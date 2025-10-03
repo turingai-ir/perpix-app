@@ -1,1 +1,1 @@
-export * from './use-app-translate'
+export * from './use-app-translate';

@@ -1,7 +1,6 @@
 import { useEffect, type FC } from 'react';
 import { Outlet, useNavigate } from 'react-router';
-import { notifications } from '@mantine/notifications';
-import { Flex } from '@mantine/core';
+import { toast } from 'sonner';
 
 import {
   FetchHttpError,
@@ -21,26 +20,18 @@ const RootLayout: FC = () => {
   useEffect(() => {
     const errorhandler = async (error: unknown) => {
       if (error instanceof FetchNetworkError) {
-        notifications.show({
-          title: t('common.error'),
-          color: 'red',
-          message: t('common.fetchErrors.network'),
-        });
+        toast.error(t('common.fetchErrors.network'));
       }
 
       if (error instanceof FetchTimeoutError) {
-        notifications.show({
-          title: t('common.error'),
-          color: 'red',
-          message: t('common.fetchErrors.timeout'),
-        });
+        toast.error(t('common.fetchErrors.network'));
       }
 
       // 401 error
       if (error instanceof FetchHttpError && error.response.status === HttpStatus.UNAUTHORIZED) {
         const cookie = cookies();
         cookie.remove(APP_KEYS.COOKIES.ACCESS_TOKEN);
-        navigate(ROUTES_KEY.login.path);
+        navigate(ROUTES_KEY.auth.login.path);
       }
 
       if (
@@ -59,17 +50,13 @@ const RootLayout: FC = () => {
                   messages.push(i.msg);
                 }
               });
-              notifications.show({
-                title: t('common.error'),
-                color: 'red',
-                message: (
-                  <Flex direction="column" gap="xs">
-                    {messages.map((i, index) => (
-                      <span key={index}>{i}</span>
-                    ))}
-                  </Flex>
-                ),
-              });
+              toast.error(
+                <div className="gap-1 flex flex-col ">
+                  {messages.map((i, index) => (
+                    <span key={index}>{i}</span>
+                  ))}
+                </div>,
+              );
             }
             // eslint-disable-next-line unused-imports/no-unused-vars
           } catch (_e) {
@@ -80,15 +67,25 @@ const RootLayout: FC = () => {
           try {
             const parseError = await error.response.clone().json();
             if (typeof parseError?.detail === 'string') {
-              notifications.show({
-                title: t('common.error'),
-                color: 'red',
-                message: (
-                  <Flex direction="column" gap="xs">
-                    <span>{parseError?.detail}</span>
-                  </Flex>
-                ),
-              });
+              toast.error(
+                <div className="gap-1 flex flex-col ">
+                  <span>{parseError?.detail}</span>
+                </div>,
+              );
+            }
+          } catch (_e) {
+            /* empty */
+          }
+        }
+        if (error.response.status === HttpStatus.TOO_MANY_REQUESTS) {
+          try {
+            const parseError = await error.response.clone().json();
+            if (typeof parseError?.detail === 'string') {
+              toast.error(
+                <div className="gap-1 flex flex-col ">
+                  <span>{parseError?.detail}</span>
+                </div>,
+              );
             }
           } catch (_e) {
             /* empty */

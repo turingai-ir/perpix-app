@@ -1,90 +1,180 @@
 {
   "common": {
+    "and": "و",
+    "chat": "چت",
+    "day": "روز",
+    "download": "دانلود",
     "error": "خطا",
     "fetchErrors": {
       "network": "خطای شبکه لطفا اتصال خود را بررسی کنید",
       "timeout": "متاسفانه خطایی رخ داده است دوباره تلاش کنید"
     },
-    "seconds": "ثانیه",
-    "day": "روز",
     "hour": "ساعت",
-    "minute": "دقیقه",
-    "and": "و",
-    "today": "امروز",
-    "yesterday": "دیروز",
-    "thisWeek": "این هفته",
-    "thisMonth": "این ماه",
-    "older": "قدیمی تر",
-    "chat": "چت",
     "image": "عکس",
-    "download": "دانلود"
-  },
-  "pages": {
-    "login": {
-      "title": "ورود",
-      "description": "به تورینگ چت خوش آمدید"
+    "minute": "دقیقه",
+    "older": "قدیمی تر",
+    "seconds": "ثانیه",
+    "thisMonth": "این ماه",
+    "thisWeek": "این هفته",
+    "today": "امروز",
+    "validationErrors": {
+      "maxLength": "{{name}} باید کمتر از {{max}} کاراکتر باشد",
+      "minLength": "{{name}} باید بیشتر از {{min}} کاراکتر باشد",
+      "mobile": "شماره تلفن نامعتبر است",
+      "number": "{{name}} باید عدد باشد",
+      "required": "{{name}} الزامی است",
+      "password": "رمز عبور باید حداقل شامل هشت کاراکتر و حداقل یک حرف بزرگ و یک حرف کوچک انگلیسی باشد",
+      "equalCharacter": " {{name}} باید {{length}} کاراکتر باشد",
+      "passwordMatch": "رمز عبور با تکرار آن برابر نیست",
+      "email": "ایمیل نامعتبر است",
+      "onlyEnglishAndPersianCharacters": "{{name}} فقط حروف انگلیسی و فارسی مجاز است"
     },
-    "text": {
-      "aside": {
-        "newChat": "چت جدید"
-      },
-      "apiCallError": {
-        "content": "متاسفانه خطایی رخ داده است دوباره تلاش کنید",
-        "action": "تلاش مجدد"
-      },
-
-      "searchBox": {
-        "title": "چطور میتونم کمکت کنم؟",
-        "form": {
-          "input": {
-            "label": "جستجو",
-            "placeholder": "شروع به تایپ کنید..."
-          }
-        }
+    "yesterday": "دیروز"
+  },
+  "components": {
+    "custom": {
+      "errorSection": {
+        "description": "متاسفانه خطایی رخ داده است دوباره تلاش کنید",
+        "retry": "تلاش مجدد"
       }
     },
-    "image": {
-      "aside": {
-        "newChat": "عکس جدید"
-      },
-      "apiCallError": {
-        "content": "متاسفانه خطایی رخ داده است دوباره تلاش کنید",
-        "action": "تلاش مجدد"
-      },
-
-      "searchBox": {
-        "title": "چطور میتونم کمکت کنم؟",
-        "form": {
-          "input": {
-            "label": "جستجو",
-            "placeholder": "شروع به تایپ کنید..."
-          }
-        }
+    "form": {
+      "rules": {
+        "incorrectRegex": "{{name}} نامعتبر است",
+        "maxLength": "{{name}} باید کمتر از {{max}} کاراکتر باشد",
+        "minLength": "{{name}} باید بیشتر از {{min}} کاراکتر باشد",
+        "phoneNumber": "شماره تلفن نامعتبر است",
+        "required": "{{name}} الزامی است"
       }
     }
   },
   "feature": {
     "login": {
+      "otp": {
+        "changeNumber": "تغییر شماره",
+        "label": "کد فعال سازی",
+        "login": "ورود",
+        "resend": "ارسال مجدد کد فعال سازی"
+      },
       "phoneNumber": {
         "label": "شماره تلفن"
       },
-      "sendOtp": "ارسال کد فعال سازی",
-      "otp": {
-        "label": "کد فعال سازی",
-        "login": "ورود",
-        "resend": "ارسال مجدد کد فعال سازی",
-        "changeNumber": "تغییر شماره"
-      }
+      "sendOtp": "ارسال کد فعال سازی"
     }
   },
-  "components": {
-    "form": {
-      "rules": {
-        "required": "{{name}} الزامی است",
-        "incorrectRegex": "{{name}} نامعتبر است",
-        "phoneNumber": "شماره تلفن نامعتبر است",
-        "maxLength": "{{name}} باید کمتر از {{max}} کاراکتر باشد",
-        "minLength": "{{name}} باید بیشتر از {{min}} کاراکتر باشد"
+  "pages": {
+    "root": {
+      "accessToSections": {
+        "imageGeneration": {
+          "title": "تولید و ویرایش عکس",
+          "description": "دسترسی به آخرین مدل های تولید و ویرایش تصویر"
+        },
+        "videoGeneration": {
+          "title": "تولید ویدیو",
+          "description": "دسترسی به آخرین مدل های تولید ویدیو، هرآنچه میخواهید تصور کنید"
+        },
+        "userProfile": {
+          "title": "حساب کاربری",
+          "description": "دسترسی به پروفایل کاربری و مشخصات شخصی"
+        },
+        "action": "کلیک کنید"
+      }
+    },
+    "auth": {
+      "login": {
+        "description": "به پر پیکسل ای آی خوش آمدید",
+        "forgetPassword": "فراموشی رمز عبور",
+        "startForm": {
+          "mobile": {
+            "description": "شماره همراه تلفن خود را وارد کنید",
+            "label": "شماره تلفن"
+          },
+          "submit": "ادامه دادن"
+        },
+        "enterPasswordForm": {
+          "password": { "label": "رمز عبور", "description": "رمز عبور خود را وارد کنید" },
+          "submit": "ورود",
+          "successLoginToast": "با موفقیت وارد شدید"
+        },
+        "setPasswordForm": {
+          "title": "ایجاد رمز عبور",
+          "description": "در این مرحله شما رمز عبور برای خودو انتخاب می کنید",
+          "otp": { "label": "کد فعال سازی", "description": "کد فعال سازی را وارد کنید" },
+          "password": { "label": "رمز عبور", "description": "رمز عبور خود را وارد کنید" },
+          "confirmPassword": {
+            "label": "تکرار رمز عبور",
+            "description": "تکرار رمز عبور خود را وارد کنید"
+          },
+          "resend": "ارسال مجدد کد فعال سازی",
+          "resendUntil": "ارسال مجدد کد فعال سازی در {{time}} دقیقه",
+          "submit": "ورود",
+          "successSetPasswordToast": "رمز عبور با موفقیت ثبت شد"
+        },
+        "successSendOtp": "کد تایید با موفقیت برای شما ارسال گردید",
+        "title": "ورود"
+      }
+    },
+    "image": {
+      "apiCallError": {
+        "action": "تلاش مجدد",
+        "content": "متاسفانه خطایی رخ داده است دوباره تلاش کنید"
+      },
+      "aside": {
+        "newChat": "عکس جدید"
+      },
+      "searchBox": {
+        "form": {
+          "input": {
+            "label": "جستجو",
+            "placeholder": "شروع به تایپ کنید..."
+          }
+        },
+        "title": "چطور میتونم کمکت کنم؟"
+      }
+    },
+    "login": {
+      "description": "به تورینگ چت خوش آمدید",
+      "title": "ورود"
+    },
+    "text": {
+      "apiCallError": {
+        "action": "تلاش مجدد",
+        "content": "متاسفانه خطایی رخ داده است دوباره تلاش کنید"
+      },
+      "aside": {
+        "newChat": "چت جدید"
+      },
+      "searchBox": {
+        "form": {
+          "input": {
+            "label": "جستجو",
+            "placeholder": "شروع به تایپ کنید..."
+          }
+        },
+        "title": "چطور میتونم کمکت کنم؟"
+      }
+    },
+    "profile": {
+      "settings": {
+        "title": "ویرایش حساب کاربری",
+        "userInfo": {
+          "form": {
+            "name": {
+              "label": "نام کامل",
+              "description": "فقط شامل حروف انگلیسی و فارسی و حداکثر ۶۴ کاراکتر"
+            },
+            "mobile": {
+              "label": "شماره تلفن همراه",
+              "description": "شماره همراه تلفن خود را وارد کنید"
+            },
+            "email": {
+              "label": "ایمیل"
+            },
+            "submit": "ویرایش اطلاعات",
+            "successSetPasswordToast": "اطلاعات کاربری با موفقیت بروزرسانی گردید"
+          },
+          "backToHome": "بازگشت به صفحه اصلی"
+        }
       }
     }
   }

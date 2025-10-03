@@ -1,5 +1,6 @@
-import openapiTS, { astToString } from "openapi-typescript";
-import fs from "fs/promises";
+import fs from 'fs/promises';
+
+import openapiTS, { astToString } from 'openapi-typescript';
 
 /**
  * Generates a TypeScript client from an OpenAPI schema and writes it to a file.
@@ -32,7 +33,7 @@ const generateClient = async (url: string, fileName: string): Promise<void> => {
  */
 
 const main = async () => {
-  await generateClient("http://localhost:8000/openapi.json", "api");
+  await generateClient('http://localhost:8000/openapi.json', 'api');
 };
 
 main();

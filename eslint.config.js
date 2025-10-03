@@ -17,6 +17,9 @@ export default tseslint.config({ ignores: ['dist', 'build', '.vite'] }, ...manti
     sourceType: 'module',
     globals: globals.browser,
     parser: tseslint.parser,
+    parserOptions: {
+      tsconfigRootDir: import.meta.dirname, // Explicitly set the root directory
+    },
   },
   plugins: {
     react,

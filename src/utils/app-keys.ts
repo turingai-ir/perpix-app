@@ -6,9 +6,9 @@ if (!API_BASE_URL) {
 
 export const APP_KEYS = {
   DB: {
-    NAME: 'turing-ai-app',
+    NAME: 'per-pix-ai-app',
     STORGES: {
-      globalState: 'globalState',
+      globalState: 'global-storage',
     },
   },
   COOKIES: {

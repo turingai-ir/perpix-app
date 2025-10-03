@@ -1,27 +1,28 @@
 import { createBrowserRouter, Navigate } from 'react-router';
 
-import LoginPage from '../pages/login/page';
-
 import { ROUTES_KEY } from './routes';
 
 import RootLayout from '@/pages/root/layout';
-import TextPage from '@/pages/text/page';
-import ImagePage from '@/pages/image/page';
+import AuthLoginPage from '@/pages/auth/login/page';
+import RootPage from '@/pages/root/page';
+import ProfileLayout from '@/pages/profile/layout';
+// import ProfilePage from '@/pages/profile/page';
+import ProfileSettingsPage from '@/pages/profile/settings/page';
 
 export const router = createBrowserRouter([
   {
     Component: RootLayout,
     children: [
-      { path: ROUTES_KEY.root.path, element: <Navigate to={ROUTES_KEY.text.root.path} /> },
+      { path: ROUTES_KEY.root.path, Component: RootPage },
+      { path: ROUTES_KEY.auth.login.path, Component: AuthLoginPage },
       {
-        path: ROUTES_KEY.login.path,
-        Component: LoginPage,
+        path: ROUTES_KEY.profile.root,
+        Component: ProfileLayout,
+        children: [
+          // { Component: ProfilePage, index: true },
+          { Component: ProfileSettingsPage, path: ROUTES_KEY.profile.settings },
+        ],
       },
-      { path: ROUTES_KEY.text.root.path, Component: TextPage },
-      { path: ROUTES_KEY.text.chat.path, Component: TextPage },
-
-      { path: ROUTES_KEY.image.root.path, Component: ImagePage },
-      { path: ROUTES_KEY.image.chat.path, Component: ImagePage },
 
       { path: '*', element: <Navigate to={ROUTES_KEY.text.root.path} /> },
     ],
