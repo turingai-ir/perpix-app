@@ -11,7 +11,7 @@ import { APP_KEYS, HttpStatus } from '@/utils';
 import { useAppTranslate } from '@/hook';
 import { appEventBus } from '@/services/event-bus';
 import { cookies } from '@/utils/cookies';
-import { ROUTES_KEY } from '@/router';
+import { APP_ROUTES_KEY } from '@/router';
 
 const RootLayout: FC = () => {
   const { t } = useAppTranslate();
@@ -31,7 +31,7 @@ const RootLayout: FC = () => {
       if (error instanceof FetchHttpError && error.response.status === HttpStatus.UNAUTHORIZED) {
         const cookie = cookies();
         cookie.remove(APP_KEYS.COOKIES.ACCESS_TOKEN);
-        navigate(ROUTES_KEY.auth.login.path);
+        navigate(APP_ROUTES_KEY.auth.login.path);
       }
 
       if (

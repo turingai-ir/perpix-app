@@ -11,7 +11,7 @@ import authLoginPageState from '../_state';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAppTranslate, useSecondsCountDown } from '@/hook';
-import { I18_KEYS } from '@/services/i18';
+import { APP_I18_KEYS } from '@/services/i18';
 import { Heading2, Muted, Paragraph } from '@/components/ui/typography';
 import { APP_KEYS, REGEX } from '@/utils';
 import {
@@ -25,7 +25,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { useReactQueryApi } from '@/hook/app';
 import { cookies } from '@/utils/cookies';
-import { ROUTES_KEY } from '@/router';
+import { APP_ROUTES_KEY } from '@/router';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { PasswordInput } from '@/components/ui/password-input';
 
@@ -35,7 +35,7 @@ const AuthLoginPageSetPassword: FC = () => {
   const countDown = useSecondsCountDown(150);
   const [pageState] = useImmerAtom(authLoginPageState);
 
-  const { t } = useAppTranslate(I18_KEYS.RESOURCES.MAIN);
+  const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const reactQueryApi = useReactQueryApi();
   const formSchema = z
     .object({
@@ -80,7 +80,7 @@ const AuthLoginPageSetPassword: FC = () => {
   const setPassword = reactQueryApi.useMutation('post', '/user/set-password/', {
     onSuccess(data) {
       cookie.set(APP_KEYS.COOKIES.ACCESS_TOKEN, data.token);
-      navigate(ROUTES_KEY.root.path);
+      navigate(APP_ROUTES_KEY.root.path);
       toast.success(t('pages.auth.login.setPasswordForm.successSetPasswordToast'));
     },
   });

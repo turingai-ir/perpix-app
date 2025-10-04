@@ -1,16 +1,17 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { TbCameraAi, TbPhotoAi, TbUserCog } from 'react-icons/tb';
+import { useNavigate } from 'react-router';
+import type { FC } from 'react';
 
 import SpotlightCard from '@/components/SpotlightCard';
 import { Heading3, Muted } from '@/components/ui/typography';
 import { useAppTranslate } from '@/hook';
-import { I18_KEYS } from '@/services/i18';
-import { useNavigate } from 'react-router';
-import { ROUTES_KEY } from '@/router';
+import { APP_I18_KEYS } from '@/services/i18';
+import { APP_ROUTES_KEY } from '@/router';
 
-const RootPage = () => {
-  const { t } = useAppTranslate(I18_KEYS.RESOURCES.MAIN);
+const RootPage: FC = () => {
+  const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const navigate = useNavigate();
 
   return (
@@ -35,7 +36,7 @@ const RootPage = () => {
           <div
             className="flex flex-col select-none gap-4"
             onClick={() => {
-              navigate(ROUTES_KEY.profile.settings);
+              navigate(APP_ROUTES_KEY.profile.settings);
             }}
           >
             <TbUserCog className="w-12 h-12" />

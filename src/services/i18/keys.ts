@@ -1,4 +1,4 @@
-export const I18_KEYS = {
+export const APP_I18_KEYS = {
   RESOURCES: {
     MAIN: 'MAIN',
   },

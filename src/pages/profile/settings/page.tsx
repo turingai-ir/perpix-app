@@ -8,7 +8,7 @@ import { Link } from 'react-router';
 
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAppTranslate } from '@/hook';
-import { I18_KEYS } from '@/services/i18';
+import { APP_I18_KEYS } from '@/services/i18';
 import {
   Form,
   FormControl,
@@ -23,10 +23,10 @@ import { Button } from '@/components/ui/button';
 import { useReactQueryApi } from '@/hook/app';
 import LoadingSection from '@/components/custom/loading-section';
 import ErrorSection from '@/components/custom/error-section';
-import { ROUTES_KEY } from '@/router';
+import { APP_ROUTES_KEY } from '@/router';
 
 const ProfileSettingsPage: FC = () => {
-  const { t } = useAppTranslate(I18_KEYS.RESOURCES.MAIN);
+  const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
 
   const reactQueryApi = useReactQueryApi();
 
@@ -180,7 +180,7 @@ const ProfileSettingsPage: FC = () => {
           </Form>
         </CardContent>
         <CardFooter>
-          <Link className="w-full" to={ROUTES_KEY.root.path}>
+          <Link className="w-full" to={APP_ROUTES_KEY.app.path}>
             <Button className="w-full" variant="link">
               {t('pages.profile.settings.userInfo.backToHome')}
             </Button>

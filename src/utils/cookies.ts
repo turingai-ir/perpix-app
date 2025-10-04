@@ -3,7 +3,7 @@ import Cookies from 'universal-cookie';
 export const cookies = () => {
   const c = new Cookies(null, {
     path: '/',
-    secure: import.meta.env.MODE === 'prodcution',
+    secure: import.meta.env.MODE === 'production',
     httpOnly: import.meta.env.MODE === 'production',
   });
   const get = (name: string) => {

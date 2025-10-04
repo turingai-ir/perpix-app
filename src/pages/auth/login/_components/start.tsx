@@ -9,7 +9,7 @@ import authLoginPageState from '../_state';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAppTranslate } from '@/hook';
-import { I18_KEYS } from '@/services/i18';
+import { APP_I18_KEYS } from '@/services/i18';
 import { Heading2, Muted, Paragraph } from '@/components/ui/typography';
 import { APP_KEYS, REGEX } from '@/utils';
 import {
@@ -28,7 +28,7 @@ import { cookies } from '@/utils/cookies';
 const AuthLoginPageStart: FC = () => {
   const [pageState, setPageState] = useImmerAtom(authLoginPageState);
   const cookie = cookies();
-  const { t } = useAppTranslate(I18_KEYS.RESOURCES.MAIN);
+  const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const reactQueryApi = useReactQueryApi();
   const formSchema = z.object({
     mobile: z

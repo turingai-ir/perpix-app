@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router';
 
 import { LoginFeature } from '@/feature/login';
 import { useAppTranslate } from '@/hook';
-import { ROUTES_KEY } from '@/router';
+import { APP_ROUTES_KEY } from '@/router';
 
 export default function LoginPage() {
   const { t } = useAppTranslate();
@@ -18,7 +18,7 @@ export default function LoginPage() {
           <Text>{t('pages.login.description')}</Text>
           <LoginFeature
             onFinish={() => {
-              navigate(ROUTES_KEY.root.path);
+              navigate(APP_ROUTES_KEY.root.path);
             }}
           />
         </Flex>

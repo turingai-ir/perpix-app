@@ -1,16 +1,20 @@
-export const ROUTES_KEY = {
+export const APP_ROUTES_KEY = {
   auth: {
     path: '/auth',
     login: {
       path: '/auth/login',
     },
   },
-  root: {
+  app: {
     path: '/',
   },
   profile: {
-    root: '/profile',
-    settings: '/profile/settings',
+    root: {
+      path: '/profile',
+    },
+    settings: {
+      path: '/profile/settings',
+    },
   },
 
   text: {

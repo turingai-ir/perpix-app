@@ -3,14 +3,14 @@ import type { FC, PropsWithChildren } from 'react';
 import { Muted } from '@/components/ui/typography';
 import { Button } from '@/components/ui/button';
 import { useAppTranslate } from '@/hook';
-import { I18_KEYS } from '@/services/i18';
+import { APP_I18_KEYS } from '@/services/i18';
 
 interface Props {
   onRetry?: () => void;
 }
 
 const ErrorSection: FC<PropsWithChildren<Props>> = ({ children, onRetry }) => {
-  const { t } = useAppTranslate(I18_KEYS.RESOURCES.MAIN);
+  const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
 
   return (
     <div className="flex gap-4 flex-col">

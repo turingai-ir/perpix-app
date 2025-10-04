@@ -7,7 +7,7 @@ import type { paths } from './api';
 import { cookies } from '@/utils/cookies';
 import { APP_KEYS, createCustomFetch } from '@/utils';
 
-export const apiClinet = createFetch<paths>({
+export const apiClient = createFetch<paths>({
   fetch: createCustomFetch(globalThis.fetch, {
     retryOnNetworkError: false,
     maxRetries: 0,
@@ -35,5 +35,5 @@ const tokenMiddleware: Middleware = {
   },
 };
 
-apiClinet.use(tokenMiddleware);
-apiClinet.use(errorMiddleware);
+apiClient.use(tokenMiddleware);
+apiClient.use(errorMiddleware);
