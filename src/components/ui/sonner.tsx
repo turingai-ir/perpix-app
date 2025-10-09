@@ -1,15 +1,19 @@
 import { Toaster as Sonner } from 'sonner';
+import { selectAtom } from 'jotai/utils';
+import { useAtom } from 'jotai';
 
-import { useApp } from '@/hook/app';
+import { globalAtom } from '@/state';
 
 type ToasterProps = React.ComponentProps<typeof Sonner>;
 
+const themeAtom = selectAtom(globalAtom, (val) => val.theme);
+
 const Toaster = ({ ...props }: ToasterProps) => {
-  const { theme } = useApp();
+  const [theme] = useAtom(themeAtom);
 
   return (
     <Sonner
-      theme={theme.current}
+      theme={theme}
       className="toaster group"
       toastOptions={{
         classNames: {

@@ -16,7 +16,11 @@ export const APP_ROUTES_KEY = {
       path: '/profile/settings',
     },
   },
-
+  generation: {
+    image: {
+      path: '/generation/image',
+    },
+  },
   text: {
     root: {
       path: '/text',

@@ -1,28 +1,24 @@
-import { useEffect, useState, type FC, type PropsWithChildren } from 'react';
+import { useEffect, type FC, type PropsWithChildren } from 'react';
 import createClient from 'openapi-react-query';
+import { selectAtom } from 'jotai/utils';
+import { useAtom } from 'jotai';
 
-import { appContext, type Theme } from './context';
+import { appContext } from './context';
 
 import { apiClient } from '@/services/api';
-import { cookies } from '@/utils/cookies';
+import { globalAtom } from '@/state';
 
-interface AppProviderProps {
-  theme: {
-    default: Theme;
-    storageKey: string;
-  };
-}
-const AppContextProvider: FC<PropsWithChildren<AppProviderProps>> = ({ children, theme }) => {
-  const [myTheme, setMyTheme] = useState<Theme>(
-    () => (cookies().get(theme.storageKey) as Theme) || theme.default,
-  );
+interface AppProviderProps {}
+
+const themeAtom = selectAtom(globalAtom, (val) => val.theme);
+
+const AppContextProvider: FC<PropsWithChildren<AppProviderProps>> = ({ children }) => {
   const apiHook = createClient(apiClient);
+  const [myTheme] = useAtom(themeAtom);
 
   useEffect(() => {
     const root = window.document.documentElement;
-
     root.classList.remove('light', 'dark');
-
     root.classList.add(myTheme);
   }, [myTheme]);
 
@@ -30,13 +26,6 @@ const AppContextProvider: FC<PropsWithChildren<AppProviderProps>> = ({ children,
     <appContext.Provider
       value={{
         apiHook,
-        theme: {
-          current: myTheme,
-          setTheme(t) {
-            cookies().set(theme.storageKey, t);
-            setMyTheme(t);
-          },
-        },
       }}
     >
       {children}

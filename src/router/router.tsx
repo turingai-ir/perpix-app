@@ -12,6 +12,7 @@ import AppPage from '@/pages/(app)/page';
 import { cookies } from '@/utils/cookies';
 import { APP_KEYS } from '@/utils';
 import AppLayout from '@/pages/(app)/_layout';
+import GenerationImagePage from '@/pages/(app)/generation/image/page';
 
 export const router = createBrowserRouter([
   {
@@ -40,6 +41,10 @@ export const router = createBrowserRouter([
           // { Component: ProfilePage, index: true },
           { Component: ProfileSettingsPage, path: APP_ROUTES_KEY.profile.settings.path },
         ],
+      },
+      {
+        path: APP_ROUTES_KEY.generation.image.path,
+        Component: GenerationImagePage,
       },
 
       { path: '*', element: <Navigate to={APP_ROUTES_KEY.text.root.path} /> },

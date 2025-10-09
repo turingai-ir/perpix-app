@@ -36,7 +36,7 @@ const RootPage: FC = () => {
           <div
             className="flex flex-col select-none gap-4"
             onClick={() => {
-              navigate(APP_ROUTES_KEY.profile.settings);
+              navigate(APP_ROUTES_KEY.profile.settings.path);
             }}
           >
             <TbUserCog className="w-12 h-12" />

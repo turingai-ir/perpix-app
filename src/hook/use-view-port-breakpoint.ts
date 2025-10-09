@@ -1,6 +1,5 @@
-import { useState, useEffect } from 'react';
-
-const BREAKPOINTS = {
+import { useEffect, useState } from 'react';
+export const BREAKPOINTS = {
   sm: '(min-width: 40rem)',
   md: '(min-width: 48rem)',
   lg: '(min-width: 64rem)',
@@ -8,28 +7,37 @@ const BREAKPOINTS = {
   '2xl': '(min-width: 96rem)',
 } as const;
 
-type BREAKPOINTS_KEYS = keyof typeof BREAKPOINTS;
+export type BreakpointKey = keyof typeof BREAKPOINTS;
+
+/**
+ * Returns an object of all breakpoint matches.
+ * Can be used both inside and outside React.
+ */
+export function getViewportBreakpoints(): Record<BreakpointKey, boolean> {
+  if (typeof window === 'undefined') {
+    return Object.keys(BREAKPOINTS).reduce(
+      (acc, key) => ({ ...acc, [key]: false }),
+      {} as Record<BreakpointKey, boolean>,
+    );
+  }
+
+  return Object.entries(BREAKPOINTS).reduce(
+    (acc, [key, query]) => ({
+      ...acc,
+      [key]: window.matchMedia(query).matches,
+    }),
+    {} as Record<BreakpointKey, boolean>,
+  );
+}
 
 export function useViewportBreakpoint() {
-  const [breakpoints, setBreakpoints] = useState<Record<BREAKPOINTS_KEYS, boolean>>(() =>
-    Object.keys(BREAKPOINTS).reduce(
-      (acc, key) => ({
-        ...acc,
-        [key]:
-          typeof window !== 'undefined'
-            ? window.matchMedia(BREAKPOINTS[key as keyof typeof BREAKPOINTS]).matches
-            : false,
-      }),
-      {} as Record<BREAKPOINTS_KEYS, boolean>,
-    ),
+  const [breakpoints, setBreakpoints] = useState<Record<BreakpointKey, boolean>>(() =>
+    getViewportBreakpoints(),
   );
 
   useEffect(() => {
     const mediaQueries = Object.entries(BREAKPOINTS).map(([key, query]) => {
       const mediaQuery = window.matchMedia(query);
-
-      // Set initial value immediately
-      setBreakpoints((prev) => ({ ...prev, [key]: mediaQuery.matches }));
 
       const handleChange = () => {
         setBreakpoints((prev) => ({ ...prev, [key]: mediaQuery.matches }));

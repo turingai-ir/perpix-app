@@ -1,11 +1,11 @@
-import { atomWithImmer } from 'jotai-immer';
+import { atom } from 'jotai';
 
 interface AuthLoginPageState {
   currentView: 'START' | 'PASSWORD' | 'SET_PASSWORD';
   mobile: string;
   tempToken: string;
 }
-const authLoginPageState = atomWithImmer<AuthLoginPageState>({
+const authLoginPageState = atom<AuthLoginPageState>({
   currentView: 'START',
   mobile: '',
   tempToken: '',
