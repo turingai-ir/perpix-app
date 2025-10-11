@@ -1,6 +1,6 @@
 import type { FC } from 'react';
-import { TbLoader2 } from 'react-icons/tb';
+import { LoaderCircle } from 'lucide-react';
 
-const LoadingSection: FC = () => <TbLoader2 className="animate-spin w-7 h-7" />;
+const LoadingSection: FC = () => <LoaderCircle className="animate-spin w-7 h-7" />;
 
 export default LoadingSection;

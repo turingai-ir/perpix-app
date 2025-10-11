@@ -1614,12 +1614,12 @@ export interface operations {
   };
 }
 export enum AiChatRole {
-  Value0 = 0,
-  Value1 = 1,
-  Value2 = 2,
-  Value3 = 3,
-  Value4 = 4,
-  Value5 = 5,
+  SYSTEM = 0,
+  USER = 1,
+  ASSISTANT = 2,
+  TOOL = 3,
+  FUNCTION = 4,
+  INLINE = 5,
 }
 export enum AiModelGenerationTypeEnum {
   TEXT_TO_IMAGE = 'TEXT_TO_IMAGE',

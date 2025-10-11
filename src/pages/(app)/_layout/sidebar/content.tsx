@@ -1,21 +1,22 @@
 import type { FC } from 'react';
 import { TbCameraAi, TbPhotoAi } from 'react-icons/tb';
+import { selectAtom } from 'jotai/utils';
+import { useAtom } from 'jotai';
+
+import appLayoutAtom from '../_state';
 
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { useReactQueryApi } from '@/hook/app';
 import { useAppTranslate } from '@/hook';
 import { APP_I18_KEYS } from '@/services/i18';
 import { formatLocalizedNumber } from '@/utils';
 import { APP_ROUTES_KEY } from '@/router';
 
+const walletCurrentBalanceAtom = selectAtom(appLayoutAtom, (val) => val.walletCurrentBalance);
 const AppLayoutSidebarContent: FC = () => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
-  const reactQueryApi = useReactQueryApi();
 
-  const userInfoQuery = reactQueryApi.useQuery('get', '/user/get-info', undefined, {
-    enabled: false,
-  });
+  const [walletCurrentBalance] = useAtom(walletCurrentBalanceAtom);
 
   const balanceMenuItems = [
     {
@@ -42,7 +43,7 @@ const AppLayoutSidebarContent: FC = () => {
             </CardTitle>
             <div className="text-2xl font-semibold tracking-tight text-sidebar-foreground">
               {formatLocalizedNumber({
-                value: userInfoQuery.data?.default_wallet?.balance_usdmicro || 0,
+                value: walletCurrentBalance || 0,
               })}
             </div>
           </div>

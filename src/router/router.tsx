@@ -21,7 +21,17 @@ export const router = createBrowserRouter([
       {
         path: APP_ROUTES_KEY.app.path,
         Component: AppLayout,
-        children: [{ Component: AppPage, index: true }],
+        children: [
+          { Component: AppPage, index: true },
+          {
+            path: APP_ROUTES_KEY.generation.image.path,
+            Component: GenerationImagePage,
+          },
+          {
+            path: APP_ROUTES_KEY.generation.image.history.path,
+            Component: GenerationImagePage,
+          },
+        ],
         middleware: [
           async () => {
             const token = cookies().get(APP_KEYS.COOKIES.ACCESS_TOKEN);
@@ -41,10 +51,6 @@ export const router = createBrowserRouter([
           // { Component: ProfilePage, index: true },
           { Component: ProfileSettingsPage, path: APP_ROUTES_KEY.profile.settings.path },
         ],
-      },
-      {
-        path: APP_ROUTES_KEY.generation.image.path,
-        Component: GenerationImagePage,
       },
 
       { path: '*', element: <Navigate to={APP_ROUTES_KEY.text.root.path} /> },

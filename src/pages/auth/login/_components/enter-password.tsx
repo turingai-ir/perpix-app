@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router';
-import { TbLoader2 } from 'react-icons/tb';
+import { LoaderCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { useImmerAtom } from 'jotai-immer';
 
@@ -127,7 +127,7 @@ const AuthLoginPageEnterPassword: FC = () => {
             />
             <Button className="w-full" type="submit" disabled={loginQuery.isPending}>
               {loginQuery.isPending ? (
-                <TbLoader2 className="animate-spin" />
+                <LoaderCircle className="animate-spin" />
               ) : (
                 t('pages.auth.login.enterPasswordForm.submit')
               )}
@@ -144,7 +144,7 @@ const AuthLoginPageEnterPassword: FC = () => {
           }}
         >
           {resetPasswordQuery.isPending ? (
-            <TbLoader2 className="animate-spin" />
+            <LoaderCircle className="animate-spin" />
           ) : (
             <Muted>{t('pages.auth.login.forgetPassword')}</Muted>
           )}

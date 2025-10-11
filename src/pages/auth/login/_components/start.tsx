@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useImmerAtom } from 'jotai-immer';
-import { TbLoader2 } from 'react-icons/tb';
+import { LoaderCircle } from 'lucide-react';
 
 import authLoginPageState from '../_state';
 
@@ -120,7 +120,7 @@ const AuthLoginPageStart: FC = () => {
             />
             <Button className="w-full" type="submit" disabled={startQuery.isPending}>
               {startQuery.isPending ? (
-                <TbLoader2 className="animate-spin" />
+                <LoaderCircle className="animate-spin" />
               ) : (
                 t('pages.auth.login.startForm.submit')
               )}

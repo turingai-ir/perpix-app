@@ -3,7 +3,8 @@ import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router';
-import { TbLoader2 } from 'react-icons/tb';
+import { LoaderCircle } from 'lucide-react';
+
 import { toast } from 'sonner';
 import { useImmerAtom } from 'jotai-immer';
 
@@ -80,7 +81,7 @@ const AuthLoginPageSetPassword: FC = () => {
   const setPassword = reactQueryApi.useMutation('post', '/user/set-password/', {
     onSuccess(data) {
       cookie.set(APP_KEYS.COOKIES.ACCESS_TOKEN, data.token);
-      navigate(APP_ROUTES_KEY.root.path);
+      navigate(APP_ROUTES_KEY.app.path);
       toast.success(t('pages.auth.login.setPasswordForm.successSetPasswordToast'));
     },
   });
@@ -216,7 +217,7 @@ const AuthLoginPageSetPassword: FC = () => {
               disabled={setPassword.isPending || countDown.seconds <= 0}
             >
               {setPassword.isPending ? (
-                <TbLoader2 className="animate-spin" />
+                <LoaderCircle className="animate-spin" />
               ) : (
                 t('pages.auth.login.setPasswordForm.submit')
               )}

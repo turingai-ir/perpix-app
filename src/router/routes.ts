@@ -19,6 +19,9 @@ export const APP_ROUTES_KEY = {
   generation: {
     image: {
       path: '/generation/image',
+      history: {
+        path: '/generation/image/:chatId',
+      },
     },
   },
   text: {

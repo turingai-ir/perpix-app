@@ -1,9 +1,5 @@
 import { get, set, del } from 'idb-keyval';
-import {
-  type PersistedClient,
-  type Persister,
-  persistQueryClient,
-} from '@tanstack/react-query-persist-client';
+import { type PersistedClient, type Persister } from '@tanstack/react-query-persist-client';
 import { QueryClient } from '@tanstack/react-query';
 
 export function createIDBPersister(idbValidKey: IDBValidKey = 'reactQuery') {
@@ -31,15 +27,15 @@ export const queryClient = new QueryClient({
   },
 });
 
-const idbPersister = createIDBPersister('reactQuery');
+// const idbPersister = createIDBPersister('reactQuery');
 
-persistQueryClient({
-  queryClient,
-  persister: idbPersister,
-  maxAge: 1000 * 60 * 60 * 24,
-  dehydrateOptions: {
-    shouldDehydrateQuery: (query) => {
-      return query.meta?.persist === true;
-    },
-  },
-});
+// persistQueryClient({
+//   queryClient,
+//   persister: idbPersister,
+//   maxAge: 1000 * 60 * 60 * 24,
+//   dehydrateOptions: {
+//     shouldDehydrateQuery: (query) => {
+//       return query.meta?.persist === true;
+//     },
+//   },
+// });

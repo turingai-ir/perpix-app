@@ -2,9 +2,9 @@ import { useEffect, type FC } from 'react';
 import z from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { TbLoader2 } from 'react-icons/tb';
 import { toast } from 'sonner';
 import { Link } from 'react-router';
+import { LoaderCircle } from 'lucide-react';
 
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAppTranslate } from '@/hook';
@@ -171,7 +171,7 @@ const ProfileSettingsPage: FC = () => {
               />
               <Button className="w-full" type="submit" disabled={editUserInfoQuery.isPending}>
                 {editUserInfoQuery.isPending ? (
-                  <TbLoader2 className="animate-spin" />
+                  <LoaderCircle className="animate-spin" />
                 ) : (
                   t('pages.profile.settings.userInfo.form.submit')
                 )}

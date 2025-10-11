@@ -19,7 +19,12 @@ const AppPage: FC = () => {
     <div className="w-full h-dvh flex p-4 items-center">
       <div className="w-full max-w-7xl  mx-auto grid grid-cols-12 gap-8">
         <SpotlightCard className="md:col-span-6 col-span-12 xl:col-span-4 h-60 cursor-pointer">
-          <div className="flex flex-col select-none gap-4">
+          <div
+            className="flex flex-col select-none gap-4"
+            onClick={() => {
+              navigate(APP_ROUTES_KEY.generation.image.path);
+            }}
+          >
             <TbPhotoAi className="w-12 h-12" />
             <Heading3>{t('pages.root.accessToSections.imageGeneration.title')}</Heading3>
             <Muted>{t('pages.root.accessToSections.imageGeneration.description')}</Muted>

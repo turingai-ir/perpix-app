@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { TbEye, TbEyeClosed } from 'react-icons/tb';
+import { Eye, EyeClosed } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -31,9 +31,9 @@ const PasswordInput = React.forwardRef<HTMLInputElement, InputProps>(
           disabled={disabled}
         >
           {showPassword && !disabled ? (
-            <TbEye className="h-4 w-4" aria-hidden="true" />
+            <Eye className="h-4 w-4" aria-hidden="true" />
           ) : (
-            <TbEyeClosed className="h-4 w-4" aria-hidden="true" />
+            <EyeClosed className="h-4 w-4" aria-hidden="true" />
           )}
           <span className="sr-only">{showPassword ? 'Hide password' : 'Show password'}</span>
         </Button>
