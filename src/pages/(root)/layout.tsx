@@ -9,7 +9,7 @@ import {
 } from '@/utils/custom-fetch/fetch-errors';
 import { APP_KEYS, HttpStatus } from '@/utils';
 import { useAppTranslate } from '@/hook';
-import { appEventBus } from '@/services/event-bus';
+import { appEventBus } from '@/lib/event-bus';
 import { cookies } from '@/utils/cookies';
 import { APP_ROUTES_KEY } from '@/router';
 

@@ -1,6 +1,6 @@
 import createFetch, { type Middleware } from 'openapi-fetch';
 
-import { appEventBus } from '../event-bus';
+import { appEventBus } from '../../lib/event-bus';
 
 import type { paths } from './api';
 

@@ -1,8 +1,6 @@
 export class EventBusClass<Events> {
   private target = new EventTarget();
 
-  constructor() {}
-
   // Emit an event with a specific payload
   emit<K extends keyof Events>(type: K, detail: Events[K]) {
     const event = new CustomEvent<Events[K]>(String(type), { detail });

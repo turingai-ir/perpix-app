@@ -13,6 +13,12 @@ interface AppLayoutAtom {
     currentSelectedId?: string;
   };
   walletCurrentBalance: number;
+  sidebarHistoryChats: {
+    list: { title: string; id: string; link: string }[];
+    isPending: boolean;
+    isError: boolean;
+    AllItemsFetched: boolean;
+  };
 }
 const appLayoutAtom = atom<AppLayoutAtom>({
   isSidebarOpen: getViewportBreakpoints().lg,
@@ -21,5 +27,11 @@ const appLayoutAtom = atom<AppLayoutAtom>({
     currentSelectedId: undefined,
   },
   walletCurrentBalance: 0,
+  sidebarHistoryChats: {
+    list: [],
+    isPending: true,
+    isError: false,
+    AllItemsFetched: false,
+  },
 });
 export default appLayoutAtom;

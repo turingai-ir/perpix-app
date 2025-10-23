@@ -13,6 +13,7 @@ import { cookies } from '@/utils/cookies';
 import { APP_KEYS } from '@/utils';
 import AppLayout from '@/pages/(app)/_layout';
 import GenerationImagePage from '@/pages/(app)/generation/image/page';
+import GenerationImageLayout from '@/pages/(app)/generation/image/_layout';
 
 export const router = createBrowserRouter([
   {
@@ -25,11 +26,17 @@ export const router = createBrowserRouter([
           { Component: AppPage, index: true },
           {
             path: APP_ROUTES_KEY.generation.image.path,
-            Component: GenerationImagePage,
-          },
-          {
-            path: APP_ROUTES_KEY.generation.image.history.path,
-            Component: GenerationImagePage,
+            Component: GenerationImageLayout,
+            children: [
+              {
+                index: true,
+                Component: GenerationImagePage,
+              },
+              {
+                path: APP_ROUTES_KEY.generation.image.history.path,
+                Component: GenerationImagePage,
+              },
+            ],
           },
         ],
         middleware: [

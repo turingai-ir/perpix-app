@@ -1,7 +1,8 @@
-import type { FC } from 'react';
+import { useCallback, useEffect, type FC } from 'react';
 import { TbCameraAi, TbPhotoAi } from 'react-icons/tb';
 import { selectAtom } from 'jotai/utils';
 import { useAtom } from 'jotai';
+import { Link } from 'react-router';
 
 import appLayoutAtom from '../_state';
 
@@ -11,14 +12,50 @@ import { useAppTranslate } from '@/hook';
 import { APP_I18_KEYS } from '@/services/i18';
 import { formatLocalizedNumber } from '@/utils';
 import { APP_ROUTES_KEY } from '@/router';
+import { appEventBus } from '@/lib/event-bus';
+import { Separator } from '@/components/ui/separator';
+import { Muted } from '@/components/ui/typography';
+import { useInfiniteScroll } from '@/hooks';
+import ErrorSection from '@/components/custom/error-section';
+import LoadingSection from '@/components/custom/loading-section';
 
+const sidebarHistoryChatsAtom = selectAtom(appLayoutAtom, (val) => val.sidebarHistoryChats);
 const walletCurrentBalanceAtom = selectAtom(appLayoutAtom, (val) => val.walletCurrentBalance);
 const AppLayoutSidebarContent: FC = () => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
 
   const [walletCurrentBalance] = useAtom(walletCurrentBalanceAtom);
+  const [sidebarHistoryChats] = useAtom(sidebarHistoryChatsAtom);
 
-  const balanceMenuItems = [
+  const requestForChatHistory = () => {
+    appEventBus.emit('SIDEBAR_REQUEST_FOR_DATA', undefined);
+  };
+
+  const triggerMoreData = useCallback(() => {
+    if (
+      !sidebarHistoryChats.AllItemsFetched &&
+      !sidebarHistoryChats.isPending &&
+      !sidebarHistoryChats.isError
+    ) {
+      requestForChatHistory();
+    }
+  }, [
+    sidebarHistoryChats.AllItemsFetched,
+    sidebarHistoryChats.isError,
+    sidebarHistoryChats.isPending,
+  ]);
+
+  const scrollRef = useInfiniteScroll<HTMLDivElement>({
+    offset: 100,
+    loading: sidebarHistoryChats.isPending,
+    onTrigger: triggerMoreData,
+  });
+
+  useEffect(() => {
+    requestForChatHistory();
+  }, []);
+
+  const menuItems = [
     {
       key: 'image-generations',
       label: t('pages.app.layout.sidebar.menu.imageGeneration.label'),
@@ -34,7 +71,7 @@ const AppLayoutSidebarContent: FC = () => {
   ];
 
   return (
-    <div className="flex w-full flex-col gap-4 p-4">
+    <div className="flex w-full flex-col gap-4 p-4 overflow-auto">
       <Card className="border border-sidebar-border bg-sidebar text-sidebar-foreground shadow-sm">
         <CardHeader className="flex flex-row items-center justify-between space-y-0">
           <div className="space-y-1">
@@ -50,19 +87,47 @@ const AppLayoutSidebarContent: FC = () => {
         </CardHeader>
       </Card>
 
-      <nav aria-label={t('pages.app.layout.sidebar.balanceCard.actions.label')}>
+      <nav
+        aria-label={t('pages.app.layout.sidebar.balanceCard.actions.label')}
+        className="flex flex-col gap-4"
+      >
         <ul className="flex flex-col gap-1.5">
-          {balanceMenuItems.map(({ key, label, href, Icon }) => (
+          {menuItems.map(({ key, label, href, Icon }) => (
             <li key={key}>
               <Button asChild variant="ghost" className="w-full justify-start gap-3 px-2 text-sm">
-                <a href={href}>
+                <Link to={href}>
                   <Icon aria-hidden="true" className="h-5 w-5" />
                   {label}
-                </a>
+                </Link>
               </Button>
             </li>
           ))}
         </ul>
+        <Separator />
+        <div className="flex flex-col gap-2">
+          <ul className="flex flex-col gap-1.5">
+            {sidebarHistoryChats.list.map((item) => (
+              <li key={item.id}>
+                <Link to={item.link}>
+                  <Muted>{`${item.title.slice(0, 20)} ...`}</Muted>
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <div ref={scrollRef} />
+          {sidebarHistoryChats.isPending ? (
+            <div className="w-full justify-center items-center flex">
+              <LoadingSection />
+            </div>
+          ) : null}
+          {sidebarHistoryChats.isError ? (
+            <ErrorSection
+              onRetry={() => {
+                requestForChatHistory();
+              }}
+            />
+          ) : null}
+        </div>
       </nav>
     </div>
   );

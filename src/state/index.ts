@@ -8,6 +8,7 @@ interface globalAtom {
   theme: Theme;
   language: Language;
 }
+
 export const globalAtom = atomWithSyncStorage<globalAtom>(
   APP_KEYS.LOCAL_STORAGE.GLOBAL_JOTAI_ATOM,
   {
@@ -16,5 +17,4 @@ export const globalAtom = atomWithSyncStorage<globalAtom>(
     language: LANGUAGES.FARSI,
   },
   createSyncJotaiStorage(),
-  { strategy: 'merge', version: 1 },
 );

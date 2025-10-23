@@ -27,8 +27,8 @@ import {
 } from '@/components/ui/select';
 import { Muted, Paragraph } from '@/components/ui/typography';
 import { APP_ROUTES_KEY } from '@/router';
-import { ChatBubble } from '@/components/custom/chat-bubble';
-import { AiChatRole, UploadedFileTypeEnum } from '@/services/api';
+// import { ChatBubble } from '@/components/custom/chat-bubble';
+// import { AiChatRole, UploadedFileTypeEnum } from '@/services/api';
 
 const selectedModelAtom = selectAtom(appLayoutAtom, (val) => val.chooseModelSelect);
 
@@ -100,7 +100,10 @@ const GenerationImagePage: FC = () => {
   );
 
   useEffect(() => {
-    const aiModelUUID = AiModesList.data?.data[0].uuid;
+    const aiModelUUID = AiModesList.data?.data?.[0]?.uuid ?? null;
+    if (!aiModelUUID) {
+      return;
+    }
 
     if (AiModesList.isSuccess && aiModelUUID) {
       setAppLayoutState((draft) => {
@@ -169,6 +172,8 @@ const GenerationImagePage: FC = () => {
     );
   }
 
+  // loading or no data for loading
+
   if (AiModesList.isPending || AiModel.isPending || !AiModesList.data || !AiModel.data) {
     return (
       <div className="w-full flex-1 mx-auto flex justify-center py-4 items-center ">
@@ -208,7 +213,7 @@ const GenerationImagePage: FC = () => {
 
       {imageGenerationMutate.isSuccess ? (
         <div className="flex flex-col gap-8">
-          {(imageGenerationMutate.data?.messages ?? []).map((item) => {
+          {/* {(imageGenerationMutate.data?.messages ?? []).map((item) => {
             if (item.role === AiChatRole.USER) {
               return (
                 <div className="w-full max-w-[500px] ml-auto" key={item.id}>
@@ -249,7 +254,7 @@ const GenerationImagePage: FC = () => {
             }
 
             return null;
-          })}
+          })} */}
         </div>
       ) : null}
 
@@ -308,7 +313,6 @@ const GenerationImagePage: FC = () => {
                   AiModel.isPending ||
                   !modelHaveRequirements() ||
                   imageGenerationMutate.isPending ||
-                  imageGenerationMutate.isError ||
                   imageGenerationMutate.isSuccess
                 }
                 className="mr-auto"

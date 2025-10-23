@@ -241,6 +241,42 @@ export interface paths {
     readonly patch?: never;
     readonly trace?: never;
   };
+  readonly '/models/open-ai/images/generations/list': {
+    readonly parameters: {
+      readonly query?: never;
+      readonly header?: never;
+      readonly path?: never;
+      readonly cookie?: never;
+    };
+    /** Images Generation List */
+    readonly get: operations['images_generation_list_models_open_ai_images_generations_list_get'];
+    readonly put?: never;
+    readonly post?: never;
+    readonly delete?: never;
+    readonly options?: never;
+    readonly head?: never;
+    readonly patch?: never;
+    readonly trace?: never;
+  };
+  readonly '/models/open-ai/images/generations/{chat_uuid}': {
+    readonly parameters: {
+      readonly query?: never;
+      readonly header?: never;
+      readonly path: {
+        readonly chat_uuid: string;
+      };
+      readonly cookie?: never;
+    };
+    /** Images Generation Detail */
+    readonly get: operations['images_generation_detail_models_open_ai_images_generations__chat_uuid__get'];
+    readonly put?: never;
+    readonly post?: never;
+    readonly delete?: never;
+    readonly options?: never;
+    readonly head?: never;
+    readonly patch?: never;
+    readonly trace?: never;
+  };
   readonly '/models/open-ai/images/generations': {
     readonly parameters: {
       readonly query?: never;
@@ -317,7 +353,7 @@ export interface components {
   schemas: {
     /**
      * AiChatRole
-     * @enum {integer}
+     * @enum {string}
      */
     readonly AiChatRole: AiChatRole;
     /**
@@ -333,17 +369,17 @@ export interface components {
       readonly model_name: string;
       /** Display Name */
       readonly display_name: string | null;
-      /** @default 0 */
+      /** @default ACTIVE */
       readonly status: components['schemas']['AiStatusEnum'] | null;
     };
     /**
      * AiModelOwnerEnum
-     * @enum {integer}
+     * @enum {string}
      */
     readonly AiModelOwnerEnum: AiModelOwnerEnum;
     /**
      * AiModelSupportedTypeEnum
-     * @enum {integer}
+     * @enum {string}
      */
     readonly AiModelSupportedTypeEnum: AiModelSupportedTypeEnum;
     /** AiProviderInList */
@@ -358,12 +394,12 @@ export interface components {
     };
     /**
      * AiStatusEnum
-     * @enum {integer}
+     * @enum {string}
      */
     readonly AiStatusEnum: AiStatusEnum;
     /**
      * AiVideoGenerationStatus
-     * @enum {integer}
+     * @enum {string}
      */
     readonly AiVideoGenerationStatus: AiVideoGenerationStatus;
     /** Body_images_edits_models_open_ai_images_edits_post */
@@ -434,8 +470,6 @@ export interface components {
     readonly GetAdminAiModelResponseBody: {
       /** Uuid */
       readonly uuid: string;
-      /** Provider Id */
-      readonly provider_id: number;
       /** Model Name */
       readonly model_name: string;
       /** Display Name */
@@ -464,7 +498,7 @@ export interface components {
       readonly config_defaults: {
         readonly [key: string]: unknown;
       };
-      /** @default 0 */
+      /** @default ACTIVE */
       readonly status: components['schemas']['AiStatusEnum'] | null;
       readonly model_owner: components['schemas']['AiModelOwnerEnum'];
       /** Model Api Urls */
@@ -491,6 +525,46 @@ export interface components {
       readonly page_size: number;
       /** Total Count */
       readonly total_count: number;
+    };
+    /** GetModelsOpenAiImagesGenerationsResponseBody */
+    readonly GetModelsOpenAiImagesGenerationsResponseBody: {
+      /** Ai Model Id */
+      readonly ai_model_id: string;
+      /** Wallet Balance Usdmicro */
+      readonly wallet_balance_usdmicro: number;
+      /** Ai Model Config */
+      readonly ai_model_config: {
+        readonly [key: string]: unknown;
+      };
+      /** Messages */
+      readonly messages:
+        | readonly components['schemas']['GetModelsOpenAiImagesGenerationsResponseBodyMessage'][]
+        | null;
+      /** Id */
+      readonly id: string;
+    };
+    /** GetModelsOpenAiImagesGenerationsResponseBodyMessage */
+    readonly GetModelsOpenAiImagesGenerationsResponseBodyMessage: {
+      /**
+       * Created At
+       * Format: date-time
+       */
+      readonly created_at: string;
+      /**
+       * Updated At
+       * Format: date-time
+       */
+      readonly updated_at: string;
+      /** Message */
+      readonly message: string | null;
+      /**
+       * Files
+       * @default []
+       */
+      readonly files: readonly components['schemas']['UploadedFileItem'][] | null;
+      readonly role: components['schemas']['AiChatRole'];
+      /** Id */
+      readonly id: string;
     };
     /** HTTPValidationError */
     readonly HTTPValidationError: {
@@ -532,7 +606,7 @@ export interface components {
       readonly config_defaults: {
         readonly [key: string]: unknown;
       } | null;
-      /** @default 0 */
+      /** @default ACTIVE */
       readonly status: components['schemas']['AiStatusEnum'] | null;
       readonly model_owner: components['schemas']['AiModelOwnerEnum'];
       /** Model Api Urls */
@@ -550,8 +624,6 @@ export interface components {
     readonly PostAdminAddAiModelResponseBody: {
       /** Uuid */
       readonly uuid: string;
-      /** Provider Id */
-      readonly provider_id: number;
       /** Model Name */
       readonly model_name: string;
       /** Display Name */
@@ -580,7 +652,7 @@ export interface components {
       readonly config_defaults: {
         readonly [key: string]: unknown;
       };
-      /** @default 0 */
+      /** @default ACTIVE */
       readonly status: components['schemas']['AiStatusEnum'] | null;
       readonly model_owner: components['schemas']['AiModelOwnerEnum'];
       /** Model Api Urls */
@@ -604,7 +676,7 @@ export interface components {
       readonly api_url?: string | null;
       /** Api Key */
       readonly api_key: string;
-      /** @default 0 */
+      /** @default ACTIVE */
       readonly status: components['schemas']['AiStatusEnum'] | null;
       /** Rate Limit Per Min */
       readonly rate_limit_per_min?: number | null;
@@ -662,25 +734,25 @@ export interface components {
       /** Url */
       readonly url: string;
     };
-    /** PostModlesGoogleVideosGenerationsResponseBody */
-    readonly PostModlesGoogleVideosGenerationsResponseBody: {
+    /** PostModelsGoogleVideosGenerationsResponseBody */
+    readonly PostModelsGoogleVideosGenerationsResponseBody: {
       /** Ai Model Id */
       readonly ai_model_id: string;
-      /** Wallet Blanace Usdmicro */
-      readonly wallet_blanace_usdmicro: number;
+      /** Wallet Balance Usdmicro */
+      readonly wallet_balance_usdmicro: number;
       /** Ai Model Config */
       readonly ai_model_config: {
         readonly [key: string]: unknown;
       };
       /** Messages */
       readonly messages:
-        | readonly components['schemas']['PostModlesGoogleVideosGenerationsResponseBodyMessage'][]
+        | readonly components['schemas']['PostModelsGoogleVideosGenerationsResponseBodyMessage'][]
         | null;
       /** Id */
       readonly id: string;
     };
-    /** PostModlesGoogleVideosGenerationsResponseBodyMessage */
-    readonly PostModlesGoogleVideosGenerationsResponseBodyMessage: {
+    /** PostModelsGoogleVideosGenerationsResponseBodyMessage */
+    readonly PostModelsGoogleVideosGenerationsResponseBodyMessage: {
       /**
        * Created At
        * Format: date-time
@@ -693,19 +765,18 @@ export interface components {
       readonly updated_at: string;
       /** Message */
       readonly message: string | null;
-      /** Files Url */
-      readonly files_url:
-        | readonly {
-            readonly [key: string]: string;
-          }[]
-        | null;
+      /**
+       * Files
+       * @default []
+       */
+      readonly files: readonly components['schemas']['UploadedFileItem'][] | null;
       readonly video_generation_status: components['schemas']['AiVideoGenerationStatus'] | null;
       readonly role: components['schemas']['AiChatRole'];
       /** Id */
       readonly id: string;
     };
-    /** PostModlesGoogleVideosGenerationsResultResponseBody */
-    readonly PostModlesGoogleVideosGenerationsResultResponseBody: {
+    /** PostModelsGoogleVideosGenerationsResultResponseBody */
+    readonly PostModelsGoogleVideosGenerationsResultResponseBody: {
       /**
        * Created At
        * Format: date-time
@@ -718,36 +789,35 @@ export interface components {
       readonly updated_at: string;
       /** Message */
       readonly message: string | null;
-      /** Files Url */
-      readonly files_url:
-        | readonly {
-            readonly [key: string]: string;
-          }[]
-        | null;
+      /**
+       * Files
+       * @default []
+       */
+      readonly files: readonly components['schemas']['UploadedFileItem'][] | null;
       readonly video_generation_status: components['schemas']['AiVideoGenerationStatus'] | null;
       readonly role: components['schemas']['AiChatRole'];
       /** Id */
       readonly id: string;
     };
-    /** PostModlesOpenAiImagesEditsResponseBody */
-    readonly PostModlesOpenAiImagesEditsResponseBody: {
+    /** PostModelsOpenAiImagesEditsResponseBody */
+    readonly PostModelsOpenAiImagesEditsResponseBody: {
       /** Ai Model Id */
       readonly ai_model_id: string;
-      /** Wallet Blanace Usdmicro */
-      readonly wallet_blanace_usdmicro: number;
+      /** Wallet Balance Usdmicro */
+      readonly wallet_balance_usdmicro: number;
       /** Ai Model Config */
       readonly ai_model_config: {
         readonly [key: string]: unknown;
       };
       /** Messages */
       readonly messages:
-        | readonly components['schemas']['PostModlesOpenAiImagesEditsResponseBodyMessage'][]
+        | readonly components['schemas']['PostModelsOpenAiImagesEditsResponseBodyMessage'][]
         | null;
       /** Id */
       readonly id: string;
     };
-    /** PostModlesOpenAiImagesEditsResponseBodyMessage */
-    readonly PostModlesOpenAiImagesEditsResponseBodyMessage: {
+    /** PostModelsOpenAiImagesEditsResponseBodyMessage */
+    readonly PostModelsOpenAiImagesEditsResponseBodyMessage: {
       /**
        * Created At
        * Format: date-time
@@ -760,18 +830,48 @@ export interface components {
       readonly updated_at: string;
       /** Message */
       readonly message: string | null;
-      /** Files Url */
-      readonly files_url:
-        | readonly {
-            readonly [key: string]: string;
-          }[]
-        | null;
+      /**
+       * Files
+       * @default []
+       */
+      readonly files: readonly components['schemas']['UploadedFileItem'][] | null;
       readonly role: components['schemas']['AiChatRole'];
       /** Id */
       readonly id: string;
     };
-    /** PostModlesOpenAiImagesGenerationsRequestBody */
-    readonly PostModlesOpenAiImagesGenerationsRequestBody: {
+    /** PostModelsOpenAiImagesGenerationsListResponseBody */
+    readonly PostModelsOpenAiImagesGenerationsListResponseBody: {
+      /** Chats */
+      readonly chats: readonly components['schemas']['PostModelsOpenAiImagesGenerationsListResponseBodyChat'][];
+      /** Page */
+      readonly page: number;
+      /**
+       * Page Size
+       * @default 10
+       */
+      readonly page_size: number;
+      /** Total Count */
+      readonly total_count: number;
+    };
+    /** PostModelsOpenAiImagesGenerationsListResponseBodyChat */
+    readonly PostModelsOpenAiImagesGenerationsListResponseBodyChat: {
+      /** Prompt */
+      readonly prompt: string;
+      /** Chat Id */
+      readonly chat_id: string;
+      /**
+       * Created At
+       * Format: date-time
+       */
+      readonly created_at: string;
+      /**
+       * Updated At
+       * Format: date-time
+       */
+      readonly updated_at: string;
+    };
+    /** PostModelsOpenAiImagesGenerationsRequestBody */
+    readonly PostModelsOpenAiImagesGenerationsRequestBody: {
       /** Ai Model Id */
       readonly ai_model_id: string;
       /** Ai Model Config */
@@ -779,25 +879,25 @@ export interface components {
         readonly [key: string]: unknown;
       };
     };
-    /** PostModlesOpenAiImagesGenerationsResponseBody */
-    readonly PostModlesOpenAiImagesGenerationsResponseBody: {
+    /** PostModelsOpenAiImagesGenerationsResponseBody */
+    readonly PostModelsOpenAiImagesGenerationsResponseBody: {
       /** Ai Model Id */
       readonly ai_model_id: string;
-      /** Wallet Blanace Usdmicro */
-      readonly wallet_blanace_usdmicro: number;
+      /** Wallet Balance Usdmicro */
+      readonly wallet_balance_usdmicro: number;
       /** Ai Model Config */
       readonly ai_model_config: {
         readonly [key: string]: unknown;
       };
       /** Messages */
       readonly messages:
-        | readonly components['schemas']['PostModlesOpenAiImagesGenerationsResponseBodyMessage'][]
+        | readonly components['schemas']['PostModelsOpenAiImagesGenerationsResponseBodyMessage'][]
         | null;
       /** Id */
       readonly id: string;
     };
-    /** PostModlesOpenAiImagesGenerationsResponseBodyMessage */
-    readonly PostModlesOpenAiImagesGenerationsResponseBodyMessage: {
+    /** PostModelsOpenAiImagesGenerationsResponseBodyMessage */
+    readonly PostModelsOpenAiImagesGenerationsResponseBodyMessage: {
       /**
        * Created At
        * Format: date-time
@@ -810,15 +910,20 @@ export interface components {
       readonly updated_at: string;
       /** Message */
       readonly message: string | null;
-      /** Files Url */
-      readonly files_url:
-        | readonly {
-            readonly [key: string]: string;
-          }[]
-        | null;
+      /**
+       * Files
+       * @default []
+       */
+      readonly files: readonly components['schemas']['UploadedFileItem'][] | null;
       readonly role: components['schemas']['AiChatRole'];
       /** Id */
       readonly id: string;
+    };
+    /** UploadedFileItem */
+    readonly UploadedFileItem: {
+      readonly type: components['schemas']['UploadedFileTypeEnum'];
+      /** Url */
+      readonly url: string;
     };
     /**
      * UploadedFileTypeEnum
@@ -885,10 +990,16 @@ export interface components {
     };
     /** UserPatchEditInfoRequest */
     readonly UserPatchEditInfoRequest: {
-      /** Email */
-      readonly email: string | null;
-      /** Name */
-      readonly name: string | null;
+      /**
+       * Email
+       * @example info@prepixai.com
+       */
+      readonly email?: string | null;
+      /**
+       * Name
+       * @example Joan hanson
+       */
+      readonly name?: string | null;
     };
     /** UserPatchEditInfoResponse */
     readonly UserPatchEditInfoResponse: {
@@ -962,12 +1073,12 @@ export interface components {
     };
     /**
      * WalletMemberRole
-     * @enum {integer}
+     * @enum {string}
      */
     readonly WalletMemberRole: WalletMemberRole;
     /**
      * WalletType
-     * @enum {integer}
+     * @enum {string}
      */
     readonly WalletType: WalletType;
   };
@@ -993,6 +1104,10 @@ export type SchemaGetAdminAiModelResponseBody =
   components['schemas']['GetAdminAiModelResponseBody'];
 export type SchemaGetAdminAiModelsResponseBody =
   components['schemas']['GetAdminAiModelsResponseBody'];
+export type SchemaGetModelsOpenAiImagesGenerationsResponseBody =
+  components['schemas']['GetModelsOpenAiImagesGenerationsResponseBody'];
+export type SchemaGetModelsOpenAiImagesGenerationsResponseBodyMessage =
+  components['schemas']['GetModelsOpenAiImagesGenerationsResponseBodyMessage'];
 export type SchemaHttpValidationError = components['schemas']['HTTPValidationError'];
 export type SchemaPostAdminAddAiModelRequestBody =
   components['schemas']['PostAdminAddAiModelRequestBody'];
@@ -1008,22 +1123,27 @@ export type SchemaPostAdminUpdateWalletBalanceResponseBody =
   components['schemas']['PostAdminUpdateWalletBalanceResponseBody'];
 export type SchemaPostAdminUploadResponseBody =
   components['schemas']['PostAdminUploadResponseBody'];
-export type SchemaPostModlesGoogleVideosGenerationsResponseBody =
-  components['schemas']['PostModlesGoogleVideosGenerationsResponseBody'];
-export type SchemaPostModlesGoogleVideosGenerationsResponseBodyMessage =
-  components['schemas']['PostModlesGoogleVideosGenerationsResponseBodyMessage'];
-export type SchemaPostModlesGoogleVideosGenerationsResultResponseBody =
-  components['schemas']['PostModlesGoogleVideosGenerationsResultResponseBody'];
-export type SchemaPostModlesOpenAiImagesEditsResponseBody =
-  components['schemas']['PostModlesOpenAiImagesEditsResponseBody'];
-export type SchemaPostModlesOpenAiImagesEditsResponseBodyMessage =
-  components['schemas']['PostModlesOpenAiImagesEditsResponseBodyMessage'];
-export type SchemaPostModlesOpenAiImagesGenerationsRequestBody =
-  components['schemas']['PostModlesOpenAiImagesGenerationsRequestBody'];
-export type SchemaPostModlesOpenAiImagesGenerationsResponseBody =
-  components['schemas']['PostModlesOpenAiImagesGenerationsResponseBody'];
-export type SchemaPostModlesOpenAiImagesGenerationsResponseBodyMessage =
-  components['schemas']['PostModlesOpenAiImagesGenerationsResponseBodyMessage'];
+export type SchemaPostModelsGoogleVideosGenerationsResponseBody =
+  components['schemas']['PostModelsGoogleVideosGenerationsResponseBody'];
+export type SchemaPostModelsGoogleVideosGenerationsResponseBodyMessage =
+  components['schemas']['PostModelsGoogleVideosGenerationsResponseBodyMessage'];
+export type SchemaPostModelsGoogleVideosGenerationsResultResponseBody =
+  components['schemas']['PostModelsGoogleVideosGenerationsResultResponseBody'];
+export type SchemaPostModelsOpenAiImagesEditsResponseBody =
+  components['schemas']['PostModelsOpenAiImagesEditsResponseBody'];
+export type SchemaPostModelsOpenAiImagesEditsResponseBodyMessage =
+  components['schemas']['PostModelsOpenAiImagesEditsResponseBodyMessage'];
+export type SchemaPostModelsOpenAiImagesGenerationsListResponseBody =
+  components['schemas']['PostModelsOpenAiImagesGenerationsListResponseBody'];
+export type SchemaPostModelsOpenAiImagesGenerationsListResponseBodyChat =
+  components['schemas']['PostModelsOpenAiImagesGenerationsListResponseBodyChat'];
+export type SchemaPostModelsOpenAiImagesGenerationsRequestBody =
+  components['schemas']['PostModelsOpenAiImagesGenerationsRequestBody'];
+export type SchemaPostModelsOpenAiImagesGenerationsResponseBody =
+  components['schemas']['PostModelsOpenAiImagesGenerationsResponseBody'];
+export type SchemaPostModelsOpenAiImagesGenerationsResponseBodyMessage =
+  components['schemas']['PostModelsOpenAiImagesGenerationsResponseBodyMessage'];
+export type SchemaUploadedFileItem = components['schemas']['UploadedFileItem'];
 export type SchemaUserGetInfoReponseDefaultWallet =
   components['schemas']['UserGetInfoReponseDefaultWallet'];
 export type SchemaUserGetInfoResponse = components['schemas']['UserGetInfoResponse'];
@@ -1482,6 +1602,69 @@ export interface operations {
       };
     };
   };
+  readonly images_generation_list_models_open_ai_images_generations_list_get: {
+    readonly parameters: {
+      readonly query?: {
+        readonly page?: number;
+        readonly page_size?: number;
+      };
+      readonly header?: never;
+      readonly path?: never;
+      readonly cookie?: never;
+    };
+    readonly requestBody?: never;
+    readonly responses: {
+      /** @description Successful Response */
+      readonly 200: {
+        headers: {
+          readonly [name: string]: unknown;
+        };
+        content: {
+          readonly 'application/json': components['schemas']['PostModelsOpenAiImagesGenerationsListResponseBody'];
+        };
+      };
+      /** @description Validation Error */
+      readonly 422: {
+        headers: {
+          readonly [name: string]: unknown;
+        };
+        content: {
+          readonly 'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  readonly images_generation_detail_models_open_ai_images_generations__chat_uuid__get: {
+    readonly parameters: {
+      readonly query?: never;
+      readonly header?: never;
+      readonly path: {
+        readonly chat_uuid: string;
+      };
+      readonly cookie?: never;
+    };
+    readonly requestBody?: never;
+    readonly responses: {
+      /** @description Successful Response */
+      readonly 200: {
+        headers: {
+          readonly [name: string]: unknown;
+        };
+        content: {
+          readonly 'application/json': components['schemas']['GetModelsOpenAiImagesGenerationsResponseBody'];
+        };
+      };
+      /** @description Validation Error */
+      readonly 422: {
+        headers: {
+          readonly [name: string]: unknown;
+        };
+        content: {
+          readonly 'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
   readonly images_generation_models_open_ai_images_generations_post: {
     readonly parameters: {
       readonly query?: never;
@@ -1491,7 +1674,7 @@ export interface operations {
     };
     readonly requestBody: {
       readonly content: {
-        readonly 'application/json': components['schemas']['PostModlesOpenAiImagesGenerationsRequestBody'];
+        readonly 'application/json': components['schemas']['PostModelsOpenAiImagesGenerationsRequestBody'];
       };
     };
     readonly responses: {
@@ -1501,7 +1684,7 @@ export interface operations {
           readonly [name: string]: unknown;
         };
         content: {
-          readonly 'application/json': components['schemas']['PostModlesOpenAiImagesGenerationsResponseBody'];
+          readonly 'application/json': components['schemas']['PostModelsOpenAiImagesGenerationsResponseBody'];
         };
       };
       /** @description Validation Error */
@@ -1534,7 +1717,7 @@ export interface operations {
           readonly [name: string]: unknown;
         };
         content: {
-          readonly 'application/json': components['schemas']['PostModlesOpenAiImagesEditsResponseBody'];
+          readonly 'application/json': components['schemas']['PostModelsOpenAiImagesEditsResponseBody'];
         };
       };
       /** @description Validation Error */
@@ -1567,7 +1750,7 @@ export interface operations {
           readonly [name: string]: unknown;
         };
         content: {
-          readonly 'application/json': components['schemas']['PostModlesGoogleVideosGenerationsResponseBody'];
+          readonly 'application/json': components['schemas']['PostModelsGoogleVideosGenerationsResponseBody'];
         };
       };
       /** @description Validation Error */
@@ -1598,7 +1781,7 @@ export interface operations {
           readonly [name: string]: unknown;
         };
         content: {
-          readonly 'application/json': components['schemas']['PostModlesGoogleVideosGenerationsResultResponseBody'];
+          readonly 'application/json': components['schemas']['PostModelsGoogleVideosGenerationsResultResponseBody'];
         };
       };
       /** @description Validation Error */
@@ -1614,12 +1797,12 @@ export interface operations {
   };
 }
 export enum AiChatRole {
-  SYSTEM = 0,
-  USER = 1,
-  ASSISTANT = 2,
-  TOOL = 3,
-  FUNCTION = 4,
-  INLINE = 5,
+  SYSTEM = 'SYSTEM',
+  USER = 'USER',
+  ASSISTANT = 'ASSISTANT',
+  TOOl = 'TOOl',
+  FUNCTION = 'FUNCTION',
+  INLINE = 'INLINE',
 }
 export enum AiModelGenerationTypeEnum {
   TEXT_TO_IMAGE = 'TEXT_TO_IMAGE',
@@ -1628,42 +1811,42 @@ export enum AiModelGenerationTypeEnum {
   IMAGE_TO_VIDEO = 'IMAGE_TO_VIDEO',
 }
 export enum AiModelOwnerEnum {
-  Value0 = 0,
-  Value1 = 1,
+  OPEN_AI = 'OPEN_AI',
+  GOOGLE = 'GOOGLE',
 }
 export enum AiModelSupportedTypeEnum {
-  Value0 = 0,
-  Value1 = 1,
-  Value2 = 2,
-  Value3 = 3,
+  TEXT = 'TEXT',
+  IMAGE = 'IMAGE',
+  AUDIO = 'AUDIO',
+  VIDEO = 'VIDEO',
 }
 export enum AiStatusEnum {
-  Value0 = 0,
-  Value1 = 1,
-  Value2 = 2,
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+  MAINTENANCE = 'MAINTENANCE',
 }
 export enum AiVideoGenerationStatus {
-  Value0 = 0,
-  Value1 = 1,
-  Value2 = 2,
-  Value3 = 3,
+  PENDING = 'PENDING',
+  IN_PROGRESS = 'IN_PROGRESS',
+  COMPLETED = 'COMPLETED',
+  FAILED = 'FAILED',
 }
 export enum UploadedFileTypeEnum {
-  IMAGE_REFRENCE = 'IMAGE_REFRENCE',
+  IMAGE_REFERENCE = 'IMAGE_REFERENCE',
   IMAGE_MASK = 'IMAGE_MASK',
   IMAGE_GENERATED = 'IMAGE_GENERATED',
   VIDEO_GENERATED = 'VIDEO_GENERATED',
-  AUDIO_REFRENCE = 'AUDIO_REFRENCE',
-  DOCUMENT_REFRENCE = 'DOCUMENT_REFRENCE',
+  AUDIO_REFERENCE = 'AUDIO_REFERENCE',
+  DOCUMENT_REFERENCE = 'DOCUMENT_REFERENCE',
   OTHER = 'OTHER',
 }
 export enum WalletMemberRole {
-  Value0 = 0,
-  Value1 = 1,
+  MEMBER = 'MEMBER',
+  ADMIN = 'ADMIN',
 }
 export enum WalletType {
-  Value0 = 0,
-  Value1 = 1,
+  PERSONAL = 'PERSONAL',
+  GROUP = 'GROUP',
 }
 export enum ApiPaths {
   start_user_start__post = '/user/start/',
@@ -1680,6 +1863,8 @@ export enum ApiPaths {
   get_ai_models_admin_ai_models__get = '/admin/ai-models/',
   update_wallet_balance_admin_update_wallet_balance_post = '/admin/update-wallet-balance',
   upload_to_statics_admin_upload_to_statics_post = '/admin/upload-to-statics',
+  images_generation_list_models_open_ai_images_generations_list_get = '/models/open-ai/images/generations/list',
+  images_generation_detail_models_open_ai_images_generations__chat_uuid__get = '/models/open-ai/images/generations/{chat_uuid}',
   images_generation_models_open_ai_images_generations_post = '/models/open-ai/images/generations',
   images_edits_models_open_ai_images_edits_post = '/models/open-ai/images/edits',
   video_generation_models_google_video_generations_post = '/models/google/video/generations',

@@ -8,7 +8,6 @@ export interface WebStorage {
 }
 
 export class LocalStorageAdapter implements WebStorage {
-  constructor(private debugging: boolean = false) {}
   public get<T>(key: string): T | undefined {
     const item = localStorage.getItem(key);
     return item as T | undefined;

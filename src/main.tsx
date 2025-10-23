@@ -1,26 +1,42 @@
 import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
+import { createRoot, type Root } from 'react-dom/client';
 import { Provider } from 'jotai';
-import type { Store } from 'jotai/vanilla/store';
 
 import App from './app.tsx';
 import AppContextProvider from './hook/app/provider.tsx';
 import { bootstrapJotai } from './lib/jotai.ts';
 
-export let jotaiStore: Store;
+const container = document.getElementById('root');
 
-const init = async () => {
-  jotaiStore = await bootstrapJotai();
+if (!container) {
+  throw new Error('Root element with id "root" was not found.');
+}
 
-  createRoot(document.getElementById('root')!).render(
-    <StrictMode>
-      <Provider store={jotaiStore}>
-        <AppContextProvider>
-          <App />
-        </AppContextProvider>
-      </Provider>
-    </StrictMode>,
-  );
-};
+type RootContainer = HTMLElement & { __reactRoot?: Root };
 
-init();
+const rootContainer = container as RootContainer;
+
+if (!rootContainer.__reactRoot) {
+  rootContainer.__reactRoot = createRoot(rootContainer);
+}
+
+const root = rootContainer.__reactRoot;
+
+export const jotaiStore = bootstrapJotai();
+
+root.render(
+  <StrictMode>
+    <Provider store={jotaiStore}>
+      <AppContextProvider>
+        <App />
+      </AppContextProvider>
+    </Provider>
+  </StrictMode>,
+);
+
+if (import.meta.hot) {
+  import.meta.hot.dispose(() => {
+    root.unmount();
+    rootContainer.__reactRoot = undefined;
+  });
+}

@@ -1,5 +1,5 @@
 import { useImmerAtom } from 'jotai-immer';
-import type { FC } from 'react';
+import { type FC } from 'react';
 
 import appLayoutAtom from '../_state';
 
