@@ -1,14 +1,12 @@
+// scripts/generate-api/generate.ts
 import fs from 'fs/promises';
+import path from 'path';
 
 import openapiTS, { astToString } from 'openapi-typescript';
 
-/**
- * Generates a TypeScript client from an OpenAPI schema and writes it to a file.
- * @param url The URL of the OpenAPI schema.
- * @param fileName The name of the file to write, without the extension.
- * @returns A Promise that resolves when the file has been written.
- */
-const generateClient = async (url: string, fileName: string): Promise<void> => {
+import { makeBinaryTransform } from './transform';
+
+const generateClient = async (url: string, fileName: string) => {
   const ast = await openapiTS(new URL(url, import.meta.url), {
     enum: true,
     enumValues: true,
@@ -16,24 +14,15 @@ const generateClient = async (url: string, fileName: string): Promise<void> => {
     makePathsEnum: true,
     generatePathParams: true,
     rootTypes: true,
-  } as const);
+    transform: makeBinaryTransform('File'),
+  });
 
-  const path = `./scripts/generate-api/_output/`;
-  const writePath = `${path}${fileName}.ts`;
-
-  // Ensure the output directory exists and write the file
-  await fs.mkdir(path, { recursive: true });
-  await fs.writeFile(writePath, astToString(ast));
+  const outputDir = path.resolve('./scripts/generate-api/_output');
+  await fs.mkdir(outputDir, { recursive: true });
+  await fs.writeFile(path.join(outputDir, `${fileName}.ts`), astToString(ast));
 };
-
-/**
- * The main entry point of this script.
- * Prompts the user to select an OpenAPI schema using the `openApiSchemaPicker` function,
- * and then generates a TypeScript client based on the selected schema URL.
- */
 
 const main = async () => {
   await generateClient('http://localhost:8000/openapi.json', 'api');
 };
-
 main();

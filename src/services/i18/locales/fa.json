@@ -80,7 +80,7 @@
           },
           "menu": {
             "imageGeneration": {
-              "label": "تولید و ویرایش عکس"
+              "label": "تولید عکس"
             },
             "videoGeneration": {
               "label": "تولید  ویدیو"
@@ -213,7 +213,7 @@
         "action": "کلیک کنید",
         "imageGeneration": {
           "description": "دسترسی به آخرین مدل های تولید و ویرایش تصویر",
-          "title": "تولید و ویرایش عکس"
+          "title": "تولید عکس"
         },
         "userProfile": {
           "description": "دسترسی به پروفایل کاربری و مشخصات شخصی",

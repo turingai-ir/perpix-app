@@ -11,7 +11,6 @@ import { Button } from '@/components/ui/button';
 import { useReactQueryApi } from '@/hook/app';
 import LoadingSection from '@/components/custom/loading-section';
 import ErrorSection from '@/components/custom/error-section';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { APP_LAYOUT_SIDEBAR_WIDTH } from '@/utils';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import {
@@ -25,10 +24,13 @@ import {
 import { cn } from '@/lib/utils';
 import { useAppTranslate } from '@/hook';
 import { APP_I18_KEYS } from '@/services/i18';
+import { appEventBus } from '@/lib/event-bus';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const AppLayout: FC = () => {
   const [appLayoutState, setAppLayoutState] = useImmerAtom(appLayoutAtom);
   const [ref, scrollAreaRef] = useMeasure<HTMLDivElement>();
+  const scrollAreaMyRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLElement>(null);
   const [openChooseModel, setOpenChooseModel] = useState(false);
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
@@ -45,6 +47,28 @@ const AppLayout: FC = () => {
     }
   }, [userInfoQuery.isSuccess, userInfoQuery.data, setAppLayoutState]);
 
+  useEffect(() => {
+    const appEventBusListener = appEventBus.on('SCROLL_APP_LAYOUT_UNTIL_END', () => {
+      const el = scrollAreaMyRef.current;
+      if (!el) {
+        return;
+      }
+
+      const areaElement = el.childNodes[1] as HTMLDivElement;
+
+      if (!areaElement) {
+        return;
+      }
+      areaElement.scrollTo({
+        top: areaElement.scrollHeight,
+        behavior: 'smooth',
+      });
+    });
+
+    return () => {
+      appEventBusListener();
+    };
+  }, [scrollAreaMyRef]);
   if (userInfoQuery.isLoading || !userInfoQuery.data) {
     return (
       <div className="w-full h-dvh mx-auto flex justify-center py-4 items-center ">
@@ -75,7 +99,15 @@ const AppLayout: FC = () => {
       }}
     >
       <AppLayoutSidebar sidebarWidth={APP_LAYOUT_SIDEBAR_WIDTH} />
-      <ScrollArea ref={ref} className="flex flex-col relative max-h-full h-full overflow-auto">
+      <ScrollArea
+        ref={(r) => {
+          if (r) {
+            scrollAreaMyRef.current = r;
+            ref(r);
+          }
+        }}
+        className="flex flex-col relative max-h-full h-full overflow-auto"
+      >
         <header ref={headerRef} className="flex items-center sticky top-0 bg-background z-10">
           <Button
             variant="ghost"

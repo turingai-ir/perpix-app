@@ -404,10 +404,13 @@ export interface components {
     readonly AiVideoGenerationStatus: AiVideoGenerationStatus;
     /** Body_images_edits_models_open_ai_images_edits_post */
     readonly Body_images_edits_models_open_ai_images_edits_post: {
-      /** Image */
-      readonly image: readonly string[];
+      /**
+       * Images
+       * @description Multiple binary files
+       */
+      readonly images: File[];
       /** Mask */
-      readonly mask?: string | null;
+      readonly mask?: File | null;
       /** Ai Model Id */
       readonly ai_model_id: string;
       /** Ai Model Config */
@@ -419,12 +422,12 @@ export interface components {
        * File
        * Format: binary
        */
-      readonly file: string;
+      readonly file: File;
     };
     /** Body_video_generation_models_google_video_generations_post */
     readonly Body_video_generation_models_google_video_generations_post: {
       /** Reference Images */
-      readonly reference_images?: readonly string[] | null;
+      readonly reference_images?: File[] | null;
       /** Ai Model Id */
       readonly ai_model_id: string;
       /** Ai Model Config */
@@ -1667,7 +1670,10 @@ export interface operations {
   };
   readonly images_generation_models_open_ai_images_generations_post: {
     readonly parameters: {
-      readonly query?: never;
+      readonly query?: {
+        /** @description Chat ID */
+        readonly chat_id?: string | null;
+      };
       readonly header?: never;
       readonly path?: never;
       readonly cookie?: never;
@@ -1700,7 +1706,10 @@ export interface operations {
   };
   readonly images_edits_models_open_ai_images_edits_post: {
     readonly parameters: {
-      readonly query?: never;
+      readonly query?: {
+        /** @description Chat ID */
+        readonly chat_id?: string | null;
+      };
       readonly header?: never;
       readonly path?: never;
       readonly cookie?: never;

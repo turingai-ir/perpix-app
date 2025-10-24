@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type FC } from 'react';
+import { useCallback, useEffect, useRef, useState, type FC } from 'react';
 import { useImmerAtom } from 'jotai-immer';
 import { selectAtom } from 'jotai/utils';
 import { useAtom } from 'jotai';
@@ -17,7 +17,7 @@ import ErrorSection from '@/components/custom/error-section';
 import { APP_I18_KEYS } from '@/services/i18';
 import { ButtonFullIcon } from '@/components/custom/button-full-icon';
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
-import { MultiImageUploadInput } from '@/components/form/mutil-image-upload-input';
+import { MultiImageUploadInput } from '@/components/form';
 import {
   Select,
   SelectContent,
@@ -27,13 +27,20 @@ import {
 } from '@/components/ui/select';
 import { Muted, Paragraph } from '@/components/ui/typography';
 import { APP_ROUTES_KEY } from '@/router';
-import { AiChatRole, UploadedFileTypeEnum } from '@/services/api';
+import { AiChatRole, UploadedFileTypeEnum, type components } from '@/services/api';
 import { ChatBubble } from '@/components/custom/chat-bubble';
+import { cn } from '@/lib/utils';
+import { appEventBus } from '@/lib/event-bus';
+import { LoadingGeneration } from '@/components/custom/loading-generation';
 // import { ChatBubble } from '@/components/custom/chat-bubble';
 // import { AiChatRole, UploadedFileTypeEnum } from '@/services/api';
 
 const selectedModelAtom = selectAtom(appLayoutAtom, (val) => val.chooseModelSelect);
 const isSidebarOpenAtom = selectAtom(appLayoutAtom, (val) => val.isSidebarOpen);
+
+const scrollUntilDown = () => {
+  appEventBus.emit('SCROLL_APP_LAYOUT_UNTIL_END', undefined);
+};
 
 const GenerationImagePage: FC = () => {
   const [, setAppLayoutState] = useImmerAtom(appLayoutAtom);
@@ -47,21 +54,56 @@ const GenerationImagePage: FC = () => {
   const params = useParams();
 
   const [chatId, setChatId] = useState(params?.chatId ?? undefined);
+  const [chatMessages, setChatMessages] = useState<
+    components['schemas']['GetModelsOpenAiImagesGenerationsResponseBodyMessage'][]
+  >([]);
 
-  const chatHistory = reactQueryApi.useQuery(
+  useEffect(() => {
+    if (chatMessages.length) {
+      setTimeout(() => {
+        scrollUntilDown();
+      }, 1000);
+    }
+  }, [chatMessages]);
+
+  const chatHistory = reactQueryApi.useMutation(
     'get',
     '/models/open-ai/images/generations/{chat_uuid}',
     {
-      params: {
-        path: {
-          chat_uuid: chatId ?? '',
-        },
+      onSuccess: async (data) => {
+        if (data.messages) {
+          setChatMessages([...data.messages]);
+        }
+        if (data) {
+          const reverseChats = Array.from(data.messages ?? []).reverse();
+          const referenceImage = reverseChats
+            .find((i) => i.role === AiChatRole.ASSISTANT)
+            ?.files?.find((i) => i.type === UploadedFileTypeEnum.IMAGE_GENERATED)?.url;
+
+          if (referenceImage) {
+            const file = await urlToFile(
+              referenceImage,
+              referenceImage.split('/').pop() ?? 'file.png',
+            );
+            form.setValue('images', [file]);
+          }
+        }
       },
     },
-    {
-      enabled: !!chatId,
-    },
   );
+
+  useEffect(() => {
+    if (chatId) {
+      chatHistory.mutate({
+        params: {
+          path: {
+            chat_uuid: chatId,
+          },
+        },
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chatId]);
 
   const formSchema = z.object({
     images: z.array(z.instanceof(File)).max(3),
@@ -78,37 +120,22 @@ const GenerationImagePage: FC = () => {
     },
   });
 
+  const resetForm = useCallback(() => {
+    form.reset({
+      images: [],
+      prompt: '',
+      size: form.getValues('size'),
+    });
+  }, [form]);
+
   const promptInputWatch = form.watch('prompt');
-
-  // set reference image from chat history
-  useEffect(() => {
-    const getData = async () => {
-      if (chatHistory.data) {
-        const reverseChats = Array.from(chatHistory.data.messages ?? []).reverse();
-        const referenceImage = reverseChats
-          .find((i) => i.role === AiChatRole.ASSISTANT)
-          ?.files?.find((i) => i.type === UploadedFileTypeEnum.IMAGE_GENERATED)?.url;
-
-        if (referenceImage) {
-          const file = await urlToFile(
-            referenceImage,
-            referenceImage.split('/').pop() ?? 'file.png',
-          );
-          form.setValue('images', [file]);
-        }
-      }
-    };
-    if (chatId) {
-      getData();
-    }
-  }, [chatHistory.data, chatId, form]);
 
   // change chat id
   useEffect(() => {
     setChatId(params?.chatId);
-    form.reset();
-    form.setValue('images', []);
-  }, [form, params]);
+    setChatMessages([]);
+    resetForm();
+  }, [form, params, resetForm]);
 
   const AiModesList = reactQueryApi.useQuery('get', '/admin/ai-models/', {
     params: {
@@ -139,13 +166,18 @@ const GenerationImagePage: FC = () => {
     '/models/open-ai/images/generations',
     {
       onSuccess: (data) => {
-        const chatId = data.id;
-        if (chatId) {
-          setChatId(chatId);
+        const dataChatId = data.id;
+
+        setChatMessages((pre) => [...pre, ...(data?.messages ?? [])]);
+
+        resetForm();
+        if (dataChatId !== chatId) {
+          setChatId(dataChatId);
+
           window.history.pushState(
             {},
             '',
-            APP_ROUTES_KEY.generation.image.history.path.replace(':chatId', chatId),
+            APP_ROUTES_KEY.generation.image.history.path.replace(':chatId', dataChatId),
           );
         }
       },
@@ -154,17 +186,35 @@ const GenerationImagePage: FC = () => {
 
   const imageEditMutate = reactQueryApi.useMutation('post', '/models/open-ai/images/edits', {
     onSuccess: (data) => {
-      const chatId = data.id;
-      if (chatId) {
-        setChatId(chatId);
+      const dataChatId = data.id;
+
+      setChatMessages((pre) => [...pre, ...(data?.messages ?? [])]);
+
+      resetForm();
+      if (dataChatId !== chatId) {
+        setChatId(dataChatId);
+
         window.history.pushState(
           {},
           '',
-          APP_ROUTES_KEY.generation.image.history.path.replace(':chatId', chatId),
+          APP_ROUTES_KEY.generation.image.history.path.replace(':chatId', dataChatId),
         );
       }
     },
   });
+
+  const modelHaveRequirements = () => {
+    if (promptInputWatch.length > 5) {
+      return true;
+    }
+    return false;
+  };
+
+  const generationIsPending = imageGenerationMutate.isPending || imageEditMutate.isPending;
+  const disableForm = AiModel.isLoading || generationIsPending || chatHistory.isPending;
+
+  const disabledSubmit =
+    AiModel.isLoading || generationIsPending || chatHistory.isPending || !modelHaveRequirements();
 
   // change ai models list
   useEffect(() => {
@@ -190,10 +240,7 @@ const GenerationImagePage: FC = () => {
   // successLoad ai model
   useEffect(() => {
     if (AiModel.isSuccess && AiModel.data && AiModel.data.config_defaults?.size) {
-      form.reset({
-        ...form.getValues(),
-        size: AiModel.data.config_defaults.size as string,
-      });
+      form.setValue('size', AiModel.data.config_defaults.size as string);
     }
   }, [AiModel.isSuccess, AiModel.data, form]);
 
@@ -209,28 +256,30 @@ const GenerationImagePage: FC = () => {
     el.style.height = `${Math.min(el.scrollHeight, maxHeight)}px`;
   };
 
-  const modelHaveRequirements = () => {
-    if (promptInputWatch.length > 5) {
-      return true;
-    }
-    return false;
-  };
-
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    // reset form
-    form.reset();
-
     //  edit
     if (values.images.length > 0) {
+      const formData = new FormData();
+
+      formData.append(
+        'ai_model_config',
+        JSON.stringify({
+          prompt: values.prompt,
+          size: values.size,
+        }),
+      );
+
+      formData.append('ai_model_id', selectedModel.currentSelectedId ?? '');
+
+      for (let i = 0; i < values.images.length; i++) {
+        formData.append(`images`, values.images[i]);
+      }
       imageEditMutate.mutate({
-        body: {
-          ai_model_config: JSON.stringify({
-            prompt: values.prompt,
-            size: values.size,
-          }),
-          ai_model_id: selectedModel.currentSelectedId ?? '',
-          image: values.images,
-          mask: 
+        body: formData as unknown as any,
+        params: {
+          query: {
+            chat_id: chatId ?? undefined,
+          },
         },
       });
     }
@@ -243,6 +292,11 @@ const GenerationImagePage: FC = () => {
           ai_model_config: {
             prompt: values.prompt,
             size: values.size,
+          },
+        },
+        params: {
+          query: {
+            chat_id: chatId ?? undefined,
           },
         },
       });
@@ -268,14 +322,22 @@ const GenerationImagePage: FC = () => {
   if (chatHistory.isError) {
     return (
       <div className="mx-auto flex justify-center py-4 items-center w-full h-dvh">
-        <ErrorSection onRetry={() => chatHistory.refetch()} />
+        <ErrorSection
+          onRetry={() =>
+            chatHistory.mutate({
+              params: {
+                path: {
+                  chat_uuid: chatId ?? '',
+                },
+              },
+            })
+          }
+        />
       </div>
     );
   }
 
-  // loading or no data for loading
-
-  if (AiModesList.isLoading || AiModel.isLoading || chatHistory.isLoading) {
+  if (chatHistory.isPending) {
     return (
       <div className="w-full flex-1 mx-auto flex justify-center py-4 items-center ">
         <LoadingSection />
@@ -283,13 +345,8 @@ const GenerationImagePage: FC = () => {
     );
   }
   return (
-    <div className="w-full min-h-full relative pb-80 p-4">
-      {!(
-        imageGenerationMutate.isPending ||
-        imageGenerationMutate.isSuccess ||
-        imageGenerationMutate.isError ||
-        chatHistory.data
-      ) ? (
+    <div className="w-full min-h-full relative pb-64 p-4">
+      {!chatMessages.length ? (
         <div className="w-full flex flex-col justify-center items-center gap-4">
           <Paragraph>
             {t('pages.generation.image.requirementsSection.title', {
@@ -313,45 +370,41 @@ const GenerationImagePage: FC = () => {
         </div>
       ) : null}
       <div className="flex flex-col gap-8">
-        {chatHistory.data?.messages?.map((item) => {
-          if (item.role === AiChatRole.USER) {
-            return (
-              <div className="w-full max-w-[500px] ml-auto" key={item.id}>
-                <ChatBubble
-                  avatar="P"
-                  images={(item.files ?? [])
-                    .filter((i) => i.type === UploadedFileTypeEnum.IMAGE_MASK)
-                    .map((i) => i.url)}
-                  sender="user"
-                  message={item.message ?? undefined}
-                />
-              </div>
-            );
-          }
-          return (
-            <div className="w-full max-w-[500px] mr-auto" key={item.id}>
-              <ChatBubble
-                avatar="T"
-                images={(item.files ?? [])
-                  .filter((i) => i.type === UploadedFileTypeEnum.IMAGE_GENERATED)
-                  .map((i) => i.url)}
-                sender="agent"
-                message={item.message ?? undefined}
-              />
-            </div>
-          );
-        })}
+        {chatMessages?.map((item) => (
+          <div
+            className={cn([
+              'w-full max-w-[500px]',
+              {
+                'ml-auto': item.role === AiChatRole.USER,
+                'mr-auto': item.role !== AiChatRole.USER,
+              },
+            ])}
+            key={item.id}
+          >
+            <ChatBubble
+              avatar="P"
+              images={(item.files ?? [])
+                .filter((i) =>
+                  item.role === AiChatRole.USER
+                    ? i.type === UploadedFileTypeEnum.IMAGE_REFERENCE
+                    : i.type === UploadedFileTypeEnum.IMAGE_GENERATED,
+                )
+                .map((i) => i.url)}
+              sender={item.role === AiChatRole.USER ? 'user' : 'agent'}
+              message={item.message ?? undefined}
+            />
+          </div>
+        ))}
       </div>
 
-      {imageGenerationMutate.isPending ? (
-        <div className="w-full flex flex-col justify-center items-center">
-          <LoadingSection />
-          <Paragraph>{t('pages.generation.image.generationLoading.content')}</Paragraph>
+      {generationIsPending ? (
+        <div className="w-full flex flex-col justify-center items-center py-8">
+          <LoadingGeneration />
         </div>
       ) : null}
 
       {imageGenerationMutate.isError ? (
-        <div className="w-full flex flex-col justify-center items-center">
+        <div className="w-full flex flex-col justify-center items-center py-8">
           <ErrorSection />
         </div>
       ) : null}
@@ -378,6 +431,7 @@ const GenerationImagePage: FC = () => {
                           textareaRef.current = r;
                           ref(r);
                         }}
+                        disabled={disableForm}
                         onInput={handleInput}
                         rows={2}
                         placeholder={t(
@@ -391,17 +445,7 @@ const GenerationImagePage: FC = () => {
                 )}
               />
 
-              <ButtonFullIcon
-                type="submit"
-                size="lg"
-                disabled={
-                  AiModel.isLoading ||
-                  !modelHaveRequirements() ||
-                  imageGenerationMutate.isPending ||
-                  imageGenerationMutate.isSuccess
-                }
-                className="mr-auto"
-              >
+              <ButtonFullIcon type="submit" size="lg" disabled={disabledSubmit} className="mr-auto">
                 {t('pages.generation.image.promptBox.generate')}
               </ButtonFullIcon>
             </div>

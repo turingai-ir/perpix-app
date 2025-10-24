@@ -1,6 +1,7 @@
 import type { FC, ReactNode } from 'react';
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import dayjs from 'dayjs';
+
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Muted } from '../ui/typography';
 
 type Sender = 'agent' | 'user';
@@ -27,11 +28,19 @@ export const ChatBubble: FC<ChatBubbleProps> = ({ avatar, message, sender, times
         ) : null}
         {message ? <div className="bg-accent rounded-md p-3">{message}</div> : null}
         {images ? (
-          <div className="flex flex-col w-full gap-1">
+          <div
+            className={
+              images.length > 1 ? 'grid grid-cols-2 gap-2 w-full' : 'flex flex-col w-full gap-1'
+            }
+          >
             {images.map((image, index) => (
               <div key={index} className="w-full h-full">
                 {typeof image === 'string' ? (
-                  <img className="w-full h-auto" src={image} alt="img" key={index} />
+                  <img
+                    className="w-full h-auto object-cover rounded-lg"
+                    src={image}
+                    alt={`img-${index}`}
+                  />
                 ) : (
                   image
                 )}

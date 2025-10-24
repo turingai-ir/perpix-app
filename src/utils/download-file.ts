@@ -11,5 +11,5 @@ export const downloadFile = (url: string, name: string) => {
 export async function urlToFile(url: string, name: string) {
   const response = await fetch(url);
   const blob = await response.blob();
-  return new File([blob], name);
+  return new File([blob], name, { type: blob.type });
 }

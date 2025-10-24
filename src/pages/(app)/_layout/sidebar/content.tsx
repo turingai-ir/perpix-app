@@ -105,7 +105,9 @@ const AppLayoutSidebarContent: FC = () => {
             {sidebarHistoryChats.list.map((item) => (
               <li key={item.id}>
                 <Link to={item.link}>
-                  <Muted>{`${item.title.slice(0, 25)} ...`}</Muted>
+                  <Muted>
+                    {item.title.length > 25 ? `${item.title.slice(0, 25)} ...` : item.title}
+                  </Muted>
                 </Link>
               </li>
             ))}
