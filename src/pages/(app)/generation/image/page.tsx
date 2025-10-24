@@ -1,15 +1,15 @@
-/* eslint-disable prefer-object-has-own */
-import { useEffect, useRef, type FC } from 'react';
+import { useEffect, useRef, useState, type FC } from 'react';
 import { useImmerAtom } from 'jotai-immer';
 import { selectAtom } from 'jotai/utils';
 import { useAtom } from 'jotai';
 import z from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useParams } from 'react-router';
 
 import appLayoutAtom from '../../_layout/_state';
 
-import { APP_LAYOUT_SIDEBAR_WIDTH, simplifyAspect } from '@/utils';
+import { APP_LAYOUT_SIDEBAR_WIDTH, simplifyAspect, urlToFile } from '@/utils';
 import { useReactQueryApi } from '@/hook/app';
 import { useAppTranslate, useViewportBreakpoint } from '@/hook';
 import LoadingSection from '@/components/custom/loading-section';
@@ -27,10 +27,13 @@ import {
 } from '@/components/ui/select';
 import { Muted, Paragraph } from '@/components/ui/typography';
 import { APP_ROUTES_KEY } from '@/router';
+import { AiChatRole, UploadedFileTypeEnum } from '@/services/api';
+import { ChatBubble } from '@/components/custom/chat-bubble';
 // import { ChatBubble } from '@/components/custom/chat-bubble';
 // import { AiChatRole, UploadedFileTypeEnum } from '@/services/api';
 
 const selectedModelAtom = selectAtom(appLayoutAtom, (val) => val.chooseModelSelect);
+const isSidebarOpenAtom = selectAtom(appLayoutAtom, (val) => val.isSidebarOpen);
 
 const GenerationImagePage: FC = () => {
   const [, setAppLayoutState] = useImmerAtom(appLayoutAtom);
@@ -38,6 +41,27 @@ const GenerationImagePage: FC = () => {
   const { lg } = useViewportBreakpoint();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
+  const reactQueryApi = useReactQueryApi();
+  const [isSidebarOpen] = useAtom(isSidebarOpenAtom);
+
+  const params = useParams();
+
+  const [chatId, setChatId] = useState(params?.chatId ?? undefined);
+
+  const chatHistory = reactQueryApi.useQuery(
+    'get',
+    '/models/open-ai/images/generations/{chat_uuid}',
+    {
+      params: {
+        path: {
+          chat_uuid: chatId ?? '',
+        },
+      },
+    },
+    {
+      enabled: !!chatId,
+    },
+  );
 
   const formSchema = z.object({
     images: z.array(z.instanceof(File)).max(3),
@@ -56,7 +80,35 @@ const GenerationImagePage: FC = () => {
 
   const promptInputWatch = form.watch('prompt');
 
-  const reactQueryApi = useReactQueryApi();
+  // set reference image from chat history
+  useEffect(() => {
+    const getData = async () => {
+      if (chatHistory.data) {
+        const reverseChats = Array.from(chatHistory.data.messages ?? []).reverse();
+        const referenceImage = reverseChats
+          .find((i) => i.role === AiChatRole.ASSISTANT)
+          ?.files?.find((i) => i.type === UploadedFileTypeEnum.IMAGE_GENERATED)?.url;
+
+        if (referenceImage) {
+          const file = await urlToFile(
+            referenceImage,
+            referenceImage.split('/').pop() ?? 'file.png',
+          );
+          form.setValue('images', [file]);
+        }
+      }
+    };
+    if (chatId) {
+      getData();
+    }
+  }, [chatHistory.data, chatId, form]);
+
+  // change chat id
+  useEffect(() => {
+    setChatId(params?.chatId);
+    form.reset();
+    form.setValue('images', []);
+  }, [form, params]);
 
   const AiModesList = reactQueryApi.useQuery('get', '/admin/ai-models/', {
     params: {
@@ -89,6 +141,7 @@ const GenerationImagePage: FC = () => {
       onSuccess: (data) => {
         const chatId = data.id;
         if (chatId) {
+          setChatId(chatId);
           window.history.pushState(
             {},
             '',
@@ -99,22 +152,40 @@ const GenerationImagePage: FC = () => {
     },
   );
 
+  const imageEditMutate = reactQueryApi.useMutation('post', '/models/open-ai/images/edits', {
+    onSuccess: (data) => {
+      const chatId = data.id;
+      if (chatId) {
+        setChatId(chatId);
+        window.history.pushState(
+          {},
+          '',
+          APP_ROUTES_KEY.generation.image.history.path.replace(':chatId', chatId),
+        );
+      }
+    },
+  });
+
+  // change ai models list
   useEffect(() => {
+    const aiModelFromChatHistory = chatHistory.data?.ai_model_id;
     const aiModelUUID = AiModesList.data?.data?.[0]?.uuid ?? null;
-    if (!aiModelUUID) {
+
+    if (!aiModelUUID && aiModelFromChatHistory) {
       return;
     }
 
-    if (AiModesList.isSuccess && aiModelUUID) {
+    if ((aiModelUUID || aiModelFromChatHistory) && AiModesList.isSuccess) {
       setAppLayoutState((draft) => {
-        draft.chooseModelSelect.currentSelectedId = aiModelUUID;
-        draft.chooseModelSelect.list = AiModesList.data.data.map((item) => ({
+        draft.chooseModelSelect.currentSelectedId =
+          aiModelFromChatHistory || aiModelUUID || undefined;
+        draft.chooseModelSelect.list = AiModesList?.data.data.map((item) => ({
           name: item.display_name ?? item.model_name,
           id: item.uuid,
         }));
       });
     }
-  }, [AiModesList.data, AiModesList.isSuccess, setAppLayoutState]);
+  }, [AiModesList.data, AiModesList.isSuccess, setAppLayoutState, chatHistory.data]);
 
   // successLoad ai model
   useEffect(() => {
@@ -146,14 +217,36 @@ const GenerationImagePage: FC = () => {
   };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    imageGenerationMutate.mutate({
-      body: {
-        ai_model_id: selectedModel.currentSelectedId ?? '',
-        ai_model_config: {
-          prompt: values.prompt,
+    // reset form
+    form.reset();
+
+    //  edit
+    if (values.images.length > 0) {
+      imageEditMutate.mutate({
+        body: {
+          ai_model_config: JSON.stringify({
+            prompt: values.prompt,
+            size: values.size,
+          }),
+          ai_model_id: selectedModel.currentSelectedId ?? '',
+          image: values.images,
+          mask: 
         },
-      },
-    });
+      });
+    }
+
+    // generate
+    else {
+      imageGenerationMutate.mutate({
+        body: {
+          ai_model_id: selectedModel.currentSelectedId ?? '',
+          ai_model_config: {
+            prompt: values.prompt,
+            size: values.size,
+          },
+        },
+      });
+    }
   }
 
   if (AiModesList.isError) {
@@ -172,9 +265,17 @@ const GenerationImagePage: FC = () => {
     );
   }
 
+  if (chatHistory.isError) {
+    return (
+      <div className="mx-auto flex justify-center py-4 items-center w-full h-dvh">
+        <ErrorSection onRetry={() => chatHistory.refetch()} />
+      </div>
+    );
+  }
+
   // loading or no data for loading
 
-  if (AiModesList.isPending || AiModel.isPending || !AiModesList.data || !AiModel.data) {
+  if (AiModesList.isLoading || AiModel.isLoading || chatHistory.isLoading) {
     return (
       <div className="w-full flex-1 mx-auto flex justify-center py-4 items-center ">
         <LoadingSection />
@@ -186,7 +287,8 @@ const GenerationImagePage: FC = () => {
       {!(
         imageGenerationMutate.isPending ||
         imageGenerationMutate.isSuccess ||
-        imageGenerationMutate.isError
+        imageGenerationMutate.isError ||
+        chatHistory.data
       ) ? (
         <div className="w-full flex flex-col justify-center items-center gap-4">
           <Paragraph>
@@ -197,12 +299,12 @@ const GenerationImagePage: FC = () => {
             })}
           </Paragraph>
           <ul className="!m-0 !p-0 flex flex-col gap-2">
-            {(AiModel.data.config_schema as any)?.required.includes('prompt') ? (
+            {(AiModel?.data?.config_schema as any)?.required.includes('prompt') ? (
               <li>
                 <Muted>{t('pages.generation.image.requirementsSection.required.prompt')}</Muted>
               </li>
             ) : null}
-            {(AiModel.data.config_schema as any)?.required.includes('image') ? (
+            {(AiModel?.data?.config_schema as any)?.required.includes('image') ? (
               <li>
                 <Muted>{t('pages.generation.image.requirementsSection.required.image')}</Muted>
               </li>
@@ -210,53 +312,36 @@ const GenerationImagePage: FC = () => {
           </ul>
         </div>
       ) : null}
-
-      {imageGenerationMutate.isSuccess ? (
-        <div className="flex flex-col gap-8">
-          {/* {(imageGenerationMutate.data?.messages ?? []).map((item) => {
-            if (item.role === AiChatRole.USER) {
-              return (
-                <div className="w-full max-w-[500px] ml-auto" key={item.id}>
-                  <ChatBubble
-                    avatar="P"
-                    images={(item.files_url ?? [])
-                      .filter((obj) =>
-                        Object.prototype.hasOwnProperty.call(
-                          obj,
-                          UploadedFileTypeEnum.IMAGE_REFRENCE,
-                        ),
-                      )
-                      .map((obj) => obj[UploadedFileTypeEnum.IMAGE_GENERATED])}
-                    sender="user"
-                    message={item.message ?? undefined}
-                  />
-                </div>
-              );
-            }
-            if (item.role === AiChatRole.ASSISTANT) {
-              return (
-                <div className="w-full max-w-[500px] ml-auto" key={item.id}>
-                  <ChatBubble
-                    avatar="P"
-                    images={(item.files_url ?? [])
-                      .filter((obj) =>
-                        Object.prototype.hasOwnProperty.call(
-                          obj,
-                          UploadedFileTypeEnum.DOCUMENT_REFRENCE,
-                        ),
-                      )
-                      .map((obj) => obj[UploadedFileTypeEnum.IMAGE_GENERATED])}
-                    sender="user"
-                    message={item.message ?? undefined}
-                  />
-                </div>
-              );
-            }
-
-            return null;
-          })} */}
-        </div>
-      ) : null}
+      <div className="flex flex-col gap-8">
+        {chatHistory.data?.messages?.map((item) => {
+          if (item.role === AiChatRole.USER) {
+            return (
+              <div className="w-full max-w-[500px] ml-auto" key={item.id}>
+                <ChatBubble
+                  avatar="P"
+                  images={(item.files ?? [])
+                    .filter((i) => i.type === UploadedFileTypeEnum.IMAGE_MASK)
+                    .map((i) => i.url)}
+                  sender="user"
+                  message={item.message ?? undefined}
+                />
+              </div>
+            );
+          }
+          return (
+            <div className="w-full max-w-[500px] mr-auto" key={item.id}>
+              <ChatBubble
+                avatar="T"
+                images={(item.files ?? [])
+                  .filter((i) => i.type === UploadedFileTypeEnum.IMAGE_GENERATED)
+                  .map((i) => i.url)}
+                sender="agent"
+                message={item.message ?? undefined}
+              />
+            </div>
+          );
+        })}
+      </div>
 
       {imageGenerationMutate.isPending ? (
         <div className="w-full flex flex-col justify-center items-center">
@@ -276,8 +361,8 @@ const GenerationImagePage: FC = () => {
           onSubmit={form.handleSubmit(onSubmit)}
           className="fixed bottom-0 bg-background"
           style={{
-            right: lg ? APP_LAYOUT_SIDEBAR_WIDTH : '0',
-            width: lg ? `calc(100% - ${APP_LAYOUT_SIDEBAR_WIDTH})` : '100%',
+            right: lg && isSidebarOpen ? APP_LAYOUT_SIDEBAR_WIDTH : '0',
+            width: lg && isSidebarOpen ? `calc(100% - ${APP_LAYOUT_SIDEBAR_WIDTH})` : '100%',
           }}
         >
           <div className="mx-auto p-4 lg:max-w-[80%] w-full max-w-full flex flex-col gap-2">
@@ -310,7 +395,7 @@ const GenerationImagePage: FC = () => {
                 type="submit"
                 size="lg"
                 disabled={
-                  AiModel.isPending ||
+                  AiModel.isLoading ||
                   !modelHaveRequirements() ||
                   imageGenerationMutate.isPending ||
                   imageGenerationMutate.isSuccess
@@ -360,7 +445,7 @@ const GenerationImagePage: FC = () => {
                     <FormControl>
                       <MultiImageUploadInput
                         label={t('pages.generation.image.promptBox.referenceImages.label')}
-                        maxSizeMb={5}
+                        maxSizeMb={10}
                         {...field}
                       />
                     </FormControl>

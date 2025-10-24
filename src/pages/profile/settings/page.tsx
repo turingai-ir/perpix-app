@@ -169,8 +169,8 @@ const ProfileSettingsPage: FC = () => {
                   </FormItem>
                 )}
               />
-              <Button className="w-full" type="submit" disabled={editUserInfoQuery.isPending}>
-                {editUserInfoQuery.isPending ? (
+              <Button className="w-full" type="submit" disabled={editUserInfoQuery.isLoading}>
+                {editUserInfoQuery.isLoading ? (
                   <LoaderCircle className="animate-spin" />
                 ) : (
                   t('pages.profile.settings.userInfo.form.submit')

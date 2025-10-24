@@ -24,20 +24,4 @@ export const APP_ROUTES_KEY = {
       },
     },
   },
-  text: {
-    root: {
-      path: '/text',
-    },
-    chat: {
-      path: '/text/:id',
-    },
-  },
-  image: {
-    root: {
-      path: '/image',
-    },
-    chat: {
-      path: '/image/:id',
-    },
-  },
 } as const;

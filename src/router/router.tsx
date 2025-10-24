@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate, redirect } from 'react-router';
+import { createBrowserRouter, redirect } from 'react-router';
 
 import { APP_ROUTES_KEY } from './routes';
 
@@ -54,13 +54,8 @@ export const router = createBrowserRouter([
       {
         path: APP_ROUTES_KEY.profile.root.path,
         Component: ProfileLayout,
-        children: [
-          // { Component: ProfilePage, index: true },
-          { Component: ProfileSettingsPage, path: APP_ROUTES_KEY.profile.settings.path },
-        ],
+        children: [{ Component: ProfileSettingsPage, path: APP_ROUTES_KEY.profile.settings.path }],
       },
-
-      { path: '*', element: <Navigate to={APP_ROUTES_KEY.text.root.path} /> },
     ],
   },
 ]);

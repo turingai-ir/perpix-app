@@ -125,8 +125,8 @@ const AuthLoginPageEnterPassword: FC = () => {
                 </FormItem>
               )}
             />
-            <Button className="w-full" type="submit" disabled={loginQuery.isPending}>
-              {loginQuery.isPending ? (
+            <Button className="w-full" type="submit" disabled={loginQuery.isLoading}>
+              {loginQuery.isLoading ? (
                 <LoaderCircle className="animate-spin" />
               ) : (
                 t('pages.auth.login.enterPasswordForm.submit')
@@ -137,13 +137,13 @@ const AuthLoginPageEnterPassword: FC = () => {
       </CardContent>
       <CardFooter>
         <Button
-          disabled={resetPasswordQuery.isPending}
+          disabled={resetPasswordQuery.isLoading}
           variant="link"
           onClick={async () => {
             await resetPasswordQuery.mutateAsync({ body: { phone_number: pageState.mobile } });
           }}
         >
-          {resetPasswordQuery.isPending ? (
+          {resetPasswordQuery.isLoading ? (
             <LoaderCircle className="animate-spin" />
           ) : (
             <Muted>{t('pages.auth.login.forgetPassword')}</Muted>

@@ -15,7 +15,7 @@ interface AppLayoutAtom {
   walletCurrentBalance: number;
   sidebarHistoryChats: {
     list: { title: string; id: string; link: string }[];
-    isPending: boolean;
+    isLoading: boolean;
     isError: boolean;
     AllItemsFetched: boolean;
   };
@@ -29,7 +29,7 @@ const appLayoutAtom = atom<AppLayoutAtom>({
   walletCurrentBalance: 0,
   sidebarHistoryChats: {
     list: [],
-    isPending: true,
+    isLoading: false,
     isError: false,
     AllItemsFetched: false,
   },

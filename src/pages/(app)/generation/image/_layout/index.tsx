@@ -41,7 +41,7 @@ const GenerationImageLayout: FC = () => {
   // init
   useEffect(() => {
     setAppLayoutState((draft) => {
-      draft.sidebarHistoryChats.isPending = false;
+      draft.sidebarHistoryChats.isLoading = false;
       draft.sidebarHistoryChats.isError = false;
       draft.sidebarHistoryChats.list = [];
     });
@@ -72,10 +72,10 @@ const GenerationImageLayout: FC = () => {
   // update state
   useEffect(() => {
     setAppLayoutState((draft) => {
-      draft.sidebarHistoryChats.isPending = getAllImages.isPending;
+      draft.sidebarHistoryChats.isLoading = getAllImages.isLoading;
       draft.sidebarHistoryChats.isError = getAllImages.isError;
     });
-  }, [getAllImages.isError, getAllImages.isPending, setAppLayoutState]);
+  }, [getAllImages.isError, getAllImages.isLoading, setAppLayoutState]);
 
   //   update when new page
   useEffect(() => {

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, type FC } from 'react';
+import { useCallback, type FC } from 'react';
 import { TbCameraAi, TbPhotoAi } from 'react-icons/tb';
 import { selectAtom } from 'jotai/utils';
 import { useAtom } from 'jotai';
@@ -19,6 +19,10 @@ import { useInfiniteScroll } from '@/hooks';
 import ErrorSection from '@/components/custom/error-section';
 import LoadingSection from '@/components/custom/loading-section';
 
+const requestForChatHistory = () => {
+  appEventBus.emit('SIDEBAR_REQUEST_FOR_DATA', undefined);
+};
+
 const sidebarHistoryChatsAtom = selectAtom(appLayoutAtom, (val) => val.sidebarHistoryChats);
 const walletCurrentBalanceAtom = selectAtom(appLayoutAtom, (val) => val.walletCurrentBalance);
 const AppLayoutSidebarContent: FC = () => {
@@ -27,14 +31,10 @@ const AppLayoutSidebarContent: FC = () => {
   const [walletCurrentBalance] = useAtom(walletCurrentBalanceAtom);
   const [sidebarHistoryChats] = useAtom(sidebarHistoryChatsAtom);
 
-  const requestForChatHistory = () => {
-    appEventBus.emit('SIDEBAR_REQUEST_FOR_DATA', undefined);
-  };
-
   const triggerMoreData = useCallback(() => {
     if (
       !sidebarHistoryChats.AllItemsFetched &&
-      !sidebarHistoryChats.isPending &&
+      !sidebarHistoryChats.isLoading &&
       !sidebarHistoryChats.isError
     ) {
       requestForChatHistory();
@@ -42,18 +42,14 @@ const AppLayoutSidebarContent: FC = () => {
   }, [
     sidebarHistoryChats.AllItemsFetched,
     sidebarHistoryChats.isError,
-    sidebarHistoryChats.isPending,
+    sidebarHistoryChats.isLoading,
   ]);
 
   const scrollRef = useInfiniteScroll<HTMLDivElement>({
     offset: 100,
-    loading: sidebarHistoryChats.isPending,
+    loading: sidebarHistoryChats.isLoading,
     onTrigger: triggerMoreData,
   });
-
-  useEffect(() => {
-    requestForChatHistory();
-  }, []);
 
   const menuItems = [
     {
@@ -109,13 +105,13 @@ const AppLayoutSidebarContent: FC = () => {
             {sidebarHistoryChats.list.map((item) => (
               <li key={item.id}>
                 <Link to={item.link}>
-                  <Muted>{`${item.title.slice(0, 20)} ...`}</Muted>
+                  <Muted>{`${item.title.slice(0, 25)} ...`}</Muted>
                 </Link>
               </li>
             ))}
           </ul>
           <div ref={scrollRef} />
-          {sidebarHistoryChats.isPending ? (
+          {sidebarHistoryChats.isLoading ? (
             <div className="w-full justify-center items-center flex">
               <LoadingSection />
             </div>
