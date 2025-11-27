@@ -18,7 +18,7 @@ const AppLayoutSidebar: FC<{ sidebarWidth: string }> = ({ sidebarWidth }) => {
       <>
         <aside
           className={cn(
-            'flex h-full w-[var(--sidebar-width)] flex-col bg-sidebar text-sidebar-foreground transition-all duration-300 ease-in-out',
+            'flex h-full w-(--sidebar-width) flex-col bg-sidebar text-sidebar-foreground transition-all duration-300 ease-in-out',
             appLayoutState.isSidebarOpen
               ? 'translate-x-0 opacity-100'
               : 'translate-x-full opacity-0',
@@ -44,7 +44,7 @@ const AppLayoutSidebar: FC<{ sidebarWidth: string }> = ({ sidebarWidth }) => {
       }
     >
       <SheetContent
-        className="w-[var(--sidebar-width)]"
+        className="w-(--sidebar-width) bg-sidebar"
         style={
           {
             '--sidebar-width': sidebarWidth,

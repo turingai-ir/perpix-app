@@ -7,6 +7,10 @@ type FormatLocalizedNumberParams = {
   value: number;
 };
 
+export const tokenToMicroDollar = (amount: number) => amount * 1_000;
+
+export const rialToToman = (amount: number) => amount / 10;
+
 export function formatLocalizedNumber({ value }: FormatLocalizedNumberParams) {
   if (typeof value !== 'number') {
     return '';

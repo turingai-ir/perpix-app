@@ -14,5 +14,8 @@ export const APP_KEYS = {
   COOKIES: {
     ACCESS_TOKEN: 'chitoz',
   },
+  URL_HASH: {
+    pricing: '#pricing',
+  },
   API_BASE_URL,
 } as const;

@@ -41,4 +41,4 @@ export const SUPPORTED_THEMES = Object.values(THEMES) as Theme[];
 
 // SIZES
 
-export const APP_LAYOUT_SIDEBAR_WIDTH = '16rem';
+export const APP_LAYOUT_SIDEBAR_WIDTH = '18rem';

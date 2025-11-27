@@ -2,15 +2,17 @@ import { useCallback, type FC } from 'react';
 import { TbCameraAi, TbPhotoAi } from 'react-icons/tb';
 import { selectAtom } from 'jotai/utils';
 import { useAtom } from 'jotai';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
+import { BadgeCheck, ChevronsUpDown, LogOut, Sparkles, UserRound } from 'lucide-react';
 
 import appLayoutAtom from '../_state';
 
-import { Card, CardHeader, CardTitle } from '@/components/ui/card';
+import AppLayoutSidebarWallet from './wallet';
+
 import { Button } from '@/components/ui/button';
 import { useAppTranslate } from '@/hook';
 import { APP_I18_KEYS } from '@/services/i18';
-import { formatLocalizedNumber } from '@/utils';
+import { APP_KEYS } from '@/utils';
 import { APP_ROUTES_KEY } from '@/router';
 import { appEventBus } from '@/lib/event-bus';
 import { Separator } from '@/components/ui/separator';
@@ -18,17 +20,39 @@ import { Muted } from '@/components/ui/typography';
 import { useInfiniteScroll } from '@/hooks';
 import ErrorSection from '@/components/custom/error-section';
 import LoadingSection from '@/components/custom/loading-section';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useReactQueryApi } from '@/hook/app';
+import { Badge } from '@/components/ui/badge';
+import { cookies } from '@/utils/cookies';
 
 const requestForChatHistory = () => {
   appEventBus.emit('SIDEBAR_REQUEST_FOR_DATA', undefined);
 };
 
 const sidebarHistoryChatsAtom = selectAtom(appLayoutAtom, (val) => val.sidebarHistoryChats);
-const walletCurrentBalanceAtom = selectAtom(appLayoutAtom, (val) => val.walletCurrentBalance);
 const AppLayoutSidebarContent: FC = () => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
+  const reactQueryApi = useReactQueryApi();
+  const navigate = useNavigate();
+  const cookie = cookies();
 
-  const [walletCurrentBalance] = useAtom(walletCurrentBalanceAtom);
+  const userInfoQuery = reactQueryApi.useQuery('get', '/user/get-info', undefined, {
+    enabled: false,
+  });
+
+  const handleLogout = () => {
+    cookie.remove(APP_KEYS.COOKIES.ACCESS_TOKEN);
+    navigate(APP_ROUTES_KEY.auth.login.path);
+  };
   const [sidebarHistoryChats] = useAtom(sidebarHistoryChatsAtom);
 
   const triggerMoreData = useCallback(() => {
@@ -67,21 +91,8 @@ const AppLayoutSidebarContent: FC = () => {
   ];
 
   return (
-    <div className="flex w-full flex-col gap-4 p-4 overflow-auto">
-      <Card className="border border-sidebar-border bg-sidebar text-sidebar-foreground shadow-sm">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0">
-          <div className="space-y-1">
-            <CardTitle className="text-sm font-medium ">
-              {t('pages.app.layout.sidebar.balanceCard.title')}
-            </CardTitle>
-            <div className="text-2xl font-semibold tracking-tight text-sidebar-foreground">
-              {formatLocalizedNumber({
-                value: walletCurrentBalance || 0,
-              })}
-            </div>
-          </div>
-        </CardHeader>
-      </Card>
+    <div className="flex w-full flex-col gap-4 p-2 overflow-auto h-full">
+      <AppLayoutSidebarWallet />
 
       <nav
         aria-label={t('pages.app.layout.sidebar.balanceCard.actions.label')}
@@ -127,6 +138,93 @@ const AppLayoutSidebarContent: FC = () => {
           ) : null}
         </div>
       </nav>
+
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild className="mt-auto">
+          <Button
+            variant="ghost"
+            size="lg"
+            className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+          >
+            <Avatar className="h-8 w-8 rounded-lg">
+              <AvatarImage />
+              <AvatarFallback className="rounded-lg">
+                <UserRound />
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex flex-1 text-left text-sm leading-tight">
+              <Badge>
+                {userInfoQuery.data?.active_subscription?.plan.display_name ??
+                  t('features.pricing.plans.free.title')}
+              </Badge>
+            </div>
+            <ChevronsUpDown className="ml-auto size-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
+          className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+          side="top"
+          align="end"
+          sideOffset={4}
+        >
+          <DropdownMenuLabel className="p-0 font-normal">
+            <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+              <Avatar className="h-8 w-8 rounded-lg">
+                <AvatarImage />
+                <AvatarFallback className="rounded-lg">
+                  <UserRound />
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex flex-1 text-left text-sm leading-tight">
+                <Badge>
+                  {userInfoQuery.data?.active_subscription?.plan.display_name ??
+                    t('features.pricing.plans.free.title')}
+                </Badge>
+              </div>
+            </div>
+          </DropdownMenuLabel>
+          {userInfoQuery.data?.active_subscription?.plan.display_name ? null : (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuItem
+                  onClick={() => {
+                    navigate(APP_KEYS.URL_HASH.pricing);
+                  }}
+                >
+                  <Sparkles />
+                  {t('pages.app.layout.sidebar.user.upgrade')}
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+            </>
+          )}
+
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <DropdownMenuItem
+              onClick={() => {
+                navigate(APP_ROUTES_KEY.profile.root.path);
+              }}
+            >
+              <BadgeCheck />
+              {t('pages.app.layout.sidebar.user.account')}
+            </DropdownMenuItem>
+            {/* <DropdownMenuItem>
+              <CreditCard />
+              Billing
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Bell />
+              Notifications
+            </DropdownMenuItem> */}
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={handleLogout}>
+            <LogOut />
+            {t('pages.app.layout.sidebar.user.logout')}
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 };

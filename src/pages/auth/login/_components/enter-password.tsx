@@ -63,7 +63,7 @@ const AuthLoginPageEnterPassword: FC = () => {
       }),
   });
 
-  const loginQuery = reactQueryApi.useMutation('post', '/user/login/', {
+  const loginQuery = reactQueryApi.useMutation('post', '/user/login', {
     onSuccess(data) {
       cookie.set(APP_KEYS.COOKIES.ACCESS_TOKEN, data.token);
       navigate(APP_ROUTES_KEY.app.path);
@@ -71,7 +71,7 @@ const AuthLoginPageEnterPassword: FC = () => {
     },
   });
 
-  const resetPasswordQuery = reactQueryApi.useMutation('post', '/user/reset-password/', {
+  const resetPasswordQuery = reactQueryApi.useMutation('post', '/user/reset-password', {
     onSuccess(data) {
       cookie.set(APP_KEYS.COOKIES.ACCESS_TOKEN, data.token);
       setPageState((draft) => {
@@ -87,6 +87,7 @@ const AuthLoginPageEnterPassword: FC = () => {
       password: '',
     },
   });
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     await loginQuery.mutateAsync({
       body: {
@@ -125,8 +126,8 @@ const AuthLoginPageEnterPassword: FC = () => {
                 </FormItem>
               )}
             />
-            <Button className="w-full" type="submit" disabled={loginQuery.isLoading}>
-              {loginQuery.isLoading ? (
+            <Button className="w-full" type="submit" disabled={loginQuery.isPending}>
+              {loginQuery.isPending ? (
                 <LoaderCircle className="animate-spin" />
               ) : (
                 t('pages.auth.login.enterPasswordForm.submit')
@@ -137,13 +138,13 @@ const AuthLoginPageEnterPassword: FC = () => {
       </CardContent>
       <CardFooter>
         <Button
-          disabled={resetPasswordQuery.isLoading}
+          disabled={resetPasswordQuery.isPending}
           variant="link"
           onClick={async () => {
             await resetPasswordQuery.mutateAsync({ body: { phone_number: pageState.mobile } });
           }}
         >
-          {resetPasswordQuery.isLoading ? (
+          {resetPasswordQuery.isPending ? (
             <LoaderCircle className="animate-spin" />
           ) : (
             <Muted>{t('pages.auth.login.forgetPassword')}</Muted>

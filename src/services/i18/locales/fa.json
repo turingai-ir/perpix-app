@@ -1,5 +1,7 @@
 {
   "common": {
+    "tomans": "تومان",
+    "token": "توکن",
     "and": "و",
     "chat": "چت",
     "day": "روز",
@@ -7,7 +9,8 @@
     "error": "خطا",
     "fetchErrors": {
       "network": "خطای شبکه لطفا اتصال خود را بررسی کنید",
-      "timeout": "متاسفانه خطایی رخ داده است دوباره تلاش کنید"
+      "timeout": "متاسفانه خطایی رخ داده است دوباره تلاش کنید",
+      "serverError": "خطای داخلی رخ داده است بعدا امتحان کنید"
     },
     "hour": "ساعت",
     "image": "عکس",
@@ -20,6 +23,7 @@
     "validationErrors": {
       "email": "ایمیل نامعتبر است",
       "equalCharacter": " {{name}} باید {{length}} کاراکتر باشد",
+      "imageMaxSize": "حجم عکس باید کمتر از {{maxSize}} مگابایت باشد",
       "maxLength": "{{name}} باید کمتر از {{max}} کاراکتر باشد",
       "minLength": "{{name}} باید بیشتر از {{min}} کاراکتر باشد",
       "mobile": "شماره تلفن نامعتبر است",
@@ -28,7 +32,8 @@
       "password": "رمز عبور باید حداقل شامل هشت کاراکتر و حداقل یک حرف بزرگ و یک حرف کوچک انگلیسی باشد",
       "passwordMatch": "رمز عبور با تکرار آن برابر نیست",
       "required": "{{name}} الزامی است",
-      "imageMaxSize": "حجم عکس باید کمتر از {{maxSize}} مگابایت باشد"
+      "min": "{{name}} حداقل باید {{min}} باشد",
+      "max": "{{name}} حداکثر می می تواند {{max}} باشد"
     },
     "yesterday": "دیروز"
   },
@@ -52,30 +57,26 @@
       }
     }
   },
-  "feature": {
-    "login": {
-      "otp": {
-        "changeNumber": "تغییر شماره",
-        "label": "کد فعال سازی",
-        "login": "ورود",
-        "resend": "ارسال مجدد کد فعال سازی"
-      },
-      "phoneNumber": {
-        "label": "شماره تلفن"
-      },
-      "sendOtp": "ارسال کد فعال سازی"
-    }
-  },
   "pages": {
     "app": {
       "layout": {
+        "chooseModel": {
+          "empty": "یافت نشد",
+          "searchBoxPlaceholder": "نام مدل"
+        },
         "sidebar": {
           "balanceCard": {
-            "title": "موجودی حساب",
             "actions": {
-              "label": "پیوندهای مالی",
               "addFunds": "افزودن اعتبار",
+              "label": "پیوندهای مالی",
               "transactions": "مشاهده تراکنش‌ها"
+            },
+            "title": "موجودی حساب",
+            "chargeWallet": {
+              "title": "افزایش موجودی کیف پول",
+              "description": "میزان توکن برای خریداری را وارید نمایید و سپس از طریق درگاه پرداخت کنید",
+              "action": "پرداخت ({{amount}} تومان) ",
+              "nonAction": "پرداخت"
             }
           },
           "menu": {
@@ -85,38 +86,13 @@
             "videoGeneration": {
               "label": "تولید  ویدیو"
             }
-          }
-        },
-        "chooseModel": {
-          "empty": "یافت نشد",
-          "searchBoxPlaceholder": "نام مدل"
-        }
-      }
-    },
-    "generation": {
-      "image": {
-        "promptBox": {
-          "generate": "تولید",
-          "promptTextArea": {
-            "placeholder": "شروع به تایپ کنید"
           },
-          "referenceImages": {
-            "label": "عکس منبع"
+          "user": {
+            "noPlan": "بدون اشتراک",
+            "upgrade": "خرید اشتراک",
+            "account": "حساب کاربری",
+            "logout": "خروج"
           }
-        },
-        "requirementsSection": {
-          "title": "ورودی های لازم برای کار با {{modelName}}",
-          "required": {
-            "prompt": "حداقل ۵ کاراکتر برای دستور وارد کنید",
-            "image": "یک عکس به عنوان منبع وارد کنید"
-          }
-        },
-        "generationLoading": {
-          "content": "در حال تولید عکس ..."
-        },
-        "generationError": {
-          "content": "متاسفانه خطایی رخ داده است دوباره تلاش کنید",
-          "action": "تلاش مجدد"
         }
       }
     },
@@ -163,27 +139,32 @@
         "title": "ورود"
       }
     },
-    "image": {
-      "apiCallError": {
-        "action": "تلاش مجدد",
-        "content": "متاسفانه خطایی رخ داده است دوباره تلاش کنید"
-      },
-      "aside": {
-        "newChat": "عکس جدید"
-      },
-      "searchBox": {
-        "form": {
-          "input": {
-            "label": "جستجو",
-            "placeholder": "شروع به تایپ کنید..."
+    "generation": {
+      "image": {
+        "generationError": {
+          "action": "تلاش مجدد",
+          "content": "متاسفانه خطایی رخ داده است دوباره تلاش کنید"
+        },
+        "generationLoading": {
+          "content": "در حال تولید عکس ..."
+        },
+        "promptBox": {
+          "generate": "تولید",
+          "promptTextArea": {
+            "placeholder": "شروع به تایپ کنید"
+          },
+          "referenceImages": {
+            "label": "عکس منبع"
           }
         },
-        "title": "چطور میتونم کمکت کنم؟"
+        "requirementsSection": {
+          "required": {
+            "image": "یک عکس به عنوان منبع وارد کنید",
+            "prompt": "حداقل ۵ کاراکتر برای دستور وارد کنید"
+          },
+          "title": "ورودی های لازم برای کار با {{modelName}}"
+        }
       }
-    },
-    "login": {
-      "description": "به تورینگ چت خوش آمدید",
-      "title": "ورود"
     },
     "profile": {
       "settings": {
@@ -225,22 +206,59 @@
         }
       }
     },
-    "text": {
-      "apiCallError": {
-        "action": "تلاش مجدد",
-        "content": "متاسفانه خطایی رخ داده است دوباره تلاش کنید"
-      },
-      "aside": {
-        "newChat": "چت جدید"
-      },
-      "searchBox": {
-        "form": {
-          "input": {
-            "label": "جستجو",
-            "placeholder": "شروع به تایپ کنید..."
-          }
+    "payment": {
+      "result": {
+        "successful": {
+          "title": "پرداخت موفق",
+          "description": "تراکنش شما با موفقیت انجام گردید و مبلغ پرداختی شما به حساب شما واریز گردید"
         },
-        "title": "چطور میتونم کمکت کنم؟"
+        "failed": {
+          "title": "پرداخت ناموفق",
+          "description": "تراکنش شما کامل نشد و مبلغ پرداختی شما نهایتا تا ۷۲ به حساب شما بازمیگردد، درصورت هرگونه مشکل لطفا کد پیگیری را برای پشتیبانی ارسال نمایید"
+        },
+        "trackingCode": "کد پیگیری",
+        "amount": "مبلغ تراکنش",
+        "return": "بازگشت به صفحه اصلی"
+      }
+    }
+  },
+  "features": {
+    "pricing": {
+      "title": "بسته ها",
+      "description": "شما برای استفاده از امکانات پرپیکس نیاز دارید یکی از بسته های زیر را خریداری کنید",
+      "purchase": "خرید",
+      "plans": {
+        "free": {
+          "title": "بدون اشتراک"
+        },
+        "economic": {
+          "title": "اقتصادی",
+          "description": "مناسب برای کم مصرف ها",
+          "features": ["نگه داری فایل ها تا ۷روز", "دسترسی به تولید عکس", "تولید ۷۰ عکس"],
+          "action": "خرید"
+        },
+        "basic": {
+          "title": "پایه",
+          "description": "مناسب برای همه",
+          "features": [
+            "نگه داری فایل ها تا ۷روز",
+            "دسترسی به تولید عکس",
+            "دسترسی به تولید ویدیو",
+            "تولید ۱۲۰ عکس یا ۴ ویدیو"
+          ],
+          "action": "خرید"
+        },
+        "pro": {
+          "title": "حرفه ای",
+          "description": "مناسب برای حرفه ای ها",
+          "features": [
+            "نگه داری فایل ها تا ۷روز",
+            "دسترسی به تولید عکس",
+            "دسترسی به تولید ویدیو",
+            "تولید ۳۶۰ عکس یا ۲۰ ویدیو"
+          ],
+          "action": "خرید"
+        }
       }
     }
   }

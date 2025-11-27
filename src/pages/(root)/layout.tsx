@@ -91,6 +91,13 @@ const RootLayout: FC = () => {
             /* empty */
           }
         }
+        if (error.response.status === HttpStatus.INTERNAL_SERVER_ERROR) {
+          toast.error(
+            <div className="gap-1 flex flex-col ">
+              <span>{t('common.fetchErrors.serverError')}</span>
+            </div>,
+          );
+        }
       }
     };
 
@@ -100,7 +107,11 @@ const RootLayout: FC = () => {
     };
   }, [navigate, t]);
 
-  return <Outlet />;
+  return (
+    <>
+      <Outlet />
+    </>
+  );
 };
 
 export default RootLayout;

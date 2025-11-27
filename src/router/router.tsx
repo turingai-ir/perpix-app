@@ -4,9 +4,7 @@ import { APP_ROUTES_KEY } from './routes';
 
 import RootLayout from '@/pages/(root)/layout';
 import AuthLoginPage from '@/pages/auth/login/page';
-// import RootPage from '@/pages/(root)/page';
 import ProfileLayout from '@/pages/profile/layout';
-// import ProfilePage from '@/pages/profile/page';
 import ProfileSettingsPage from '@/pages/profile/settings/page';
 import AppPage from '@/pages/(app)/page';
 import { cookies } from '@/utils/cookies';
@@ -14,6 +12,7 @@ import { APP_KEYS } from '@/utils';
 import AppLayout from '@/pages/(app)/_layout';
 import GenerationImagePage from '@/pages/(app)/generation/image/page';
 import GenerationImageLayout from '@/pages/(app)/generation/image/_layout';
+import PaymentResultPage from '@/pages/payment/result/page';
 
 export const router = createBrowserRouter([
   {
@@ -22,6 +21,16 @@ export const router = createBrowserRouter([
       {
         path: APP_ROUTES_KEY.app.path,
         Component: AppLayout,
+        middleware: [
+          async () => {
+            const token = cookies().get(APP_KEYS.COOKIES.ACCESS_TOKEN);
+            if (!token) {
+              throw redirect(APP_ROUTES_KEY.auth.login.path);
+            }
+
+            return {};
+          },
+        ],
         children: [
           { Component: AppPage, index: true },
           {
@@ -39,6 +48,11 @@ export const router = createBrowserRouter([
             ],
           },
         ],
+      },
+      { path: APP_ROUTES_KEY.auth.login.path, Component: AuthLoginPage },
+      {
+        path: APP_ROUTES_KEY.profile.root.path,
+        Component: ProfileLayout,
         middleware: [
           async () => {
             const token = cookies().get(APP_KEYS.COOKIES.ACCESS_TOKEN);
@@ -49,12 +63,11 @@ export const router = createBrowserRouter([
             return {};
           },
         ],
-      },
-      { path: APP_ROUTES_KEY.auth.login.path, Component: AuthLoginPage },
-      {
-        path: APP_ROUTES_KEY.profile.root.path,
-        Component: ProfileLayout,
         children: [{ Component: ProfileSettingsPage, path: APP_ROUTES_KEY.profile.settings.path }],
+      },
+      {
+        path: APP_ROUTES_KEY.payment.result.path,
+        Component: PaymentResultPage,
       },
     ],
   },

@@ -24,4 +24,9 @@ export const APP_ROUTES_KEY = {
       },
     },
   },
+  payment: {
+    result: {
+      path: 'payment/result/:sessionId',
+    },
+  },
 } as const;

@@ -42,7 +42,7 @@ const AppPage: FC = () => {
           <div
             className="flex flex-col select-none gap-4"
             onClick={() => {
-              navigate(APP_ROUTES_KEY.profile.settings.path);
+              navigate(APP_ROUTES_KEY.profile.root.path);
             }}
           >
             <TbUserCog className="w-12 h-12" />

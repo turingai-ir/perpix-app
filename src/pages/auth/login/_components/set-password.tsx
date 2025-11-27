@@ -77,7 +77,7 @@ const AuthLoginPageSetPassword: FC = () => {
       path: ['confirmPassword'],
     });
 
-  const setPassword = reactQueryApi.useMutation('post', '/user/set-password/', {
+  const setPassword = reactQueryApi.useMutation('post', '/user/set-password', {
     onSuccess(data) {
       cookie.set(APP_KEYS.COOKIES.ACCESS_TOKEN, data.token);
       navigate(APP_ROUTES_KEY.app.path);
@@ -85,7 +85,7 @@ const AuthLoginPageSetPassword: FC = () => {
     },
   });
 
-  const resetPasswordQuery = reactQueryApi.useMutation('post', '/user/reset-password/', {
+  const resetPasswordQuery = reactQueryApi.useMutation('post', '/user/reset-password', {
     onSuccess(data) {
       cookie.set(APP_KEYS.COOKIES.ACCESS_TOKEN, data.token);
       toast.info(t('pages.auth.login.successSendOtp'));

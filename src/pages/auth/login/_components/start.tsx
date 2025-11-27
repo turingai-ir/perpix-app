@@ -55,7 +55,7 @@ const AuthLoginPageStart: FC = () => {
       }),
   });
 
-  const startQuery = reactQueryApi.useMutation('post', '/user/start/', {
+  const startQuery = reactQueryApi.useMutation('post', '/user/start', {
     onSuccess(data) {
       cookie.set(APP_KEYS.COOKIES.ACCESS_TOKEN, data.token);
 
