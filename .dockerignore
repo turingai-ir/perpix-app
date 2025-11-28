@@ -1,10 +1,9 @@
-.git
-.gitignore
-.vscode
 node_modules
 dist
-pnpm-store
+.git
+.gitignore
+Dockerfile
+compose.yaml
+pnpm-debug.log
 npm-debug.log
 yarn-error.log
-*.log
-.env
