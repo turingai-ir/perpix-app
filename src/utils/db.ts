@@ -2,7 +2,7 @@ import { openDB, type IDBPDatabase } from 'idb';
 
 import { APP_KEYS } from './app-keys';
 
-type StorageName = (typeof APP_KEYS.DB.STORGES)[keyof typeof APP_KEYS.DB.STORGES];
+type StorageName = (typeof APP_KEYS.DB.STORAGES)[keyof typeof APP_KEYS.DB.STORAGES];
 
 export const getDB = async (storageName: StorageName): Promise<IDBPDatabase> => {
   return openDB(APP_KEYS.DB.NAME, 1, {

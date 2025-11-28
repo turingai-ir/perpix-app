@@ -7,6 +7,9 @@ if (!API_BASE_URL) {
 export const APP_KEYS = {
   DB: {
     NAME: 'per-pix-ai-app',
+    STORAGES: {
+      GLOBAL_STATE: 'global-state',
+    },
   },
   LOCAL_STORAGE: {
     GLOBAL_JOTAI_ATOM: 'global-state',
