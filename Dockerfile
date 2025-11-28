@@ -32,14 +32,16 @@ RUN --mount=type=bind,source=package.json,target=package.json \
 # Copy the rest of the source files into the image.
 COPY . .
 
+# Ensure app files (including node_modules) are writable by the node user.
+RUN chown -R node:node /usr/src/app
+
+# Drop privileges for build and runtime.
+USER node
+ENV NODE_ENV production
+ENV VITE_TEMP_DIR=/tmp/.vite-temp
+
 # Build 
 RUN pnpm build
-
-# Drop privileges for runtime
-USER node
-
-# Use production node environment by default.
-ENV NODE_ENV production
 
 # Expose the port that the application listens on.
 EXPOSE 4173
