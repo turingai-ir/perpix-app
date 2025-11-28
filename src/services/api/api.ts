@@ -546,6 +546,11 @@ export interface components {
        * Format: date-time
        */
       readonly created_at: string;
+      /**
+       * Updated At
+       * Format: date-time
+       */
+      readonly updated_at: string;
       /** Expire Date */
       readonly expire_date: string | null;
       /** User Prompt */
@@ -557,8 +562,8 @@ export interface components {
     readonly AiChatSessionHistoryResponse: {
       /** Sessions */
       readonly sessions: readonly components['schemas']['AiChatSessionSummary'][];
-      /** Hasmore */
-      readonly hasMore: boolean;
+      /** Hasnextpage */
+      readonly hasNextPage: boolean;
     };
     /** AiChatSessionMessageSummary */
     readonly AiChatSessionMessageSummary: {
@@ -572,19 +577,25 @@ export interface components {
        * Format: date-time
        */
       readonly created_at: string;
+      /**
+       * Updated At
+       * Format: date-time
+       */
+      readonly updated_at: string;
       /** Ai Model Config */
       readonly ai_model_config: {
         readonly [key: string]: unknown;
       };
-      /** Ai Model Provider Task Id */
-      readonly ai_model_provider_task_id: string | null;
+      /** Ai Model Uuid */
+      readonly ai_model_uuid: string | null;
       readonly task_status: components['schemas']['AiModelTaskStatusEnum'] | null;
       /** Cost Usdmicro */
       readonly cost_usdmicro: number | null;
-      /** Files */
-      readonly files: readonly {
-        readonly [key: string]: unknown;
-      }[];
+      /**
+       * Files
+       * @default []
+       */
+      readonly files: readonly components['schemas']['UploadedFileItem'][] | null;
     };
     /** AiChatSessionSummary */
     readonly AiChatSessionSummary: {
@@ -596,6 +607,11 @@ export interface components {
        * Format: date-time
        */
       readonly created_at: string;
+      /**
+       * Updated At
+       * Format: date-time
+       */
+      readonly updated_at: string;
       /** Expire Date */
       readonly expire_date: string | null;
       /** User Prompt */
@@ -679,8 +695,6 @@ export interface components {
       readonly pricing_tiers: readonly {
         readonly [key: string]: unknown;
       }[];
-      /** Providers */
-      readonly providers?: readonly components['schemas']['AiModelProviderDetail'][];
     };
     /**
      * AiModelOwnerEnum
@@ -709,15 +723,6 @@ export interface components {
       readonly model_api_url?: string | null;
       /** Model Name */
       readonly model_name?: string | null;
-    };
-    /** AiModelProviderDetail */
-    readonly AiModelProviderDetail: {
-      /** Provider Uuid */
-      readonly provider_uuid: string;
-      /** Api Url */
-      readonly api_url: string | null;
-      /** Model Name */
-      readonly model_name: string | null;
     };
     /**
      * AiModelProvidersEnum
@@ -897,8 +902,8 @@ export interface components {
     readonly CurrencyUnitEnum: CurrencyUnitEnum;
     /** GenerationResponseBody */
     readonly GenerationResponseBody: {
-      /** Ai Model Id */
-      readonly ai_model_id: string;
+      /** Ai Model Uuid */
+      readonly ai_model_uuid: string;
       /** Wallet Balance Usdmicro */
       readonly wallet_balance_usdmicro: number;
       /** Ai Model Config */
@@ -907,8 +912,8 @@ export interface components {
       };
       /** Messages */
       readonly messages: readonly components['schemas']['GenerationResponseBodyMessage'][] | null;
-      /** Id */
-      readonly id: string;
+      /** Uuid */
+      readonly uuid: string;
     };
     /** GenerationResponseBodyMessage */
     readonly GenerationResponseBodyMessage: {
@@ -930,9 +935,9 @@ export interface components {
        */
       readonly files: readonly components['schemas']['UploadedFileItem'][] | null;
       readonly role: components['schemas']['AiChatRoleEnum'];
-      /** Id */
-      readonly id: string;
-      readonly status: components['schemas']['AiModelTaskStatusEnum'] | null;
+      /** Uuid */
+      readonly uuid: string;
+      readonly task_status: components['schemas']['AiModelTaskStatusEnum'] | null;
     };
     /** GetAdminCurrencyExchangeRateRefreshResponseBody */
     readonly GetAdminCurrencyExchangeRateRefreshResponseBody: {
@@ -1294,7 +1299,6 @@ export type SchemaAiModelCreate = components['schemas']['AiModelCreate'];
 export type SchemaAiModelDetail = components['schemas']['AiModelDetail'];
 export type SchemaAiModelPage = components['schemas']['AiModelPage'];
 export type SchemaAiModelProviderConfig = components['schemas']['AiModelProviderConfig'];
-export type SchemaAiModelProviderDetail = components['schemas']['AiModelProviderDetail'];
 export type SchemaAiModelSummary = components['schemas']['AiModelSummary'];
 export type SchemaAiProviderCreate = components['schemas']['AiProviderCreate'];
 export type SchemaAiProviderDetail = components['schemas']['AiProviderDetail'];

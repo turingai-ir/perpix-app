@@ -9,12 +9,17 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import appLayoutAtom from '../../_layout/_state';
 
-import { APP_LAYOUT_SIDEBAR_WIDTH, simplifyAspect, urlToFile } from '@/utils';
+import { APP_LAYOUT_SIDEBAR_WIDTH, convertToStorageUrl, simplifyAspect, urlToFile } from '@/utils';
 import { useReactQueryApi } from '@/hook/app';
 import { useAppTranslate, useViewportBreakpoint } from '@/hook';
 import { APP_I18_KEYS } from '@/services/i18';
 import { APP_ROUTES_KEY } from '@/router';
-import { AiChatRoleEnum, UploadedFileTypeEnum, type components } from '@/services/api';
+import {
+  AiChatRoleEnum,
+  AiModelSupportedTaskTypeEnum,
+  UploadedFileTypeEnum,
+  type SchemaGenerationResponseBodyMessage,
+} from '@/services/api';
 import { cn } from '@/lib/utils';
 import { appEventBus } from '@/lib/event-bus';
 import LoadingSection from '@/components/custom/loading-section';
@@ -37,16 +42,13 @@ import { Muted, Paragraph } from '@/components/ui/typography';
 const selectedModelAtom = selectAtom(appLayoutAtom, (v) => v.chooseModelSelect);
 const isSidebarOpenAtom = selectAtom(appLayoutAtom, (v) => v.isSidebarOpen);
 
-// ======= Types
-type ChatMessage = components['schemas']['GetModelsOpenAiImagesGenerationsResponseBodyMessage'];
-
 // ======= Utils
 const scrollUntilDown = () => {
   appEventBus.emit('SCROLL_APP_LAYOUT_UNTIL_END', undefined);
 };
 
 const formSchema = z.object({
-  images: z.array(z.instanceof(File)).max(3),
+  images_reference: z.array(z.instanceof(File)).max(3),
   size: z.string(),
   prompt: z.string(),
 });
@@ -63,23 +65,35 @@ const GenerationImagePage: FC = () => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const [chatId, setChatId] = useState<string | undefined>(params?.chatId ?? undefined);
-  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const [chatMessages, setChatMessages] = useState<SchemaGenerationResponseBodyMessage[]>([]);
 
   // ======= Form
   const form = useForm<z.input<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: { images: [], size: '', prompt: '' },
+    defaultValues: { images_reference: [], size: '', prompt: '' },
   });
 
   const promptValue = form.watch('prompt');
 
   const resetForm = useCallback(() => {
     form.reset({
-      images: [],
+      images_reference: [],
       prompt: '',
       size: form.getValues('size'),
     });
   }, [form]);
+
+  const updateFormConfig = useCallback(
+    ({ images_reference, size }: { images_reference?: File[]; size?: string }) => {
+      if (images_reference) {
+        form.setValue('images_reference', images_reference, { shouldDirty: false });
+      }
+      if (size) {
+        form.setValue('size', size, { shouldDirty: false });
+      }
+    },
+    [form],
+  );
 
   // ======= Auto scroll when messages change
   useEffect(() => {
@@ -91,115 +105,122 @@ const GenerationImagePage: FC = () => {
   }, [chatMessages]);
 
   // ======= Queries
-  const AiModesList = reactQueryApi.useQuery('get', '/admin/ai-models/', {
-    params: { query: { page: 0, page_size: 100 } },
+  const AiModelList = reactQueryApi.useQuery('get', '/ai/models/list', {
+    params: {
+      query: { page: 0, page_size: 100, supported_outputs: [AiModelSupportedTaskTypeEnum.IMAGE] },
+    },
   });
+
+  // select active id if we do not have chat id
+  useEffect(() => {
+    setAppLayoutState((pre) => {
+      pre.chooseModelSelect.list = (AiModelList.data?.data ?? []).map((item) => ({
+        name: item.display_name ?? '',
+        id: item.uuid ?? '',
+        description: '',
+      }));
+      const firstModel = AiModelList.data?.data[0];
+
+      // we do not have chat id
+      if (!chatId && firstModel) {
+        pre.chooseModelSelect.currentSelectedId = firstModel.uuid;
+      }
+    });
+  }, [AiModelList.data?.data, chatId, setAppLayoutState]);
 
   const AiModel = reactQueryApi.useQuery(
     'get',
-    '/admin/ai-model/{uuid}',
-    { params: { path: { uuid: selectedModel.currentSelectedId || '' } } },
+    '/ai/models/{uuid}',
+    { params: { path: { uuid: selectedModel.currentSelectedId! } } },
     { enabled: !!selectedModel.currentSelectedId },
   );
 
-  const chatHistory = reactQueryApi.useMutation(
+  useEffect(() => {
+    // do not use default config if we have chat id
+    if (chatId) {
+      return;
+    }
+    const size = AiModel.data?.config_defaults?.size as string | undefined;
+    updateFormConfig({ size });
+  }, [AiModel.data?.config_defaults?.size, chatId, updateFormConfig]);
+
+  const chatHistory = reactQueryApi.useQuery(
     'get',
-    '/models/open-ai/images/generations/{chat_uuid}',
+    '/ai/session-history/{session_uuid}',
     {
-      onSuccess: async (data) => {
-        if (data?.messages) {
-          setChatMessages([...data.messages]);
-        }
-
-        // آخرین تصویر جنریت‌شده را به‌عنوان رفرنس درون فرم قرار بده
-        const reverseChats = Array.from(data?.messages ?? []).reverse();
-        const referenceImage = reverseChats
-          .find((m) => m.role === AiChatRoleEnum.ASSISTANT)
-          ?.files?.find((f) => f.type === UploadedFileTypeEnum.IMAGE_GENERATED)?.url;
-
-        if (referenceImage) {
-          const file = await urlToFile(
-            referenceImage,
-            referenceImage.split('/').pop() ?? 'file.png',
-          );
-          form.setValue('images', [file], { shouldDirty: true, shouldTouch: true });
-        }
+      params: {
+        path: {
+          session_uuid: chatId!,
+        },
       },
+    },
+    {
+      enabled: !!chatId,
     },
   );
 
-  // لود تاریخچه وقتی chatId عوض می‌شود
   useEffect(() => {
-    if (!chatId) {
+    if (!chatHistory.data?.messages?.length) {
       return;
     }
-    chatHistory.mutate({ params: { path: { chat_uuid: chatId } } });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chatId]);
 
-  // وقتی مسیر عوض شود: chatId + پاکسازی UI
+    setChatMessages(
+      chatHistory.data.messages.map((i) => ({
+        created_at: i.created_at,
+        role: i.role,
+        files: i.files,
+        uuid: i.uuid,
+        message: i.message,
+        task_status: i.task_status,
+        updated_at: i.updated_at,
+      })),
+    );
+    const lastAssistantMsg = [...chatHistory.data.messages]
+      .reverse()
+      .find((m) => m.role === AiChatRoleEnum.ASSISTANT);
+
+    // update selected model
+    setAppLayoutState((pre) => {
+      pre.chooseModelSelect.currentSelectedId = lastAssistantMsg?.ai_model_uuid ?? '';
+    });
+
+    const imageUrl = lastAssistantMsg?.files?.find(
+      (f) => f.type === UploadedFileTypeEnum.IMAGE_GENERATED,
+    )?.url as string;
+
+    const size = lastAssistantMsg?.ai_model_config?.size as string;
+
+    if (!imageUrl || typeof imageUrl !== 'string') {
+      updateFormConfig({ images_reference: [], size });
+      return;
+    }
+
+    urlToFile(convertToStorageUrl(imageUrl), 'generated-image.png').then((file) => {
+      updateFormConfig({ images_reference: [file] });
+    });
+  }, [chatHistory?.data?.messages, form, setAppLayoutState, updateFormConfig]);
+
+  // update chatId if needed
   useEffect(() => {
+    if (!params?.chatId) {
+      return;
+    }
+    if (params?.chatId === chatId) {
+      return;
+    }
     setChatId(params?.chatId);
     setChatMessages([]);
     resetForm();
-  }, [params?.chatId, resetForm]);
-
-  // تنظیم لیست مدل‌ها و currentSelectedId (فقط وقتی دیتا آماده شد)
-  useEffect(() => {
-    const aiModelFromChatHistory = chatHistory.data?.ai_model_id;
-    const list = AiModesList.data?.data ?? [];
-    if (!AiModesList.isSuccess || !list.length) {
-      return;
-    }
-
-    setAppLayoutState((draft) => {
-      draft.chooseModelSelect.list = list.map((item) => ({
-        name: item.display_name ?? item.model_name,
-        id: item.uuid,
-      }));
-      if (!draft.chooseModelSelect.currentSelectedId) {
-        draft.chooseModelSelect.currentSelectedId =
-          aiModelFromChatHistory || list[0]?.uuid || undefined;
-      }
-    });
-  }, [AiModesList.isSuccess, AiModesList.data, chatHistory.data?.ai_model_id, setAppLayoutState]);
-
-  // ست سایز پیش‌فرض از تنظیمات مدل
-  useEffect(() => {
-    const defaultSize = AiModel.data?.config_defaults?.size as string | undefined;
-    if (AiModel.isSuccess && defaultSize) {
-      form.setValue('size', defaultSize, { shouldDirty: false });
-    }
-  }, [AiModel.isSuccess, AiModel.data?.config_defaults?.size, form]);
+  }, [chatId, params?.chatId, resetForm]);
 
   // ======= Mutations
-  const imageGenerationMutate = reactQueryApi.useMutation(
-    'post',
-    '/models/open-ai/images/generations',
-    {
-      onSuccess: (data) => {
-        const dataChatId = data.id;
-        setChatMessages((prev) => [...prev, ...(data?.messages ?? [])]);
-        resetForm();
-
-        if (dataChatId && dataChatId !== chatId) {
-          setChatId(dataChatId);
-          window.history.pushState(
-            {},
-            '',
-            APP_ROUTES_KEY.generation.image.history.path.replace(':chatId', dataChatId),
-          );
-        }
-      },
-    },
-  );
-
-  const imageEditMutate = reactQueryApi.useMutation('post', '/models/open-ai/images/edits', {
+  const imageGenerationMutate = reactQueryApi.useMutation('post', '/ai/generate/image/generation', {
     onSuccess: (data) => {
-      const dataChatId = data.id;
+      const dataChatId = data.uuid;
       setChatMessages((prev) => [...prev, ...(data?.messages ?? [])]);
       resetForm();
 
+      // update chat id
       if (dataChatId && dataChatId !== chatId) {
         setChatId(dataChatId);
         window.history.pushState(
@@ -212,8 +233,8 @@ const GenerationImagePage: FC = () => {
   });
 
   // ======= Derived states
-  const generationIsPending = imageGenerationMutate.isPending || imageEditMutate.isPending;
-  const disableForm = AiModel.isLoading || generationIsPending || chatHistory.isPending;
+  const generationIsPending = imageGenerationMutate.isPending;
+  const disableForm = AiModel.isLoading || generationIsPending || chatHistory.isLoading;
 
   const modelHaveRequirements = useMemo(() => promptValue.trim().length > 5, [promptValue]);
   const disabledSubmit = disableForm || !modelHaveRequirements;
@@ -231,37 +252,27 @@ const GenerationImagePage: FC = () => {
 
   // ======= Submit
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    if (values.images.length > 0) {
-      const formData = new FormData();
-      formData.append(
-        'ai_model_config',
-        JSON.stringify({ prompt: values.prompt, size: values.size }),
-      );
-      formData.append('ai_model_id', selectedModel.currentSelectedId ?? '');
-      values.images.forEach((img) => formData.append('images', img));
+    const formData = new FormData();
+    formData.append(
+      'ai_model_config',
+      JSON.stringify({ prompt: values.prompt, size: values.size }),
+    );
+    formData.append('prompt', values.prompt);
+    formData.append('ai_model_uuid', selectedModel.currentSelectedId ?? '');
 
-      imageEditMutate.mutate({
-        body: formData as unknown as any, // (بدون تغییر در سیستم فعلی)
-        params: { query: { chat_id: chatId ?? undefined } },
-      });
-      return;
-    }
+    values.images_reference.forEach((img) => formData.append('images_reference', img));
 
-    // در غیر این صورت => Generate
     imageGenerationMutate.mutate({
-      body: {
-        ai_model_id: selectedModel.currentSelectedId ?? '',
-        ai_model_config: { prompt: values.prompt, size: values.size },
-      },
+      body: formData as unknown as any,
       params: { query: { chat_id: chatId ?? undefined } },
     });
   }
 
   // ======= Error/Loading states
-  if (AiModesList.isError) {
+  if (AiModelList.isError) {
     return (
       <div className="mx-auto flex justify-center py-4 items-center w-full h-dvh">
-        <ErrorSection onRetry={() => AiModesList.refetch()} />
+        <ErrorSection onRetry={() => AiModelList.refetch()} />
       </div>
     );
   }
@@ -277,14 +288,12 @@ const GenerationImagePage: FC = () => {
   if (chatHistory.isError) {
     return (
       <div className="mx-auto flex justify-center py-4 items-center w-full h-dvh">
-        <ErrorSection
-          onRetry={() => chatHistory.mutate({ params: { path: { chat_uuid: chatId ?? '' } } })}
-        />
+        <ErrorSection onRetry={() => chatHistory.refetch()} />
       </div>
     );
   }
 
-  if (chatHistory.isPending) {
+  if (chatHistory.isLoading) {
     return (
       <div className="w-full flex-1 mx-auto flex justify-center py-4 items-center">
         <LoadingSection />
@@ -292,12 +301,13 @@ const GenerationImagePage: FC = () => {
     );
   }
 
-  // ======= Render
   const sizeEnum: string[] = (AiModel.data?.config_schema as any)?.properties?.size?.enum ?? [];
 
   const isPromptRequired = (AiModel.data?.config_schema as any)?.required?.includes?.('prompt');
 
-  const isImageRequired = (AiModel.data?.config_schema as any)?.required?.includes?.('image');
+  const isImageRequired = (AiModel.data?.config_schema as any)?.required?.includes?.(
+    'images_reference',
+  );
 
   return (
     <div className="w-full min-h-full relative pb-64 p-4">
@@ -310,7 +320,7 @@ const GenerationImagePage: FC = () => {
                 '',
             })}
           </Paragraph>
-          <ul className="!m-0 !p-0 flex flex-col gap-2">
+          <ul className="m-0! p-0! flex flex-col gap-2">
             {isPromptRequired ? (
               <li>
                 <Muted>{t('pages.generation.image.requirementsSection.required.prompt')}</Muted>
@@ -328,7 +338,7 @@ const GenerationImagePage: FC = () => {
       <div className="flex flex-col gap-8">
         {chatMessages.map((item) => (
           <div
-            key={item.id}
+            key={item.uuid}
             className={cn('w-full max-w-[500px]', {
               'ml-auto': item.role === AiChatRoleEnum.USER,
               'mr-auto': item.role !== AiChatRoleEnum.USER,
@@ -343,7 +353,7 @@ const GenerationImagePage: FC = () => {
                     ? f.type === UploadedFileTypeEnum.IMAGE_REFERENCE
                     : f.type === UploadedFileTypeEnum.IMAGE_GENERATED,
                 )
-                .map((f) => f.url)}
+                .map((f) => convertToStorageUrl(f.url))}
               message={item.message ?? undefined}
             />
           </div>
@@ -418,7 +428,7 @@ const GenerationImagePage: FC = () => {
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select size" />
+                          <SelectValue placeholder={t('common.selectSize')} />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -435,7 +445,7 @@ const GenerationImagePage: FC = () => {
 
               <FormField
                 control={form.control}
-                name="images"
+                name="images_reference"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>

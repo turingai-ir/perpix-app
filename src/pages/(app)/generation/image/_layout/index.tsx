@@ -1,4 +1,4 @@
-import { useEffect, useState, type FC } from 'react';
+import { useEffect, type FC } from 'react';
 import { Outlet } from 'react-router';
 import { useImmerAtom } from 'jotai-immer';
 import { useAtom } from 'jotai';
@@ -9,34 +9,45 @@ import { appEventBus } from '@/lib/event-bus';
 import appLayoutAtom from '@/pages/(app)/_layout/_state';
 import { APP_ROUTES_KEY } from '@/router';
 
-const DEFAULT_PAGE_SIZE = 10;
+const DEFAULT_PAGE_SIZE = 50;
 const sidebarHistoryChatsAllItemsFetchedAtom = selectAtom(
   appLayoutAtom,
   (val) => val.sidebarHistoryChats.AllItemsFetched,
 );
 
 const GenerationImageLayout: FC = () => {
-  const [pageNumber, setPageNumber] = useState(0);
   const reactQueryApi = useReactQueryApi();
   const [allItemsFetched] = useAtom(sidebarHistoryChatsAllItemsFetchedAtom);
-
   const [, setAppLayoutState] = useImmerAtom(appLayoutAtom);
 
-  const getAllImages = reactQueryApi.useQuery(
+  const sessionHistoryQuery = reactQueryApi.useInfiniteQuery(
     'get',
-    '/models/open-ai/images/generations/list',
+    '/ai/session-history',
     {
       params: {
         query: {
-          page_size: DEFAULT_PAGE_SIZE,
-          page: pageNumber,
+          limit: DEFAULT_PAGE_SIZE,
         },
       },
     },
     {
       enabled: !allItemsFetched,
+      initialPageParam: 0,
+      pageParamName: 'offset',
+      getNextPageParam: (lastPage, pages) =>
+        lastPage.hasNextPage ? pages.length * DEFAULT_PAGE_SIZE : undefined,
     },
   );
+  const {
+    data: sessionHistoryData,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isError: sessionHistoryIsError,
+    isLoading: sessionHistoryIsLoading,
+    refetch: refetchSessionHistory,
+  } = sessionHistoryQuery;
+  const hasSessionHistory = !!sessionHistoryData?.pages?.length;
 
   // init
   useEffect(() => {
@@ -44,48 +55,66 @@ const GenerationImageLayout: FC = () => {
       draft.sidebarHistoryChats.isLoading = false;
       draft.sidebarHistoryChats.isError = false;
       draft.sidebarHistoryChats.list = [];
+      draft.sidebarHistoryChats.AllItemsFetched = false;
     });
   }, [setAppLayoutState]);
 
   //   update data
   useEffect(() => {
-    const totalDataFetchLength =
-      ((getAllImages.data?.page ?? 0) + 1) * (getAllImages.data?.page_size ?? DEFAULT_PAGE_SIZE);
+    const pages = sessionHistoryData?.pages ?? [];
+    const sessions = pages.flatMap((page) => page.sessions);
+    const lastPage = pages[pages.length - 1];
+    const newList = sessions.map((item) => ({
+      id: item.uuid,
+      link: APP_ROUTES_KEY.generation.image.history.path.replace(':chatId', item.uuid),
+      title: item.user_prompt ?? '',
+    }));
 
-    if (getAllImages.data) {
-      const newList: { title: string; id: string; link: string }[] = [];
-      getAllImages.data.chats.forEach((item) => {
-        newList.push({
-          id: item.chat_id,
-          link: APP_ROUTES_KEY.generation.image.history.path.replace(':chatId', item.chat_id),
-          title: item.prompt,
-        });
-      });
-      setAppLayoutState((draft) => {
-        draft.sidebarHistoryChats.list = [...draft.sidebarHistoryChats.list, ...newList];
-        draft.sidebarHistoryChats.AllItemsFetched =
-          totalDataFetchLength >= getAllImages.data.total_count;
-      });
-    }
-  }, [getAllImages.data, setAppLayoutState]);
+    setAppLayoutState((draft) => {
+      const prevList = draft.sidebarHistoryChats.list;
+      const newLastId = newList[newList.length - 1]?.id;
+      const prevLastId = prevList[prevList.length - 1]?.id;
+
+      if (prevList.length !== newList.length || newLastId !== prevLastId) {
+        draft.sidebarHistoryChats.list = newList;
+      }
+      draft.sidebarHistoryChats.AllItemsFetched = lastPage ? !lastPage.hasNextPage : false;
+    });
+  }, [sessionHistoryData, setAppLayoutState]);
 
   // update state
   useEffect(() => {
     setAppLayoutState((draft) => {
-      draft.sidebarHistoryChats.isLoading = getAllImages.isLoading;
-      draft.sidebarHistoryChats.isError = getAllImages.isError;
+      draft.sidebarHistoryChats.isLoading = sessionHistoryIsLoading || isFetchingNextPage;
+      draft.sidebarHistoryChats.isError = sessionHistoryIsError;
     });
-  }, [getAllImages.isError, getAllImages.isLoading, setAppLayoutState]);
+  }, [isFetchingNextPage, sessionHistoryIsError, sessionHistoryIsLoading, setAppLayoutState]);
 
   //   update when new page
   useEffect(() => {
     const appEventBusListener = appEventBus.on('SIDEBAR_REQUEST_FOR_DATA', () => {
-      setPageNumber((pre) => pre + 1);
+      if (hasSessionHistory) {
+        if (hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+        return;
+      }
+
+      if (!sessionHistoryIsLoading) {
+        refetchSessionHistory();
+      }
     });
     return () => {
       appEventBusListener();
     };
-  }, [setPageNumber]);
+  }, [
+    fetchNextPage,
+    hasSessionHistory,
+    hasNextPage,
+    isFetchingNextPage,
+    refetchSessionHistory,
+    sessionHistoryIsLoading,
+  ]);
 
   return <Outlet />;
 };

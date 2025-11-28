@@ -199,13 +199,15 @@ const AppLayout: FC = () => {
                       variant="outline"
                       role="combobox"
                       aria-expanded={openChooseModel}
-                      className="w-[200px] justify-between"
+                      className="justify-between"
                     >
                       {appLayoutState.chooseModelSelect.currentSelectedId
-                        ? appLayoutState.chooseModelSelect.list.find(
-                            (framework) =>
-                              framework.id === appLayoutState.chooseModelSelect.currentSelectedId,
-                          )?.name
+                        ? `${appLayoutState.chooseModelSelect.list
+                            .find(
+                              (framework) =>
+                                framework.id === appLayoutState.chooseModelSelect.currentSelectedId,
+                            )
+                            ?.name.slice(0, 20)}...`
                         : ''}
                       <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>

@@ -35,7 +35,8 @@
       "min": "{{name}} حداقل باید {{min}} باشد",
       "max": "{{name}} حداکثر می می تواند {{max}} باشد"
     },
-    "yesterday": "دیروز"
+    "yesterday": "دیروز",
+    "selectSize": "انتخاب سایز"
   },
   "components": {
     "custom": {

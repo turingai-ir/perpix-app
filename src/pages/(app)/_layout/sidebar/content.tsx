@@ -70,7 +70,8 @@ const AppLayoutSidebarContent: FC = () => {
   ]);
 
   const scrollRef = useInfiniteScroll<HTMLDivElement>({
-    offset: 100,
+    offset: 500,
+    disabled: sidebarHistoryChats.AllItemsFetched || sidebarHistoryChats.isError,
     loading: sidebarHistoryChats.isLoading,
     onTrigger: triggerMoreData,
   });
