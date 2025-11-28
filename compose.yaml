@@ -1,5 +1,5 @@
 services:
-  turing-app:
+  perpixai-app:
     build:
       context: .
       dockerfile: Dockerfile
