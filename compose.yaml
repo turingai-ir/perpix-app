@@ -2,8 +2,6 @@ services:
   perpixai-app:
     build:
       context: .
-      dockerfile: Dockerfile
-
       args:
         VITE_API_BASE_URL: ${VITE_API_BASE_URL}
         VITE_S3_ENDPOINT: ${VITE_S3_ENDPOINT}
