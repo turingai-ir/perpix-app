@@ -9,7 +9,7 @@ services:
     image: perpixai-app:latest
     pull_policy: build
     ports:
-      - "4000:4000"
+      - "4173:4173"
     environment:
       NODE_ENV: production
     restart: unless-stopped
