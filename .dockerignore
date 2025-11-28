@@ -1,0 +1,10 @@
+.git
+.gitignore
+.vscode
+node_modules
+dist
+pnpm-store
+npm-debug.log
+yarn-error.log
+*.log
+.env
