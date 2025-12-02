@@ -16,6 +16,7 @@ import { APP_ROUTES_KEY } from '@/router';
 const RootLayout: FC = () => {
   const { t } = useAppTranslate();
   const navigate = useNavigate();
+  const cookie = cookies();
 
   useEffect(() => {
     const errorhandler = async (error: unknown) => {
@@ -29,7 +30,6 @@ const RootLayout: FC = () => {
 
       // 401 error
       if (error instanceof FetchHttpError && error.response.status === HttpStatus.UNAUTHORIZED) {
-        const cookie = cookies();
         cookie.remove(APP_KEYS.COOKIES.ACCESS_TOKEN);
         navigate(APP_ROUTES_KEY.auth.login.path);
       }
