@@ -4,7 +4,6 @@ export const cookies = () => {
   const c = new Cookies(null, {
     path: '/',
     secure: import.meta.env.MODE === 'production',
-    httpOnly: import.meta.env.MODE === 'production',
     sameSite: 'lax',
   });
   const get = (name: string) => {

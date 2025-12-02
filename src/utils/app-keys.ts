@@ -15,7 +15,7 @@ export const APP_KEYS = {
     GLOBAL_JOTAI_ATOM: 'global-state',
   },
   COOKIES: {
-    ACCESS_TOKEN: 'chitoz',
+    ACCESS_TOKEN: 'access_token',
   },
   URL_HASH: {
     pricing: '#pricing',

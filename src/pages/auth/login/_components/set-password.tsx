@@ -170,7 +170,7 @@ const AuthLoginPageSetPassword: FC = () => {
                 <FormItem>
                   <FormLabel>{t('pages.auth.login.setPasswordForm.otp.label')}</FormLabel>
                   <FormControl>
-                    <InputOTP type="number" maxLength={6} {...field}>
+                    <InputOTP inputMode="numeric" pattern="[0-9]*" maxLength={6} {...field}>
                       <InputOTPGroup dir="ltr">
                         <InputOTPSlot index={0} />
                         <InputOTPSlot index={1} />
