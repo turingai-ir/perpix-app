@@ -41,7 +41,7 @@ const MultiImageUploadInput = React.forwardRef<HTMLInputElement, MultiImageUploa
       }
 
       const validFiles = Array.from(files).filter(
-        (f) => ['image/png', 'image/jpeg'].includes(f.type) && f.size <= maxSize,
+        (f) => ['image/png', 'image/jpeg', 'image/jpg'].includes(f.type) && f.size <= maxSize,
       );
 
       const updated = [...(value || []), ...validFiles].slice(0, maxFiles);
@@ -96,7 +96,7 @@ const MultiImageUploadInput = React.forwardRef<HTMLInputElement, MultiImageUploa
               {...props}
               className="hidden"
             />
-            <span className="text-sm text-muted-foreground text-center">{label}</span>
+            <span className="text-sm text-center">{label}</span>
           </label>
         )}
       </div>

@@ -16,7 +16,7 @@ const sidebarHistoryChatsAllItemsFetchedAtom = selectAtom(
   (val) => val.sidebarHistoryChats.AllItemsFetched,
 );
 
-const GenerationImageLayout: FC = () => {
+const GenerationVideoLayout: FC = () => {
   const reactQueryApi = useReactQueryApi();
   const [allItemsFetched] = useAtom(sidebarHistoryChatsAllItemsFetchedAtom);
   const [, setAppLayoutState] = useImmerAtom(appLayoutAtom);
@@ -28,7 +28,7 @@ const GenerationImageLayout: FC = () => {
       params: {
         query: {
           limit: DEFAULT_PAGE_SIZE,
-          task_type: AiModelSupportedTaskTypeEnum.IMAGE,
+          task_type: AiModelSupportedTaskTypeEnum.VIDEO,
         },
       },
     },
@@ -68,7 +68,7 @@ const GenerationImageLayout: FC = () => {
     const lastPage = pages[pages.length - 1];
     const newList = sessions.map((item) => ({
       id: item.uuid,
-      link: APP_ROUTES_KEY.generation.image.history.path.replace(':chatId', item.uuid),
+      link: APP_ROUTES_KEY.generation.video.history.path.replace(':chatId', item.uuid),
       title: item.user_prompt ?? '',
     }));
 
@@ -121,4 +121,4 @@ const GenerationImageLayout: FC = () => {
   return <Outlet />;
 };
 
-export default GenerationImageLayout;
+export default GenerationVideoLayout;

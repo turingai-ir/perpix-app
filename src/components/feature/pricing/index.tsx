@@ -1,5 +1,4 @@
 import { CircleCheck, LoaderCircle } from 'lucide-react';
-import { useMemo } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -7,11 +6,7 @@ import { useAppTranslate } from '@/hook';
 import { useReactQueryApi } from '@/hook/app';
 import LoadingSection from '@/components/custom/loading-section';
 import ErrorSection from '@/components/custom/error-section';
-import {
-  PaymentGateWayProviderEnum,
-  SubscriptionPlansEnum,
-  type SchemaSubscriptionPlanResponse,
-} from '@/services/api';
+import { PaymentGateWayProviderEnum } from '@/services/api';
 import { formatLocalizedNumber, rialToToman } from '@/utils';
 import {
   Sheet,
@@ -22,6 +17,7 @@ import {
 } from '@/components/ui/sheet';
 import { APP_I18_KEYS } from '@/services/i18';
 import { cn } from '@/lib/utils';
+import { Muted } from '@/components/ui/typography';
 
 interface Props {
   open: boolean;
@@ -32,58 +28,13 @@ function PricingFeature({ open, onOpenChange }: Props) {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
 
   const plansQuery = reactQueryApi.useQuery('get', '/user/subscription/plans');
+  const userInfoQuery = reactQueryApi.useQuery('get', '/user/get-info');
 
   const purchasePlanQuery = reactQueryApi.useMutation('post', '/user/subscription/purchase');
 
-  const plans = useMemo(() => {
-    const planConfigs = {
-      [SubscriptionPlansEnum.ECONOMIC]: {
-        getName: (plan: SchemaSubscriptionPlanResponse) =>
-          t('features.pricing.plans.economic.title') ?? plan.name,
-        description: 'features.pricing.plans.economic.description',
-        features: 'features.pricing.plans.economic.features',
-        isRecommended: false,
-        isPopular: false,
-      },
-      [SubscriptionPlansEnum.BASIC]: {
-        getName: (plan: SchemaSubscriptionPlanResponse) =>
-          t('features.pricing.plans.basic.title') ?? plan.name,
-        description: 'features.pricing.plans.basic.description',
-        features: 'features.pricing.plans.basic.features',
-        isRecommended: true,
-        isPopular: true,
-      },
-      [SubscriptionPlansEnum.PRO]: {
-        getName: (plan: SchemaSubscriptionPlanResponse) =>
-          plan.display_name ?? t('features.pricing.plans.pro.title'),
-        description: 'features.pricing.plans.pro.description',
-        features: 'features.pricing.plans.pro.features',
-        isRecommended: false,
-        isPopular: false,
-      },
-    };
-
-    return Array.from(plansQuery.data?.items ?? [])
-      .reverse()
-      .map((plan) => {
-        const config = planConfigs[plan.name as SubscriptionPlansEnum];
-        if (!config) {
-          return null;
-        }
-
-        return {
-          name: config.getName(plan),
-          price: formatLocalizedNumber({ value: rialToToman(plan.price_irr ?? 0) }),
-          description: t(config.description),
-          features: t(config.features, { returnObjects: true }) as string[],
-          buttonText: t('features.pricing.purchase'),
-          isRecommended: config.isRecommended ?? false,
-          isPopular: config.isPopular ?? false,
-          planId: plan.uuid,
-        };
-      })
-      .filter(Boolean);
-  }, [plansQuery.data?.items, t]);
+  const plans = plansQuery.data?.items.filter(
+    (i) => i.uuid !== userInfoQuery.data?.active_subscription?.plan.uuid,
+  );
 
   const handlePurchasePlan = async (planId: string) => {
     return await purchasePlanQuery.mutateAsync({
@@ -113,21 +64,21 @@ function PricingFeature({ open, onOpenChange }: Props) {
               {plans?.map((plan) => (
                 <div
                   key={plan?.name}
-                  className={cn('border rounded-lg p-6 flex flex-col w-72', {
-                    'border-foreground': plan?.isRecommended,
+                  className={cn('border rounded-lg p-6 flex flex-col w-80', {
+                    'border-foreground': plan?.is_recommended,
                   })}
                 >
-                  <h3 className="text-lg font-medium">{plan?.name}</h3>
-                  <p className="mt-2 text-4xl font-bold">{`${plan?.price} ${t('common.tomans')}`}</p>
+                  <h3 className="text-lg font-medium">{plan?.display_name}</h3>
+                  <p className="mt-2 text-4xl font-bold">{`${formatLocalizedNumber({ value: rialToToman(plan?.price_irr ?? 0) })} ${t('common.tomans')}`}</p>
                   <p className="mt-4 font-medium text-muted-foreground">{plan?.description}</p>
 
                   <Separator className="my-4" />
 
                   <ul className="space-y-2">
-                    {(plan?.features ?? []).map((feature) => (
-                      <li key={feature} className="flex items-start gap-2">
+                    {((plan.meta?.features as string[]) ?? []).map((feature) => (
+                      <li key={feature} className="flex items-start gap-2 text-sm">
                         <CircleCheck className="h-4 w-4 mt-1 text-green-500" />
-                        {feature}
+                        <Muted> {feature}</Muted>
                       </li>
                     ))}
                   </ul>
@@ -135,22 +86,22 @@ function PricingFeature({ open, onOpenChange }: Props) {
                   <div className="mt-auto pt-7">
                     <Button
                       type="button"
-                      variant={plan?.isPopular ? 'default' : 'outline'}
+                      variant={plan?.is_popular ? 'default' : 'outline'}
                       size="lg"
                       className="w-full"
                       disabled={purchasePlanQuery.isPending}
                       onClick={async () => {
-                        const res = await handlePurchasePlan(plan?.planId ?? '');
+                        const res = await handlePurchasePlan(plan?.uuid ?? '');
                         if (res.gateway_url) {
                           window.location.href = res.gateway_url;
                         }
                       }}
                     >
                       {purchasePlanQuery.isPending &&
-                      purchasePlanQuery.variables?.body.plan_uuid === plan?.planId ? (
+                      purchasePlanQuery.variables?.body.plan_uuid === plan?.uuid ? (
                         <LoaderCircle className="animate-spin" />
                       ) : (
-                        plan?.buttonText
+                        t('features.pricing.purchase')
                       )}
                     </Button>
                   </div>

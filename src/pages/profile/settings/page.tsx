@@ -30,16 +30,7 @@ const ProfileSettingsPage: FC = () => {
 
   const reactQueryApi = useReactQueryApi();
 
-  const userInfoQuery = reactQueryApi.useQuery(
-    'get',
-    '/user/get-info',
-    {},
-    {
-      meta: {
-        persist: true,
-      },
-    },
-  );
+  const userInfoQuery = reactQueryApi.useQuery('get', '/user/get-info');
 
   const editUserInfoQuery = reactQueryApi.useMutation('patch', '/user/edit-info', {
     onSuccess: () => {

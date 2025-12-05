@@ -5,9 +5,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router';
 import { LoaderCircle } from 'lucide-react';
 import { toast } from 'sonner';
-import { useImmerAtom } from 'jotai-immer';
-
-import authLoginPageState from '../_state';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAppTranslate, useSecondsCountDown } from '@/hook';
@@ -33,7 +30,6 @@ const AuthLoginPageSetPassword: FC = () => {
   const navigate = useNavigate();
   const cookie = cookies();
   const countDown = useSecondsCountDown(150);
-  const [pageState] = useImmerAtom(authLoginPageState);
 
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const reactQueryApi = useReactQueryApi();
@@ -85,9 +81,8 @@ const AuthLoginPageSetPassword: FC = () => {
     },
   });
 
-  const resetPasswordQuery = reactQueryApi.useMutation('post', '/user/reset-password', {
-    onSuccess(data) {
-      cookie.set(APP_KEYS.COOKIES.ACCESS_TOKEN, data.token);
+  const resendOtp = reactQueryApi.useMutation('post', '/user/resend-otp', {
+    onSuccess() {
       toast.info(t('pages.auth.login.successSendOtp'));
       countDown.setSeconds(150);
     },
@@ -194,9 +189,7 @@ const AuthLoginPageSetPassword: FC = () => {
                 <Button
                   type="button"
                   onClick={async () => {
-                    await resetPasswordQuery.mutateAsync({
-                      body: { phone_number: pageState.mobile },
-                    });
+                    await resendOtp.mutateAsync({});
                   }}
                   variant="link"
                 >

@@ -86,7 +86,7 @@ const AppLayoutSidebarContent: FC = () => {
     {
       key: 'video-generation',
       label: t('pages.app.layout.sidebar.menu.videoGeneration.label'),
-      href: '/app/billing/transactions',
+      href: APP_ROUTES_KEY.generation.video.path,
       Icon: TbCameraAi,
     },
   ];

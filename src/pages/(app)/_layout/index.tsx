@@ -45,15 +45,6 @@ const AppLayout: FC = () => {
   const [pricingOpen, setPricingOpen] = useState(false);
 
   const onOpenChange = (open: boolean) => {
-    if (userInfoQuery.isSuccess && !userInfoQuery.data?.active_subscription) {
-      setPricingOpen(true);
-      navigate(APP_KEYS.URL_HASH.pricing);
-
-      return;
-    }
-
-    setPricingOpen(open);
-
     if (open) {
       navigate(APP_KEYS.URL_HASH.pricing);
     } else {
@@ -75,10 +66,6 @@ const AppLayout: FC = () => {
       setAppLayoutState((draft) => {
         draft.walletCurrentBalance = userInfoQuery.data.default_wallet?.balance_usdmicro ?? 0;
       });
-    }
-    // check having subscription
-    if (userInfoQuery.isSuccess && !userInfoQuery.data?.active_subscription) {
-      navigate(APP_KEYS.URL_HASH.pricing);
     }
   }, [userInfoQuery.isSuccess, userInfoQuery.data, setAppLayoutState, navigate]);
 

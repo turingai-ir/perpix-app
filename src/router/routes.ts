@@ -23,6 +23,12 @@ export const APP_ROUTES_KEY = {
         path: '/generation/image/:chatId',
       },
     },
+    video: {
+      path: '/generation/video',
+      history: {
+        path: '/generation/video/:chatId',
+      },
+    },
   },
   payment: {
     result: {

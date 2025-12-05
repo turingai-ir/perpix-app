@@ -1,5 +1,12 @@
 {
   "common": {
+    "taskStatus": {
+      "pending": "در حال انجام",
+      "inProgress": "در حال انجام",
+      "completed": "انجام شده",
+      "failed": "نا موفق",
+      "canceled": "لغو شده"
+    },
     "tomans": "تومان",
     "token": "توکن",
     "and": "و",
@@ -151,6 +158,7 @@
         },
         "promptBox": {
           "generate": "تولید",
+          "edit": "ویرایش",
           "promptTextArea": {
             "placeholder": "شروع به تایپ کنید"
           },
@@ -160,7 +168,36 @@
         },
         "requirementsSection": {
           "required": {
-            "image": "یک عکس به عنوان منبع وارد کنید",
+            "image": "حداقل یک عکس به عنوان منبع وارد کنید",
+            "prompt": "حداقل ۵ کاراکتر برای دستور وارد کنید"
+          },
+          "title": "ورودی های لازم برای کار با {{modelName}}"
+        }
+      },
+      "video": {
+        "generationError": {
+          "action": "تلاش مجدد",
+          "content": "متاسفانه خطایی رخ داده است دوباره تلاش کنید"
+        },
+        "generationLoading": {
+          "content": "در حال تولید ویدیو ..."
+        },
+        "promptBox": {
+          "generate": "تولید",
+          "promptTextArea": {
+            "placeholder": "شروع به تایپ کنید"
+          },
+          "includeAudio": {
+            "label": "شامل صدا"
+          },
+          "referenceImages": {
+            "first": "عکس اول",
+            "last": "عکس آخر"
+          }
+        },
+        "requirementsSection": {
+          "required": {
+            "image": "حداقل یک عکس به عنوان منبع وارد کنید",
             "prompt": "حداقل ۵ کاراکتر برای دستور وارد کنید"
           },
           "title": "ورودی های لازم برای کار با {{modelName}}"

@@ -50,6 +50,23 @@ export interface paths {
     readonly patch?: never;
     readonly trace?: never;
   };
+  readonly '/user/resend-otp': {
+    readonly parameters: {
+      readonly query?: never;
+      readonly header?: never;
+      readonly path?: never;
+      readonly cookie?: never;
+    };
+    readonly get?: never;
+    readonly put?: never;
+    /** Resend Otp */
+    readonly post: operations['resend_otp_user_resend_otp_post'];
+    readonly delete?: never;
+    readonly options?: never;
+    readonly head?: never;
+    readonly patch?: never;
+    readonly trace?: never;
+  };
   readonly '/user/set-password': {
     readonly parameters: {
       readonly query?: never;
@@ -364,6 +381,23 @@ export interface paths {
     readonly patch?: never;
     readonly trace?: never;
   };
+  readonly '/admin/subscription/activate': {
+    readonly parameters: {
+      readonly query?: never;
+      readonly header?: never;
+      readonly path?: never;
+      readonly cookie?: never;
+    };
+    readonly get?: never;
+    readonly put?: never;
+    /** Activate User Subscription */
+    readonly post: operations['activate_user_subscription_admin_subscription_activate_post'];
+    readonly delete?: never;
+    readonly options?: never;
+    readonly head?: never;
+    readonly patch?: never;
+    readonly trace?: never;
+  };
   readonly '/ai/session-history': {
     readonly parameters: {
       readonly query?: never;
@@ -531,6 +565,13 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
+    /** ActivateUserSubscriptionRequest */
+    readonly ActivateUserSubscriptionRequest: {
+      /** User Uuid */
+      readonly user_uuid: string;
+      /** Plan Uuid */
+      readonly plan_uuid: string;
+    };
     /**
      * AiChatRoleEnum
      * @enum {string}
@@ -894,6 +935,16 @@ export interface components {
        * @default true
        */
       readonly is_active: boolean;
+      /**
+       * Is Popular
+       * @default false
+       */
+      readonly is_popular: boolean;
+      /**
+       * Is Recommended
+       * @default false
+       */
+      readonly is_recommended: boolean;
     };
     /**
      * CurrencyUnitEnum
@@ -1032,6 +1083,10 @@ export interface components {
       } | null;
       /** Is Active */
       readonly is_active: boolean;
+      /** Is Popular */
+      readonly is_popular: boolean;
+      /** Is Recommended */
+      readonly is_recommended: boolean;
       /**
        * Created At
        * Format: date-time
@@ -1086,6 +1141,10 @@ export interface components {
       } | null;
       /** Is Active */
       readonly is_active?: boolean | null;
+      /** Is Popular */
+      readonly is_popular?: boolean | null;
+      /** Is Recommended */
+      readonly is_recommended?: boolean | null;
     };
     /** UploadedFileItem */
     readonly UploadedFileItem: {
@@ -1183,6 +1242,13 @@ export interface components {
       /** Scopes */
       readonly scopes: readonly string[] | null;
       readonly default_wallet: components['schemas']['UserGetInfoResponseDefaultWallet'] | null;
+    };
+    /** UserResendOtpResponse */
+    readonly UserResendOtpResponse: {
+      /** Is Verified */
+      readonly is_verified: boolean;
+      /** Next Otp At */
+      readonly next_otp_at: string | null;
     };
     /** UserResetPasswordBody */
     readonly UserResetPasswordBody: {
@@ -1289,6 +1355,8 @@ export interface components {
   headers: never;
   pathItems: never;
 }
+export type SchemaActivateUserSubscriptionRequest =
+  components['schemas']['ActivateUserSubscriptionRequest'];
 export type SchemaAiChatSessionDetail = components['schemas']['AiChatSessionDetail'];
 export type SchemaAiChatSessionHistoryResponse =
   components['schemas']['AiChatSessionHistoryResponse'];
@@ -1339,6 +1407,7 @@ export type SchemaUserLoginBody = components['schemas']['UserLoginBody'];
 export type SchemaUserLoginResponse = components['schemas']['UserLoginResponse'];
 export type SchemaUserPatchEditInfoRequest = components['schemas']['UserPatchEditInfoRequest'];
 export type SchemaUserPatchEditInfoResponse = components['schemas']['UserPatchEditInfoResponse'];
+export type SchemaUserResendOtpResponse = components['schemas']['UserResendOtpResponse'];
 export type SchemaUserResetPasswordBody = components['schemas']['UserResetPasswordBody'];
 export type SchemaUserResetPasswordResponse = components['schemas']['UserResetPasswordResponse'];
 export type SchemaUserSetPasswordBody = components['schemas']['UserSetPasswordBody'];
@@ -1445,6 +1514,26 @@ export interface operations {
         };
         content: {
           readonly 'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  readonly resend_otp_user_resend_otp_post: {
+    readonly parameters: {
+      readonly query?: never;
+      readonly header?: never;
+      readonly path?: never;
+      readonly cookie?: never;
+    };
+    readonly requestBody?: never;
+    readonly responses: {
+      /** @description Successful Response */
+      readonly 200: {
+        headers: {
+          readonly [name: string]: unknown;
+        };
+        content: {
+          readonly 'application/json': components['schemas']['UserResendOtpResponse'];
         };
       };
     };
@@ -2001,6 +2090,39 @@ export interface operations {
       };
     };
   };
+  readonly activate_user_subscription_admin_subscription_activate_post: {
+    readonly parameters: {
+      readonly query?: never;
+      readonly header?: never;
+      readonly path?: never;
+      readonly cookie?: never;
+    };
+    readonly requestBody: {
+      readonly content: {
+        readonly 'application/json': components['schemas']['ActivateUserSubscriptionRequest'];
+      };
+    };
+    readonly responses: {
+      /** @description Successful Response */
+      readonly 200: {
+        headers: {
+          readonly [name: string]: unknown;
+        };
+        content: {
+          readonly 'application/json': components['schemas']['UserSubscriptionResponse'];
+        };
+      };
+      /** @description Validation Error */
+      readonly 422: {
+        headers: {
+          readonly [name: string]: unknown;
+        };
+        content: {
+          readonly 'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
   readonly get_session_history_ai_session_history_get: {
     readonly parameters: {
       readonly query?: {
@@ -2379,6 +2501,7 @@ export enum ApiPaths {
   start_user_start_post = '/user/start',
   login_user_login_post = '/user/login',
   reset_password_user_reset_password_post = '/user/reset-password',
+  resend_otp_user_resend_otp_post = '/user/resend-otp',
   set_password_user_set_password_post = '/user/set-password',
   get_info_user_get_info_get = '/user/get-info',
   edit_user_info_user_edit_info_patch = '/user/edit-info',
@@ -2397,6 +2520,7 @@ export enum ApiPaths {
   create_subscription_plan_admin_subscription_plan_post = '/admin/subscription-plan',
   update_subscription_plan_admin_subscription_plan__plan_uuid__patch = '/admin/subscription-plan/{plan_uuid}',
   list_subscription_plans_admin_subscription_plans_get = '/admin/subscription-plans',
+  activate_user_subscription_admin_subscription_activate_post = '/admin/subscription/activate',
   get_session_history_ai_session_history_get = '/ai/session-history',
   get_session_detail_ai_session_history__session_uuid__get = '/ai/session-history/{session_uuid}',
   list_ai_models_ai_models_list_get = '/ai/models/list',
