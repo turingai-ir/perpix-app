@@ -561,6 +561,91 @@ export interface paths {
     readonly patch?: never;
     readonly trace?: never;
   };
+  readonly '/file-manager/upload': {
+    readonly parameters: {
+      readonly query?: never;
+      readonly header?: never;
+      readonly path?: never;
+      readonly cookie?: never;
+    };
+    readonly get?: never;
+    readonly put?: never;
+    /** Upload */
+    readonly post: operations['upload_file_manager_upload_post'];
+    readonly delete?: never;
+    readonly options?: never;
+    readonly head?: never;
+    readonly patch?: never;
+    readonly trace?: never;
+  };
+  readonly '/file-manager/files': {
+    readonly parameters: {
+      readonly query?: never;
+      readonly header?: never;
+      readonly path?: never;
+      readonly cookie?: never;
+    };
+    /** List User Files */
+    readonly get: operations['list_user_files_file_manager_files_get'];
+    readonly put?: never;
+    readonly post?: never;
+    readonly delete?: never;
+    readonly options?: never;
+    readonly head?: never;
+    readonly patch?: never;
+    readonly trace?: never;
+  };
+  readonly '/file-manager/multipart/initiate': {
+    readonly parameters: {
+      readonly query?: never;
+      readonly header?: never;
+      readonly path?: never;
+      readonly cookie?: never;
+    };
+    readonly get?: never;
+    readonly put?: never;
+    /** Initiate Multipart Upload */
+    readonly post: operations['initiate_multipart_upload_file_manager_multipart_initiate_post'];
+    readonly delete?: never;
+    readonly options?: never;
+    readonly head?: never;
+    readonly patch?: never;
+    readonly trace?: never;
+  };
+  readonly '/file-manager/multipart/presign-part': {
+    readonly parameters: {
+      readonly query?: never;
+      readonly header?: never;
+      readonly path?: never;
+      readonly cookie?: never;
+    };
+    readonly get?: never;
+    readonly put?: never;
+    /** Presign Multipart Part */
+    readonly post: operations['presign_multipart_part_file_manager_multipart_presign_part_post'];
+    readonly delete?: never;
+    readonly options?: never;
+    readonly head?: never;
+    readonly patch?: never;
+    readonly trace?: never;
+  };
+  readonly '/file-manager/multipart/complete': {
+    readonly parameters: {
+      readonly query?: never;
+      readonly header?: never;
+      readonly path?: never;
+      readonly cookie?: never;
+    };
+    readonly get?: never;
+    readonly put?: never;
+    /** Complete Multipart Upload */
+    readonly post: operations['complete_multipart_upload_file_manager_multipart_complete_post'];
+    readonly delete?: never;
+    readonly options?: never;
+    readonly head?: never;
+    readonly patch?: never;
+    readonly trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -662,7 +747,8 @@ export interface components {
     readonly AiModelCreate: {
       /** Providers */
       readonly providers: readonly components['schemas']['AiModelProviderConfig'][];
-      readonly name: components['schemas']['AiModelsEnum'];
+      /** Name */
+      readonly name: string;
       /** Display Name */
       readonly display_name?: string | null;
       /** Fa Display Name */
@@ -687,6 +773,10 @@ export interface components {
       readonly config_defaults?: {
         readonly [key: string]: unknown;
       };
+      /** Meta */
+      readonly meta?: {
+        readonly [key: string]: unknown;
+      } | null;
       /** @default ACTIVE */
       readonly status: components['schemas']['AiStatusEnum'] | null;
       readonly model_owner: components['schemas']['AiModelOwnerEnum'];
@@ -727,6 +817,10 @@ export interface components {
       readonly config_defaults: {
         readonly [key: string]: unknown;
       };
+      /** Meta */
+      readonly meta: {
+        readonly [key: string]: unknown;
+      } | null;
       /** @default ACTIVE */
       readonly status: components['schemas']['AiStatusEnum'] | null;
       readonly model_owner: components['schemas']['AiModelOwnerEnum'];
@@ -791,11 +885,6 @@ export interface components {
      * @enum {string}
      */
     readonly AiModelTaskStatusEnum: AiModelTaskStatusEnum;
-    /**
-     * AiModelsEnum
-     * @enum {string}
-     */
-    readonly AiModelsEnum: AiModelsEnum;
     /** AiProviderCreate */
     readonly AiProviderCreate: {
       readonly name: components['schemas']['AiModelProvidersEnum'];
@@ -886,6 +975,11 @@ export interface components {
       /** Ai Model Config */
       readonly ai_model_config: string;
     };
+    /** Body_upload_file_manager_upload_post */
+    readonly Body_upload_file_manager_upload_post: {
+      /** File */
+      readonly file?: File | null;
+    };
     /** Body_video_generation_ai_generate_video_generation_post */
     readonly Body_video_generation_ai_generate_video_generation_post: {
       /**
@@ -951,6 +1045,129 @@ export interface components {
      * @enum {string}
      */
     readonly CurrencyUnitEnum: CurrencyUnitEnum;
+    /** FileManagerMultipartCompleteRequest */
+    readonly FileManagerMultipartCompleteRequest: {
+      /** Upload Id */
+      readonly upload_id: string;
+      /** Object Name */
+      readonly object_name: string;
+      /**
+       * File Uuid
+       * Format: uuid
+       */
+      readonly file_uuid: string;
+      /** File Name */
+      readonly file_name: string;
+      /** File Size */
+      readonly file_size: number;
+      /** Content Type */
+      readonly content_type: string;
+      /**
+       * Is Public
+       * @default true
+       */
+      readonly is_public: boolean;
+      /** Meta */
+      readonly meta?: {
+        readonly [key: string]: unknown;
+      };
+      /** Parts */
+      readonly parts: readonly components['schemas']['FileManagerMultipartCompletedPart'][];
+    };
+    /** FileManagerMultipartCompletedPart */
+    readonly FileManagerMultipartCompletedPart: {
+      /** Part Number */
+      readonly part_number: number;
+      /** Etag */
+      readonly etag: string;
+    };
+    /** FileManagerMultipartInitiateRequest */
+    readonly FileManagerMultipartInitiateRequest: {
+      /** File Name */
+      readonly file_name: string;
+      /** File Size */
+      readonly file_size: number;
+      /** Content Type */
+      readonly content_type: string;
+      /**
+       * Is Public
+       * @default true
+       */
+      readonly is_public: boolean;
+      /** Meta */
+      readonly meta?: {
+        readonly [key: string]: unknown;
+      };
+    };
+    /** FileManagerMultipartInitiateResponse */
+    readonly FileManagerMultipartInitiateResponse: {
+      /** Upload Id */
+      readonly upload_id: string;
+      /** Bucket Name */
+      readonly bucket_name: string;
+      /** Object Name */
+      readonly object_name: string;
+      /**
+       * File Uuid
+       * Format: uuid
+       */
+      readonly file_uuid: string;
+      /** Chunk Size */
+      readonly chunk_size: number;
+      /** Parts Count */
+      readonly parts_count: number;
+    };
+    /** FileManagerMultipartPresignPartRequest */
+    readonly FileManagerMultipartPresignPartRequest: {
+      /** Upload Id */
+      readonly upload_id: string;
+      /** Object Name */
+      readonly object_name: string;
+      /** Part Number */
+      readonly part_number: number;
+    };
+    /** FileManagerMultipartPresignPartResponse */
+    readonly FileManagerMultipartPresignPartResponse: {
+      /** Presigned Url */
+      readonly presigned_url: string;
+      /** Part Number */
+      readonly part_number: number;
+      /** Expires In */
+      readonly expires_in: number;
+    };
+    /** FileManagerUploadFileResponse */
+    readonly FileManagerUploadFileResponse: {
+      /** Bucket Name */
+      readonly bucket_name: string;
+      /** Object Name */
+      readonly object_name: string;
+      /** File Name */
+      readonly file_name: string;
+      /** File Size */
+      readonly file_size: number;
+      /** Content Type */
+      readonly content_type: string;
+      /**
+       * Is Public
+       * @default true
+       */
+      readonly is_public: boolean;
+      /** Meta */
+      readonly meta?: {
+        readonly [key: string]: unknown;
+      };
+      /** Updated At */
+      readonly updated_at?: string | null;
+      /** Expire At */
+      readonly expire_at?: string | null;
+      /**
+       * Is Deleted
+       * @default false
+       */
+      readonly is_deleted: boolean;
+      /** Uuid */
+      readonly uuid?: string | null;
+    };
     /** GenerationResponseBody */
     readonly GenerationResponseBody: {
       /** Ai Model Uuid */
@@ -1374,12 +1591,28 @@ export type SchemaAiProviderPage = components['schemas']['AiProviderPage'];
 export type SchemaAiProviderSummary = components['schemas']['AiProviderSummary'];
 export type SchemaBodyImageGenerationAiGenerateImageGenerationPost =
   components['schemas']['Body_image_generation_ai_generate_image_generation_post'];
+export type SchemaBodyUploadFileManagerUploadPost =
+  components['schemas']['Body_upload_file_manager_upload_post'];
 export type SchemaBodyVideoGenerationAiGenerateVideoGenerationPost =
   components['schemas']['Body_video_generation_ai_generate_video_generation_post'];
 export type SchemaCompleteSubscriptionPurchaseRequest =
   components['schemas']['CompleteSubscriptionPurchaseRequest'];
 export type SchemaCreateSubscriptionPlanRequest =
   components['schemas']['CreateSubscriptionPlanRequest'];
+export type SchemaFileManagerMultipartCompleteRequest =
+  components['schemas']['FileManagerMultipartCompleteRequest'];
+export type SchemaFileManagerMultipartCompletedPart =
+  components['schemas']['FileManagerMultipartCompletedPart'];
+export type SchemaFileManagerMultipartInitiateRequest =
+  components['schemas']['FileManagerMultipartInitiateRequest'];
+export type SchemaFileManagerMultipartInitiateResponse =
+  components['schemas']['FileManagerMultipartInitiateResponse'];
+export type SchemaFileManagerMultipartPresignPartRequest =
+  components['schemas']['FileManagerMultipartPresignPartRequest'];
+export type SchemaFileManagerMultipartPresignPartResponse =
+  components['schemas']['FileManagerMultipartPresignPartResponse'];
+export type SchemaFileManagerUploadFileResponse =
+  components['schemas']['FileManagerUploadFileResponse'];
 export type SchemaGenerationResponseBody = components['schemas']['GenerationResponseBody'];
 export type SchemaGenerationResponseBodyMessage =
   components['schemas']['GenerationResponseBodyMessage'];
@@ -2421,6 +2654,158 @@ export interface operations {
       };
     };
   };
+  readonly upload_file_manager_upload_post: {
+    readonly parameters: {
+      readonly query?: never;
+      readonly header?: never;
+      readonly path?: never;
+      readonly cookie?: never;
+    };
+    readonly requestBody?: {
+      readonly content: {
+        readonly 'multipart/form-data': components['schemas']['Body_upload_file_manager_upload_post'];
+      };
+    };
+    readonly responses: {
+      /** @description Successful Response */
+      readonly 200: {
+        headers: {
+          readonly [name: string]: unknown;
+        };
+        content: {
+          readonly 'application/json': components['schemas']['FileManagerUploadFileResponse'];
+        };
+      };
+      /** @description Validation Error */
+      readonly 422: {
+        headers: {
+          readonly [name: string]: unknown;
+        };
+        content: {
+          readonly 'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  readonly list_user_files_file_manager_files_get: {
+    readonly parameters: {
+      readonly query?: never;
+      readonly header?: never;
+      readonly path?: never;
+      readonly cookie?: never;
+    };
+    readonly requestBody?: never;
+    readonly responses: {
+      /** @description Successful Response */
+      readonly 200: {
+        headers: {
+          readonly [name: string]: unknown;
+        };
+        content: {
+          readonly 'application/json': readonly components['schemas']['FileManagerUploadFileResponse'][];
+        };
+      };
+    };
+  };
+  readonly initiate_multipart_upload_file_manager_multipart_initiate_post: {
+    readonly parameters: {
+      readonly query?: never;
+      readonly header?: never;
+      readonly path?: never;
+      readonly cookie?: never;
+    };
+    readonly requestBody: {
+      readonly content: {
+        readonly 'application/json': components['schemas']['FileManagerMultipartInitiateRequest'];
+      };
+    };
+    readonly responses: {
+      /** @description Successful Response */
+      readonly 200: {
+        headers: {
+          readonly [name: string]: unknown;
+        };
+        content: {
+          readonly 'application/json': components['schemas']['FileManagerMultipartInitiateResponse'];
+        };
+      };
+      /** @description Validation Error */
+      readonly 422: {
+        headers: {
+          readonly [name: string]: unknown;
+        };
+        content: {
+          readonly 'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  readonly presign_multipart_part_file_manager_multipart_presign_part_post: {
+    readonly parameters: {
+      readonly query?: never;
+      readonly header?: never;
+      readonly path?: never;
+      readonly cookie?: never;
+    };
+    readonly requestBody: {
+      readonly content: {
+        readonly 'application/json': components['schemas']['FileManagerMultipartPresignPartRequest'];
+      };
+    };
+    readonly responses: {
+      /** @description Successful Response */
+      readonly 200: {
+        headers: {
+          readonly [name: string]: unknown;
+        };
+        content: {
+          readonly 'application/json': components['schemas']['FileManagerMultipartPresignPartResponse'];
+        };
+      };
+      /** @description Validation Error */
+      readonly 422: {
+        headers: {
+          readonly [name: string]: unknown;
+        };
+        content: {
+          readonly 'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  readonly complete_multipart_upload_file_manager_multipart_complete_post: {
+    readonly parameters: {
+      readonly query?: never;
+      readonly header?: never;
+      readonly path?: never;
+      readonly cookie?: never;
+    };
+    readonly requestBody: {
+      readonly content: {
+        readonly 'application/json': components['schemas']['FileManagerMultipartCompleteRequest'];
+      };
+    };
+    readonly responses: {
+      /** @description Successful Response */
+      readonly 200: {
+        headers: {
+          readonly [name: string]: unknown;
+        };
+        content: {
+          readonly 'application/json': components['schemas']['FileManagerUploadFileResponse'];
+        };
+      };
+      /** @description Validation Error */
+      readonly 422: {
+        headers: {
+          readonly [name: string]: unknown;
+        };
+        content: {
+          readonly 'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
 }
 export enum AiChatRoleEnum {
   SYSTEM = 'SYSTEM',
@@ -2433,6 +2818,20 @@ export enum AiChatRoleEnum {
 export enum AiModelOwnerEnum {
   OPEN_AI = 'OPEN_AI',
   GOOGLE = 'GOOGLE',
+  BLACK_FOREST_LABS = 'BLACK_FOREST_LABS',
+  K_LING_AI = 'K_LING_AI',
+  BRIA = 'BRIA',
+  BYTE_DANCE = 'BYTE_DANCE',
+  IDEO_GRAM = 'IDEO_GRAM',
+  IMAGINE_ART = 'IMAGINE_ART',
+  LIGHT_TICKS = 'LIGHT_TICKS',
+  MID_JOURNEY = 'MID_JOURNEY',
+  MINI_MAX = 'MINI_MAX',
+  PIX_VERSE = 'PIX_VERSE',
+  PRUNA_AI = 'PRUNA_AI',
+  RUNWAY = 'RUNWAY',
+  SOURCE_FUL = 'SOURCE_FUL',
+  VIDU = 'VIDU',
 }
 export enum AiModelProvidersEnum {
   RUNWARE = 'RUNWARE',
@@ -2449,11 +2848,6 @@ export enum AiModelTaskStatusEnum {
   IN_PROGRESS = 'IN_PROGRESS',
   COMPLETED = 'COMPLETED',
   FAILED = 'FAILED',
-}
-export enum AiModelsEnum {
-  OPENAI_GPT_IMAGE_1 = 'OPENAI_GPT_IMAGE_1',
-  GOOGLE_GEMINI_2_5_FLASH_IMAGE = 'GOOGLE_GEMINI_2_5_FLASH_IMAGE',
-  GOOGLE_VEO_3_POINT_1_FAST = 'GOOGLE_VEO_3_POINT_1_FAST',
 }
 export enum AiStatusEnum {
   ACTIVE = 'ACTIVE',
@@ -2530,4 +2924,9 @@ export enum ApiPaths {
   check_video_generation_result_ai_generate_video_generation_check_result_post = '/ai/generate/video/generation/check-result',
   get_irr_exchange_rate_gateway_irr_exchange_rate_get = '/gateway/irr-exchange-rate',
   get_payment_result_gateway_payment_result_get = '/gateway/payment-result',
+  upload_file_manager_upload_post = '/file-manager/upload',
+  list_user_files_file_manager_files_get = '/file-manager/files',
+  initiate_multipart_upload_file_manager_multipart_initiate_post = '/file-manager/multipart/initiate',
+  presign_multipart_part_file_manager_multipart_presign_part_post = '/file-manager/multipart/presign-part',
+  complete_multipart_upload_file_manager_multipart_complete_post = '/file-manager/multipart/complete',
 }

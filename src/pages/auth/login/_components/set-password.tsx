@@ -5,6 +5,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router';
 import { LoaderCircle } from 'lucide-react';
 import { toast } from 'sonner';
+import { useImmerAtom } from 'jotai-immer';
+
+import authLoginPageState from '../_state';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAppTranslate, useSecondsCountDown } from '@/hook';
@@ -30,6 +33,7 @@ const AuthLoginPageSetPassword: FC = () => {
   const navigate = useNavigate();
   const cookie = cookies();
   const countDown = useSecondsCountDown(150);
+  const [, setPageState] = useImmerAtom(authLoginPageState);
 
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const reactQueryApi = useReactQueryApi();
@@ -76,6 +80,9 @@ const AuthLoginPageSetPassword: FC = () => {
   const setPassword = reactQueryApi.useMutation('post', '/user/set-password', {
     onSuccess(data) {
       cookie.set(APP_KEYS.COOKIES.ACCESS_TOKEN, data.token);
+      setPageState((draft) => {
+        draft.currentView = 'START';
+      });
       navigate(APP_ROUTES_KEY.app.path);
       toast.success(t('pages.auth.login.setPasswordForm.successSetPasswordToast'));
     },

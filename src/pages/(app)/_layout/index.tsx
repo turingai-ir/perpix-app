@@ -26,7 +26,7 @@ import { useAppTranslate } from '@/hook';
 import { APP_I18_KEYS } from '@/services/i18';
 import { appEventBus } from '@/lib/event-bus';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import PricingFeature from '@/components/feature/pricing';
+import PricingFeature from '@/feature/pricing';
 
 const AppLayout: FC = () => {
   const [appLayoutState, setAppLayoutState] = useImmerAtom(appLayoutAtom);

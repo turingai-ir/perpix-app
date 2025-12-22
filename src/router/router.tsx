@@ -23,16 +23,14 @@ export const router = createBrowserRouter([
       {
         path: APP_ROUTES_KEY.app.path,
         Component: AppLayout,
-        middleware: [
-          async () => {
-            const token = cookies().get(APP_KEYS.COOKIES.ACCESS_TOKEN);
-            if (!token) {
-              throw redirect(APP_ROUTES_KEY.auth.login.path);
-            }
+        loader: () => {
+          const token = cookies().get(APP_KEYS.COOKIES.ACCESS_TOKEN);
+          if (!token) {
+            throw redirect(APP_ROUTES_KEY.auth.login.path);
+          }
 
-            return {};
-          },
-        ],
+          return null;
+        },
         children: [
           { Component: AppPage, index: true },
           {
@@ -69,16 +67,14 @@ export const router = createBrowserRouter([
       {
         path: APP_ROUTES_KEY.profile.root.path,
         Component: ProfileLayout,
-        middleware: [
-          async () => {
-            const token = cookies().get(APP_KEYS.COOKIES.ACCESS_TOKEN);
-            if (!token) {
-              throw redirect(APP_ROUTES_KEY.auth.login.path);
-            }
+        loader: () => {
+          const token = cookies().get(APP_KEYS.COOKIES.ACCESS_TOKEN);
+          if (!token) {
+            throw redirect(APP_ROUTES_KEY.auth.login.path);
+          }
 
-            return {};
-          },
-        ],
+          return null;
+        },
         children: [{ Component: ProfileSettingsPage, path: APP_ROUTES_KEY.profile.settings.path }],
       },
       {
