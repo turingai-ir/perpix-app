@@ -8,9 +8,20 @@ import { useReactQueryApi } from '@/hook/app';
 import { appEventBus } from '@/lib/event-bus';
 import appLayoutAtom from '@/pages/(app)/_layout/_state';
 import { APP_ROUTES_KEY } from '@/router';
-import { AiModelSupportedTaskTypeEnum } from '@/services/api';
+import {
+  AiModelSupportedTaskTypeEnum,
+  type SchemaAiChatSessionHistoryResponse,
+  type SchemaAiChatSessionSummary,
+} from '@/services/api';
 
 const DEFAULT_PAGE_SIZE = 50;
+const normalizeList = <T,>(value: unknown): T[] => {
+  if (!value) {
+    return [];
+  }
+  return Array.isArray(value) ? [...value] : Array.from(value as ArrayLike<T>);
+};
+
 const sidebarHistoryChatsAllItemsFetchedAtom = selectAtom(
   appLayoutAtom,
   (val) => val.sidebarHistoryChats.AllItemsFetched,
@@ -63,8 +74,10 @@ const GenerationVideoLayout: FC = () => {
 
   //   update data
   useEffect(() => {
-    const pages = sessionHistoryData?.pages ?? [];
-    const sessions = pages.flatMap((page) => page.sessions);
+    const pages = normalizeList<SchemaAiChatSessionHistoryResponse>(sessionHistoryData?.pages);
+    const sessions = pages.flatMap((page) =>
+      normalizeList<SchemaAiChatSessionSummary>(page.sessions),
+    );
     const lastPage = pages[pages.length - 1];
     const newList = sessions.map((item) => ({
       id: item.uuid,

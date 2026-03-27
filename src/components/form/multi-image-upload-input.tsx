@@ -5,8 +5,10 @@ import { cn } from '@/lib/utils';
 import { useAppTranslate } from '@/hook';
 import { APP_I18_KEYS } from '@/services/i18';
 
-export interface MultiImageUploadInputProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type' | 'onChange' | 'value'> {
+export interface MultiImageUploadInputProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  'type' | 'onChange' | 'value'
+> {
   value?: File[];
   onChange?: (value: File[]) => void;
   maxFiles?: number;

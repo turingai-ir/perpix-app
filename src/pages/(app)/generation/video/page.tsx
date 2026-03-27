@@ -25,6 +25,8 @@ import {
   AiModelSupportedTaskTypeEnum,
   AiModelTaskStatusEnum,
   UploadedFileTypeEnum,
+  type SchemaAiChatSessionDetail,
+  type SchemaAiModelPage,
   type SchemaGenerationResponseBodyMessage,
 } from '@/services/api';
 import { cn } from '@/lib/utils';
@@ -62,6 +64,13 @@ const formSchema = z.object({
   prompt: z.string(),
   include_audio: z.boolean(),
 });
+
+const normalizeList = <T,>(value: unknown): T[] => {
+  if (!value) {
+    return [];
+  }
+  return Array.isArray(value) ? [...value] : Array.from(value as ArrayLike<T>);
+};
 
 const VIDEO_RESULT_POLL_INTERVAL_MS = 5_000;
 const VIDEO_RESULT_MAX_DURATION_MS = 5 * 60 * 1000;
@@ -203,13 +212,15 @@ const GenerationVideoPage: FC = () => {
 
   // select active id if we do not have chat id
   useEffect(() => {
+    const models = normalizeList<SchemaAiModelPage['data'][number]>(AiModelList.data?.data);
+
     setAppLayoutState((pre) => {
-      pre.chooseModelSelect.list = (AiModelList.data?.data ?? []).map((item) => ({
+      pre.chooseModelSelect.list = models.map((item) => ({
         name: item.display_name ?? '',
         id: item.uuid ?? '',
         description: '',
       }));
-      const firstModel = AiModelList.data?.data[0];
+      const firstModel = models[0];
 
       // we do not have chat id
       if (!chatId && firstModel) {
@@ -257,12 +268,16 @@ const GenerationVideoPage: FC = () => {
   );
 
   useEffect(() => {
-    if (!chatHistory.data?.messages?.length) {
+    const messages = normalizeList<NonNullable<SchemaAiChatSessionDetail['messages']>[number]>(
+      chatHistory.data?.messages,
+    );
+
+    if (!messages.length) {
       return;
     }
 
     setChatMessages(
-      chatHistory.data.messages.map((i) => ({
+      messages.map((i) => ({
         created_at: i.created_at,
         role: i.role,
         files: i.files,
@@ -273,7 +288,7 @@ const GenerationVideoPage: FC = () => {
       })),
     );
 
-    const lastAssistantMsg = [...chatHistory.data.messages]
+    const lastAssistantMsg = [...messages]
       .reverse()
       .find((m) => m.role === AiChatRoleEnum.ASSISTANT);
 
@@ -316,13 +331,26 @@ const GenerationVideoPage: FC = () => {
           if (index === -1) {
             return messages;
           }
-          const updatedMessage =
+          const updatedMessage: SchemaGenerationResponseBodyMessage =
             data.task_status === AiModelTaskStatusEnum.COMPLETED
-              ? { ...messages[index], ...data }
+              ? {
+                  ...messages[index],
+                  created_at: data.created_at,
+                  updated_at: data.updated_at,
+                  message: data.message,
+                  files: normalizeList<
+                    NonNullable<SchemaGenerationResponseBodyMessage['files']>[number]
+                  >(data.files),
+                  role: data.role,
+                  uuid: data.uuid,
+                  task_status: data.task_status,
+                }
               : {
                   ...messages[index],
                   task_status: data.task_status ?? messages[index].task_status,
-                  files: data.files ?? messages[index].files,
+                  files: normalizeList<
+                    NonNullable<SchemaGenerationResponseBodyMessage['files']>[number]
+                  >(data.files),
                 };
 
           return [...messages.slice(0, index), updatedMessage, ...messages.slice(index + 1)];
@@ -363,7 +391,8 @@ const GenerationVideoPage: FC = () => {
   const videoGenerationMutate = reactQueryApi.useMutation('post', '/ai/generate/video/generation', {
     onSuccess: (data) => {
       const dataChatId = data.uuid;
-      setChatMessages((prev) => [...prev, ...(data?.messages ?? [])]);
+      const newMessages = normalizeList<SchemaGenerationResponseBodyMessage>(data?.messages);
+      setChatMessages((prev) => [...prev, ...newMessages]);
       resetForm();
 
       // update chat id
@@ -436,7 +465,8 @@ const GenerationVideoPage: FC = () => {
   // ======= Submit
   async function onSubmit(values: z.infer<typeof formSchema>) {
     // user does not have subscription
-    if (!userInfoQuery.data?.active_subscription?.plan.scopes.includes('ai:video_models')) {
+    const userScopes = normalizeList<string>(userInfoQuery.data?.active_subscription?.plan.scopes);
+    if (!userScopes.includes('ai:video_models')) {
       navigate(APP_KEYS.URL_HASH.pricing);
       return;
     }
@@ -456,13 +486,16 @@ const GenerationVideoPage: FC = () => {
     });
   }
 
+  const modelOptions = normalizeList<SchemaAiModelPage['data'][number]>(AiModelList.data?.data);
+  const requiredConfigFields = normalizeList<string>(
+    (AiModel.data?.config_schema as any)?.required,
+  );
+
   const sizeEnum: string[] = (AiModel.data?.config_schema as any)?.properties?.size?.enum ?? [];
 
-  const isPromptRequired = (AiModel.data?.config_schema as any)?.required?.includes?.('prompt');
+  const isPromptRequired = requiredConfigFields.includes('prompt');
 
-  const isImageFrameRequired = (AiModel.data?.config_schema as any)?.required?.includes?.(
-    'images_frame',
-  );
+  const isImageFrameRequired = requiredConfigFields.includes('images_frame');
 
   const modelHaveRequirements = useMemo(() => {
     const trimmedPrompt = promptValue.trim();
@@ -483,7 +516,7 @@ const GenerationVideoPage: FC = () => {
   const disabledSubmit = disableForm || !modelHaveRequirements;
 
   // ======= Error/Loading states
-  if (AiModelList.isError || AiModelList.data?.data.length === 0) {
+  if (AiModelList.isError || modelOptions.length === 0) {
     return (
       <div className="mx-auto flex justify-center py-4 items-center w-full h-dvh">
         <ErrorSection onRetry={() => AiModelList.refetch()} />
@@ -556,14 +589,18 @@ const GenerationVideoPage: FC = () => {
                 status={item.task_status ?? undefined}
                 avatar="P"
                 sender={item.role === AiChatRoleEnum.USER ? 'user' : 'agent'}
-                images={(item.files ?? [])
+                images={normalizeList<
+                  NonNullable<SchemaGenerationResponseBodyMessage['files']>[number]
+                >(item.files)
                   .filter((f) =>
                     item.role === AiChatRoleEnum.USER
                       ? f.type === UploadedFileTypeEnum.IMAGE_REFERENCE
                       : f.type === UploadedFileTypeEnum.IMAGE_GENERATED,
                   )
                   .map((f) => convertToStorageUrl(f.url))}
-                videos={(item.files ?? [])
+                videos={normalizeList<
+                  NonNullable<SchemaGenerationResponseBodyMessage['files']>[number]
+                >(item.files)
                   .filter(
                     (f) =>
                       item.role === AiChatRoleEnum.ASSISTANT &&

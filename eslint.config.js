@@ -7,9 +7,21 @@ import jsxA11y from 'eslint-plugin-jsx-a11y';
 import importPlugin from 'eslint-plugin-import';
 import unusedImports from 'eslint-plugin-unused-imports';
 import prettier from 'eslint-plugin-prettier';
+import prettierConfig from 'eslint-config-prettier';
+import mantine from 'eslint-config-mantine';
 
 export default tseslint.config(
-  { ignores: ['dist', 'build', '.vite'] },
+  {
+    ignores: [
+      'dist',
+      'build',
+      '.vite',
+      'eslint.config.js',
+      'tailwind.config.js',
+      'scripts/generate-api/_output/**',
+    ],
+  },
+  ...mantine,
   {
     files: ['**/*.{ts,tsx}'],
     languageOptions: {
@@ -41,9 +53,7 @@ export default tseslint.config(
       ...jsxA11y.configs.recommended.rules,
 
       'prettier/prettier': 'warn',
-
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
-
       'jsx-a11y/anchor-is-valid': [
         'warn',
         {
@@ -61,13 +71,11 @@ export default tseslint.config(
           controlComponents: ['Input'],
         },
       ],
-
       'unused-imports/no-unused-imports': 'warn',
       'unused-imports/no-unused-vars': [
         'warn',
         { vars: 'all', varsIgnorePattern: '^_', argsIgnorePattern: '^_' },
       ],
-
       'import/order': [
         'warn',
         {
@@ -75,9 +83,9 @@ export default tseslint.config(
           'newlines-between': 'always',
         },
       ],
-
       'react/react-in-jsx-scope': 'off',
       'react/prop-types': 'off',
     },
   },
+  prettierConfig,
 );

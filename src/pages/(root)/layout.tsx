@@ -58,8 +58,7 @@ const RootLayout: FC = () => {
                 </div>,
               );
             }
-            // eslint-disable-next-line unused-imports/no-unused-vars
-          } catch (_e) {
+          } catch {
             /* empty */
           }
         }
@@ -73,7 +72,7 @@ const RootLayout: FC = () => {
                 </div>,
               );
             }
-          } catch (_e) {
+          } catch {
             /* empty */
           }
         }
@@ -87,7 +86,7 @@ const RootLayout: FC = () => {
                 </div>,
               );
             }
-          } catch (_e) {
+          } catch {
             /* empty */
           }
         }

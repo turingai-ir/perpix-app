@@ -33,22 +33,21 @@ export const createSyncJotaiStorage = <Value>(storage: WebStorage = new LocalSto
     getItem(key: string) {
       try {
         return storage.get(key) as string | null;
-        // eslint-disable-next-line unused-imports/no-unused-vars
-      } catch (e) {
+      } catch {
         return null;
       }
     },
     removeItem(key: string) {
       try {
         storage.delete(key);
-      } catch (e) {
+      } catch {
         /* empty */
       }
     },
     setItem(key: string, newValue: string) {
       try {
         storage.set(key, newValue);
-      } catch (e) {
+      } catch {
         /* empty */
       }
     },
@@ -88,7 +87,7 @@ export function bootstrapJotai() {
       } else {
         store.set(config.atom, storedValue);
       }
-    } catch (e) {
+    } catch {
       store.set(config.atom, config.defaultValue);
     }
     atomConfigs.delete(key);

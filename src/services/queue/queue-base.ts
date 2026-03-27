@@ -2,7 +2,7 @@
  * A listener function type for queue events.
  * @template T - The type of items stored in the queue.
  */
-type QueueListener<T> = (item: T) => void
+type QueueListener<T> = (item: T) => void;
 
 /**
  * Abstract base class representing a generic queue with event listeners for enqueue and dequeue operations.
@@ -14,7 +14,7 @@ type QueueListener<T> = (item: T) => void
  */
 export abstract class BaseQueue<T> {
   /** Internal array holding queue items. */
-  private items: T[] = []
+  private items: T[] = [];
 
   /**
    * Event listeners for `'add'` and `'remove'` events.
@@ -23,7 +23,7 @@ export abstract class BaseQueue<T> {
   private listeners: { add: Set<QueueListener<T>>; remove: Set<QueueListener<T>> } = {
     add: new Set(),
     remove: new Set(),
-  }
+  };
 
   /**
    * Protected constructor to prevent direct instantiation.
@@ -36,8 +36,8 @@ export abstract class BaseQueue<T> {
    * @param item - The item to enqueue.
    */
   public enqueue(item: T): void {
-    this.items.push(item)
-    this.emit('add', item)
+    this.items.push(item);
+    this.emit('add', item);
   }
 
   /**
@@ -46,9 +46,11 @@ export abstract class BaseQueue<T> {
    * @returns The dequeued item, or `undefined` if the queue is empty.
    */
   public dequeue(): T | undefined {
-    const item = this.items.shift()
-    if (item !== undefined) this.emit('remove', item)
-    return item
+    const item = this.items.shift();
+    if (item !== undefined) {
+      this.emit('remove', item);
+    }
+    return item;
   }
 
   /**
@@ -56,7 +58,7 @@ export abstract class BaseQueue<T> {
    * @returns The item at the front, or `undefined` if the queue is empty.
    */
   public peek(): T | undefined {
-    return this.items[0]
+    return this.items[0];
   }
 
   /**
@@ -64,14 +66,14 @@ export abstract class BaseQueue<T> {
    * @returns `true` if the queue is empty, `false` otherwise.
    */
   public isEmpty(): boolean {
-    return this.items.length === 0
+    return this.items.length === 0;
   }
 
   /**
    * Gets the current number of items in the queue.
    */
   public get size(): number {
-    return this.items.length
+    return this.items.length;
   }
 
   /**
@@ -79,7 +81,7 @@ export abstract class BaseQueue<T> {
    * @returns An array containing the queue's items in order.
    */
   public toArray(): T[] {
-    return [...this.items]
+    return [...this.items];
   }
 
   /**
@@ -88,7 +90,7 @@ export abstract class BaseQueue<T> {
    * @param listener - The listener function to invoke when the event occurs.
    */
   public on(event: 'add' | 'remove', listener: QueueListener<T>): void {
-    this.listeners[event].add(listener)
+    this.listeners[event].add(listener);
   }
 
   /**
@@ -97,7 +99,7 @@ export abstract class BaseQueue<T> {
    * @param listener - The listener function to remove.
    */
   public off(event: 'add' | 'remove', listener: QueueListener<T>): void {
-    this.listeners[event].delete(listener)
+    this.listeners[event].delete(listener);
   }
 
   /**
@@ -109,9 +111,9 @@ export abstract class BaseQueue<T> {
   private emit(event: 'add' | 'remove', item: T) {
     for (const fn of this.listeners[event]) {
       try {
-        fn(item)
+        fn(item);
       } catch (e) {
-        console.error(e)
+        console.error(e);
       }
     }
   }

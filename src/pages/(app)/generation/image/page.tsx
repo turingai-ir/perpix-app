@@ -25,6 +25,8 @@ import {
   AiChatRoleEnum,
   AiModelSupportedTaskTypeEnum,
   UploadedFileTypeEnum,
+  type SchemaAiChatSessionDetail,
+  type SchemaAiModelPage,
   type SchemaGenerationResponseBodyMessage,
 } from '@/services/api';
 import { cn } from '@/lib/utils';
@@ -59,6 +61,13 @@ const formSchema = z.object({
   size: z.string(),
   prompt: z.string(),
 });
+
+const normalizeList = <T,>(value: unknown): T[] => {
+  if (!value) {
+    return [];
+  }
+  return Array.isArray(value) ? [...value] : Array.from(value as ArrayLike<T>);
+};
 
 const GenerationImagePage: FC = () => {
   const [, setAppLayoutState] = useImmerAtom(appLayoutAtom);
@@ -128,13 +137,15 @@ const GenerationImagePage: FC = () => {
 
   // select active id if we do not have chat id
   useEffect(() => {
+    const models = normalizeList<SchemaAiModelPage['data'][number]>(AiModelList.data?.data);
+
     setAppLayoutState((pre) => {
-      pre.chooseModelSelect.list = (AiModelList.data?.data ?? []).map((item) => ({
+      pre.chooseModelSelect.list = models.map((item) => ({
         name: item.display_name ?? '',
         id: item.uuid ?? '',
         description: '',
       }));
-      const firstModel = AiModelList.data?.data[0];
+      const firstModel = models[0];
 
       // we do not have chat id
       if (!chatId && firstModel) {
@@ -182,14 +193,18 @@ const GenerationImagePage: FC = () => {
   );
 
   useEffect(() => {
-    if (!chatHistory.data?.messages?.length) {
+    const messages = normalizeList<NonNullable<SchemaAiChatSessionDetail['messages']>[number]>(
+      chatHistory.data?.messages,
+    );
+
+    if (!messages.length) {
       return;
     }
 
     let isCanceled = false;
 
     setChatMessages(
-      chatHistory.data.messages.map((i) => ({
+      messages.map((i) => ({
         created_at: i.created_at,
         role: i.role,
         files: i.files,
@@ -200,7 +215,7 @@ const GenerationImagePage: FC = () => {
       })),
     );
 
-    const lastAssistantMsg = [...chatHistory.data.messages]
+    const lastAssistantMsg = [...messages]
       .reverse()
       .find((m) => m.role === AiChatRoleEnum.ASSISTANT);
 
@@ -213,9 +228,10 @@ const GenerationImagePage: FC = () => {
 
     updateFormConfig({ size });
 
-    const imageUrl = lastAssistantMsg?.files?.find(
-      (f) => f.type === UploadedFileTypeEnum.IMAGE_GENERATED,
-    )?.url as string;
+    const imageUrl = normalizeList<
+      NonNullable<SchemaGenerationResponseBodyMessage['files']>[number]
+    >(lastAssistantMsg?.files).find((f) => f.type === UploadedFileTypeEnum.IMAGE_GENERATED)
+      ?.url as string;
 
     if (imageUrl && typeof imageUrl === 'string' && imagesReferenceValue.length === 0) {
       urlToFile(convertToStorageUrl(imageUrl), 'generated-image.png').then((file) => {
@@ -256,7 +272,8 @@ const GenerationImagePage: FC = () => {
   const imageGenerationMutate = reactQueryApi.useMutation('post', '/ai/generate/image/generation', {
     onSuccess: (data) => {
       const dataChatId = data.uuid;
-      setChatMessages((prev) => [...prev, ...(data?.messages ?? [])]);
+      const newMessages = normalizeList<SchemaGenerationResponseBodyMessage>(data?.messages);
+      setChatMessages((prev) => [...prev, ...newMessages]);
       resetForm();
 
       // update chat id
@@ -294,7 +311,8 @@ const GenerationImagePage: FC = () => {
   // ======= Submit
   async function onSubmit(values: z.infer<typeof formSchema>) {
     // user does not have subscription
-    if (!userInfoQuery.data?.active_subscription?.plan.scopes.includes('ai:image_models')) {
+    const userScopes = normalizeList<string>(userInfoQuery.data?.active_subscription?.plan.scopes);
+    if (!userScopes.includes('ai:image_models')) {
       navigate(APP_KEYS.URL_HASH.pricing);
       return;
     }
@@ -314,13 +332,16 @@ const GenerationImagePage: FC = () => {
     });
   }
 
+  const modelOptions = normalizeList<SchemaAiModelPage['data'][number]>(AiModelList.data?.data);
+  const requiredConfigFields = normalizeList<string>(
+    (AiModel.data?.config_schema as any)?.required,
+  );
+
   const sizeEnum: string[] = (AiModel.data?.config_schema as any)?.properties?.size?.enum ?? [];
 
-  const isPromptRequired = (AiModel.data?.config_schema as any)?.required?.includes?.('prompt');
+  const isPromptRequired = requiredConfigFields.includes('prompt');
 
-  const isImageRequired = (AiModel.data?.config_schema as any)?.required?.includes?.(
-    'images_reference',
-  );
+  const isImageRequired = requiredConfigFields.includes('images_reference');
 
   const modelHaveRequirements = useMemo(() => {
     const trimmedPrompt = promptValue.trim();
@@ -341,7 +362,7 @@ const GenerationImagePage: FC = () => {
   const disabledSubmit = disableForm || !modelHaveRequirements;
 
   // ======= Error/Loading states
-  if (AiModelList.isError || AiModelList.data?.data.length === 0) {
+  if (AiModelList.isError || modelOptions.length === 0) {
     return (
       <div className="mx-auto flex justify-center py-4 items-center w-full h-dvh">
         <ErrorSection onRetry={() => AiModelList.refetch()} />
@@ -413,7 +434,9 @@ const GenerationImagePage: FC = () => {
               status={item.task_status ?? undefined}
               avatar="P"
               sender={item.role === AiChatRoleEnum.USER ? 'user' : 'agent'}
-              images={(item.files ?? [])
+              images={normalizeList<
+                NonNullable<SchemaGenerationResponseBodyMessage['files']>[number]
+              >(item.files)
                 .filter((f) =>
                   item.role === AiChatRoleEnum.USER
                     ? f.type === UploadedFileTypeEnum.IMAGE_REFERENCE

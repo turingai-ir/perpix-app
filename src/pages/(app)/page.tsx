@@ -1,6 +1,5 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-/* eslint-disable react/jsx-no-comment-textnodes */
 import type { FC } from 'react';
 import { TbCameraAi, TbPhotoAi, TbUserCog } from 'react-icons/tb';
 import { useNavigate } from 'react-router';

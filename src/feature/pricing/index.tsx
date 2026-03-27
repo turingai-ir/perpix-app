@@ -6,7 +6,10 @@ import { useAppTranslate } from '@/hook';
 import { useReactQueryApi } from '@/hook/app';
 import LoadingSection from '@/components/custom/loading-section';
 import ErrorSection from '@/components/custom/error-section';
-import { PaymentGateWayProviderEnum } from '@/services/api';
+import {
+  PaymentGateWayProviderEnum,
+  type SchemaSubscriptionPlanListResponse,
+} from '@/services/api';
 import { formatLocalizedNumber, rialToToman } from '@/utils';
 import {
   Sheet,
@@ -23,6 +26,14 @@ interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
+
+const normalizeList = <T,>(value: unknown): T[] => {
+  if (!value) {
+    return [];
+  }
+  return Array.isArray(value) ? [...value] : Array.from(value as ArrayLike<T>);
+};
+
 function PricingFeature({ open, onOpenChange }: Props) {
   const reactQueryApi = useReactQueryApi();
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
@@ -32,8 +43,11 @@ function PricingFeature({ open, onOpenChange }: Props) {
 
   const purchasePlanQuery = reactQueryApi.useMutation('post', '/user/subscription/purchase');
 
-  const plans = plansQuery.data?.items.filter(
-    (i) => i.uuid !== userInfoQuery.data?.active_subscription?.plan.uuid,
+  const planItems = normalizeList<SchemaSubscriptionPlanListResponse['items'][number]>(
+    plansQuery.data?.items,
+  );
+  const plans = planItems.filter(
+    (plan) => plan.uuid !== userInfoQuery.data?.active_subscription?.plan.uuid,
   );
 
   const handlePurchasePlan = async (planId: string) => {
