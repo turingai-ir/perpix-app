@@ -5,6 +5,7 @@ services:
       args:
         VITE_API_BASE_URL: ${VITE_API_BASE_URL}
         VITE_S3_ENDPOINT: ${VITE_S3_ENDPOINT}
+        VITE_FONT_BASE_URL: ${VITE_FONT_BASE_URL}
     ports:
       - "4173:80"
     restart: unless-stopped
