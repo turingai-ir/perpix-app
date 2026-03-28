@@ -4,7 +4,7 @@ import { Check } from 'lucide-react';
 import { useReactQueryApi } from '@/hook/app';
 import LoadingSection from '@/components/custom/loading-section';
 import ErrorSection from '@/components/custom/error-section';
-import { PaymentInvoiceStatusEnum } from '@/services/api';
+import { PaymentInvoiceStatusEnumMap } from '@/services/api';
 import { Button } from '@/components/ui/button';
 import { formatLocalizedNumber, rialToToman } from '@/utils';
 import { useAppTranslate } from '@/hook';
@@ -38,7 +38,7 @@ function PaymentResultPage() {
         </div>
       ) : null}
       {paymentResultQuery.data &&
-      paymentResultQuery.data.transaction_status === PaymentInvoiceStatusEnum.PAID ? (
+      paymentResultQuery.data.transaction_status === PaymentInvoiceStatusEnumMap.PAID ? (
         <div className="flex items-center justify-center min-h-screen px-4 py-8 bg-background">
           <div className="w-full max-w-lg">
             <div className="flex justify-center mb-8">
@@ -95,7 +95,7 @@ function PaymentResultPage() {
         </div>
       ) : null}{' '}
       {paymentResultQuery.data &&
-      paymentResultQuery.data.transaction_status !== PaymentInvoiceStatusEnum.PAID ? (
+      paymentResultQuery.data.transaction_status !== PaymentInvoiceStatusEnumMap.PAID ? (
         <div className="flex items-center justify-center min-h-screen px-4 py-8 bg-background">
           <div className="w-full max-w-lg">
             <div className="flex justify-center mb-8">

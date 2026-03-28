@@ -4,7 +4,6 @@ import dayjs from 'dayjs';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Muted } from '../ui/typography';
 
-import { AiModelTaskStatusEnum } from '@/services/api';
 import { useAppTranslate } from '@/hook';
 import { APP_I18_KEYS } from '@/services/i18';
 
@@ -16,7 +15,7 @@ interface ChatBubbleProps {
   sender: Sender;
   images?: (string | ReactNode)[];
   videos?: (string | ReactNode)[];
-  status?: AiModelTaskStatusEnum;
+  status?: any;
 }
 export const ChatBubble: FC<ChatBubbleProps> = ({
   avatar,
@@ -41,7 +40,7 @@ export const ChatBubble: FC<ChatBubbleProps> = ({
             <Muted>{dayjs(timestamp).format('HH:mm')}</Muted>
           </div>
         ) : null}
-        {status === AiModelTaskStatusEnum.FAILED ? (
+        {status === 'FAILED' ? (
           <div>
             <Muted>{t('common.taskStatus.failed')}</Muted>
           </div>

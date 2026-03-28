@@ -7,7 +7,7 @@ import { useReactQueryApi } from '@/hook/app';
 import LoadingSection from '@/components/custom/loading-section';
 import ErrorSection from '@/components/custom/error-section';
 import {
-  PaymentGateWayProviderEnum,
+  PaymentGateWayProviderEnumMap,
   type SchemaSubscriptionPlanListResponse,
 } from '@/services/api';
 import { formatLocalizedNumber, rialToToman } from '@/utils';
@@ -54,7 +54,7 @@ function PricingFeature({ open, onOpenChange }: Props) {
     return await purchasePlanQuery.mutateAsync({
       body: {
         plan_uuid: planId,
-        gateway: PaymentGateWayProviderEnum.PAYPING_IRR,
+        gateway: PaymentGateWayProviderEnumMap.PAYPING_IRR,
       },
     });
   };

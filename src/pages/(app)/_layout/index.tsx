@@ -199,7 +199,7 @@ const AppLayout: FC = () => {
                       <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-[200px] p-0">
+                  <PopoverContent className="w-50 p-0">
                     <Command>
                       <CommandInput
                         placeholder={`   ${t('pages.app.layout.chooseModel.searchBoxPlaceholder')}`}
@@ -242,7 +242,8 @@ const AppLayout: FC = () => {
             className="flex relative"
             style={{
               // 20 px for scrollArea
-              minHeight: scrollAreaRef.height - (headerRef.current?.offsetHeight ?? 0) - 20,
+              // minHeight: scrollAreaRef.height - (headerRef.current?.offsetHeight ?? 0) - 20,
+              minHeight: scrollAreaRef.height - (headerRef.current?.offsetHeight ?? 0),
             }}
           >
             <Outlet />

@@ -30,7 +30,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { useReactQueryApi } from '@/hook/app';
-import { PaymentGateWayProviderEnum } from '@/services/api';
+import { PaymentGateWayProviderEnumMap } from '@/services/api';
 import {
   Form,
   FormControl,
@@ -96,7 +96,7 @@ function AppLayoutSidebarWallet() {
         exchangeRateMutation.mutate({
           params: {
             query: {
-              provider: PaymentGateWayProviderEnum.PAYPING_IRR,
+              provider: PaymentGateWayProviderEnumMap.PAYPING_IRR,
               amount_usdmicro: tokenToMicroDollar(parseInt(amountWatch, 10)),
             },
           },
@@ -111,7 +111,7 @@ function AppLayoutSidebarWallet() {
     const res = await walletDepositMutation.mutateAsync({
       body: {
         amount_usdmicro: tokenToMicroDollar(parseInt(values.amount, 10)),
-        gateway: PaymentGateWayProviderEnum.PAYPING_IRR,
+        gateway: PaymentGateWayProviderEnumMap.PAYPING_IRR,
       },
     });
     if (res.gateway_url) {

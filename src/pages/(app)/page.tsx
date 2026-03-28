@@ -15,7 +15,7 @@ const AppPage: FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="w-full h-dvh flex p-4 items-center">
+    <div className="w-full min-h-full flex p-4 items-center">
       <div className="w-full max-w-7xl  mx-auto grid grid-cols-12 gap-8">
         <SpotlightCard className="md:col-span-6 col-span-12 xl:col-span-4 h-60 cursor-pointer">
           <div
