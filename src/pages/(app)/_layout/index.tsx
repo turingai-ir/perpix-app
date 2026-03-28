@@ -158,7 +158,7 @@ const AppLayout: FC = () => {
               )}
             </Button>
 
-            <div className="mr-auto p-2 ml-2">
+            <div className="ml-auto mr-2 p-2">
               {/* <Button
               variant="ghost"
               size="sm"
@@ -196,7 +196,7 @@ const AppLayout: FC = () => {
                             )
                             ?.name.slice(0, 20)}...`
                         : ''}
-                      <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      <ChevronsUpDownIcon className="mr-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-50 p-0">
@@ -220,7 +220,7 @@ const AppLayout: FC = () => {
                             >
                               <CheckIcon
                                 className={cn(
-                                  'mr-2 h-4 w-4',
+                                  'ml-2 h-4 w-4',
                                   appLayoutState.chooseModelSelect.currentSelectedId ===
                                     framework.id
                                     ? 'opacity-100'

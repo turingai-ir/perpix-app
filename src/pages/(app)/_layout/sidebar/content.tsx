@@ -153,13 +153,13 @@ const AppLayoutSidebarContent: FC = () => {
                 <UserRound />
               </AvatarFallback>
             </Avatar>
-            <div className="flex flex-1 text-left text-sm leading-tight">
+            <div className="flex flex-1 text-right text-sm leading-tight">
               <Badge>
                 {userInfoQuery.data?.active_subscription?.plan.display_name ??
                   t('features.pricing.plans.free.title')}
               </Badge>
             </div>
-            <ChevronsUpDown className="ml-auto size-4" />
+            <ChevronsUpDown className="mr-auto size-4" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent
@@ -169,14 +169,14 @@ const AppLayoutSidebarContent: FC = () => {
           sideOffset={4}
         >
           <DropdownMenuLabel className="p-0 font-normal">
-            <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+            <div className="flex items-center gap-2 px-1 py-1.5 text-right text-sm">
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage />
                 <AvatarFallback className="rounded-lg">
                   <UserRound />
                 </AvatarFallback>
               </Avatar>
-              <div className="flex flex-1 text-left text-sm leading-tight">
+              <div className="flex flex-1 text-right text-sm leading-tight">
                 <Badge>
                   {userInfoQuery.data?.active_subscription?.plan.display_name ??
                     t('features.pricing.plans.free.title')}

@@ -1,9 +1,6 @@
-@import 'tailwindcss';
-@import 'tw-animate-css';
+@import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@import "@fontsource-variable/inter";
-
 @custom-variant dark (&:is(.dark *));
 
 :root {
@@ -115,7 +112,7 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
   --font-heading: var(--font-sans);
-  --font-sans: 'Inter Variable', sans-serif;
+  --font-sans: "Vazirmatn", sans-serif;
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
@@ -133,39 +130,6 @@
   }
 }
 
-@theme {
-  --default-font-family: 'Vazirmatn';
-}
-
-:root {
-  font-family: var(--default-font-family);
-}
-
 [data-sonner-toaster] {
-  font-family: var(--default-font-family);
-}
-
-input[type='number']::-webkit-outer-spin-button,
-input[type='number']::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-/* ===== Custom Scrollbar for Tailwind 4 ===== */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05); /* track faintly visible */
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: rgba(120, 120, 120, 0.6);
-  border-radius: 9999px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(180, 180, 180, 0.8);
+  font-family: var(--font-sans);
 }
