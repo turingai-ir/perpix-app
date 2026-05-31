@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 function pad(n: number) {
   return n < 10 ? `0${n}` : `${n}`;
 }
 
 function formatSeconds(totalSeconds: number) {
-  const sign = totalSeconds < 0 ? '-' : '';
+  const sign = totalSeconds < 0 ? "-" : "";
   const abs = Math.abs(Math.floor(totalSeconds));
   const minutes = Math.floor(abs / 60);
   const seconds = abs % 60;

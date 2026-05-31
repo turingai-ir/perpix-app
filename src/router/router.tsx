@@ -1,18 +1,18 @@
-import { createBrowserRouter, redirect } from 'react-router';
+import { createBrowserRouter, redirect } from "react-router";
 
-import { APP_ROUTES_KEY } from './routes';
+import { APP_ROUTES_KEY } from "./routes";
 
-import RootLayout from '@/pages/(root)/layout';
-import AuthLoginPage from '@/pages/auth/login/page';
-import ProfileLayout from '@/pages/profile/layout';
-import ProfileSettingsPage from '@/pages/profile/settings/page';
-import AppPage from '@/pages/(app)/page';
-import { cookies } from '@/utils/cookies';
-import { APP_KEYS } from '@/utils';
-import AppLayout from '@/pages/(app)/_layout';
-// import GenerationImagePage from '@/pages/(app)/generation/image/page';
+import RootLayout from "@/pages/(root)/layout";
+import AuthLoginPage from "@/pages/auth/login/page";
+import ProfileLayout from "@/pages/profile/layout";
+import ProfileSettingsPage from "@/pages/profile/settings/page";
+import AppPage from "@/pages/(app)/page";
+import { cookies } from "@/utils/cookies";
+import { APP_KEYS } from "@/utils";
+import AppLayout from "@/pages/(app)/_layout";
+import GenerationImagePage from "@/pages/(app)/generation/image/page";
 // import GenerationImageLayout from '@/pages/(app)/generation/image/_layout';
-import PaymentResultPage from '@/pages/payment/result/page';
+import PaymentResultPage from "@/pages/payment/result/page";
 // import GenerationVideoLayout from '@/pages/(app)/generation/video/_layout';
 // import GenerationVideoPage from '@/pages/(app)/generation/video/page';
 
@@ -33,20 +33,19 @@ export const router = createBrowserRouter([
         },
         children: [
           { Component: AppPage, index: true },
-          // {
-          //   path: APP_ROUTES_KEY.generation.image.path,
-          //   Component: GenerationImageLayout,
-          //   children: [
-          //     {
-          //       index: true,
-          //       Component: GenerationImagePage,
-          //     },
-          //     {
-          //       path: APP_ROUTES_KEY.generation.image.history.path,
-          //       Component: GenerationImagePage,
-          //     },
-          //   ],
-          // },
+          {
+            path: APP_ROUTES_KEY.generation.image.path,
+            children: [
+              {
+                index: true,
+                Component: GenerationImagePage,
+              },
+              {
+                path: APP_ROUTES_KEY.generation.image.history.path,
+                Component: GenerationImagePage,
+              },
+            ],
+          },
           // {
           //   path: APP_ROUTES_KEY.generation.video.path,
           //   Component: GenerationVideoLayout,
@@ -82,7 +81,7 @@ export const router = createBrowserRouter([
         Component: PaymentResultPage,
       },
       {
-        path: '*',
+        path: "*",
         loader: () => redirect(APP_ROUTES_KEY.app.path),
       },
     ],

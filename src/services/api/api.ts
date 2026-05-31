@@ -981,11 +981,6 @@ export interface components {
              */
             readonly updated_at: string;
         };
-        /** AiRegistryProviderListResponse */
-        readonly AiRegistryProviderListResponse: {
-            /** Data */
-            readonly data: readonly components["schemas"]["AiRegistryProviderDetail"][];
-        };
         /**
          * AiRegistryProviderNameEnum
          * @enum {string}
@@ -1075,6 +1070,11 @@ export interface components {
          * @enum {string}
          */
         readonly AiTaskRuleEnum: "SYSTEM" | "USER" | "ASSISTANT" | "TOOL" | "FUNCTION" | "INLINE";
+        /**
+         * AiTaskTypeEnum
+         * @enum {string}
+         */
+        readonly AiTaskTypeEnum: "TEXT" | "IMAGE" | "AUDIO" | "VIDEO";
         /** Body_simple_upload_file_manager_simple_upload_post */
         readonly Body_simple_upload_file_manager_simple_upload_post: {
             /** File */
@@ -1726,11 +1726,6 @@ export interface components {
             /** Provider Links */
             readonly provider_links?: readonly components["schemas"]["AiRegistryModelProviderLinkDetail"][];
         };
-        /** AiRegistryModelListResponse */
-        readonly turing_python_api__api__v1__ai_registry__admin_schema__AiRegistryModelListResponse: {
-            /** Data */
-            readonly data: readonly components["schemas"]["turing_python_api__api__v1__ai_registry__admin_schema__AiRegistryModelDetail"][];
-        };
         /** AiRegistryModelDetail */
         readonly turing_python_api__api__v1__ai_registry__user_schema__AiRegistryModelDetail: {
             /**
@@ -1762,11 +1757,6 @@ export interface components {
                 readonly [key: string]: unknown;
             };
         };
-        /** AiRegistryModelListResponse */
-        readonly turing_python_api__api__v1__ai_registry__user_schema__AiRegistryModelListResponse: {
-            /** Data */
-            readonly data: readonly components["schemas"]["AiRegistryModelSummary"][];
-        };
     };
     responses: never;
     parameters: never;
@@ -1785,7 +1775,6 @@ export type SchemaAiRegistryModelSupportedTypesEnum = components['schemas']['AiR
 export type SchemaAiRegistryModelUpdateRequest = components['schemas']['AiRegistryModelUpdateRequest'];
 export type SchemaAiRegistryProviderCreateRequest = components['schemas']['AiRegistryProviderCreateRequest'];
 export type SchemaAiRegistryProviderDetail = components['schemas']['AiRegistryProviderDetail'];
-export type SchemaAiRegistryProviderListResponse = components['schemas']['AiRegistryProviderListResponse'];
 export type SchemaAiRegistryProviderNameEnum = components['schemas']['AiRegistryProviderNameEnum'];
 export type SchemaAiRegistryProviderUpdateRequest = components['schemas']['AiRegistryProviderUpdateRequest'];
 export type SchemaAiTaskAdminPatchMessageRequest = components['schemas']['AiTaskAdminPatchMessageRequest'];
@@ -1794,6 +1783,7 @@ export type SchemaAiTaskMessageResponse = components['schemas']['AiTaskMessageRe
 export type SchemaAiTaskMessageStatusEnum = components['schemas']['AiTaskMessageStatusEnum'];
 export type SchemaAiTaskResponse = components['schemas']['AiTaskResponse'];
 export type SchemaAiTaskRuleEnum = components['schemas']['AiTaskRuleEnum'];
+export type SchemaAiTaskTypeEnum = components['schemas']['AiTaskTypeEnum'];
 export type SchemaBodySimpleUploadFileManagerSimpleUploadPost = components['schemas']['Body_simple_upload_file_manager_simple_upload_post'];
 export type SchemaCompleteSubscriptionPurchaseRequest = components['schemas']['CompleteSubscriptionPurchaseRequest'];
 export type SchemaCreateSubscriptionPlanRequest = components['schemas']['CreateSubscriptionPlanRequest'];
@@ -1843,9 +1833,7 @@ export type SchemaWalletDepositResponseBody = components['schemas']['WalletDepos
 export type SchemaWalletMemberRoleEnum = components['schemas']['WalletMemberRoleEnum'];
 export type SchemaWalletTypeEnum = components['schemas']['WalletTypeEnum'];
 export type SchemaTuringPythonApiApiV1AiRegistryAdminSchemaAiRegistryModelDetail = components['schemas']['turing_python_api__api__v1__ai_registry__admin_schema__AiRegistryModelDetail'];
-export type SchemaTuringPythonApiApiV1AiRegistryAdminSchemaAiRegistryModelListResponse = components['schemas']['turing_python_api__api__v1__ai_registry__admin_schema__AiRegistryModelListResponse'];
 export type SchemaTuringPythonApiApiV1AiRegistryUserSchemaAiRegistryModelDetail = components['schemas']['turing_python_api__api__v1__ai_registry__user_schema__AiRegistryModelDetail'];
-export type SchemaTuringPythonApiApiV1AiRegistryUserSchemaAiRegistryModelListResponse = components['schemas']['turing_python_api__api__v1__ai_registry__user_schema__AiRegistryModelListResponse'];
 export type $defs = Record<string, never>;
 export interface operations {
     readonly start_user_start_post: {
@@ -2784,6 +2772,7 @@ export interface operations {
             readonly query?: {
                 readonly offset?: number;
                 readonly limit?: number;
+                readonly task_type?: components["schemas"]["AiTaskTypeEnum"] | null;
             };
             readonly header?: never;
             readonly path?: never;
@@ -2847,6 +2836,7 @@ export interface operations {
             readonly query?: {
                 readonly offset?: number;
                 readonly limit?: number;
+                readonly task_type?: components["schemas"]["AiTaskTypeEnum"] | null;
             };
             readonly header?: never;
             readonly path: {
@@ -2962,7 +2952,7 @@ export interface operations {
                     readonly [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": components["schemas"]["turing_python_api__api__v1__ai_registry__user_schema__AiRegistryModelListResponse"];
+                    readonly "application/json": readonly components["schemas"]["AiRegistryModelSummary"][];
                 };
             };
             /** @description Validation Error */
@@ -3121,7 +3111,7 @@ export interface operations {
                     readonly [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": components["schemas"]["AiRegistryProviderListResponse"];
+                    readonly "application/json": readonly components["schemas"]["AiRegistryProviderDetail"][];
                 };
             };
         };
@@ -3242,7 +3232,7 @@ export interface operations {
                     readonly [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": components["schemas"]["turing_python_api__api__v1__ai_registry__admin_schema__AiRegistryModelListResponse"];
+                    readonly "application/json": readonly components["schemas"]["turing_python_api__api__v1__ai_registry__admin_schema__AiRegistryModelDetail"][];
                 };
             };
             /** @description Validation Error */
@@ -3341,6 +3331,7 @@ export const aiRegistryModelSupportedTypesEnumValues: ReadonlyArray<FlattenedDee
 export const aiRegistryProviderNameEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiRegistryProviderNameEnum"]> = ["RUNWARE", "AIMLAPI"];
 export const aiTaskMessageStatusEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiTaskMessageStatusEnum"]> = ["PENDING", "IN_PROGRESS", "SUCCESS", "FAILED"];
 export const aiTaskRuleEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiTaskRuleEnum"]> = ["SYSTEM", "USER", "ASSISTANT", "TOOL", "FUNCTION", "INLINE"];
+export const aiTaskTypeEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiTaskTypeEnum"]> = ["TEXT", "IMAGE", "AUDIO", "VIDEO"];
 export const currencyUnitEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["CurrencyUnitEnum"]> = ["USD", "IRR", "USDMICRO"];
 export const paymentGateWayProviderEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaymentGateWayProviderEnum"]> = ["PAYPING_IRR"];
 export const paymentInvoiceStatusEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaymentInvoiceStatusEnum"]> = ["PENDING", "PAID", "FAILED", "CANCELLED"];
@@ -3405,6 +3396,15 @@ export const AiTaskRuleEnumMap = {
 } as const;
 export type AiTaskRuleEnumKey = keyof typeof AiTaskRuleEnumMap;
 export type AiTaskRuleEnumValue = (typeof AiTaskRuleEnumMap)[AiTaskRuleEnumKey];
+
+export const AiTaskTypeEnumMap = {
+  "TEXT": "TEXT",
+  "IMAGE": "IMAGE",
+  "AUDIO": "AUDIO",
+  "VIDEO": "VIDEO",
+} as const;
+export type AiTaskTypeEnumKey = keyof typeof AiTaskTypeEnumMap;
+export type AiTaskTypeEnumValue = (typeof AiTaskTypeEnumMap)[AiTaskTypeEnumKey];
 
 export const CurrencyUnitEnumMap = {
   "USD": "USD",

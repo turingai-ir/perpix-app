@@ -1,5 +1,7 @@
 export interface WebStorage {
-  get: <T extends string>(key: string) => Promise<T | undefined> | T | undefined;
+  get: <T extends string>(
+    key: string,
+  ) => Promise<T | undefined> | T | undefined;
   set: <T extends string>(key: string, value: T) => Promise<void> | void;
   delete: (key: string) => Promise<void> | void;
   clear: () => Promise<void> | void;

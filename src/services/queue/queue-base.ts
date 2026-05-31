@@ -37,7 +37,7 @@ export abstract class BaseQueue<T> {
    */
   public enqueue(item: T): void {
     this.items.push(item);
-    this.emit('add', item);
+    this.emit("add", item);
   }
 
   /**
@@ -48,7 +48,7 @@ export abstract class BaseQueue<T> {
   public dequeue(): T | undefined {
     const item = this.items.shift();
     if (item !== undefined) {
-      this.emit('remove', item);
+      this.emit("remove", item);
     }
     return item;
   }
@@ -89,7 +89,7 @@ export abstract class BaseQueue<T> {
    * @param event - The event type to listen for.
    * @param listener - The listener function to invoke when the event occurs.
    */
-  public on(event: 'add' | 'remove', listener: QueueListener<T>): void {
+  public on(event: "add" | "remove", listener: QueueListener<T>): void {
     this.listeners[event].add(listener);
   }
 
@@ -98,7 +98,7 @@ export abstract class BaseQueue<T> {
    * @param event - The event type to stop listening for.
    * @param listener - The listener function to remove.
    */
-  public off(event: 'add' | 'remove', listener: QueueListener<T>): void {
+  public off(event: "add" | "remove", listener: QueueListener<T>): void {
     this.listeners[event].delete(listener);
   }
 
@@ -108,7 +108,7 @@ export abstract class BaseQueue<T> {
    * @param event - The event type to emit.
    * @param item - The item associated with the event.
    */
-  private emit(event: 'add' | 'remove', item: T) {
+  private emit(event: "add" | "remove", item: T) {
     for (const fn of this.listeners[event]) {
       try {
         fn(item);

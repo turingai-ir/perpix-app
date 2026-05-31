@@ -1,25 +1,25 @@
-import { useCallback, type FC } from 'react';
-import { TbCameraAi, TbPhotoAi } from 'react-icons/tb';
-import { selectAtom } from 'jotai/utils';
-import { useAtom } from 'jotai';
-import { Link, useNavigate } from 'react-router';
-import { BadgeCheck, ChevronsUpDown, LogOut, Sparkles, UserRound } from 'lucide-react';
+import { useCallback, type FC } from "react";
+import { TbCameraAi, TbPhotoAi } from "react-icons/tb";
+import { selectAtom } from "jotai/utils";
+import { useAtom } from "jotai";
+import { Link, useNavigate } from "react-router";
+import { BadgeCheck, ChevronsUpDown, LogOut, Sparkles, UserRound } from "lucide-react";
 
-import appLayoutAtom from '../_state';
+import appLayoutAtom from "../_state";
 
-import AppLayoutSidebarWallet from './wallet';
+import AppLayoutSidebarWallet from "./wallet";
 
-import { Button } from '@/components/ui/button';
-import { useAppTranslate } from '@/hook';
-import { APP_I18_KEYS } from '@/services/i18';
-import { APP_KEYS } from '@/utils';
-import { APP_ROUTES_KEY } from '@/router';
-import { appEventBus } from '@/lib/event-bus';
-import { Separator } from '@/components/ui/separator';
-import { Muted } from '@/components/ui/typography';
-import { useInfiniteScroll } from '@/hooks';
-import ErrorSection from '@/components/custom/error-section';
-import LoadingSection from '@/components/custom/loading-section';
+import { Button } from "@/components/ui/button";
+import { useAppTranslate } from "@/hook";
+import { APP_I18_KEYS } from "@/services/i18";
+import { APP_KEYS } from "@/utils";
+import { APP_ROUTES_KEY } from "@/router";
+import { appEventBus } from "@/lib/event-bus";
+import { Separator } from "@/components/ui/separator";
+import { Muted } from "@/components/ui/typography";
+import { useInfiniteScroll } from "@/hooks";
+import ErrorSection from "@/components/custom/error-section";
+import LoadingSection from "@/components/custom/loading-section";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,14 +28,15 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useReactQueryApi } from '@/hook/app';
-import { Badge } from '@/components/ui/badge';
-import { cookies } from '@/utils/cookies';
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useReactQueryApi } from "@/hook/app";
+import { Badge } from "@/components/ui/badge";
+import { cookies } from "@/utils/cookies";
+import AppLayoutSidebarHistory from "./history";
 
 const requestForChatHistory = () => {
-  appEventBus.emit('SIDEBAR_REQUEST_FOR_DATA', undefined);
+  appEventBus.emit("SIDEBAR_REQUEST_FOR_DATA", undefined);
 };
 
 const sidebarHistoryChatsAtom = selectAtom(appLayoutAtom, (val) => val.sidebarHistoryChats);
@@ -45,7 +46,7 @@ const AppLayoutSidebarContent: FC = () => {
   const navigate = useNavigate();
   const cookie = cookies();
 
-  const userInfoQuery = reactQueryApi.useQuery('get', '/user/get-info', undefined, {
+  const userInfoQuery = reactQueryApi.useQuery("get", "/user/get-info", undefined, {
     enabled: false,
   });
 
@@ -78,14 +79,14 @@ const AppLayoutSidebarContent: FC = () => {
 
   const menuItems = [
     {
-      key: 'image-generations',
-      label: t('pages.app.layout.sidebar.menu.imageGeneration.label'),
+      key: "image-generations",
+      label: t("pages.app.layout.sidebar.menu.imageGeneration.label"),
       href: APP_ROUTES_KEY.generation.image.path,
       Icon: TbPhotoAi,
     },
     {
-      key: 'video-generation',
-      label: t('pages.app.layout.sidebar.menu.videoGeneration.label'),
+      key: "video-generation",
+      label: t("pages.app.layout.sidebar.menu.videoGeneration.label"),
       href: APP_ROUTES_KEY.generation.video.path,
       Icon: TbCameraAi,
     },
@@ -96,7 +97,7 @@ const AppLayoutSidebarContent: FC = () => {
       <AppLayoutSidebarWallet />
 
       <nav
-        aria-label={t('pages.app.layout.sidebar.balanceCard.actions.label')}
+        aria-label={t("pages.app.layout.sidebar.balanceCard.actions.label")}
         className="flex flex-col gap-4"
       >
         <ul className="flex flex-col gap-1.5">
@@ -138,6 +139,8 @@ const AppLayoutSidebarContent: FC = () => {
             />
           ) : null}
         </div>
+        <Separator />
+        <AppLayoutSidebarHistory />
       </nav>
 
       <DropdownMenu>
@@ -156,7 +159,7 @@ const AppLayoutSidebarContent: FC = () => {
             <div className="flex flex-1 text-right text-sm leading-tight">
               <Badge>
                 {userInfoQuery.data?.active_subscription?.plan.display_name ??
-                  t('features.pricing.plans.free.title')}
+                  t("features.pricing.plans.free.title")}
               </Badge>
             </div>
             <ChevronsUpDown className="mr-auto size-4" />
@@ -179,7 +182,7 @@ const AppLayoutSidebarContent: FC = () => {
               <div className="flex flex-1 text-right text-sm leading-tight">
                 <Badge>
                   {userInfoQuery.data?.active_subscription?.plan.display_name ??
-                    t('features.pricing.plans.free.title')}
+                    t("features.pricing.plans.free.title")}
                 </Badge>
               </div>
             </div>
@@ -194,7 +197,7 @@ const AppLayoutSidebarContent: FC = () => {
                   }}
                 >
                   <Sparkles />
-                  {t('pages.app.layout.sidebar.user.upgrade')}
+                  {t("pages.app.layout.sidebar.user.upgrade")}
                 </DropdownMenuItem>
               </DropdownMenuGroup>
             </>
@@ -208,7 +211,7 @@ const AppLayoutSidebarContent: FC = () => {
               }}
             >
               <BadgeCheck />
-              {t('pages.app.layout.sidebar.user.account')}
+              {t("pages.app.layout.sidebar.user.account")}
             </DropdownMenuItem>
             {/* <DropdownMenuItem>
               <CreditCard />
@@ -222,7 +225,7 @@ const AppLayoutSidebarContent: FC = () => {
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleLogout}>
             <LogOut />
-            {t('pages.app.layout.sidebar.user.logout')}
+            {t("pages.app.layout.sidebar.user.logout")}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

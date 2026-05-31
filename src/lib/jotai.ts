@@ -1,8 +1,8 @@
-import { createStore } from 'jotai';
-import { atomWithStorage, createJSONStorage } from 'jotai/utils';
-import type { SyncStorage } from 'jotai/vanilla/utils/atomWithStorage';
+import { createStore } from "jotai";
+import { atomWithStorage, createJSONStorage } from "jotai/utils";
+import type { SyncStorage } from "jotai/vanilla/utils/atomWithStorage";
 
-import { LocalStorageAdapter, type WebStorage } from './web-storage';
+import { LocalStorageAdapter, type WebStorage } from "./web-storage";
 
 type AtomConfig<T = any> = {
   atom: ReturnType<typeof atomWithStorage<T>>;
@@ -58,7 +58,7 @@ export const createSyncJotaiStorage = <Value>(storage: WebStorage = new LocalSto
 };
 
 function isObject(value: unknown): value is Record<string, any> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 function shallowMerge<T>(target: T, source: T): T {

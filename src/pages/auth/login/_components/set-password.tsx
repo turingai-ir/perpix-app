@@ -1,19 +1,25 @@
-import type { FC } from 'react';
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useNavigate } from 'react-router';
-import { LoaderCircle } from 'lucide-react';
-import { toast } from 'sonner';
-import { useImmerAtom } from 'jotai-immer';
+import type { FC } from "react";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useNavigate } from "react-router";
+import { LoaderCircle } from "lucide-react";
+import { toast } from "sonner";
+import { useImmerAtom } from "jotai-immer";
 
-import authLoginPageState from '../_state';
+import authLoginPageState from "../_state";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useAppTranslate, useSecondsCountDown } from '@/hook';
-import { APP_I18_KEYS } from '@/services/i18';
-import { Heading2, Muted, Paragraph } from '@/components/ui/typography';
-import { APP_KEYS, REGEX } from '@/utils';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { useAppTranslate, useSecondsCountDown } from "@/hook";
+import { APP_I18_KEYS } from "@/services/i18";
+import { Heading2, Muted, Paragraph } from "@/components/ui/typography";
+import { APP_KEYS, REGEX } from "@/utils";
 import {
   Form,
   FormControl,
@@ -21,13 +27,17 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Button } from '@/components/ui/button';
-import { useReactQueryApi } from '@/hook/app';
-import { cookies } from '@/utils/cookies';
-import { APP_ROUTES_KEY } from '@/router';
-import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
-import { PasswordInput } from '@/components/ui/password-input';
+} from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
+import { useReactQueryApi } from "@/hook/app";
+import { cookies } from "@/utils/cookies";
+import { APP_ROUTES_KEY } from "@/router";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
+import { PasswordInput } from "@/components/ui/password-input";
 
 const AuthLoginPageSetPassword: FC = () => {
   const navigate = useNavigate();
@@ -44,8 +54,8 @@ const AuthLoginPageSetPassword: FC = () => {
         .transform((value) => {
           let normalized = value.trim();
 
-          if (normalized.startsWith('+98')) {
-            normalized = normalized.replace('+98', '0');
+          if (normalized.startsWith("+98")) {
+            normalized = normalized.replace("+98", "0");
           }
 
           if (/^9\d{9}$/.test(normalized)) {
@@ -55,42 +65,44 @@ const AuthLoginPageSetPassword: FC = () => {
           return normalized;
         })
         .refine((value) => REGEX.password.test(value), {
-          message: t('common.validationErrors.password'),
+          message: t("common.validationErrors.password"),
         }),
       confirmPassword: z.string({}),
       otp: z
         .string({})
         .length(6, {
-          error: t('common.validationErrors.equalCharacter', {
-            name: t('pages.auth.login.setPasswordForm.otp.label'),
+          error: t("common.validationErrors.equalCharacter", {
+            name: t("pages.auth.login.setPasswordForm.otp.label"),
             length: 6,
           }),
         })
         .refine((value) => REGEX.number.test(value), {
-          message: t('common.validationErrors.number', {
-            name: t('pages.auth.login.setPasswordForm.otp.label'),
+          message: t("common.validationErrors.number", {
+            name: t("pages.auth.login.setPasswordForm.otp.label"),
           }),
         }),
     })
     .refine((data) => data.password === data.confirmPassword, {
-      message: t('common.validationErrors.passwordMatch'),
-      path: ['confirmPassword'],
+      message: t("common.validationErrors.passwordMatch"),
+      path: ["confirmPassword"],
     });
 
-  const setPassword = reactQueryApi.useMutation('post', '/user/set-password', {
+  const setPassword = reactQueryApi.useMutation("post", "/user/set-password", {
     onSuccess(data) {
       cookie.set(APP_KEYS.COOKIES.ACCESS_TOKEN, data.token);
       setPageState((draft) => {
-        draft.currentView = 'START';
+        draft.currentView = "START";
       });
       navigate(APP_ROUTES_KEY.app.path);
-      toast.success(t('pages.auth.login.setPasswordForm.successSetPasswordToast'));
+      toast.success(
+        t("pages.auth.login.setPasswordForm.successSetPasswordToast"),
+      );
     },
   });
 
-  const resendOtp = reactQueryApi.useMutation('post', '/user/resend-otp', {
+  const resendOtp = reactQueryApi.useMutation("post", "/user/resend-otp", {
     onSuccess() {
-      toast.info(t('pages.auth.login.successSendOtp'));
+      toast.info(t("pages.auth.login.successSendOtp"));
       countDown.setSeconds(150);
     },
   });
@@ -98,9 +110,9 @@ const AuthLoginPageSetPassword: FC = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      otp: '',
-      password: '',
-      confirmPassword: '',
+      otp: "",
+      password: "",
+      confirmPassword: "",
     },
   });
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -116,11 +128,13 @@ const AuthLoginPageSetPassword: FC = () => {
     <Card className="w-full max-w-sm">
       <CardHeader>
         <CardTitle>
-          <Heading2 className="text-center">{t('pages.auth.login.setPasswordForm.title')}</Heading2>
+          <Heading2 className="text-center">
+            {t("pages.auth.login.setPasswordForm.title")}
+          </Heading2>
         </CardTitle>
         <CardDescription>
           <Paragraph className="text-center">
-            {t('pages.auth.login.setPasswordForm.description')}
+            {t("pages.auth.login.setPasswordForm.description")}
           </Paragraph>
         </CardDescription>
       </CardHeader>
@@ -132,14 +146,20 @@ const AuthLoginPageSetPassword: FC = () => {
               name="password"
               render={({ field, fieldState }) => (
                 <FormItem>
-                  <FormLabel>{t('pages.auth.login.setPasswordForm.password.label')}</FormLabel>
+                  <FormLabel>
+                    {t("pages.auth.login.setPasswordForm.password.label")}
+                  </FormLabel>
                   <FormControl>
                     <PasswordInput dir="ltr" {...field} />
                   </FormControl>
                   {fieldState.error ? (
                     <FormMessage />
                   ) : (
-                    <Muted>{t('pages.auth.login.setPasswordForm.password.description')}</Muted>
+                    <Muted>
+                      {t(
+                        "pages.auth.login.setPasswordForm.password.description",
+                      )}
+                    </Muted>
                   )}
                 </FormItem>
               )}
@@ -150,7 +170,9 @@ const AuthLoginPageSetPassword: FC = () => {
               render={({ field, fieldState }) => (
                 <FormItem>
                   <FormLabel>
-                    {t('pages.auth.login.setPasswordForm.confirmPassword.label')}
+                    {t(
+                      "pages.auth.login.setPasswordForm.confirmPassword.label",
+                    )}
                   </FormLabel>
                   <FormControl>
                     <PasswordInput dir="ltr" {...field} />
@@ -159,7 +181,9 @@ const AuthLoginPageSetPassword: FC = () => {
                     <FormMessage />
                   ) : (
                     <Muted>
-                      {t('pages.auth.login.setPasswordForm.confirmPassword.description')}
+                      {t(
+                        "pages.auth.login.setPasswordForm.confirmPassword.description",
+                      )}
                     </Muted>
                   )}
                 </FormItem>
@@ -170,9 +194,16 @@ const AuthLoginPageSetPassword: FC = () => {
               name="otp"
               render={({ field, fieldState }) => (
                 <FormItem>
-                  <FormLabel>{t('pages.auth.login.setPasswordForm.otp.label')}</FormLabel>
+                  <FormLabel>
+                    {t("pages.auth.login.setPasswordForm.otp.label")}
+                  </FormLabel>
                   <FormControl>
-                    <InputOTP inputMode="numeric" pattern="[0-9]*" maxLength={6} {...field}>
+                    <InputOTP
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      maxLength={6}
+                      {...field}
+                    >
                       <InputOTPGroup dir="ltr">
                         <InputOTPSlot index={0} />
                         <InputOTPSlot index={1} />
@@ -186,7 +217,9 @@ const AuthLoginPageSetPassword: FC = () => {
                   {fieldState.error ? (
                     <FormMessage />
                   ) : (
-                    <Muted>{t('pages.auth.login.setPasswordForm.otp.description')}</Muted>
+                    <Muted>
+                      {t("pages.auth.login.setPasswordForm.otp.description")}
+                    </Muted>
                   )}
                 </FormItem>
               )}
@@ -200,11 +233,11 @@ const AuthLoginPageSetPassword: FC = () => {
                   }}
                   variant="link"
                 >
-                  {t('pages.auth.login.setPasswordForm.resend')}
+                  {t("pages.auth.login.setPasswordForm.resend")}
                 </Button>
               ) : (
                 <Muted className="py-2">
-                  {t('pages.auth.login.setPasswordForm.resendUntil', {
+                  {t("pages.auth.login.setPasswordForm.resendUntil", {
                     time: countDown.formatted,
                   })}
                 </Muted>
@@ -218,7 +251,7 @@ const AuthLoginPageSetPassword: FC = () => {
               {setPassword.isPending ? (
                 <LoaderCircle className="animate-spin" />
               ) : (
-                t('pages.auth.login.setPasswordForm.submit')
+                t("pages.auth.login.setPasswordForm.submit")
               )}
             </Button>
           </form>

@@ -9,9 +9,10 @@ import { appEventBus } from '@/lib/event-bus';
 import appLayoutAtom from '@/pages/(app)/_layout/_state';
 import { APP_ROUTES_KEY } from '@/router';
 import {
-  AiModelSupportedTaskTypeEnum,
-  type SchemaAiChatSessionHistoryResponse,
-  type SchemaAiChatSessionSummary,
+  AiRegistryModelSupportedTypesEnumMap,
+  AiTaskRuleEnumMap,
+  type SchemaAiTaskListResponse,
+  type SchemaAiTaskResponse,
 } from '@/services/api';
 
 const DEFAULT_PAGE_SIZE = 50;
@@ -34,12 +35,12 @@ const GenerationVideoLayout: FC = () => {
 
   const sessionHistoryQuery = reactQueryApi.useInfiniteQuery(
     'get',
-    '/ai/session-history',
+    '/ai-task/list',
     {
       params: {
         query: {
+          offset: 0,
           limit: DEFAULT_PAGE_SIZE,
-          task_type: AiModelSupportedTaskTypeEnum.VIDEO,
         },
       },
     },
@@ -48,7 +49,7 @@ const GenerationVideoLayout: FC = () => {
       initialPageParam: 0,
       pageParamName: 'offset',
       getNextPageParam: (lastPage, pages) =>
-        lastPage.hasNextPage ? pages.length * DEFAULT_PAGE_SIZE : undefined,
+        lastPage.has_next ? pages.length * DEFAULT_PAGE_SIZE : undefined,
     },
   );
   const {
@@ -74,16 +75,23 @@ const GenerationVideoLayout: FC = () => {
 
   //   update data
   useEffect(() => {
-    const pages = normalizeList<SchemaAiChatSessionHistoryResponse>(sessionHistoryData?.pages);
-    const sessions = pages.flatMap((page) =>
-      normalizeList<SchemaAiChatSessionSummary>(page.sessions),
-    );
+    const pages = normalizeList<SchemaAiTaskListResponse>(sessionHistoryData?.pages);
+    const sessions = pages
+      .flatMap((page) => normalizeList<SchemaAiTaskResponse>(page.items))
+      .filter((item) => item.task_type === AiRegistryModelSupportedTypesEnumMap.VIDEO);
     const lastPage = pages[pages.length - 1];
-    const newList = sessions.map((item) => ({
-      id: item.uuid,
-      link: APP_ROUTES_KEY.generation.video.history.path.replace(':chatId', item.uuid),
-      title: item.user_prompt ?? '',
-    }));
+    const newList = sessions.map((item) => {
+      const lastMessage = item.messages[item.messages.length - 1];
+
+      return {
+        id: item.uuid,
+        link: APP_ROUTES_KEY.generation.video.history.path.replace(':chatId', item.uuid),
+        title:
+          item.messages.find((message) => message.role === AiTaskRuleEnumMap.USER)?.message ??
+          lastMessage?.message ??
+          '',
+      };
+    });
 
     setAppLayoutState((draft) => {
       const prevList = draft.sidebarHistoryChats.list;
@@ -93,7 +101,7 @@ const GenerationVideoLayout: FC = () => {
       if (prevList.length !== newList.length || newLastId !== prevLastId) {
         draft.sidebarHistoryChats.list = newList;
       }
-      draft.sidebarHistoryChats.AllItemsFetched = lastPage ? !lastPage.hasNextPage : false;
+      draft.sidebarHistoryChats.AllItemsFetched = lastPage ? !lastPage.has_next : false;
     });
   }, [sessionHistoryData, setAppLayoutState]);
 

@@ -1,6 +1,6 @@
-import { APP_KEYS } from '@/utils/app-keys';
-import { LANGUAGES, THEMES, type Language, type Theme } from '@/utils/consts-only';
-import { atomWithSyncStorage, createSyncJotaiStorage } from '@/lib/jotai';
+import { APP_KEYS } from "@/utils/app-keys";
+import { LANGUAGES, THEMES, type Language, type Theme } from "@/utils/consts-only";
+import { atomWithSyncStorage, createSyncJotaiStorage } from "@/lib/jotai";
 
 // const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
 

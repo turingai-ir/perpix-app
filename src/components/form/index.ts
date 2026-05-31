@@ -1,1 +1,1 @@
-export * from './multi-image-upload-input';
+export * from "./multi-image-upload-input";

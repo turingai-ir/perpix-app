@@ -6,7 +6,13 @@ import { toast } from "sonner";
 import { Link } from "react-router";
 import { LoaderCircle } from "lucide-react";
 
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { useAppTranslate } from "@/hook";
 import { APP_I18_KEYS } from "@/services/i18";
 import {
@@ -32,11 +38,17 @@ const ProfileSettingsPage: FC = () => {
 
   const userInfoQuery = reactQueryApi.useQuery("get", "/user/get-info");
 
-  const editUserInfoQuery = reactQueryApi.useMutation("patch", "/user/edit-info", {
-    onSuccess: () => {
-      toast.success(t("pages.profile.settings.userInfo.form.successSetPasswordToast"));
+  const editUserInfoQuery = reactQueryApi.useMutation(
+    "patch",
+    "/user/edit-info",
+    {
+      onSuccess: () => {
+        toast.success(
+          t("pages.profile.settings.userInfo.form.successSetPasswordToast"),
+        );
+      },
     },
-  });
+  );
 
   const formSchema = z.object({
     name: z
@@ -120,14 +132,20 @@ const ProfileSettingsPage: FC = () => {
                 name="name"
                 render={({ field, fieldState }) => (
                   <FormItem>
-                    <FormLabel>{t("pages.profile.settings.userInfo.form.name.label")}</FormLabel>
+                    <FormLabel>
+                      {t("pages.profile.settings.userInfo.form.name.label")}
+                    </FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
                     {fieldState.error ? (
                       <FormMessage />
                     ) : (
-                      <Muted>{t("pages.profile.settings.userInfo.form.name.description")}</Muted>
+                      <Muted>
+                        {t(
+                          "pages.profile.settings.userInfo.form.name.description",
+                        )}
+                      </Muted>
                     )}
                   </FormItem>
                 )}
@@ -137,7 +155,9 @@ const ProfileSettingsPage: FC = () => {
                 name="email"
                 render={({ field, fieldState }) => (
                   <FormItem>
-                    <FormLabel>{t("pages.profile.settings.userInfo.form.email.label")}</FormLabel>
+                    <FormLabel>
+                      {t("pages.profile.settings.userInfo.form.email.label")}
+                    </FormLabel>
                     <FormControl>
                       <Input dir="ltr" type="email" {...field} />
                     </FormControl>
@@ -151,15 +171,26 @@ const ProfileSettingsPage: FC = () => {
                 disabled
                 render={({ field, fieldState }) => (
                   <FormItem>
-                    <FormLabel>{t("pages.profile.settings.userInfo.form.mobile.label")}</FormLabel>
+                    <FormLabel>
+                      {t("pages.profile.settings.userInfo.form.mobile.label")}
+                    </FormLabel>
                     <FormControl>
-                      <Input dir="ltr" type="number" placeholder="0912345678" {...field} />
+                      <Input
+                        dir="ltr"
+                        type="number"
+                        placeholder="0912345678"
+                        {...field}
+                      />
                     </FormControl>
                     {fieldState.error ? <FormMessage /> : null}
                   </FormItem>
                 )}
               />
-              <Button className="w-full" type="submit" disabled={editUserInfoQuery.isPending}>
+              <Button
+                className="w-full"
+                type="submit"
+                disabled={editUserInfoQuery.isPending}
+              >
                 {editUserInfoQuery.isPending ? (
                   <LoaderCircle className="animate-spin" />
                 ) : (

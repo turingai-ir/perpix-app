@@ -40,7 +40,21 @@
       "passwordMatch": "رمز عبور با تکرار آن برابر نیست",
       "required": "{{name}} الزامی است",
       "min": "{{name}} حداقل باید {{min}} باشد",
-      "max": "{{name}} حداکثر می می تواند {{max}} باشد"
+      "max": "{{name}} حداکثر می می تواند {{max}} باشد",
+      "dynamicConfig": {
+        "required": "این فیلد الزامی است",
+        "invalidEnum": "مقدار انتخاب‌شده معتبر نیست",
+        "invalidString": "مقدار باید متن باشد",
+        "invalidNumber": "مقدار باید عدد باشد",
+        "invalidInteger": "مقدار باید عدد صحیح باشد",
+        "invalidArray": "مقدار باید آرایه باشد",
+        "minLength": "حداقل {{min}} کاراکتر لازم است",
+        "maxLength": "حداکثر {{max}} کاراکتر مجاز است",
+        "minNumber": "حداقل مقدار {{min}} است",
+        "maxNumber": "حداکثر مقدار {{max}} است",
+        "minItems": "حداقل {{min}} آیتم لازم است",
+        "maxItems": "حداکثر {{max}} آیتم مجاز است"
+      }
     },
     "yesterday": "دیروز",
     "selectSize": "انتخاب سایز"

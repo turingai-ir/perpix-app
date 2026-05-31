@@ -1,4 +1,4 @@
-import { useAppTranslate } from '@/hook';
+import { useAppTranslate } from "@/hook";
 
 export function useFormateTime() {
   const { t } = useAppTranslate();
@@ -7,11 +7,11 @@ export function useFormateTime() {
     const toLocalizedNumber = (num: number): string => num.toString();
 
     const labels = {
-      day: t('common.day'),
-      hour: t('common.hour'),
-      minute: t('common.minute'),
-      second: t('common.seconds'),
-      and: t('common.and'),
+      day: t("common.day"),
+      hour: t("common.hour"),
+      minute: t("common.minute"),
+      second: t("common.seconds"),
+      and: t("common.and"),
     };
 
     const days = Math.floor(totalSeconds / 86400);

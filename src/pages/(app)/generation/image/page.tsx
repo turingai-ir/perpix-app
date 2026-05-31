@@ -7,6 +7,8 @@
 // import z from 'zod';
 // import { zodResolver } from '@hookform/resolvers/zod';
 
+import { GenerationImagePromptBox } from "./_components";
+
 // import appLayoutAtom from '../../_layout/_state';
 
 // import {
@@ -560,3 +562,13 @@
 // };
 
 // export default GenerationImagePage;
+
+const GenerationImagePage = () => {
+  return (
+    <div className="relative w-full pt-4 pb-20">
+      <GenerationImagePromptBox />
+    </div>
+  );
+};
+
+export default GenerationImagePage;

@@ -1,11 +1,11 @@
-import createFetch, { type Middleware } from 'openapi-fetch';
+import createFetch, { type Middleware } from "openapi-fetch";
 
-import { appEventBus } from '../../lib/event-bus';
+import { appEventBus } from "../../lib/event-bus";
 
-import type { paths } from './api';
+import type { paths } from "./api";
 
-import { cookies } from '@/utils/cookies';
-import { APP_KEYS, createCustomFetch } from '@/utils';
+import { cookies } from "@/utils/cookies";
+import { APP_KEYS, createCustomFetch } from "@/utils";
 
 export const apiClient = createFetch<paths>({
   fetch: createCustomFetch(globalThis.fetch, {
@@ -19,7 +19,7 @@ export const apiClient = createFetch<paths>({
 
 const errorMiddleware: Middleware = {
   onError: ({ error }) => {
-    appEventBus.emit('API_ERROR_EVENT', error);
+    appEventBus.emit("API_ERROR_EVENT", error);
     throw error;
   },
 };
@@ -28,8 +28,8 @@ const tokenMiddleware: Middleware = {
   onRequest: ({ request }) => {
     const cookie = cookies();
     const token = cookie.get(APP_KEYS.COOKIES.ACCESS_TOKEN);
-    if (token && typeof token === 'string') {
-      request.headers.set('Authorization', `Bearer ${token}`);
+    if (token && typeof token === "string") {
+      request.headers.set("Authorization", `Bearer ${token}`);
     }
     return request;
   },

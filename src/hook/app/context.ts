@@ -1,7 +1,7 @@
-import createClient, { type OpenapiQueryClient } from 'openapi-react-query';
-import { createContext } from 'react';
+import createClient, { type OpenapiQueryClient } from "openapi-react-query";
+import { createContext } from "react";
 
-import { apiClient, type paths } from '@/services/api';
+import { apiClient, type paths } from "@/services/api";
 
 interface Context {
   apiHook: OpenapiQueryClient<paths, `${string}/${string}`>;

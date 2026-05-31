@@ -1,13 +1,13 @@
-import * as React from 'react';
-import { toast } from 'sonner';
+import * as React from "react";
+import { toast } from "sonner";
 
-import { cn } from '@/lib/utils';
-import { useAppTranslate } from '@/hook';
-import { APP_I18_KEYS } from '@/services/i18';
+import { cn } from "@/lib/utils";
+import { useAppTranslate } from "@/hook";
+import { APP_I18_KEYS } from "@/services/i18";
 
 export interface MultiImageUploadInputProps extends Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
-  'type' | 'onChange' | 'value'
+  "type" | "onChange" | "value"
 > {
   value?: File[];
   onChange?: (value: File[]) => void;
@@ -38,17 +38,17 @@ const MultiImageUploadInput = React.forwardRef<HTMLInputElement, MultiImageUploa
       }
 
       if (Array.from(files).find((f) => f.size > maxSize)) {
-        toast.error(t('common.validationErrors.imageMaxSize', { maxSize: maxSizeMb }));
+        toast.error(t("common.validationErrors.imageMaxSize", { maxSize: maxSizeMb }));
         return;
       }
 
       const validFiles = Array.from(files).filter(
-        (f) => ['image/png', 'image/jpeg', 'image/jpg'].includes(f.type) && f.size <= maxSize,
+        (f) => ["image/png", "image/jpeg", "image/jpg"].includes(f.type) && f.size <= maxSize,
       );
 
       const updated = [...(value || []), ...validFiles].slice(0, maxFiles);
       onChange?.(updated);
-      e.target.value = '';
+      e.target.value = "";
     };
 
     const handleRemove = (index: number) => {
@@ -62,8 +62,8 @@ const MultiImageUploadInput = React.forwardRef<HTMLInputElement, MultiImageUploa
           <div
             key={i}
             className={cn(
-              'relative w-[72px] h-[72px] border rounded-md overflow-hidden group',
-              disabled && 'opacity-50 cursor-not-allowed',
+              "relative w-18 h-18 border rounded-md overflow-hidden group",
+              disabled && "opacity-50 cursor-not-allowed",
             )}
           >
             <img src={src} alt={`Uploaded ${i}`} className="w-full h-full object-cover" />
@@ -84,7 +84,7 @@ const MultiImageUploadInput = React.forwardRef<HTMLInputElement, MultiImageUploa
         {value.length < maxFiles && !disabled && (
           <label
             className={cn(
-              'w-[72px] h-[72px] flex items-center justify-center border-2 border-dashed rounded-md cursor-pointer hover:bg-muted/30 transition-colors',
+              "w-18 h-18 flex items-center justify-center border-2 border-dashed rounded-md cursor-pointer hover:bg-muted/30 transition-colors",
               className,
             )}
           >
@@ -106,5 +106,5 @@ const MultiImageUploadInput = React.forwardRef<HTMLInputElement, MultiImageUploa
   },
 );
 
-MultiImageUploadInput.displayName = 'MultiImageUploadInput';
+MultiImageUploadInput.displayName = "MultiImageUploadInput";
 export { MultiImageUploadInput };

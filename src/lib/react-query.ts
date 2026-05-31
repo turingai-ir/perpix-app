@@ -1,8 +1,11 @@
-import { get, set, del } from 'idb-keyval';
-import { type PersistedClient, type Persister } from '@tanstack/react-query-persist-client';
-import { QueryClient } from '@tanstack/react-query';
+import { get, set, del } from "idb-keyval";
+import {
+  type PersistedClient,
+  type Persister,
+} from "@tanstack/react-query-persist-client";
+import { QueryClient } from "@tanstack/react-query";
 
-export function createIDBPersister(idbValidKey: IDBValidKey = 'reactQuery') {
+export function createIDBPersister(idbValidKey: IDBValidKey = "reactQuery") {
   return {
     persistClient: async (client: PersistedClient) => {
       await set(idbValidKey, client);
