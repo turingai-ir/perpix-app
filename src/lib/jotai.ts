@@ -13,7 +13,6 @@ type AtomConfig<T = any> = {
 
 const atomConfigs = new Map<string, AtomConfig>();
 
-// Cache برای storage instances تا duplicate creation جلوگیری بشه
 const storageCache = new WeakMap<WebStorage, SyncStorage<any>>();
 
 const getDefaultStorage = <Value>(): SyncStorage<Value> => {
@@ -24,7 +23,9 @@ const getDefaultStorage = <Value>(): SyncStorage<Value> => {
   return storageCache.get(defaultAdapter)! as SyncStorage<Value>;
 };
 
-export const createSyncJotaiStorage = <Value>(storage: WebStorage = new LocalStorageAdapter()) => {
+export const createSyncJotaiStorage = <Value>(
+  storage: WebStorage = new LocalStorageAdapter(),
+) => {
   if (storageCache.has(storage)) {
     return storageCache.get(storage)! as SyncStorage<Value>;
   }
@@ -77,7 +78,7 @@ export function bootstrapJotai() {
 
       if (storedValue === null || storedValue === undefined) {
         store.set(config.atom, config.defaultValue);
-        atomConfigs.delete(key); // بلافاصله delete برای کاهش memory
+        atomConfigs.delete(key);
         continue;
       }
 

@@ -1,13 +1,13 @@
-import type { FC, ReactNode } from 'react';
-import dayjs from 'dayjs';
+import type { FC, ReactNode } from "react";
+import dayjs from "dayjs";
 
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { Muted } from '../ui/typography';
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Muted } from "../ui/typography";
 
-import { useAppTranslate } from '@/hook';
-import { APP_I18_KEYS } from '@/services/i18';
+import { useAppTranslate } from "@/hook";
+import { APP_I18_KEYS } from "@/services/i18";
 
-type Sender = 'agent' | 'user';
+type Sender = "agent" | "user";
 interface ChatBubbleProps {
   avatar: string | ReactNode;
   message?: string | ReactNode;
@@ -31,30 +31,34 @@ export const ChatBubble: FC<ChatBubbleProps> = ({
     <div
       className="w-full flex gap-2"
       style={{
-        flexDirection: sender === 'agent' ? 'row' : 'row-reverse',
+        flexDirection: sender === "agent" ? "row" : "row-reverse",
       }}
     >
       <div className="flex-col flex gap-2 w-full">
         {timestamp ? (
           <div>
-            <Muted>{dayjs(timestamp).format('HH:mm')}</Muted>
+            <Muted>{dayjs(timestamp).format("HH:mm")}</Muted>
           </div>
         ) : null}
-        {status === 'FAILED' ? (
+        {status === "FAILED" ? (
           <div>
-            <Muted>{t('common.taskStatus.failed')}</Muted>
+            <Muted>{t("common.taskStatus.failed")}</Muted>
           </div>
         ) : null}
-        {message ? <div className="bg-accent rounded-md p-3">{message}</div> : null}
+        {message ? (
+          <div className="bg-accent rounded-md p-3">{message}</div>
+        ) : null}
         {images?.length ? (
           <div
             className={
-              images.length > 1 ? 'grid grid-cols-2 gap-2 w-full' : 'flex flex-col w-full gap-1'
+              images.length > 1
+                ? "grid grid-cols-2 gap-2 w-full"
+                : "flex flex-col w-full gap-1"
             }
           >
             {images.map((image, index) => (
               <div key={index} className="w-full h-full">
-                {typeof image === 'string' ? (
+                {typeof image === "string" ? (
                   <img
                     className="w-full h-auto object-cover rounded-lg"
                     src={image}
@@ -70,14 +74,20 @@ export const ChatBubble: FC<ChatBubbleProps> = ({
         {videos?.length ? (
           <div
             className={
-              videos.length > 1 ? 'grid grid-cols-2 gap-2 w-full' : 'flex flex-col w-full gap-1'
+              videos.length > 1
+                ? "grid grid-cols-2 gap-2 w-full"
+                : "flex flex-col w-full gap-1"
             }
           >
             {videos.map((video, index) => (
               <div key={index} className="w-full h-full">
-                {typeof video === 'string' ? (
+                {typeof video === "string" ? (
                   // eslint-disable-next-line jsx-a11y/media-has-caption
-                  <video className="w-full h-auto object-cover rounded-lg" src={video} controls />
+                  <video
+                    className="w-full h-auto object-cover rounded-lg"
+                    src={video}
+                    controls
+                  />
                 ) : (
                   video
                 )}
@@ -87,7 +97,7 @@ export const ChatBubble: FC<ChatBubbleProps> = ({
         ) : null}
       </div>
       <div className="min-w-fit">
-        {typeof avatar === 'string' ? (
+        {typeof avatar === "string" ? (
           <Avatar>
             <AvatarImage src={avatar} />
             <AvatarFallback>P</AvatarFallback>
@@ -100,4 +110,4 @@ export const ChatBubble: FC<ChatBubbleProps> = ({
   );
 };
 
-ChatBubble.displayName = 'ChatBubble';
+ChatBubble.displayName = "ChatBubble";

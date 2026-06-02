@@ -5,7 +5,9 @@ import { useReactQueryApi } from "@/hook/app";
 export const useModel = () => {
   const { useQuery } = useReactQueryApi();
 
-  const [currentModel, setCurrentModel] = useState<string | undefined>(undefined);
+  const [currentModel, setCurrentModel] = useState<string | undefined>(
+    undefined,
+  );
 
   const modelsListState = useQuery("get", "/ai-registry/models");
 
@@ -23,7 +25,8 @@ export const useModel = () => {
   );
 
   useEffect(() => {
-    if (modelsListState.data?.length) setCurrentModel(modelsListState.data[0].uuid);
+    if (modelsListState.data?.length)
+      setCurrentModel(modelsListState.data[0].uuid);
   }, [modelsListState.data]);
 
   return {

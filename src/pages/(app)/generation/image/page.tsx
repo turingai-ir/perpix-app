@@ -565,7 +565,7 @@ import { GenerationImagePromptBox } from "./_components";
 
 const GenerationImagePage = () => {
   return (
-    <div className="relative w-full pt-4 pb-20">
+    <div className="relative w-full min-w-0 overflow-x-hidden pt-4 pb-20">
       <GenerationImagePromptBox />
     </div>
   );

@@ -29,7 +29,10 @@ const RootLayout: FC = () => {
       }
 
       // 401 error
-      if (error instanceof FetchHttpError && error.response.status === HttpStatus.UNAUTHORIZED) {
+      if (
+        error instanceof FetchHttpError &&
+        error.response.status === HttpStatus.UNAUTHORIZED
+      ) {
         cookie.remove(APP_KEYS.COOKIES.ACCESS_TOKEN);
         navigate(APP_ROUTES_KEY.auth.login.path);
       }

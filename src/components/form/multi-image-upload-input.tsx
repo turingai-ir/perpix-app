@@ -16,9 +16,21 @@ export interface MultiImageUploadInputProps extends Omit<
   label: string;
 }
 
-const MultiImageUploadInput = React.forwardRef<HTMLInputElement, MultiImageUploadInputProps>(
+const MultiImageUploadInput = React.forwardRef<
+  HTMLInputElement,
+  MultiImageUploadInputProps
+>(
   (
-    { className, value = [], onChange, maxFiles = 3, disabled, maxSizeMb, label, ...props },
+    {
+      className,
+      value = [],
+      onChange,
+      maxFiles = 3,
+      disabled,
+      maxSizeMb,
+      label,
+      ...props
+    },
     ref,
   ) => {
     const maxSize = maxSizeMb * 1024 * 1024;
@@ -38,12 +50,16 @@ const MultiImageUploadInput = React.forwardRef<HTMLInputElement, MultiImageUploa
       }
 
       if (Array.from(files).find((f) => f.size > maxSize)) {
-        toast.error(t("common.validationErrors.imageMaxSize", { maxSize: maxSizeMb }));
+        toast.error(
+          t("common.validationErrors.imageMaxSize", { maxSize: maxSizeMb }),
+        );
         return;
       }
 
       const validFiles = Array.from(files).filter(
-        (f) => ["image/png", "image/jpeg", "image/jpg"].includes(f.type) && f.size <= maxSize,
+        (f) =>
+          ["image/png", "image/jpeg", "image/jpg"].includes(f.type) &&
+          f.size <= maxSize,
       );
 
       const updated = [...(value || []), ...validFiles].slice(0, maxFiles);
@@ -66,7 +82,11 @@ const MultiImageUploadInput = React.forwardRef<HTMLInputElement, MultiImageUploa
               disabled && "opacity-50 cursor-not-allowed",
             )}
           >
-            <img src={src} alt={`Uploaded ${i}`} className="w-full h-full object-cover" />
+            <img
+              src={src}
+              alt={`Uploaded ${i}`}
+              className="w-full h-full object-cover"
+            />
             {!disabled && (
               <button
                 type="button"

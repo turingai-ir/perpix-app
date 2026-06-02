@@ -1,4 +1,4 @@
-import { useCallback, useRef, type FC } from "react";
+import { useCallback, useRef, useState, type FC } from "react";
 import { ArrowUp } from "lucide-react";
 
 import { useModel } from "../_hooks";
@@ -11,11 +11,17 @@ import {
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { useAppTranslate } from "@/hook";
 import { Button } from "@/components/ui/button";
+import { useFileManager } from "@/feature/file-manager/hook";
+import { HorizontalImageUploader } from "@/components/custom/horizontal-image-uploader";
 
 export const GenerationImagePromptBox: FC = () => {
-  const { modelState, modelsListState } = useModel();
+  const { modelState } = useModel();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { t } = useAppTranslate();
+  const { filesPreview, pendingUploads, requestUpload } =
+    useFileManager("image_generation");
+
+  const [selectedImages, setSelectedImages] = useState<string[]>([]);
 
   const dynamicForm = useDynamicConfigForm({
     autoResetOnSchemaChange: true,
@@ -28,7 +34,11 @@ export const GenerationImagePromptBox: FC = () => {
 
   const submitForm = () => {};
 
-  console.log(modelsListState.data, dynamicForm.defaultValues);
+  console.log({
+    defaultValues: dynamicForm.defaultValues,
+    filesPreview,
+    pendingUploads,
+  });
 
   const handleInput = useCallback(() => {
     const el = textareaRef.current;
@@ -41,19 +51,40 @@ export const GenerationImagePromptBox: FC = () => {
   }, []);
 
   return (
-    <div className="w-full min-w-0 px-4">
-      <Card className="w-full min-w-0 max-w-full px-2">
+    <div className="w-full min-w-0 overflow-hidden px-4">
+      <Card className="w-full min-w-0 overflow-hidden px-2">
+        <HorizontalImageUploader
+          images={[
+            ...selectedImages.map((i) => ({
+              id: i,
+              url: filesPreview.get(i),
+              status: "success" as const,
+            })),
+          ]}
+          onDeleteClick={(imageId) => {
+            setSelectedImages((pre) => pre.filter((id) => id !== imageId));
+          }}
+          onFileSelect={async (file) => {
+            const res = await requestUpload(file);
+            if (res) {
+              setSelectedImages((pre) => [...pre, res]);
+            }
+          }}
+          showPlaceholder
+          label={t("common.addImage")}
+          accept="image/jpeg, image/png"
+        />
         <Form {...dynamicForm.form}>
           <form
-            className="w-full min-w-0 flex flex-col"
+            className="flex w-full min-w-0 flex-col"
             onSubmit={dynamicForm.handleSubmit(submitForm)}
           >
             <FormField
               control={dynamicForm.control}
               name="prompt"
               render={({ field: { ref, value, ...field } }) => (
-                <FormItem className="min-w-0 ">
-                  <FormControl className="min-w-0">
+                <FormItem>
+                  <FormControl>
                     <textarea
                       value={String(value ?? "")}
                       ref={(r) => {
@@ -63,7 +94,7 @@ export const GenerationImagePromptBox: FC = () => {
                       onInput={handleInput}
                       rows={3}
                       wrap="soft"
-                      className="wrap-break-word resize-none overflow-y-auto scrollbar-thin w-full border-none outline-none"
+                      className="wrap-break-word w-full resize-none overflow-y-auto border-none outline-none"
                       placeholder={t(
                         "pages.generation.image.promptBox.promptTextArea.placeholder",
                       )}
