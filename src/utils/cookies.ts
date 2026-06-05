@@ -1,10 +1,10 @@
-import Cookies, { type CookieSetOptions } from 'universal-cookie';
+import Cookies, { type CookieSetOptions } from "universal-cookie";
 
 export const cookies = () => {
   const c = new Cookies(null, {
-    path: '/',
-    secure: import.meta.env.MODE === 'production',
-    sameSite: 'lax',
+    path: "/",
+    secure: import.meta.env.MODE === "production",
+    sameSite: "lax",
   });
   const get = (name: string) => {
     return c.get(name);

@@ -1,38 +1,38 @@
 export const APP_ROUTES_KEY = {
   auth: {
-    path: '/auth',
+    path: "/auth",
     login: {
-      path: '/auth/login',
+      path: "/auth/login",
     },
   },
   app: {
-    path: '/',
+    path: "/",
   },
   profile: {
     root: {
-      path: '/profile',
+      path: "/profile",
     },
     settings: {
-      path: '/profile/settings',
+      path: "/profile/settings",
     },
   },
   generation: {
     image: {
-      path: '/generation/image',
+      path: "/generation/image",
       history: {
-        path: '/generation/image/:chatId',
+        path: "/generation/image/:chatId",
       },
     },
     video: {
-      path: '/generation/video',
+      path: "/generation/video",
       history: {
-        path: '/generation/video/:chatId',
+        path: "/generation/video/:chatId",
       },
     },
   },
   payment: {
     result: {
-      path: 'payment/result/:sessionId',
+      path: "payment/result/:sessionId",
     },
   },
 } as const;

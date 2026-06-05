@@ -7,7 +7,12 @@
 // import z from 'zod';
 // import { zodResolver } from '@hookform/resolvers/zod';
 
+import { AiGenerationLoading } from "@/components/custom/ai-generation-loading";
 import { GenerationImagePromptBox } from "./_components";
+import { useAiGenerate } from "./_hooks";
+import { TypingAnimation } from "@/components/ui/typing-animation";
+import { useParams } from "react-router";
+import { useState } from "react";
 
 // import appLayoutAtom from '../../_layout/_state';
 
@@ -564,9 +569,52 @@ import { GenerationImagePromptBox } from "./_components";
 // export default GenerationImagePage;
 
 const GenerationImagePage = () => {
+  const params = useParams();
+
+  const [chatId, setChatId] = useState<string | undefined>(
+    params?.chatId ?? undefined,
+  );
+
+  const { aiGenerateState, aiTaskState } = useAiGenerate(chatId);
+
+  const handleForm = (data: any, ai_model_uuid: string) => {
+    aiGenerateState.mutateAsync({
+      body: {
+        task_type: "IMAGE",
+        ai_model_uuid: ai_model_uuid,
+        ai_model_config: data,
+      },
+    });
+  };
   return (
-    <div className="relative w-full min-w-0 overflow-x-hidden pt-4 pb-20">
-      <GenerationImagePromptBox />
+    <div className="relative flex w-full min-w-0 flex-col overflow-x-hidden px-4 pt-4 pb-20">
+      {aiGenerateState.isPending ? (
+        <div className="flex w-full justify-center p-4">
+          <AiGenerationLoading />
+        </div>
+      ) : null}
+
+      <div className="mx-auto flex w-full max-w-200 flex-col items-center gap-4">
+        {aiGenerateState.isPending ? null : (
+          <TypingAnimation
+            loop
+            blinkCursor
+            cursorStyle="block"
+            words={[
+              "با هوش مصنوعی رویاهتو بساز 🚀",
+              "هرچی که نمیشه اینجا میشه ✨",
+              "تخیلتو تبدیل به تصویر کن 🎨",
+              "از ایده تا واقعیت، فقط یک کلیک ⚡",
+            ]}
+          />
+        )}
+
+        <GenerationImagePromptBox
+          chatId={chatId}
+          isLoading={aiGenerateState.isPending || aiTaskState.isLoading}
+          onSubmit={handleForm}
+        />
+      </div>
     </div>
   );
 };

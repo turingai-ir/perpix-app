@@ -1,0 +1,12 @@
+{
+  "@shadcn-space/animated-text-04": {
+    "source": "@shadcn-space",
+    "version": "latest",
+    "addedAt": "2026-06-04T17:05:12.394Z"
+  },
+  "@magicui/typing-animation": {
+    "source": "@magicui",
+    "version": "latest",
+    "addedAt": "2026-06-04T17:14:29.126Z"
+  }
+}

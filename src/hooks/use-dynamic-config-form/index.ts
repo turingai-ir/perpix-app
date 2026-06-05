@@ -8,6 +8,7 @@ import {
   buildObjectZodSchema,
   createValidationMessages,
   EMPTY_CONFIG_SCHEMA,
+  sanitizeConfigValues,
   stripUndefinedDeep,
 } from "./schema";
 import type {
@@ -38,6 +39,7 @@ export {
   buildFieldMeta,
   buildObjectZodSchema,
   isJsonConfigSchema,
+  sanitizeConfigValues,
 } from "./schema";
 
 export function useDynamicConfigForm({
@@ -52,7 +54,8 @@ export function useDynamicConfigForm({
 
   const isReady = Boolean(configSchema?.properties);
 
-  const resolvedSchemaKey = schemaKey ?? configSchema?.$id ?? "empty-dynamic-config-schema";
+  const resolvedSchemaKey =
+    schemaKey ?? configSchema?.$id ?? "empty-dynamic-config-schema";
 
   const validationMessages = useMemo<DynamicConfigValidationMessages>(() => {
     return createValidationMessages(t);
@@ -115,20 +118,33 @@ export function useDynamicConfigForm({
   );
 
   const getCleanValues = useCallback(() => {
-    return stripUndefinedDeep(form.getValues());
-  }, [form]);
+    return sanitizeConfigValues(
+      safeConfigSchema,
+      stripUndefinedDeep(form.getValues()),
+    );
+  }, [form, safeConfigSchema]);
+
+  const handleSubmit: typeof form.handleSubmit = useCallback(
+    (onValid, onInvalid) => {
+      return form.handleSubmit((values, event) => {
+        const cleaned = sanitizeConfigValues(
+          safeConfigSchema,
+          stripUndefinedDeep(values),
+        );
+        return onValid(cleaned, event);
+      }, onInvalid);
+    },
+    [form, safeConfigSchema],
+  );
 
   const handleCleanSubmit = useCallback(
     (
       onValid: (values: DynamicConfigValues) => void | Promise<void>,
       onInvalid?: Parameters<typeof form.handleSubmit>[1],
     ) => {
-      return form.handleSubmit((values) => {
-        const cleaned = stripUndefinedDeep(values);
-        return onValid(cleaned);
-      }, onInvalid);
+      return handleSubmit((values) => onValid(values), onInvalid);
     },
-    [form],
+    [form, handleSubmit],
   );
 
   return {
@@ -142,7 +158,7 @@ export function useDynamicConfigForm({
     getFieldMeta,
     register: form.register,
     control: form.control,
-    handleSubmit: form.handleSubmit,
+    handleSubmit,
     handleCleanSubmit,
     formState: form.formState,
     setValue: form.setValue,

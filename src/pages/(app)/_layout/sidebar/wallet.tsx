@@ -40,20 +40,31 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-const walletCurrentBalanceAtom = selectAtom(appLayoutAtom, (val) => val.walletCurrentBalance);
+const walletCurrentBalanceAtom = selectAtom(
+  appLayoutAtom,
+  (val) => val.walletCurrentBalance,
+);
 
 function AppLayoutSidebarWallet() {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const [walletCurrentBalance] = useAtom(walletCurrentBalanceAtom);
   const reactQueryApi = useReactQueryApi();
 
-  const exchangeRateMutation = reactQueryApi.useMutation("get", "/gateway/irr-exchange-rate");
-  const walletDepositMutation = reactQueryApi.useMutation("post", "/user/wallet/deposit");
+  const exchangeRateMutation = reactQueryApi.useMutation(
+    "get",
+    "/gateway/irr-exchange-rate",
+  );
+  const walletDepositMutation = reactQueryApi.useMutation(
+    "post",
+    "/user/wallet/deposit",
+  );
 
   const formSchema = z.object({
     amount: z
       .string({
-        error: t("common.validationErrors.required", { name: t("common.token") }),
+        error: t("common.validationErrors.required", {
+          name: t("common.token"),
+        }),
       })
       .refine(
         (s) => {
@@ -120,14 +131,14 @@ function AppLayoutSidebarWallet() {
   }
 
   return (
-    <Card className="border border-sidebar-border bg-sidebar text-sidebar-foreground shadow-sm">
+    <Card className="border-sidebar-border bg-sidebar text-sidebar-foreground border shadow-sm">
       <CardHeader className="flex flex-row items-center justify-between space-y-0">
         <div className="space-y-2">
-          <CardTitle className="text-sm font-medium ">
+          <CardTitle className="text-sm font-medium">
             <Muted>{t("pages.app.layout.sidebar.balanceCard.title")}</Muted>
           </CardTitle>
           <div className="flex items-center gap-1">
-            <div className="text-2xl font-semibold tracking-tight text-sidebar-foreground">
+            <div className="text-sidebar-foreground text-2xl font-semibold tracking-tight">
               {formatLocalizedNumber({
                 value: microDollarToToken(walletCurrentBalance || 0),
               })}
@@ -141,17 +152,24 @@ function AppLayoutSidebarWallet() {
                   {t("pages.app.layout.sidebar.balanceCard.chargeWallet.title")}
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
+              <DialogContent className="sm:max-w-106.25">
                 <DialogHeader className="text-right!">
                   <DialogTitle className="mb-4">
-                    {t("pages.app.layout.sidebar.balanceCard.chargeWallet.title")}
+                    {t(
+                      "pages.app.layout.sidebar.balanceCard.chargeWallet.title",
+                    )}
                   </DialogTitle>
                   <DialogDescription>
-                    {t("pages.app.layout.sidebar.balanceCard.chargeWallet.description")}
+                    {t(
+                      "pages.app.layout.sidebar.balanceCard.chargeWallet.description",
+                    )}
                   </DialogDescription>
                 </DialogHeader>
 
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="space-y-8"
+                >
                   <FormField
                     control={form.control}
                     name="amount"
@@ -164,7 +182,9 @@ function AppLayoutSidebarWallet() {
                             dir="ltr"
                             thousandSeparator=","
                             {...field}
-                            onChange={(e) => field.onChange(e.target.value.replace(/,/g, ""))}
+                            onChange={(e) =>
+                              field.onChange(e.target.value.replace(/,/g, ""))
+                            }
                             autoComplete="off"
                           />
                         </FormControl>
@@ -175,18 +195,30 @@ function AppLayoutSidebarWallet() {
                   <Button
                     className="w-full"
                     type="submit"
-                    disabled={exchangeRateMutation.isPending || walletDepositMutation.isPending}
+                    disabled={
+                      exchangeRateMutation.isPending ||
+                      walletDepositMutation.isPending
+                    }
                   >
-                    {exchangeRateMutation.isPending || walletDepositMutation.isPending ? (
+                    {exchangeRateMutation.isPending ||
+                    walletDepositMutation.isPending ? (
                       <LoaderCircle className="animate-spin" />
                     ) : exchangeRateMutation.data?.total_transaction_amount ? (
-                      t("pages.app.layout.sidebar.balanceCard.chargeWallet.action", {
-                        amount: formatLocalizedNumber({
-                          value: rialToToman(exchangeRateMutation.data?.total_transaction_amount),
-                        }),
-                      })
+                      t(
+                        "pages.app.layout.sidebar.balanceCard.chargeWallet.action",
+                        {
+                          amount: formatLocalizedNumber({
+                            value: rialToToman(
+                              exchangeRateMutation.data
+                                ?.total_transaction_amount,
+                            ),
+                          }),
+                        },
+                      )
                     ) : (
-                      t("pages.app.layout.sidebar.balanceCard.chargeWallet.nonAction")
+                      t(
+                        "pages.app.layout.sidebar.balanceCard.chargeWallet.nonAction",
+                      )
                     )}
                   </Button>
                 </form>

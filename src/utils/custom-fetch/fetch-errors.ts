@@ -1,18 +1,37 @@
 type Request = RequestInfo;
 type Response = globalThis.Response;
+
+type ErrorConstructorWithStackTrace = ErrorConstructor & {
+  captureStackTrace?: (
+    targetObject: object,
+    constructorOpt?: new (...args: never[]) => Error,
+  ) => void;
+};
+
+const captureStackTrace = (
+  targetObject: object,
+  constructorOpt: new (...args: never[]) => Error,
+) => {
+  (Error as ErrorConstructorWithStackTrace).captureStackTrace?.(
+    targetObject,
+    constructorOpt,
+  );
+};
+
 export class FetchTimeoutError extends Error {
   public originalError: unknown;
   public request: Request;
-  constructor(originalError: unknown, request: Request, message = 'Timeout error occurred') {
+  constructor(
+    originalError: unknown,
+    request: Request,
+    message = "Timeout error occurred",
+  ) {
     super(message);
     this.originalError = originalError;
     this.request = request;
-    this.name = 'TimeoutError';
+    this.name = "TimeoutError";
     Object.setPrototypeOf(this, FetchTimeoutError.prototype);
-
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, FetchTimeoutError);
-    }
+    captureStackTrace(this, FetchTimeoutError);
   }
 }
 
@@ -20,17 +39,17 @@ export class FetchNetworkError extends Error {
   public originalError: unknown;
   public request: Request;
 
-  constructor(originalError: unknown, request: Request, message = 'Network error occurred') {
+  constructor(
+    originalError: unknown,
+    request: Request,
+    message = "Network error occurred",
+  ) {
     super(message);
     this.request = request;
     this.originalError = originalError;
-    this.name = 'NetworkError';
+    this.name = "NetworkError";
     Object.setPrototypeOf(this, FetchNetworkError.prototype);
-
-    // Preserve the stack trace
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, FetchNetworkError);
-    }
+    captureStackTrace(this, FetchNetworkError);
   }
 }
 
@@ -42,12 +61,9 @@ export class FetchHttpError extends Error {
     super(`HTTP error: ${response.status}`);
     this.response = response;
     this.request = request;
-    this.name = 'HttpError';
+    this.name = "HttpError";
     Object.setPrototypeOf(this, FetchHttpError.prototype);
-
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, FetchHttpError);
-    }
+    captureStackTrace(this, FetchHttpError);
   }
 
   /**

@@ -24,11 +24,19 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 export function isJsonConfigSchema(value: unknown): value is JsonConfigSchema {
-  if (!isRecord(value) || value.type !== "object" || !isRecord(value.properties)) {
+  if (
+    !isRecord(value) ||
+    value.type !== "object" ||
+    !isRecord(value.properties)
+  ) {
     return false;
   }
 
-  if ("required" in value && value.required !== undefined && !Array.isArray(value.required)) {
+  if (
+    "required" in value &&
+    value.required !== undefined &&
+    !Array.isArray(value.required)
+  ) {
     return false;
   }
 
@@ -58,7 +66,9 @@ const DEFAULT_VALIDATION_MESSAGES: DynamicConfigValidationMessages = {
   maxItems: (max) => `حداکثر ${max} آیتم مجاز است`,
 };
 
-export function createValidationMessages(t: TFunction): DynamicConfigValidationMessages {
+export function createValidationMessages(
+  t: TFunction,
+): DynamicConfigValidationMessages {
   return {
     required: t(`${DYNAMIC_CONFIG_VALIDATION_KEY}.required`),
     invalidEnum: t(`${DYNAMIC_CONFIG_VALIDATION_KEY}.invalidEnum`),
@@ -66,10 +76,14 @@ export function createValidationMessages(t: TFunction): DynamicConfigValidationM
     invalidNumber: t(`${DYNAMIC_CONFIG_VALIDATION_KEY}.invalidNumber`),
     invalidInteger: t(`${DYNAMIC_CONFIG_VALIDATION_KEY}.invalidInteger`),
     invalidArray: t(`${DYNAMIC_CONFIG_VALIDATION_KEY}.invalidArray`),
-    minLength: (min) => t(`${DYNAMIC_CONFIG_VALIDATION_KEY}.minLength`, { min }),
-    maxLength: (max) => t(`${DYNAMIC_CONFIG_VALIDATION_KEY}.maxLength`, { max }),
-    minNumber: (min) => t(`${DYNAMIC_CONFIG_VALIDATION_KEY}.minNumber`, { min }),
-    maxNumber: (max) => t(`${DYNAMIC_CONFIG_VALIDATION_KEY}.maxNumber`, { max }),
+    minLength: (min) =>
+      t(`${DYNAMIC_CONFIG_VALIDATION_KEY}.minLength`, { min }),
+    maxLength: (max) =>
+      t(`${DYNAMIC_CONFIG_VALIDATION_KEY}.maxLength`, { max }),
+    minNumber: (min) =>
+      t(`${DYNAMIC_CONFIG_VALIDATION_KEY}.minNumber`, { min }),
+    maxNumber: (max) =>
+      t(`${DYNAMIC_CONFIG_VALIDATION_KEY}.maxNumber`, { max }),
     minItems: (min) => t(`${DYNAMIC_CONFIG_VALIDATION_KEY}.minItems`, { min }),
     maxItems: (max) => t(`${DYNAMIC_CONFIG_VALIDATION_KEY}.maxItems`, { max }),
   };
@@ -153,7 +167,9 @@ function buildBaseZodField(
     }
 
     case "integer": {
-      let schema = z.number(messages.invalidNumber).int(messages.invalidInteger);
+      let schema = z
+        .number(messages.invalidNumber)
+        .int(messages.invalidInteger);
 
       if (prop.minimum !== undefined) {
         schema = schema.min(prop.minimum, messages.minNumber(prop.minimum));
@@ -184,7 +200,9 @@ function buildBaseZodField(
       return z.preprocess(toBoolean, z.boolean());
 
     case "array": {
-      const itemSchema = prop.items ? buildBaseZodField(prop.items, messages) : z.any();
+      const itemSchema = prop.items
+        ? buildBaseZodField(prop.items, messages)
+        : z.any();
 
       let schema = z.array(itemSchema, messages.invalidArray);
 
@@ -309,6 +327,69 @@ function getEmptyDefaultValue(prop: JsonSchemaProperty): unknown {
   }
 }
 
+function cleanValueByProperty(
+  prop: JsonSchemaProperty,
+  value: unknown,
+): unknown {
+  if (value === undefined) return undefined;
+
+  if (prop.type === "object" && prop.properties && isRecord(value)) {
+    return sanitizeConfigValues(
+      {
+        type: "object",
+        properties: prop.properties,
+        required: nestedRequiredFields(prop),
+        additionalProperties: prop.additionalProperties,
+      },
+      value,
+    );
+  }
+
+  if (prop.type === "array" && prop.items && Array.isArray(value)) {
+    return value
+      .map((item) =>
+        cleanValueByProperty(prop.items as JsonSchemaProperty, item),
+      )
+      .filter((item) => item !== undefined);
+  }
+
+  return value;
+}
+
+function getPropertyDefaultValue(
+  prop: JsonSchemaProperty,
+  defaultValue: unknown,
+): unknown {
+  if (defaultValue !== undefined) {
+    return cleanValueByProperty(prop, defaultValue);
+  }
+
+  return cleanValueByProperty(prop, prop.default ?? getEmptyDefaultValue(prop));
+}
+
+export function sanitizeConfigValues(
+  configSchema?: JsonConfigSchema | null,
+  values?: Record<string, unknown> | null,
+): DynamicConfigValues {
+  if (!configSchema?.properties || !values) {
+    return {};
+  }
+
+  const result: DynamicConfigValues = {};
+
+  for (const [key, prop] of Object.entries(configSchema.properties)) {
+    if (!(key in values)) continue;
+
+    const value = cleanValueByProperty(prop, values[key]);
+
+    if (value !== undefined) {
+      result[key] = value;
+    }
+  }
+
+  return result;
+}
+
 export function buildDefaultValues(
   configSchema?: JsonConfigSchema | null,
   configDefaults?: Record<string, unknown> | null,
@@ -320,12 +401,10 @@ export function buildDefaultValues(
   const result: DynamicConfigValues = {};
 
   for (const [key, prop] of Object.entries(configSchema.properties)) {
-    if (configDefaults && key in configDefaults) {
-      result[key] = configDefaults[key];
-      continue;
-    }
-
-    result[key] = prop.default ?? getEmptyDefaultValue(prop);
+    result[key] = getPropertyDefaultValue(
+      prop,
+      configDefaults && key in configDefaults ? configDefaults[key] : undefined,
+    );
   }
 
   return result as DefaultValues<DynamicConfigValues>;
@@ -333,7 +412,8 @@ export function buildDefaultValues(
 
 function resolveInputType(prop: JsonSchemaProperty): FieldMeta["inputType"] {
   if (prop.enum && prop.enum.length > 0) return "select";
-  if (prop.type === "string") return (prop.maxLength ?? 0) > 200 ? "textarea" : "text";
+  if (prop.type === "string")
+    return (prop.maxLength ?? 0) > 200 ? "textarea" : "text";
   if (prop.type === "integer" || prop.type === "number") return "number";
   if (prop.type === "boolean") return "checkbox";
   if (prop.type === "array") return "array";
@@ -363,7 +443,9 @@ export function buildFieldMeta(params: {
 
 export function stripUndefinedDeep<T>(value: T): T {
   if (Array.isArray(value)) {
-    return value.map(stripUndefinedDeep).filter((item) => item !== undefined) as T;
+    return value
+      .map(stripUndefinedDeep)
+      .filter((item) => item !== undefined) as T;
   }
 
   if (value && typeof value === "object") {
