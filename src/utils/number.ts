@@ -1,5 +1,5 @@
-import { jotaiStore } from '@/main';
-import { globalAtom } from '@/state';
+import { jotaiStore } from "@/lib/jotai-store";
+import { globalAtom } from "@/state";
 
 export const microDollarToToken = (amount: number) => amount / 1_000;
 
@@ -12,8 +12,8 @@ export const tokenToMicroDollar = (amount: number) => amount * 1_000;
 export const rialToToman = (amount: number) => amount / 10;
 
 export function formatLocalizedNumber({ value }: FormatLocalizedNumberParams) {
-  if (typeof value !== 'number') {
-    return '';
+  if (typeof value !== "number") {
+    return "";
   }
 
   return new Intl.NumberFormat(jotaiStore.get(globalAtom).language, {

@@ -56,6 +56,11 @@ export default defineConfig(({ mode }) => ({
       },
     }),
   ],
+  server: {
+    watch: {
+      ignored: [".pnpm-store"],
+    },
+  },
   resolve: {
     alias: {
       "@": path.resolve(srcPath),

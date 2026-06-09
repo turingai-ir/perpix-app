@@ -1,13 +1,16 @@
 import {
-  useCallback,
+  useEffect,
+  useMemo,
   useRef,
   useState,
+  type ChangeEvent,
   type FC,
   type SubmitEventHandler,
 } from "react";
 import { ArrowUp, Loader2 } from "lucide-react";
 
 import { useAiGenerate, useModel } from "../_hooks";
+import { ImageReferenceUploader } from "./image-reference-uploader";
 
 import { Card } from "@/components/ui/card";
 import {
@@ -17,8 +20,6 @@ import {
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { useAppTranslate } from "@/hook";
 import { Button } from "@/components/ui/button";
-import { useFileManager } from "@/feature/file-manager/hook";
-import { HorizontalImageUploader } from "@/components/custom/horizontal-image-uploader";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Select,
@@ -30,6 +31,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { simplifyAspect } from "@/utils";
+import type { SchemaAiTaskResponse } from "@/services/api";
 
 interface Props {
   onSubmit: (data: any, ai_model_uuid: string) => void;
@@ -46,79 +48,74 @@ export const GenerationImagePromptBox: FC<Props> = ({
 }) => {
   const { modelState, modelsListState, currentModel, setCurrentModel } =
     useModel();
-  const resizeFrameRef = useRef<number | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const isPromptTooShortRef = useRef(true);
   const { t } = useAppTranslate();
-  const { filesPreview, requestUpload } = useFileManager("image_generation");
   const { aiTaskState } = useAiGenerate(chatId);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
 
-  console.log(
-    "aiTaskState",
-    aiTaskState.data?.messages && (aiTaskState.data?.messages ?? []).slice(-1),
-  );
+  const dynamicFormConfigDefaults = useMemo(() => {
+    const chatData = aiTaskState?.data as SchemaAiTaskResponse;
+    const lastMessage = chatData?.messages?.slice(-1)[0];
 
-  const [selectedImages, setSelectedImages] = useState<string[]>([]);
-  const uploadVersionRef = useRef(0);
+    const lastMessageConfigDefaults = lastMessage?.ai_model_config
+      ? {
+          ...lastMessage?.ai_model_config,
+          images_reference:
+            lastMessage?.ai_model_config?.images_generated ??
+            lastMessage?.ai_model_config?.images_reference,
+        }
+      : undefined;
+
+    return {
+      ...(lastMessageConfigDefaults ?? modelState.data?.config_defaults),
+      prompt: "",
+    };
+  }, [aiTaskState.data, modelState.data?.config_defaults]);
 
   const dynamicForm = useDynamicConfigForm({
     autoResetOnSchemaChange: true,
-    configDefaults: modelState.data?.config_defaults,
+    configDefaults: dynamicFormConfigDefaults,
     configSchema: isJsonConfigSchema(modelState.data?.config_schema)
       ? modelState.data.config_schema
       : null,
     schemaKey: modelState.data?.uuid,
   });
 
-  const promptWatch = dynamicForm.watch("prompt", "");
-  const isPromptTooShort =
-    String(promptWatch ?? "").trim().length < MIN_PROMPT_LENGTH;
+  const [isPromptTooShort, setIsPromptTooShort] = useState(true);
 
-  const selectedImageItems = selectedImages.map((imageId) => ({
-    id: imageId,
-    url: filesPreview.get(imageId),
-    status: "success" as const,
-  }));
-
-  const isPromptInputDisabled =
+  const isFormBusy =
     isLoading ||
     !dynamicForm.isReady ||
     modelsListState.isLoading ||
     modelState.isLoading;
 
-  const isInteractionDisabled = isPromptInputDisabled || isPromptTooShort;
+  const isInteractionDisabled = isFormBusy;
+  const isSubmitDisabled =
+    isInteractionDisabled || isUploadingImage || isPromptTooShort;
 
-  const handleValidSubmit = (data: Record<string, unknown>) => {
-    if (isInteractionDisabled) return;
-
-    onSubmit(data, currentModel ?? "");
-  };
+  const submitForm = dynamicForm.handleSubmit((data) =>
+    onSubmit(data, currentModel ?? ""),
+  );
 
   const handleFormSubmit: SubmitEventHandler<HTMLFormElement> = (event) => {
-    if (isInteractionDisabled) {
+    const currentPrompt =
+      textareaRef.current?.value ??
+      String(dynamicForm.getValues("prompt") ?? "");
+    const currentPromptTooShort =
+      currentPrompt.trim().length < MIN_PROMPT_LENGTH;
+
+    if (isInteractionDisabled || isUploadingImage || currentPromptTooShort) {
       event.preventDefault();
       return;
     }
 
-    uploadVersionRef.current += 1;
-    void dynamicForm.handleSubmit(handleValidSubmit)(event);
-  };
-
-  const handleImageDelete = (imageId: string) => {
-    if (isPromptInputDisabled) return;
-
-    setSelectedImages((pre) => pre.filter((id) => id !== imageId));
-  };
-
-  const handleImageSelect = async (file: File) => {
-    if (isPromptInputDisabled) return;
-
-    const uploadVersion = uploadVersionRef.current;
-
-    const uploadedImageId = await requestUpload(file);
-
-    if (uploadedImageId && uploadVersion === uploadVersionRef.current) {
-      setSelectedImages((pre) => [...pre, uploadedImageId]);
-    }
+    dynamicForm.setValue("prompt", currentPrompt, {
+      shouldDirty: true,
+      shouldTouch: true,
+      shouldValidate: false,
+    });
+    void submitForm(event);
   };
 
   const handleModelChange = (modelId: string) => {
@@ -127,41 +124,34 @@ export const GenerationImagePromptBox: FC<Props> = ({
     setCurrentModel(modelId);
   };
 
-  const resizeTextarea = useCallback(() => {
-    const el = textareaRef.current;
-    if (!el) {
-      return;
+  const handlePromptChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    const nextIsPromptTooShort =
+      event.target.value.trim().length < MIN_PROMPT_LENGTH;
+
+    if (isPromptTooShortRef.current !== nextIsPromptTooShort) {
+      isPromptTooShortRef.current = nextIsPromptTooShort;
+      setIsPromptTooShort(nextIsPromptTooShort);
     }
+  };
 
-    el.style.height = "auto";
+  useEffect(() => {
+    const prompt = String(dynamicForm.defaultValues.prompt ?? "");
+    const nextIsPromptTooShort = prompt.trim().length < MIN_PROMPT_LENGTH;
 
-    const nextHeight = el.scrollHeight;
-    if (el.offsetHeight !== nextHeight) {
-      el.style.height = `${nextHeight}px`;
+    isPromptTooShortRef.current = nextIsPromptTooShort;
+    setIsPromptTooShort(nextIsPromptTooShort);
+
+    if (textareaRef.current) {
+      textareaRef.current.value = prompt;
     }
-  }, []);
-
-  const scheduleTextareaResize = useCallback(() => {
-    if (resizeFrameRef.current !== null) {
-      return;
-    }
-
-    resizeFrameRef.current = requestAnimationFrame(() => {
-      resizeFrameRef.current = null;
-      resizeTextarea();
-    });
-  }, [resizeTextarea]);
+  }, [dynamicForm.defaultValues]);
 
   return (
     <Card className="w-full min-w-0 overflow-hidden px-2">
-      <HorizontalImageUploader
-        images={selectedImageItems}
-        disabled={isPromptInputDisabled}
-        onDeleteClick={handleImageDelete}
-        onFileSelect={handleImageSelect}
-        showPlaceholder
-        label={t("common.addImage")}
-        accept="image/jpeg, image/png"
+      <ImageReferenceUploader
+        dynamicForm={dynamicForm}
+        disabled={isFormBusy}
+        onUploadingChange={setIsUploadingImage}
       />
       <Form {...dynamicForm.form}>
         <form
@@ -171,7 +161,7 @@ export const GenerationImagePromptBox: FC<Props> = ({
           <FormField
             control={dynamicForm.control}
             name="prompt"
-            render={({ field: { ref, value, ...field } }) => (
+            render={({ field }) => (
               <FormItem>
                 <ScrollArea
                   className="h-20 w-full overflow-hidden"
@@ -179,20 +169,21 @@ export const GenerationImagePromptBox: FC<Props> = ({
                 >
                   <FormControl>
                     <textarea
-                      value={String(value ?? "")}
+                      name={field.name}
+                      defaultValue={String(field.value ?? "")}
                       ref={(r) => {
                         textareaRef.current = r;
-                        ref(r);
+                        field.ref(r);
                       }}
-                      onInput={scheduleTextareaResize}
+                      onBlur={field.onBlur}
+                      onChange={handlePromptChange}
                       rows={3}
                       wrap="soft"
-                      disabled={isPromptInputDisabled}
-                      className="block min-h-20 w-full resize-none overflow-hidden border-none wrap-anywhere break-all outline-none"
+                      disabled={isFormBusy}
+                      className="block h-20 w-full resize-none overflow-y-auto border-none wrap-anywhere break-all outline-none"
                       placeholder={t(
                         "pages.generation.image.promptBox.promptTextArea.placeholder",
                       )}
-                      {...field}
                     />
                   </FormControl>
                 </ScrollArea>
@@ -205,7 +196,7 @@ export const GenerationImagePromptBox: FC<Props> = ({
                 type="submit"
                 variant="default"
                 className="group flex h-8! w-8! cursor-pointer items-center justify-center rounded-full p-0!"
-                disabled={isInteractionDisabled || isLoading}
+                disabled={isSubmitDisabled}
               >
                 {isLoading ? (
                   <Loader2 className="h-5! w-5! animate-spin" />
@@ -216,7 +207,7 @@ export const GenerationImagePromptBox: FC<Props> = ({
             </div>
             <div className="flex w-full flex-wrap gap-2">
               <Select
-                value={currentModel}
+                value={currentModel ?? ""}
                 onValueChange={handleModelChange}
                 disabled={isInteractionDisabled}
               >
@@ -242,7 +233,7 @@ export const GenerationImagePromptBox: FC<Props> = ({
                   <FormItem>
                     <Select
                       name={field.name}
-                      value={String(field.value)}
+                      value={field.value == null ? "" : String(field.value)}
                       onValueChange={field.onChange}
                       disabled={isInteractionDisabled}
                     >

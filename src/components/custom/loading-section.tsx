@@ -1,6 +1,8 @@
-import type { FC } from 'react';
-import { LoaderCircle } from 'lucide-react';
+import type { FC } from "react";
+import { LoaderCircle } from "lucide-react";
 
-const LoadingSection: FC = () => <LoaderCircle className="animate-spin w-7 h-7" />;
+const LoadingSection: FC = () => (
+  <LoaderCircle className="h-7 w-7 animate-spin" />
+);
 
 export default LoadingSection;

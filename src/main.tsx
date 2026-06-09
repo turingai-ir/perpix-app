@@ -4,7 +4,7 @@ import { Provider } from 'jotai';
 
 import App from './app.tsx';
 import AppContextProvider from './hook/app/provider.tsx';
-import { bootstrapJotai } from './lib/jotai.ts';
+import { jotaiStore } from './lib/jotai-store.ts';
 
 const container = document.getElementById('root');
 
@@ -21,8 +21,6 @@ if (!rootContainer.__reactRoot) {
 }
 
 const root = rootContainer.__reactRoot;
-
-export const jotaiStore = bootstrapJotai();
 
 root.render(
   <StrictMode>

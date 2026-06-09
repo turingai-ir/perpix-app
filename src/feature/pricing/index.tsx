@@ -21,6 +21,7 @@ import {
 import { APP_I18_KEYS } from "@/services/i18";
 import { cn } from "@/lib/utils";
 import { Muted } from "@/components/ui/typography";
+import { useUser } from "@/pages/_hooks";
 
 interface Props {
   open: boolean;
@@ -39,7 +40,7 @@ function PricingFeature({ open, onOpenChange }: Props) {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
 
   const plansQuery = reactQueryApi.useQuery("get", "/user/subscription/plans");
-  const userInfoQuery = reactQueryApi.useQuery("get", "/user/get-info");
+  const { userState } = useUser();
 
   const purchasePlanQuery = reactQueryApi.useMutation(
     "post",
@@ -50,7 +51,7 @@ function PricingFeature({ open, onOpenChange }: Props) {
     SchemaSubscriptionPlanListResponse["items"][number]
   >(plansQuery.data?.items);
   const plans = planItems.filter(
-    (plan) => plan.uuid !== userInfoQuery.data?.active_subscription?.plan.uuid,
+    (plan) => plan.uuid !== userState.data?.active_subscription?.plan.uuid,
   );
 
   const handlePurchasePlan = async (planId: string) => {
@@ -64,7 +65,7 @@ function PricingFeature({ open, onOpenChange }: Props) {
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className="w-full h-dvh flex flex-col">
+      <SheetContent side="bottom" className="flex h-dvh w-full flex-col">
         <SheetHeader>
           <SheetTitle className="text-center text-4xl">
             {t("features.pricing.title")}
@@ -80,18 +81,18 @@ function PricingFeature({ open, onOpenChange }: Props) {
         )}
 
         {plansQuery.isSuccess && (
-          <div className="flex-1 overflow-y-auto pt-8 px-6 flex items-center-safe">
-            <div className="max-w-(--breakpoint-lg) mx-auto flex flex-col lg:flex-row lg:gap-8 gap-4">
+          <div className="flex flex-1 items-center-safe overflow-y-auto px-6 pt-8">
+            <div className="mx-auto flex max-w-(--breakpoint-lg) flex-col gap-4 lg:flex-row lg:gap-8">
               {plans?.map((plan) => (
                 <div
                   key={plan?.name}
-                  className={cn("border rounded-lg p-6 flex flex-col w-80", {
+                  className={cn("flex w-80 flex-col rounded-lg border p-6", {
                     "border-foreground": plan?.is_recommended,
                   })}
                 >
                   <h3 className="text-lg font-medium">{plan?.display_name}</h3>
                   <p className="mt-2 text-4xl font-bold">{`${formatLocalizedNumber({ value: rialToToman(plan?.price_irr ?? 0) })} ${t("common.tomans")}`}</p>
-                  <p className="mt-4 font-medium text-muted-foreground">
+                  <p className="text-muted-foreground mt-4 font-medium">
                     {plan?.description}
                   </p>
 
@@ -104,7 +105,7 @@ function PricingFeature({ open, onOpenChange }: Props) {
                           key={feature}
                           className="flex items-start gap-2 text-sm"
                         >
-                          <CircleCheck className="h-4 w-4 mt-1 text-green-500" />
+                          <CircleCheck className="mt-1 h-4 w-4 text-green-500" />
                           <Muted> {feature}</Muted>
                         </li>
                       ),

@@ -30,13 +30,14 @@ import { useReactQueryApi } from "@/hook/app";
 import LoadingSection from "@/components/custom/loading-section";
 import ErrorSection from "@/components/custom/error-section";
 import { APP_ROUTES_KEY } from "@/router";
+import { useUser } from "@/pages/_hooks";
 
 const ProfileSettingsPage: FC = () => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
 
   const reactQueryApi = useReactQueryApi();
 
-  const userInfoQuery = reactQueryApi.useQuery("get", "/user/get-info");
+  const { userState } = useUser();
 
   const editUserInfoQuery = reactQueryApi.useMutation(
     "patch",
@@ -86,12 +87,12 @@ const ProfileSettingsPage: FC = () => {
   });
 
   useEffect(() => {
-    if (userInfoQuery.isSuccess) {
-      form.setValue("email", userInfoQuery.data.email ?? "");
-      form.setValue("name", userInfoQuery.data.name ?? "");
-      form.setValue("mobile", userInfoQuery.data.phone_number ?? "");
+    if (userState.isSuccess) {
+      form.setValue("email", userState.data.email ?? "");
+      form.setValue("name", userState.data.name ?? "");
+      form.setValue("mobile", userState.data.phone_number ?? "");
     }
-  }, [userInfoQuery.isSuccess, userInfoQuery.data, form]);
+  }, [userState.isSuccess, userState.data, form]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     await editUserInfoQuery.mutateAsync({
@@ -102,24 +103,24 @@ const ProfileSettingsPage: FC = () => {
     });
   }
 
-  if (userInfoQuery.isLoading) {
+  if (userState.isLoading) {
     return (
-      <div className="mx-auto flex justify-center py-4 items-center h-full">
+      <div className="mx-auto flex h-full items-center justify-center py-4">
         <LoadingSection />
       </div>
     );
   }
 
-  if (userInfoQuery.isError) {
+  if (userState.isError) {
     return (
-      <div className="mx-auto flex justify-center py-4 items-center h-full">
-        <ErrorSection onRetry={() => userInfoQuery.refetch()} />
+      <div className="mx-auto flex h-full items-center justify-center py-4">
+        <ErrorSection onRetry={() => userState.refetch()} />
       </div>
     );
   }
 
   return (
-    <div className="max-w-xl mx-auto p-4 flex min-h-full justify-center items-center">
+    <div className="mx-auto flex min-h-full max-w-xl items-center justify-center p-4">
       <Card className="w-full">
         <CardHeader>
           <CardTitle>{t("pages.profile.settings.title")}</CardTitle>

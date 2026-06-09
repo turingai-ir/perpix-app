@@ -962,8 +962,6 @@ export interface components {
             readonly display_name: string | null;
             /** Base Api Url */
             readonly base_api_url: string | null;
-            /** Api Key */
-            readonly api_key: string | null;
             /** Rate Limit Per Min */
             readonly rate_limit_per_min: number | null;
             /** Meta */
@@ -1271,6 +1269,10 @@ export interface components {
              * Format: date-time
              */
             readonly expire_at: string;
+            /** File Size */
+            readonly file_size: number;
+            /** Content Type */
+            readonly content_type: string;
         };
         /** FileManagerUploadFileResponse */
         readonly FileManagerUploadFileResponse: {

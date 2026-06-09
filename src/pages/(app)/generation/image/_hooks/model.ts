@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { useReactQueryApi } from "@/hook/app";
 import type {
@@ -46,9 +47,9 @@ export const useModel = () => {
 };
 
 export const useAiGenerate = (task_id: string | undefined) => {
-  const { useMutation, useQuery } = useReactQueryApi();
-
-  const aiGenerateState = useMutation("post", "/ai-task/generate");
+  const { useMutation, useQuery, queryOptions } = useReactQueryApi();
+  const queryClient = useQueryClient();
+  const userQueryKey = queryOptions("get", "/user/get-info").queryKey;
 
   const aiTaskState = useQuery(
     "get",
@@ -60,6 +61,16 @@ export const useAiGenerate = (task_id: string | undefined) => {
       enabled: !!task_id,
     },
   );
+
+  const aiGenerateState = useMutation("post", "/ai-task/generate", {
+    onSuccess() {
+      void queryClient.invalidateQueries({ queryKey: userQueryKey });
+
+      if (task_id) {
+        void aiTaskState.refetch();
+      }
+    },
+  });
 
   return {
     aiGenerateState,

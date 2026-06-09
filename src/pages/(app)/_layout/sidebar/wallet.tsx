@@ -39,16 +39,14 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-
-const walletCurrentBalanceAtom = selectAtom(
-  appLayoutAtom,
-  (val) => val.walletCurrentBalance,
-);
+import { useUser } from "@/pages/_hooks";
 
 function AppLayoutSidebarWallet() {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
-  const [walletCurrentBalance] = useAtom(walletCurrentBalanceAtom);
+
   const reactQueryApi = useReactQueryApi();
+
+  const { userState } = useUser();
 
   const exchangeRateMutation = reactQueryApi.useMutation(
     "get",
@@ -140,7 +138,9 @@ function AppLayoutSidebarWallet() {
           <div className="flex items-center gap-1">
             <div className="text-sidebar-foreground text-2xl font-semibold tracking-tight">
               {formatLocalizedNumber({
-                value: microDollarToToken(walletCurrentBalance || 0),
+                value: microDollarToToken(
+                  userState.data?.default_wallet?.balance_usdmicro || 0,
+                ),
               })}
             </div>
             <small>{t("common.token")}</small>

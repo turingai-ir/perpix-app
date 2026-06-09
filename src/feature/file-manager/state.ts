@@ -1,17 +1,16 @@
 import { atom } from "jotai";
 
-export enum FileManagerPendingUploadStatus {
+export enum FileManagerUploadStatus {
   UPLOADING = "UPLOADING",
+  UPLOADED = "UPLOADED",
   FAILED = "FAILED",
 }
 
 export interface PendingFile {
   file: File;
   name: string;
-  status: FileManagerPendingUploadStatus;
+  status: FileManagerUploadStatus;
 }
-
-export const filesPreviewAtom = atom<Map<string, string>>(new Map());
 
 export const pendingUploadsGroupedAtom = atom<
   Map<string, Map<string, PendingFile>>

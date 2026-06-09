@@ -1,11 +1,9 @@
 import { useAtom } from "jotai";
 import { useMemo } from "react";
-import { toast } from "sonner";
 
 import {
-  filesPreviewAtom,
   pendingUploadsGroupedAtom,
-  FileManagerPendingUploadStatus,
+  FileManagerUploadStatus,
   type PendingFile,
 } from "./state";
 
@@ -22,52 +20,46 @@ export const useFileManager = (requestId: string) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const { useMutation } = useReactQueryApi();
 
-  const [filesPreview, setFilesPreview] = useAtom(filesPreviewAtom);
   const [allPendingUploads, setAllPendingUploads] = useAtom(
     pendingUploadsGroupedAtom,
   );
 
   const simpleUpload = useMutation("post", "/file-manager/simple-upload");
-  const getFileUrl = useMutation(
-    "get",
-    "/file-manager/files/{file_uuid}/download",
-  );
 
   const pendingUploads = useMemo(
     () => allPendingUploads.get(requestId) || new Map<string, PendingFile>(),
     [allPendingUploads, requestId],
   );
 
-  const getFilePreview = async (fileUuid: string) => {
-    const cachedUrl = filesPreview.get(fileUuid);
-    if (cachedUrl) return cachedUrl;
+  const removePendingUpload = (fileName: string) => {
+    setAllPendingUploads((prev) => {
+      const group = prev.get(requestId);
+      if (!group) return prev;
 
-    const res = await getFileUrl.mutateAsync({
-      params: { path: { file_uuid: fileUuid } },
-    });
-
-    setFilesPreview((prev) => {
       const next = new Map(prev);
-      next.set(fileUuid, res.presigned_url);
+      const nextGroup = new Map(group);
+
+      nextGroup.delete(fileName);
+      if (nextGroup.size === 0) {
+        next.delete(requestId);
+      } else {
+        next.set(requestId, nextGroup);
+      }
+
       return next;
     });
-
-    return res.presigned_url;
   };
 
-  const requestUpload = async (file: File) => {
+  const requestUpload = async (file: File): Promise<string> => {
     if (file.size > maxSize) {
-      toast.error(String(t("common.validationErrors.maxSize", { maxSizeMb })));
       return Promise.reject(
         Error(t("common.validationErrors.maxSize", { maxSizeMb })),
       );
     }
     if (!allowedFileTypes.includes(file.type)) {
-      toast.error(String(t("common.validationErrors.invalidFileFormat")));
       return Promise.reject(t("common.validationErrors.invalidFileFormat"));
     }
     if (pendingUploads.get(file.name)) {
-      toast.error(String(t("common.validationErrors.duplicateFile")));
       return Promise.reject(t("common.validationErrors.duplicateFile"));
     }
 
@@ -78,7 +70,7 @@ export const useFileManager = (requestId: string) => {
       group.set(file.name, {
         file,
         name: file.name,
-        status: FileManagerPendingUploadStatus.UPLOADING,
+        status: FileManagerUploadStatus.UPLOADING,
       });
 
       next.set(requestId, group);
@@ -127,16 +119,15 @@ export const useFileManager = (requestId: string) => {
             nextGroup.set(file.name, {
               file,
               name: file.name,
-              status: FileManagerPendingUploadStatus.FAILED,
+              status: FileManagerUploadStatus.FAILED,
             });
 
             next.set(requestId, nextGroup);
             return next;
           });
-          return Promise.reject(Error());
+          return Promise.reject(t("common.errorOnUploading"));
         }
 
-        await getFilePreview(uuid);
         return Promise.resolve(uuid);
       } catch (e) {
         setAllPendingUploads((prev) => {
@@ -149,21 +140,43 @@ export const useFileManager = (requestId: string) => {
           nextGroup.set(file.name, {
             file,
             name: file.name,
-            status: FileManagerPendingUploadStatus.FAILED,
+            status: FileManagerUploadStatus.FAILED,
           });
 
           next.set(requestId, nextGroup);
           return next;
         });
-        return Promise.reject(Error());
+        return Promise.reject(t("common.errorOnUploading"));
       }
     }
+
+    return Promise.reject(t("common.errorOnUploading"));
   };
 
   return {
     requestUpload,
+    removePendingUpload,
     pendingUploads,
-    getFilePreview,
-    filesPreview,
   };
+};
+
+export const useFilePreview = (
+  fileUuid: string | undefined,
+  enabled = true,
+) => {
+  const { useQuery } = useReactQueryApi();
+  const getFilePreviewState = useQuery(
+    "get",
+    "/file-manager/files/{file_uuid}/download",
+    {
+      params: {
+        path: {
+          file_uuid: fileUuid ?? "",
+        },
+      },
+    },
+    { enabled: enabled && !!fileUuid },
+  );
+
+  return { getFilePreviewState };
 };

@@ -1,7 +1,5 @@
-import { useCallback, type FC } from "react";
+import { type FC } from "react";
 import { TbCameraAi, TbPhotoAi } from "react-icons/tb";
-import { selectAtom } from "jotai/utils";
-import { useAtom } from "jotai";
 import { Link, useNavigate } from "react-router";
 import {
   BadgeCheck,
@@ -12,8 +10,6 @@ import {
   UserRound,
 } from "lucide-react";
 
-import appLayoutAtom from "../_state";
-
 import AppLayoutSidebarWallet from "./wallet";
 
 import { Button } from "@/components/ui/button";
@@ -21,12 +17,7 @@ import { useAppTranslate } from "@/hook";
 import { APP_I18_KEYS } from "@/services/i18";
 import { APP_KEYS } from "@/utils";
 import { APP_ROUTES_KEY } from "@/router";
-import { appEventBus } from "@/lib/event-bus";
 import { Separator } from "@/components/ui/separator";
-import { Muted } from "@/components/ui/typography";
-import { useInfiniteScroll } from "@/hooks";
-import ErrorSection from "@/components/custom/error-section";
-import LoadingSection from "@/components/custom/loading-section";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -42,14 +33,6 @@ import { Badge } from "@/components/ui/badge";
 import { cookies } from "@/utils/cookies";
 import AppLayoutSidebarHistory from "./history";
 
-const requestForChatHistory = () => {
-  appEventBus.emit("SIDEBAR_REQUEST_FOR_DATA", undefined);
-};
-
-const sidebarHistoryChatsAtom = selectAtom(
-  appLayoutAtom,
-  (val) => val.sidebarHistoryChats,
-);
 const AppLayoutSidebarContent: FC = () => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const reactQueryApi = useReactQueryApi();
@@ -69,29 +52,6 @@ const AppLayoutSidebarContent: FC = () => {
     cookie.remove(APP_KEYS.COOKIES.ACCESS_TOKEN);
     navigate(APP_ROUTES_KEY.auth.login.path);
   };
-  const [sidebarHistoryChats] = useAtom(sidebarHistoryChatsAtom);
-
-  const triggerMoreData = useCallback(() => {
-    if (
-      !sidebarHistoryChats.AllItemsFetched &&
-      !sidebarHistoryChats.isLoading &&
-      !sidebarHistoryChats.isError
-    ) {
-      requestForChatHistory();
-    }
-  }, [
-    sidebarHistoryChats.AllItemsFetched,
-    sidebarHistoryChats.isError,
-    sidebarHistoryChats.isLoading,
-  ]);
-
-  const scrollRef = useInfiniteScroll<HTMLDivElement>({
-    offset: 500,
-    disabled:
-      sidebarHistoryChats.AllItemsFetched || sidebarHistoryChats.isError,
-    loading: sidebarHistoryChats.isLoading,
-    onTrigger: triggerMoreData,
-  });
 
   const menuItems = [
     {
