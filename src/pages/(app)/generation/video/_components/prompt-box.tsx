@@ -10,7 +10,7 @@ import {
 import { ArrowUp, Loader2 } from "lucide-react";
 
 import { useModel } from "../../_hooks";
-import { ImageReferenceUploader } from "./image-reference-uploader";
+import { ImagesReferenceUploader } from "./images-reference-uploader";
 
 import { Card } from "@/components/ui/card";
 import {
@@ -45,13 +45,13 @@ interface Props {
 
 const MIN_PROMPT_LENGTH = 3;
 
-export const GenerationImagePromptBox: FC<Props> = ({
+export const GenerationVideoPromptBox: FC<Props> = ({
   onSubmit,
   isLoading,
   lastMessageConfig,
 }) => {
   const { modelState, modelsListState, currentModel, setCurrentModel } =
-    useModel([AiRegistryModelSupportedTypesEnumMap.IMAGE]);
+    useModel([AiRegistryModelSupportedTypesEnumMap.VIDEO]);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const isPromptTooShortRef = useRef(true);
   const { t } = useAppTranslate();
@@ -61,9 +61,7 @@ export const GenerationImagePromptBox: FC<Props> = ({
     const lastMessageConfigDefaults = lastMessageConfig
       ? ({
           ...lastMessageConfig,
-          images_reference:
-            lastMessageConfig.images_generated ??
-            lastMessageConfig.images_reference,
+          images_frame: lastMessageConfig.images_frame,
         } as Record<string, unknown>)
       : undefined;
 
@@ -154,7 +152,7 @@ export const GenerationImagePromptBox: FC<Props> = ({
 
   return (
     <Card className="w-full min-w-0 overflow-hidden px-2">
-      <ImageReferenceUploader
+      <ImagesReferenceUploader
         dynamicForm={dynamicForm}
         disabled={isFormBusy}
         onUploadingChange={setIsUploadingImage}
@@ -188,7 +186,7 @@ export const GenerationImagePromptBox: FC<Props> = ({
                       disabled={isFormBusy}
                       className="block h-20 w-full resize-none overflow-y-auto border-none wrap-anywhere break-all outline-none"
                       placeholder={t(
-                        "pages.generation.image.promptBox.promptTextArea.placeholder",
+                        "pages.generation.video.promptBox.promptTextArea.placeholder",
                       )}
                     />
                   </FormControl>

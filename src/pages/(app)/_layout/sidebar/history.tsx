@@ -10,7 +10,7 @@ import { APP_ROUTES_KEY } from "@/router";
 import { AiRegistryModelSupportedTypesEnumMap } from "@/services/api";
 import { APP_I18_KEYS } from "@/services/i18";
 
-import { useAiTasksList } from "../../generation/image/_hooks";
+import { useAiTasksList } from "../../generation/_hooks";
 
 const HISTORY_TITLE_MAX_LENGTH = 50;
 

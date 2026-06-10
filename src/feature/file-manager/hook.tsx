@@ -11,20 +11,41 @@ import { useReactQueryApi } from "@/hook/app";
 import { APP_I18_KEYS } from "@/services/i18";
 import { useAppTranslate } from "@/hook";
 
-const maxSizeMb = 50;
+const maxSizeMb = 100;
 const maxSize = maxSizeMb * 1024 * 1024;
-const FiveMb = 5 * 1024 * 1024;
-const allowedFileTypes = ["image/png", "image/jpeg", "image/jpg"];
+const fiveMb = 5 * 1024 * 1024;
+const defaultAllowedFileTypes = ["image/png", "image/jpeg"];
 
-export const useFileManager = (requestId: string) => {
+interface UseFileManagerOptions {
+  allowedFileTypes?: string[];
+}
+
+export const useFileManager = (
+  requestId: string,
+  options: UseFileManagerOptions = {},
+) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const { useMutation } = useReactQueryApi();
+  const allowedFileTypes =
+    options.allowedFileTypes ?? defaultAllowedFileTypes;
 
   const [allPendingUploads, setAllPendingUploads] = useAtom(
     pendingUploadsGroupedAtom,
   );
 
   const simpleUpload = useMutation("post", "/file-manager/simple-upload");
+  const initiateMultipartUpload = useMutation(
+    "post",
+    "/file-manager/multipart/initiate",
+  );
+  const presignMultipartPart = useMutation(
+    "post",
+    "/file-manager/multipart/presign-part",
+  );
+  const completeMultipartUpload = useMutation(
+    "post",
+    "/file-manager/multipart/complete",
+  );
 
   const pendingUploads = useMemo(
     () => allPendingUploads.get(requestId) || new Map<string, PendingFile>(),
@@ -50,17 +71,116 @@ export const useFileManager = (requestId: string) => {
     });
   };
 
+  const failPendingUpload = (file: File) => {
+    setAllPendingUploads((prev) => {
+      const group = prev.get(requestId);
+      if (!group) return prev;
+
+      const next = new Map(prev);
+      const nextGroup = new Map(group);
+
+      nextGroup.set(file.name, {
+        file,
+        name: file.name,
+        status: FileManagerUploadStatus.FAILED,
+      });
+
+      next.set(requestId, nextGroup);
+      return next;
+    });
+  };
+
+  const uploadSimpleFile = async (file: File) => {
+    return simpleUpload.mutateAsync({
+      body: { file: file as any },
+      bodySerializer: (body) => {
+        const file = body?.file as unknown as File;
+        const formData = new FormData();
+        formData.append("file", file, file.name);
+        return formData;
+      },
+    });
+  };
+
+  const uploadMultipartFile = async (
+    file: File,
+    meta: Record<string, unknown> = {},
+  ) => {
+    const initiate = await initiateMultipartUpload.mutateAsync({
+      body: {
+        file_name: file.name,
+        file_size: file.size,
+        content_type: file.type,
+        meta,
+      },
+    });
+
+    const { upload_id, object_name, uuid, chunk_size, parts_count } = initiate;
+    const uploadedParts: { part_number: number; etag: string }[] = [];
+
+    for (let partNumber = 1; partNumber <= parts_count; partNumber += 1) {
+      const start = (partNumber - 1) * chunk_size;
+      const end = Math.min(start + chunk_size, file.size);
+      const chunk = file.slice(start, end);
+
+      const presign = await presignMultipartPart.mutateAsync({
+        body: {
+          upload_id,
+          object_name,
+          part_number: partNumber,
+        },
+      });
+
+      const uploadRes = await fetch(presign.presigned_url, {
+        method: "PUT",
+        body: chunk,
+      });
+
+      if (!uploadRes.ok) {
+        throw new Error(t("common.uploadErrors.partFailed"));
+      }
+
+      const etag = uploadRes.headers.get("ETag");
+
+      if (!etag) {
+        throw new Error(t("common.uploadErrors.etagMissing"));
+      }
+
+      uploadedParts.push({
+        part_number: partNumber,
+        etag,
+      });
+    }
+
+    return completeMultipartUpload.mutateAsync({
+      body: {
+        upload_id,
+        object_name,
+        file_uuid: uuid,
+        file_name: file.name,
+        file_size: file.size,
+        content_type: file.type,
+        meta,
+        parts: uploadedParts,
+      },
+    });
+  };
+
   const requestUpload = async (file: File): Promise<string> => {
+    const uploadErrorMessage = t("common.errorOnUploading");
+
     if (file.size > maxSize) {
       return Promise.reject(
         Error(t("common.validationErrors.maxSize", { maxSizeMb })),
       );
     }
     if (!allowedFileTypes.includes(file.type)) {
-      return Promise.reject(t("common.validationErrors.invalidFileFormat"));
+      return Promise.reject(
+        Error(t("common.validationErrors.invalidFileFormat")),
+      );
     }
     if (pendingUploads.get(file.name)) {
-      return Promise.reject(t("common.validationErrors.duplicateFile"));
+      return Promise.reject(Error(t("common.validationErrors.duplicateFile")));
     }
 
     setAllPendingUploads((prev) => {
@@ -77,80 +197,26 @@ export const useFileManager = (requestId: string) => {
       return next;
     });
 
-    if (file.size < FiveMb) {
-      try {
-        const res = await simpleUpload.mutateAsync({
-          body: { file: file as any },
-          bodySerializer: (body) => {
-            const file = body?.file as unknown as File;
-            const formData = new FormData();
-            formData.append("file", file, file.name);
-            return formData;
-          },
-        });
+    try {
+      const res =
+        file.size > fiveMb
+          ? await uploadMultipartFile(file, { source: "web" })
+          : await uploadSimpleFile(file);
 
-        setAllPendingUploads((prev) => {
-          const group = prev.get(requestId);
-          if (!group) return prev;
+      const uuid = res.uuid;
 
-          const next = new Map(prev);
-          const nextGroup = new Map(group);
-
-          nextGroup.delete(file.name);
-          if (nextGroup.size === 0) {
-            next.delete(requestId);
-          } else {
-            next.set(requestId, nextGroup);
-          }
-
-          return next;
-        });
-
-        const uuid = res.uuid;
-
-        if (!uuid) {
-          setAllPendingUploads((prev) => {
-            const group = prev.get(requestId);
-            if (!group) return prev;
-
-            const next = new Map(prev);
-            const nextGroup = new Map(group);
-
-            nextGroup.set(file.name, {
-              file,
-              name: file.name,
-              status: FileManagerUploadStatus.FAILED,
-            });
-
-            next.set(requestId, nextGroup);
-            return next;
-          });
-          return Promise.reject(t("common.errorOnUploading"));
-        }
-
-        return Promise.resolve(uuid);
-      } catch (e) {
-        setAllPendingUploads((prev) => {
-          const group = prev.get(requestId);
-          if (!group) return prev;
-
-          const next = new Map(prev);
-          const nextGroup = new Map(group);
-
-          nextGroup.set(file.name, {
-            file,
-            name: file.name,
-            status: FileManagerUploadStatus.FAILED,
-          });
-
-          next.set(requestId, nextGroup);
-          return next;
-        });
-        return Promise.reject(t("common.errorOnUploading"));
+      if (!uuid) {
+        failPendingUpload(file);
+        return Promise.reject(Error(uploadErrorMessage));
       }
-    }
 
-    return Promise.reject(t("common.errorOnUploading"));
+      removePendingUpload(file.name);
+
+      return Promise.resolve(uuid);
+    } catch (e) {
+      failPendingUpload(file);
+      return Promise.reject(e instanceof Error ? e : Error(uploadErrorMessage));
+    }
   };
 
   return {

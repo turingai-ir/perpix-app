@@ -11,10 +11,10 @@ import { cookies } from "@/utils/cookies";
 import { APP_KEYS } from "@/utils";
 import AppLayout from "@/pages/(app)/_layout";
 import GenerationImagePage from "@/pages/(app)/generation/image/page";
+import GenerationVideoPage from "@/pages/(app)/generation/video/page";
 // import GenerationImageLayout from '@/pages/(app)/generation/image/_layout';
 import PaymentResultPage from "@/pages/payment/result/page";
 // import GenerationVideoLayout from '@/pages/(app)/generation/video/_layout';
-// import GenerationVideoPage from '@/pages/(app)/generation/video/page';
 
 export const router = createBrowserRouter([
   {
@@ -46,20 +46,19 @@ export const router = createBrowserRouter([
               },
             ],
           },
-          // {
-          //   path: APP_ROUTES_KEY.generation.video.path,
-          //   Component: GenerationVideoLayout,
-          //   children: [
-          //     {
-          //       index: true,
-          //       Component: GenerationVideoPage,
-          //     },
-          //     {
-          //       path: APP_ROUTES_KEY.generation.video.history.path,
-          //       Component: GenerationVideoPage,
-          //     },
-          //   ],
-          // },
+          {
+            path: APP_ROUTES_KEY.generation.video.path,
+            children: [
+              {
+                index: true,
+                Component: GenerationVideoPage,
+              },
+              {
+                path: APP_ROUTES_KEY.generation.video.history.path,
+                Component: GenerationVideoPage,
+              },
+            ],
+          },
         ],
       },
       { path: APP_ROUTES_KEY.auth.login.path, Component: AuthLoginPage },

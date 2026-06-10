@@ -4,6 +4,7 @@ import {
   Image as ImageIcon,
   LoaderCircle,
   Plus,
+  Video,
   X,
 } from "lucide-react";
 
@@ -29,12 +30,14 @@ export interface LocalImageItem {
 interface HorizontalImagePreviewItemProps {
   image: UploadedImageItem;
   disabled: boolean;
+  previewType: "image" | "video";
   onDeleteClick?: (id: string) => void;
 }
 
 interface LocalHorizontalImagePreviewItemProps {
   image: LocalImageItem;
   disabled: boolean;
+  previewType: "image" | "video";
   onDeleteClick?: (fileName: string) => void;
 }
 
@@ -50,6 +53,7 @@ interface HorizontalImageUploaderProps {
   showPlaceholder?: boolean;
   accept?: string;
   disabled?: boolean;
+  previewType?: "image" | "video";
   onFileSelect?: (file: File) => void;
   onDeleteClick?: (id: string) => void;
   onLocalDeleteClick?: (fileName: string) => void;
@@ -62,6 +66,7 @@ export const HorizontalImageUploader: FC<HorizontalImageUploaderProps> = ({
   showPlaceholder = true,
   accept = "image/jpeg, image/png",
   disabled = false,
+  previewType = "image",
   onFileSelect,
   onDeleteClick,
   onLocalDeleteClick,
@@ -104,6 +109,7 @@ export const HorizontalImageUploader: FC<HorizontalImageUploaderProps> = ({
               key={image.file.name}
               image={image}
               disabled={disabled}
+              previewType={previewType}
               onDeleteClick={onLocalDeleteClick}
             />
           ))}
@@ -113,6 +119,7 @@ export const HorizontalImageUploader: FC<HorizontalImageUploaderProps> = ({
               key={image.id}
               image={image}
               disabled={disabled}
+              previewType={previewType}
               onDeleteClick={onDeleteClick}
             />
           ))}
@@ -176,6 +183,7 @@ const ImageUploadPlaceholder: FC<{
 const HorizontalImagePreviewItem: FC<HorizontalImagePreviewItemProps> = ({
   image,
   disabled,
+  previewType,
   onDeleteClick,
 }) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
@@ -183,7 +191,7 @@ const HorizontalImagePreviewItem: FC<HorizontalImagePreviewItemProps> = ({
 
   const isPreviewLoading = getFilePreviewState.isPending;
   const isError = getFilePreviewState.isError;
-  const imageUrl = getFilePreviewState.data?.presigned_url;
+  const previewUrl = getFilePreviewState.data?.presigned_url;
   const canDelete = !!onDeleteClick && !disabled;
 
   const handleDeleteClick = () => {
@@ -199,11 +207,20 @@ const HorizontalImagePreviewItem: FC<HorizontalImagePreviewItemProps> = ({
         isError && "border-destructive/50 bg-destructive/5",
       )}
     >
-      {!isError && imageUrl ? (
+      {!isError && previewUrl && previewType === "image" ? (
         <img
-          src={imageUrl}
+          src={previewUrl}
           alt="Uploaded item"
           className="h-full w-full object-cover transition-transform group-hover:scale-105"
+        />
+      ) : null}
+
+      {!isError && previewUrl && previewType === "video" ? (
+        // eslint-disable-next-line jsx-a11y/media-has-caption
+        <video
+          src={previewUrl}
+          className="h-full w-full object-cover transition-transform group-hover:scale-105"
+          controls
         />
       ) : null}
 
@@ -211,9 +228,11 @@ const HorizontalImagePreviewItem: FC<HorizontalImagePreviewItemProps> = ({
         <ErrorPreview label={t("common.error")} className="text-destructive" />
       )}
 
-      {!isPreviewLoading && !isError && !imageUrl && <EmptyImagePreview />}
+      {!isPreviewLoading && !isError && !previewUrl && (
+        <EmptyImagePreview previewType={previewType} />
+      )}
 
-      {isPreviewLoading && !imageUrl && (
+      {isPreviewLoading && !previewUrl && (
         <Skeleton className="h-full w-full animate-pulse overflow-hidden rounded-lg" />
       )}
 
@@ -224,7 +243,7 @@ const HorizontalImagePreviewItem: FC<HorizontalImagePreviewItemProps> = ({
 
 const LocalHorizontalImagePreviewItem: FC<
   LocalHorizontalImagePreviewItemProps
-> = ({ image, disabled, onDeleteClick }) => {
+> = ({ image, disabled, previewType, onDeleteClick }) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const imageUrlRef = useRef<string | null>(null);
   const isUploading = image.status === FileManagerUploadStatus.UPLOADING;
@@ -245,7 +264,7 @@ const LocalHorizontalImagePreviewItem: FC<
   }, []);
 
   const setImageElement = useCallback(
-    (element: HTMLImageElement | null) => {
+    (element: HTMLImageElement | HTMLVideoElement | null) => {
       revokeImageUrl();
 
       if (!element) return;
@@ -265,11 +284,20 @@ const LocalHorizontalImagePreviewItem: FC<
         isError && "border-destructive/50 bg-destructive/5",
       )}
     >
-      <img
-        ref={setImageElement}
-        alt={image.file.name}
-        className="h-full w-full object-cover transition-transform group-hover:scale-105"
-      />
+      {previewType === "image" ? (
+        <img
+          ref={setImageElement}
+          alt={image.file.name}
+          className="h-full w-full object-cover transition-transform group-hover:scale-105"
+        />
+      ) : (
+        // eslint-disable-next-line jsx-a11y/media-has-caption
+        <video
+          ref={setImageElement}
+          className="h-full w-full object-cover transition-transform group-hover:scale-105"
+          controls
+        />
+      )}
 
       {isUploading && (
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-1 bg-black/45 text-white backdrop-blur-[1px]">
@@ -296,9 +324,15 @@ const LocalHorizontalImagePreviewItem: FC<
   );
 };
 
-const EmptyImagePreview = () => (
+const EmptyImagePreview: FC<{ previewType?: "image" | "video" }> = ({
+  previewType = "image",
+}) => (
   <div className="text-muted-foreground flex flex-col items-center justify-center gap-1">
-    <ImageIcon className="h-6 w-6 opacity-40" />
+    {previewType === "video" ? (
+      <Video className="h-6 w-6 opacity-40" />
+    ) : (
+      <ImageIcon className="h-6 w-6 opacity-40" />
+    )}
   </div>
 );
 

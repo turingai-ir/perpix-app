@@ -1,5 +1,5 @@
-import { GenerationImageChats, GenerationImagePromptBox } from "./_components";
-import { useAiGenerate } from "../_hooks";
+import { GenerationVideoChats, GenerationVideoPromptBox } from "./_components";
+import { useAiGenerate, useAiTaskResultPolling } from "../_hooks";
 import { TypingAnimation } from "@/components/ui/typing-animation";
 import { useParams } from "react-router";
 import {
@@ -16,10 +16,11 @@ import LoadingSection from "@/components/custom/loading-section";
 import { APP_ROUTES_KEY } from "@/router";
 import { appEventBus } from "@/lib/event-bus";
 import type { SchemaAiTaskResponse } from "@/services/api";
+import { AiTaskRuleEnumMap } from "@/services/api";
 import { LoadingGeneration } from "@/components/custom";
 import { APP_I18_KEYS } from "@/services/i18";
 
-const GenerationImagePage = () => {
+const GenerationVideoPage = () => {
   const params = useParams();
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const routeChatId = params?.chatId ?? undefined;
@@ -27,7 +28,7 @@ const GenerationImagePage = () => {
 
   const [chatId, setChatId] = useState<string | undefined>(routeChatId);
   const typingAnimationWords = t(
-    "pages.generation.image.typingAnimation.words",
+    "pages.generation.video.typingAnimation.words",
     {
       returnObjects: true,
     },
@@ -41,7 +42,29 @@ const GenerationImagePage = () => {
   const { mutateAsync } = aiGenerateState;
   const taskData = aiTaskState.data as SchemaAiTaskResponse | undefined;
   const aiTaskMessages = useMemo(() => taskData?.messages ?? [], [taskData]);
-  const lastMessage = aiTaskMessages[aiTaskMessages.length - 1];
+  const assistantMessage = useMemo(
+    () =>
+      [...aiTaskMessages]
+        .reverse()
+        .find((message) => message.role === AiTaskRuleEnumMap.ASSISTANT),
+    [aiTaskMessages],
+  );
+  const aiTaskResultState = useAiTaskResultPolling(
+    taskData?.uuid,
+    assistantMessage,
+  );
+  const displayedMessages = useMemo(() => {
+    const resultMessage = aiTaskResultState.data;
+
+    if (!resultMessage?.uuid) {
+      return aiTaskMessages;
+    }
+
+    return aiTaskMessages.map((message) =>
+      message.uuid === resultMessage.uuid ? resultMessage : message,
+    );
+  }, [aiTaskMessages, aiTaskResultState.data]);
+  const lastMessage = displayedMessages[displayedMessages.length - 1];
   const isTaskLoading = aiTaskState.isLoading || isChatRoutePending;
   const isGenerating = aiGenerateState.isPending;
   const isBusy = isGenerating || isTaskLoading;
@@ -63,13 +86,13 @@ const GenerationImagePage = () => {
     return () => {
       cancelAnimationFrame(frameId);
     };
-  }, [aiTaskMessages.length, lastMessage?.uuid]);
+  }, [displayedMessages.length, lastMessage?.uuid]);
 
   const handleForm = useCallback(
     async (data: any, ai_model_uuid: string) => {
       const res = await mutateAsync({
         body: {
-          task_type: "IMAGE",
+          task_type: "VIDEO",
           ai_model_uuid: ai_model_uuid,
           ai_model_config: data,
           task_uuid: chatId ?? undefined,
@@ -79,7 +102,7 @@ const GenerationImagePage = () => {
       window.history.pushState(
         {},
         "",
-        APP_ROUTES_KEY.generation.image.history.path.replace(
+        APP_ROUTES_KEY.generation.video.history.path.replace(
           ":chatId",
           res.uuid,
         ),
@@ -101,7 +124,7 @@ const GenerationImagePage = () => {
 
       <Activity mode={isTaskLoading ? "hidden" : "visible"}>
         <>
-          <GenerationImageChats messages={aiTaskMessages} />
+          <GenerationVideoChats messages={displayedMessages} />
 
           {isGenerating ? (
             <div className="flex w-full justify-center px-4 py-8">
@@ -119,7 +142,7 @@ const GenerationImagePage = () => {
               />
             ) : null}
 
-            <GenerationImagePromptBox
+            <GenerationVideoPromptBox
               isLoading={isBusy}
               lastMessageConfig={lastMessage?.ai_model_config}
               onSubmit={handleForm}
@@ -131,4 +154,4 @@ const GenerationImagePage = () => {
   );
 };
 
-export default GenerationImagePage;
+export default GenerationVideoPage;
