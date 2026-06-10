@@ -1,13 +1,9 @@
-import { selectAtom } from "jotai/utils";
-import { useAtom } from "jotai";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import { LoaderCircle } from "lucide-react";
 import { useDebounce } from "react-use";
 import { NumericFormat } from "react-number-format";
-
-import appLayoutAtom from "../_state";
 
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Muted } from "@/components/ui/typography";

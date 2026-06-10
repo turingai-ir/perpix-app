@@ -1,4 +1,12 @@
-import { useEffect, useRef, useState, type FC } from "react";
+import {
+  useCallback,
+  useEffect,
+  useEffectEvent,
+  useRef,
+  useState,
+  useTransition,
+  type FC,
+} from "react";
 import { Outlet, useLocation, useNavigate } from "react-router";
 import { useImmerAtom } from "jotai-immer";
 import { useMeasure } from "react-use";
@@ -23,6 +31,7 @@ const AppLayout: FC = () => {
   const scrollAreaMyRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLElement>(null);
   const navigate = useNavigate();
+  const [, startNavigationTransition] = useTransition();
 
   const { userState } = useUser();
 
@@ -30,14 +39,36 @@ const AppLayout: FC = () => {
 
   const [pricingOpen, setPricingOpen] = useState(false);
 
-  const onOpenChange = (open: boolean) => {
-    if (open) {
-      navigate(APP_KEYS.URL_HASH.pricing);
-    } else {
-      navigate(location.pathname + location.search, { replace: true });
+  const scrollAppLayoutUntilEnd = useEffectEvent(() => {
+    const el = scrollAreaMyRef.current;
+    if (!el) {
+      return;
     }
-    navigate(location.pathname + location.search, { replace: true });
-  };
+
+    const areaElement = el.childNodes[1] as HTMLDivElement;
+
+    if (!areaElement) {
+      return;
+    }
+    areaElement.scrollTo({
+      top: areaElement.scrollHeight,
+      behavior: "smooth",
+    });
+  });
+
+  const onOpenChange = useCallback(
+    (open: boolean) => {
+      startNavigationTransition(() => {
+        if (open) {
+          navigate(APP_KEYS.URL_HASH.pricing);
+          return;
+        }
+
+        navigate(location.pathname + location.search, { replace: true });
+      });
+    },
+    [location.pathname, location.search, navigate, startNavigationTransition],
+  );
 
   useEffect(() => {
     if (location.hash === APP_KEYS.URL_HASH.pricing) {
@@ -51,27 +82,14 @@ const AppLayout: FC = () => {
     const appEventBusListener = appEventBus.on(
       "SCROLL_APP_LAYOUT_UNTIL_END",
       () => {
-        const el = scrollAreaMyRef.current;
-        if (!el) {
-          return;
-        }
-
-        const areaElement = el.childNodes[1] as HTMLDivElement;
-
-        if (!areaElement) {
-          return;
-        }
-        areaElement.scrollTo({
-          top: areaElement.scrollHeight,
-          behavior: "smooth",
-        });
+        scrollAppLayoutUntilEnd();
       },
     );
 
     return () => {
       appEventBusListener();
     };
-  }, [scrollAreaMyRef]);
+  }, []);
 
   if (userState.isLoading || !userState.data) {
     return (

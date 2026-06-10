@@ -1,4 +1,4 @@
-import { useEffect, type FC } from "react";
+import { Activity, useEffect, type FC } from "react";
 import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -103,14 +103,6 @@ const ProfileSettingsPage: FC = () => {
     });
   }
 
-  if (userState.isLoading) {
-    return (
-      <div className="mx-auto flex h-full items-center justify-center py-4">
-        <LoadingSection />
-      </div>
-    );
-  }
-
   if (userState.isError) {
     return (
       <div className="mx-auto flex h-full items-center justify-center py-4">
@@ -119,97 +111,116 @@ const ProfileSettingsPage: FC = () => {
     );
   }
 
+  const isUserLoading = userState.isLoading || !userState.data;
+
   return (
-    <div className="mx-auto flex min-h-full max-w-xl items-center justify-center p-4">
-      <Card className="w-full">
-        <CardHeader>
-          <CardTitle>{t("pages.profile.settings.title")}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field, fieldState }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t("pages.profile.settings.userInfo.form.name.label")}
-                    </FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    {fieldState.error ? (
-                      <FormMessage />
-                    ) : (
-                      <Muted>
-                        {t(
-                          "pages.profile.settings.userInfo.form.name.description",
+    <>
+      {isUserLoading ? (
+        <div className="mx-auto flex h-full items-center justify-center py-4">
+          <LoadingSection />
+        </div>
+      ) : null}
+
+      <Activity mode={isUserLoading ? "hidden" : "visible"}>
+        <div className="mx-auto flex min-h-full max-w-xl items-center justify-center p-4">
+          <Card className="w-full">
+            <CardHeader>
+              <CardTitle>{t("pages.profile.settings.title")}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="space-y-8"
+                >
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field, fieldState }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t("pages.profile.settings.userInfo.form.name.label")}
+                        </FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        {fieldState.error ? (
+                          <FormMessage />
+                        ) : (
+                          <Muted>
+                            {t(
+                              "pages.profile.settings.userInfo.form.name.description",
+                            )}
+                          </Muted>
                         )}
-                      </Muted>
+                      </FormItem>
                     )}
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field, fieldState }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t("pages.profile.settings.userInfo.form.email.label")}
-                    </FormLabel>
-                    <FormControl>
-                      <Input dir="ltr" type="email" {...field} />
-                    </FormControl>
-                    {fieldState.error ? <FormMessage /> : null}
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="mobile"
-                disabled
-                render={({ field, fieldState }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t("pages.profile.settings.userInfo.form.mobile.label")}
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        dir="ltr"
-                        type="number"
-                        placeholder="0912345678"
-                        {...field}
-                      />
-                    </FormControl>
-                    {fieldState.error ? <FormMessage /> : null}
-                  </FormItem>
-                )}
-              />
-              <Button
-                className="w-full"
-                type="submit"
-                disabled={editUserInfoQuery.isPending}
-              >
-                {editUserInfoQuery.isPending ? (
-                  <LoaderCircle className="animate-spin" />
-                ) : (
-                  t("pages.profile.settings.userInfo.form.submit")
-                )}
-              </Button>
-            </form>
-          </Form>
-        </CardContent>
-        <CardFooter>
-          <Link className="w-full" to={APP_ROUTES_KEY.app.path}>
-            <Button className="w-full" variant="link">
-              {t("pages.profile.settings.userInfo.backToHome")}
-            </Button>
-          </Link>
-        </CardFooter>
-      </Card>
-    </div>
+                  />
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field, fieldState }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t(
+                            "pages.profile.settings.userInfo.form.email.label",
+                          )}
+                        </FormLabel>
+                        <FormControl>
+                          <Input dir="ltr" type="email" {...field} />
+                        </FormControl>
+                        {fieldState.error ? <FormMessage /> : null}
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="mobile"
+                    disabled
+                    render={({ field, fieldState }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t(
+                            "pages.profile.settings.userInfo.form.mobile.label",
+                          )}
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            dir="ltr"
+                            type="number"
+                            placeholder="0912345678"
+                            {...field}
+                          />
+                        </FormControl>
+                        {fieldState.error ? <FormMessage /> : null}
+                      </FormItem>
+                    )}
+                  />
+                  <Button
+                    className="w-full"
+                    type="submit"
+                    disabled={editUserInfoQuery.isPending}
+                  >
+                    {editUserInfoQuery.isPending ? (
+                      <LoaderCircle className="animate-spin" />
+                    ) : (
+                      t("pages.profile.settings.userInfo.form.submit")
+                    )}
+                  </Button>
+                </form>
+              </Form>
+            </CardContent>
+            <CardFooter>
+              <Link className="w-full" to={APP_ROUTES_KEY.app.path}>
+                <Button className="w-full" variant="link">
+                  {t("pages.profile.settings.userInfo.backToHome")}
+                </Button>
+              </Link>
+            </CardFooter>
+          </Card>
+        </div>
+      </Activity>
+    </>
   );
 };
 

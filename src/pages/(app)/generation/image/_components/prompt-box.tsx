@@ -9,7 +9,7 @@ import {
 } from "react";
 import { ArrowUp, Loader2 } from "lucide-react";
 
-import { useAiGenerate, useModel } from "../_hooks";
+import { useModel } from "../_hooks";
 import { ImageReferenceUploader } from "./image-reference-uploader";
 
 import { Card } from "@/components/ui/card";
@@ -31,12 +31,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { simplifyAspect } from "@/utils";
-import type { SchemaAiTaskResponse } from "@/services/api";
+import type { SchemaAiTaskMessageResponse } from "@/services/api";
 
 interface Props {
   onSubmit: (data: any, ai_model_uuid: string) => void;
   isLoading?: boolean;
-  chatId?: string;
+  lastMessageConfig?: SchemaAiTaskMessageResponse["ai_model_config"];
 }
 
 const MIN_PROMPT_LENGTH = 3;
@@ -44,34 +44,30 @@ const MIN_PROMPT_LENGTH = 3;
 export const GenerationImagePromptBox: FC<Props> = ({
   onSubmit,
   isLoading,
-  chatId,
+  lastMessageConfig,
 }) => {
   const { modelState, modelsListState, currentModel, setCurrentModel } =
     useModel();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const isPromptTooShortRef = useRef(true);
   const { t } = useAppTranslate();
-  const { aiTaskState } = useAiGenerate(chatId);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
 
   const dynamicFormConfigDefaults = useMemo(() => {
-    const chatData = aiTaskState?.data as SchemaAiTaskResponse;
-    const lastMessage = chatData?.messages?.slice(-1)[0];
-
-    const lastMessageConfigDefaults = lastMessage?.ai_model_config
-      ? {
-          ...lastMessage?.ai_model_config,
+    const lastMessageConfigDefaults = lastMessageConfig
+      ? ({
+          ...lastMessageConfig,
           images_reference:
-            lastMessage?.ai_model_config?.images_generated ??
-            lastMessage?.ai_model_config?.images_reference,
-        }
+            lastMessageConfig.images_generated ??
+            lastMessageConfig.images_reference,
+        } as Record<string, unknown>)
       : undefined;
 
     return {
       ...(lastMessageConfigDefaults ?? modelState.data?.config_defaults),
       prompt: "",
     };
-  }, [aiTaskState.data, modelState.data?.config_defaults]);
+  }, [lastMessageConfig, modelState.data?.config_defaults]);
 
   const dynamicForm = useDynamicConfigForm({
     autoResetOnSchemaChange: true,

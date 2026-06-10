@@ -1,5 +1,8 @@
 {
   "common": {
+    "coolTexts": {
+      "cooking": "درحال پخت و پز هستیم ..."
+    },
     "errorOnUploading": "خطایی هنگام آپلود فایل پیش آمده است",
     "emptyTitle": "بدون عنوان",
     "addImage": "افزودن عکس",

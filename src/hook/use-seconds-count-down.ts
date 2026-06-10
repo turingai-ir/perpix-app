@@ -14,16 +14,19 @@ function formatSeconds(totalSeconds: number) {
 
 export function useSecondsCountDown(initialSeconds: number) {
   const [seconds, setSeconds] = useState(initialSeconds);
+  const isRunning = seconds > 0;
 
   useEffect(() => {
-    if (seconds <= 0) {
-      return () => {};
+    if (!isRunning) {
+      return;
     }
+
     const interval = setInterval(() => {
       setSeconds((s) => (s > 0 ? s - 1 : 0));
     }, 1000);
+
     return () => clearInterval(interval);
-  }, [seconds]);
+  }, [isRunning]);
 
   return { formatted: formatSeconds(seconds), seconds, setSeconds };
 }

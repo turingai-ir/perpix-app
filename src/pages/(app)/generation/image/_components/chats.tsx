@@ -1,23 +1,21 @@
 import type { FC } from "react";
-import { useAiGenerate } from "../_hooks";
-import { AiTaskRuleEnumMap, type SchemaAiTaskResponse } from "@/services/api";
+import {
+  AiTaskRuleEnumMap,
+  type SchemaAiTaskMessageResponse,
+} from "@/services/api";
 import { ChatBubble } from "@/components/custom";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 
 interface Props {
-  chatId?: string;
+  messages: readonly SchemaAiTaskMessageResponse[];
 }
-export const GenerationImageChats: FC<Props> = ({ chatId }) => {
-  const { aiTaskState } = useAiGenerate(chatId);
-  const aiTaskMessages = aiTaskState.isSuccess
-    ? (aiTaskState.data as SchemaAiTaskResponse)?.messages
-    : [];
+export const GenerationImageChats: FC<Props> = ({ messages }) => {
+  if (!messages.length) return null;
 
-  if (!aiTaskState.isSuccess) return null;
   return (
     <div className="flex w-full flex-col gap-2">
-      {aiTaskMessages.map((item) => {
+      {messages.map((item) => {
         return (
           <div
             key={item.uuid}

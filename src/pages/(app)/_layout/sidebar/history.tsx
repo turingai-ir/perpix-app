@@ -1,4 +1,4 @@
-import { useCallback, useMemo, type FC } from "react";
+import { Activity, useCallback, useMemo, type FC } from "react";
 import { Link, useLocation } from "react-router";
 
 import ErrorSection from "@/components/custom/error-section";
@@ -106,12 +106,22 @@ const AppLayoutSidebarHistory: FC = () => {
 
   return (
     <div className="flex w-full flex-col gap-2">
-      {historyItems.map((item) => (
-        <Link key={item.uuid} to={getHistoryHref(item.uuid)}>
-          <Muted>{getHistoryTitle(item.messages?.[0]?.message)}</Muted>
-        </Link>
-      ))}
-      <div ref={scrollRef} />
+      <Activity
+        mode={
+          aiTasksListStatus.isLoading && !historyItems.length
+            ? "hidden"
+            : "visible"
+        }
+      >
+        <div className="flex w-full flex-col gap-2">
+          {historyItems.map((item) => (
+            <Link key={item.uuid} to={getHistoryHref(item.uuid)}>
+              <Muted>{getHistoryTitle(item.messages?.[0]?.message)}</Muted>
+            </Link>
+          ))}
+          <div ref={scrollRef} />
+        </div>
+      </Activity>
       {aiTasksListStatus.isLoading ? (
         <div className="flex w-full items-center justify-center">
           <LoadingSection />

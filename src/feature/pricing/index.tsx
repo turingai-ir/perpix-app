@@ -1,3 +1,4 @@
+import { Activity, useCallback, useMemo } from "react";
 import { CircleCheck, LoaderCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -46,22 +47,29 @@ function PricingFeature({ open, onOpenChange }: Props) {
     "post",
     "/user/subscription/purchase",
   );
+  const { mutateAsync: purchasePlan } = purchasePlanQuery;
 
-  const planItems = normalizeList<
-    SchemaSubscriptionPlanListResponse["items"][number]
-  >(plansQuery.data?.items);
-  const plans = planItems.filter(
-    (plan) => plan.uuid !== userState.data?.active_subscription?.plan.uuid,
+  const plans = useMemo(() => {
+    const planItems = normalizeList<
+      SchemaSubscriptionPlanListResponse["items"][number]
+    >(plansQuery.data?.items);
+
+    return planItems.filter(
+      (plan) => plan.uuid !== userState.data?.active_subscription?.plan.uuid,
+    );
+  }, [plansQuery.data?.items, userState.data?.active_subscription?.plan.uuid]);
+
+  const handlePurchasePlan = useCallback(
+    async (planId: string) => {
+      return await purchasePlan({
+        body: {
+          plan_uuid: planId,
+          gateway: PaymentGateWayProviderEnumMap.PAYPING_IRR,
+        },
+      });
+    },
+    [purchasePlan],
   );
-
-  const handlePurchasePlan = async (planId: string) => {
-    return await purchasePlanQuery.mutateAsync({
-      body: {
-        plan_uuid: planId,
-        gateway: PaymentGateWayProviderEnumMap.PAYPING_IRR,
-      },
-    });
-  };
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -80,7 +88,7 @@ function PricingFeature({ open, onOpenChange }: Props) {
           <ErrorSection onRetry={() => plansQuery.refetch()} />
         )}
 
-        {plansQuery.isSuccess && (
+        <Activity mode={plansQuery.isSuccess ? "visible" : "hidden"}>
           <div className="flex flex-1 items-center-safe overflow-y-auto px-6 pt-8">
             <div className="mx-auto flex max-w-(--breakpoint-lg) flex-col gap-4 lg:flex-row lg:gap-8">
               {plans?.map((plan) => (
@@ -139,7 +147,7 @@ function PricingFeature({ open, onOpenChange }: Props) {
               ))}
             </div>
           </div>
-        )}
+        </Activity>
       </SheetContent>
     </Sheet>
   );
