@@ -30,12 +30,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { simplifyAspect } from "@/utils";
 import {
   AiRegistryModelSupportedTypesEnumMap,
   type SchemaAiTaskMessageResponse,
 } from "@/services/api";
 import { showDynamicFormErrorsToast } from "@/pages/(app)/generation/_utils/dynamic-form-errors-toast";
+import { getModelDynamicConfig } from "@/pages/(app)/generation/_utils/model-dynamic-config";
 
 interface Props {
   onSubmit: (data: any, ai_model_uuid: string) => void;
@@ -56,6 +56,8 @@ export const GenerationVideoPromptBox: FC<Props> = ({
   const isPromptTooShortRef = useRef(true);
   const { t } = useAppTranslate();
   const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const { configDefaults: modelConfigDefaults, configMeta: modelConfigMeta } =
+    getModelDynamicConfig(modelState.data);
 
   const dynamicFormConfigDefaults = useMemo(() => {
     const lastMessageConfigDefaults = lastMessageConfig
@@ -66,19 +68,22 @@ export const GenerationVideoPromptBox: FC<Props> = ({
       : undefined;
 
     return {
-      ...(lastMessageConfigDefaults ?? modelState.data?.config_defaults),
+      ...(modelConfigDefaults ?? {}),
+      ...(lastMessageConfigDefaults ?? {}),
       prompt: "",
     };
-  }, [lastMessageConfig, modelState.data?.config_defaults]);
+  }, [lastMessageConfig, modelConfigDefaults]);
 
   const dynamicForm = useDynamicConfigForm({
     autoResetOnSchemaChange: true,
     configDefaults: dynamicFormConfigDefaults,
+    configMeta: modelConfigMeta,
     configSchema: isJsonConfigSchema(modelState.data?.config_schema)
       ? modelState.data.config_schema
       : null,
     schemaKey: modelState.data?.uuid,
   });
+  const sizeOptionLabels = dynamicForm.getFieldMeta("size")?.optionLabels ?? {};
 
   const [isPromptTooShort, setIsPromptTooShort] = useState(true);
 
@@ -253,8 +258,9 @@ export const GenerationVideoPromptBox: FC<Props> = ({
                           {dynamicForm.isReady &&
                             (dynamicForm.properties?.size?.enum ?? []).map(
                               (size) => (
-                                <SelectItem key={size} value={size}>
-                                  {simplifyAspect(size)}
+                                <SelectItem key={size} value={String(size)}>
+                                  {sizeOptionLabels[String(size)] ??
+                                    String(size)}
                                 </SelectItem>
                               ),
                             )}
@@ -264,6 +270,49 @@ export const GenerationVideoPromptBox: FC<Props> = ({
                   </FormItem>
                 )}
               />
+              {dynamicForm.properties.duration ? (
+                <FormField
+                  control={dynamicForm.control}
+                  name="duration"
+                  render={({ field, fieldState }) => (
+                    <FormItem>
+                      <Select
+                        name={field.name}
+                        value={field.value == null ? "" : String(field.value)}
+                        onValueChange={(value) => field.onChange(Number(value))}
+                        disabled={isInteractionDisabled}
+                      >
+                        <SelectTrigger
+                          className="w-full"
+                          aria-invalid={fieldState.invalid}
+                        >
+                          <SelectValue
+                            placeholder={t("common.selectDuration")}
+                          />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>
+                              {t("common.selectDuration")}
+                            </SelectLabel>
+                            {dynamicForm.isReady &&
+                              (dynamicForm.properties.duration.enum ?? []).map(
+                                (duration) => (
+                                  <SelectItem
+                                    key={duration}
+                                    value={String(duration)}
+                                  >
+                                    {duration} {t("common.seconds")}
+                                  </SelectItem>
+                                ),
+                              )}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </FormItem>
+                  )}
+                />
+              ) : null}
             </div>
           </div>
         </form>

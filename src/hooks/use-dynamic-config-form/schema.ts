@@ -6,6 +6,7 @@ import type {
   DynamicConfigValidationMessages,
   DynamicConfigValues,
   FieldMeta,
+  JsonConfigMeta,
   JsonConfigSchema,
   JsonSchemaProperty,
 } from "./types";
@@ -93,6 +94,12 @@ function emptyToUndefined(value: unknown) {
   return value === "" || value === null ? undefined : value;
 }
 
+function optionalEmptyToUndefined(value: unknown) {
+  if (Array.isArray(value) && value.length === 0) return undefined;
+
+  return emptyToUndefined(value);
+}
+
 function toNumber(value: unknown) {
   const normalizedValue = emptyToUndefined(value);
 
@@ -145,7 +152,11 @@ function buildBaseZodField(
   prop: JsonSchemaProperty,
   messages: DynamicConfigValidationMessages,
 ): z.ZodTypeAny {
-  if (prop.enum && prop.enum.length > 0) {
+  if (
+    prop.enum &&
+    prop.enum.length > 0 &&
+    prop.enum.every((value) => typeof value === "string")
+  ) {
     return z.enum(prop.enum as [string, ...string[]], {
       message: messages.invalidEnum,
     });
@@ -179,6 +190,12 @@ function buildBaseZodField(
         schema = schema.max(prop.maximum, messages.maxNumber(prop.maximum));
       }
 
+      if (prop.enum && prop.enum.length > 0) {
+        schema = schema.refine((value) => prop.enum?.includes(value), {
+          message: messages.invalidEnum,
+        });
+      }
+
       return z.preprocess(toNumber, schema);
     }
 
@@ -191,6 +208,12 @@ function buildBaseZodField(
 
       if (prop.maximum !== undefined) {
         schema = schema.max(prop.maximum, messages.maxNumber(prop.maximum));
+      }
+
+      if (prop.enum && prop.enum.length > 0) {
+        schema = schema.refine((value) => prop.enum?.includes(value), {
+          message: messages.invalidEnum,
+        });
       }
 
       return z.preprocess(toNumber, schema);
@@ -252,7 +275,7 @@ function makeFieldRequired(
 }
 
 function makeFieldOptional(schema: z.ZodTypeAny): z.ZodTypeAny {
-  return z.preprocess(emptyToUndefined, schema.optional());
+  return z.preprocess(optionalEmptyToUndefined, schema.optional());
 }
 
 function buildZodField(
@@ -360,7 +383,7 @@ function getPropertyDefaultValue(
   prop: JsonSchemaProperty,
   defaultValue: unknown,
 ): unknown {
-  if (defaultValue !== undefined) {
+  if (defaultValue !== undefined && defaultValue !== null) {
     return cleanValueByProperty(prop, defaultValue);
   }
 
@@ -421,13 +444,21 @@ function resolveInputType(prop: JsonSchemaProperty): FieldMeta["inputType"] {
   return "unknown";
 }
 
+function resolveOptionLabels(
+  fieldName: string,
+  configMeta?: JsonConfigMeta | null,
+) {
+  return configMeta?.labels?.[fieldName];
+}
+
 export function buildFieldMeta(params: {
   name: string;
   prop: JsonSchemaProperty;
   requiredFields: readonly string[];
   defaultValues: Record<string, unknown>;
+  configMeta?: JsonConfigMeta | null;
 }): FieldMeta {
-  const { name, prop, requiredFields, defaultValues } = params;
+  const { name, prop, requiredFields, defaultValues, configMeta } = params;
 
   return {
     name,
@@ -436,6 +467,7 @@ export function buildFieldMeta(params: {
     defaultValue: defaultValues[name],
     inputType: resolveInputType(prop),
     options: prop.enum,
+    optionLabels: resolveOptionLabels(name, configMeta),
     description: prop.description,
     title: prop.title,
   };

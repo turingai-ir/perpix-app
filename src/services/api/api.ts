@@ -795,10 +795,6 @@ export interface components {
             readonly config_schema?: {
                 readonly [key: string]: unknown;
             };
-            /** Config Defaults */
-            readonly config_defaults?: {
-                readonly [key: string]: unknown;
-            };
             /** Pricing By */
             readonly pricing_by?: readonly string[];
             /** Pricing Tiers */
@@ -915,10 +911,6 @@ export interface components {
             readonly supported_outputs?: readonly components["schemas"]["AiRegistryModelSupportedTypesEnum"][] | null;
             /** Config Schema */
             readonly config_schema?: {
-                readonly [key: string]: unknown;
-            } | null;
-            /** Config Defaults */
-            readonly config_defaults?: {
                 readonly [key: string]: unknown;
             } | null;
             /** Pricing By */
@@ -1699,10 +1691,6 @@ export interface components {
             readonly config_schema: {
                 readonly [key: string]: unknown;
             };
-            /** Config Defaults */
-            readonly config_defaults: {
-                readonly [key: string]: unknown;
-            };
             /** Pricing By */
             readonly pricing_by: readonly string[];
             /** Pricing Tiers */
@@ -1754,8 +1742,8 @@ export interface components {
             readonly config_schema: {
                 readonly [key: string]: unknown;
             };
-            /** Config Defaults */
-            readonly config_defaults: {
+            /** Meta */
+            readonly meta: {
                 readonly [key: string]: unknown;
             };
         };

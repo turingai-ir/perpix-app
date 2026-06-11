@@ -1,10 +1,16 @@
 import type { UseFormProps } from "react-hook-form";
 
-export type JsonSchemaType = "string" | "integer" | "number" | "boolean" | "array" | "object";
+export type JsonSchemaType =
+  | "string"
+  | "integer"
+  | "number"
+  | "boolean"
+  | "array"
+  | "object";
 
 export type JsonSchemaProperty = {
   type?: JsonSchemaType;
-  enum?: readonly string[];
+  enum?: readonly (string | number)[];
 
   default?: unknown;
   description?: string;
@@ -34,6 +40,10 @@ export type JsonConfigSchema = {
   additionalProperties?: boolean;
 };
 
+export type JsonConfigMeta = {
+  labels?: Record<string, Record<string, string>>;
+};
+
 export type DynamicConfigValues = Record<string, unknown>;
 
 export type FieldMeta = {
@@ -50,7 +60,8 @@ export type FieldMeta = {
     | "array"
     | "object"
     | "unknown";
-  options?: readonly string[];
+  options?: readonly (string | number)[];
+  optionLabels?: Record<string, string>;
   description?: string;
   title?: string;
 };
@@ -58,9 +69,13 @@ export type FieldMeta = {
 export type UseDynamicConfigFormInput = {
   configSchema?: JsonConfigSchema | null;
   configDefaults?: Record<string, unknown> | null;
+  configMeta?: JsonConfigMeta | null;
   schemaKey?: string | number | null;
   autoResetOnSchemaChange?: boolean;
-  formOptions?: Omit<UseFormProps<DynamicConfigValues>, "resolver" | "defaultValues">;
+  formOptions?: Omit<
+    UseFormProps<DynamicConfigValues>,
+    "resolver" | "defaultValues"
+  >;
 };
 
 export type DynamicConfigValidationMessages = {

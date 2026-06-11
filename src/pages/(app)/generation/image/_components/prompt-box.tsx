@@ -30,12 +30,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { simplifyAspect } from "@/utils";
 import {
   AiRegistryModelSupportedTypesEnumMap,
   type SchemaAiTaskMessageResponse,
 } from "@/services/api";
 import { showDynamicFormErrorsToast } from "@/pages/(app)/generation/_utils/dynamic-form-errors-toast";
+import { getModelDynamicConfig } from "@/pages/(app)/generation/_utils/model-dynamic-config";
 
 interface Props {
   onSubmit: (data: any, ai_model_uuid: string) => void;
@@ -56,6 +56,8 @@ export const GenerationImagePromptBox: FC<Props> = ({
   const isPromptTooShortRef = useRef(true);
   const { t } = useAppTranslate();
   const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const { configDefaults: modelConfigDefaults, configMeta: modelConfigMeta } =
+    getModelDynamicConfig(modelState.data);
 
   const dynamicFormConfigDefaults = useMemo(() => {
     const lastMessageConfigDefaults = lastMessageConfig
@@ -68,19 +70,22 @@ export const GenerationImagePromptBox: FC<Props> = ({
       : undefined;
 
     return {
-      ...(lastMessageConfigDefaults ?? modelState.data?.config_defaults),
+      ...(modelConfigDefaults ?? {}),
+      ...(lastMessageConfigDefaults ?? {}),
       prompt: "",
     };
-  }, [lastMessageConfig, modelState.data?.config_defaults]);
+  }, [lastMessageConfig, modelConfigDefaults]);
 
   const dynamicForm = useDynamicConfigForm({
     autoResetOnSchemaChange: true,
     configDefaults: dynamicFormConfigDefaults,
+    configMeta: modelConfigMeta,
     configSchema: isJsonConfigSchema(modelState.data?.config_schema)
       ? modelState.data.config_schema
       : null,
     schemaKey: modelState.data?.uuid,
   });
+  const sizeOptionLabels = dynamicForm.getFieldMeta("size")?.optionLabels ?? {};
 
   const [isPromptTooShort, setIsPromptTooShort] = useState(true);
 
@@ -255,8 +260,9 @@ export const GenerationImagePromptBox: FC<Props> = ({
                           {dynamicForm.isReady &&
                             (dynamicForm.properties?.size?.enum ?? []).map(
                               (size) => (
-                                <SelectItem key={size} value={size}>
-                                  {simplifyAspect(size)}
+                                <SelectItem key={size} value={String(size)}>
+                                  {sizeOptionLabels[String(size)] ??
+                                    String(size)}
                                 </SelectItem>
                               ),
                             )}

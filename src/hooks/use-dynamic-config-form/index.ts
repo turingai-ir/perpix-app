@@ -15,6 +15,7 @@ import type {
   DynamicConfigValidationMessages,
   DynamicConfigValues,
   FieldMeta,
+  JsonConfigMeta,
   JsonConfigSchema,
   JsonSchemaProperty,
   JsonSchemaType,
@@ -28,6 +29,7 @@ export type {
   DynamicConfigValidationMessages,
   DynamicConfigValues,
   FieldMeta,
+  JsonConfigMeta,
   JsonConfigSchema,
   JsonSchemaProperty,
   JsonSchemaType,
@@ -45,6 +47,7 @@ export {
 export function useDynamicConfigForm({
   configSchema,
   configDefaults,
+  configMeta,
   schemaKey,
   autoResetOnSchemaChange = true,
   formOptions,
@@ -84,9 +87,10 @@ export function useDynamicConfigForm({
         prop,
         requiredFields,
         defaultValues: defaultValues as Record<string, unknown>,
+        configMeta,
       }),
     );
-  }, [properties, requiredFields, defaultValues]);
+  }, [properties, requiredFields, defaultValues, configMeta]);
 
   const form = useForm<DynamicConfigValues>({
     resolver: zodResolver(zodSchema),
@@ -112,9 +116,10 @@ export function useDynamicConfigForm({
         prop,
         requiredFields,
         defaultValues: defaultValues as Record<string, unknown>,
+        configMeta,
       });
     },
-    [properties, requiredFields, defaultValues],
+    [properties, requiredFields, defaultValues, configMeta],
   );
 
   const getCleanValues = useCallback(() => {

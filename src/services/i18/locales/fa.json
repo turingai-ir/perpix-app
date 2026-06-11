@@ -23,6 +23,7 @@
     "minute": "دقیقه",
     "older": "قدیمی تر",
     "seconds": "ثانیه",
+    "selectDuration": "انتخاب مدت زمان",
     "selectSize": "انتخاب سایز",
     "taskStatus": {
       "canceled": "لغو شده",
