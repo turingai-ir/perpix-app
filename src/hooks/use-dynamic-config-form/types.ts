@@ -6,11 +6,21 @@ export type JsonSchemaType =
   | "number"
   | "boolean"
   | "array"
-  | "object";
+  | "object"
+  | "null";
+
+export type JsonConfigUi = {
+  order?: readonly string[];
+  widgets?: Record<string, string>;
+  enumLabels?: Record<string, Record<string, string>>;
+};
 
 export type JsonSchemaProperty = {
-  type?: JsonSchemaType;
+  type?: JsonSchemaType | readonly JsonSchemaType[];
   enum?: readonly (string | number)[];
+  label?: {
+    options?: Record<string, string>;
+  };
 
   default?: unknown;
   description?: string;
@@ -33,11 +43,14 @@ export type JsonSchemaProperty = {
 };
 
 export type JsonConfigSchema = {
+  $schema?: string;
   $id?: string;
   type: "object";
   required?: readonly string[];
   properties: Record<string, JsonSchemaProperty>;
   additionalProperties?: boolean;
+  allOf?: readonly unknown[];
+  "x-ui"?: JsonConfigUi;
 };
 
 export type JsonConfigMeta = {

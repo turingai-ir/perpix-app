@@ -17,6 +17,12 @@ function isFieldError(error: unknown): error is FieldError {
   );
 }
 
+function getPrimaryType(property: JsonSchemaProperty) {
+  if (!Array.isArray(property.type)) return property.type;
+
+  return property.type.find((type) => type !== "null") ?? property.type[0];
+}
+
 function getFieldProperty(
   properties: DynamicFormProperties,
   fieldPath: string,
@@ -31,7 +37,7 @@ function getFieldProperty(
   for (const segment of pathSegments.slice(1)) {
     if (!currentProperty) return undefined;
 
-    if (currentProperty.type === "array") {
+    if (getPrimaryType(currentProperty) === "array") {
       currentProperty = currentProperty.items;
     }
 

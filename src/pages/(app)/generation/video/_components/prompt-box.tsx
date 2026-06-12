@@ -1,4 +1,5 @@
 import {
+  Activity,
   useEffect,
   useMemo,
   useRef,
@@ -83,7 +84,9 @@ export const GenerationVideoPromptBox: FC<Props> = ({
       : null,
     schemaKey: modelState.data?.uuid,
   });
+
   const sizeOptionLabels = dynamicForm.getFieldMeta("size")?.optionLabels ?? {};
+  const durationProperty = dynamicForm.properties.duration;
 
   const [isPromptTooShort, setIsPromptTooShort] = useState(true);
 
@@ -270,49 +273,54 @@ export const GenerationVideoPromptBox: FC<Props> = ({
                   </FormItem>
                 )}
               />
-              {dynamicForm.properties.duration ? (
-                <FormField
-                  control={dynamicForm.control}
-                  name="duration"
-                  render={({ field, fieldState }) => (
-                    <FormItem>
-                      <Select
-                        name={field.name}
-                        value={field.value == null ? "" : String(field.value)}
-                        onValueChange={(value) => field.onChange(Number(value))}
-                        disabled={isInteractionDisabled}
-                      >
-                        <SelectTrigger
-                          className="w-full"
-                          aria-invalid={fieldState.invalid}
+              <Activity mode={durationProperty ? "visible" : "hidden"}>
+                {durationProperty && (
+                  <FormField
+                    control={dynamicForm.control}
+                    defaultValue={dynamicForm.defaultValues.duration}
+                    name="duration"
+                    render={({ field, fieldState }) => (
+                      <FormItem>
+                        <Select
+                          name={field.name}
+                          value={field.value == null ? "" : String(field.value)}
+                          onValueChange={(value) =>
+                            field.onChange(Number(value))
+                          }
+                          disabled={isInteractionDisabled}
                         >
-                          <SelectValue
-                            placeholder={t("common.selectDuration")}
-                          />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            <SelectLabel>
-                              {t("common.selectDuration")}
-                            </SelectLabel>
-                            {dynamicForm.isReady &&
-                              (dynamicForm.properties.duration.enum ?? []).map(
-                                (duration) => (
-                                  <SelectItem
-                                    key={duration}
-                                    value={String(duration)}
-                                  >
-                                    {duration} {t("common.seconds")}
-                                  </SelectItem>
-                                ),
-                              )}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    </FormItem>
-                  )}
-                />
-              ) : null}
+                          <SelectTrigger
+                            className="w-full"
+                            aria-invalid={fieldState.invalid}
+                          >
+                            <SelectValue
+                              placeholder={t("common.selectDuration")}
+                            />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              <SelectLabel>
+                                {t("common.selectDuration")}
+                              </SelectLabel>
+                              {dynamicForm.isReady &&
+                                (durationProperty.enum ?? []).map(
+                                  (duration) => (
+                                    <SelectItem
+                                      key={duration}
+                                      value={String(duration)}
+                                    >
+                                      {duration} {t("common.seconds")}
+                                    </SelectItem>
+                                  ),
+                                )}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                      </FormItem>
+                    )}
+                  />
+                )}
+              </Activity>
             </div>
           </div>
         </form>

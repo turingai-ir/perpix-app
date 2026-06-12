@@ -1,11 +1,10 @@
 import { useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 
 import {
+  buildAjvResolver,
   buildDefaultValues,
   buildFieldMeta,
-  buildObjectZodSchema,
   createValidationMessages,
   EMPTY_CONFIG_SCHEMA,
   sanitizeConfigValues,
@@ -37,9 +36,9 @@ export type {
 };
 
 export {
+  buildAjvResolver,
   buildDefaultValues,
   buildFieldMeta,
-  buildObjectZodSchema,
   isJsonConfigSchema,
   sanitizeConfigValues,
 } from "./schema";
@@ -64,8 +63,8 @@ export function useDynamicConfigForm({
     return createValidationMessages(t);
   }, [t]);
 
-  const zodSchema = useMemo(() => {
-    return buildObjectZodSchema(safeConfigSchema, validationMessages);
+  const resolver = useMemo(() => {
+    return buildAjvResolver(safeConfigSchema, validationMessages);
   }, [safeConfigSchema, validationMessages]);
 
   const defaultValues = useMemo(() => {
@@ -80,6 +79,10 @@ export function useDynamicConfigForm({
     return safeConfigSchema.properties ?? {};
   }, [safeConfigSchema]);
 
+  const enumLabels = useMemo(() => {
+    return safeConfigSchema["x-ui"]?.enumLabels;
+  }, [safeConfigSchema]);
+
   const fieldMetas = useMemo(() => {
     return Object.entries(properties).map(([name, prop]) =>
       buildFieldMeta({
@@ -87,13 +90,14 @@ export function useDynamicConfigForm({
         prop,
         requiredFields,
         defaultValues: defaultValues as Record<string, unknown>,
+        enumLabels,
         configMeta,
       }),
     );
-  }, [properties, requiredFields, defaultValues, configMeta]);
+  }, [properties, requiredFields, defaultValues, enumLabels, configMeta]);
 
   const form = useForm<DynamicConfigValues>({
-    resolver: zodResolver(zodSchema),
+    resolver,
     defaultValues,
     mode: "onChange",
     ...formOptions,
@@ -116,10 +120,11 @@ export function useDynamicConfigForm({
         prop,
         requiredFields,
         defaultValues: defaultValues as Record<string, unknown>,
+        enumLabels,
         configMeta,
       });
     },
-    [properties, requiredFields, defaultValues, configMeta],
+    [properties, requiredFields, defaultValues, enumLabels, configMeta],
   );
 
   const getCleanValues = useCallback(() => {
@@ -155,7 +160,7 @@ export function useDynamicConfigForm({
   return {
     isReady,
     form,
-    zodSchema,
+    configSchema: safeConfigSchema,
     defaultValues,
     properties,
     requiredFields,

@@ -1,6 +1,8 @@
-import { z } from "zod";
+import Ajv2020 from "ajv/dist/2020";
+import type { ErrorObject } from "ajv";
 import type { TFunction } from "i18next";
-import type { DefaultValues } from "react-hook-form";
+import type { DefaultValues, FieldError, Resolver } from "react-hook-form";
+import { toNestErrors } from "@hookform/resolvers";
 
 import type {
   DynamicConfigValidationMessages,
@@ -94,12 +96,6 @@ function emptyToUndefined(value: unknown) {
   return value === "" || value === null ? undefined : value;
 }
 
-function optionalEmptyToUndefined(value: unknown) {
-  if (Array.isArray(value) && value.length === 0) return undefined;
-
-  return emptyToUndefined(value);
-}
-
 function toNumber(value: unknown) {
   const normalizedValue = emptyToUndefined(value);
 
@@ -148,170 +144,192 @@ function nestedRequiredFields(prop: JsonSchemaProperty): readonly string[] {
   return Array.isArray(prop.required) ? prop.required : [];
 }
 
-function buildBaseZodField(
+function getPrimaryType(prop: JsonSchemaProperty) {
+  if (!Array.isArray(prop.type)) return prop.type;
+
+  return prop.type.find((type) => type !== "null") ?? prop.type[0];
+}
+
+function normalizeValueForAjv(
   prop: JsonSchemaProperty,
-  messages: DynamicConfigValidationMessages,
-): z.ZodTypeAny {
-  if (
-    prop.enum &&
-    prop.enum.length > 0 &&
-    prop.enum.every((value) => typeof value === "string")
-  ) {
-    return z.enum(prop.enum as [string, ...string[]], {
-      message: messages.invalidEnum,
-    });
+  value: unknown,
+): unknown {
+  const propType = getPrimaryType(prop);
+
+  if (value === "" && propType !== "string") return undefined;
+
+  if (propType === "integer" || propType === "number") {
+    return toNumber(value);
   }
 
-  switch (prop.type) {
-    case "string": {
-      let schema = z.string(messages.invalidString);
+  if (propType === "boolean") {
+    return toBoolean(value);
+  }
 
-      if (prop.minLength !== undefined) {
-        schema = schema.min(prop.minLength, messages.minLength(prop.minLength));
-      }
+  if (propType === "array" && typeof value === "string") {
+    return toArray(value);
+  }
 
-      if (prop.maxLength !== undefined) {
-        schema = schema.max(prop.maxLength, messages.maxLength(prop.maxLength));
-      }
+  if (propType === "object" && prop.properties && isRecord(value)) {
+    return normalizeValuesForAjv(
+      {
+        type: "object",
+        properties: prop.properties,
+        required: nestedRequiredFields(prop),
+        additionalProperties: prop.additionalProperties,
+      },
+      value,
+    );
+  }
 
-      return schema;
+  return value;
+}
+
+function normalizeValuesForAjv(
+  configSchema: JsonConfigSchema,
+  values: Record<string, unknown>,
+) {
+  const result: DynamicConfigValues = { ...values };
+
+  for (const [key, prop] of Object.entries(configSchema.properties ?? {})) {
+    if (!(key in result)) continue;
+
+    result[key] = normalizeValueForAjv(prop, result[key]);
+  }
+
+  return result;
+}
+
+function decodeJsonPointerSegment(segment: string) {
+  return segment.replace(/~1/g, "/").replace(/~0/g, "~");
+}
+
+function getAjvErrorPath(error: ErrorObject) {
+  const pathSegments = error.instancePath
+    .split("/")
+    .filter(Boolean)
+    .map(decodeJsonPointerSegment);
+
+  if (error.keyword === "required") {
+    const missingProperty = error.params.missingProperty;
+
+    if (typeof missingProperty === "string") {
+      pathSegments.push(missingProperty);
     }
+  }
 
-    case "integer": {
-      let schema = z
-        .number(messages.invalidNumber)
-        .int(messages.invalidInteger);
+  if (error.keyword === "additionalProperties") {
+    const additionalProperty = error.params.additionalProperty;
 
-      if (prop.minimum !== undefined) {
-        schema = schema.min(prop.minimum, messages.minNumber(prop.minimum));
-      }
-
-      if (prop.maximum !== undefined) {
-        schema = schema.max(prop.maximum, messages.maxNumber(prop.maximum));
-      }
-
-      if (prop.enum && prop.enum.length > 0) {
-        schema = schema.refine((value) => prop.enum?.includes(value), {
-          message: messages.invalidEnum,
-        });
-      }
-
-      return z.preprocess(toNumber, schema);
+    if (typeof additionalProperty === "string") {
+      pathSegments.push(additionalProperty);
     }
+  }
 
-    case "number": {
-      let schema = z.number(messages.invalidNumber);
+  return pathSegments.join(".") || "root";
+}
 
-      if (prop.minimum !== undefined) {
-        schema = schema.min(prop.minimum, messages.minNumber(prop.minimum));
-      }
+function getAjvErrorMessage(
+  error: ErrorObject,
+  messages: DynamicConfigValidationMessages,
+) {
+  switch (error.keyword) {
+    case "required":
+      return messages.required;
 
-      if (prop.maximum !== undefined) {
-        schema = schema.max(prop.maximum, messages.maxNumber(prop.maximum));
-      }
+    case "enum":
+    case "const":
+      return messages.invalidEnum;
 
-      if (prop.enum && prop.enum.length > 0) {
-        schema = schema.refine((value) => prop.enum?.includes(value), {
-          message: messages.invalidEnum,
-        });
-      }
+    case "minLength":
+      return messages.minLength(Number(error.params.limit));
 
-      return z.preprocess(toNumber, schema);
-    }
+    case "maxLength":
+      return messages.maxLength(Number(error.params.limit));
 
-    case "boolean":
-      return z.preprocess(toBoolean, z.boolean());
+    case "minimum":
+    case "exclusiveMinimum":
+      return messages.minNumber(Number(error.params.limit));
 
-    case "array": {
-      const itemSchema = prop.items
-        ? buildBaseZodField(prop.items, messages)
-        : z.any();
+    case "maximum":
+    case "exclusiveMaximum":
+      return messages.maxNumber(Number(error.params.limit));
 
-      let schema = z.array(itemSchema, messages.invalidArray);
+    case "minItems":
+      return messages.minItems(Number(error.params.limit));
 
-      if (prop.minItems !== undefined) {
-        schema = schema.min(prop.minItems, messages.minItems(prop.minItems));
-      }
+    case "maxItems":
+      return messages.maxItems(Number(error.params.limit));
 
-      if (prop.maxItems !== undefined) {
-        schema = schema.max(prop.maxItems, messages.maxItems(prop.maxItems));
-      }
+    case "type": {
+      const expectedType = error.params.type;
+      const expectedTypes = Array.isArray(expectedType)
+        ? expectedType
+        : [expectedType];
 
-      return z.preprocess(toArray, schema);
-    }
+      if (expectedTypes.includes("array")) return messages.invalidArray;
+      if (expectedTypes.includes("integer")) return messages.invalidInteger;
+      if (expectedTypes.includes("number")) return messages.invalidNumber;
+      if (expectedTypes.includes("string")) return messages.invalidString;
 
-    case "object": {
-      if (!prop.properties) {
-        return z.record(z.string(), z.any());
-      }
-
-      return buildObjectZodSchema(
-        {
-          type: "object",
-          properties: prop.properties,
-          required: nestedRequiredFields(prop),
-          additionalProperties: prop.additionalProperties,
-        },
-        messages,
-      );
+      return error.message ?? messages.required;
     }
 
     default:
-      return z.any();
+      return error.message ?? messages.required;
   }
 }
 
-function makeFieldRequired(
-  schema: z.ZodTypeAny,
-  messages: DynamicConfigValidationMessages,
-): z.ZodTypeAny {
-  const hasRequiredValue = z
-    .custom((value) => value !== undefined, {
-      message: messages.required,
-    })
-    .pipe(schema);
+function getAjvErrorType(error: ErrorObject) {
+  if (error.keyword === "exclusiveMinimum") return "minimum";
+  if (error.keyword === "exclusiveMaximum") return "maximum";
 
-  return z.preprocess(emptyToUndefined, hasRequiredValue);
+  return error.keyword;
 }
 
-function makeFieldOptional(schema: z.ZodTypeAny): z.ZodTypeAny {
-  return z.preprocess(optionalEmptyToUndefined, schema.optional());
-}
-
-function buildZodField(
-  prop: JsonSchemaProperty,
-  options: { required: boolean; messages: DynamicConfigValidationMessages },
-): z.ZodTypeAny {
-  const baseSchema = buildBaseZodField(prop, options.messages);
-
-  if (options.required) {
-    return makeFieldRequired(baseSchema, options.messages);
-  }
-
-  return makeFieldOptional(baseSchema);
-}
-
-export function buildObjectZodSchema(
+export function buildAjvResolver(
   configSchema: JsonConfigSchema,
   messages: DynamicConfigValidationMessages = DEFAULT_VALIDATION_MESSAGES,
-) {
-  const shape: Record<string, z.ZodTypeAny> = {};
-  const requiredFields = configSchema.required ?? [];
+): Resolver<DynamicConfigValues> {
+  const ajv = new Ajv2020({
+    allErrors: true,
+    coerceTypes: true,
+    strict: false,
+    validateSchema: false,
+  });
+  const validate = ajv.compile(configSchema);
 
-  for (const [key, prop] of Object.entries(configSchema.properties ?? {})) {
-    shape[key] = buildZodField(prop, {
-      required: isRequired(prop, key, requiredFields),
-      messages,
-    });
-  }
+  return async (values, _context, options) => {
+    const normalizedValues = normalizeValuesForAjv(configSchema, values);
+    const isValid = validate(normalizedValues);
 
-  let schema = z.object(shape);
+    if (isValid) {
+      return {
+        values: normalizedValues,
+        errors: {},
+      };
+    }
 
-  if (configSchema.additionalProperties === false) {
-    schema = schema.strict();
-  }
+    const flatErrors: Record<string, FieldError> = {};
 
-  return schema;
+    for (const error of validate.errors ?? []) {
+      if (error.keyword === "if") continue;
+
+      const path = getAjvErrorPath(error);
+
+      if (flatErrors[path]) continue;
+
+      flatErrors[path] = {
+        type: getAjvErrorType(error),
+        message: getAjvErrorMessage(error, messages),
+      };
+    }
+
+    return {
+      values: {},
+      errors: toNestErrors(flatErrors, options),
+    };
+  };
 }
 
 function getEmptyDefaultValue(prop: JsonSchemaProperty): unknown {
@@ -319,7 +337,7 @@ function getEmptyDefaultValue(prop: JsonSchemaProperty): unknown {
     return prop.default ?? prop.enum[0];
   }
 
-  switch (prop.type) {
+  switch (getPrimaryType(prop)) {
     case "string":
       return "";
 
@@ -356,7 +374,9 @@ function cleanValueByProperty(
 ): unknown {
   if (value === undefined) return undefined;
 
-  if (prop.type === "object" && prop.properties && isRecord(value)) {
+  const propType = getPrimaryType(prop);
+
+  if (propType === "object" && prop.properties && isRecord(value)) {
     return sanitizeConfigValues(
       {
         type: "object",
@@ -368,7 +388,7 @@ function cleanValueByProperty(
     );
   }
 
-  if (prop.type === "array" && prop.items && Array.isArray(value)) {
+  if (propType === "array" && prop.items && Array.isArray(value)) {
     return value
       .map((item) =>
         cleanValueByProperty(prop.items as JsonSchemaProperty, item),
@@ -434,21 +454,29 @@ export function buildDefaultValues(
 }
 
 function resolveInputType(prop: JsonSchemaProperty): FieldMeta["inputType"] {
+  const propType = getPrimaryType(prop);
+
   if (prop.enum && prop.enum.length > 0) return "select";
-  if (prop.type === "string")
+  if (propType === "string")
     return (prop.maxLength ?? 0) > 200 ? "textarea" : "text";
-  if (prop.type === "integer" || prop.type === "number") return "number";
-  if (prop.type === "boolean") return "checkbox";
-  if (prop.type === "array") return "array";
-  if (prop.type === "object") return "object";
+  if (propType === "integer" || propType === "number") return "number";
+  if (propType === "boolean") return "checkbox";
+  if (propType === "array") return "array";
+  if (propType === "object") return "object";
   return "unknown";
 }
 
 function resolveOptionLabels(
+  prop: JsonSchemaProperty,
   fieldName: string,
+  enumLabels?: Record<string, Record<string, string>>,
   configMeta?: JsonConfigMeta | null,
 ) {
-  return configMeta?.labels?.[fieldName];
+  return (
+    enumLabels?.[fieldName] ??
+    prop.label?.options ??
+    configMeta?.labels?.[fieldName]
+  );
 }
 
 export function buildFieldMeta(params: {
@@ -456,9 +484,11 @@ export function buildFieldMeta(params: {
   prop: JsonSchemaProperty;
   requiredFields: readonly string[];
   defaultValues: Record<string, unknown>;
+  enumLabels?: Record<string, Record<string, string>>;
   configMeta?: JsonConfigMeta | null;
 }): FieldMeta {
-  const { name, prop, requiredFields, defaultValues, configMeta } = params;
+  const { name, prop, requiredFields, defaultValues, enumLabels, configMeta } =
+    params;
 
   return {
     name,
@@ -467,7 +497,7 @@ export function buildFieldMeta(params: {
     defaultValue: defaultValues[name],
     inputType: resolveInputType(prop),
     options: prop.enum,
-    optionLabels: resolveOptionLabels(name, configMeta),
+    optionLabels: resolveOptionLabels(prop, name, enumLabels, configMeta),
     description: prop.description,
     title: prop.title,
   };
