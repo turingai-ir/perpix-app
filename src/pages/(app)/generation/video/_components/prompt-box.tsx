@@ -1,5 +1,4 @@
 import {
-  Activity,
   useEffect,
   useMemo,
   useRef,
@@ -11,6 +10,7 @@ import {
 import { ArrowUp, Loader2 } from "lucide-react";
 
 import { useModel } from "../../_hooks";
+import { ExclusiveImageInputsHint } from "./exclusive-image-inputs-hint";
 import { ImagesReferenceUploader } from "./images-reference-uploader";
 
 import { Card } from "@/components/ui/card";
@@ -37,6 +37,11 @@ import {
 } from "@/services/api";
 import { showDynamicFormErrorsToast } from "@/pages/(app)/generation/_utils/dynamic-form-errors-toast";
 import { getModelDynamicConfig } from "@/pages/(app)/generation/_utils/model-dynamic-config";
+import {
+  AdvancedPromptSettingsDialog,
+  DynamicPromptConfigField,
+  getPromptConfigFieldNames,
+} from "@/pages/(app)/generation/_components/dynamic-prompt-config-field";
 
 interface Props {
   onSubmit: (data: any, ai_model_uuid: string) => void;
@@ -45,6 +50,16 @@ interface Props {
 }
 
 const MIN_PROMPT_LENGTH = 3;
+const PROMPT_FIELD_NAMES = new Set([
+  "prompt",
+  "frame_images",
+  "reference_images",
+]);
+const PROMPT_BOX_CONFIG_FIELD_NAMES = new Set(["size", "resolution"]);
+const ADVANCED_CONFIG_EXCLUDED_FIELD_NAMES = new Set([
+  ...PROMPT_FIELD_NAMES,
+  ...PROMPT_BOX_CONFIG_FIELD_NAMES,
+]);
 
 export const GenerationVideoPromptBox: FC<Props> = ({
   onSubmit,
@@ -64,7 +79,6 @@ export const GenerationVideoPromptBox: FC<Props> = ({
     const lastMessageConfigDefaults = lastMessageConfig
       ? ({
           ...lastMessageConfig,
-          images_frame: lastMessageConfig.images_frame,
         } as Record<string, unknown>)
       : undefined;
 
@@ -84,9 +98,17 @@ export const GenerationVideoPromptBox: FC<Props> = ({
       : null,
     schemaKey: modelState.data?.uuid,
   });
+  const frameImages = dynamicForm.watch("frame_images");
+  const referenceImages = dynamicForm.watch("reference_images");
 
-  const sizeOptionLabels = dynamicForm.getFieldMeta("size")?.optionLabels ?? {};
-  const durationProperty = dynamicForm.properties.duration;
+  const promptBoxFieldNames = getPromptConfigFieldNames({
+    dynamicForm,
+    includedFields: PROMPT_BOX_CONFIG_FIELD_NAMES,
+  });
+  const advancedFieldNames = getPromptConfigFieldNames({
+    dynamicForm,
+    excludedFields: ADVANCED_CONFIG_EXCLUDED_FIELD_NAMES,
+  });
 
   const [isPromptTooShort, setIsPromptTooShort] = useState(true);
 
@@ -160,6 +182,12 @@ export const GenerationVideoPromptBox: FC<Props> = ({
 
   return (
     <Card className="w-full min-w-0 overflow-hidden px-2">
+      <ExclusiveImageInputsHint
+        configSchema={dynamicForm.configSchema}
+        frameImages={frameImages}
+        isUploadingImage={isUploadingImage}
+        referenceImages={referenceImages}
+      />
       <ImagesReferenceUploader
         dynamicForm={dynamicForm}
         disabled={isFormBusy}
@@ -217,13 +245,13 @@ export const GenerationVideoPromptBox: FC<Props> = ({
                 )}
               </Button>
             </div>
-            <div className="flex w-full flex-wrap gap-2">
+            <div className="flex w-full flex-wrap gap-4">
               <Select
                 value={currentModel ?? ""}
                 onValueChange={handleModelChange}
                 disabled={isInteractionDisabled}
               >
-                <SelectTrigger className="w-full max-w-72">
+                <SelectTrigger className="w-full md:max-w-72">
                   <SelectValue placeholder={t("common.chooseModel")} />
                 </SelectTrigger>
                 <SelectContent>
@@ -238,89 +266,19 @@ export const GenerationVideoPromptBox: FC<Props> = ({
                   </SelectGroup>
                 </SelectContent>
               </Select>
-              <FormField
-                control={dynamicForm.control}
-                name="size"
-                render={({ field, fieldState }) => (
-                  <FormItem>
-                    <Select
-                      name={field.name}
-                      value={field.value == null ? "" : String(field.value)}
-                      onValueChange={field.onChange}
-                      disabled={isInteractionDisabled}
-                    >
-                      <SelectTrigger
-                        className="w-full"
-                        aria-invalid={fieldState.invalid}
-                      >
-                        <SelectValue placeholder={t("common.selectSize")} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectLabel>{t("common.selectSize")}</SelectLabel>
-                          {dynamicForm.isReady &&
-                            (dynamicForm.properties?.size?.enum ?? []).map(
-                              (size) => (
-                                <SelectItem key={size} value={String(size)}>
-                                  {sizeOptionLabels[String(size)] ??
-                                    String(size)}
-                                </SelectItem>
-                              ),
-                            )}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </FormItem>
-                )}
+              {promptBoxFieldNames.map((fieldName) => (
+                <DynamicPromptConfigField
+                  key={fieldName}
+                  dynamicForm={dynamicForm}
+                  fieldName={fieldName}
+                  disabled={isInteractionDisabled}
+                />
+              ))}
+              <AdvancedPromptSettingsDialog
+                dynamicForm={dynamicForm}
+                fieldNames={advancedFieldNames}
+                disabled={isInteractionDisabled}
               />
-              <Activity mode={durationProperty ? "visible" : "hidden"}>
-                {durationProperty && (
-                  <FormField
-                    control={dynamicForm.control}
-                    defaultValue={dynamicForm.defaultValues.duration}
-                    name="duration"
-                    render={({ field, fieldState }) => (
-                      <FormItem>
-                        <Select
-                          name={field.name}
-                          value={field.value == null ? "" : String(field.value)}
-                          onValueChange={(value) =>
-                            field.onChange(Number(value))
-                          }
-                          disabled={isInteractionDisabled}
-                        >
-                          <SelectTrigger
-                            className="w-full"
-                            aria-invalid={fieldState.invalid}
-                          >
-                            <SelectValue
-                              placeholder={t("common.selectDuration")}
-                            />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectGroup>
-                              <SelectLabel>
-                                {t("common.selectDuration")}
-                              </SelectLabel>
-                              {dynamicForm.isReady &&
-                                (durationProperty.enum ?? []).map(
-                                  (duration) => (
-                                    <SelectItem
-                                      key={duration}
-                                      value={String(duration)}
-                                    >
-                                      {duration} {t("common.seconds")}
-                                    </SelectItem>
-                                  ),
-                                )}
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      </FormItem>
-                    )}
-                  />
-                )}
-              </Activity>
             </div>
           </div>
         </form>

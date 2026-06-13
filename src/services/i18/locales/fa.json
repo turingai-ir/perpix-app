@@ -7,11 +7,32 @@
     "emptyTitle": "بدون عنوان",
     "addImage": "افزودن عکس",
     "addVideo": "افزودن ویدیو",
+    "advancedSettings": "تنظیمات پیشرفته",
     "and": "و",
     "chat": "چت",
     "chooseModel": "انتخاب مدل",
     "day": "روز",
     "download": "دانلود",
+    "dynamicConfig": {
+      "fields": {
+        "duration": "مدت زمان",
+        "frame_images": "تصاویر فریم",
+        "generate_audio": "تولید صدا",
+        "image_search": "جستجوی تصویر",
+        "output_format": "فرمت خروجی",
+        "output_quality": "کیفیت خروجی",
+        "reference_images": "تصاویر مرجع",
+        "resize_mode": "حالت تغییر اندازه",
+        "resolution": "رزولوشن",
+        "safety_check": "بررسی ایمنی",
+        "safety_mode": "حالت ایمنی",
+        "safety_tolerance": "تلرانس ایمنی",
+        "seed": "سید",
+        "size": "اندازه",
+        "thinking": "سطح تفکر",
+        "web_search": "جستجوی وب"
+      }
+    },
     "error": "خطا",
     "fetchErrors": {
       "network": "خطای شبکه لطفا اتصال خود را بررسی کنید",
@@ -271,6 +292,7 @@
           "content": "در حال تولید ویدیو ..."
         },
         "promptBox": {
+          "exclusiveImageInputsHint": "لطفا یا تصاویر مرجع اضافه کنید یا تصاویر فریم",
           "generate": "تولید",
           "includeAudio": {
             "label": "شامل صدا"

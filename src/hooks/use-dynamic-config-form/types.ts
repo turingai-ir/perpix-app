@@ -13,11 +13,24 @@ export type JsonConfigUi = {
   order?: readonly string[];
   widgets?: Record<string, string>;
   enumLabels?: Record<string, Record<string, string>>;
+  visibility?: readonly JsonConfigUiVisibilityRule[];
+};
+
+export type JsonConfigUiVisibilityRule = {
+  effect: "SHOW" | "HIDE";
+  fields: readonly string[];
+  condition: {
+    field: string;
+    operator: "empty" | "not_empty" | "equals" | "not_equals" | "in" | "not_in";
+    value?: unknown;
+    values?: readonly unknown[];
+  };
 };
 
 export type JsonSchemaProperty = {
   type?: JsonSchemaType | readonly JsonSchemaType[];
   enum?: readonly (string | number)[];
+  const?: unknown;
   label?: {
     options?: Record<string, string>;
   };
@@ -40,6 +53,7 @@ export type JsonSchemaProperty = {
   properties?: Record<string, JsonSchemaProperty>;
   required?: boolean | readonly string[];
   additionalProperties?: boolean;
+  not?: JsonSchemaProperty;
 };
 
 export type JsonConfigSchema = {

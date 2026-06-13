@@ -1,4 +1,4 @@
-import { useEffect, type FC } from "react";
+import { useCallback, useEffect, useState, type FC } from "react";
 import { toast } from "sonner";
 
 import { HorizontalImageUploader } from "@/components/custom/horizontal-image-uploader";
@@ -10,7 +10,14 @@ import { useAppTranslate } from "@/hook";
 import type { useDynamicConfigForm } from "@/hooks/use-dynamic-config-form";
 
 const REQUEST_ID = "video_generation";
-const IMAGES_FRAME_FIELD = "images_frame";
+const IMAGE_FIELD_NAMES = ["frame_images", "reference_images"] as const;
+const INCOMPATIBLE_IMAGE_FIELDS = {
+  frame_images: ["reference_images"],
+  reference_images: ["frame_images"],
+} as const satisfies Record<
+  (typeof IMAGE_FIELD_NAMES)[number],
+  readonly (typeof IMAGE_FIELD_NAMES)[number][]
+>;
 
 type DynamicConfigForm = ReturnType<typeof useDynamicConfigForm>;
 
@@ -29,21 +36,37 @@ const normalizeImageFrames = (value: unknown): string[] => {
   );
 };
 
-export const ImagesReferenceUploader: FC<Props> = ({
+type ImageUploaderFieldProps = Props & {
+  fieldName: (typeof IMAGE_FIELD_NAMES)[number];
+  onFieldUploadingChange?: (
+    fieldName: (typeof IMAGE_FIELD_NAMES)[number],
+    isUploading: boolean,
+  ) => void;
+};
+
+const ImageReferenceUploaderField: FC<ImageUploaderFieldProps> = ({
   dynamicForm,
   disabled = false,
-  onUploadingChange,
+  fieldName,
+  onFieldUploadingChange,
 }) => {
   const { t } = useAppTranslate();
-  const { requestUpload, removePendingUpload, pendingUploads } =
-    useFileManager(REQUEST_ID);
-
-  const imagesFrameProperty = dynamicForm.properties[IMAGES_FRAME_FIELD];
-  const shouldShowImageUploader = Boolean(imagesFrameProperty);
-  const imagesFrameMaxItems = imagesFrameProperty?.maxItems;
-  const selectedImages = normalizeImageFrames(
-    dynamicForm.watch(IMAGES_FRAME_FIELD, []),
+  const { requestUpload, removePendingUpload, pendingUploads } = useFileManager(
+    `${REQUEST_ID}_${fieldName}`,
   );
+
+  const imageProperty = dynamicForm.properties[fieldName];
+  const imagePropertyDefinition =
+    typeof imageProperty === "object" && imageProperty !== null
+      ? imageProperty
+      : undefined;
+  const fieldLabel = t(`common.dynamicConfig.fields.${fieldName}`, {
+    defaultValue: imagePropertyDefinition?.title ?? fieldName,
+  });
+  const shouldShowImageUploader =
+    Boolean(imagePropertyDefinition) && dynamicForm.isFieldVisible(fieldName);
+  const imagesFrameMaxItems = imagePropertyDefinition?.maxItems;
+  const selectedImages = normalizeImageFrames(dynamicForm.watch(fieldName, []));
 
   const localImageItems = Array.from(pendingUploads.values()).map((upload) => ({
     file: upload.file,
@@ -64,14 +87,14 @@ export const ImagesReferenceUploader: FC<Props> = ({
     selectedImageSlotsCount >= imagesFrameMaxItems;
 
   useEffect(() => {
-    onUploadingChange?.(isUploadingImage);
-  }, [isUploadingImage, onUploadingChange]);
+    onFieldUploadingChange?.(fieldName, isUploadingImage);
+  }, [fieldName, isUploadingImage, onFieldUploadingChange]);
 
   const handleImageDelete = (imageId: string) => {
     if (disabled) return;
 
     dynamicForm.setValue(
-      IMAGES_FRAME_FIELD,
+      fieldName,
       selectedImages.filter((id) => id !== imageId),
       { shouldDirty: true, shouldValidate: true },
     );
@@ -93,7 +116,7 @@ export const ImagesReferenceUploader: FC<Props> = ({
 
       if (uploadedImageId) {
         const nextSelectedImages = normalizeImageFrames(
-          dynamicForm.getValues(IMAGES_FRAME_FIELD),
+          dynamicForm.getValues(fieldName),
         );
 
         if (
@@ -104,10 +127,17 @@ export const ImagesReferenceUploader: FC<Props> = ({
         }
 
         dynamicForm.setValue(
-          IMAGES_FRAME_FIELD,
+          fieldName,
           [...nextSelectedImages, uploadedImageId],
           { shouldDirty: true, shouldValidate: true },
         );
+
+        for (const incompatibleField of INCOMPATIBLE_IMAGE_FIELDS[fieldName]) {
+          dynamicForm.setValue(incompatibleField, [], {
+            shouldDirty: true,
+            shouldValidate: true,
+          });
+        }
       }
     } catch (error) {
       const errorMessage =
@@ -122,16 +152,63 @@ export const ImagesReferenceUploader: FC<Props> = ({
   }
 
   return (
-    <HorizontalImageUploader
-      uploadedImages={uploadedImageItems}
-      localImages={localImageItems}
-      disabled={disabled}
-      onDeleteClick={handleImageDelete}
-      onLocalDeleteClick={handleLocalImageDelete}
-      onFileSelect={handleImageSelect}
-      showPlaceholder={!hasReachedImagesFrameMax}
-      label={t("common.addImage")}
-      accept="image/jpeg, image/png"
-    />
+    <div className="flex w-full min-w-0 flex-col gap-2 py-2">
+      <span className="text-muted-foreground text-sm font-normal">
+        {fieldLabel}
+      </span>
+      <HorizontalImageUploader
+        uploadedImages={uploadedImageItems}
+        localImages={localImageItems}
+        disabled={disabled}
+        onDeleteClick={handleImageDelete}
+        onLocalDeleteClick={handleLocalImageDelete}
+        onFileSelect={handleImageSelect}
+        showPlaceholder={!hasReachedImagesFrameMax}
+        label={t("common.addImage")}
+        accept="image/jpeg, image/png"
+      />
+    </div>
+  );
+};
+
+export const ImagesReferenceUploader: FC<Props> = ({
+  onUploadingChange,
+  ...props
+}) => {
+  const [uploadingByField, setUploadingByField] = useState<
+    Partial<Record<(typeof IMAGE_FIELD_NAMES)[number], boolean>>
+  >({});
+
+  const handleFieldUploadingChange = useCallback(
+    (fieldName: (typeof IMAGE_FIELD_NAMES)[number], isUploading: boolean) => {
+      if (uploadingByField[fieldName] === isUploading) {
+        return;
+      }
+
+      setUploadingByField((prev) => {
+        return {
+          ...prev,
+          [fieldName]: isUploading,
+        };
+      });
+    },
+    [uploadingByField],
+  );
+
+  useEffect(() => {
+    onUploadingChange?.(Object.values(uploadingByField).some(Boolean));
+  }, [onUploadingChange, uploadingByField]);
+
+  return (
+    <>
+      {IMAGE_FIELD_NAMES.map((fieldName) => (
+        <ImageReferenceUploaderField
+          key={fieldName}
+          {...props}
+          fieldName={fieldName}
+          onFieldUploadingChange={handleFieldUploadingChange}
+        />
+      ))}
+    </>
   );
 };

@@ -9,6 +9,7 @@ import type {
   DynamicConfigValues,
   FieldMeta,
   JsonConfigMeta,
+  JsonConfigUiVisibilityRule,
   JsonConfigSchema,
   JsonSchemaProperty,
 } from "./types";
@@ -148,6 +149,247 @@ function getPrimaryType(prop: JsonSchemaProperty) {
   if (!Array.isArray(prop.type)) return prop.type;
 
   return prop.type.find((type) => type !== "null") ?? prop.type[0];
+}
+
+function isEmptyDynamicValue(value: unknown) {
+  if (value === undefined || value === null || value === "") return true;
+  if (Array.isArray(value)) return value.length === 0;
+
+  return false;
+}
+
+function hasDynamicValue(values: Record<string, unknown>, fieldName: string) {
+  return fieldName in values && !isEmptyDynamicValue(values[fieldName]);
+}
+
+function propertyMatchesValue(
+  prop: JsonSchemaProperty,
+  value: unknown,
+): boolean {
+  if ("const" in prop && !Object.is(value, prop.const)) return false;
+
+  if (
+    prop.not &&
+    conditionMatches({ properties: { value: prop.not } }, { value })
+  ) {
+    return false;
+  }
+
+  const propType = getPrimaryType(prop);
+
+  if (propType === "array") {
+    if (!Array.isArray(value)) return false;
+    if (prop.minItems !== undefined && value.length < prop.minItems) {
+      return false;
+    }
+    if (prop.maxItems !== undefined && value.length > prop.maxItems) {
+      return false;
+    }
+  }
+
+  if (propType === "string" && typeof value !== "string") return false;
+  if (propType === "boolean" && typeof value !== "boolean") return false;
+  if (
+    (propType === "number" || propType === "integer") &&
+    typeof value !== "number"
+  ) {
+    return false;
+  }
+
+  return true;
+}
+
+function conditionMatches(
+  condition: unknown,
+  values: Record<string, unknown>,
+): boolean {
+  if (!isRecord(condition)) return false;
+
+  if (Array.isArray(condition.required)) {
+    const hasRequiredFields = condition.required.every(
+      (fieldName) =>
+        typeof fieldName === "string" && hasDynamicValue(values, fieldName),
+    );
+
+    if (!hasRequiredFields) return false;
+  }
+
+  if (isRecord(condition.properties)) {
+    for (const [fieldName, prop] of Object.entries(condition.properties)) {
+      if (!isRecord(prop)) return false;
+
+      if (!propertyMatchesValue(prop, values[fieldName])) {
+        return false;
+      }
+    }
+  }
+
+  if (Array.isArray(condition.anyOf)) {
+    return condition.anyOf.some((item) => conditionMatches(item, values));
+  }
+
+  if (Array.isArray(condition.allOf)) {
+    return condition.allOf.every((item) => conditionMatches(item, values));
+  }
+
+  if ("not" in condition) {
+    return !conditionMatches(condition.not, values);
+  }
+
+  return true;
+}
+
+function collectNotRequiredFields(schema: unknown): string[] {
+  if (!isRecord(schema)) return [];
+
+  const requiredFields = Array.isArray(schema.required)
+    ? schema.required.filter((fieldName): fieldName is string => {
+        return typeof fieldName === "string";
+      })
+    : [];
+
+  const anyOfRequiredFields = Array.isArray(schema.anyOf)
+    ? schema.anyOf.flatMap(collectNotRequiredFields)
+    : [];
+
+  return [...requiredFields, ...anyOfRequiredFields];
+}
+
+function getSchemaFieldNames(configSchema?: JsonConfigSchema | null) {
+  return new Set(Object.keys(configSchema?.properties ?? {}));
+}
+
+function getSchemaHiddenFields(
+  configSchema: JsonConfigSchema,
+  values: Record<string, unknown>,
+) {
+  const hiddenFields = new Set<string>();
+
+  for (const rule of configSchema.allOf ?? []) {
+    if (!isRecord(rule) || !conditionMatches(rule.if, values)) continue;
+
+    if (isRecord(rule.then) && "not" in rule.then) {
+      for (const fieldName of collectNotRequiredFields(rule.then.not)) {
+        hiddenFields.add(fieldName);
+      }
+    }
+  }
+
+  return hiddenFields;
+}
+
+function uiVisibilityConditionMatches(
+  rule: JsonConfigUiVisibilityRule,
+  values: Record<string, unknown>,
+) {
+  const condition = rule.condition;
+
+  if (!condition) return false;
+
+  const fieldValue = values[condition.field];
+
+  switch (condition.operator) {
+    case "empty":
+      return isEmptyDynamicValue(fieldValue);
+
+    case "not_empty":
+      return !isEmptyDynamicValue(fieldValue);
+
+    case "equals":
+      return Object.is(fieldValue, condition.value);
+
+    case "not_equals":
+      return !Object.is(fieldValue, condition.value);
+
+    case "in":
+      return (condition.values ?? []).some((value) =>
+        Object.is(value, fieldValue),
+      );
+
+    case "not_in":
+      return !(condition.values ?? []).some((value) =>
+        Object.is(value, fieldValue),
+      );
+
+    default:
+      return false;
+  }
+}
+
+function getUiHiddenFields(
+  configSchema: JsonConfigSchema,
+  values: Record<string, unknown>,
+) {
+  const fieldNames = getSchemaFieldNames(configSchema);
+  const hiddenFields = new Set<string>();
+  const showControlledFields = new Set<string>();
+
+  for (const rule of configSchema["x-ui"]?.visibility ?? []) {
+    if (rule.effect !== "SHOW") continue;
+
+    for (const fieldName of rule.fields ?? []) {
+      if (fieldNames.has(fieldName)) showControlledFields.add(fieldName);
+    }
+  }
+
+  for (const fieldName of showControlledFields) {
+    hiddenFields.add(fieldName);
+  }
+
+  for (const rule of configSchema["x-ui"]?.visibility ?? []) {
+    const matches = uiVisibilityConditionMatches(rule, values);
+
+    if (!matches) continue;
+
+    for (const fieldName of rule.fields) {
+      if (!fieldNames.has(fieldName)) continue;
+
+      if (rule.effect === "HIDE") {
+        hiddenFields.add(fieldName);
+      } else {
+        hiddenFields.delete(fieldName);
+      }
+    }
+  }
+
+  return hiddenFields;
+}
+
+export function getVisibleConfigFields(
+  configSchema: JsonConfigSchema,
+  values: Record<string, unknown>,
+) {
+  const visibleFields = getSchemaFieldNames(configSchema);
+
+  for (const fieldName of getUiHiddenFields(configSchema, values)) {
+    visibleFields.delete(fieldName);
+  }
+
+  for (const fieldName of getSchemaHiddenFields(configSchema, values)) {
+    visibleFields.delete(fieldName);
+  }
+
+  return visibleFields;
+}
+
+function applyConditionalConstValues(
+  configSchema: JsonConfigSchema,
+  values: DynamicConfigValues,
+) {
+  const result = { ...values };
+
+  for (const rule of configSchema.allOf ?? []) {
+    if (!isRecord(rule) || !conditionMatches(rule.if, result)) continue;
+    if (!isRecord(rule.then) || !isRecord(rule.then.properties)) continue;
+
+    for (const [fieldName, prop] of Object.entries(rule.then.properties)) {
+      if (isRecord(prop) && "const" in prop) {
+        result[fieldName] = prop.const;
+      }
+    }
+  }
+
+  return result;
 }
 
 function normalizeValueForAjv(
@@ -300,7 +542,22 @@ export function buildAjvResolver(
   const validate = ajv.compile(configSchema);
 
   return async (values, _context, options) => {
-    const normalizedValues = normalizeValuesForAjv(configSchema, values);
+    const conditionalValues = applyConditionalConstValues(configSchema, values);
+    const visibleFields = getVisibleConfigFields(
+      configSchema,
+      conditionalValues,
+    );
+    const sanitizedValues = sanitizeConfigValues(
+      configSchema,
+      conditionalValues,
+      {
+        visibleFields,
+      },
+    );
+    const normalizedValues = normalizeValuesForAjv(
+      configSchema,
+      sanitizedValues,
+    );
     const isValid = validate(normalizedValues);
 
     if (isValid) {
@@ -413,17 +670,37 @@ function getPropertyDefaultValue(
 export function sanitizeConfigValues(
   configSchema?: JsonConfigSchema | null,
   values?: Record<string, unknown> | null,
+  options?: {
+    visibleFields?: ReadonlySet<string>;
+  },
 ): DynamicConfigValues {
   if (!configSchema?.properties || !values) {
     return {};
   }
 
   const result: DynamicConfigValues = {};
+  const visibleFields =
+    options?.visibleFields ?? getVisibleConfigFields(configSchema, values);
+  const valuesWithConditionalConsts = applyConditionalConstValues(
+    configSchema,
+    values,
+  );
 
   for (const [key, prop] of Object.entries(configSchema.properties)) {
-    if (!(key in values)) continue;
+    if (!visibleFields.has(key) || !(key in valuesWithConditionalConsts)) {
+      continue;
+    }
 
-    const value = cleanValueByProperty(prop, values[key]);
+    const value = cleanValueByProperty(prop, valuesWithConditionalConsts[key]);
+
+    if (
+      getPrimaryType(prop) === "array" &&
+      Array.isArray(value) &&
+      value.length === 0 &&
+      (prop.minItems ?? 0) > 0
+    ) {
+      continue;
+    }
 
     if (value !== undefined) {
       result[key] = value;

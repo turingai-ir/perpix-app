@@ -12,6 +12,20 @@ import { useAppTranslate } from "@/hook";
 interface Props {
   messages: readonly SchemaAiTaskMessageResponse[];
 }
+
+function normalizeImageIds(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+
+  return value.filter(
+    (imageId): imageId is string =>
+      typeof imageId === "string" && imageId.length > 0,
+  );
+}
+
+function uniqueImageIds(...imageGroups: unknown[]) {
+  return Array.from(new Set(imageGroups.flatMap(normalizeImageIds)));
+}
+
 export const GenerationVideoChats: FC<Props> = ({ messages }) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
 
@@ -22,6 +36,10 @@ export const GenerationVideoChats: FC<Props> = ({ messages }) => {
       {messages.map((item) => {
         const videosGenerated = (item.ai_model_config?.videos_generated ??
           []) as Array<string>;
+        const inputImages = uniqueImageIds(
+          item.ai_model_config?.frame_images,
+          item.ai_model_config?.reference_images,
+        );
         const isAssistant = item.role === AiTaskRuleEnumMap.ASSISTANT;
         const isGeneratingVideo =
           isAssistant &&
@@ -54,12 +72,7 @@ export const GenerationVideoChats: FC<Props> = ({ messages }) => {
                   : (item.message ?? "")
               }
               status={item.task_status}
-              images={
-                item.role === "USER"
-                  ? ((item.ai_model_config?.images_frame ??
-                      []) as Array<string>)
-                  : undefined
-              }
+              images={item.role === "USER" ? inputImages : undefined}
               videos={item.role === "USER" ? undefined : videosGenerated}
             />
           </div>

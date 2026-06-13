@@ -1,12 +1,11 @@
 import { GenerationImageChats, GenerationImagePromptBox } from "./_components";
-import { useAiGenerate } from "../_hooks";
+import { useAiGenerate, useScrollToLatestMessage } from "../_hooks";
 import { TypingAnimation } from "@/components/ui/typing-animation";
 import { useParams } from "react-router";
 import {
   Activity,
   useCallback,
   useEffect,
-  useEffectEvent,
   useMemo,
   useState,
   useTransition,
@@ -14,7 +13,6 @@ import {
 import { useAppTranslate } from "@/hook";
 import LoadingSection from "@/components/custom/loading-section";
 import { APP_ROUTES_KEY } from "@/router";
-import { appEventBus } from "@/lib/event-bus";
 import type { SchemaAiTaskResponse } from "@/services/api";
 import { LoadingGeneration } from "@/components/custom";
 import { APP_I18_KEYS } from "@/services/i18";
@@ -47,23 +45,12 @@ const GenerationImagePage = () => {
   const isBusy = isGenerating || isTaskLoading;
   const shouldShowIntro = !isGenerating && !chatId;
 
-  const scrollToLatestMessage = useEffectEvent(() => {
-    appEventBus.emit("SCROLL_APP_LAYOUT_UNTIL_END", undefined);
+  useScrollToLatestMessage({
+    isGenerating,
+    isTaskLoading,
+    lastMessageUuid: lastMessage?.uuid,
+    messageCount: aiTaskMessages.length,
   });
-
-  useEffect(() => {
-    if (!lastMessage?.uuid) {
-      return;
-    }
-
-    const frameId = requestAnimationFrame(() => {
-      scrollToLatestMessage();
-    });
-
-    return () => {
-      cancelAnimationFrame(frameId);
-    };
-  }, [aiTaskMessages.length, lastMessage?.uuid]);
 
   const handleForm = useCallback(
     async (data: any, ai_model_uuid: string) => {

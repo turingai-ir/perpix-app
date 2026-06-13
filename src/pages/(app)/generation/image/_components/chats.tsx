@@ -37,7 +37,7 @@ export const GenerationImageChats: FC<Props> = ({ messages }) => {
               message={item.message ?? ""}
               images={
                 item.role === "USER"
-                  ? ((item.ai_model_config?.images_reference ??
+                  ? ((item.ai_model_config?.reference_images ??
                       []) as Array<string>)
                   : ((item.ai_model_config?.images_generated ??
                       []) as Array<string>)

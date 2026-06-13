@@ -7,6 +7,7 @@ import {
   buildFieldMeta,
   createValidationMessages,
   EMPTY_CONFIG_SCHEMA,
+  getVisibleConfigFields,
   sanitizeConfigValues,
   stripUndefinedDeep,
 } from "./schema";
@@ -39,6 +40,7 @@ export {
   buildAjvResolver,
   buildDefaultValues,
   buildFieldMeta,
+  getVisibleConfigFields,
   isJsonConfigSchema,
   sanitizeConfigValues,
 } from "./schema";
@@ -109,6 +111,22 @@ export function useDynamicConfigForm({
     form.reset(defaultValues);
   }, [resolvedSchemaKey, autoResetOnSchemaChange, form, defaultValues]);
 
+  const watchedValues = form.watch();
+
+  const visibleFieldNames = useMemo(() => {
+    return getVisibleConfigFields(
+      safeConfigSchema,
+      watchedValues as Record<string, unknown>,
+    );
+  }, [safeConfigSchema, watchedValues]);
+
+  const isFieldVisible = useCallback(
+    (fieldName: string) => {
+      return visibleFieldNames.has(fieldName);
+    },
+    [visibleFieldNames],
+  );
+
   const getFieldMeta = useCallback(
     (fieldName: string): FieldMeta | undefined => {
       const prop = properties[fieldName];
@@ -165,6 +183,8 @@ export function useDynamicConfigForm({
     properties,
     requiredFields,
     fieldMetas,
+    visibleFieldNames,
+    isFieldVisible,
     getFieldMeta,
     register: form.register,
     control: form.control,

@@ -10,7 +10,7 @@ import { useAppTranslate } from "@/hook";
 import type { useDynamicConfigForm } from "@/hooks/use-dynamic-config-form";
 
 const REQUEST_ID = "image_generation";
-const IMAGES_REFERENCE_FIELD = "images_reference";
+const REFERENCE_IMAGES_FIELD = "reference_images";
 
 type DynamicConfigForm = ReturnType<typeof useDynamicConfigForm>;
 
@@ -39,11 +39,11 @@ export const ImageReferenceUploader: FC<Props> = ({
     useFileManager(REQUEST_ID);
 
   const imagesReferenceProperty =
-    dynamicForm.properties[IMAGES_REFERENCE_FIELD];
+    dynamicForm.properties[REFERENCE_IMAGES_FIELD];
   const shouldShowImageUploader = Boolean(imagesReferenceProperty);
   const imagesReferenceMaxItems = imagesReferenceProperty?.maxItems;
   const selectedImages = normalizeImageReferences(
-    dynamicForm.watch(IMAGES_REFERENCE_FIELD, []),
+    dynamicForm.watch(REFERENCE_IMAGES_FIELD, []),
   );
 
   const localImageItems = Array.from(pendingUploads.values()).map((upload) => ({
@@ -72,7 +72,7 @@ export const ImageReferenceUploader: FC<Props> = ({
     if (disabled) return;
 
     dynamicForm.setValue(
-      IMAGES_REFERENCE_FIELD,
+      REFERENCE_IMAGES_FIELD,
       selectedImages.filter((id) => id !== imageId),
       { shouldDirty: true, shouldValidate: true },
     );
@@ -94,7 +94,7 @@ export const ImageReferenceUploader: FC<Props> = ({
 
       if (uploadedImageId) {
         const nextSelectedImages = normalizeImageReferences(
-          dynamicForm.getValues(IMAGES_REFERENCE_FIELD),
+          dynamicForm.getValues(REFERENCE_IMAGES_FIELD),
         );
 
         if (
@@ -105,7 +105,7 @@ export const ImageReferenceUploader: FC<Props> = ({
         }
 
         dynamicForm.setValue(
-          IMAGES_REFERENCE_FIELD,
+          REFERENCE_IMAGES_FIELD,
           [...nextSelectedImages, uploadedImageId],
           { shouldDirty: true, shouldValidate: true },
         );
