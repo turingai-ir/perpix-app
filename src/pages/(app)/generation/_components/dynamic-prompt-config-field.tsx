@@ -128,12 +128,14 @@ export const DynamicPromptConfigField: FC<{
               }
               disabled={disabled}
             >
-              <SelectTrigger
-                className={controlClassName}
-                aria-invalid={fieldState.invalid}
-              >
-                <SelectValue placeholder={label} />
-              </SelectTrigger>
+              <FormControl>
+                <SelectTrigger
+                  className={controlClassName}
+                  aria-invalid={fieldState.invalid}
+                >
+                  <SelectValue placeholder={label} />
+                </SelectTrigger>
+              </FormControl>
               <SelectContent>
                 <SelectGroup>
                   <SelectLabel>{label}</SelectLabel>

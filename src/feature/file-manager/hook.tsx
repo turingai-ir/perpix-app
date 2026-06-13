@@ -14,7 +14,34 @@ import { useAppTranslate } from "@/hook";
 const maxSizeMb = 100;
 const maxSize = maxSizeMb * 1024 * 1024;
 const fiveMb = 5 * 1024 * 1024;
+const minImageDimension = 300;
 const defaultAllowedFileTypes = ["image/png", "image/jpeg"];
+
+const readImageDimensions = (file: File) =>
+  new Promise<{ width: number; height: number }>((resolve, reject) => {
+    const image = new Image();
+    const objectUrl = URL.createObjectURL(file);
+
+    const cleanup = () => {
+      URL.revokeObjectURL(objectUrl);
+      image.onload = null;
+      image.onerror = null;
+    };
+
+    image.onload = () => {
+      const { naturalWidth: width, naturalHeight: height } = image;
+
+      cleanup();
+      resolve({ width, height });
+    };
+
+    image.onerror = () => {
+      cleanup();
+      reject(new Error());
+    };
+
+    image.src = objectUrl;
+  });
 
 interface UseFileManagerOptions {
   allowedFileTypes?: string[];
@@ -178,6 +205,17 @@ export const useFileManager = (
       return Promise.reject(
         Error(t("common.validationErrors.invalidFileFormat")),
       );
+    }
+    if (file.type.startsWith("image/")) {
+      const { width, height } = await readImageDimensions(file).catch(() => {
+        throw new Error(t("common.validationErrors.imageDimensionsUnreadable"));
+      });
+
+      if (width < minImageDimension || height < minImageDimension) {
+        return Promise.reject(
+          Error(t("common.validationErrors.imageTooSmall")),
+        );
+      }
     }
     if (pendingUploads.get(file.name)) {
       return Promise.reject(Error(t("common.validationErrors.duplicateFile")));

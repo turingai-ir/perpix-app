@@ -3,6 +3,7 @@ import { createRoot, type Root } from 'react-dom/client';
 import { Provider } from 'jotai';
 
 import App from './app.tsx';
+import { ErrorBoundary } from './components/custom/error-boundary.tsx';
 import AppContextProvider from './hook/app/provider.tsx';
 import { jotaiStore } from './lib/jotai-store.ts';
 
@@ -24,11 +25,13 @@ const root = rootContainer.__reactRoot;
 
 root.render(
   <StrictMode>
-    <Provider store={jotaiStore}>
-      <AppContextProvider>
-        <App />
-      </AppContextProvider>
-    </Provider>
+    <ErrorBoundary>
+      <Provider store={jotaiStore}>
+        <AppContextProvider>
+          <App />
+        </AppContextProvider>
+      </Provider>
+    </ErrorBoundary>
   </StrictMode>,
 );
 

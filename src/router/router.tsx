@@ -14,11 +14,13 @@ import GenerationImagePage from "@/pages/(app)/generation/image/page";
 import GenerationVideoPage from "@/pages/(app)/generation/video/page";
 // import GenerationImageLayout from '@/pages/(app)/generation/image/_layout';
 import PaymentResultPage from "@/pages/payment/result/page";
+import { ErrorFallbackPage } from "@/components/custom";
 // import GenerationVideoLayout from '@/pages/(app)/generation/video/_layout';
 
 export const router = createBrowserRouter([
   {
     Component: RootLayout,
+    errorElement: <ErrorFallbackPage />,
     children: [
       {
         path: APP_ROUTES_KEY.app.path,

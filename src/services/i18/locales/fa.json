@@ -83,6 +83,8 @@
       "email": "ایمیل نامعتبر است",
       "equalCharacter": " {{name}} باید {{length}} کاراکتر باشد",
       "imageMaxSize": "حجم عکس باید کمتر از {{maxSize}} مگابایت باشد",
+      "imageDimensionsUnreadable": "امکان بررسی ابعاد عکس وجود ندارد",
+      "imageTooSmall": "عکس خیلی کوچک است",
       "invalidFileFormat": "فرمت فایل مجاز نمی باشد",
       "max": "{{name}} حداکثر می می تواند {{max}} باشد",
       "maxLength": "{{name}} باید کمتر از {{max}} کاراکتر باشد",
