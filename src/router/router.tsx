@@ -1,4 +1,5 @@
-import { createBrowserRouter, redirect } from "react-router";
+import { useEffect } from "react";
+import { createBrowserRouter, redirect, useRouteError } from "react-router";
 
 import { APP_ROUTES_KEY } from "./routes";
 
@@ -15,12 +16,13 @@ import GenerationVideoPage from "@/pages/(app)/generation/video/page";
 // import GenerationImageLayout from '@/pages/(app)/generation/image/_layout';
 import PaymentResultPage from "@/pages/payment/result/page";
 import { ErrorFallbackPage } from "@/components/custom";
+import { captureError } from "@/lib/observability";
 // import GenerationVideoLayout from '@/pages/(app)/generation/video/_layout';
 
 export const router = createBrowserRouter([
   {
     Component: RootLayout,
-    errorElement: <ErrorFallbackPage />,
+    errorElement: <RouteErrorFallback />,
     children: [
       {
         path: APP_ROUTES_KEY.app.path,
@@ -88,3 +90,13 @@ export const router = createBrowserRouter([
     ],
   },
 ]);
+
+function RouteErrorFallback() {
+  const error = useRouteError();
+
+  useEffect(() => {
+    captureError(error);
+  }, [error]);
+
+  return <ErrorFallbackPage />;
+}

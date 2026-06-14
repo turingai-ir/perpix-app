@@ -6,6 +6,7 @@ import App from './app.tsx';
 import { ErrorBoundary } from './components/custom/error-boundary.tsx';
 import AppContextProvider from './hook/app/provider.tsx';
 import { jotaiStore } from './lib/jotai-store.ts';
+import './lib/observability';
 
 const container = document.getElementById('root');
 

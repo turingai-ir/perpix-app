@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -8,8 +9,16 @@ import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 
 const srcPath = fileURLToPath(new URL("./src", import.meta.url));
+const packageJson = JSON.parse(readFileSync(new URL("./package.json", import.meta.url), "utf-8")) as {
+  name: string;
+  version: string;
+};
+const appRelease = `${packageJson.name}@${packageJson.version}`;
 
 export default defineConfig(({ mode }) => ({
+  define: {
+    __APP_RELEASE__: JSON.stringify(appRelease),
+  },
   plugins: [
     react(),
     tailwindcss(),
