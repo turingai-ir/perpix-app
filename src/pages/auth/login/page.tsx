@@ -10,20 +10,46 @@ const AuthLoginPage: FC = () => {
   const [pageState] = useImmerAtom(authLoginPageState);
 
   return (
-    <div className="relative flex h-dvh w-full items-center justify-center p-4">
-      <Activity mode={pageState.currentView === "START" ? "visible" : "hidden"}>
-        <AuthLoginPageStart />
-      </Activity>
-      <Activity
-        mode={pageState.currentView === "PASSWORD" ? "visible" : "hidden"}
+    <div className="grid h-dvh w-full place-items-center p-4">
+      <div
+        className={
+          pageState.currentView === "START"
+            ? "col-start-1 row-start-1 flex w-full justify-center"
+            : "hidden"
+        }
       >
-        <AuthLoginPageEnterPassword />
-      </Activity>
-      <Activity
-        mode={pageState.currentView === "SET_PASSWORD" ? "visible" : "hidden"}
+        <Activity
+          mode={pageState.currentView === "START" ? "visible" : "hidden"}
+        >
+          <AuthLoginPageStart />
+        </Activity>
+      </div>
+      <div
+        className={
+          pageState.currentView === "PASSWORD"
+            ? "col-start-1 row-start-1 flex w-full justify-center"
+            : "hidden"
+        }
       >
-        <AuthLoginPageSetPassword />
-      </Activity>
+        <Activity
+          mode={pageState.currentView === "PASSWORD" ? "visible" : "hidden"}
+        >
+          <AuthLoginPageEnterPassword />
+        </Activity>
+      </div>
+      <div
+        className={
+          pageState.currentView === "SET_PASSWORD"
+            ? "col-start-1 row-start-1 flex w-full justify-center"
+            : "hidden"
+        }
+      >
+        <Activity
+          mode={pageState.currentView === "SET_PASSWORD" ? "visible" : "hidden"}
+        >
+          <AuthLoginPageSetPassword />
+        </Activity>
+      </div>
     </div>
   );
 };

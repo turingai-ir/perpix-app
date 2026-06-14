@@ -1,5 +1,3 @@
-"use client"
-
 import * as React from "react"
 import { OTPInput, OTPInputContext } from "input-otp"
 
@@ -17,9 +15,10 @@ function InputOTP({
     <OTPInput
       data-slot="input-otp"
       containerClassName={cn(
-        "cn-input-otp flex items-center has-disabled:opacity-50",
+        "cn-input-otp relative flex items-center has-disabled:opacity-50",
         containerClassName
       )}
+      pushPasswordManagerStrategy="none"
       spellCheck={false}
       className={cn("disabled:cursor-not-allowed", className)}
       {...props}
