@@ -1,5 +1,7 @@
 import { useReactQueryApi } from "@/hook/app";
 
+export * from "./paid-action-guard";
+
 export const useUser = () => {
   const { useQuery } = useReactQueryApi();
 

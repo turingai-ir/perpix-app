@@ -79,6 +79,22 @@ const RootLayout: FC = () => {
             /* empty */
           }
         }
+        if (error.response.status === HttpStatus.FORBIDDEN) {
+          let message = t("common.fetchErrors.forbidden");
+          try {
+            const parseError = await error.response.clone().json();
+            if (typeof parseError?.detail === "string") {
+              message = parseError.detail;
+            }
+          } catch {
+            /* empty */
+          }
+          toast.error(
+            <div className="gap-1 flex flex-col ">
+              <span>{message}</span>
+            </div>,
+          );
+        }
         if (error.response.status === HttpStatus.TOO_MANY_REQUESTS) {
           try {
             const parseError = await error.response.clone().json();

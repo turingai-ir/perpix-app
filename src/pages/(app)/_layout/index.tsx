@@ -4,7 +4,6 @@ import {
   useEffectEvent,
   useRef,
   useState,
-  useTransition,
   type FC,
 } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router";
@@ -31,13 +30,14 @@ const AppLayout: FC = () => {
   const scrollAreaMyRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLElement>(null);
   const navigate = useNavigate();
-  const [, startNavigationTransition] = useTransition();
 
   const { userState } = useUser();
 
   const location = useLocation();
 
-  const [pricingOpen, setPricingOpen] = useState(false);
+  const [pricingOpen, setPricingOpen] = useState(
+    location.hash === APP_KEYS.URL_HASH.pricing,
+  );
 
   const scrollAppLayoutUntilEnd = useEffectEvent(() => {
     const el = scrollAreaMyRef.current;
@@ -58,16 +58,16 @@ const AppLayout: FC = () => {
 
   const onOpenChange = useCallback(
     (open: boolean) => {
-      startNavigationTransition(() => {
-        if (open) {
-          navigate(APP_KEYS.URL_HASH.pricing);
-          return;
-        }
+      setPricingOpen(open);
 
-        navigate(location.pathname + location.search, { replace: true });
-      });
+      if (open) {
+        navigate(APP_KEYS.URL_HASH.pricing);
+        return;
+      }
+
+      navigate(location.pathname + location.search, { replace: true });
     },
-    [location.pathname, location.search, navigate, startNavigationTransition],
+    [location.pathname, location.search, navigate],
   );
 
   useEffect(() => {

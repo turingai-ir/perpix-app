@@ -8,6 +8,8 @@ import {
 } from "@/feature/file-manager";
 import { useAppTranslate } from "@/hook";
 import type { useDynamicConfigForm } from "@/hooks/use-dynamic-config-form";
+import { FetchHttpError } from "@/utils/custom-fetch/fetch-errors";
+import { HttpStatus } from "@/utils";
 
 const REQUEST_ID = "image_generation";
 const REFERENCE_IMAGES_FIELD = "reference_images";
@@ -111,10 +113,15 @@ export const ImageReferenceUploader: FC<Props> = ({
         );
       }
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error || "");
+      if (
+        error instanceof FetchHttpError &&
+        error.response.status === HttpStatus.BAD_REQUEST
+      ) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error || "");
 
-      toast.error(errorMessage || t("common.errorOnUploading"));
+        toast.error(errorMessage || t("common.errorOnUploading"));
+      }
     }
   };
 

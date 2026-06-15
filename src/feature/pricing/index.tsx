@@ -40,7 +40,12 @@ function PricingFeature({ open, onOpenChange }: Props) {
   const reactQueryApi = useReactQueryApi();
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
 
-  const plansQuery = reactQueryApi.useQuery("get", "/user/subscription/plans");
+  const plansQuery = reactQueryApi.useQuery(
+    "get",
+    "/user/subscription/plans",
+    undefined,
+    { enabled: open },
+  );
   const { userState } = useUser();
 
   const purchasePlanQuery = reactQueryApi.useMutation(
@@ -73,7 +78,10 @@ function PricingFeature({ open, onOpenChange }: Props) {
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className="flex h-dvh w-full flex-col">
+      <SheetContent
+        side="bottom"
+        className="flex h-dvh w-full flex-col transition-transform duration-100 ease-out"
+      >
         <SheetHeader>
           <SheetTitle className="text-center text-4xl">
             {t("features.pricing.title")}
