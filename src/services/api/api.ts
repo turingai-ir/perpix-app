@@ -1283,6 +1283,11 @@ export interface components {
              * @default false
              */
             readonly is_recommended: boolean;
+            /**
+             * Is Default
+             * @default false
+             */
+            readonly is_default: boolean;
         };
         /** CreateWalletTransactionResponse */
         readonly CreateWalletTransactionResponse: {
@@ -1687,6 +1692,8 @@ export interface components {
             readonly is_popular: boolean;
             /** Is Recommended */
             readonly is_recommended: boolean;
+            /** Is Default */
+            readonly is_default: boolean;
             /**
              * Created At
              * Format: date-time
@@ -1747,6 +1754,8 @@ export interface components {
             readonly is_popular?: boolean | null;
             /** Is Recommended */
             readonly is_recommended?: boolean | null;
+            /** Is Default */
+            readonly is_default?: boolean | null;
         };
         /** UserChargeWalletRequest */
         readonly UserChargeWalletRequest: {
@@ -1934,8 +1943,6 @@ export interface components {
              * Format: date-time
              */
             readonly expires_at: string;
-            /** Is Active */
-            readonly is_active: boolean;
         };
         /** ValidationError */
         readonly ValidationError: {

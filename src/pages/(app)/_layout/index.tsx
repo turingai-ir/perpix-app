@@ -38,6 +38,9 @@ const AppLayout: FC = () => {
   const [pricingOpen, setPricingOpen] = useState(
     location.hash === APP_KEYS.URL_HASH.pricing,
   );
+  const [pricingRequiredScopes, setPricingRequiredScopes] = useState<string[]>(
+    [],
+  );
 
   const scrollAppLayoutUntilEnd = useEffectEvent(() => {
     const el = scrollAreaMyRef.current;
@@ -65,6 +68,7 @@ const AppLayout: FC = () => {
         return;
       }
 
+      setPricingRequiredScopes([]);
       navigate(location.pathname + location.search, { replace: true });
     },
     [location.pathname, location.search, navigate],
@@ -83,6 +87,20 @@ const AppLayout: FC = () => {
       "SCROLL_APP_LAYOUT_UNTIL_END",
       () => {
         scrollAppLayoutUntilEnd();
+      },
+    );
+
+    return () => {
+      appEventBusListener();
+    };
+  }, []);
+
+  useEffect(() => {
+    const appEventBusListener = appEventBus.on(
+      "SUBSCRIPTION_UPGRADE_REQUIRED",
+      ({ requiredScopes }) => {
+        setPricingRequiredScopes(requiredScopes);
+        setPricingOpen(true);
       },
     );
 
@@ -111,6 +129,7 @@ const AppLayout: FC = () => {
     <>
       <PricingFeature
         open={pricingOpen}
+        requiredScopes={pricingRequiredScopes}
         onOpenChange={(open) => {
           onOpenChange(open);
         }}

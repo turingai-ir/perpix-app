@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { useReactQueryApi } from "@/hook/app";
-import { usePaidActionGuard } from "@/pages/_hooks";
+import { getPaidActionScope, usePaidActionGuard } from "@/pages/_hooks";
 import type {
   AiRegistryModelSupportedTypesEnumKey,
   AiRegistryModelSupportedTypesEnumValue,
@@ -60,7 +60,7 @@ export const useModel = (
 export const useAiGenerate = (task_id: string | undefined) => {
   const { useMutation, useQuery, queryOptions } = useReactQueryApi();
   const queryClient = useQueryClient();
-  const { guardAction, guardAsyncAction } = usePaidActionGuard();
+  const { guardAsyncAction } = usePaidActionGuard();
   const userQueryKey = queryOptions("get", "/user/get-info").queryKey;
 
   const aiTaskState = useQuery(
@@ -83,12 +83,16 @@ export const useAiGenerate = (task_id: string | undefined) => {
       }
     },
   });
+  const guardedMutateAsync = guardAsyncAction(
+    aiGenerateState.mutateAsync,
+    (variables) => getPaidActionScope(variables.body.task_type),
+  );
 
   return {
     aiGenerateState: {
       ...aiGenerateState,
-      mutate: guardAction(aiGenerateState.mutate),
-      mutateAsync: guardAsyncAction(aiGenerateState.mutateAsync),
+      mutate: aiGenerateState.mutate,
+      mutateAsync: guardedMutateAsync,
     },
     aiTaskState,
   };

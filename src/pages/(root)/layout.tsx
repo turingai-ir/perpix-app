@@ -39,6 +39,27 @@ const RootLayout: FC = () => {
 
       if (
         error instanceof FetchHttpError &&
+        error.response.status === HttpStatus.UPGRADE_REQUIRED
+      ) {
+        const parsedError = await error.parseJson();
+        const requiredScopes =
+          typeof parsedError === "object" &&
+          parsedError !== null &&
+          "required_scopes" in parsedError &&
+          Array.isArray(parsedError.required_scopes)
+            ? parsedError.required_scopes.filter(
+                (scope): scope is string => typeof scope === "string",
+              )
+            : [];
+
+        appEventBus.emit("SUBSCRIPTION_UPGRADE_REQUIRED", {
+          requiredScopes,
+        });
+        navigate(APP_KEYS.URL_HASH.pricing);
+      }
+
+      if (
+        error instanceof FetchHttpError &&
         typeof error.request !== "string" &&
         error.request.method.toLowerCase() !== "get"
       ) {
@@ -54,7 +75,7 @@ const RootLayout: FC = () => {
                 }
               });
               toast.error(
-                <div className="gap-1 flex flex-col ">
+                <div className="flex flex-col gap-1">
                   {messages.map((i, index) => (
                     <span key={index}>{i}</span>
                   ))}
@@ -70,7 +91,7 @@ const RootLayout: FC = () => {
             const parseError = await error.response.clone().json();
             if (typeof parseError?.detail === "string") {
               toast.error(
-                <div className="gap-1 flex flex-col ">
+                <div className="flex flex-col gap-1">
                   <span>{parseError?.detail}</span>
                 </div>,
               );
@@ -90,7 +111,7 @@ const RootLayout: FC = () => {
             /* empty */
           }
           toast.error(
-            <div className="gap-1 flex flex-col ">
+            <div className="flex flex-col gap-1">
               <span>{message}</span>
             </div>,
           );
@@ -100,7 +121,7 @@ const RootLayout: FC = () => {
             const parseError = await error.response.clone().json();
             if (typeof parseError?.detail === "string") {
               toast.error(
-                <div className="gap-1 flex flex-col ">
+                <div className="flex flex-col gap-1">
                   <span>{parseError?.detail}</span>
                 </div>,
               );
@@ -111,7 +132,7 @@ const RootLayout: FC = () => {
         }
         if (error.response.status === HttpStatus.INTERNAL_SERVER_ERROR) {
           toast.error(
-            <div className="gap-1 flex flex-col ">
+            <div className="flex flex-col gap-1">
               <span>{t("common.fetchErrors.serverError")}</span>
             </div>,
           );

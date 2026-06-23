@@ -16,11 +16,11 @@ import { APP_ROUTES_KEY } from "@/router";
 import { usePayments, usePaymentStatus } from "@/pages/_hooks";
 
 function PaymentResultPage() {
-  const params = useParams();
+  const { paymentUuid } = useParams<{ paymentUuid: string }>();
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
 
-  const paymentStatusState = usePaymentStatus(params.sessionId);
-  const paymentsState = usePayments(!!params.sessionId);
+  const paymentStatusState = usePaymentStatus(paymentUuid);
+  const paymentsState = usePayments(!!paymentUuid);
   const paymentResult = paymentStatusState.data;
   const payments = paymentsState.data
     ? Array.from(
@@ -29,7 +29,7 @@ function PaymentResultPage() {
     : [];
   const payment = payments.find(
     (item: SchemaPaymentListItemResponse) =>
-      item.payment_uuid === params.sessionId,
+      item.payment_uuid === paymentUuid,
   );
   const isPaid = paymentResult?.status === PaymentStatusEnumMap.PAID;
 
@@ -75,7 +75,7 @@ function PaymentResultPage() {
                   dir="ltr"
                   className="text-foreground font-mono font-semibold"
                 >
-                  {params.sessionId ?? ""}
+                  {paymentUuid ?? ""}
                 </span>
               </div>
               <div className="bg-border h-px" />
@@ -134,7 +134,7 @@ function PaymentResultPage() {
                   dir="ltr"
                   className="text-foreground font-mono font-semibold"
                 >
-                  {params.sessionId ?? ""}
+                  {paymentUuid ?? ""}
                 </span>
               </div>
               <div className="bg-border h-px" />

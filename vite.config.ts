@@ -67,7 +67,7 @@ export default defineConfig(({ mode }) => ({
   ],
   server: {
     watch: {
-      ignored: [".pnpm-store"],
+      ignored: ["**/.pnpm-store/**", "**/node_modules/**"],
     },
   },
   resolve: {

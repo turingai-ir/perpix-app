@@ -19,12 +19,14 @@ import { APP_I18_KEYS } from "@/services/i18";
 import { cn } from "@/lib/utils";
 import { Muted } from "@/components/ui/typography";
 import {
+  useActiveSubscription,
   usePurchaseSubscription,
   useSubscriptionPlans,
 } from "@/pages/_hooks";
 
 interface Props {
   open: boolean;
+  requiredScopes?: string[];
   onOpenChange: (open: boolean) => void;
 }
 
@@ -35,10 +37,11 @@ const normalizeList = <T,>(value: unknown): T[] => {
   return Array.isArray(value) ? [...value] : Array.from(value as ArrayLike<T>);
 };
 
-function PricingFeature({ open, onOpenChange }: Props) {
+function PricingFeature({ open, requiredScopes = [], onOpenChange }: Props) {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
 
   const plansState = useSubscriptionPlans(open);
+  const activeSubscriptionState = useActiveSubscription();
   const purchaseSubscriptionState = usePurchaseSubscription();
   const { mutateAsync: purchasePlan } = purchaseSubscriptionState;
 
@@ -47,8 +50,17 @@ function PricingFeature({ open, onOpenChange }: Props) {
       SchemaSubscriptionPlanListResponse["items"][number]
     >(plansState.data?.items);
 
-    return planItems;
-  }, [plansState.data?.items]);
+    return planItems.filter(
+      (plan) =>
+        plan.uuid !== activeSubscriptionState.data?.plan.uuid &&
+        plan.is_default !== true &&
+        requiredScopes.every((scope) => plan.scopes.includes(scope)),
+    );
+  }, [
+    activeSubscriptionState.data?.plan.uuid,
+    plansState.data?.items,
+    requiredScopes,
+  ]);
 
   const handlePurchasePlan = useCallback(
     async (planId: string) => {
