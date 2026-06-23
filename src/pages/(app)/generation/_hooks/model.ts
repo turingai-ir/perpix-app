@@ -1,14 +1,80 @@
 import { useEffect, useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import {
+  type InfiniteData,
+  type Query,
+  type QueryClient,
+  useQueryClient,
+} from "@tanstack/react-query";
 
 import { useReactQueryApi } from "@/hook/app";
 import { getPaidActionScope, usePaidActionGuard } from "@/pages/_hooks";
 import type {
   AiRegistryModelSupportedTypesEnumKey,
   AiRegistryModelSupportedTypesEnumValue,
+  SchemaAiTaskListResponse,
   SchemaAiTaskMessageResponse,
+  SchemaAiTaskResponse,
   SchemaAiRegistryModelSummary,
 } from "@/services/api";
+
+const DEFAULT_PAGE_SIZE = 50;
+
+const getAiTasksListQueryKey = (
+  queryOptions: ReturnType<typeof useReactQueryApi>["queryOptions"],
+) => queryOptions("get", "/ai-task/list").queryKey;
+
+const getAiTasksListTaskType = (query: Query) => {
+  const init = query.queryKey[2] as
+    | {
+        params?: {
+          query?: {
+            task_type?: AiRegistryModelSupportedTypesEnumKey | null;
+          };
+        };
+      }
+    | undefined;
+
+  return init?.params?.query?.task_type;
+};
+
+const upsertAiTaskInListCache = (
+  queryClient: QueryClient,
+  aiTasksListQueryKey: readonly unknown[],
+  task: SchemaAiTaskResponse,
+) => {
+  queryClient.setQueriesData<InfiniteData<SchemaAiTaskListResponse>>(
+    {
+      queryKey: aiTasksListQueryKey,
+      predicate: (query) => {
+        const listTaskType = getAiTasksListTaskType(query);
+
+        return !listTaskType || listTaskType === task.task_type;
+      },
+    },
+    (currentData) => {
+      if (!currentData?.pages.length) {
+        return currentData;
+      }
+
+      const pagesWithoutTask = currentData.pages.map((page) => ({
+        ...page,
+        items: page.items.filter((item) => item.uuid !== task.uuid),
+      }));
+      const [firstPage, ...remainingPages] = pagesWithoutTask;
+
+      return {
+        ...currentData,
+        pages: [
+          {
+            ...firstPage,
+            items: [task, ...firstPage.items],
+          },
+          ...remainingPages,
+        ],
+      };
+    },
+  );
+};
 
 export const useModel = (
   supportedOutputs: Array<AiRegistryModelSupportedTypesEnumValue>,
@@ -62,6 +128,7 @@ export const useAiGenerate = (task_id: string | undefined) => {
   const queryClient = useQueryClient();
   const { guardAsyncAction } = usePaidActionGuard();
   const userQueryKey = queryOptions("get", "/user/get-info").queryKey;
+  const aiTasksListQueryKey = getAiTasksListQueryKey(queryOptions);
 
   const aiTaskState = useQuery(
     "get",
@@ -75,8 +142,17 @@ export const useAiGenerate = (task_id: string | undefined) => {
   );
 
   const aiGenerateState = useMutation("post", "/ai-task/generate", {
-    onSuccess() {
+    onSuccess(task) {
       void queryClient.invalidateQueries({ queryKey: userQueryKey });
+      upsertAiTaskInListCache(
+        queryClient,
+        aiTasksListQueryKey,
+        task as SchemaAiTaskResponse,
+      );
+      void queryClient.invalidateQueries({
+        queryKey: aiTasksListQueryKey,
+        refetchType: "none",
+      });
 
       if (task_id) {
         void aiTaskState.refetch();
@@ -98,30 +174,42 @@ export const useAiGenerate = (task_id: string | undefined) => {
   };
 };
 
-const VIDEO_POLLING_INTERVAL = 60_000;
+const AI_TASK_POLLING_INTERVAL = 10_000;
 
-const getGeneratedVideos = (message: SchemaAiTaskMessageResponse | undefined) =>
-  message?.ai_model_config?.videos_generated as string[] | undefined;
+export enum GeneratedMediaField {
+  IMAGE = "images_generated",
+  VIDEO = "videos_generated",
+}
 
-export const isVideoReady = (
+const getGeneratedMedia = (
   message: SchemaAiTaskMessageResponse | undefined,
+  generatedMediaField: GeneratedMediaField,
+) => message?.ai_model_config?.[generatedMediaField] as string[] | undefined;
+
+export const isAiTaskMessageReady = (
+  message: SchemaAiTaskMessageResponse | undefined,
+  generatedMediaField: GeneratedMediaField,
 ) => {
-  const videosGenerated = getGeneratedVideos(message);
+  const generatedMedia = getGeneratedMedia(message, generatedMediaField);
 
   return (
     message?.task_status === "SUCCESS" &&
-    Array.isArray(videosGenerated) &&
-    videosGenerated.length > 0
+    Array.isArray(generatedMedia) &&
+    generatedMedia.length > 0
   );
 };
 
 export const isAiTaskMessageTerminal = (
   message: SchemaAiTaskMessageResponse | undefined,
-) => message?.task_status === "FAILED" || isVideoReady(message);
+  generatedMediaField: GeneratedMediaField,
+) =>
+  message?.task_status === "FAILED" ||
+  isAiTaskMessageReady(message, generatedMediaField);
 
 export const useAiTaskResultPolling = (
   taskUuid: string | undefined,
   message: SchemaAiTaskMessageResponse | undefined,
+  generatedMediaField: GeneratedMediaField,
 ) => {
   const { useQuery, queryOptions } = useReactQueryApi();
   const queryClient = useQueryClient();
@@ -130,10 +218,19 @@ export const useAiTaskResultPolling = (
         params: { path: { task_uuid: taskUuid } },
       }).queryKey
     : undefined;
+  const aiTasksListQueryKey = getAiTasksListQueryKey(queryOptions);
+
+  const invalidateTaskQueries = () => {
+    if (aiTaskQueryKey) {
+      void queryClient.invalidateQueries({ queryKey: aiTaskQueryKey });
+    }
+
+    void queryClient.invalidateQueries({ queryKey: aiTasksListQueryKey });
+  };
 
   const shouldPoll =
     !!message?.uuid &&
-    !isAiTaskMessageTerminal(message) &&
+    !isAiTaskMessageTerminal(message, generatedMediaField) &&
     !!message.ai_external_provider_task_id;
 
   return useQuery(
@@ -154,32 +251,26 @@ export const useAiTaskResultPolling = (
           | undefined;
 
         if (!resultMessage) {
-          return VIDEO_POLLING_INTERVAL;
+          return AI_TASK_POLLING_INTERVAL;
         }
 
         if (resultMessage.task_status === "FAILED") {
-          if (aiTaskQueryKey) {
-            void queryClient.invalidateQueries({ queryKey: aiTaskQueryKey });
-          }
+          invalidateTaskQueries();
 
           return false;
         }
 
-        if (isVideoReady(resultMessage)) {
-          if (aiTaskQueryKey) {
-            void queryClient.invalidateQueries({ queryKey: aiTaskQueryKey });
-          }
+        if (isAiTaskMessageReady(resultMessage, generatedMediaField)) {
+          invalidateTaskQueries();
 
           return false;
         }
 
-        return VIDEO_POLLING_INTERVAL;
+        return AI_TASK_POLLING_INTERVAL;
       },
     },
   );
 };
-
-const DEFAULT_PAGE_SIZE = 50;
 
 export const useAiTasksList = (
   task_type: AiRegistryModelSupportedTypesEnumKey | undefined,

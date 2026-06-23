@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { APP_I18_KEYS } from "@/services/i18";
 import { useAppTranslate } from "@/hook";
-import { Skeleton } from "@/components/ui/skeleton";
+import { GenerationMediaPlaceholder } from "@/pages/(app)/generation/_components/generation-media-placeholder";
 
 interface Props {
   messages: readonly SchemaAiTaskMessageResponse[];
@@ -67,9 +67,7 @@ export const GenerationVideoChats: FC<Props> = ({ messages }) => {
                   />
                 </Avatar>
               }
-              message={
-                isGeneratingVideo ? undefined : (item.message ?? "")
-              }
+              message={isGeneratingVideo ? undefined : (item.message ?? "")}
               status={item.task_status}
               images={item.role === "USER" ? inputImages : undefined}
               videos={
@@ -77,7 +75,7 @@ export const GenerationVideoChats: FC<Props> = ({ messages }) => {
                   ? undefined
                   : isGeneratingVideo
                     ? [
-                        <VideoGenerationPlaceholder
+                        <GenerationMediaPlaceholder
                           key="video-generation-placeholder"
                           label={t(
                             "pages.generation.video.generationLoading.content",
@@ -93,12 +91,3 @@ export const GenerationVideoChats: FC<Props> = ({ messages }) => {
     </div>
   );
 };
-
-const VideoGenerationPlaceholder: FC<{ label: string }> = ({ label }) => (
-  <div className="flex w-full flex-col gap-2">
-    <p className="text-muted-foreground text-sm">{label}</p>
-    <div className="aspect-square w-full overflow-hidden rounded-lg border">
-      <Skeleton className="h-full w-full animate-pulse overflow-hidden rounded-lg" />
-    </div>
-  </div>
-);
