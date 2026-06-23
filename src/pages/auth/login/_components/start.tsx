@@ -22,14 +22,14 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { useReactQueryApi } from '@/hook/app';
 import { cookies } from '@/utils/cookies';
+import { useStart } from '@/pages/_hooks';
 
 const AuthLoginPageStart: FC = () => {
   const [pageState, setPageState] = useImmerAtom(authLoginPageState);
   const cookie = cookies();
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
-  const reactQueryApi = useReactQueryApi();
+  const startState = useStart();
   const formSchema = z.object({
     mobile: z
       .string({})
@@ -55,22 +55,6 @@ const AuthLoginPageStart: FC = () => {
       }),
   });
 
-  const startQuery = reactQueryApi.useMutation('post', '/user/start', {
-    onSuccess(data) {
-      cookie.set(APP_KEYS.COOKIES.ACCESS_TOKEN, data.token);
-
-      if (data.is_verified === true) {
-        setPageState((draft) => {
-          draft.currentView = 'PASSWORD';
-        });
-      } else {
-        setPageState((draft) => {
-          draft.currentView = 'SET_PASSWORD';
-        });
-      }
-    },
-  });
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -78,13 +62,15 @@ const AuthLoginPageStart: FC = () => {
     },
   });
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    await startQuery.mutateAsync({
+    const data = await startState.mutateAsync({
       body: {
         phone_number: values.mobile,
       },
     });
+    cookie.set(APP_KEYS.COOKIES.ACCESS_TOKEN, data.token);
     setPageState((draft) => {
       draft.mobile = values.mobile;
+      draft.currentView = data.is_verified ? 'PASSWORD' : 'SET_PASSWORD';
     });
   }
 
@@ -118,8 +104,8 @@ const AuthLoginPageStart: FC = () => {
                 </FormItem>
               )}
             />
-            <Button className="w-full" type="submit" disabled={startQuery.isPending}>
-              {startQuery.isPending ? (
+            <Button className="w-full" type="submit" disabled={startState.isPending}>
+              {startState.isPending ? (
                 <LoaderCircle className="animate-spin" />
               ) : (
                 t('pages.auth.login.startForm.submit')

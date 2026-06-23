@@ -4,13 +4,9 @@ import { CircleCheck, LoaderCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useAppTranslate } from "@/hook";
-import { useReactQueryApi } from "@/hook/app";
 import LoadingSection from "@/components/custom/loading-section";
 import ErrorSection from "@/components/custom/error-section";
-import {
-  PaymentGateWayProviderEnumMap,
-  type SchemaSubscriptionPlanListResponse,
-} from "@/services/api";
+import { type SchemaSubscriptionPlanListResponse } from "@/services/api";
 import { formatLocalizedNumber, rialToToman } from "@/utils";
 import {
   Sheet,
@@ -22,7 +18,10 @@ import {
 import { APP_I18_KEYS } from "@/services/i18";
 import { cn } from "@/lib/utils";
 import { Muted } from "@/components/ui/typography";
-import { useUser } from "@/pages/_hooks";
+import {
+  usePurchaseSubscription,
+  useSubscriptionPlans,
+} from "@/pages/_hooks";
 
 interface Props {
   open: boolean;
@@ -37,39 +36,25 @@ const normalizeList = <T,>(value: unknown): T[] => {
 };
 
 function PricingFeature({ open, onOpenChange }: Props) {
-  const reactQueryApi = useReactQueryApi();
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
 
-  const plansQuery = reactQueryApi.useQuery(
-    "get",
-    "/user/subscription/plans",
-    undefined,
-    { enabled: open },
-  );
-  const { userState } = useUser();
-
-  const purchasePlanQuery = reactQueryApi.useMutation(
-    "post",
-    "/user/subscription/purchase",
-  );
-  const { mutateAsync: purchasePlan } = purchasePlanQuery;
+  const plansState = useSubscriptionPlans(open);
+  const purchaseSubscriptionState = usePurchaseSubscription();
+  const { mutateAsync: purchasePlan } = purchaseSubscriptionState;
 
   const plans = useMemo(() => {
     const planItems = normalizeList<
       SchemaSubscriptionPlanListResponse["items"][number]
-    >(plansQuery.data?.items);
+    >(plansState.data?.items);
 
-    return planItems.filter(
-      (plan) => plan.uuid !== userState.data?.active_subscription?.plan.uuid,
-    );
-  }, [plansQuery.data?.items, userState.data?.active_subscription?.plan.uuid]);
+    return planItems;
+  }, [plansState.data?.items]);
 
   const handlePurchasePlan = useCallback(
     async (planId: string) => {
       return await purchasePlan({
         body: {
           plan_uuid: planId,
-          gateway: PaymentGateWayProviderEnumMap.PAYPING_IRR,
         },
       });
     },
@@ -91,12 +76,12 @@ function PricingFeature({ open, onOpenChange }: Props) {
           </SheetDescription>
         </SheetHeader>
 
-        {plansQuery.isLoading && <LoadingSection />}
-        {plansQuery.isError && (
-          <ErrorSection onRetry={() => plansQuery.refetch()} />
+        {plansState.isLoading && <LoadingSection />}
+        {plansState.isError && (
+          <ErrorSection onRetry={() => plansState.refetch()} />
         )}
 
-        <Activity mode={plansQuery.isSuccess ? "visible" : "hidden"}>
+        <Activity mode={plansState.isSuccess ? "visible" : "hidden"}>
           <div className="flex flex-1 items-center-safe overflow-y-auto px-6 pt-8">
             <div className="mx-auto flex max-w-(--breakpoint-lg) flex-col gap-4 lg:flex-row lg:gap-8">
               {plans?.map((plan) => (
@@ -134,16 +119,16 @@ function PricingFeature({ open, onOpenChange }: Props) {
                       variant={plan?.is_popular ? "default" : "outline"}
                       size="lg"
                       className="w-full"
-                      disabled={purchasePlanQuery.isPending}
+                      disabled={purchaseSubscriptionState.isPending}
                       onClick={async () => {
                         const res = await handlePurchasePlan(plan?.uuid ?? "");
-                        if (res.gateway_url) {
-                          window.location.href = res.gateway_url;
+                        if (res.payment_url) {
+                          window.location.href = res.payment_url;
                         }
                       }}
                     >
-                      {purchasePlanQuery.isPending &&
-                      purchasePlanQuery.variables?.body.plan_uuid ===
+                      {purchaseSubscriptionState.isPending &&
+                      purchaseSubscriptionState.variables?.body.plan_uuid ===
                         plan?.uuid ? (
                         <LoaderCircle className="animate-spin" />
                       ) : (

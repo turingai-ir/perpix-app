@@ -30,10 +30,10 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
-import { useReactQueryApi } from '@/hook/app';
 import { cookies } from '@/utils/cookies';
 import { APP_ROUTES_KEY } from '@/router';
 import { PasswordInput } from '@/components/ui/password-input';
+import { useLogin, useResetPassword } from '@/pages/_hooks';
 
 const AuthLoginPageEnterPassword: FC = () => {
   const navigate = useNavigate();
@@ -41,7 +41,8 @@ const AuthLoginPageEnterPassword: FC = () => {
   const [pageState, setPageState] = useImmerAtom(authLoginPageState);
 
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
-  const reactQueryApi = useReactQueryApi();
+  const loginState = useLogin();
+  const resetPasswordState = useResetPassword();
   const formSchema = z.object({
     password: z
       .string({})
@@ -63,24 +64,6 @@ const AuthLoginPageEnterPassword: FC = () => {
       }),
   });
 
-  const loginQuery = reactQueryApi.useMutation('post', '/user/login', {
-    onSuccess(data) {
-      cookie.set(APP_KEYS.COOKIES.ACCESS_TOKEN, data.token);
-      navigate(APP_ROUTES_KEY.app.path);
-      toast.success(t('pages.auth.login.enterPasswordForm.successLoginToast'));
-    },
-  });
-
-  const resetPasswordQuery = reactQueryApi.useMutation('post', '/user/reset-password', {
-    onSuccess(data) {
-      cookie.set(APP_KEYS.COOKIES.ACCESS_TOKEN, data.token);
-      setPageState((draft) => {
-        draft.currentView = 'SET_PASSWORD';
-      });
-      toast.info(t('pages.auth.login.successSendOtp'));
-    },
-  });
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -89,11 +72,14 @@ const AuthLoginPageEnterPassword: FC = () => {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    await loginQuery.mutateAsync({
+    const data = await loginState.mutateAsync({
       body: {
         password: values.password,
       },
     });
+    cookie.set(APP_KEYS.COOKIES.ACCESS_TOKEN, data.token);
+    navigate(APP_ROUTES_KEY.app.path);
+    toast.success(t('pages.auth.login.enterPasswordForm.successLoginToast'));
   }
 
   return (
@@ -126,8 +112,8 @@ const AuthLoginPageEnterPassword: FC = () => {
                 </FormItem>
               )}
             />
-            <Button className="w-full" type="submit" disabled={loginQuery.isPending}>
-              {loginQuery.isPending ? (
+            <Button className="w-full" type="submit" disabled={loginState.isPending}>
+              {loginState.isPending ? (
                 <LoaderCircle className="animate-spin" />
               ) : (
                 t('pages.auth.login.enterPasswordForm.submit')
@@ -138,13 +124,20 @@ const AuthLoginPageEnterPassword: FC = () => {
       </CardContent>
       <CardFooter>
         <Button
-          disabled={resetPasswordQuery.isPending}
+          disabled={resetPasswordState.isPending}
           variant="link"
           onClick={async () => {
-            await resetPasswordQuery.mutateAsync({ body: { phone_number: pageState.mobile } });
+            const data = await resetPasswordState.mutateAsync({
+              body: { phone_number: pageState.mobile },
+            });
+            cookie.set(APP_KEYS.COOKIES.ACCESS_TOKEN, data.token);
+            setPageState((draft) => {
+              draft.currentView = 'SET_PASSWORD';
+            });
+            toast.info(t('pages.auth.login.successSendOtp'));
           }}
         >
-          {resetPasswordQuery.isPending ? (
+          {resetPasswordState.isPending ? (
             <LoaderCircle className="animate-spin" />
           ) : (
             <Muted>{t('pages.auth.login.forgetPassword')}</Muted>

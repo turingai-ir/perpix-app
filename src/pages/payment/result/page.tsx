@@ -2,43 +2,47 @@ import { Activity } from "react";
 import { Link, useParams } from "react-router";
 import { Check } from "lucide-react";
 
-import { useReactQueryApi } from "@/hook/app";
 import LoadingSection from "@/components/custom/loading-section";
 import ErrorSection from "@/components/custom/error-section";
-import { PaymentInvoiceStatusEnumMap } from "@/services/api";
+import {
+  PaymentStatusEnumMap,
+  type SchemaPaymentListItemResponse,
+} from "@/services/api";
 import { Button } from "@/components/ui/button";
 import { formatLocalizedNumber, rialToToman } from "@/utils";
 import { useAppTranslate } from "@/hook";
 import { APP_I18_KEYS } from "@/services/i18";
 import { APP_ROUTES_KEY } from "@/router";
+import { usePayments, usePaymentStatus } from "@/pages/_hooks";
 
 function PaymentResultPage() {
-  const reactQueryApi = useReactQueryApi();
   const params = useParams();
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
 
-  const paymentResultQuery = reactQueryApi.useQuery(
-    "get",
-    "/gateway/payment-result",
-    {
-      params: { query: { session_id: params?.sessionId ?? "" } },
-    },
-    { enabled: !!params?.sessionId },
+  const paymentStatusState = usePaymentStatus(params.sessionId);
+  const paymentsState = usePayments(!!params.sessionId);
+  const paymentResult = paymentStatusState.data;
+  const payments = paymentsState.data
+    ? Array.from(
+        paymentsState.data.items as ArrayLike<SchemaPaymentListItemResponse>,
+      )
+    : [];
+  const payment = payments.find(
+    (item: SchemaPaymentListItemResponse) =>
+      item.payment_uuid === params.sessionId,
   );
-  const paymentResult = paymentResultQuery.data;
-  const isPaid =
-    paymentResult?.transaction_status === PaymentInvoiceStatusEnumMap.PAID;
+  const isPaid = paymentResult?.status === PaymentStatusEnumMap.PAID;
 
   return (
     <div className="h-dvh w-full">
-      {paymentResultQuery.isLoading ? (
+      {paymentStatusState.isLoading ? (
         <div className="flex h-full w-full items-center justify-center">
           <LoadingSection />
         </div>
       ) : null}
-      {paymentResultQuery.isError ? (
+      {paymentStatusState.isError ? (
         <div className="flex h-full w-full items-center justify-center">
-          <ErrorSection onRetry={() => paymentResultQuery.refetch()} />
+          <ErrorSection onRetry={() => paymentStatusState.refetch()} />
         </div>
       ) : null}
       <Activity mode={paymentResult && isPaid ? "visible" : "hidden"}>
@@ -82,7 +86,7 @@ function PaymentResultPage() {
                 <span className="text-2xl font-bold text-green-500 dark:text-green-400">
                   {`${formatLocalizedNumber({
                     value: rialToToman(
-                      paymentResult?.total_transaction_amount ?? 0,
+                      payment?.amount_irr ?? 0,
                     ),
                   })} ${t("common.tomans")}`}
                 </span>
@@ -141,7 +145,7 @@ function PaymentResultPage() {
                 <span className="text-2xl font-bold text-red-500 dark:text-red-400">
                   {`${formatLocalizedNumber({
                     value: rialToToman(
-                      paymentResult?.total_transaction_amount ?? 0,
+                      payment?.amount_irr ?? 0,
                     ),
                   })} ${t("common.tomans")}`}
                 </span>

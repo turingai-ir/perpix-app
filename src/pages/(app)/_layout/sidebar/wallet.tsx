@@ -2,7 +2,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import { LoaderCircle } from "lucide-react";
-import { useDebounce } from "react-use";
 import { NumericFormat } from "react-number-format";
 
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,7 +11,6 @@ import { APP_I18_KEYS } from "@/services/i18";
 import {
   formatLocalizedNumber,
   microDollarToToken,
-  rialToToman,
   tokenToMicroDollar,
 } from "@/utils";
 import { Button } from "@/components/ui/button";
@@ -25,8 +23,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { useReactQueryApi } from "@/hook/app";
-import { PaymentGateWayProviderEnumMap } from "@/services/api";
 import {
   Form,
   FormControl,
@@ -35,23 +31,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useUser } from "@/pages/_hooks";
+import { useChargeWallet, useWallet } from "@/pages/_hooks";
 
 function AppLayoutSidebarWallet() {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
 
-  const reactQueryApi = useReactQueryApi();
-
-  const { userState } = useUser();
-
-  const exchangeRateMutation = reactQueryApi.useMutation(
-    "get",
-    "/gateway/irr-exchange-rate",
-  );
-  const walletDepositMutation = reactQueryApi.useMutation(
-    "post",
-    "/user/wallet/deposit",
-  );
+  const walletState = useWallet();
+  const chargeWalletState = useChargeWallet();
 
   const formSchema = z.object({
     amount: z
@@ -93,34 +79,14 @@ function AppLayoutSidebarWallet() {
     mode: "onChange",
   });
 
-  const amountWatch = form.watch("amount");
-
-  useDebounce(
-    () => {
-      if (amountWatch) {
-        exchangeRateMutation.mutate({
-          params: {
-            query: {
-              provider: PaymentGateWayProviderEnumMap.PAYPING_IRR,
-              amount_usdmicro: tokenToMicroDollar(parseInt(amountWatch, 10)),
-            },
-          },
-        });
-      }
-    },
-    300,
-    [amountWatch],
-  );
-
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const res = await walletDepositMutation.mutateAsync({
+    const res = await chargeWalletState.mutateAsync({
       body: {
         amount_usdmicro: tokenToMicroDollar(parseInt(values.amount, 10)),
-        gateway: PaymentGateWayProviderEnumMap.PAYPING_IRR,
       },
     });
-    if (res.gateway_url) {
-      window.location.href = res.gateway_url;
+    if (res.payment_url) {
+      window.location.href = res.payment_url;
     }
   }
 
@@ -135,7 +101,7 @@ function AppLayoutSidebarWallet() {
             <div className="text-sidebar-foreground text-2xl font-semibold tracking-tight">
               {formatLocalizedNumber({
                 value: microDollarToToken(
-                  userState.data?.default_wallet?.balance_usdmicro || 0,
+                  walletState.data?.balance_usdmicro || 0,
                 ),
               })}
             </div>
@@ -191,26 +157,10 @@ function AppLayoutSidebarWallet() {
                   <Button
                     className="w-full"
                     type="submit"
-                    disabled={
-                      exchangeRateMutation.isPending ||
-                      walletDepositMutation.isPending
-                    }
+                    disabled={chargeWalletState.isPending}
                   >
-                    {exchangeRateMutation.isPending ||
-                    walletDepositMutation.isPending ? (
+                    {chargeWalletState.isPending ? (
                       <LoaderCircle className="animate-spin" />
-                    ) : exchangeRateMutation.data?.total_transaction_amount ? (
-                      t(
-                        "pages.app.layout.sidebar.balanceCard.chargeWallet.action",
-                        {
-                          amount: formatLocalizedNumber({
-                            value: rialToToman(
-                              exchangeRateMutation.data
-                                ?.total_transaction_amount,
-                            ),
-                          }),
-                        },
-                      )
                     ) : (
                       t(
                         "pages.app.layout.sidebar.balanceCard.chargeWallet.nonAction",

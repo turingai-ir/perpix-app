@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useNavigate } from "react-router";
 
-import { useReactQueryApi } from "@/hook/app";
+import { useWallet } from "./api";
 import { APP_KEYS } from "@/utils";
 
 const MIN_PAID_ACTION_BALANCE_USDMICRO = 10_000;
@@ -17,20 +17,16 @@ export class PaidActionRequirementError extends Error {
 }
 
 export const usePaidActionGuard = () => {
-  const { useQuery } = useReactQueryApi();
   const navigate = useNavigate();
 
-  const userState = useQuery("get", "/user/get-info");
+  const walletState = useWallet();
 
   const canRunPaidAction = useCallback(() => {
-    const user = userState.data;
-
     return (
-      user?.active_subscription?.is_active === true &&
-      (user.default_wallet?.balance_usdmicro ?? 0) >=
-        MIN_PAID_ACTION_BALANCE_USDMICRO
+      (walletState.data?.balance_usdmicro ?? 0) >=
+      MIN_PAID_ACTION_BALANCE_USDMICRO
     );
-  }, [userState.data]);
+  }, [walletState.data?.balance_usdmicro]);
 
   const navigateToPricing = useCallback(() => {
     navigate(APP_KEYS.URL_HASH.pricing);

@@ -28,25 +28,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useReactQueryApi } from "@/hook/app";
 import { Badge } from "@/components/ui/badge";
 import { cookies } from "@/utils/cookies";
+import { useActiveSubscription } from "@/pages/_hooks";
 import AppLayoutSidebarHistory from "./history";
 
 const AppLayoutSidebarContent: FC = () => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
-  const reactQueryApi = useReactQueryApi();
   const navigate = useNavigate();
   const cookie = cookies();
 
-  const userInfoQuery = reactQueryApi.useQuery(
-    "get",
-    "/user/get-info",
-    undefined,
-    {
-      enabled: false,
-    },
-  );
+  const activeSubscriptionState = useActiveSubscription();
 
   const handleLogout = () => {
     cookie.remove(APP_KEYS.COOKIES.ACCESS_TOKEN);
@@ -112,7 +104,7 @@ const AppLayoutSidebarContent: FC = () => {
             </Avatar>
             <div className="flex flex-1 text-right text-sm leading-tight">
               <Badge>
-                {userInfoQuery.data?.active_subscription?.plan.display_name ??
+                {activeSubscriptionState.data?.plan.display_name ??
                   t("features.pricing.plans.free.title")}
               </Badge>
             </div>
@@ -135,13 +127,13 @@ const AppLayoutSidebarContent: FC = () => {
               </Avatar>
               <div className="flex flex-1 text-right text-sm leading-tight">
                 <Badge>
-                  {userInfoQuery.data?.active_subscription?.plan.display_name ??
+                  {activeSubscriptionState.data?.plan.display_name ??
                     t("features.pricing.plans.free.title")}
                 </Badge>
               </div>
             </div>
           </DropdownMenuLabel>
-          {userInfoQuery.data?.active_subscription?.plan.display_name ? null : (
+          {activeSubscriptionState.data?.plan.display_name ? null : (
             <>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>

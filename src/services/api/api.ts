@@ -1,4 +1,38 @@
 export interface paths {
+    readonly "/user/get-info": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        /** Get Info */
+        readonly get: operations["get_info_user_get_info_get"];
+        readonly put?: never;
+        readonly post?: never;
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
+    readonly "/user/edit-info": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly get?: never;
+        readonly put?: never;
+        readonly post?: never;
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        /** Edit User Info */
+        readonly patch: operations["edit_user_info_user_edit_info_patch"];
+        readonly trace?: never;
+    };
     readonly "/user/start": {
         readonly parameters: {
             readonly query?: never;
@@ -84,57 +118,6 @@ export interface paths {
         readonly patch?: never;
         readonly trace?: never;
     };
-    readonly "/user/get-info": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
-        };
-        /** Get Info */
-        readonly get: operations["get_info_user_get_info_get"];
-        readonly put?: never;
-        readonly post?: never;
-        readonly delete?: never;
-        readonly options?: never;
-        readonly head?: never;
-        readonly patch?: never;
-        readonly trace?: never;
-    };
-    readonly "/user/edit-info": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
-        };
-        readonly get?: never;
-        readonly put?: never;
-        readonly post?: never;
-        readonly delete?: never;
-        readonly options?: never;
-        readonly head?: never;
-        /** Edit User Info */
-        readonly patch: operations["edit_user_info_user_edit_info_patch"];
-        readonly trace?: never;
-    };
-    readonly "/user/wallet/deposit": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
-        };
-        readonly get?: never;
-        readonly put?: never;
-        /** Initiate Wallet Deposit */
-        readonly post: operations["initiate_wallet_deposit_user_wallet_deposit_post"];
-        readonly delete?: never;
-        readonly options?: never;
-        readonly head?: never;
-        readonly patch?: never;
-        readonly trace?: never;
-    };
     readonly "/user/subscription/plans": {
         readonly parameters: {
             readonly query?: never;
@@ -152,6 +135,23 @@ export interface paths {
         readonly patch?: never;
         readonly trace?: never;
     };
+    readonly "/user/subscription/active": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        /** Get Active Subscription */
+        readonly get: operations["get_active_subscription_user_subscription_active_get"];
+        readonly put?: never;
+        readonly post?: never;
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
     readonly "/user/subscription/purchase": {
         readonly parameters: {
             readonly query?: never;
@@ -161,42 +161,8 @@ export interface paths {
         };
         readonly get?: never;
         readonly put?: never;
-        /** Initiate Subscription Purchase */
-        readonly post: operations["initiate_subscription_purchase_user_subscription_purchase_post"];
-        readonly delete?: never;
-        readonly options?: never;
-        readonly head?: never;
-        readonly patch?: never;
-        readonly trace?: never;
-    };
-    readonly "/user/subscription/purchase/confirm": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
-        };
-        readonly get?: never;
-        readonly put?: never;
-        /** Confirm Subscription Purchase */
-        readonly post: operations["confirm_subscription_purchase_user_subscription_purchase_confirm_post"];
-        readonly delete?: never;
-        readonly options?: never;
-        readonly head?: never;
-        readonly patch?: never;
-        readonly trace?: never;
-    };
-    readonly "/admin/currency-exchange-rate/refresh": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
-        };
-        /** Refresh Currency Exchange Rate */
-        readonly get: operations["refresh_currency_exchange_rate_admin_currency_exchange_rate_refresh_get"];
-        readonly put?: never;
-        readonly post?: never;
+        /** Purchase Subscription */
+        readonly post: operations["purchase_subscription_user_subscription_purchase_post"];
         readonly delete?: never;
         readonly options?: never;
         readonly head?: never;
@@ -273,15 +239,32 @@ export interface paths {
         readonly patch?: never;
         readonly trace?: never;
     };
-    readonly "/gateway/irr-exchange-rate": {
+    readonly "/wallet/charge": {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
             readonly path?: never;
             readonly cookie?: never;
         };
-        /** Get Irr Exchange Rate */
-        readonly get: operations["get_irr_exchange_rate_gateway_irr_exchange_rate_get"];
+        readonly get?: never;
+        readonly put?: never;
+        /** Charge Wallet */
+        readonly post: operations["charge_wallet_wallet_charge_post"];
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
+    readonly "/wallet/wallet": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        /** Get Current User Wallet */
+        readonly get: operations["get_current_user_wallet_wallet_wallet_get"];
         readonly put?: never;
         readonly post?: never;
         readonly delete?: never;
@@ -290,17 +273,128 @@ export interface paths {
         readonly patch?: never;
         readonly trace?: never;
     };
-    readonly "/gateway/payment-result": {
+    readonly "/wallet/wallet/{wallet_uuid}/transactions": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path: {
+                readonly wallet_uuid: string;
+            };
+            readonly cookie?: never;
+        };
+        /** Get Wallet Transactions */
+        readonly get: operations["get_wallet_transactions_wallet_wallet__wallet_uuid__transactions_get"];
+        readonly put?: never;
+        readonly post?: never;
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
+    readonly "/admin/wallet/{wallet_uuid}/transactions": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path: {
+                readonly wallet_uuid: string;
+            };
+            readonly cookie?: never;
+        };
+        /** Get Wallet Transactions */
+        readonly get: operations["get_wallet_transactions_admin_wallet__wallet_uuid__transactions_get"];
+        readonly put?: never;
+        readonly post?: never;
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
+    readonly "/admin/wallet/{wallet_uuid}/charge": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path: {
+                readonly wallet_uuid: string;
+            };
+            readonly cookie?: never;
+        };
+        readonly get?: never;
+        readonly put?: never;
+        /** Charge Wallet */
+        readonly post: operations["charge_wallet_admin_wallet__wallet_uuid__charge_post"];
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
+    readonly "/admin/currency-exchange-rate/refresh": {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
             readonly path?: never;
             readonly cookie?: never;
         };
-        /** Get Payment Result */
-        readonly get: operations["get_payment_result_gateway_payment_result_get"];
+        /** Refresh Currency Exchange Rate */
+        readonly get: operations["refresh_currency_exchange_rate_admin_currency_exchange_rate_refresh_get"];
         readonly put?: never;
         readonly post?: never;
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
+    readonly "/payment": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        /** List Payments */
+        readonly get: operations["list_payments_payment_get"];
+        readonly put?: never;
+        /** Create Payment */
+        readonly post: operations["create_payment_payment_post"];
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
+    readonly "/payment/{payment_uuid}": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path: {
+                readonly payment_uuid: string;
+            };
+            readonly cookie?: never;
+        };
+        /** Get Payment Status */
+        readonly get: operations["get_payment_status_payment__payment_uuid__get"];
+        readonly put?: never;
+        readonly post?: never;
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
+    readonly "/payment/verify": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly get?: never;
+        readonly put?: never;
+        /** Verify Payment */
+        readonly post: operations["verify_payment_payment_verify_post"];
         readonly delete?: never;
         readonly options?: never;
         readonly head?: never;
@@ -769,9 +863,15 @@ export interface components {
     schemas: {
         /** ActivateUserSubscriptionRequest */
         readonly ActivateUserSubscriptionRequest: {
-            /** User Uuid */
+            /**
+             * User Uuid
+             * Format: uuid
+             */
             readonly user_uuid: string;
-            /** Plan Uuid */
+            /**
+             * Plan Uuid
+             * Format: uuid
+             */
             readonly plan_uuid: string;
         };
         /** AiRegistryModelCreateRequest */
@@ -1048,10 +1148,21 @@ export interface components {
              */
             readonly uuid: string;
             readonly task_type: components["schemas"]["AiRegistryModelSupportedTypesEnum"];
-            /** Created At */
-            readonly created_at: unknown;
-            /** Updated At */
-            readonly updated_at: unknown;
+            /**
+             * Expire Date
+             * Format: date-time
+             */
+            readonly expire_date: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            readonly created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            readonly updated_at: string;
             /** Messages */
             readonly messages: readonly components["schemas"]["AiTaskMessageResponse"][];
         };
@@ -1070,17 +1181,74 @@ export interface components {
             /** File */
             readonly file?: string | null;
         };
-        /** CompleteSubscriptionPurchaseRequest */
-        readonly CompleteSubscriptionPurchaseRequest: {
-            /** Session Id */
-            readonly session_id: string;
+        /** Body_verify_payment_payment_verify_post */
+        readonly Body_verify_payment_payment_verify_post: {
+            /** Status */
+            readonly status: number;
+            /** Data */
+            readonly data: string;
+            /** Errorcode */
+            readonly errorCode?: string | null;
+        };
+        /** ChargeWalletRequest */
+        readonly ChargeWalletRequest: {
+            /**
+             * User Uuid
+             * Format: uuid
+             */
+            readonly user_uuid: string;
+            /** Amount Usdmicro */
+            readonly amount_usdmicro: number;
+            /** Meta */
+            readonly meta?: {
+                readonly [key: string]: unknown;
+            };
+        };
+        /** ChargeWalletResponse */
+        readonly ChargeWalletResponse: {
+            /**
+             * Payment Uuid
+             * Format: uuid
+             */
+            readonly payment_uuid: string;
+            /** Payment Url */
+            readonly payment_url: string;
+            /** Amount Usdmicro */
+            readonly amount_usdmicro: number;
+            /** Amount Irr */
+            readonly amount_irr: number;
+            /**
+             * Wallet Uuid
+             * Format: uuid
+             */
+            readonly wallet_uuid: string;
+        };
+        /** CreatePaymentRequest */
+        readonly CreatePaymentRequest: {
+            /** Amount Usdmicro */
+            readonly amount_usdmicro: number;
+        };
+        /** CreatePaymentResponse */
+        readonly CreatePaymentResponse: {
+            /**
+             * Payment Uuid
+             * Format: uuid
+             */
+            readonly payment_uuid: string;
+            /** Amount Usdmicro */
+            readonly amount_usdmicro: number;
+            /** Amount Irr */
+            readonly amount_irr: number;
+            /** Payment Url */
+            readonly payment_url: string;
         };
         /**
          * CreateSubscriptionPlanRequest
          * @description Request payload for creating a subscription plan.
          */
         readonly CreateSubscriptionPlanRequest: {
-            readonly name: components["schemas"]["SubscriptionPlansEnum"];
+            /** Name */
+            readonly name: string;
             /** Display Name */
             readonly display_name?: string | null;
             /** Description */
@@ -1115,6 +1283,58 @@ export interface components {
              * @default false
              */
             readonly is_recommended: boolean;
+        };
+        /** CreateWalletTransactionResponse */
+        readonly CreateWalletTransactionResponse: {
+            /**
+             * Wallet Uuid
+             * Format: uuid
+             */
+            readonly wallet_uuid: string;
+            /**
+             * User Uuid
+             * Format: uuid
+             */
+            readonly user_uuid: string;
+            /** Amount Usdmicro */
+            readonly amount_usdmicro: number;
+            /** Old Balance Usdmicro */
+            readonly old_balance_usdmicro: number;
+            /** New Balance Usdmicro */
+            readonly new_balance_usdmicro: number;
+            /**
+             * Transaction Uuid
+             * Format: uuid
+             */
+            readonly transaction_uuid: string;
+            /** Meta */
+            readonly meta: {
+                readonly [key: string]: unknown;
+            };
+            /** Performed By Admin Uuid */
+            readonly performed_by_admin_uuid: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            readonly created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            readonly updated_at: string;
+        };
+        /** CurrencyExchangeRateRefreshResponse */
+        readonly CurrencyExchangeRateRefreshResponse: {
+            readonly from_currency: components["schemas"]["CurrencyUnitEnum"];
+            readonly to_currency: components["schemas"]["CurrencyUnitEnum"];
+            /** Value */
+            readonly value: string;
+            /**
+             * Date
+             * Format: date-time
+             */
+            readonly date: string;
         };
         /**
          * CurrencyUnitEnum
@@ -1314,66 +1534,119 @@ export interface components {
             /** Task Uuid */
             readonly task_uuid?: string | null;
         };
-        /** GetAdminCurrencyExchangeRateRefreshResponseBody */
-        readonly GetAdminCurrencyExchangeRateRefreshResponseBody: {
-            readonly from_currency: components["schemas"]["CurrencyUnitEnum"];
-            readonly to_currency: components["schemas"]["CurrencyUnitEnum"];
-            /** Value */
-            readonly value: string;
+        /** GetWalletResponse */
+        readonly GetWalletResponse: {
             /**
-             * Date
+             * Wallet Uuid
+             * Format: uuid
+             */
+            readonly wallet_uuid: string;
+            /**
+             * Owner User Uuid
+             * Format: uuid
+             */
+            readonly owner_user_uuid: string;
+            /** Name */
+            readonly name: string;
+            /** Balance Usdmicro */
+            readonly balance_usdmicro: number;
+            /** Is Active */
+            readonly is_active: boolean;
+            /**
+             * Created At
              * Format: date-time
              */
-            readonly date: string;
+            readonly created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            readonly updated_at: string;
         };
-        /** GetIrrExchangeRateResponseBody */
-        readonly GetIrrExchangeRateResponseBody: {
-            /** Amount Usdmicro */
-            readonly amount_usdmicro: number | null;
-            readonly gateway_provider: components["schemas"]["PaymentGateWayProviderEnum"];
-            /** Vat Percent */
-            readonly vat_percent: number | null;
-            /** Vat Amount */
-            readonly vat_amount: number | null;
-            /** Subtotal Transaction Amount */
-            readonly subtotal_transaction_amount: number | null;
-            /** Total Transaction Amount */
-            readonly total_transaction_amount: number | null;
-            readonly transaction_amount_currency: components["schemas"]["CurrencyUnitEnum"] | null;
-        };
-        /** GetPaymentResultResponseBody */
-        readonly GetPaymentResultResponseBody: {
-            /** Amount Usdmicro */
-            readonly amount_usdmicro: number | null;
-            readonly gateway_provider: components["schemas"]["PaymentGateWayProviderEnum"];
-            /** Vat Percent */
-            readonly vat_percent: number | null;
-            /** Vat Amount */
-            readonly vat_amount: number | null;
-            /** Subtotal Transaction Amount */
-            readonly subtotal_transaction_amount: number | null;
-            /** Total Transaction Amount */
-            readonly total_transaction_amount: number | null;
-            readonly transaction_amount_currency: components["schemas"]["CurrencyUnitEnum"] | null;
-            /** Balance After */
-            readonly balance_after: number | null;
-            readonly transaction_status: components["schemas"]["PaymentInvoiceStatusEnum"] | null;
+        /** GetWalletTransactionsResponse */
+        readonly GetWalletTransactionsResponse: {
+            /**
+             * Wallet Uuid
+             * Format: uuid
+             */
+            readonly wallet_uuid: string;
+            /**
+             * Owner User Uuid
+             * Format: uuid
+             */
+            readonly owner_user_uuid: string;
+            /** Transactions */
+            readonly transactions: readonly components["schemas"]["WalletTransactionResponse"][];
+            /**
+             * Created At
+             * Format: date-time
+             */
+            readonly created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            readonly updated_at: string;
         };
         /** HTTPValidationError */
         readonly HTTPValidationError: {
             /** Detail */
             readonly detail?: readonly components["schemas"]["ValidationError"][];
         };
+        /** PaymentListItemResponse */
+        readonly PaymentListItemResponse: {
+            /**
+             * Payment Uuid
+             * Format: uuid
+             */
+            readonly payment_uuid: string;
+            /** Amount Usdmicro */
+            readonly amount_usdmicro: number;
+            /** Amount Irr */
+            readonly amount_irr: number;
+            readonly status: components["schemas"]["PaymentStatusEnum"];
+            /** Payment Url */
+            readonly payment_url: string | null;
+            readonly target_type: components["schemas"]["PaymentTargetTypeEnum"] | null;
+            /** Target Uuid */
+            readonly target_uuid: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            readonly created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            readonly updated_at: string;
+        };
+        /** PaymentListResponse */
+        readonly PaymentListResponse: {
+            /** Items */
+            readonly items: readonly components["schemas"]["PaymentListItemResponse"][];
+            /** Has Next */
+            readonly has_next: boolean;
+        };
         /**
-         * PaymentGateWayProviderEnum
+         * PaymentStatusEnum
          * @enum {string}
          */
-        readonly PaymentGateWayProviderEnum: "PAYPING_IRR";
+        readonly PaymentStatusEnum: "PENDING" | "PAID" | "FAILED";
+        /** PaymentStatusResponse */
+        readonly PaymentStatusResponse: {
+            /**
+             * Payment Uuid
+             * Format: uuid
+             */
+            readonly payment_uuid: string;
+            readonly status: components["schemas"]["PaymentStatusEnum"];
+        };
         /**
-         * PaymentInvoiceStatusEnum
+         * PaymentTargetTypeEnum
          * @enum {string}
          */
-        readonly PaymentInvoiceStatusEnum: "PENDING" | "PAID" | "FAILED" | "CANCELLED";
+        readonly PaymentTargetTypeEnum: "subscription" | "wallet";
         /** SubscriptionPlanListResponse */
         readonly SubscriptionPlanListResponse: {
             /** Items */
@@ -1383,7 +1656,10 @@ export interface components {
         };
         /** SubscriptionPlanResponse */
         readonly SubscriptionPlanResponse: {
-            /** Uuid */
+            /**
+             * Uuid
+             * Format: uuid
+             */
             readonly uuid: string;
             /** Name */
             readonly name: string;
@@ -1422,31 +1698,33 @@ export interface components {
              */
             readonly updated_at: string;
         };
-        /**
-         * SubscriptionPlansEnum
-         * @enum {string}
-         */
-        readonly SubscriptionPlansEnum: "ECONOMIC" | "BASIC" | "PRO";
         /** SubscriptionPurchaseRequest */
         readonly SubscriptionPurchaseRequest: {
-            /** Plan Uuid */
+            /**
+             * Plan Uuid
+             * Format: uuid
+             */
             readonly plan_uuid: string;
-            readonly gateway: components["schemas"]["PaymentGateWayProviderEnum"];
         };
         /** SubscriptionPurchaseResponse */
         readonly SubscriptionPurchaseResponse: {
-            /** Session Id */
-            readonly session_id: string;
-            /** Gateway Url */
-            readonly gateway_url: string;
+            /**
+             * Payment Uuid
+             * Format: uuid
+             */
+            readonly payment_uuid: string;
+            /** Payment Url */
+            readonly payment_url: string;
             /** Amount Usdmicro */
             readonly amount_usdmicro: number;
-            readonly gateway_provider: components["schemas"]["PaymentGateWayProviderEnum"];
+            /** Amount Irr */
+            readonly amount_irr: number;
             readonly plan: components["schemas"]["SubscriptionPlanResponse"];
         };
         /** UpdateSubscriptionPlanRequest */
         readonly UpdateSubscriptionPlanRequest: {
-            readonly name?: components["schemas"]["SubscriptionPlansEnum"] | null;
+            /** Name */
+            readonly name?: string | null;
             /** Display Name */
             readonly display_name?: string | null;
             /** Description */
@@ -1470,46 +1748,92 @@ export interface components {
             /** Is Recommended */
             readonly is_recommended?: boolean | null;
         };
-        /** UserGetInfoResponse */
-        readonly UserGetInfoResponse: {
-            /** User Uuid */
-            readonly user_uuid: string;
+        /** UserChargeWalletRequest */
+        readonly UserChargeWalletRequest: {
+            /** Amount Usdmicro */
+            readonly amount_usdmicro: number;
+        };
+        /** UserEditInfoRequest */
+        readonly UserEditInfoRequest: {
+            /**
+             * Email
+             * @example info@prepixai.com
+             */
+            readonly email?: string | null;
+            /**
+             * Name
+             * @example Joan hanson
+             */
+            readonly name?: string | null;
+        };
+        /** UserEditInfoResponse */
+        readonly UserEditInfoResponse: {
             /** Email */
             readonly email: string | null;
+            /** Phone Number */
+            readonly phone_number: string;
             /** Name */
             readonly name: string | null;
-            /** Phone Number */
-            readonly phone_number: string | null;
+            /**
+             * Is Verified
+             * @default false
+             */
+            readonly is_verified: boolean;
             /** Scopes */
-            readonly scopes: readonly string[] | null;
-            readonly default_wallet: components["schemas"]["UserGetInfoResponseDefaultWallet"] | null;
-            readonly active_subscription: components["schemas"]["UserSubscriptionResponse"] | null;
-        };
-        /** UserGetInfoResponseDefaultWallet */
-        readonly UserGetInfoResponseDefaultWallet: {
-            /** Wallet Id */
-            readonly wallet_id: string;
-            /** Name */
-            readonly name: string;
-            /** Is Owner */
-            readonly is_owner: boolean;
-            /** Balance Usdmicro */
-            readonly balance_usdmicro: number;
-            /** Soft Limit Usdmicro */
-            readonly soft_limit_usdmicro: number | null;
-            readonly wallet_type: components["schemas"]["WalletTypeEnum"];
-            /** Is Active */
+            readonly scopes: readonly string[];
+            /** Default Wallet Uuid */
+            readonly default_wallet_uuid: string | null;
+            /**
+             * Is Active
+             * @default true
+             */
             readonly is_active: boolean;
-            /** Is Locked */
-            readonly is_locked: boolean;
-            /** Extra Metadata */
-            readonly extra_metadata: {
-                readonly [key: string]: unknown;
-            } | null;
-            readonly user_role: components["schemas"]["WalletMemberRoleEnum"];
+            /**
+             * Created At
+             * Format: date-time
+             */
+            readonly created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            readonly updated_at: string;
         };
-        /** UserLoginBody */
-        readonly UserLoginBody: {
+        /** UserGetInfoResponse */
+        readonly UserGetInfoResponse: {
+            /** Email */
+            readonly email: string | null;
+            /** Phone Number */
+            readonly phone_number: string;
+            /** Name */
+            readonly name: string | null;
+            /**
+             * Is Verified
+             * @default false
+             */
+            readonly is_verified: boolean;
+            /** Scopes */
+            readonly scopes: readonly string[];
+            /** Default Wallet Uuid */
+            readonly default_wallet_uuid: string | null;
+            /**
+             * Is Active
+             * @default true
+             */
+            readonly is_active: boolean;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            readonly created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            readonly updated_at: string;
+        };
+        /** UserLoginRequest */
+        readonly UserLoginRequest: {
             /**
              * Password
              * @example qwerQWER1234!!!!
@@ -1526,45 +1850,24 @@ export interface components {
             readonly email: string | null;
             /** Name */
             readonly name: string | null;
-            /** User Uuid */
-            readonly user_uuid: string;
-        };
-        /** UserPatchEditInfoRequest */
-        readonly UserPatchEditInfoRequest: {
             /**
-             * Email
-             * @example info@prepixai.com
+             * User Uuid
+             * Format: uuid
              */
-            readonly email?: string | null;
-            /**
-             * Name
-             * @example Joan hanson
-             */
-            readonly name?: string | null;
-        };
-        /** UserPatchEditInfoResponse */
-        readonly UserPatchEditInfoResponse: {
-            /** User Uuid */
             readonly user_uuid: string;
-            /** Email */
-            readonly email: string | null;
-            /** Name */
-            readonly name: string | null;
-            /** Phone Number */
-            readonly phone_number: string | null;
-            /** Scopes */
-            readonly scopes: readonly string[] | null;
-            readonly default_wallet: components["schemas"]["UserGetInfoResponseDefaultWallet"] | null;
         };
         /** UserResendOtpResponse */
         readonly UserResendOtpResponse: {
             /** Is Verified */
             readonly is_verified: boolean;
-            /** Next Otp At */
-            readonly next_otp_at: string | null;
+            /**
+             * Next Otp At
+             * Format: date-time
+             */
+            readonly next_otp_at: string;
         };
-        /** UserResetPasswordBody */
-        readonly UserResetPasswordBody: {
+        /** UserResetPasswordRequest */
+        readonly UserResetPasswordRequest: {
             /**
              * Phone Number
              * @example 09123456789
@@ -1577,11 +1880,14 @@ export interface components {
             readonly token: string;
             /** Is Verified */
             readonly is_verified: boolean;
-            /** Next Otp At */
-            readonly next_otp_at: string | null;
+            /**
+             * Next Otp At
+             * Format: date-time
+             */
+            readonly next_otp_at: string;
         };
-        /** UserSetPasswordBody */
-        readonly UserSetPasswordBody: {
+        /** UserSetPasswordRequest */
+        readonly UserSetPasswordRequest: {
             /**
              * Password
              * @example qwerQWER1234!!!!
@@ -1593,8 +1899,8 @@ export interface components {
              */
             readonly otp_code: string;
         };
-        /** UserStartBody */
-        readonly UserStartBody: {
+        /** UserStartRequest */
+        readonly UserStartRequest: {
             /**
              * Phone Number
              * @example 09123456789
@@ -1612,7 +1918,10 @@ export interface components {
         };
         /** UserSubscriptionResponse */
         readonly UserSubscriptionResponse: {
-            /** Uuid */
+            /**
+             * Uuid
+             * Format: uuid
+             */
             readonly uuid: string;
             readonly plan: components["schemas"]["SubscriptionPlanResponse"];
             /**
@@ -1641,32 +1950,73 @@ export interface components {
             /** Context */
             readonly ctx?: Record<string, never>;
         };
-        /** WalletDepositRequestBody */
-        readonly WalletDepositRequestBody: {
+        /** WalletTransactionResponse */
+        readonly WalletTransactionResponse: {
+            /**
+             * Transaction Uuid
+             * Format: uuid
+             */
+            readonly transaction_uuid: string;
+            readonly type: components["schemas"]["WalletTransactionTypeEnum"];
             /** Amount Usdmicro */
             readonly amount_usdmicro: number;
-            readonly gateway: components["schemas"]["PaymentGateWayProviderEnum"];
-        };
-        /** WalletDepositResponseBody */
-        readonly WalletDepositResponseBody: {
-            /** Session Id */
-            readonly session_id: string;
-            /** Gateway Url */
-            readonly gateway_url: string;
-            readonly gateway_provider: components["schemas"]["PaymentGateWayProviderEnum"];
+            /** Balance Before */
+            readonly balance_before: number;
+            /** Balance After */
+            readonly balance_after: number;
+            /** Meta */
+            readonly meta: {
+                readonly [key: string]: unknown;
+            };
+            /**
+             * Created At
+             * Format: date-time
+             */
+            readonly created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            readonly updated_at: string;
         };
         /**
-         * WalletMemberRoleEnum
+         * WalletTransactionTypeEnum
          * @enum {string}
          */
-        readonly WalletMemberRoleEnum: "MEMBER" | "ADMIN";
-        /**
-         * WalletTypeEnum
-         * @enum {string}
-         */
-        readonly WalletTypeEnum: "PERSONAL" | "GROUP";
+        readonly WalletTransactionTypeEnum: "DEPOSIT" | "WITHDRAW" | "REFUND";
         /** AiRegistryModelDetail */
-        readonly turing_python_api__api__v1__ai_registry__admin_schema__AiRegistryModelDetail: {
+        readonly turing_python_api__modules__ai_registry__presentation__schemas__AiRegistryModelDetail: {
+            /**
+             * Uuid
+             * Format: uuid
+             */
+            readonly uuid: string;
+            readonly model_owner: components["schemas"]["AiRegistryModelOwnerEnum"];
+            /** Name */
+            readonly name: string;
+            /** Display Name */
+            readonly display_name: string | null;
+            /** Description */
+            readonly description: string | null;
+            /** Icon Url */
+            readonly icon_url: string | null;
+            /** Tags */
+            readonly tags: readonly string[];
+            /** Supported Inputs */
+            readonly supported_inputs: readonly components["schemas"]["AiRegistryModelSupportedTypesEnum"][];
+            /** Supported Outputs */
+            readonly supported_outputs: readonly components["schemas"]["AiRegistryModelSupportedTypesEnum"][];
+            /** Config Schema */
+            readonly config_schema: {
+                readonly [key: string]: unknown;
+            };
+            /** Meta */
+            readonly meta: {
+                readonly [key: string]: unknown;
+            };
+        };
+        /** AiRegistryModelDetail */
+        readonly turing_python_api__modules__ai_registry__presentation__schemas_admin__AiRegistryModelDetail: {
             /**
              * Uuid
              * Format: uuid
@@ -1716,37 +2066,6 @@ export interface components {
             /** Provider Links */
             readonly provider_links?: readonly components["schemas"]["AiRegistryModelProviderLinkDetail"][];
         };
-        /** AiRegistryModelDetail */
-        readonly turing_python_api__api__v1__ai_registry__user_schema__AiRegistryModelDetail: {
-            /**
-             * Uuid
-             * Format: uuid
-             */
-            readonly uuid: string;
-            readonly model_owner: components["schemas"]["AiRegistryModelOwnerEnum"];
-            /** Name */
-            readonly name: string;
-            /** Display Name */
-            readonly display_name: string | null;
-            /** Description */
-            readonly description: string | null;
-            /** Icon Url */
-            readonly icon_url: string | null;
-            /** Tags */
-            readonly tags: readonly string[];
-            /** Supported Inputs */
-            readonly supported_inputs: readonly components["schemas"]["AiRegistryModelSupportedTypesEnum"][];
-            /** Supported Outputs */
-            readonly supported_outputs: readonly components["schemas"]["AiRegistryModelSupportedTypesEnum"][];
-            /** Config Schema */
-            readonly config_schema: {
-                readonly [key: string]: unknown;
-            };
-            /** Meta */
-            readonly meta: {
-                readonly [key: string]: unknown;
-            };
-        };
     };
     responses: never;
     parameters: never;
@@ -1775,8 +2094,14 @@ export type SchemaAiTaskResponse = components['schemas']['AiTaskResponse'];
 export type SchemaAiTaskRuleEnum = components['schemas']['AiTaskRuleEnum'];
 export type SchemaAiTaskTypeEnum = components['schemas']['AiTaskTypeEnum'];
 export type SchemaBodySimpleUploadFileManagerSimpleUploadPost = components['schemas']['Body_simple_upload_file_manager_simple_upload_post'];
-export type SchemaCompleteSubscriptionPurchaseRequest = components['schemas']['CompleteSubscriptionPurchaseRequest'];
+export type SchemaBodyVerifyPaymentPaymentVerifyPost = components['schemas']['Body_verify_payment_payment_verify_post'];
+export type SchemaChargeWalletRequest = components['schemas']['ChargeWalletRequest'];
+export type SchemaChargeWalletResponse = components['schemas']['ChargeWalletResponse'];
+export type SchemaCreatePaymentRequest = components['schemas']['CreatePaymentRequest'];
+export type SchemaCreatePaymentResponse = components['schemas']['CreatePaymentResponse'];
 export type SchemaCreateSubscriptionPlanRequest = components['schemas']['CreateSubscriptionPlanRequest'];
+export type SchemaCreateWalletTransactionResponse = components['schemas']['CreateWalletTransactionResponse'];
+export type SchemaCurrencyExchangeRateRefreshResponse = components['schemas']['CurrencyExchangeRateRefreshResponse'];
 export type SchemaCurrencyUnitEnum = components['schemas']['CurrencyUnitEnum'];
 export type SchemaFileManagerAdminDeleteBulkRequest = components['schemas']['FileManagerAdminDeleteBulkRequest'];
 export type SchemaFileManagerAdminDeleteBulkResponse = components['schemas']['FileManagerAdminDeleteBulkResponse'];
@@ -1792,40 +2117,92 @@ export type SchemaFileManagerPresignedGetResponse = components['schemas']['FileM
 export type SchemaFileManagerUploadFileResponse = components['schemas']['FileManagerUploadFileResponse'];
 export type SchemaFileManagerUserFilesResponse = components['schemas']['FileManagerUserFilesResponse'];
 export type SchemaGenerateTaskRequest = components['schemas']['GenerateTaskRequest'];
-export type SchemaGetAdminCurrencyExchangeRateRefreshResponseBody = components['schemas']['GetAdminCurrencyExchangeRateRefreshResponseBody'];
-export type SchemaGetIrrExchangeRateResponseBody = components['schemas']['GetIrrExchangeRateResponseBody'];
-export type SchemaGetPaymentResultResponseBody = components['schemas']['GetPaymentResultResponseBody'];
+export type SchemaGetWalletResponse = components['schemas']['GetWalletResponse'];
+export type SchemaGetWalletTransactionsResponse = components['schemas']['GetWalletTransactionsResponse'];
 export type SchemaHttpValidationError = components['schemas']['HTTPValidationError'];
-export type SchemaPaymentGateWayProviderEnum = components['schemas']['PaymentGateWayProviderEnum'];
-export type SchemaPaymentInvoiceStatusEnum = components['schemas']['PaymentInvoiceStatusEnum'];
+export type SchemaPaymentListItemResponse = components['schemas']['PaymentListItemResponse'];
+export type SchemaPaymentListResponse = components['schemas']['PaymentListResponse'];
+export type SchemaPaymentStatusEnum = components['schemas']['PaymentStatusEnum'];
+export type SchemaPaymentStatusResponse = components['schemas']['PaymentStatusResponse'];
+export type SchemaPaymentTargetTypeEnum = components['schemas']['PaymentTargetTypeEnum'];
 export type SchemaSubscriptionPlanListResponse = components['schemas']['SubscriptionPlanListResponse'];
 export type SchemaSubscriptionPlanResponse = components['schemas']['SubscriptionPlanResponse'];
-export type SchemaSubscriptionPlansEnum = components['schemas']['SubscriptionPlansEnum'];
 export type SchemaSubscriptionPurchaseRequest = components['schemas']['SubscriptionPurchaseRequest'];
 export type SchemaSubscriptionPurchaseResponse = components['schemas']['SubscriptionPurchaseResponse'];
 export type SchemaUpdateSubscriptionPlanRequest = components['schemas']['UpdateSubscriptionPlanRequest'];
+export type SchemaUserChargeWalletRequest = components['schemas']['UserChargeWalletRequest'];
+export type SchemaUserEditInfoRequest = components['schemas']['UserEditInfoRequest'];
+export type SchemaUserEditInfoResponse = components['schemas']['UserEditInfoResponse'];
 export type SchemaUserGetInfoResponse = components['schemas']['UserGetInfoResponse'];
-export type SchemaUserGetInfoResponseDefaultWallet = components['schemas']['UserGetInfoResponseDefaultWallet'];
-export type SchemaUserLoginBody = components['schemas']['UserLoginBody'];
+export type SchemaUserLoginRequest = components['schemas']['UserLoginRequest'];
 export type SchemaUserLoginResponse = components['schemas']['UserLoginResponse'];
-export type SchemaUserPatchEditInfoRequest = components['schemas']['UserPatchEditInfoRequest'];
-export type SchemaUserPatchEditInfoResponse = components['schemas']['UserPatchEditInfoResponse'];
 export type SchemaUserResendOtpResponse = components['schemas']['UserResendOtpResponse'];
-export type SchemaUserResetPasswordBody = components['schemas']['UserResetPasswordBody'];
+export type SchemaUserResetPasswordRequest = components['schemas']['UserResetPasswordRequest'];
 export type SchemaUserResetPasswordResponse = components['schemas']['UserResetPasswordResponse'];
-export type SchemaUserSetPasswordBody = components['schemas']['UserSetPasswordBody'];
-export type SchemaUserStartBody = components['schemas']['UserStartBody'];
+export type SchemaUserSetPasswordRequest = components['schemas']['UserSetPasswordRequest'];
+export type SchemaUserStartRequest = components['schemas']['UserStartRequest'];
 export type SchemaUserStartResponse = components['schemas']['UserStartResponse'];
 export type SchemaUserSubscriptionResponse = components['schemas']['UserSubscriptionResponse'];
 export type SchemaValidationError = components['schemas']['ValidationError'];
-export type SchemaWalletDepositRequestBody = components['schemas']['WalletDepositRequestBody'];
-export type SchemaWalletDepositResponseBody = components['schemas']['WalletDepositResponseBody'];
-export type SchemaWalletMemberRoleEnum = components['schemas']['WalletMemberRoleEnum'];
-export type SchemaWalletTypeEnum = components['schemas']['WalletTypeEnum'];
-export type SchemaTuringPythonApiApiV1AiRegistryAdminSchemaAiRegistryModelDetail = components['schemas']['turing_python_api__api__v1__ai_registry__admin_schema__AiRegistryModelDetail'];
-export type SchemaTuringPythonApiApiV1AiRegistryUserSchemaAiRegistryModelDetail = components['schemas']['turing_python_api__api__v1__ai_registry__user_schema__AiRegistryModelDetail'];
+export type SchemaWalletTransactionResponse = components['schemas']['WalletTransactionResponse'];
+export type SchemaWalletTransactionTypeEnum = components['schemas']['WalletTransactionTypeEnum'];
+export type SchemaTuringPythonApiModulesAiRegistryPresentationSchemasAiRegistryModelDetail = components['schemas']['turing_python_api__modules__ai_registry__presentation__schemas__AiRegistryModelDetail'];
+export type SchemaTuringPythonApiModulesAiRegistryPresentationSchemasAdminAiRegistryModelDetail = components['schemas']['turing_python_api__modules__ai_registry__presentation__schemas_admin__AiRegistryModelDetail'];
 export type $defs = Record<string, never>;
 export interface operations {
+    readonly get_info_user_get_info_get: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["UserGetInfoResponse"];
+                };
+            };
+        };
+    };
+    readonly edit_user_info_user_edit_info_patch: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody: {
+            readonly content: {
+                readonly "application/json": components["schemas"]["UserEditInfoRequest"];
+            };
+        };
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["UserEditInfoResponse"];
+                };
+            };
+            /** @description Validation Error */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     readonly start_user_start_post: {
         readonly parameters: {
             readonly query?: never;
@@ -1835,7 +2212,7 @@ export interface operations {
         };
         readonly requestBody: {
             readonly content: {
-                readonly "application/json": components["schemas"]["UserStartBody"];
+                readonly "application/json": components["schemas"]["UserStartRequest"];
             };
         };
         readonly responses: {
@@ -1868,7 +2245,7 @@ export interface operations {
         };
         readonly requestBody: {
             readonly content: {
-                readonly "application/json": components["schemas"]["UserLoginBody"];
+                readonly "application/json": components["schemas"]["UserLoginRequest"];
             };
         };
         readonly responses: {
@@ -1901,7 +2278,7 @@ export interface operations {
         };
         readonly requestBody: {
             readonly content: {
-                readonly "application/json": components["schemas"]["UserResetPasswordBody"];
+                readonly "application/json": components["schemas"]["UserResetPasswordRequest"];
             };
         };
         readonly responses: {
@@ -1954,7 +2331,7 @@ export interface operations {
         };
         readonly requestBody: {
             readonly content: {
-                readonly "application/json": components["schemas"]["UserSetPasswordBody"];
+                readonly "application/json": components["schemas"]["UserSetPasswordRequest"];
             };
         };
         readonly responses: {
@@ -1965,92 +2342,6 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["UserLoginResponse"];
-                };
-            };
-            /** @description Validation Error */
-            readonly 422: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    readonly get_info_user_get_info_get: {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
-        };
-        readonly requestBody?: never;
-        readonly responses: {
-            /** @description Successful Response */
-            readonly 200: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["UserGetInfoResponse"];
-                };
-            };
-        };
-    };
-    readonly edit_user_info_user_edit_info_patch: {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
-        };
-        readonly requestBody: {
-            readonly content: {
-                readonly "application/json": components["schemas"]["UserPatchEditInfoRequest"];
-            };
-        };
-        readonly responses: {
-            /** @description Successful Response */
-            readonly 200: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["UserPatchEditInfoResponse"];
-                };
-            };
-            /** @description Validation Error */
-            readonly 422: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    readonly initiate_wallet_deposit_user_wallet_deposit_post: {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
-        };
-        readonly requestBody: {
-            readonly content: {
-                readonly "application/json": components["schemas"]["WalletDepositRequestBody"];
-            };
-        };
-        readonly responses: {
-            /** @description Successful Response */
-            readonly 200: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["WalletDepositResponseBody"];
                 };
             };
             /** @description Validation Error */
@@ -2084,73 +2375,7 @@ export interface operations {
             };
         };
     };
-    readonly initiate_subscription_purchase_user_subscription_purchase_post: {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
-        };
-        readonly requestBody: {
-            readonly content: {
-                readonly "application/json": components["schemas"]["SubscriptionPurchaseRequest"];
-            };
-        };
-        readonly responses: {
-            /** @description Successful Response */
-            readonly 200: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["SubscriptionPurchaseResponse"];
-                };
-            };
-            /** @description Validation Error */
-            readonly 422: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    readonly confirm_subscription_purchase_user_subscription_purchase_confirm_post: {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
-        };
-        readonly requestBody: {
-            readonly content: {
-                readonly "application/json": components["schemas"]["CompleteSubscriptionPurchaseRequest"];
-            };
-        };
-        readonly responses: {
-            /** @description Successful Response */
-            readonly 200: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["UserSubscriptionResponse"];
-                };
-            };
-            /** @description Validation Error */
-            readonly 422: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    readonly refresh_currency_exchange_rate_admin_currency_exchange_rate_refresh_get: {
+    readonly get_active_subscription_user_subscription_active_get: {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -2165,7 +2390,40 @@ export interface operations {
                     readonly [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": components["schemas"]["GetAdminCurrencyExchangeRateRefreshResponseBody"];
+                    readonly "application/json": components["schemas"]["UserSubscriptionResponse"];
+                };
+            };
+        };
+    };
+    readonly purchase_subscription_user_subscription_purchase_post: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody: {
+            readonly content: {
+                readonly "application/json": components["schemas"]["SubscriptionPurchaseRequest"];
+            };
+        };
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 201: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["SubscriptionPurchaseResponse"];
+                };
+            };
+            /** @description Validation Error */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
@@ -2242,7 +2500,6 @@ export interface operations {
         readonly parameters: {
             readonly query?: {
                 readonly include_inactive?: boolean;
-                readonly include_deleted?: boolean;
             };
             readonly header?: never;
             readonly path?: never;
@@ -2303,25 +2560,26 @@ export interface operations {
             };
         };
     };
-    readonly get_irr_exchange_rate_gateway_irr_exchange_rate_get: {
+    readonly charge_wallet_wallet_charge_post: {
         readonly parameters: {
-            readonly query: {
-                readonly amount_usdmicro: number;
-                readonly provider: components["schemas"]["PaymentGateWayProviderEnum"];
-            };
+            readonly query?: never;
             readonly header?: never;
             readonly path?: never;
             readonly cookie?: never;
         };
-        readonly requestBody?: never;
+        readonly requestBody: {
+            readonly content: {
+                readonly "application/json": components["schemas"]["UserChargeWalletRequest"];
+            };
+        };
         readonly responses: {
             /** @description Successful Response */
-            readonly 200: {
+            readonly 201: {
                 headers: {
                     readonly [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": components["schemas"]["GetIrrExchangeRateResponseBody"];
+                    readonly "application/json": components["schemas"]["ChargeWalletResponse"];
                 };
             };
             /** @description Validation Error */
@@ -2335,10 +2593,157 @@ export interface operations {
             };
         };
     };
-    readonly get_payment_result_gateway_payment_result_get: {
+    readonly get_current_user_wallet_wallet_wallet_get: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["GetWalletResponse"];
+                };
+            };
+        };
+    };
+    readonly get_wallet_transactions_wallet_wallet__wallet_uuid__transactions_get: {
+        readonly parameters: {
+            readonly query?: {
+                readonly offset?: number;
+                readonly limit?: number;
+            };
+            readonly header?: never;
+            readonly path: {
+                readonly wallet_uuid: string;
+            };
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["GetWalletTransactionsResponse"];
+                };
+            };
+            /** @description Validation Error */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    readonly get_wallet_transactions_admin_wallet__wallet_uuid__transactions_get: {
         readonly parameters: {
             readonly query: {
-                readonly session_id: string;
+                readonly user_uuid: string;
+                readonly offset?: number;
+                readonly limit?: number;
+            };
+            readonly header?: never;
+            readonly path: {
+                readonly wallet_uuid: string;
+            };
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["GetWalletTransactionsResponse"];
+                };
+            };
+            /** @description Validation Error */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    readonly charge_wallet_admin_wallet__wallet_uuid__charge_post: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header: {
+                readonly "Idempotency-Key": string;
+            };
+            readonly path: {
+                readonly wallet_uuid: string;
+            };
+            readonly cookie?: never;
+        };
+        readonly requestBody: {
+            readonly content: {
+                readonly "application/json": components["schemas"]["ChargeWalletRequest"];
+            };
+        };
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 201: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["CreateWalletTransactionResponse"];
+                };
+            };
+            /** @description Validation Error */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    readonly refresh_currency_exchange_rate_admin_currency_exchange_rate_refresh_get: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["CurrencyExchangeRateRefreshResponse"];
+                };
+            };
+        };
+    };
+    readonly list_payments_payment_get: {
+        readonly parameters: {
+            readonly query?: {
+                readonly offset?: number;
+                readonly limit?: number;
             };
             readonly header?: never;
             readonly path?: never;
@@ -2352,7 +2757,104 @@ export interface operations {
                     readonly [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": components["schemas"]["GetPaymentResultResponseBody"];
+                    readonly "application/json": components["schemas"]["PaymentListResponse"];
+                };
+            };
+            /** @description Validation Error */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    readonly create_payment_payment_post: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody: {
+            readonly content: {
+                readonly "application/json": components["schemas"]["CreatePaymentRequest"];
+            };
+        };
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 201: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["CreatePaymentResponse"];
+                };
+            };
+            /** @description Validation Error */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    readonly get_payment_status_payment__payment_uuid__get: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path: {
+                readonly payment_uuid: string;
+            };
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["PaymentStatusResponse"];
+                };
+            };
+            /** @description Validation Error */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    readonly verify_payment_payment_verify_post: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody: {
+            readonly content: {
+                readonly "application/x-www-form-urlencoded": components["schemas"]["Body_verify_payment_payment_verify_post"];
+            };
+        };
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 303: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": unknown;
                 };
             };
             /** @description Validation Error */
@@ -2973,7 +3475,7 @@ export interface operations {
                     readonly [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": components["schemas"]["turing_python_api__api__v1__ai_registry__user_schema__AiRegistryModelDetail"];
+                    readonly "application/json": components["schemas"]["turing_python_api__modules__ai_registry__presentation__schemas__AiRegistryModelDetail"];
                 };
             };
             /** @description Validation Error */
@@ -3125,7 +3627,7 @@ export interface operations {
                     readonly [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": components["schemas"]["turing_python_api__api__v1__ai_registry__admin_schema__AiRegistryModelDetail"];
+                    readonly "application/json": components["schemas"]["turing_python_api__modules__ai_registry__presentation__schemas_admin__AiRegistryModelDetail"];
                 };
             };
             /** @description Validation Error */
@@ -3156,7 +3658,7 @@ export interface operations {
                     readonly [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": components["schemas"]["turing_python_api__api__v1__ai_registry__admin_schema__AiRegistryModelDetail"];
+                    readonly "application/json": components["schemas"]["turing_python_api__modules__ai_registry__presentation__schemas_admin__AiRegistryModelDetail"];
                 };
             };
             /** @description Validation Error */
@@ -3191,7 +3693,7 @@ export interface operations {
                     readonly [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": components["schemas"]["turing_python_api__api__v1__ai_registry__admin_schema__AiRegistryModelDetail"];
+                    readonly "application/json": components["schemas"]["turing_python_api__modules__ai_registry__presentation__schemas_admin__AiRegistryModelDetail"];
                 };
             };
             /** @description Validation Error */
@@ -3222,7 +3724,7 @@ export interface operations {
                     readonly [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": readonly components["schemas"]["turing_python_api__api__v1__ai_registry__admin_schema__AiRegistryModelDetail"][];
+                    readonly "application/json": readonly components["schemas"]["turing_python_api__modules__ai_registry__presentation__schemas_admin__AiRegistryModelDetail"][];
                 };
             };
             /** @description Validation Error */
@@ -3257,7 +3759,7 @@ export interface operations {
                     readonly [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": components["schemas"]["turing_python_api__api__v1__ai_registry__admin_schema__AiRegistryModelDetail"];
+                    readonly "application/json": components["schemas"]["turing_python_api__modules__ai_registry__presentation__schemas_admin__AiRegistryModelDetail"];
                 };
             };
             /** @description Validation Error */
@@ -3293,7 +3795,7 @@ export interface operations {
                     readonly [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": components["schemas"]["turing_python_api__api__v1__ai_registry__admin_schema__AiRegistryModelDetail"];
+                    readonly "application/json": components["schemas"]["turing_python_api__modules__ai_registry__presentation__schemas_admin__AiRegistryModelDetail"];
                 };
             };
             /** @description Validation Error */
@@ -3323,11 +3825,9 @@ export const aiTaskMessageStatusEnumValues: ReadonlyArray<FlattenedDeepRequired<
 export const aiTaskRuleEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiTaskRuleEnum"]> = ["SYSTEM", "USER", "ASSISTANT", "TOOL", "FUNCTION", "INLINE"];
 export const aiTaskTypeEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiTaskTypeEnum"]> = ["TEXT", "IMAGE", "AUDIO", "VIDEO"];
 export const currencyUnitEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["CurrencyUnitEnum"]> = ["USD", "IRR", "USDMICRO"];
-export const paymentGateWayProviderEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaymentGateWayProviderEnum"]> = ["PAYPING_IRR"];
-export const paymentInvoiceStatusEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaymentInvoiceStatusEnum"]> = ["PENDING", "PAID", "FAILED", "CANCELLED"];
-export const subscriptionPlansEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["SubscriptionPlansEnum"]> = ["ECONOMIC", "BASIC", "PRO"];
-export const walletMemberRoleEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["WalletMemberRoleEnum"]> = ["MEMBER", "ADMIN"];
-export const walletTypeEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["WalletTypeEnum"]> = ["PERSONAL", "GROUP"];
+export const paymentStatusEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaymentStatusEnum"]> = ["PENDING", "PAID", "FAILED"];
+export const paymentTargetTypeEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaymentTargetTypeEnum"]> = ["subscription", "wallet"];
+export const walletTransactionTypeEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["WalletTransactionTypeEnum"]> = ["DEPOSIT", "WITHDRAW", "REFUND"];
 
 
 export const AiRegistryModelOwnerEnumMap = {
@@ -3404,39 +3904,25 @@ export const CurrencyUnitEnumMap = {
 export type CurrencyUnitEnumKey = keyof typeof CurrencyUnitEnumMap;
 export type CurrencyUnitEnumValue = (typeof CurrencyUnitEnumMap)[CurrencyUnitEnumKey];
 
-export const PaymentGateWayProviderEnumMap = {
-  "PAYPING_IRR": "PAYPING_IRR",
-} as const;
-export type PaymentGateWayProviderEnumKey = keyof typeof PaymentGateWayProviderEnumMap;
-export type PaymentGateWayProviderEnumValue = (typeof PaymentGateWayProviderEnumMap)[PaymentGateWayProviderEnumKey];
-
-export const PaymentInvoiceStatusEnumMap = {
+export const PaymentStatusEnumMap = {
   "PENDING": "PENDING",
   "PAID": "PAID",
   "FAILED": "FAILED",
-  "CANCELLED": "CANCELLED",
 } as const;
-export type PaymentInvoiceStatusEnumKey = keyof typeof PaymentInvoiceStatusEnumMap;
-export type PaymentInvoiceStatusEnumValue = (typeof PaymentInvoiceStatusEnumMap)[PaymentInvoiceStatusEnumKey];
+export type PaymentStatusEnumKey = keyof typeof PaymentStatusEnumMap;
+export type PaymentStatusEnumValue = (typeof PaymentStatusEnumMap)[PaymentStatusEnumKey];
 
-export const SubscriptionPlansEnumMap = {
-  "ECONOMIC": "ECONOMIC",
-  "BASIC": "BASIC",
-  "PRO": "PRO",
+export const PaymentTargetTypeEnumMap = {
+  "subscription": "subscription",
+  "wallet": "wallet",
 } as const;
-export type SubscriptionPlansEnumKey = keyof typeof SubscriptionPlansEnumMap;
-export type SubscriptionPlansEnumValue = (typeof SubscriptionPlansEnumMap)[SubscriptionPlansEnumKey];
+export type PaymentTargetTypeEnumKey = keyof typeof PaymentTargetTypeEnumMap;
+export type PaymentTargetTypeEnumValue = (typeof PaymentTargetTypeEnumMap)[PaymentTargetTypeEnumKey];
 
-export const WalletMemberRoleEnumMap = {
-  "MEMBER": "MEMBER",
-  "ADMIN": "ADMIN",
+export const WalletTransactionTypeEnumMap = {
+  "DEPOSIT": "DEPOSIT",
+  "WITHDRAW": "WITHDRAW",
+  "REFUND": "REFUND",
 } as const;
-export type WalletMemberRoleEnumKey = keyof typeof WalletMemberRoleEnumMap;
-export type WalletMemberRoleEnumValue = (typeof WalletMemberRoleEnumMap)[WalletMemberRoleEnumKey];
-
-export const WalletTypeEnumMap = {
-  "PERSONAL": "PERSONAL",
-  "GROUP": "GROUP",
-} as const;
-export type WalletTypeEnumKey = keyof typeof WalletTypeEnumMap;
-export type WalletTypeEnumValue = (typeof WalletTypeEnumMap)[WalletTypeEnumKey];
+export type WalletTransactionTypeEnumKey = keyof typeof WalletTransactionTypeEnumMap;
+export type WalletTransactionTypeEnumValue = (typeof WalletTransactionTypeEnumMap)[WalletTransactionTypeEnumKey];

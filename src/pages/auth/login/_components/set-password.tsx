@@ -29,7 +29,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { useReactQueryApi } from "@/hook/app";
 import { cookies } from "@/utils/cookies";
 import { APP_ROUTES_KEY } from "@/router";
 import {
@@ -38,6 +37,7 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { PasswordInput } from "@/components/ui/password-input";
+import { useResendOtp, useSetPassword } from "@/pages/_hooks";
 
 const AuthLoginPageSetPassword: FC = () => {
   const navigate = useNavigate();
@@ -46,7 +46,8 @@ const AuthLoginPageSetPassword: FC = () => {
   const [, setPageState] = useImmerAtom(authLoginPageState);
 
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
-  const reactQueryApi = useReactQueryApi();
+  const setPasswordState = useSetPassword();
+  const resendOtpState = useResendOtp();
   const formSchema = z
     .object({
       password: z
@@ -87,26 +88,6 @@ const AuthLoginPageSetPassword: FC = () => {
       path: ["confirmPassword"],
     });
 
-  const setPassword = reactQueryApi.useMutation("post", "/user/set-password", {
-    onSuccess(data) {
-      cookie.set(APP_KEYS.COOKIES.ACCESS_TOKEN, data.token);
-      setPageState((draft) => {
-        draft.currentView = "START";
-      });
-      navigate(APP_ROUTES_KEY.app.path);
-      toast.success(
-        t("pages.auth.login.setPasswordForm.successSetPasswordToast"),
-      );
-    },
-  });
-
-  const resendOtp = reactQueryApi.useMutation("post", "/user/resend-otp", {
-    onSuccess() {
-      toast.info(t("pages.auth.login.successSendOtp"));
-      countDown.setSeconds(150);
-    },
-  });
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -116,12 +97,20 @@ const AuthLoginPageSetPassword: FC = () => {
     },
   });
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    await setPassword.mutateAsync({
+    const data = await setPasswordState.mutateAsync({
       body: {
         password: values.password,
         otp_code: values.otp,
       },
     });
+    cookie.set(APP_KEYS.COOKIES.ACCESS_TOKEN, data.token);
+    setPageState((draft) => {
+      draft.currentView = "START";
+    });
+    navigate(APP_ROUTES_KEY.app.path);
+    toast.success(
+      t("pages.auth.login.setPasswordForm.successSetPasswordToast"),
+    );
   }
 
   return (
@@ -229,7 +218,9 @@ const AuthLoginPageSetPassword: FC = () => {
                 <Button
                   type="button"
                   onClick={async () => {
-                    await resendOtp.mutateAsync({});
+                    await resendOtpState.mutateAsync({});
+                    toast.info(t("pages.auth.login.successSendOtp"));
+                    countDown.setSeconds(150);
                   }}
                   variant="link"
                 >
@@ -246,9 +237,9 @@ const AuthLoginPageSetPassword: FC = () => {
             <Button
               className="w-full"
               type="submit"
-              disabled={setPassword.isPending || countDown.seconds <= 0}
+              disabled={setPasswordState.isPending || countDown.seconds <= 0}
             >
-              {setPassword.isPending ? (
+              {setPasswordState.isPending ? (
                 <LoaderCircle className="animate-spin" />
               ) : (
                 t("pages.auth.login.setPasswordForm.submit")

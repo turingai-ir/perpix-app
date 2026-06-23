@@ -26,30 +26,16 @@ import {
 import { Input } from "@/components/ui/input";
 import { Muted } from "@/components/ui/typography";
 import { Button } from "@/components/ui/button";
-import { useReactQueryApi } from "@/hook/app";
 import LoadingSection from "@/components/custom/loading-section";
 import ErrorSection from "@/components/custom/error-section";
 import { APP_ROUTES_KEY } from "@/router";
-import { useUser } from "@/pages/_hooks";
+import { useEditUserInfo, useUser } from "@/pages/_hooks";
 
 const ProfileSettingsPage: FC = () => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
 
-  const reactQueryApi = useReactQueryApi();
-
-  const { userState } = useUser();
-
-  const editUserInfoQuery = reactQueryApi.useMutation(
-    "patch",
-    "/user/edit-info",
-    {
-      onSuccess: () => {
-        toast.success(
-          t("pages.profile.settings.userInfo.form.successSetPasswordToast"),
-        );
-      },
-    },
-  );
+  const userState = useUser();
+  const editUserInfoState = useEditUserInfo();
 
   const formSchema = z.object({
     name: z
@@ -95,12 +81,15 @@ const ProfileSettingsPage: FC = () => {
   }, [userState.isSuccess, userState.data, form]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    await editUserInfoQuery.mutateAsync({
+    await editUserInfoState.mutateAsync({
       body: {
         name: values.name,
         email: values.email,
       },
     });
+    toast.success(
+      t("pages.profile.settings.userInfo.form.successSetPasswordToast"),
+    );
   }
 
   if (userState.isError) {
@@ -199,9 +188,9 @@ const ProfileSettingsPage: FC = () => {
                   <Button
                     className="w-full"
                     type="submit"
-                    disabled={editUserInfoQuery.isPending}
+                    disabled={editUserInfoState.isPending}
                   >
-                    {editUserInfoQuery.isPending ? (
+                    {editUserInfoState.isPending ? (
                       <LoaderCircle className="animate-spin" />
                     ) : (
                       t("pages.profile.settings.userInfo.form.submit")

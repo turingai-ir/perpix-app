@@ -31,7 +31,7 @@ const AppLayout: FC = () => {
   const headerRef = useRef<HTMLElement>(null);
   const navigate = useNavigate();
 
-  const { userState } = useUser();
+  const userState = useUser();
 
   const location = useLocation();
 
