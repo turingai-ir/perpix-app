@@ -12,7 +12,7 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { useAppTranslate, useSecondsCountDown } from "@/hook";
 import { APP_I18_KEYS } from "@/services/i18";
-import { formatLocalizedNumber, rialToToman } from "@/utils";
+import { formatLocalizedNumber } from "@/utils";
 
 const PAYMENT_REDIRECT_COUNTDOWN_SECONDS = 10;
 
@@ -104,10 +104,10 @@ export function PaymentRedirectPortal() {
     ((PAYMENT_REDIRECT_COUNTDOWN_SECONDS - seconds) /
       PAYMENT_REDIRECT_COUNTDOWN_SECONDS) *
     100;
-  const formatToman = useCallback(
+  const formatCurrency = useCallback(
     (amountIrr: number) =>
-      t("pages.payment.redirect.amountToman", {
-        amount: formatLocalizedNumber({ value: rialToToman(amountIrr) }),
+      t("pages.payment.redirect.amountRials", {
+        amount: formatLocalizedNumber({ value: amountIrr }),
       }),
     [t],
   );
@@ -128,7 +128,7 @@ export function PaymentRedirectPortal() {
               {t("pages.payment.redirect.initialAmount")}
             </span>
             <span className="font-medium">
-              {formatToman(pendingPayment?.amountIrr ?? 0)}
+              {formatCurrency(pendingPayment?.amountIrr ?? 0)}
             </span>
           </div>
           <div className="flex items-center justify-between gap-4">
@@ -139,14 +139,14 @@ export function PaymentRedirectPortal() {
                 }),
               })}
             </span>
-            <span className="font-medium">{formatToman(taxAmount)}</span>
+            <span className="font-medium">{formatCurrency(taxAmount)}</span>
           </div>
           <div className="flex items-center justify-between gap-4 border-t pt-4">
             <span className="font-medium">
               {t("pages.payment.redirect.finalAmount")}
             </span>
             <span className="text-lg font-semibold">
-              {formatToman(taxedAmount)}
+              {formatCurrency(taxedAmount)}
             </span>
           </div>
         </div>

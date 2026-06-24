@@ -7,7 +7,7 @@ import { useAppTranslate } from "@/hook";
 import LoadingSection from "@/components/custom/loading-section";
 import ErrorSection from "@/components/custom/error-section";
 import { type SchemaSubscriptionPlanListResponse } from "@/services/api";
-import { formatLocalizedNumber, rialToToman } from "@/utils";
+import { formatLocalizedNumber } from "@/utils";
 import {
   Sheet,
   SheetContent,
@@ -106,7 +106,7 @@ function PricingFeature({ open, requiredScopes = [], onOpenChange }: Props) {
                   })}
                 >
                   <h3 className="text-lg font-medium">{plan?.display_name}</h3>
-                  <p className="mt-2 text-4xl font-bold">{`${formatLocalizedNumber({ value: rialToToman(plan?.price_irr ?? 0) })} ${t("common.tomans")}`}</p>
+                  <p className="mt-2 text-4xl font-bold">{`${formatLocalizedNumber({ value: plan?.price_irr ?? 0 })} ${t("common.rials")}`}</p>
                   <p className="text-muted-foreground mt-4 font-medium">
                     {plan?.description}
                   </p>

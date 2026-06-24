@@ -9,7 +9,7 @@ import {
   type SchemaPaymentListItemResponse,
 } from "@/services/api";
 import { Button } from "@/components/ui/button";
-import { formatLocalizedNumber, rialToToman } from "@/utils";
+import { formatLocalizedNumber } from "@/utils";
 import { useAppTranslate } from "@/hook";
 import { APP_I18_KEYS } from "@/services/i18";
 import { APP_ROUTES_KEY } from "@/router/routes";
@@ -28,8 +28,7 @@ function PaymentResultPage() {
       )
     : [];
   const payment = payments.find(
-    (item: SchemaPaymentListItemResponse) =>
-      item.payment_uuid === paymentUuid,
+    (item: SchemaPaymentListItemResponse) => item.payment_uuid === paymentUuid,
   );
   const isPaid = paymentResult?.status === PaymentStatusEnumMap.PAID;
 
@@ -85,10 +84,8 @@ function PaymentResultPage() {
                 </span>
                 <span className="text-2xl font-bold text-green-500 dark:text-green-400">
                   {`${formatLocalizedNumber({
-                    value: rialToToman(
-                      payment?.amount_irr ?? 0,
-                    ),
-                  })} ${t("common.tomans")}`}
+                    value: payment?.amount_irr ?? 0,
+                  })} ${t("common.rials")}`}
                 </span>
               </div>
             </div>
@@ -144,10 +141,8 @@ function PaymentResultPage() {
                 </span>
                 <span className="text-2xl font-bold text-red-500 dark:text-red-400">
                   {`${formatLocalizedNumber({
-                    value: rialToToman(
-                      payment?.amount_irr ?? 0,
-                    ),
-                  })} ${t("common.tomans")}`}
+                    value: payment?.amount_irr ?? 0,
+                  })} ${t("common.rials")}`}
                 </span>
               </div>
             </div>

@@ -1,7 +1,7 @@
 import { jotaiStore } from "@/lib/jotai-store";
 import { globalAtom } from "@/state";
 
-const TOKEN_CALCULATOR = 10_000;
+const TOKEN_CALCULATOR = 1_000;
 export const microDollarToToken = (amount: number) => amount / TOKEN_CALCULATOR;
 
 type FormatLocalizedNumberParams = {

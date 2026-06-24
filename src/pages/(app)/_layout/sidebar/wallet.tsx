@@ -51,12 +51,12 @@ function AppLayoutSidebarWallet() {
       .refine(
         (s) => {
           const n = Number(s);
-          return !Number.isNaN(n) && n >= 1_000;
+          return !Number.isNaN(n) && n >= 10;
         },
         {
           message: t("common.validationErrors.min", {
             name: t("common.token"),
-            min: formatLocalizedNumber({ value: 1_000 }),
+            min: formatLocalizedNumber({ value: 10 }),
           }),
         },
       )

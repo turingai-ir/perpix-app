@@ -189,7 +189,7 @@
               "transactions": "مشاهده تراکنش‌ها"
             },
             "chargeWallet": {
-              "action": "پرداخت ({{amount}} تومان) ",
+              "action": "پرداخت ({{amount}} ریال) ",
               "description": "میزان توکن برای خریداری را وارید نمایید و سپس از طریق درگاه پرداخت کنید",
               "nonAction": "پرداخت",
               "title": "افزایش موجودی کیف پول"
@@ -336,7 +336,7 @@
     },
     "payment": {
       "redirect": {
-        "amountToman": "{{amount}} تومان",
+        "amountRials": "{{amount}} ریال",
         "autoRedirect": "انتقال خودکار تا {{seconds}} ثانیه دیگر",
         "continue": "ادامه پرداخت",
         "description": "قبل از انتقال به درگاه، مالیات به مبلغ پرداخت اضافه می‌شود.",
