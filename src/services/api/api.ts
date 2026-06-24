@@ -118,6 +118,25 @@ export interface paths {
         readonly patch?: never;
         readonly trace?: never;
     };
+    readonly "/admin/user/{user_uuid}/get-info": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path: {
+                readonly user_uuid: string;
+            };
+            readonly cookie?: never;
+        };
+        /** Get User Info */
+        readonly get: operations["get_user_info_admin_user__user_uuid__get_info_get"];
+        readonly put?: never;
+        readonly post?: never;
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
     readonly "/user/subscription/plans": {
         readonly parameters: {
             readonly query?: never;
@@ -233,6 +252,23 @@ export interface paths {
         readonly put?: never;
         /** Activate User Subscription */
         readonly post: operations["activate_user_subscription_admin_subscription_activate_post"];
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
+    readonly "/admin/subscription/deactivate": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly get?: never;
+        readonly put?: never;
+        /** Deactivate User Subscription */
+        readonly post: operations["deactivate_user_subscription_admin_subscription_deactivate_post"];
         readonly delete?: never;
         readonly options?: never;
         readonly head?: never;
@@ -874,6 +910,44 @@ export interface components {
              */
             readonly plan_uuid: string;
         };
+        /** AdminUserGetInfoResponse */
+        readonly AdminUserGetInfoResponse: {
+            /** Email */
+            readonly email: string | null;
+            /** Phone Number */
+            readonly phone_number: string;
+            /** Name */
+            readonly name: string | null;
+            /**
+             * Is Verified
+             * @default false
+             */
+            readonly is_verified: boolean;
+            /** Scopes */
+            readonly scopes: readonly string[];
+            /** Default Wallet Uuid */
+            readonly default_wallet_uuid: string | null;
+            /**
+             * Is Active
+             * @default true
+             */
+            readonly is_active: boolean;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            readonly created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            readonly updated_at: string;
+            /**
+             * User Uuid
+             * Format: uuid
+             */
+            readonly user_uuid: string;
+        };
         /** AiRegistryModelCreateRequest */
         readonly AiRegistryModelCreateRequest: {
             readonly model_owner: components["schemas"]["AiRegistryModelOwnerEnum"];
@@ -1215,8 +1289,14 @@ export interface components {
             readonly payment_url: string;
             /** Amount Usdmicro */
             readonly amount_usdmicro: number;
-            /** Amount Irr */
-            readonly amount_irr: number;
+            /** Amount Irr Without Tax */
+            readonly amount_irr_without_tax: number;
+            /** Tax Percent */
+            readonly tax_percent: number;
+            /** Tax Amount Irr */
+            readonly tax_amount_irr: number;
+            /** Total Amount Irr */
+            readonly total_amount_irr: number;
             /**
              * Wallet Uuid
              * Format: uuid
@@ -1235,10 +1315,14 @@ export interface components {
              * Format: uuid
              */
             readonly payment_uuid: string;
-            /** Amount Usdmicro */
-            readonly amount_usdmicro: number;
-            /** Amount Irr */
-            readonly amount_irr: number;
+            /** Amount Irr Without Tax */
+            readonly amount_irr_without_tax: number;
+            /** Tax Percent */
+            readonly tax_percent: number;
+            /** Tax Amount Irr */
+            readonly tax_amount_irr: number;
+            /** Total Amount Irr */
+            readonly total_amount_irr: number;
             /** Payment Url */
             readonly payment_url: string;
         };
@@ -1346,6 +1430,14 @@ export interface components {
          * @enum {string}
          */
         readonly CurrencyUnitEnum: "USD" | "IRR" | "USDMICRO";
+        /** DeactivateUserSubscriptionRequest */
+        readonly DeactivateUserSubscriptionRequest: {
+            /**
+             * User Uuid
+             * Format: uuid
+             */
+            readonly user_uuid: string;
+        };
         /** FileManagerAdminDeleteBulkRequest */
         readonly FileManagerAdminDeleteBulkRequest: {
             /** File Uuids */
@@ -1605,10 +1697,14 @@ export interface components {
              * Format: uuid
              */
             readonly payment_uuid: string;
-            /** Amount Usdmicro */
-            readonly amount_usdmicro: number;
-            /** Amount Irr */
-            readonly amount_irr: number;
+            /** Amount Irr Without Tax */
+            readonly amount_irr_without_tax: number;
+            /** Tax Percent */
+            readonly tax_percent: number;
+            /** Tax Amount Irr */
+            readonly tax_amount_irr: number;
+            /** Total Amount Irr */
+            readonly total_amount_irr: number;
             readonly status: components["schemas"]["PaymentStatusEnum"];
             /** Payment Url */
             readonly payment_url: string | null;
@@ -1724,8 +1820,14 @@ export interface components {
             readonly payment_url: string;
             /** Amount Usdmicro */
             readonly amount_usdmicro: number;
-            /** Amount Irr */
-            readonly amount_irr: number;
+            /** Amount Irr Without Tax */
+            readonly amount_irr_without_tax: number;
+            /** Tax Percent */
+            readonly tax_percent: number;
+            /** Tax Amount Irr */
+            readonly tax_amount_irr: number;
+            /** Total Amount Irr */
+            readonly total_amount_irr: number;
             readonly plan: components["schemas"]["SubscriptionPlanResponse"];
         };
         /** UpdateSubscriptionPlanRequest */
@@ -2081,6 +2183,7 @@ export interface components {
     pathItems: never;
 }
 export type SchemaActivateUserSubscriptionRequest = components['schemas']['ActivateUserSubscriptionRequest'];
+export type SchemaAdminUserGetInfoResponse = components['schemas']['AdminUserGetInfoResponse'];
 export type SchemaAiRegistryModelCreateRequest = components['schemas']['AiRegistryModelCreateRequest'];
 export type SchemaAiRegistryModelOwnerEnum = components['schemas']['AiRegistryModelOwnerEnum'];
 export type SchemaAiRegistryModelProviderLinkCreateRequest = components['schemas']['AiRegistryModelProviderLinkCreateRequest'];
@@ -2110,6 +2213,7 @@ export type SchemaCreateSubscriptionPlanRequest = components['schemas']['CreateS
 export type SchemaCreateWalletTransactionResponse = components['schemas']['CreateWalletTransactionResponse'];
 export type SchemaCurrencyExchangeRateRefreshResponse = components['schemas']['CurrencyExchangeRateRefreshResponse'];
 export type SchemaCurrencyUnitEnum = components['schemas']['CurrencyUnitEnum'];
+export type SchemaDeactivateUserSubscriptionRequest = components['schemas']['DeactivateUserSubscriptionRequest'];
 export type SchemaFileManagerAdminDeleteBulkRequest = components['schemas']['FileManagerAdminDeleteBulkRequest'];
 export type SchemaFileManagerAdminDeleteBulkResponse = components['schemas']['FileManagerAdminDeleteBulkResponse'];
 export type SchemaFileManagerAdminFileResponse = components['schemas']['FileManagerAdminFileResponse'];
@@ -2362,6 +2466,37 @@ export interface operations {
             };
         };
     };
+    readonly get_user_info_admin_user__user_uuid__get_info_get: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path: {
+                readonly user_uuid: string;
+            };
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["AdminUserGetInfoResponse"];
+                };
+            };
+            /** @description Validation Error */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     readonly get_subscription_plans_user_subscription_plans_get: {
         readonly parameters: {
             readonly query?: never;
@@ -2544,6 +2679,39 @@ export interface operations {
         readonly requestBody: {
             readonly content: {
                 readonly "application/json": components["schemas"]["ActivateUserSubscriptionRequest"];
+            };
+        };
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["UserSubscriptionResponse"];
+                };
+            };
+            /** @description Validation Error */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    readonly deactivate_user_subscription_admin_subscription_deactivate_post: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody: {
+            readonly content: {
+                readonly "application/json": components["schemas"]["DeactivateUserSubscriptionRequest"];
             };
         };
         readonly responses: {

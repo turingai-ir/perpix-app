@@ -138,7 +138,10 @@ function PricingFeature({ open, requiredScopes = [], onOpenChange }: Props) {
                         const res = await handlePurchasePlan(plan?.uuid ?? "");
                         openPaymentUrl({
                           paymentUrl: res.payment_url,
-                          amountIrr: res.amount_irr,
+                          amountIrrWithoutTax: res.amount_irr_without_tax,
+                          taxPercent: res.tax_percent,
+                          taxAmountIrr: res.tax_amount_irr,
+                          totalAmountIrr: res.total_amount_irr,
                         });
                       }}
                     >

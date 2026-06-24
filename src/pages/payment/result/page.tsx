@@ -31,6 +31,22 @@ function PaymentResultPage() {
     (item: SchemaPaymentListItemResponse) => item.payment_uuid === paymentUuid,
   );
   const isPaid = paymentResult?.status === PaymentStatusEnumMap.PAID;
+  const paymentRows = [
+    {
+      label: t("pages.payment.result.initialAmount"),
+      value: payment?.amount_irr_without_tax ?? 0,
+    },
+    {
+      label: t("pages.payment.result.tax", {
+        percent: formatLocalizedNumber({ value: payment?.tax_percent ?? 0 }),
+      }),
+      value: payment?.tax_amount_irr ?? 0,
+    },
+    {
+      label: t("pages.payment.result.amount"),
+      value: payment?.total_amount_irr ?? 0,
+    },
+  ];
 
   return (
     <div className="h-dvh w-full">
@@ -78,16 +94,27 @@ function PaymentResultPage() {
                 </span>
               </div>
               <div className="bg-border h-px" />
-              <div className="flex flex-col items-start justify-between gap-4 lg:flex-row">
-                <span className="text-muted-foreground text-sm">
-                  {t("pages.payment.result.amount")}
-                </span>
-                <span className="text-2xl font-bold text-green-500 dark:text-green-400">
-                  {`${formatLocalizedNumber({
-                    value: payment?.amount_irr ?? 0,
-                  })} ${t("common.rials")}`}
-                </span>
-              </div>
+              {paymentRows.map((row, index) => (
+                <div
+                  key={row.label}
+                  className="flex flex-col items-start justify-between gap-4 lg:flex-row"
+                >
+                  <span className="text-muted-foreground text-sm">
+                    {row.label}
+                  </span>
+                  <span
+                    className={
+                      index === paymentRows.length - 1
+                        ? "text-2xl font-bold text-green-500 dark:text-green-400"
+                        : "text-foreground font-medium"
+                    }
+                  >
+                    {`${formatLocalizedNumber({
+                      value: row.value,
+                    })} ${t("common.rials")}`}
+                  </span>
+                </div>
+              ))}
             </div>
 
             <div className="space-y-3">
@@ -135,16 +162,27 @@ function PaymentResultPage() {
                 </span>
               </div>
               <div className="bg-border h-px" />
-              <div className="flex flex-col items-start justify-between gap-4 lg:flex-row">
-                <span className="text-muted-foreground text-sm">
-                  {t("pages.payment.result.amount")}
-                </span>
-                <span className="text-2xl font-bold text-red-500 dark:text-red-400">
-                  {`${formatLocalizedNumber({
-                    value: payment?.amount_irr ?? 0,
-                  })} ${t("common.rials")}`}
-                </span>
-              </div>
+              {paymentRows.map((row, index) => (
+                <div
+                  key={row.label}
+                  className="flex flex-col items-start justify-between gap-4 lg:flex-row"
+                >
+                  <span className="text-muted-foreground text-sm">
+                    {row.label}
+                  </span>
+                  <span
+                    className={
+                      index === paymentRows.length - 1
+                        ? "text-2xl font-bold text-red-500 dark:text-red-400"
+                        : "text-foreground font-medium"
+                    }
+                  >
+                    {`${formatLocalizedNumber({
+                      value: row.value,
+                    })} ${t("common.rials")}`}
+                  </span>
+                </div>
+              ))}
             </div>
 
             <div className="space-y-3">

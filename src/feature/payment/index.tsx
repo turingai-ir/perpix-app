@@ -18,12 +18,18 @@ const PAYMENT_REDIRECT_COUNTDOWN_SECONDS = 10;
 
 type PaymentRedirectParams = {
   paymentUrl?: string | null;
-  amountIrr?: number | null;
+  amountIrrWithoutTax?: number | null;
+  taxPercent?: number | null;
+  taxAmountIrr?: number | null;
+  totalAmountIrr?: number | null;
 };
 
 type PendingPaymentRedirect = {
   paymentUrl: string;
-  amountIrr: number;
+  amountIrrWithoutTax: number;
+  taxPercent: number;
+  taxAmountIrr: number;
+  totalAmountIrr: number;
 };
 
 type PaymentRedirectContextValue = {
@@ -32,13 +38,14 @@ type PaymentRedirectContextValue = {
 
 type PaymentRedirectListener = (params: PendingPaymentRedirect) => void;
 
-const taxPercent = Number(import.meta.env.VITE_PERPIX_TAX_PERCENT ?? 0);
-const normalizedTaxPercent = Number.isFinite(taxPercent) ? taxPercent : 0;
 const paymentRedirectListeners = new Set<PaymentRedirectListener>();
 
 function emitPaymentRedirect({
   paymentUrl,
-  amountIrr = 0,
+  amountIrrWithoutTax = 0,
+  taxPercent = 0,
+  taxAmountIrr = 0,
+  totalAmountIrr = 0,
 }: PaymentRedirectParams) {
   if (!paymentUrl) {
     return;
@@ -47,13 +54,12 @@ function emitPaymentRedirect({
   paymentRedirectListeners.forEach((listener) => {
     listener({
       paymentUrl,
-      amountIrr: amountIrr ?? 0,
+      amountIrrWithoutTax: amountIrrWithoutTax ?? 0,
+      taxPercent: taxPercent ?? 0,
+      taxAmountIrr: taxAmountIrr ?? 0,
+      totalAmountIrr: totalAmountIrr ?? 0,
     });
   });
-}
-
-function getTaxedAmount(amountIrr: number) {
-  return Math.round(amountIrr * (1 + normalizedTaxPercent / 100));
 }
 
 export function PaymentRedirectPortal() {
@@ -96,10 +102,6 @@ export function PaymentRedirectPortal() {
     redirectToPayment();
   }, [pendingPayment, redirectToPayment, seconds]);
 
-  const taxedAmount = pendingPayment
-    ? getTaxedAmount(pendingPayment.amountIrr)
-    : 0;
-  const taxAmount = taxedAmount - (pendingPayment?.amountIrr ?? 0);
   const progressValue =
     ((PAYMENT_REDIRECT_COUNTDOWN_SECONDS - seconds) /
       PAYMENT_REDIRECT_COUNTDOWN_SECONDS) *
@@ -128,25 +130,27 @@ export function PaymentRedirectPortal() {
               {t("pages.payment.redirect.initialAmount")}
             </span>
             <span className="font-medium">
-              {formatCurrency(pendingPayment?.amountIrr ?? 0)}
+              {formatCurrency(pendingPayment?.amountIrrWithoutTax ?? 0)}
             </span>
           </div>
           <div className="flex items-center justify-between gap-4">
             <span className="text-muted-foreground">
               {t("pages.payment.redirect.tax", {
                 percent: formatLocalizedNumber({
-                  value: normalizedTaxPercent,
+                  value: pendingPayment?.taxPercent ?? 0,
                 }),
               })}
             </span>
-            <span className="font-medium">{formatCurrency(taxAmount)}</span>
+            <span className="font-medium">
+              {formatCurrency(pendingPayment?.taxAmountIrr ?? 0)}
+            </span>
           </div>
           <div className="flex items-center justify-between gap-4 border-t pt-4">
             <span className="font-medium">
               {t("pages.payment.redirect.finalAmount")}
             </span>
             <span className="text-lg font-semibold">
-              {formatCurrency(taxedAmount)}
+              {formatCurrency(pendingPayment?.totalAmountIrr ?? 0)}
             </span>
           </div>
         </div>
