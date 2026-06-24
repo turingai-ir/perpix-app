@@ -219,13 +219,15 @@ export const useAiTaskResultPolling = (
       }).queryKey
     : undefined;
   const aiTasksListQueryKey = getAiTasksListQueryKey(queryOptions);
+  const walletQueryKey = queryOptions("get", "/wallet/wallet").queryKey;
 
-  const invalidateTaskQueries = () => {
+  const refreshAfterTaskResult = () => {
     if (aiTaskQueryKey) {
       void queryClient.invalidateQueries({ queryKey: aiTaskQueryKey });
     }
 
     void queryClient.invalidateQueries({ queryKey: aiTasksListQueryKey });
+    void queryClient.refetchQueries({ queryKey: walletQueryKey });
   };
 
   const shouldPoll =
@@ -255,13 +257,13 @@ export const useAiTaskResultPolling = (
         }
 
         if (resultMessage.task_status === "FAILED") {
-          invalidateTaskQueries();
+          refreshAfterTaskResult();
 
           return false;
         }
 
         if (isAiTaskMessageReady(resultMessage, generatedMediaField)) {
-          invalidateTaskQueries();
+          refreshAfterTaskResult();
 
           return false;
         }
