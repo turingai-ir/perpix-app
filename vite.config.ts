@@ -9,7 +9,9 @@ import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 
 const srcPath = fileURLToPath(new URL("./src", import.meta.url));
-const packageJson = JSON.parse(readFileSync(new URL("./package.json", import.meta.url), "utf-8")) as {
+const packageJson = JSON.parse(
+  readFileSync(new URL("./package.json", import.meta.url), "utf-8"),
+) as {
   name: string;
   version: string;
 };
@@ -41,12 +43,32 @@ export default defineConfig(({ mode }) => ({
         "fonts/vazirmatn/Vazirmatn-Thin.woff2",
       ],
       manifest: {
-        name: "PerPixAi",
+        id: "/",
+        name: "PerPix AI",
         short_name: "PerPixAi",
         description: "PerPixAi app",
+        start_url: "/",
+        scope: "/",
+        lang: "fa",
+        dir: "rtl",
         theme_color: "#ffffff",
         background_color: "#ffffff",
         display: "standalone",
+        screenshots: [
+          {
+            src: "screenshots/pwa-wide.png",
+            sizes: "1280x720",
+            type: "image/png",
+            form_factor: "wide",
+            label: "PerPixAi desktop workspace",
+          },
+          {
+            src: "screenshots/pwa-mobile.png",
+            sizes: "540x720",
+            type: "image/png",
+            label: "PerPixAi mobile workspace",
+          },
+        ],
         icons: [
           {
             src: "android-chrome-192x192.png",
