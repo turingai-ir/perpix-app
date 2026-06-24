@@ -11,7 +11,7 @@ import { APP_KEYS, HttpStatus } from "@/utils";
 import { useAppTranslate } from "@/hook";
 import { appEventBus } from "@/lib/event-bus";
 import { cookies } from "@/utils/cookies";
-import { APP_ROUTES_KEY } from "@/router";
+import { APP_ROUTES_KEY } from "@/router/routes";
 
 const RootLayout: FC = () => {
   const { t } = useAppTranslate();

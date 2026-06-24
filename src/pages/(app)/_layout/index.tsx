@@ -21,7 +21,9 @@ import { APP_KEYS, APP_LAYOUT_SIDEBAR_WIDTH } from "@/utils";
 
 import { appEventBus } from "@/lib/event-bus";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import PricingFeature from "@/feature/pricing";
+import { PaymentRedirectPortal } from "@/feature/payment";
 import { useUser } from "@/pages/_hooks";
 
 const AppLayout: FC = () => {
@@ -126,7 +128,7 @@ const AppLayout: FC = () => {
   }
 
   return (
-    <>
+    <TooltipProvider>
       <PricingFeature
         open={pricingOpen}
         requiredScopes={pricingRequiredScopes}
@@ -134,6 +136,7 @@ const AppLayout: FC = () => {
           onOpenChange(open);
         }}
       />
+      <PaymentRedirectPortal />
 
       <main
         className={`grid h-dvh w-full min-w-0 grid-cols-[minmax(0,1fr)] overflow-hidden transition-all duration-300 ease-in-out lg:grid-cols-[var(--sidebar-width,0px)_minmax(0,calc(100%-var(--sidebar-width,0px)))]`}
@@ -186,7 +189,7 @@ const AppLayout: FC = () => {
           </section>
         </ScrollArea>
       </main>
-    </>
+    </TooltipProvider>
   );
 };
 

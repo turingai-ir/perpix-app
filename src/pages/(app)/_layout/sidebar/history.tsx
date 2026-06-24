@@ -6,7 +6,7 @@ import LoadingSection from "@/components/custom/loading-section";
 import { Muted } from "@/components/ui/typography";
 import { useAppTranslate } from "@/hook";
 import { useInfiniteScroll } from "@/hooks";
-import { APP_ROUTES_KEY } from "@/router";
+import { APP_ROUTES_KEY } from "@/router/routes";
 import { AiRegistryModelSupportedTypesEnumMap } from "@/services/api";
 import { APP_I18_KEYS } from "@/services/i18";
 

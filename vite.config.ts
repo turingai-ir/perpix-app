@@ -24,7 +24,7 @@ export default defineConfig(({ mode }) => ({
     tailwindcss(),
     VitePWA({
       registerType: "autoUpdate",
-      injectRegister: "script-defer",
+      injectRegister: null,
       includeAssets: [
         "apple-touch-icon.png",
         "favicon.ico",
@@ -69,6 +69,9 @@ export default defineConfig(({ mode }) => ({
     watch: {
       ignored: ["**/.pnpm-store/**", "**/node_modules/**"],
     },
+  },
+  build: {
+    sourcemap: true,
   },
   resolve: {
     alias: {

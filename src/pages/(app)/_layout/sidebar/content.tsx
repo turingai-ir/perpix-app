@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { useAppTranslate } from "@/hook";
 import { APP_I18_KEYS } from "@/services/i18";
 import { APP_KEYS } from "@/utils";
-import { APP_ROUTES_KEY } from "@/router";
+import { APP_ROUTES_KEY } from "@/router/routes";
 import { Separator } from "@/components/ui/separator";
 import {
   DropdownMenu,

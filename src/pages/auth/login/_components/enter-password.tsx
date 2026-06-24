@@ -31,7 +31,7 @@ import {
 } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { cookies } from '@/utils/cookies';
-import { APP_ROUTES_KEY } from '@/router';
+import { APP_ROUTES_KEY } from '@/router/routes';
 import { PasswordInput } from '@/components/ui/password-input';
 import { useLogin, useResetPassword } from '@/pages/_hooks';
 

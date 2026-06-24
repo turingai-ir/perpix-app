@@ -28,7 +28,7 @@ import { Muted } from "@/components/ui/typography";
 import { Button } from "@/components/ui/button";
 import LoadingSection from "@/components/custom/loading-section";
 import ErrorSection from "@/components/custom/error-section";
-import { APP_ROUTES_KEY } from "@/router";
+import { APP_ROUTES_KEY } from "@/router/routes";
 import { useEditUserInfo, useUser } from "@/pages/_hooks";
 
 const ProfileSettingsPage: FC = () => {

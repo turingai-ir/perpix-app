@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { formatLocalizedNumber, rialToToman } from "@/utils";
 import { useAppTranslate } from "@/hook";
 import { APP_I18_KEYS } from "@/services/i18";
-import { APP_ROUTES_KEY } from "@/router";
+import { APP_ROUTES_KEY } from "@/router/routes";
 import { usePayments, usePaymentStatus } from "@/pages/_hooks";
 
 function PaymentResultPage() {

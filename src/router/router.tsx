@@ -4,20 +4,18 @@ import { createBrowserRouter, redirect, useRouteError } from "react-router";
 import { APP_ROUTES_KEY } from "./routes";
 
 import RootLayout from "@/pages/(root)/layout";
+import AppLayout from "@/pages/(app)/_layout";
+import AppPage from "@/pages/(app)/page";
+import GenerationImagePage from "@/pages/(app)/generation/image/page";
+import GenerationVideoPage from "@/pages/(app)/generation/video/page";
 import AuthLoginPage from "@/pages/auth/login/page";
 import ProfileLayout from "@/pages/profile/layout";
 import ProfileSettingsPage from "@/pages/profile/settings/page";
-import AppPage from "@/pages/(app)/page";
+import PaymentResultPage from "@/pages/payment/result/page";
 import { cookies } from "@/utils/cookies";
 import { APP_KEYS } from "@/utils";
-import AppLayout from "@/pages/(app)/_layout";
-import GenerationImagePage from "@/pages/(app)/generation/image/page";
-import GenerationVideoPage from "@/pages/(app)/generation/video/page";
-// import GenerationImageLayout from '@/pages/(app)/generation/image/_layout';
-import PaymentResultPage from "@/pages/payment/result/page";
-import { ErrorFallbackPage } from "@/components/custom";
+import { ErrorFallbackPage } from "@/components/custom/error-boundary";
 import { captureError } from "@/lib/observability";
-// import GenerationVideoLayout from '@/pages/(app)/generation/video/_layout';
 
 export const router = createBrowserRouter([
   {
@@ -36,7 +34,10 @@ export const router = createBrowserRouter([
           return null;
         },
         children: [
-          { Component: AppPage, index: true },
+          {
+            index: true,
+            Component: AppPage,
+          },
           {
             path: APP_ROUTES_KEY.generation.image.path,
             children: [
@@ -65,7 +66,10 @@ export const router = createBrowserRouter([
           },
         ],
       },
-      { path: APP_ROUTES_KEY.auth.login.path, Component: AuthLoginPage },
+      {
+        path: APP_ROUTES_KEY.auth.login.path,
+        Component: AuthLoginPage,
+      },
       {
         path: APP_ROUTES_KEY.profile.root.path,
         Component: ProfileLayout,
@@ -77,7 +81,12 @@ export const router = createBrowserRouter([
 
           return null;
         },
-        children: [{ Component: ProfileSettingsPage, path: APP_ROUTES_KEY.profile.settings.path }],
+        children: [
+          {
+            path: APP_ROUTES_KEY.profile.settings.path,
+            Component: ProfileSettingsPage,
+          },
+        ],
       },
       {
         path: APP_ROUTES_KEY.payment.result.path,

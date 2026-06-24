@@ -10,7 +10,7 @@ import { useNavigate, useParams } from "react-router";
 import { Activity, useCallback, useMemo } from "react";
 import { useAppTranslate } from "@/hook";
 import LoadingSection from "@/components/custom/loading-section";
-import { APP_ROUTES_KEY } from "@/router";
+import { APP_ROUTES_KEY } from "@/router/routes";
 import type { SchemaAiTaskResponse } from "@/services/api";
 import { AiTaskRuleEnumMap } from "@/services/api";
 import { APP_I18_KEYS } from "@/services/i18";

@@ -8,7 +8,7 @@ import SpotlightCard from '@/components/SpotlightCard';
 import { Heading3, Muted } from '@/components/ui/typography';
 import { useAppTranslate } from '@/hook';
 import { APP_I18_KEYS } from '@/services/i18';
-import { APP_ROUTES_KEY } from '@/router';
+import { APP_ROUTES_KEY } from '@/router/routes';
 
 const AppPage: FC = () => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);

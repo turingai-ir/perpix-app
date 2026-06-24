@@ -10,7 +10,7 @@ const AuthLoginPage: FC = () => {
   const [pageState] = useImmerAtom(authLoginPageState);
 
   return (
-    <div className="grid h-dvh w-full place-items-center p-4">
+    <main className="grid h-dvh w-full place-items-center p-4">
       <div
         className={
           pageState.currentView === "START"
@@ -50,7 +50,7 @@ const AuthLoginPage: FC = () => {
           <AuthLoginPageSetPassword />
         </Activity>
       </div>
-    </div>
+    </main>
   );
 };
 
