@@ -1,16 +1,14 @@
 {
   "common": {
-    "coolTexts": {
-      "cooking": "درحال پخت و پز هستیم ..."
-    },
-    "errorOnUploading": "خطایی هنگام آپلود فایل پیش آمده است",
-    "emptyTitle": "بدون عنوان",
     "addImage": "افزودن عکس",
     "addVideo": "افزودن ویدیو",
     "advancedSettings": "تنظیمات پیشرفته",
     "and": "و",
     "chat": "چت",
     "chooseModel": "انتخاب مدل",
+    "coolTexts": {
+      "cooking": "درحال پخت و پز هستیم ..."
+    },
     "day": "روز",
     "download": "دانلود",
     "dynamicConfig": {
@@ -33,7 +31,9 @@
         "web_search": "جستجوی وب"
       }
     },
+    "emptyTitle": "بدون عنوان",
     "error": "خطا",
+    "errorOnUploading": "خطایی هنگام آپلود فایل پیش آمده است",
     "fetchErrors": {
       "forbidden": "شما دسترسی لازم را ندارید",
       "network": "خطای شبکه لطفا اتصال خود را بررسی کنید",
@@ -44,6 +44,7 @@
     "image": "عکس",
     "minute": "دقیقه",
     "older": "قدیمی تر",
+    "rials": "ریال",
     "seconds": "ثانیه",
     "selectDuration": "انتخاب مدت زمان",
     "selectSize": "انتخاب سایز",
@@ -60,11 +61,11 @@
     "token": "توکن",
     "tomans": "تومان",
     "uploaded": "آپلود شد",
-    "uploading": "در حال آپلود",
     "uploadErrors": {
-      "partFailed": "آپلود فایل کامل نشد. لطفا دوباره تلاش کنید.",
-      "etagMissing": "آپلود فایل کامل نشد. لطفا دوباره تلاش کنید."
+      "etagMissing": "آپلود فایل کامل نشد. لطفا دوباره تلاش کنید.",
+      "partFailed": "آپلود فایل کامل نشد. لطفا دوباره تلاش کنید."
     },
+    "uploading": "در حال آپلود",
     "validationErrors": {
       "duplicateFile": "این فایل از قبل موجود است",
       "dynamicConfig": {
@@ -83,8 +84,8 @@
       },
       "email": "ایمیل نامعتبر است",
       "equalCharacter": " {{name}} باید {{length}} کاراکتر باشد",
-      "imageMaxSize": "حجم عکس باید کمتر از {{maxSize}} مگابایت باشد",
       "imageDimensionsUnreadable": "امکان بررسی ابعاد عکس وجود ندارد",
+      "imageMaxSize": "حجم عکس باید کمتر از {{maxSize}} مگابایت باشد",
       "imageTooSmall": "عکس خیلی کوچک است",
       "invalidFileFormat": "فرمت فایل مجاز نمی باشد",
       "max": "{{name}} حداکثر می می تواند {{max}} باشد",
@@ -122,15 +123,6 @@
     }
   },
   "features": {
-    "pwaUpdate": {
-      "actions": {
-        "later": "بعدا",
-        "update": "بروزرسانی",
-        "updating": "در حال بروزرسانی"
-      },
-      "description": "برای دریافت آخرین تغییرات، برنامه را بروزرسانی کنید.",
-      "title": "نسخه جدید آماده است"
-    },
     "pricing": {
       "description": "شما برای استفاده از امکانات پرپیکس نیاز دارید یکی از بسته های زیر را خریداری کنید",
       "plans": {
@@ -172,6 +164,15 @@
       },
       "purchase": "خرید",
       "title": "بسته ها"
+    },
+    "pwaUpdate": {
+      "actions": {
+        "later": "بعدا",
+        "update": "بروزرسانی",
+        "updating": "در حال بروزرسانی"
+      },
+      "description": "برای دریافت آخرین تغییرات، برنامه را بروزرسانی کنید.",
+      "title": "نسخه جدید آماده است"
     }
   },
   "pages": {
@@ -196,6 +197,9 @@
             },
             "title": "موجودی حساب"
           },
+          "history": {
+            "emptyTitle": "بدون عنوان"
+          },
           "menu": {
             "imageGeneration": {
               "label": "تولید عکس"
@@ -203,9 +207,6 @@
             "videoGeneration": {
               "label": "تولید  ویدیو"
             }
-          },
-          "history": {
-            "emptyTitle": "بدون عنوان"
           },
           "user": {
             "account": "حساب کاربری",
