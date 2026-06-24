@@ -41,7 +41,3 @@ if (import.meta.hot) {
     rootContainer.__reactRoot = undefined;
   });
 }
-
-if ('serviceWorker' in navigator && import.meta.env.PROD) {
-  void navigator.serviceWorker.register('/sw.js');
-}

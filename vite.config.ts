@@ -24,7 +24,7 @@ export default defineConfig(({ mode }) => ({
     tailwindcss(),
     VitePWA({
       registerType: "autoUpdate",
-      injectRegister: null,
+      injectRegister: "auto",
       includeAssets: [
         "apple-touch-icon.png",
         "favicon.ico",
