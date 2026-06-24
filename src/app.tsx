@@ -7,6 +7,7 @@ import { TooltipProvider } from "./components/ui/tooltip";
 import { queryClient } from "@/lib/react-query";
 import { router } from "@/router";
 import { Toaster } from "@/components/ui/sonner";
+import { PaymentRedirectPortal } from "@/feature/payment";
 
 import "./services/i18/i18";
 import "./styles/globals.css";
@@ -19,6 +20,7 @@ function App() {
         <DirectionProvider dir="rtl">
           <QueryClientProvider client={queryClient}>
             <Toaster duration={4000} richColors position="top-center" />
+            <PaymentRedirectPortal />
             <RouterProvider router={router} />
           </QueryClientProvider>
         </DirectionProvider>

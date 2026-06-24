@@ -23,6 +23,7 @@ import {
   usePurchaseSubscription,
   useSubscriptionPlans,
 } from "@/pages/_hooks";
+import { usePaymentRedirect } from "@/feature/payment";
 
 interface Props {
   open: boolean;
@@ -44,6 +45,7 @@ function PricingFeature({ open, requiredScopes = [], onOpenChange }: Props) {
   const activeSubscriptionState = useActiveSubscription();
   const purchaseSubscriptionState = usePurchaseSubscription();
   const { mutateAsync: purchasePlan } = purchaseSubscriptionState;
+  const { openPaymentUrl } = usePaymentRedirect();
 
   const plans = useMemo(() => {
     const planItems = normalizeList<
@@ -134,9 +136,10 @@ function PricingFeature({ open, requiredScopes = [], onOpenChange }: Props) {
                       disabled={purchaseSubscriptionState.isPending}
                       onClick={async () => {
                         const res = await handlePurchasePlan(plan?.uuid ?? "");
-                        if (res.payment_url) {
-                          window.location.href = res.payment_url;
-                        }
+                        openPaymentUrl({
+                          paymentUrl: res.payment_url,
+                          amountIrr: res.amount_irr,
+                        });
                       }}
                     >
                       {purchaseSubscriptionState.isPending &&

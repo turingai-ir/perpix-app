@@ -1,10 +1,11 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
-  readonly VITE_API_BASE_URL: string;
-  readonly VITE_S3_ENDPOINT: string;
+  readonly VITE_PERPIXAI_API_URL: string;
+  readonly VITE_S3_PUBLIC_ENDPOINT: string;
   readonly VITE_FONT_BASE_URL?: string;
   readonly VITE_SENTRY_DSN?: string;
+  readonly VITE_PERPIX_TAX_PERCENT?: string;
 }
 
 interface ImportMeta {

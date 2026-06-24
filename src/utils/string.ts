@@ -10,5 +10,5 @@ export function simplifyAspect(size: string): string {
 }
 
 export function convertToStorageUrl(path: string) {
-  return `${import.meta.env.VITE_S3_ENDPOINT}/${path}`;
+  return `${import.meta.env.VITE_S3_PUBLIC_ENDPOINT}/${path}`;
 }

@@ -32,12 +32,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useChargeWallet, useWallet } from "@/pages/_hooks";
+import { usePaymentRedirect } from "@/feature/payment";
 
 function AppLayoutSidebarWallet() {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
 
   const walletState = useWallet();
   const chargeWalletState = useChargeWallet();
+  const { openPaymentUrl } = usePaymentRedirect();
 
   const formSchema = z.object({
     amount: z
@@ -85,9 +87,10 @@ function AppLayoutSidebarWallet() {
         amount_usdmicro: tokenToMicroDollar(parseInt(values.amount, 10)),
       },
     });
-    if (res.payment_url) {
-      window.location.href = res.payment_url;
-    }
+    openPaymentUrl({
+      paymentUrl: res.payment_url,
+      amountIrr: res.amount_irr,
+    });
   }
 
   return (

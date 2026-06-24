@@ -326,6 +326,16 @@
       }
     },
     "payment": {
+      "redirect": {
+        "amountToman": "{{amount}} تومان",
+        "autoRedirect": "انتقال خودکار تا {{seconds}} ثانیه دیگر",
+        "continue": "ادامه پرداخت",
+        "description": "قبل از انتقال به درگاه، مالیات به مبلغ پرداخت اضافه می‌شود.",
+        "finalAmount": "مبلغ نهایی",
+        "initialAmount": "مبلغ اولیه",
+        "tax": "مالیات ({{percent}}٪)",
+        "title": "تایید مبلغ پرداخت"
+      },
       "result": {
         "amount": "مبلغ تراکنش",
         "failed": {

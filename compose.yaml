@@ -9,8 +9,8 @@ services:
     build:
       context: .
       args:
-        VITE_API_BASE_URL: ${VITE_API_BASE_URL}
-        VITE_S3_ENDPOINT: ${VITE_S3_ENDPOINT}
+        VITE_PERPIXAI_API_URL: ${VITE_PERPIXAI_API_URL}
+        VITE_S3_PUBLIC_ENDPOINT: ${VITE_S3_PUBLIC_ENDPOINT}
         VITE_FONT_BASE_URL: ${VITE_FONT_BASE_URL}
 
     mem_limit: 500m
@@ -22,6 +22,8 @@ services:
     pull_policy: build
     networks:
       - turing
+    env_file:
+      - /opt/turing/.env
 
 networks:
   turing:
