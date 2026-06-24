@@ -1,3 +1,9 @@
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
 services:
   perpixai-app:
     build:
@@ -9,6 +15,7 @@ services:
 
     mem_limit: 500m
     cpus: "0.20"
+    logging: *default-logging
     ports:
       - "4173:80"
     restart: unless-stopped
