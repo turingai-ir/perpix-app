@@ -6,6 +6,7 @@ import { queryClient } from "@/lib/react-query";
 import { router } from "@/router/router";
 import { Toaster } from "@/components/ui/sonner";
 import { PwaUpdateProvider } from "@/feature/pwa";
+import { SupportChatProvider } from "@/feature/support-chat";
 
 import "./services/i18/i18";
 import "./styles/globals.css";
@@ -18,6 +19,7 @@ function App() {
         <QueryClientProvider client={queryClient}>
           <Toaster duration={4000} richColors position="top-center" />
           <PwaUpdateProvider />
+          <SupportChatProvider />
           <RouterProvider router={router} />
         </QueryClientProvider>
       </DirectionProvider>

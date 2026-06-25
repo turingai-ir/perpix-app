@@ -5,7 +5,7 @@ import {
   BadgeCheck,
   ChevronsUpDown,
   LogOut,
-  Send,
+  MessageCircle,
   Sparkles,
   UserRound,
 } from "lucide-react";
@@ -32,11 +32,13 @@ import { Badge } from "@/components/ui/badge";
 import { cookies } from "@/utils/cookies";
 import { useActiveSubscription } from "@/pages/_hooks";
 import AppLayoutSidebarHistory from "./history";
+import { useSupportChatWidget } from "@/feature/support-chat";
 
 const AppLayoutSidebarContent: FC = () => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const navigate = useNavigate();
   const cookie = cookies();
+  const { openChatWidget } = useSupportChatWidget();
 
   const activeSubscriptionState = useActiveSubscription();
 
@@ -159,18 +161,14 @@ const AppLayoutSidebarContent: FC = () => {
               <BadgeCheck />
               {t("pages.app.layout.sidebar.user.account")}
             </DropdownMenuItem>
-            {import.meta.env.VITE_PERPIXAI_TELEGRAM_SUPPORT ? (
-              <DropdownMenuItem asChild>
-                <a
-                  href={import.meta.env.VITE_PERPIXAI_TELEGRAM_SUPPORT}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Send />
-                  {t("pages.app.layout.sidebar.user.support")}
-                </a>
-              </DropdownMenuItem>
-            ) : null}
+            <DropdownMenuItem
+              onClick={() => {
+                openChatWidget();
+              }}
+            >
+              <MessageCircle />
+              {t("pages.app.layout.sidebar.user.support")}
+            </DropdownMenuItem>
 
             <DropdownMenuItem onClick={handleLogout}>
               <LogOut />
