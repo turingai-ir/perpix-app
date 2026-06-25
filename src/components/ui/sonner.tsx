@@ -10,13 +10,15 @@ import {
   Loader2Icon,
 } from "lucide-react";
 
-const Toaster = ({ ...props }: ToasterProps) => {
+import { cn } from "@/lib/utils";
+
+const Toaster = ({ className, style, toastOptions, ...props }: ToasterProps) => {
   const { theme = "system" } = useTheme();
 
   return (
     <Sonner
       theme={theme as ToasterProps["theme"]}
-      className="toaster group"
+      className={cn("toaster group", className)}
       icons={{
         success: <CircleCheckIcon className="size-4" />,
         info: <InfoIcon className="size-4" />,
@@ -26,15 +28,20 @@ const Toaster = ({ ...props }: ToasterProps) => {
       }}
       style={
         {
+          "--font-family": "var(--font-sans)",
           "--normal-bg": "var(--popover)",
           "--normal-text": "var(--popover-foreground)",
           "--normal-border": "var(--border)",
           "--border-radius": "var(--radius)",
+          fontFamily: "var(--font-sans)",
+          ...style,
         } as React.CSSProperties
       }
       toastOptions={{
+        ...toastOptions,
         classNames: {
-          toast: "cn-toast",
+          ...toastOptions?.classNames,
+          toast: cn("cn-toast", toastOptions?.classNames?.toast),
         },
       }}
       {...props}
