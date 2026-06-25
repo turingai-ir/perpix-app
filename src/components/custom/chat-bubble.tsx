@@ -1,15 +1,13 @@
 import type { FC, ReactNode } from "react";
 import dayjs from "dayjs";
-import { AlertCircle, Image as ImageIcon } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Muted } from "../ui/typography";
 
 import { useAppTranslate } from "@/hook";
 import { APP_I18_KEYS } from "@/services/i18";
-import { useFilePreview } from "@/feature/file-manager";
-import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { MediaPreviewItem } from "@/components/custom/media-preview-item";
 
 type Sender = "agent" | "user";
 interface ChatBubbleProps {
@@ -20,15 +18,6 @@ interface ChatBubbleProps {
   images?: (string | ReactNode)[];
   videos?: (string | ReactNode)[];
   status?: any;
-}
-
-interface ChatBubbleImagePreviewItemProps {
-  imageId: string;
-  index: number;
-}
-
-interface ChatBubbleVideoPreviewItemProps {
-  videoId: string;
 }
 
 export const ChatBubble: FC<ChatBubbleProps> = ({
@@ -73,7 +62,7 @@ export const ChatBubble: FC<ChatBubbleProps> = ({
             {images.map((image, index) => (
               <div key={index} className="h-full w-full">
                 {typeof image === "string" ? (
-                  <ChatBubbleImagePreviewItem imageId={image} index={index} />
+                  <MediaPreviewItem fileId={image} index={index} type="image" />
                 ) : (
                   image
                 )}
@@ -92,7 +81,7 @@ export const ChatBubble: FC<ChatBubbleProps> = ({
             {videos.map((video, index) => (
               <div key={index} className="h-full w-full">
                 {typeof video === "string" ? (
-                  <ChatBubbleVideoPreviewItem videoId={video} />
+                  <MediaPreviewItem fileId={video} index={index} type="video" />
                 ) : (
                   video
                 )}
@@ -114,100 +103,5 @@ export const ChatBubble: FC<ChatBubbleProps> = ({
     </div>
   );
 };
-
-const ChatBubbleVideoPreviewItem: FC<ChatBubbleVideoPreviewItemProps> = ({
-  videoId,
-}) => {
-  const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
-  const { getFilePreviewState } = useFilePreview(videoId);
-
-  const isPreviewLoading = getFilePreviewState.isPending;
-  const isError = getFilePreviewState.isError;
-  const videoUrl = getFilePreviewState.data?.presigned_url;
-
-  return (
-    <div
-      className={cn(
-        "bg-background flex aspect-square w-full items-center justify-center overflow-hidden rounded-lg border",
-        isError && "border-destructive/50 bg-destructive/5",
-      )}
-    >
-      {!isError && videoUrl ? (
-        // eslint-disable-next-line jsx-a11y/media-has-caption
-        <video className="h-full w-full object-cover" src={videoUrl} controls />
-      ) : null}
-
-      {isError && (
-        <ErrorPreview label={t("common.error")} className="text-destructive" />
-      )}
-
-      {!isPreviewLoading && !isError && !videoUrl && <EmptyImagePreview />}
-
-      {isPreviewLoading && !videoUrl && (
-        <Skeleton className="h-full w-full animate-pulse overflow-hidden rounded-lg" />
-      )}
-    </div>
-  );
-};
-
-const ChatBubbleImagePreviewItem: FC<ChatBubbleImagePreviewItemProps> = ({
-  imageId,
-  index,
-}) => {
-  const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
-  const { getFilePreviewState } = useFilePreview(imageId);
-
-  const isPreviewLoading = getFilePreviewState.isPending;
-  const isError = getFilePreviewState.isError;
-  const imageUrl = getFilePreviewState.data?.presigned_url;
-
-  return (
-    <div
-      className={cn(
-        "bg-background flex aspect-square w-full items-center justify-center overflow-hidden rounded-lg border",
-        isError && "border-destructive/50 bg-destructive/5",
-      )}
-    >
-      {!isError && imageUrl ? (
-        <img
-          className="h-full w-full object-cover"
-          src={imageUrl}
-          alt={`img-${index}`}
-        />
-      ) : null}
-
-      {isError && (
-        <ErrorPreview label={t("common.error")} className="text-destructive" />
-      )}
-
-      {!isPreviewLoading && !isError && !imageUrl && <EmptyImagePreview />}
-
-      {isPreviewLoading && !imageUrl && (
-        <Skeleton className="h-full w-full animate-pulse overflow-hidden rounded-lg" />
-      )}
-    </div>
-  );
-};
-
-const EmptyImagePreview = () => (
-  <div className="text-muted-foreground flex h-full w-full flex-col items-center justify-center gap-1">
-    <ImageIcon className="h-6 w-6 opacity-40" />
-  </div>
-);
-
-const ErrorPreview: FC<{ label: string; className?: string }> = ({
-  label,
-  className,
-}) => (
-  <div
-    className={cn(
-      "flex h-full w-full flex-col items-center justify-center gap-1 p-2 text-center",
-      className,
-    )}
-  >
-    <AlertCircle className="h-5 w-5" />
-    <span className="text-[10px] whitespace-normal">{label}</span>
-  </div>
-);
 
 ChatBubble.displayName = "ChatBubble";

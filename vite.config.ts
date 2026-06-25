@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "vite";
+import legacy from "@vitejs/plugin-legacy";
 
 import { VitePWA } from "vite-plugin-pwa";
 
@@ -24,6 +25,9 @@ export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     tailwindcss(),
+    legacy({
+      renderLegacyChunks: true,
+    }),
     VitePWA({
       registerType: "autoUpdate",
       injectRegister: "auto",

@@ -18,12 +18,6 @@ export function SupportChatProvider() {
           "fq71AWvGvb7tuSJFOfcDcZKHZW9ATMF6",
         );
         document.body.appendChild(script);
-        console.log(
-          213213,
-          document.querySelector(
-            "#ILACHATWIDGET_CONTAINER_fq71AWvGvb7tuSJFOfcDcZKHZW9ATMF6",
-          ),
-        );
       }
     };
 

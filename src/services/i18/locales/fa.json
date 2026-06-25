@@ -66,6 +66,7 @@
       "partFailed": "آپلود فایل کامل نشد. لطفا دوباره تلاش کنید."
     },
     "uploading": "در حال آپلود",
+    "video": "ویدیو",
     "validationErrors": {
       "duplicateFile": "این فایل از قبل موجود است",
       "dynamicConfig": {
