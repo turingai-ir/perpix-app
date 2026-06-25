@@ -1,4 +1,4 @@
-import { Activity, useCallback, useMemo } from "react";
+import { useCallback, useMemo, useSyncExternalStore } from "react";
 import { CircleCheck, LoaderCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -25,11 +25,64 @@ import {
 } from "@/pages/_hooks";
 import { usePaymentRedirect } from "@/feature/payment";
 
-interface Props {
-  open: boolean;
+interface OpenPricingFeatureOptions {
   requiredScopes?: string[];
-  onOpenChange: (open: boolean) => void;
 }
+
+interface PricingFeatureApi {
+  openPricingFeature: (options?: OpenPricingFeatureOptions) => void;
+  closePricingFeature: () => void;
+}
+
+interface PricingFeatureState {
+  open: boolean;
+  requiredScopes: string[];
+}
+
+let pricingFeatureState: PricingFeatureState = {
+  open: false,
+  requiredScopes: [],
+};
+
+const pricingFeatureListeners = new Set<() => void>();
+
+const emitPricingFeatureChange = () => {
+  pricingFeatureListeners.forEach((listener) => listener());
+};
+
+const setPricingFeatureState = (state: PricingFeatureState) => {
+  pricingFeatureState = state;
+  emitPricingFeatureChange();
+};
+
+const subscribePricingFeature = (listener: () => void) => {
+  pricingFeatureListeners.add(listener);
+
+  return () => {
+    pricingFeatureListeners.delete(listener);
+  };
+};
+
+const getPricingFeatureState = () => pricingFeatureState;
+
+const openPricingFeature = (options?: OpenPricingFeatureOptions) => {
+  setPricingFeatureState({
+    open: true,
+    requiredScopes: options?.requiredScopes ?? [],
+  });
+};
+
+const closePricingFeature = () => {
+  setPricingFeatureState({
+    open: false,
+    requiredScopes: [],
+  });
+};
+
+const pricingFeatureApi: PricingFeatureApi = {
+  openPricingFeature,
+  closePricingFeature,
+};
 
 const normalizeList = <T,>(value: unknown): T[] => {
   if (!value) {
@@ -38,8 +91,17 @@ const normalizeList = <T,>(value: unknown): T[] => {
   return Array.isArray(value) ? [...value] : Array.from(value as ArrayLike<T>);
 };
 
-function PricingFeature({ open, requiredScopes = [], onOpenChange }: Props) {
+export function usePricingFeature(): PricingFeatureApi {
+  return pricingFeatureApi;
+}
+
+function PricingFeature() {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
+  const { open, requiredScopes } = useSyncExternalStore(
+    subscribePricingFeature,
+    getPricingFeatureState,
+    getPricingFeatureState,
+  );
 
   const plansState = useSubscriptionPlans(open);
   const activeSubscriptionState = useActiveSubscription();
@@ -75,12 +137,21 @@ function PricingFeature({ open, requiredScopes = [], onOpenChange }: Props) {
     [purchasePlan],
   );
 
+  const handleOpenChange = useCallback(
+    (nextOpen: boolean) => {
+      if (nextOpen) {
+        openPricingFeature({ requiredScopes });
+        return;
+      }
+
+      closePricingFeature();
+    },
+    [requiredScopes],
+  );
+
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent
-        side="bottom"
-        className="flex h-dvh w-full flex-col transition-transform duration-100 ease-out"
-      >
+    <Sheet open={open} onOpenChange={handleOpenChange}>
+      <SheetContent side="bottom" className="flex h-dvh w-full flex-col">
         <SheetHeader>
           <SheetTitle className="text-center text-4xl">
             {t("features.pricing.title")}
@@ -95,7 +166,7 @@ function PricingFeature({ open, requiredScopes = [], onOpenChange }: Props) {
           <ErrorSection onRetry={() => plansState.refetch()} />
         )}
 
-        <Activity mode={plansState.isSuccess ? "visible" : "hidden"}>
+        {plansState.isSuccess ? (
           <div className="flex flex-1 items-center-safe overflow-y-auto px-6 pt-8">
             <div className="mx-auto flex max-w-(--breakpoint-lg) flex-col gap-4 lg:flex-row lg:gap-8">
               {plans?.map((plan) => (
@@ -158,7 +229,7 @@ function PricingFeature({ open, requiredScopes = [], onOpenChange }: Props) {
               ))}
             </div>
           </div>
-        </Activity>
+        ) : null}
       </SheetContent>
     </Sheet>
   );

@@ -2,9 +2,6 @@ import { EventBusClass } from "./event-bus";
 
 export type AppEvents = {
   API_ERROR_EVENT: unknown;
-  SUBSCRIPTION_UPGRADE_REQUIRED: {
-    requiredScopes: string[];
-  };
   SIDEBAR_REQUEST_FOR_DATA: unknown;
   SCROLL_APP_LAYOUT_UNTIL_END: undefined;
 };

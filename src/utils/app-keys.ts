@@ -18,8 +18,5 @@ export const APP_KEYS = {
   COOKIES: {
     ACCESS_TOKEN: "access_token",
   },
-  URL_HASH: {
-    pricing: "#pricing",
-  },
   API_BASE_URL,
 } as const;

@@ -12,11 +12,13 @@ import { useAppTranslate } from "@/hook";
 import { appEventBus } from "@/lib/event-bus";
 import { cookies } from "@/utils/cookies";
 import { APP_ROUTES_KEY } from "@/router/routes";
+import { usePricingFeature } from "@/feature/pricing";
 
 const RootLayout: FC = () => {
   const { t } = useAppTranslate();
   const navigate = useNavigate();
   const cookie = cookies();
+  const { openPricingFeature } = usePricingFeature();
 
   useEffect(() => {
     const errorhandler = async (error: unknown) => {
@@ -52,10 +54,9 @@ const RootLayout: FC = () => {
               )
             : [];
 
-        appEventBus.emit("SUBSCRIPTION_UPGRADE_REQUIRED", {
+        openPricingFeature({
           requiredScopes,
         });
-        navigate(APP_KEYS.URL_HASH.pricing);
       }
 
       if (
@@ -144,7 +145,7 @@ const RootLayout: FC = () => {
     return () => {
       appEventBusListener();
     };
-  }, [cookie, navigate, t]);
+  }, [cookie, navigate, openPricingFeature, t]);
 
   return (
     <>

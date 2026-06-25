@@ -1,10 +1,8 @@
 import { useCallback } from "react";
-import { useNavigate } from "react-router";
 
 import { useActiveSubscription } from "./api";
 
-import { appEventBus } from "@/lib/event-bus";
-import { APP_KEYS } from "@/utils";
+import { usePricingFeature } from "@/feature/pricing";
 
 export enum PaidActionScope {
   AI_IMAGE_MODELS = "ai:image_models",
@@ -36,17 +34,16 @@ export const getPaidActionScope = (taskType: string) =>
   TASK_TYPE_SCOPE[taskType as PaidActionTaskType];
 
 export const usePaidActionGuard = () => {
-  const navigate = useNavigate();
   const activeSubscriptionState = useActiveSubscription();
+  const { openPricingFeature } = usePricingFeature();
 
   const showRequiredPlans = useCallback(
     (requiredScope: PaidActionScope) => {
-      appEventBus.emit("SUBSCRIPTION_UPGRADE_REQUIRED", {
+      openPricingFeature({
         requiredScopes: [requiredScope],
       });
-      navigate(APP_KEYS.URL_HASH.pricing);
     },
-    [navigate],
+    [openPricingFeature],
   );
 
   const canRunPaidAction = useCallback(

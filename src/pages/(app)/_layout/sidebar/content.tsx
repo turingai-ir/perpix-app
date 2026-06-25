@@ -33,12 +33,14 @@ import { cookies } from "@/utils/cookies";
 import { useActiveSubscription } from "@/pages/_hooks";
 import AppLayoutSidebarHistory from "./history";
 import { useSupportChatWidget } from "@/feature/support-chat";
+import { usePricingFeature } from "@/feature/pricing";
 
 const AppLayoutSidebarContent: FC = () => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const navigate = useNavigate();
   const cookie = cookies();
   const { openChatWidget } = useSupportChatWidget();
+  const { openPricingFeature } = usePricingFeature();
 
   const activeSubscriptionState = useActiveSubscription();
 
@@ -76,7 +78,7 @@ const AppLayoutSidebarContent: FC = () => {
               <Button
                 asChild
                 variant="ghost"
-                className="w-full justify-start gap-3 px-2 text-sm"
+                className="w-full justify-start gap-3"
               >
                 <Link to={href}>
                   <Icon aria-hidden="true" className="h-5 w-5" />
@@ -90,37 +92,40 @@ const AppLayoutSidebarContent: FC = () => {
         <Separator />
         <AppLayoutSidebarHistory />
       </nav>
-
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild className="mt-auto">
+      <div className="mt-auto flex w-full flex-col gap-4">
+        <div className="flex w-full flex-col gap-2">
+          {activeSubscriptionState.data?.plan.is_default ? (
+            <>
+              <Button
+                className="w-full justify-start"
+                variant="ghost"
+                onClick={() => {
+                  openPricingFeature();
+                }}
+              >
+                <Sparkles />
+                {t("pages.app.layout.sidebar.user.upgrade")}
+              </Button>
+            </>
+          ) : null}
           <Button
+            className="w-full justify-start"
             variant="ghost"
-            size="lg"
-            className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+            onClick={() => {
+              openChatWidget();
+            }}
           >
-            <Avatar className="h-8 w-8 rounded-lg">
-              <AvatarImage />
-              <AvatarFallback className="rounded-lg">
-                <UserRound />
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex flex-1 text-right text-sm leading-tight">
-              <Badge>
-                {activeSubscriptionState.data?.plan.display_name ??
-                  t("features.pricing.plans.free.title")}
-              </Badge>
-            </div>
-            <ChevronsUpDown className="mr-auto size-4" />
+            <MessageCircle />
+            {t("pages.app.layout.sidebar.user.support")}
           </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent
-          className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-          side="top"
-          align="end"
-          sideOffset={4}
-        >
-          <DropdownMenuLabel className="p-0 font-normal">
-            <div className="flex items-center gap-2 px-1 py-1.5 text-right text-sm">
+        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild className="mt-auto">
+            <Button
+              variant="ghost"
+              size="lg"
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+            >
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage />
                 <AvatarFallback className="rounded-lg">
@@ -133,50 +138,51 @@ const AppLayoutSidebarContent: FC = () => {
                     t("features.pricing.plans.free.title")}
                 </Badge>
               </div>
-            </div>
-          </DropdownMenuLabel>
-          {activeSubscriptionState.data?.plan.display_name ? null : (
-            <>
-              <DropdownMenuSeparator />
-              <DropdownMenuGroup>
-                <DropdownMenuItem
-                  onClick={() => {
-                    navigate(APP_KEYS.URL_HASH.pricing);
-                  }}
-                >
-                  <Sparkles />
-                  {t("pages.app.layout.sidebar.user.upgrade")}
-                </DropdownMenuItem>
-              </DropdownMenuGroup>
-            </>
-          )}
+              <ChevronsUpDown className="mr-auto size-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+            side="top"
+            align="end"
+            sideOffset={4}
+          >
+            <DropdownMenuLabel className="p-0 font-normal">
+              <div className="flex items-center gap-2 px-1 py-1.5 text-right text-sm">
+                <Avatar className="h-8 w-8 rounded-lg">
+                  <AvatarImage />
+                  <AvatarFallback className="rounded-lg">
+                    <UserRound />
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex flex-1 text-right text-sm leading-tight">
+                  <Badge>
+                    {activeSubscriptionState.data?.plan.display_name ??
+                      t("features.pricing.plans.free.title")}
+                  </Badge>
+                </div>
+              </div>
+            </DropdownMenuLabel>
 
-          <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            <DropdownMenuItem
-              onClick={() => {
-                navigate(APP_ROUTES_KEY.profile.root.path);
-              }}
-            >
-              <BadgeCheck />
-              {t("pages.app.layout.sidebar.user.account")}
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => {
-                openChatWidget();
-              }}
-            >
-              <MessageCircle />
-              {t("pages.app.layout.sidebar.user.support")}
-            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem
+                onClick={() => {
+                  navigate(APP_ROUTES_KEY.profile.root.path);
+                }}
+              >
+                <BadgeCheck />
+                {t("pages.app.layout.sidebar.user.account")}
+              </DropdownMenuItem>
 
-            <DropdownMenuItem onClick={handleLogout}>
-              <LogOut />
-              {t("pages.app.layout.sidebar.user.logout")}
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-        </DropdownMenuContent>
-      </DropdownMenu>
+              <DropdownMenuItem onClick={handleLogout}>
+                <LogOut />
+                {t("pages.app.layout.sidebar.user.logout")}
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
     </div>
   );
 };
