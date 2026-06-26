@@ -1,20 +1,24 @@
 import { useCallback } from "react";
 
 import { useActiveSubscription } from "./api";
-
-import { usePricingFeature } from "@/feature/pricing";
+import { usePricingFeature } from "./index";
 
 export enum PaidActionScope {
-  AI_IMAGE_MODELS = "ai:image_models",
-  AI_VIDEO_MODELS = "ai:video_models",
+  USER_READ = "user:read",
+  USER_EDIT = "user:edit",
+  SUBSCRIPTION_READ = "subscription:read",
+  WALLET_READ = "wallet:read",
+  WALLET_WRITE = "wallet:write",
+  PAYMENT_READ = "payment:read",
+  PAYMENT_WRITE = "payment:write",
+  AI_REGISTRY_READ = "ai_registry:read",
+  AI_REGISTRY_WRITE = "ai_registry:write",
+  AI_TASK_READ = "ai_task:read",
+  AI_TASK_WRITE = "ai_task:write",
+  FILE_MANAGER_READ = "file_manager:read",
+  FILE_MANAGER_WRITE = "file_manager:write",
+  ADMIN_MANAGE = "admin:manage",
 }
-
-export type PaidActionTaskType = "IMAGE" | "VIDEO";
-
-const TASK_TYPE_SCOPE: Record<PaidActionTaskType, PaidActionScope> = {
-  IMAGE: PaidActionScope.AI_IMAGE_MODELS,
-  VIDEO: PaidActionScope.AI_VIDEO_MODELS,
-};
 
 type AsyncAction = (...args: any[]) => Promise<unknown>;
 
@@ -30,41 +34,55 @@ export class PaidActionRequirementError extends Error {
   }
 }
 
-export const getPaidActionScope = (taskType: string) =>
-  TASK_TYPE_SCOPE[taskType as PaidActionTaskType];
+type PaidActionRequirement =
+  | PaidActionScope
+  | {
+      scopes?: readonly PaidActionScope[];
+    }
+  | undefined;
+
+const normalizeRequiredScopes = (requirement: PaidActionRequirement) => {
+  if (!requirement) return [];
+  if (typeof requirement === "string") return [requirement];
+
+  return [...(requirement.scopes ?? [])];
+};
 
 export const usePaidActionGuard = () => {
   const activeSubscriptionState = useActiveSubscription();
   const { openPricingFeature } = usePricingFeature();
 
   const showRequiredPlans = useCallback(
-    (requiredScope: PaidActionScope) => {
+    (requiredScopes: readonly PaidActionScope[]) => {
       openPricingFeature({
-        requiredScopes: [requiredScope],
+        requiredScopes: [...requiredScopes],
       });
     },
     [openPricingFeature],
   );
 
   const canRunPaidAction = useCallback(
-    (requiredScope: PaidActionScope, scopes?: unknown) =>
-      normalizeScopes(
+    (requiredScopes: readonly PaidActionScope[], scopes?: unknown) => {
+      const userScopes = normalizeScopes(
         scopes ?? activeSubscriptionState.data?.plan.scopes,
-      ).includes(requiredScope),
+      );
+
+      return requiredScopes.every((scope) => userScopes.includes(scope));
+    },
     [activeSubscriptionState.data?.plan.scopes],
   );
 
   const guardAsyncAction = useCallback(
     <TAction extends AsyncAction>(
       action: TAction,
-      getRequiredScope: (
-        ...args: Parameters<TAction>
-      ) => PaidActionScope | undefined,
+      getRequiredScope: (...args: Parameters<TAction>) => PaidActionRequirement,
     ): TAction =>
       (async (...args: Parameters<TAction>) => {
-        const requiredScope = getRequiredScope(...args);
+        const requiredScopes = normalizeRequiredScopes(
+          getRequiredScope(...args),
+        );
 
-        if (!requiredScope) {
+        if (!requiredScopes.length) {
           return action(...args);
         }
 
@@ -73,9 +91,12 @@ export const usePaidActionGuard = () => {
           : await activeSubscriptionState.refetch();
 
         if (
-          !canRunPaidAction(requiredScope, activeSubscription.data?.plan.scopes)
+          !canRunPaidAction(
+            requiredScopes,
+            activeSubscription.data?.plan.scopes,
+          )
         ) {
-          showRequiredPlans(requiredScope);
+          showRequiredPlans(requiredScopes);
           throw new PaidActionRequirementError();
         }
 

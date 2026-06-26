@@ -13,7 +13,7 @@ import { formatLocalizedNumber } from "@/utils";
 import { useAppTranslate } from "@/hook";
 import { APP_I18_KEYS } from "@/services/i18";
 import { APP_ROUTES_KEY } from "@/router/routes";
-import { usePayments, usePaymentStatus } from "@/pages/_hooks";
+import { usePayments, usePaymentStatus } from "@/feature/payment";
 
 function PaymentResultPage() {
   const { paymentUuid } = useParams<{ paymentUuid: string }>();

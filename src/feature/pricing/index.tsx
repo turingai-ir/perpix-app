@@ -22,10 +22,13 @@ import {
   useActiveSubscription,
   usePurchaseSubscription,
   useSubscriptionPlans,
-} from "@/pages/_hooks";
+} from "./api";
 import { usePaymentRedirect } from "@/feature/payment";
 
+export * from "./api";
+
 interface OpenPricingFeatureOptions {
+  requiredModelNames?: string[];
   requiredScopes?: string[];
 }
 
@@ -35,12 +38,14 @@ interface PricingFeatureApi {
 }
 
 interface PricingFeatureState {
+  requiredModelNames: string[];
   open: boolean;
   requiredScopes: string[];
 }
 
 let pricingFeatureState: PricingFeatureState = {
   open: false,
+  requiredModelNames: [],
   requiredScopes: [],
 };
 
@@ -68,6 +73,7 @@ const getPricingFeatureState = () => pricingFeatureState;
 const openPricingFeature = (options?: OpenPricingFeatureOptions) => {
   setPricingFeatureState({
     open: true,
+    requiredModelNames: options?.requiredModelNames ?? [],
     requiredScopes: options?.requiredScopes ?? [],
   });
 };
@@ -75,6 +81,7 @@ const openPricingFeature = (options?: OpenPricingFeatureOptions) => {
 const closePricingFeature = () => {
   setPricingFeatureState({
     open: false,
+    requiredModelNames: [],
     requiredScopes: [],
   });
 };
@@ -97,7 +104,7 @@ export function usePricingFeature(): PricingFeatureApi {
 
 function PricingFeature() {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
-  const { open, requiredScopes } = useSyncExternalStore(
+  const { open, requiredModelNames, requiredScopes } = useSyncExternalStore(
     subscribePricingFeature,
     getPricingFeatureState,
     getPricingFeatureState,
@@ -118,11 +125,16 @@ function PricingFeature() {
       (plan) =>
         plan.uuid !== activeSubscriptionState.data?.plan.uuid &&
         plan.is_default !== true &&
-        requiredScopes.every((scope) => plan.scopes.includes(scope)),
+        requiredScopes.every((scope) => plan.scopes.includes(scope)) &&
+        (!requiredModelNames.length ||
+          requiredModelNames.some((modelName) =>
+            plan.allowed_models.includes(modelName),
+          )),
     );
   }, [
     activeSubscriptionState.data?.plan.uuid,
     plansState.data?.items,
+    requiredModelNames,
     requiredScopes,
   ]);
 
@@ -140,13 +152,13 @@ function PricingFeature() {
   const handleOpenChange = useCallback(
     (nextOpen: boolean) => {
       if (nextOpen) {
-        openPricingFeature({ requiredScopes });
+        openPricingFeature({ requiredModelNames, requiredScopes });
         return;
       }
 
       closePricingFeature();
     },
-    [requiredScopes],
+    [requiredModelNames, requiredScopes],
   );
 
   return (

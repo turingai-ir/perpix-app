@@ -29,7 +29,7 @@ import { Button } from "@/components/ui/button";
 import LoadingSection from "@/components/custom/loading-section";
 import ErrorSection from "@/components/custom/error-section";
 import { APP_ROUTES_KEY } from "@/router/routes";
-import { useEditUserInfo, useUser } from "@/pages/_hooks";
+import { useEditUserInfo, useUser } from "@/feature/user";
 
 const ProfileSettingsPage: FC = () => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);

@@ -15,7 +15,7 @@ import { appEventBus } from "@/lib/event-bus";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { PaymentRedirectPortal } from "@/feature/payment";
-import { useUser } from "@/pages/_hooks";
+import { useUser } from "@/feature/user";
 
 const AppLayout: FC = () => {
   const [appLayoutState, setAppLayoutState] = useImmerAtom(appLayoutAtom);

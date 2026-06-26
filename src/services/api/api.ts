@@ -1360,6 +1360,8 @@ export interface components {
             readonly description?: string | null;
             /** Scopes */
             readonly scopes?: readonly string[];
+            /** Allowed Models */
+            readonly allowed_models?: readonly string[];
             /** Price Usdmicro */
             readonly price_usdmicro: number;
             /**
@@ -1793,6 +1795,8 @@ export interface components {
             readonly description: string | null;
             /** Scopes */
             readonly scopes: readonly string[];
+            /** Allowed Models */
+            readonly allowed_models: readonly string[];
             /** Price Usdmicro */
             readonly price_usdmicro: number;
             /** Price Irr */
@@ -1863,6 +1867,8 @@ export interface components {
             readonly description?: string | null;
             /** Scopes */
             readonly scopes?: readonly string[] | null;
+            /** Allowed Models */
+            readonly allowed_models?: readonly string[] | null;
             /** Price Usdmicro */
             readonly price_usdmicro?: number | null;
             /** Duration Days */

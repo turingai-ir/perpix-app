@@ -31,8 +31,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useChargeWallet, useWallet } from "@/pages/_hooks";
 import { usePaymentRedirect } from "@/feature/payment";
+import { useChargeWallet, useWallet } from "@/feature/wallet";
 
 function AppLayoutSidebarWallet() {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);

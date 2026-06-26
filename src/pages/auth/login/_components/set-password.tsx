@@ -37,7 +37,7 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { PasswordInput } from "@/components/ui/password-input";
-import { useResendOtp, useSetPassword } from "@/pages/_hooks";
+import { useResendOtp, useSetPassword } from "../_hooks";
 
 const AuthLoginPageSetPassword: FC = () => {
   const navigate = useNavigate();

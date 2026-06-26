@@ -30,10 +30,9 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { cookies } from "@/utils/cookies";
-import { useActiveSubscription } from "@/pages/_hooks";
+import { useActiveSubscription, usePricingFeature } from "@/feature/pricing";
 import AppLayoutSidebarHistory from "./history";
 import { useSupportChatWidget } from "@/feature/support-chat";
-import { usePricingFeature } from "@/feature/pricing";
 
 const AppLayoutSidebarContent: FC = () => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);

@@ -7,7 +7,12 @@ import {
 } from "@tanstack/react-query";
 
 import { useReactQueryApi } from "@/hook/app";
-import { getPaidActionScope, usePaidActionGuard } from "@/pages/_hooks";
+import { useActiveSubscription } from "@/feature/pricing";
+import {
+  PaidActionScope,
+  usePaidActionGuard,
+} from "@/feature/pricing/paid-action-guard";
+import { isModelAllowed } from "@/pages/(app)/generation/_utils/model-access";
 import type {
   AiRegistryModelSupportedTypesEnumKey,
   AiRegistryModelSupportedTypesEnumValue,
@@ -80,10 +85,13 @@ export const useModel = (
   supportedOutputs: Array<AiRegistryModelSupportedTypesEnumValue>,
 ) => {
   const { useQuery } = useReactQueryApi();
+  const activeSubscriptionState = useActiveSubscription();
 
   const [currentModel, setCurrentModel] = useState<string | undefined>(
     undefined,
   );
+  const allowedModelNames = activeSubscriptionState.data?.plan
+    .allowed_models as readonly string[] | undefined;
 
   const modelsListState = useQuery("get", "/ai-registry/models", {
     params: {
@@ -105,15 +113,52 @@ export const useModel = (
     },
     { enabled: !!currentModel },
   );
+  const models = modelsListState.data as
+    | Array<SchemaAiRegistryModelSummary>
+    | undefined;
+  const currentModelSummary = models?.find(
+    (model) => model.uuid === currentModel,
+  );
+  const hasAllowedModelInList = models
+    ? models.some((model) => isModelAllowed(model, allowedModelNames))
+    : true;
+  const isCurrentModelAllowed = currentModelSummary
+    ? isModelAllowed(currentModelSummary, allowedModelNames)
+    : true;
 
   useEffect(() => {
-    if (modelsListState.data?.length && !currentModel) {
-      setCurrentModel(modelsListState.data[0].uuid);
+    if (!models?.length || activeSubscriptionState.isLoading) {
+      return;
     }
-  }, [currentModel, modelsListState.data]);
+
+    const selectedModel = models.find((model) => model.uuid === currentModel);
+
+    if (selectedModel && isModelAllowed(selectedModel, allowedModelNames)) {
+      return;
+    }
+
+    const firstAllowedModel = models.find((model) =>
+      isModelAllowed(model, allowedModelNames),
+    );
+
+    if (firstAllowedModel) {
+      setCurrentModel(firstAllowedModel.uuid);
+    } else if (!currentModel) {
+      setCurrentModel(models[0].uuid);
+    }
+  }, [
+    activeSubscriptionState.isLoading,
+    allowedModelNames,
+    currentModel,
+    modelsListState.data,
+  ]);
 
   return {
+    activeSubscriptionState,
+    allowedModelNames,
     currentModel,
+    hasAllowedModelInList,
+    isCurrentModelAllowed,
     setCurrentModel,
     modelState,
     modelsListState: {
@@ -161,7 +206,7 @@ export const useAiGenerate = (task_id: string | undefined) => {
   });
   const guardedMutateAsync = guardAsyncAction(
     aiGenerateState.mutateAsync,
-    (variables) => getPaidActionScope(variables.body.task_type),
+    () => PaidActionScope.AI_TASK_WRITE,
   );
 
   return {

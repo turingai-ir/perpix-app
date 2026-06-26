@@ -61,6 +61,7 @@
     "today": "امروز",
     "token": "توکن",
     "tomans": "تومان",
+    "upgradeRequired": "نیازمند ارتقا",
     "uploaded": "آپلود شد",
     "uploadErrors": {
       "etagMissing": "آپلود فایل کامل نشد. لطفا دوباره تلاش کنید.",
