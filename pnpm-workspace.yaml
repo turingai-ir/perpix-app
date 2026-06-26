@@ -1,7 +1,5 @@
-allowBuilds:
-  core-js: set this to true or false
-  esbuild: false
-  msw: false
+onlyBuiltDependencies:
+  - core-js
 ignoredBuiltDependencies:
   - '@swc/core'
   - esbuild
