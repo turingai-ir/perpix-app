@@ -21,6 +21,7 @@ const appRelease = `${packageJson.name}@${packageJson.version}`;
 export default defineConfig(({ mode }) => ({
   define: {
     __APP_RELEASE__: JSON.stringify(appRelease),
+    __APP_VERSION__: JSON.stringify(packageJson.version),
   },
   plugins: [
     react(),

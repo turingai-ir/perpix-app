@@ -33,6 +33,9 @@ export function PwaUpdateDialog({
           <DialogDescription>
             {t("features.pwaUpdate.description")}
           </DialogDescription>
+          <p className="text-muted-foreground text-sm">
+            {t("common.appVersion", { version: __APP_VERSION__ })}
+          </p>
         </DialogHeader>
 
         <DialogFooter>

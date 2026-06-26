@@ -174,6 +174,9 @@ const AppLayoutSidebarContent: FC = () => {
                 <BadgeCheck />
                 {t("pages.app.layout.sidebar.user.account")}
               </DropdownMenuItem>
+              <DropdownMenuItem>
+                {t("common.appVersion", { version: __APP_VERSION__ })}
+              </DropdownMenuItem>
 
               <DropdownMenuItem onClick={handleLogout}>
                 <LogOut />

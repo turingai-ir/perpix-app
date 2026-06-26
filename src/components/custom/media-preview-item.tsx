@@ -136,7 +136,12 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
         </div>
 
         <div className="flex w-full shrink-0 items-center justify-center pb-2">
-          <Button asChild variant="secondary">
+          <Button
+            asChild
+            variant="secondary"
+            size="lg"
+            className="h-11 px-5 text-base"
+          >
             <a
               href={downloadUrl ?? "#"}
               download

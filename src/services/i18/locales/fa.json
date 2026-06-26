@@ -1,5 +1,6 @@
 {
   "common": {
+    "appVersion": "نسخه: {{version}}",
     "addImage": "افزودن عکس",
     "addVideo": "افزودن ویدیو",
     "advancedSettings": "تنظیمات پیشرفته",
