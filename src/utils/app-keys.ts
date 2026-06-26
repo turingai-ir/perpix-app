@@ -18,5 +18,8 @@ export const APP_KEYS = {
   COOKIES: {
     ACCESS_TOKEN: "access_token",
   },
+  INDEXED_DB: {
+    REACT_QUERY: "REACT_QUERY_OFFLINE_CACHE",
+  },
   API_BASE_URL,
 } as const;

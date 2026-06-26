@@ -1,13 +1,13 @@
 import { RouterProvider } from "react-router";
-import { QueryClientProvider } from "@tanstack/react-query";
 import { DirectionProvider } from "@radix-ui/react-direction";
 
-import { queryClient } from "@/lib/react-query";
+import { indexedDBPersister, queryClient } from "@/lib/react-query";
 import { router } from "@/router/router";
 import { Toaster } from "@/components/ui/sonner";
 import { PwaUpdateProvider } from "@/feature/pwa";
 import { SupportChatProvider } from "@/feature/support-chat";
 import PricingFeature from "@/feature/pricing";
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 
 import "./services/i18/i18";
 import "./styles/globals.css";
@@ -17,13 +17,16 @@ function App() {
   return (
     <>
       <DirectionProvider dir="rtl">
-        <QueryClientProvider client={queryClient}>
+        <PersistQueryClientProvider
+          client={queryClient}
+          persistOptions={{ persister: indexedDBPersister }}
+        >
           <Toaster duration={4000} richColors position="top-center" />
           <PwaUpdateProvider />
           <SupportChatProvider />
           <PricingFeature />
           <RouterProvider router={router} />
-        </QueryClientProvider>
+        </PersistQueryClientProvider>
       </DirectionProvider>
     </>
   );
