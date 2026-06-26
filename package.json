@@ -101,5 +101,11 @@
   "browserslist": [
     "defaults",
     "not dead"
-  ]
+  ],
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "core-js",
+      "esbuild"
+    ]
+  }
 }
