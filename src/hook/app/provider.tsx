@@ -1,4 +1,4 @@
-import { useEffect, type FC, type PropsWithChildren } from "react";
+import { useEffect, useMemo, type FC, type PropsWithChildren } from "react";
 import createClient from "openapi-react-query";
 import { selectAtom } from "jotai/utils";
 import { useAtom } from "jotai";
@@ -15,7 +15,7 @@ const themeAtom = selectAtom(globalAtom, (val) => val.theme);
 const AppContextProvider: FC<PropsWithChildren<AppProviderProps>> = ({
   children,
 }) => {
-  const apiHook = createClient(apiClient);
+  const apiHook = useMemo(() => createClient(apiClient), []);
   const [myTheme] = useAtom(themeAtom);
 
   useEffect(() => {
