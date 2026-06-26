@@ -41,15 +41,13 @@ export const revokeDownloadUrl = (url: string) => {
   URL.revokeObjectURL(url);
 };
 
-export const downloadFile = async (url: string, name: string) => {
-  const download = await createDownloadUrlFromRemoteFile(url, name);
+export const downloadFile = (url: string) => {
   const link = document.createElement("a");
-  link.href = download.url;
-  link.download = download.fileName;
+  link.href = url;
+  link.rel = "noopener";
   document.body.appendChild(link);
   link.click();
-  document.body.removeChild(link);
-  window.setTimeout(() => revokeDownloadUrl(download.url), 1000);
+  link.remove();
 };
 
 export async function urlToFile(url: string, name: string) {

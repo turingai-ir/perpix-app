@@ -47,7 +47,7 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
 
     try {
       setIsDownloading(true);
-      await downloadFile(downloadUrl, `${type}-${fileId}`);
+      downloadFile(downloadUrl);
     } catch {
       toast.error(t("common.error"));
     } finally {
