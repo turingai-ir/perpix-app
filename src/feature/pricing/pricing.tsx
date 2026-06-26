@@ -41,7 +41,7 @@ function PricingFeature() {
     useAtomValue(pricingFeatureAtom);
   const { openPricingFeature, closePricingFeature } = usePricingFeature();
 
-  const plansState = useSubscriptionPlans(open);
+  const plansState = useSubscriptionPlans();
   const activeSubscriptionState = useActiveSubscription();
   const purchaseSubscriptionState = usePurchaseSubscription();
   const { mutateAsync: purchasePlan } = purchaseSubscriptionState;
@@ -113,12 +113,12 @@ function PricingFeature() {
           </SheetDescription>
         </SheetHeader>
 
-        {plansState.isLoading && <LoadingSection />}
-        {plansState.isError && (
+        {open && plansState.isLoading && <LoadingSection />}
+        {open && plansState.isError && (
           <ErrorSection onRetry={() => plansState.refetch()} />
         )}
 
-        {plansState.isSuccess ? (
+        {open && plansState.isSuccess ? (
           <div className="flex flex-1 items-center-safe overflow-y-auto px-6 pt-8">
             <div className="mx-auto flex max-w-(--breakpoint-lg) flex-col gap-4 lg:flex-row lg:gap-8">
               {plans?.map((plan) => (
