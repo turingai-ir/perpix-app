@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 
 import { useActiveSubscription } from "./api";
-import { usePricingFeature } from "./index";
+import { usePricingFeature } from ".";
 
 export enum PaidActionScope {
   USER_READ = "user:read",

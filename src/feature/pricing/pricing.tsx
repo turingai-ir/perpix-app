@@ -1,4 +1,5 @@
-import { useCallback, useMemo, useSyncExternalStore } from "react";
+import { useCallback, useMemo } from "react";
+import { useAtomValue } from "jotai";
 import { CircleCheck, LoaderCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -24,72 +25,8 @@ import {
   useSubscriptionPlans,
 } from "./api";
 import { usePaymentRedirect } from "@/feature/payment";
-
-export * from "./api";
-
-interface OpenPricingFeatureOptions {
-  requiredModelNames?: string[];
-  requiredScopes?: string[];
-}
-
-interface PricingFeatureApi {
-  openPricingFeature: (options?: OpenPricingFeatureOptions) => void;
-  closePricingFeature: () => void;
-}
-
-interface PricingFeatureState {
-  requiredModelNames: string[];
-  open: boolean;
-  requiredScopes: string[];
-}
-
-let pricingFeatureState: PricingFeatureState = {
-  open: false,
-  requiredModelNames: [],
-  requiredScopes: [],
-};
-
-const pricingFeatureListeners = new Set<() => void>();
-
-const emitPricingFeatureChange = () => {
-  pricingFeatureListeners.forEach((listener) => listener());
-};
-
-const setPricingFeatureState = (state: PricingFeatureState) => {
-  pricingFeatureState = state;
-  emitPricingFeatureChange();
-};
-
-const subscribePricingFeature = (listener: () => void) => {
-  pricingFeatureListeners.add(listener);
-
-  return () => {
-    pricingFeatureListeners.delete(listener);
-  };
-};
-
-const getPricingFeatureState = () => pricingFeatureState;
-
-const openPricingFeature = (options?: OpenPricingFeatureOptions) => {
-  setPricingFeatureState({
-    open: true,
-    requiredModelNames: options?.requiredModelNames ?? [],
-    requiredScopes: options?.requiredScopes ?? [],
-  });
-};
-
-const closePricingFeature = () => {
-  setPricingFeatureState({
-    open: false,
-    requiredModelNames: [],
-    requiredScopes: [],
-  });
-};
-
-const pricingFeatureApi: PricingFeatureApi = {
-  openPricingFeature,
-  closePricingFeature,
-};
+import { usePricingFeature } from "./hook";
+import { pricingFeatureAtom } from "./state";
 
 const normalizeList = <T,>(value: unknown): T[] => {
   if (!value) {
@@ -98,17 +35,11 @@ const normalizeList = <T,>(value: unknown): T[] => {
   return Array.isArray(value) ? [...value] : Array.from(value as ArrayLike<T>);
 };
 
-export function usePricingFeature(): PricingFeatureApi {
-  return pricingFeatureApi;
-}
-
 function PricingFeature() {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
-  const { open, requiredModelNames, requiredScopes } = useSyncExternalStore(
-    subscribePricingFeature,
-    getPricingFeatureState,
-    getPricingFeatureState,
-  );
+  const { open, requiredModelNames, requiredScopes } =
+    useAtomValue(pricingFeatureAtom);
+  const { openPricingFeature, closePricingFeature } = usePricingFeature();
 
   const plansState = useSubscriptionPlans(open);
   const activeSubscriptionState = useActiveSubscription();
@@ -116,11 +47,15 @@ function PricingFeature() {
   const { mutateAsync: purchasePlan } = purchaseSubscriptionState;
   const { openPaymentUrl } = usePaymentRedirect();
 
-  const plans = useMemo(() => {
-    const planItems = normalizeList<
-      SchemaSubscriptionPlanListResponse["items"][number]
-    >(plansState.data?.items);
+  const planItems = useMemo(
+    () =>
+      normalizeList<SchemaSubscriptionPlanListResponse["items"][number]>(
+        plansState.data?.items,
+      ),
+    [plansState.data?.items],
+  );
 
+  const plans = useMemo(() => {
     return planItems.filter(
       (plan) =>
         plan.uuid !== activeSubscriptionState.data?.plan.uuid &&
@@ -133,7 +68,7 @@ function PricingFeature() {
     );
   }, [
     activeSubscriptionState.data?.plan.uuid,
-    plansState.data?.items,
+    planItems,
     requiredModelNames,
     requiredScopes,
   ]);
@@ -158,7 +93,12 @@ function PricingFeature() {
 
       closePricingFeature();
     },
-    [requiredModelNames, requiredScopes],
+    [
+      closePricingFeature,
+      openPricingFeature,
+      requiredModelNames,
+      requiredScopes,
+    ],
   );
 
   return (
