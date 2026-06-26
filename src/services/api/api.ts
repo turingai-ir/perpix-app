@@ -118,6 +118,23 @@ export interface paths {
         readonly patch?: never;
         readonly trace?: never;
     };
+    readonly "/admin/user/list": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        /** List Users */
+        readonly get: operations["list_users_admin_user_list_get"];
+        readonly put?: never;
+        readonly post?: never;
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
     readonly "/admin/user/{user_uuid}/get-info": {
         readonly parameters: {
             readonly query?: never;
@@ -471,7 +488,7 @@ export interface paths {
         readonly patch?: never;
         readonly trace?: never;
     };
-    readonly "/file-manager/files/{file_uuid}/download": {
+    readonly "/file-manager/files/{file_uuid}/presigned-urls": {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -480,8 +497,8 @@ export interface paths {
             };
             readonly cookie?: never;
         };
-        /** Get File Download Url */
-        readonly get: operations["get_file_download_url_file_manager_files__file_uuid__download_get"];
+        /** Get File Presigned Urls */
+        readonly get: operations["get_file_presigned_urls_file_manager_files__file_uuid__presigned_urls_get"];
         readonly put?: never;
         readonly post?: never;
         readonly delete?: never;
@@ -1060,6 +1077,10 @@ export interface components {
             readonly supported_inputs: readonly components["schemas"]["AiRegistryModelSupportedTypesEnum"][];
             /** Supported Outputs */
             readonly supported_outputs: readonly components["schemas"]["AiRegistryModelSupportedTypesEnum"][];
+            /** Pricing Tiers */
+            readonly pricing_tiers: readonly {
+                readonly [key: string]: unknown;
+            }[];
         };
         /**
          * AiRegistryModelSupportedTypesEnum
@@ -1569,10 +1590,12 @@ export interface components {
              */
             readonly expire_at: string;
         };
-        /** FileManagerPresignedGetResponse */
-        readonly FileManagerPresignedGetResponse: {
-            /** Presigned Url */
-            readonly presigned_url: string;
+        /** FileManagerPresignedUrlsResponse */
+        readonly FileManagerPresignedUrlsResponse: {
+            /** Preview Url */
+            readonly preview_url: string;
+            /** Download Url */
+            readonly download_url: string;
             /**
              * Expire At
              * Format: date-time
@@ -2115,6 +2138,10 @@ export interface components {
             readonly supported_inputs: readonly components["schemas"]["AiRegistryModelSupportedTypesEnum"][];
             /** Supported Outputs */
             readonly supported_outputs: readonly components["schemas"]["AiRegistryModelSupportedTypesEnum"][];
+            /** Pricing Tiers */
+            readonly pricing_tiers: readonly {
+                readonly [key: string]: unknown;
+            }[];
             /** Config Schema */
             readonly config_schema: {
                 readonly [key: string]: unknown;
@@ -2224,7 +2251,7 @@ export type SchemaFileManagerMultipartInitiateRequest = components['schemas']['F
 export type SchemaFileManagerMultipartInitiateResponse = components['schemas']['FileManagerMultipartInitiateResponse'];
 export type SchemaFileManagerMultipartPresignPartRequest = components['schemas']['FileManagerMultipartPresignPartRequest'];
 export type SchemaFileManagerMultipartPresignPartResponse = components['schemas']['FileManagerMultipartPresignPartResponse'];
-export type SchemaFileManagerPresignedGetResponse = components['schemas']['FileManagerPresignedGetResponse'];
+export type SchemaFileManagerPresignedUrlsResponse = components['schemas']['FileManagerPresignedUrlsResponse'];
 export type SchemaFileManagerUploadFileResponse = components['schemas']['FileManagerUploadFileResponse'];
 export type SchemaFileManagerUserFilesResponse = components['schemas']['FileManagerUserFilesResponse'];
 export type SchemaGenerateTaskRequest = components['schemas']['GenerateTaskRequest'];
@@ -2462,6 +2489,26 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    readonly list_users_admin_user_list_get: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": readonly components["schemas"]["AdminUserGetInfoResponse"][];
                 };
             };
         };
@@ -3110,7 +3157,7 @@ export interface operations {
             };
         };
     };
-    readonly get_file_download_url_file_manager_files__file_uuid__download_get: {
+    readonly get_file_presigned_urls_file_manager_files__file_uuid__presigned_urls_get: {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -3127,7 +3174,7 @@ export interface operations {
                     readonly [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": components["schemas"]["FileManagerPresignedGetResponse"];
+                    readonly "application/json": components["schemas"]["FileManagerPresignedUrlsResponse"];
                 };
             };
             /** @description Validation Error */

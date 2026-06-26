@@ -271,7 +271,7 @@ export const useFilePreview = (
   const { useQuery } = useReactQueryApi();
   const getFilePreviewState = useQuery(
     "get",
-    "/file-manager/files/{file_uuid}/download",
+    "/file-manager/files/{file_uuid}/presigned-urls",
     {
       params: {
         path: {

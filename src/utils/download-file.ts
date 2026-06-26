@@ -1,11 +1,55 @@
-export const downloadFile = (url: string, name: string) => {
+const mimeExtensionMap: Record<string, string> = {
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp",
+  "video/mp4": "mp4",
+  "video/webm": "webm",
+};
+
+function getFileName(name: string, contentType: string) {
+  if (/\.[a-z0-9]+$/i.test(name)) return name;
+
+  const extension = mimeExtensionMap[contentType.split(";")[0] ?? ""];
+  return extension ? `${name}.${extension}` : name;
+}
+
+function createDownloadUrl(blob: Blob, name: string) {
+  const objectUrl = URL.createObjectURL(blob);
+  return {
+    fileName: getFileName(name, blob.type),
+    url: objectUrl,
+  };
+}
+
+export const createDownloadUrlFromRemoteFile = async (
+  url: string,
+  name: string,
+) => {
+  const response = await fetch(url, {
+    mode: "cors",
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to download file");
+  }
+
+  const blob = await response.blob();
+  return createDownloadUrl(blob, name);
+};
+
+export const revokeDownloadUrl = (url: string) => {
+  URL.revokeObjectURL(url);
+};
+
+export const downloadFile = async (url: string, name: string) => {
+  const download = await createDownloadUrlFromRemoteFile(url, name);
   const link = document.createElement("a");
-  link.href = url;
-  link.target = "_blank";
-  link.download = name;
+  link.href = download.url;
+  link.download = download.fileName;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
+  window.setTimeout(() => revokeDownloadUrl(download.url), 1000);
 };
 
 export async function urlToFile(url: string, name: string) {

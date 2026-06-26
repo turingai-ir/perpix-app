@@ -1,5 +1,6 @@
-import type { FC } from "react";
+import { useState, type FC, type MouseEvent } from "react";
 import { AlertCircle, Download, Image as ImageIcon, Video } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -30,18 +31,28 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
   type,
 }) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
+  const [isDownloading, setIsDownloading] = useState(false);
   const { getFilePreviewState } = useFilePreview(fileId);
 
   const isPreviewLoading = getFilePreviewState.isPending;
   const isError = getFilePreviewState.isError;
-  const mediaUrl = getFilePreviewState.data?.presigned_url;
-  const mediaLabel =
-    type === "image" ? t("common.image") : t("common.video");
+  const mediaUrl = getFilePreviewState.data?.preview_url;
+  const downloadUrl = getFilePreviewState.data?.download_url;
+  const mediaLabel = type === "image" ? t("common.image") : t("common.video");
 
-  const handleDownload = () => {
-    if (!mediaUrl) return;
+  const handleDownload = async (event: MouseEvent<HTMLAnchorElement>) => {
+    if (!downloadUrl || isDownloading) return;
 
-    downloadFile(mediaUrl, `${type}-${fileId}`);
+    event.preventDefault();
+
+    try {
+      setIsDownloading(true);
+      await downloadFile(downloadUrl, `${type}-${fileId}`);
+    } catch {
+      toast.error(t("common.error"));
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
   return (
@@ -56,7 +67,7 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
           <DialogTrigger asChild>
             <button
               type="button"
-              className="group relative h-full w-full cursor-zoom-in overflow-hidden text-start outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+              className="group focus-visible:ring-ring/50 relative h-full w-full cursor-zoom-in overflow-hidden text-start outline-none focus-visible:ring-3"
               aria-label={mediaLabel}
             >
               {type === "image" ? (
@@ -84,7 +95,10 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
         ) : null}
 
         {isError && (
-          <ErrorPreview label={t("common.error")} className="text-destructive" />
+          <ErrorPreview
+            label={t("common.error")}
+            className="text-destructive"
+          />
         )}
 
         {!isPreviewLoading && !isError && !mediaUrl && (
@@ -97,13 +111,11 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
       </div>
 
       <DialogContent
-        className="top-0 start-0 flex h-dvh max-h-dvh max-w-none translate-x-0 translate-y-0 flex-col gap-3 rounded-none border-0 bg-background/95 p-3 ring-0 rtl:translate-x-0 sm:max-w-none"
+        className="bg-background/95 inset-s-0 top-0 flex h-dvh max-h-dvh max-w-none translate-x-0 translate-y-0 flex-col gap-3 rounded-none border-0 p-3 ring-0 sm:max-w-none rtl:translate-x-0"
         showCloseButton
       >
         <DialogTitle className="sr-only">{mediaLabel}</DialogTitle>
-        <DialogDescription className="sr-only">
-          {mediaLabel}
-        </DialogDescription>
+        <DialogDescription className="sr-only">{mediaLabel}</DialogDescription>
 
         <div className="flex min-h-0 w-full flex-1 items-center justify-center">
           {type === "image" ? (
@@ -124,14 +136,20 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
         </div>
 
         <div className="flex w-full shrink-0 items-center justify-center pb-2">
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={handleDownload}
-            disabled={!mediaUrl}
-          >
-            <Download />
-            {t("common.download")}
+          <Button asChild variant="secondary">
+            <a
+              href={downloadUrl ?? "#"}
+              download
+              aria-disabled={!downloadUrl || isDownloading}
+              className={cn(
+                (!downloadUrl || isDownloading) &&
+                  "pointer-events-none opacity-50",
+              )}
+              onClick={handleDownload}
+            >
+              <Download />
+              {t("common.download")}
+            </a>
           </Button>
         </div>
       </DialogContent>

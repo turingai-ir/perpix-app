@@ -25,9 +25,6 @@ export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     tailwindcss(),
-    legacy({
-      renderLegacyChunks: true,
-    }),
     VitePWA({
       registerType: "autoUpdate",
       injectRegister: "auto",
@@ -90,6 +87,7 @@ export default defineConfig(({ mode }) => ({
         enabled: mode !== "production",
       },
     }),
+    legacy({}),
   ],
   server: {
     watch: {

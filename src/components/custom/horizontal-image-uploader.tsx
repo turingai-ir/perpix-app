@@ -191,7 +191,7 @@ const HorizontalImagePreviewItem: FC<HorizontalImagePreviewItemProps> = ({
 
   const isPreviewLoading = getFilePreviewState.isPending;
   const isError = getFilePreviewState.isError;
-  const previewUrl = getFilePreviewState.data?.presigned_url;
+  const previewUrl = getFilePreviewState.data?.preview_url;
   const canDelete = !!onDeleteClick && !disabled;
 
   const handleDeleteClick = () => {

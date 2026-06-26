@@ -99,9 +99,6 @@
   },
   "browserslist": [
     "defaults",
-    "last 2 versions",
-    "not dead",
-    "iOS >= 14",
-    "Android >= 10"
+    "not dead"
   ]
 }
