@@ -30,10 +30,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { cookies } from "@/utils/cookies";
-import {
-  useActiveSubscription,
-  usePricingFeature,
-} from "@/feature/pricing";
+import { useActiveSubscription, usePricingFeature } from "@/feature/pricing";
 import AppLayoutSidebarHistory from "./history";
 import { useSupportChatWidget } from "@/feature/support-chat";
 

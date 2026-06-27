@@ -30,7 +30,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { cookies } from "@/utils/cookies";
+import { accessTokenCookieOptions, cookies } from "@/utils/cookies";
 import { APP_ROUTES_KEY } from "@/router/routes";
 import { PasswordInput } from "@/components/ui/password-input";
 import { useLogin, useResetPassword } from "../_hooks";
@@ -77,7 +77,11 @@ const AuthLoginPageEnterPassword: FC = () => {
         password: values.password,
       },
     });
-    cookie.set(APP_KEYS.COOKIES.ACCESS_TOKEN, data.token);
+    cookie.set(
+      APP_KEYS.COOKIES.ACCESS_TOKEN,
+      data.token,
+      accessTokenCookieOptions,
+    );
     navigate(APP_ROUTES_KEY.app.path);
     toast.success(t("pages.auth.login.enterPasswordForm.successLoginToast"));
   }
@@ -144,7 +148,11 @@ const AuthLoginPageEnterPassword: FC = () => {
             const data = await resetPasswordState.mutateAsync({
               body: { phone_number: pageState.mobile },
             });
-            cookie.set(APP_KEYS.COOKIES.ACCESS_TOKEN, data.token);
+            cookie.set(
+              APP_KEYS.COOKIES.ACCESS_TOKEN,
+              data.token,
+              accessTokenCookieOptions,
+            );
             setPageState((draft) => {
               draft.currentView = "SET_PASSWORD";
             });

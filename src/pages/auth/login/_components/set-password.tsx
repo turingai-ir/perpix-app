@@ -29,7 +29,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { cookies } from "@/utils/cookies";
+import { accessTokenCookieOptions, cookies } from "@/utils/cookies";
 import { APP_ROUTES_KEY } from "@/router/routes";
 import {
   InputOTP,
@@ -103,7 +103,11 @@ const AuthLoginPageSetPassword: FC = () => {
         otp_code: values.otp,
       },
     });
-    cookie.set(APP_KEYS.COOKIES.ACCESS_TOKEN, data.token);
+    cookie.set(
+      APP_KEYS.COOKIES.ACCESS_TOKEN,
+      data.token,
+      accessTokenCookieOptions,
+    );
     setPageState((draft) => {
       draft.currentView = "START";
     });

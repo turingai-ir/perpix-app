@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { cookies } from "@/utils/cookies";
+import { accessTokenCookieOptions, cookies } from "@/utils/cookies";
 import { useStart } from "../_hooks";
 
 const AuthLoginPageStart: FC = () => {
@@ -73,7 +73,11 @@ const AuthLoginPageStart: FC = () => {
         phone_number: values.mobile,
       },
     });
-    cookie.set(APP_KEYS.COOKIES.ACCESS_TOKEN, data.token);
+    cookie.set(
+      APP_KEYS.COOKIES.ACCESS_TOKEN,
+      data.token,
+      accessTokenCookieOptions,
+    );
     setPageState((draft) => {
       draft.mobile = values.mobile;
       draft.currentView = data.is_verified ? "PASSWORD" : "SET_PASSWORD";

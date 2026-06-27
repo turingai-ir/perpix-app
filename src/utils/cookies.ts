@@ -4,6 +4,11 @@ const defaultCookieOptions: CookieSetOptions = {
   path: "/",
   secure: import.meta.env.MODE === "production",
   sameSite: "lax",
+  httpOnly: import.meta.env.MODE === "production",
+};
+
+export const accessTokenCookieOptions: CookieSetOptions = {
+  maxAge: 60 * 60 * 24 * 30,
 };
 
 export const cookies = () => {
