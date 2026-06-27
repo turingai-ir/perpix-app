@@ -1,5 +1,4 @@
 import {
-  useEffect,
   useMemo,
   useRef,
   useState,
@@ -31,7 +30,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useAppTranslate } from "@/hook";
-import { usePricingFeature } from "@/feature/pricing";
 import {
   isJsonConfigSchema,
   useDynamicConfigForm,
@@ -59,7 +57,7 @@ interface Props {
   }) => ReactNode;
   isLoading?: boolean;
   lastMessageConfig?: SchemaAiTaskMessageResponse["ai_model_config"];
-  onSubmit: (data: any, ai_model_uuid: string) => void;
+  onSubmit: (data: any, ai_model_uuid: string) => Promise<void> | void;
   promptBoxFieldNames: ReadonlySet<string>;
   promptPlaceholderKey: string;
   supportedOutputs: AiRegistryModelSupportedTypesEnumValue[];
@@ -84,14 +82,10 @@ export const GenerationPromptBox: FC<Props> = ({
     modelState,
     modelsListState,
     currentModel,
-    hasAllowedModelInList,
-    isCurrentModelAllowed,
     setCurrentModel,
   } = useModel(supportedOutputs);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const isPromptTooShortRef = useRef(true);
   const { t } = useAppTranslate();
-  const { openPricingFeature } = usePricingFeature();
   const [isUploadingMedia, setIsUploadingMedia] = useState(false);
   const [isPromptTooShort, setIsPromptTooShort] = useState(true);
   const { configDefaults: modelConfigDefaults, configMeta: modelConfigMeta } =
@@ -107,7 +101,6 @@ export const GenerationPromptBox: FC<Props> = ({
     return {
       ...(modelConfigDefaults ?? {}),
       ...(lastMessageConfigDefaults ?? {}),
-      prompt: "",
     };
   }, [configDefaultsResolver, lastMessageConfig, modelConfigDefaults]);
 
@@ -135,49 +128,19 @@ export const GenerationPromptBox: FC<Props> = ({
     activeSubscriptionState.isLoading ||
     modelsListState.isLoading ||
     modelState.isLoading;
+  const isSubmitDisabled = isFormBusy || isUploadingMedia || isPromptTooShort;
 
-  const isInteractionDisabled = isFormBusy;
-  const isSubmitDisabled =
-    isInteractionDisabled || isUploadingMedia || isPromptTooShort;
-  const modelItems = Array.isArray(modelsListState.data)
-    ? modelsListState.data
-    : [];
-  const currentModelSummary = modelItems.find(
-    (model) => model.uuid === currentModel,
-  );
-  const requiredModelNamesForPricing = hasAllowedModelInList
-    ? currentModelSummary
-      ? [currentModelSummary.name]
-      : []
-    : modelItems.map((model) => model.name);
-
-  const submitForm = dynamicForm.handleSubmit(
-    (data) => onSubmit(data, currentModel ?? ""),
-    (errors) =>
-      showDynamicFormErrorsToast({
-        errors,
-        properties: dynamicForm.properties,
-        title: t("common.error"),
-      }),
-  );
-
-  const handleFormSubmit: SubmitEventHandler<HTMLFormElement> = (event) => {
+  const handleFormSubmit: SubmitEventHandler<HTMLFormElement> = async (
+    event,
+  ) => {
     const currentPrompt =
       textareaRef.current?.value ??
       String(dynamicForm.getValues("prompt") ?? "");
     const currentPromptTooShort =
       currentPrompt.trim().length < MIN_PROMPT_LENGTH;
 
-    if (isInteractionDisabled || isUploadingMedia || currentPromptTooShort) {
+    if (isFormBusy || isUploadingMedia || currentPromptTooShort) {
       event.preventDefault();
-      return;
-    }
-
-    if (!hasAllowedModelInList || !isCurrentModelAllowed) {
-      event.preventDefault();
-      openPricingFeature({
-        requiredModelNames: requiredModelNamesForPricing,
-      });
       return;
     }
 
@@ -186,36 +149,25 @@ export const GenerationPromptBox: FC<Props> = ({
       shouldTouch: true,
       shouldValidate: false,
     });
-    void submitForm(event);
-  };
 
-  const handleModelChange = (modelId: string) => {
-    if (isInteractionDisabled) return;
+    const submitForm = dynamicForm.handleSubmit(
+      async (data) => {
+        await onSubmit(data, currentModel ?? "");
+      },
+      (errors) =>
+        showDynamicFormErrorsToast({
+          errors,
+          properties: dynamicForm.properties,
+          title: t("common.error"),
+        }),
+    );
 
-    setCurrentModel(modelId);
+    await submitForm(event);
   };
 
   const handlePromptChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
-    const nextIsPromptTooShort =
-      event.target.value.trim().length < MIN_PROMPT_LENGTH;
-
-    if (isPromptTooShortRef.current !== nextIsPromptTooShort) {
-      isPromptTooShortRef.current = nextIsPromptTooShort;
-      setIsPromptTooShort(nextIsPromptTooShort);
-    }
+    setIsPromptTooShort(event.target.value.trim().length < MIN_PROMPT_LENGTH);
   };
-
-  useEffect(() => {
-    const prompt = String(dynamicForm.defaultValues.prompt ?? "");
-    const nextIsPromptTooShort = prompt.trim().length < MIN_PROMPT_LENGTH;
-
-    isPromptTooShortRef.current = nextIsPromptTooShort;
-    setIsPromptTooShort(nextIsPromptTooShort);
-
-    if (textareaRef.current) {
-      textareaRef.current.value = prompt;
-    }
-  }, [dynamicForm.defaultValues]);
 
   return (
     <Card className="w-full min-w-0 overflow-hidden px-2">
@@ -278,8 +230,8 @@ export const GenerationPromptBox: FC<Props> = ({
             <div className="flex w-full flex-wrap gap-4">
               <Select
                 value={currentModel ?? ""}
-                onValueChange={handleModelChange}
-                disabled={isInteractionDisabled}
+                onValueChange={setCurrentModel}
+                disabled={isFormBusy}
               >
                 <SelectTrigger className="w-full md:max-w-72">
                   <SelectValue placeholder={t("common.chooseModel")} />
@@ -304,13 +256,13 @@ export const GenerationPromptBox: FC<Props> = ({
                   key={fieldName}
                   dynamicForm={dynamicForm}
                   fieldName={fieldName}
-                  disabled={isInteractionDisabled}
+                  disabled={isFormBusy}
                 />
               ))}
               <AdvancedPromptSettingsDialog
                 dynamicForm={dynamicForm}
                 fieldNames={advancedFieldNames}
-                disabled={isInteractionDisabled}
+                disabled={isFormBusy}
               />
             </div>
           </div>

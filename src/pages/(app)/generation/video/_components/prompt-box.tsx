@@ -10,7 +10,7 @@ import {
 } from "@/services/api";
 
 interface Props {
-  onSubmit: (data: any, ai_model_uuid: string) => void;
+  onSubmit: (data: any, ai_model_uuid: string) => Promise<void> | void;
   isLoading?: boolean;
   lastMessageConfig?: SchemaAiTaskMessageResponse["ai_model_config"];
 }

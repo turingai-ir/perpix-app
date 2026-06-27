@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   type InfiniteData,
   type Query,
@@ -87,7 +87,7 @@ export const useModel = (
   const { useQuery } = useReactQueryApi();
   const activeSubscriptionState = useActiveSubscription();
 
-  const [currentModel, setCurrentModel] = useState<string | undefined>(
+  const [selectedModel, setCurrentModel] = useState<string | undefined>(
     undefined,
   );
   const allowedModelNames = activeSubscriptionState.data?.plan
@@ -101,6 +101,26 @@ export const useModel = (
     },
   });
 
+  const models = modelsListState.data as
+    | Array<SchemaAiRegistryModelSummary>
+    | undefined;
+  const selectedModelSummary = activeSubscriptionState.isLoading
+    ? undefined
+    : models?.find(
+        (model) =>
+          model.uuid === selectedModel &&
+          isModelAllowed(model, allowedModelNames),
+      );
+  const firstAllowedModel = activeSubscriptionState.isLoading
+    ? undefined
+    : models?.find((model) => isModelAllowed(model, allowedModelNames));
+  const currentModelSummary = selectedModelSummary ?? firstAllowedModel;
+  const currentModel = currentModelSummary?.uuid;
+  const hasAllowedModelInList = models ? Boolean(firstAllowedModel) : true;
+  const isCurrentModelAllowed = currentModelSummary
+    ? isModelAllowed(currentModelSummary, allowedModelNames)
+    : true;
+
   const modelState = useQuery(
     "get",
     "/ai-registry/models/{ai_model_uuid}",
@@ -113,45 +133,6 @@ export const useModel = (
     },
     { enabled: !!currentModel },
   );
-  const models = modelsListState.data as
-    | Array<SchemaAiRegistryModelSummary>
-    | undefined;
-  const currentModelSummary = models?.find(
-    (model) => model.uuid === currentModel,
-  );
-  const hasAllowedModelInList = models
-    ? models.some((model) => isModelAllowed(model, allowedModelNames))
-    : true;
-  const isCurrentModelAllowed = currentModelSummary
-    ? isModelAllowed(currentModelSummary, allowedModelNames)
-    : true;
-
-  useEffect(() => {
-    if (!models?.length || activeSubscriptionState.isLoading) {
-      return;
-    }
-
-    const selectedModel = models.find((model) => model.uuid === currentModel);
-
-    if (selectedModel && isModelAllowed(selectedModel, allowedModelNames)) {
-      return;
-    }
-
-    const firstAllowedModel = models.find((model) =>
-      isModelAllowed(model, allowedModelNames),
-    );
-
-    if (firstAllowedModel) {
-      setCurrentModel(firstAllowedModel.uuid);
-    } else if (!currentModel) {
-      setCurrentModel(models[0].uuid);
-    }
-  }, [
-    activeSubscriptionState.isLoading,
-    allowedModelNames,
-    currentModel,
-    modelsListState.data,
-  ]);
 
   return {
     activeSubscriptionState,
