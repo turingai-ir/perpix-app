@@ -1,7 +1,11 @@
 import { RouterProvider } from "react-router";
 import { DirectionProvider } from "@radix-ui/react-direction";
 
-import { indexedDBPersister, queryClient } from "@/lib/react-query";
+import {
+  indexedDBPersister,
+  queryClient,
+  REACT_QUERY_CACHE_TIME,
+} from "@/lib/react-query";
 import { router } from "@/router/router";
 import { Toaster } from "@/components/ui/sonner";
 import { PwaUpdateProvider } from "@/feature/pwa";
@@ -19,7 +23,10 @@ function App() {
       <DirectionProvider dir="rtl">
         <PersistQueryClientProvider
           client={queryClient}
-          persistOptions={{ persister: indexedDBPersister }}
+          persistOptions={{
+            persister: indexedDBPersister,
+            maxAge: REACT_QUERY_CACHE_TIME,
+          }}
         >
           <Toaster duration={4000} richColors position="top-center" />
           <PwaUpdateProvider />
