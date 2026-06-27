@@ -1,5 +1,5 @@
 import Ajv2020 from "ajv/dist/2020";
-import type { ErrorObject } from "ajv";
+import type { ErrorObject, ValidateFunction } from "ajv";
 import type { TFunction } from "i18next";
 import type { DefaultValues, FieldError, Resolver } from "react-hook-form";
 import { toNestErrors } from "@hookform/resolvers";
@@ -15,6 +15,17 @@ import type {
 } from "./types";
 
 const DYNAMIC_CONFIG_VALIDATION_KEY = "common.validationErrors.dynamicConfig";
+const ajv = new Ajv2020({
+  allErrors: true,
+  coerceTypes: true,
+  strict: false,
+  validateSchema: false,
+});
+const validateByCacheKey = new Map<
+  string,
+  { schema: JsonConfigSchema; validate: ValidateFunction }
+>();
+const validateBySchema = new WeakMap<JsonConfigSchema, ValidateFunction>();
 
 export const EMPTY_CONFIG_SCHEMA: JsonConfigSchema = {
   type: "object",
@@ -138,7 +149,11 @@ function isRequired(
   fieldName: string,
   requiredFields: readonly string[],
 ) {
-  return prop.required === true || requiredFields.includes(fieldName);
+  return (
+    prop["x-required"] === true ||
+    prop.required === true ||
+    requiredFields.includes(fieldName)
+  );
 }
 
 function nestedRequiredFields(prop: JsonSchemaProperty): readonly string[] {
@@ -232,6 +247,13 @@ function conditionMatches(
     return condition.allOf.every((item) => conditionMatches(item, values));
   }
 
+  if (Array.isArray(condition.oneOf)) {
+    return (
+      condition.oneOf.filter((item) => conditionMatches(item, values))
+        .length === 1
+    );
+  }
+
   if ("not" in condition) {
     return !conditionMatches(condition.not, values);
   }
@@ -252,7 +274,20 @@ function collectNotRequiredFields(schema: unknown): string[] {
     ? schema.anyOf.flatMap(collectNotRequiredFields)
     : [];
 
-  return [...requiredFields, ...anyOfRequiredFields];
+  const allOfRequiredFields = Array.isArray(schema.allOf)
+    ? schema.allOf.flatMap(collectNotRequiredFields)
+    : [];
+
+  const oneOfRequiredFields = Array.isArray(schema.oneOf)
+    ? schema.oneOf.flatMap(collectNotRequiredFields)
+    : [];
+
+  return [
+    ...requiredFields,
+    ...anyOfRequiredFields,
+    ...allOfRequiredFields,
+    ...oneOfRequiredFields,
+  ];
 }
 
 function getSchemaFieldNames(configSchema?: JsonConfigSchema | null) {
@@ -377,16 +412,26 @@ function applyConditionalConstValues(
   values: DynamicConfigValues,
 ) {
   const result = { ...values };
+  const maxPasses = Math.max(1, configSchema.allOf?.length ?? 0);
 
-  for (const rule of configSchema.allOf ?? []) {
-    if (!isRecord(rule) || !conditionMatches(rule.if, result)) continue;
-    if (!isRecord(rule.then) || !isRecord(rule.then.properties)) continue;
+  for (let pass = 0; pass < maxPasses; pass += 1) {
+    let changed = false;
 
-    for (const [fieldName, prop] of Object.entries(rule.then.properties)) {
-      if (isRecord(prop) && "const" in prop) {
-        result[fieldName] = prop.const;
+    for (const rule of configSchema.allOf ?? []) {
+      if (!isRecord(rule) || !conditionMatches(rule.if, result)) continue;
+      if (!isRecord(rule.then) || !isRecord(rule.then.properties)) continue;
+
+      for (const [fieldName, prop] of Object.entries(rule.then.properties)) {
+        if (isRecord(prop) && "const" in prop) {
+          if (!Object.is(result[fieldName], prop.const)) {
+            result[fieldName] = prop.const;
+            changed = true;
+          }
+        }
       }
     }
+
+    if (!changed) break;
   }
 
   return result;
@@ -529,17 +574,45 @@ function getAjvErrorType(error: ErrorObject) {
   return error.keyword;
 }
 
+function getCompiledValidate(
+  configSchema: JsonConfigSchema,
+  cacheKey?: string | number | null,
+) {
+  if (cacheKey !== undefined && cacheKey !== null) {
+    const normalizedCacheKey = String(cacheKey);
+    const cachedValidateEntry = validateByCacheKey.get(normalizedCacheKey);
+
+    if (cachedValidateEntry?.schema === configSchema) {
+      return cachedValidateEntry.validate;
+    }
+
+    const compiledValidate = ajv.compile(configSchema);
+    validateByCacheKey.set(normalizedCacheKey, {
+      schema: configSchema,
+      validate: compiledValidate,
+    });
+
+    return compiledValidate;
+  }
+
+  const cachedValidate = validateBySchema.get(configSchema);
+
+  if (cachedValidate) return cachedValidate;
+
+  const compiledValidate = ajv.compile(configSchema);
+  validateBySchema.set(configSchema, compiledValidate);
+
+  return compiledValidate;
+}
+
 export function buildAjvResolver(
   configSchema: JsonConfigSchema,
   messages: DynamicConfigValidationMessages = DEFAULT_VALIDATION_MESSAGES,
+  options?: {
+    cacheKey?: string | number | null;
+  },
 ): Resolver<DynamicConfigValues> {
-  const ajv = new Ajv2020({
-    allErrors: true,
-    coerceTypes: true,
-    strict: false,
-    validateSchema: false,
-  });
-  const validate = ajv.compile(configSchema);
+  const validate = getCompiledValidate(configSchema, options?.cacheKey);
 
   return async (values, _context, options) => {
     const conditionalValues = applyConditionalConstValues(configSchema, values);
@@ -589,9 +662,12 @@ export function buildAjvResolver(
   };
 }
 
-function getEmptyDefaultValue(prop: JsonSchemaProperty): unknown {
+function getEmptyDefaultValue(
+  prop: JsonSchemaProperty,
+  isRequiredField = false,
+): unknown {
   if (prop.enum && prop.enum.length > 0) {
-    return prop.default ?? prop.enum[0];
+    return isRequiredField ? prop.enum[0] : undefined;
   }
 
   switch (getPrimaryType(prop)) {
@@ -656,15 +732,51 @@ function cleanValueByProperty(
   return value;
 }
 
+function resolveEffectiveDefault(
+  prop: JsonSchemaProperty,
+  candidate: unknown,
+  fallbackValue: unknown,
+): unknown {
+  if (candidate === undefined || candidate === null) return undefined;
+
+  if (candidate === "" && (prop.enum || getPrimaryType(prop) !== "string")) {
+    return fallbackValue;
+  }
+
+  return candidate;
+}
+
 function getPropertyDefaultValue(
   prop: JsonSchemaProperty,
   defaultValue: unknown,
+  isRequiredField = false,
 ): unknown {
-  if (defaultValue !== undefined && defaultValue !== null) {
-    return cleanValueByProperty(prop, defaultValue);
+  const emptyDefaultValue = getEmptyDefaultValue(prop, isRequiredField);
+  const fallbackDefaultValue =
+    prop.default !== undefined && prop.default !== null
+      ? prop.default
+      : emptyDefaultValue;
+  const resolvedDefaultValue = resolveEffectiveDefault(
+    prop,
+    defaultValue,
+    fallbackDefaultValue,
+  );
+
+  if (resolvedDefaultValue !== undefined) {
+    return cleanValueByProperty(prop, resolvedDefaultValue);
   }
 
-  return cleanValueByProperty(prop, prop.default ?? getEmptyDefaultValue(prop));
+  const resolvedSchemaDefault = resolveEffectiveDefault(
+    prop,
+    prop.default,
+    emptyDefaultValue,
+  );
+
+  if (resolvedSchemaDefault !== undefined) {
+    return cleanValueByProperty(prop, resolvedSchemaDefault);
+  }
+
+  return cleanValueByProperty(prop, emptyDefaultValue);
 }
 
 export function sanitizeConfigValues(
@@ -724,13 +836,38 @@ export function buildDefaultValues(
     result[key] = getPropertyDefaultValue(
       prop,
       configDefaults && key in configDefaults ? configDefaults[key] : undefined,
+      isRequired(prop, key, configSchema.required ?? []),
     );
   }
 
   return result as DefaultValues<DynamicConfigValues>;
 }
 
+function resolveWidgetInputType(
+  widget: string | undefined,
+): FieldMeta["inputType"] | undefined {
+  switch (widget) {
+    case "textarea":
+    case "text":
+    case "select":
+    case "number":
+    case "checkbox":
+    case "file":
+    case "file-list":
+    case "array":
+    case "object":
+    case "hidden":
+      return widget;
+
+    default:
+      return undefined;
+  }
+}
+
 function resolveInputType(prop: JsonSchemaProperty): FieldMeta["inputType"] {
+  if (prop["x-file"]?.type === "list") return "file-list";
+  if (prop["x-file"]) return "file";
+
   const propType = getPrimaryType(prop);
 
   if (prop.enum && prop.enum.length > 0) return "select";
@@ -761,23 +898,46 @@ export function buildFieldMeta(params: {
   prop: JsonSchemaProperty;
   requiredFields: readonly string[];
   defaultValues: Record<string, unknown>;
+  widget?: string;
   enumLabels?: Record<string, Record<string, string>>;
   configMeta?: JsonConfigMeta | null;
 }): FieldMeta {
-  const { name, prop, requiredFields, defaultValues, enumLabels, configMeta } =
-    params;
+  const {
+    name,
+    prop,
+    requiredFields,
+    defaultValues,
+    widget,
+    enumLabels,
+    configMeta,
+  } = params;
 
   return {
     name,
     property: prop,
     required: isRequired(prop, name, requiredFields),
     defaultValue: defaultValues[name],
-    inputType: resolveInputType(prop),
+    inputType: resolveWidgetInputType(widget) ?? resolveInputType(prop),
     options: prop.enum,
     optionLabels: resolveOptionLabels(prop, name, enumLabels, configMeta),
     description: prop.description,
     title: prop.title,
   };
+}
+
+export function getOrderedFieldNames(configSchema?: JsonConfigSchema | null) {
+  const schemaFields = Object.keys(configSchema?.properties ?? {});
+  const schemaFieldSet = new Set(schemaFields);
+  const orderedFields =
+    configSchema?.["x-ui"]?.order?.filter((fieldName) =>
+      schemaFieldSet.has(fieldName),
+    ) ?? [];
+  const orderedFieldSet = new Set(orderedFields);
+  const remainingFields = schemaFields.filter(
+    (fieldName) => !orderedFieldSet.has(fieldName),
+  );
+
+  return [...orderedFields, ...remainingFields];
 }
 
 export function stripUndefinedDeep<T>(value: T): T {

@@ -1,4 +1,5 @@
 import {
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -57,7 +58,9 @@ interface Props {
   }) => ReactNode;
   isLoading?: boolean;
   lastMessageConfig?: SchemaAiTaskMessageResponse["ai_model_config"];
+  lastMessageModelUuid?: SchemaAiTaskMessageResponse["ai_model_uuid"];
   onSubmit: (data: any, ai_model_uuid: string) => Promise<void> | void;
+  promptClearKey?: string;
   promptBoxFieldNames: ReadonlySet<string>;
   promptPlaceholderKey: string;
   supportedOutputs: AiRegistryModelSupportedTypesEnumValue[];
@@ -71,7 +74,9 @@ export const GenerationPromptBox: FC<Props> = ({
   extraContent,
   isLoading,
   lastMessageConfig,
+  lastMessageModelUuid,
   onSubmit,
+  promptClearKey,
   promptBoxFieldNames: includedPromptBoxFieldNames,
   promptPlaceholderKey,
   supportedOutputs,
@@ -83,8 +88,9 @@ export const GenerationPromptBox: FC<Props> = ({
     modelsListState,
     currentModel,
     setCurrentModel,
-  } = useModel(supportedOutputs);
+  } = useModel(supportedOutputs, lastMessageModelUuid);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const lastPromptClearKeyRef = useRef<string | undefined>(undefined);
   const { t } = useAppTranslate();
   const [isUploadingMedia, setIsUploadingMedia] = useState(false);
   const [isPromptTooShort, setIsPromptTooShort] = useState(true);
@@ -168,6 +174,23 @@ export const GenerationPromptBox: FC<Props> = ({
   const handlePromptChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setIsPromptTooShort(event.target.value.trim().length < MIN_PROMPT_LENGTH);
   };
+
+  useEffect(() => {
+    if (!promptClearKey) return;
+    if (lastPromptClearKeyRef.current === promptClearKey) return;
+
+    lastPromptClearKeyRef.current = promptClearKey;
+    dynamicForm.setValue("prompt", "", {
+      shouldDirty: false,
+      shouldTouch: false,
+      shouldValidate: false,
+    });
+    setIsPromptTooShort(true);
+
+    if (textareaRef.current) {
+      textareaRef.current.value = "";
+    }
+  }, [dynamicForm, promptClearKey]);
 
   return (
     <Card className="w-full min-w-0 overflow-hidden px-2">

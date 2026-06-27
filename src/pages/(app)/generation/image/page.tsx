@@ -24,6 +24,7 @@ const GenerationImagePage = () => {
     isBusy,
     isTaskLoading,
     lastMessage,
+    messageListClearKey,
     shouldShowIntro,
   } = useGenerationPage({
     generatedMediaField: GeneratedMediaField.IMAGE,
@@ -56,7 +57,9 @@ const GenerationImagePage = () => {
             <GenerationImagePromptBox
               isLoading={isBusy}
               lastMessageConfig={lastMessage?.ai_model_config}
+              lastMessageModelUuid={lastMessage?.ai_model_uuid}
               onSubmit={handleForm}
+              promptClearKey={messageListClearKey}
             />
           </div>
         </>

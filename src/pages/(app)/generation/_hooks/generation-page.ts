@@ -60,6 +60,12 @@ export function useGenerationPage({
       message.uuid === resultMessage.uuid ? resultMessage : message,
     );
   }, [aiTaskMessages, aiTaskResultState.data]);
+  const messageListClearKey =
+    taskData && aiTaskMessages.length > 0
+      ? `${taskData.uuid}:${aiTaskMessages
+          .map((message) => message.uuid)
+          .join(":")}`
+      : undefined;
   const lastMessage = displayedMessages[displayedMessages.length - 1];
   const isTaskLoading = aiTaskState.isLoading;
   const isGenerating = aiGenerateState.isPending;
@@ -94,6 +100,7 @@ export function useGenerationPage({
     isBusy,
     isTaskLoading,
     lastMessage,
+    messageListClearKey,
     shouldShowIntro: !chatId,
   };
 }

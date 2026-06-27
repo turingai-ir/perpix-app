@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   type InfiniteData,
   type Query,
@@ -83,12 +83,13 @@ const upsertAiTaskInListCache = (
 
 export const useModel = (
   supportedOutputs: Array<AiRegistryModelSupportedTypesEnumValue>,
+  initialModelUuid?: string | null,
 ) => {
   const { useQuery } = useReactQueryApi();
   const activeSubscriptionState = useActiveSubscription();
 
   const [selectedModel, setCurrentModel] = useState<string | undefined>(
-    undefined,
+    initialModelUuid ?? undefined,
   );
   const allowedModelNames = activeSubscriptionState.data?.plan
     .allowed_models as readonly string[] | undefined;
@@ -120,6 +121,12 @@ export const useModel = (
   const isCurrentModelAllowed = currentModelSummary
     ? isModelAllowed(currentModelSummary, allowedModelNames)
     : true;
+
+  useEffect(() => {
+    if (initialModelUuid) {
+      setCurrentModel(initialModelUuid);
+    }
+  }, [initialModelUuid]);
 
   const modelState = useQuery(
     "get",

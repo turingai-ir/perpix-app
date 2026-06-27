@@ -7,6 +7,7 @@ import {
   buildFieldMeta,
   createValidationMessages,
   EMPTY_CONFIG_SCHEMA,
+  getOrderedFieldNames,
   getVisibleConfigFields,
   sanitizeConfigValues,
   stripUndefinedDeep,
@@ -40,6 +41,7 @@ export {
   buildAjvResolver,
   buildDefaultValues,
   buildFieldMeta,
+  getOrderedFieldNames,
   getVisibleConfigFields,
   isJsonConfigSchema,
   sanitizeConfigValues,
@@ -66,8 +68,10 @@ export function useDynamicConfigForm({
   }, [t]);
 
   const resolver = useMemo(() => {
-    return buildAjvResolver(safeConfigSchema, validationMessages);
-  }, [safeConfigSchema, validationMessages]);
+    return buildAjvResolver(safeConfigSchema, validationMessages, {
+      cacheKey: resolvedSchemaKey,
+    });
+  }, [safeConfigSchema, validationMessages, resolvedSchemaKey]);
 
   const defaultValues = useMemo(() => {
     return buildDefaultValues(safeConfigSchema, configDefaults);
@@ -85,18 +89,31 @@ export function useDynamicConfigForm({
     return safeConfigSchema["x-ui"]?.enumLabels;
   }, [safeConfigSchema]);
 
+  const orderedFieldNames = useMemo(() => {
+    return getOrderedFieldNames(safeConfigSchema);
+  }, [safeConfigSchema]);
+
   const fieldMetas = useMemo(() => {
-    return Object.entries(properties).map(([name, prop]) =>
+    return orderedFieldNames.map((name) =>
       buildFieldMeta({
         name,
-        prop,
+        prop: properties[name],
         requiredFields,
         defaultValues: defaultValues as Record<string, unknown>,
+        widget: safeConfigSchema["x-ui"]?.widgets?.[name],
         enumLabels,
         configMeta,
       }),
     );
-  }, [properties, requiredFields, defaultValues, enumLabels, configMeta]);
+  }, [
+    orderedFieldNames,
+    properties,
+    requiredFields,
+    defaultValues,
+    safeConfigSchema,
+    enumLabels,
+    configMeta,
+  ]);
 
   const form = useForm<DynamicConfigValues>({
     resolver,
@@ -138,11 +155,19 @@ export function useDynamicConfigForm({
         prop,
         requiredFields,
         defaultValues: defaultValues as Record<string, unknown>,
+        widget: safeConfigSchema["x-ui"]?.widgets?.[fieldName],
         enumLabels,
         configMeta,
       });
     },
-    [properties, requiredFields, defaultValues, enumLabels, configMeta],
+    [
+      properties,
+      requiredFields,
+      defaultValues,
+      safeConfigSchema,
+      enumLabels,
+      configMeta,
+    ],
   );
 
   const getCleanValues = useCallback(() => {
@@ -182,6 +207,7 @@ export function useDynamicConfigForm({
     defaultValues,
     properties,
     requiredFields,
+    orderedFieldNames,
     fieldMetas,
     visibleFieldNames,
     isFieldVisible,

@@ -24,6 +24,7 @@ const GenerationVideoPage = () => {
     isBusy,
     isTaskLoading,
     lastMessage,
+    messageListClearKey,
     shouldShowIntro,
   } = useGenerationPage({
     generatedMediaField: GeneratedMediaField.VIDEO,
@@ -56,7 +57,9 @@ const GenerationVideoPage = () => {
             <GenerationVideoPromptBox
               isLoading={isBusy}
               lastMessageConfig={lastMessage?.ai_model_config}
+              lastMessageModelUuid={lastMessage?.ai_model_uuid}
               onSubmit={handleForm}
+              promptClearKey={messageListClearKey}
             />
           </div>
         </>

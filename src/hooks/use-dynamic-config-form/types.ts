@@ -54,6 +54,10 @@ export type JsonSchemaProperty = {
   required?: boolean | readonly string[];
   additionalProperties?: boolean;
   not?: JsonSchemaProperty;
+  "x-required"?: boolean;
+  "x-file"?: {
+    type?: "list" | "single" | string;
+  };
 };
 
 export type JsonConfigSchema = {
@@ -84,8 +88,11 @@ export type FieldMeta = {
     | "number"
     | "checkbox"
     | "select"
+    | "file"
+    | "file-list"
     | "array"
     | "object"
+    | "hidden"
     | "unknown";
   options?: readonly (string | number)[];
   optionLabels?: Record<string, string>;

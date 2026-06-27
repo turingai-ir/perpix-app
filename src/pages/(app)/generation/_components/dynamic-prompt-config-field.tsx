@@ -57,25 +57,21 @@ export function getPromptConfigFieldNames({
   excludedFields?: ReadonlySet<string>;
   includedFields?: ReadonlySet<string>;
 }) {
-  const orderedFields = dynamicForm.configSchema["x-ui"]?.order ?? [];
-  const schemaFields = Object.keys(dynamicForm.properties);
+  return dynamicForm.orderedFieldNames.filter((fieldName) => {
+    const widget = dynamicForm.configSchema["x-ui"]?.widgets?.[fieldName];
+    const meta = dynamicForm.getFieldMeta(fieldName);
 
-  return Array.from(new Set([...orderedFields, ...schemaFields])).filter(
-    (fieldName) => {
-      const widget = dynamicForm.configSchema["x-ui"]?.widgets?.[fieldName];
-      const meta = dynamicForm.getFieldMeta(fieldName);
+    if (!meta || meta.inputType === "unknown") return false;
+    if (meta.inputType === "hidden") return false;
+    if (HIDDEN_CONFIG_FIELD_NAMES.has(fieldName)) return false;
+    if (excludedFields?.has(fieldName)) return false;
+    if (includedFields && !includedFields.has(fieldName)) return false;
+    if (widget === "hidden" || !dynamicForm.isFieldVisible(fieldName)) {
+      return false;
+    }
 
-      if (!meta || meta.inputType === "unknown") return false;
-      if (HIDDEN_CONFIG_FIELD_NAMES.has(fieldName)) return false;
-      if (excludedFields?.has(fieldName)) return false;
-      if (includedFields && !includedFields.has(fieldName)) return false;
-      if (widget === "hidden" || !dynamicForm.isFieldVisible(fieldName)) {
-        return false;
-      }
-
-      return ["select", "number", "checkbox"].includes(meta.inputType);
-    },
-  );
+    return ["select", "number", "checkbox"].includes(meta.inputType);
+  });
 }
 
 export const DynamicPromptConfigField: FC<{

@@ -12,6 +12,8 @@ interface Props {
   onSubmit: (data: any, ai_model_uuid: string) => Promise<void> | void;
   isLoading?: boolean;
   lastMessageConfig?: SchemaAiTaskMessageResponse["ai_model_config"];
+  lastMessageModelUuid?: SchemaAiTaskMessageResponse["ai_model_uuid"];
+  promptClearKey?: string;
 }
 
 const PROMPT_FIELD_NAMES = new Set(["prompt", "reference_images"]);
