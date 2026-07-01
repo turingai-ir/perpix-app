@@ -1,6 +1,7 @@
 {
   "common": {
     "appVersion": "نسخه: {{version}}",
+    "addAudio": "افزودن صدا",
     "addImage": "افزودن عکس",
     "addVideo": "افزودن ویدیو",
     "advancedSettings": "تنظیمات پیشرفته",
@@ -15,12 +16,19 @@
     "dynamicConfig": {
       "fields": {
         "duration": "مدت زمان",
+        "elements": "المان‌ها",
         "frame_images": "تصاویر فریم",
         "generate_audio": "تولید صدا",
+        "character_orientation": "جهت‌گیری کاراکتر",
         "image_search": "جستجوی تصویر",
+        "keep_original_sound": "حفظ صدای اصلی",
+        "mode": "حالت تولید",
+        "multi_prompt": "پرامپت چندبخشی",
+        "negative_prompt": "پرامپت منفی",
         "output_format": "فرمت خروجی",
         "output_quality": "کیفیت خروجی",
         "reference_images": "تصاویر مرجع",
+        "reference_videos": "ویدیوی مرجع",
         "resize_mode": "حالت تغییر اندازه",
         "resolution": "رزولوشن",
         "safety_check": "بررسی ایمنی",
@@ -29,6 +37,8 @@
         "seed": "سید",
         "size": "اندازه",
         "thinking": "سطح تفکر",
+        "ttl": "مدت نگهداری",
+        "upload_endpoint": "آدرس آپلود",
         "web_search": "جستجوی وب"
       }
     },

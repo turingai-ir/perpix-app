@@ -1,7 +1,7 @@
 import { useEffect, type FC } from "react";
 import { toast } from "sonner";
 
-import { HorizontalImageUploader } from "@/components/custom/horizontal-image-uploader";
+import { MediaUploadStrip } from "@/components/custom/media-upload-strip";
 import {
   FileManagerUploadStatus,
   useFileManager,
@@ -130,9 +130,9 @@ export const ImageReferenceUploader: FC<Props> = ({
   }
 
   return (
-    <HorizontalImageUploader
-      uploadedImages={uploadedImageItems}
-      localImages={localImageItems}
+    <MediaUploadStrip
+      uploadedItems={uploadedImageItems}
+      localItems={localImageItems}
       disabled={disabled}
       onDeleteClick={handleImageDelete}
       onLocalDeleteClick={handleLocalImageDelete}

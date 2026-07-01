@@ -29,7 +29,7 @@ export type JsonConfigUiVisibilityRule = {
 
 export type JsonSchemaProperty = {
   type?: JsonSchemaType | readonly JsonSchemaType[];
-  enum?: readonly (string | number)[];
+  enum?: readonly (string | number | boolean | null)[];
   const?: unknown;
   label?: {
     options?: Record<string, string>;
@@ -57,6 +57,7 @@ export type JsonSchemaProperty = {
   "x-required"?: boolean;
   "x-file"?: {
     type?: "list" | "single" | string;
+    accept?: readonly string[];
   };
 };
 
@@ -94,7 +95,7 @@ export type FieldMeta = {
     | "object"
     | "hidden"
     | "unknown";
-  options?: readonly (string | number)[];
+  options?: readonly (string | number | boolean | null)[];
   optionLabels?: Record<string, string>;
   description?: string;
   title?: string;

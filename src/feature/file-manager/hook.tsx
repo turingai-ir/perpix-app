@@ -17,6 +17,19 @@ const fiveMb = 5 * 1024 * 1024;
 const minImageDimension = 300;
 const defaultAllowedFileTypes = ["image/png", "image/jpeg"];
 
+function isAllowedFileType(
+  fileType: string,
+  allowedFileTypes: readonly string[],
+) {
+  return allowedFileTypes.some((allowedFileType) => {
+    if (allowedFileType.endsWith("/*")) {
+      return fileType.startsWith(allowedFileType.slice(0, -1));
+    }
+
+    return allowedFileType === fileType;
+  });
+}
+
 const readImageDimensions = (file: File) =>
   new Promise<{ width: number; height: number }>((resolve, reject) => {
     const image = new Image();
@@ -53,8 +66,7 @@ export const useFileManager = (
 ) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const { useMutation } = useReactQueryApi();
-  const allowedFileTypes =
-    options.allowedFileTypes ?? defaultAllowedFileTypes;
+  const allowedFileTypes = options.allowedFileTypes ?? defaultAllowedFileTypes;
 
   const [allPendingUploads, setAllPendingUploads] = useAtom(
     pendingUploadsGroupedAtom,
@@ -201,7 +213,7 @@ export const useFileManager = (
         Error(t("common.validationErrors.maxSize", { maxSizeMb })),
       );
     }
-    if (!allowedFileTypes.includes(file.type)) {
+    if (!isAllowedFileType(file.type, allowedFileTypes)) {
       return Promise.reject(
         Error(t("common.validationErrors.invalidFileFormat")),
       );

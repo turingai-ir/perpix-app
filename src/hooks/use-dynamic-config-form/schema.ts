@@ -706,6 +706,8 @@ function cleanValueByProperty(
   value: unknown,
 ): unknown {
   if (value === undefined) return undefined;
+  if (value === null) return undefined;
+  if (value === "") return undefined;
 
   const propType = getPrimaryType(prop);
 

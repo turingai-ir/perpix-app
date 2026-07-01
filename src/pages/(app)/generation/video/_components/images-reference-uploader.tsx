@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState, type FC } from "react";
 import { toast } from "sonner";
 
-import { HorizontalImageUploader } from "@/components/custom/horizontal-image-uploader";
+import { MediaUploadStrip } from "@/components/custom/media-upload-strip";
 import {
   FileManagerUploadStatus,
   useFileManager,
@@ -165,9 +165,9 @@ const ImageReferenceUploaderField: FC<ImageUploaderFieldProps> = ({
       <span className="text-muted-foreground text-sm font-normal">
         {fieldLabel}
       </span>
-      <HorizontalImageUploader
-        uploadedImages={uploadedImageItems}
-        localImages={localImageItems}
+      <MediaUploadStrip
+        uploadedItems={uploadedImageItems}
+        localItems={localImageItems}
         disabled={disabled}
         onDeleteClick={handleImageDelete}
         onLocalDeleteClick={handleLocalImageDelete}

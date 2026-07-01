@@ -1,6 +1,7 @@
 import { useCallback, useRef, type FC, type ChangeEventHandler } from "react";
 import {
   AlertCircle,
+  AudioLines,
   Image as ImageIcon,
   LoaderCircle,
   Plus,
@@ -18,27 +19,29 @@ import {
   useFilePreview,
 } from "@/feature/file-manager";
 
-export interface UploadedImageItem {
+export type MediaPreviewType = "audio" | "image" | "video";
+
+export interface UploadedMediaItem {
   id: string;
 }
 
-export interface LocalImageItem {
+export interface LocalMediaItem {
   file: File;
   status: FileManagerUploadStatus;
 }
 
-interface HorizontalImagePreviewItemProps {
-  image: UploadedImageItem;
+interface MediaPreviewItemProps {
   disabled: boolean;
-  previewType: "image" | "video";
+  item: UploadedMediaItem;
   onDeleteClick?: (id: string) => void;
+  previewType: MediaPreviewType;
 }
 
-interface LocalHorizontalImagePreviewItemProps {
-  image: LocalImageItem;
+interface LocalMediaPreviewItemProps {
   disabled: boolean;
-  previewType: "image" | "video";
+  item: LocalMediaItem;
   onDeleteClick?: (fileName: string) => void;
+  previewType: MediaPreviewType;
 }
 
 interface DeleteButtonProps {
@@ -46,22 +49,22 @@ interface DeleteButtonProps {
   variant?: "default" | "strong";
 }
 
-interface HorizontalImageUploaderProps {
-  uploadedImages: UploadedImageItem[];
-  localImages: LocalImageItem[];
+interface MediaUploadStripProps {
+  uploadedItems: UploadedMediaItem[];
+  localItems: LocalMediaItem[];
   label?: string;
   showPlaceholder?: boolean;
   accept?: string;
   disabled?: boolean;
-  previewType?: "image" | "video";
+  previewType?: MediaPreviewType;
   onFileSelect?: (file: File) => void;
   onDeleteClick?: (id: string) => void;
   onLocalDeleteClick?: (fileName: string) => void;
 }
 
-export const HorizontalImageUploader: FC<HorizontalImageUploaderProps> = ({
-  uploadedImages,
-  localImages,
+export const MediaUploadStrip: FC<MediaUploadStripProps> = ({
+  uploadedItems,
+  localItems,
   label,
   showPlaceholder = true,
   accept = "image/jpeg, image/png",
@@ -96,7 +99,7 @@ export const HorizontalImageUploader: FC<HorizontalImageUploaderProps> = ({
       >
         <div className="flex w-max items-center gap-4">
           {showPlaceholder && (
-            <ImageUploadPlaceholder
+            <MediaUploadPlaceholder
               accept={accept}
               disabled={disabled}
               label={label}
@@ -104,20 +107,20 @@ export const HorizontalImageUploader: FC<HorizontalImageUploaderProps> = ({
             />
           )}
 
-          {localImages.map((image) => (
-            <LocalHorizontalImagePreviewItem
-              key={image.file.name}
-              image={image}
+          {localItems.map((item) => (
+            <LocalMediaPreviewItem
+              key={item.file.name}
+              item={item}
               disabled={disabled}
               previewType={previewType}
               onDeleteClick={onLocalDeleteClick}
             />
           ))}
 
-          {uploadedImages.map((image) => (
-            <HorizontalImagePreviewItem
-              key={image.id}
-              image={image}
+          {uploadedItems.map((item) => (
+            <MediaPreviewItem
+              key={item.id}
+              item={item}
               disabled={disabled}
               previewType={previewType}
               onDeleteClick={onDeleteClick}
@@ -133,7 +136,7 @@ export const HorizontalImageUploader: FC<HorizontalImageUploaderProps> = ({
   );
 };
 
-const ImageUploadPlaceholder: FC<{
+const MediaUploadPlaceholder: FC<{
   accept: string;
   disabled: boolean;
   label?: string;
@@ -180,14 +183,14 @@ const ImageUploadPlaceholder: FC<{
   </label>
 );
 
-const HorizontalImagePreviewItem: FC<HorizontalImagePreviewItemProps> = ({
-  image,
+const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
   disabled,
+  item,
   previewType,
   onDeleteClick,
 }) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
-  const { getFilePreviewState } = useFilePreview(image.id);
+  const { getFilePreviewState } = useFilePreview(item.id);
 
   const isPreviewLoading = getFilePreviewState.isPending;
   const isError = getFilePreviewState.isError;
@@ -197,7 +200,7 @@ const HorizontalImagePreviewItem: FC<HorizontalImagePreviewItemProps> = ({
   const handleDeleteClick = () => {
     if (!onDeleteClick) return;
 
-    onDeleteClick(image.id);
+    onDeleteClick(item.id);
   };
 
   return (
@@ -224,12 +227,20 @@ const HorizontalImagePreviewItem: FC<HorizontalImagePreviewItemProps> = ({
         />
       ) : null}
 
+      {!isError && previewUrl && previewType === "audio" ? (
+        <div className="flex h-full w-full flex-col items-center justify-center gap-2 p-2">
+          <AudioLines className="text-muted-foreground h-6 w-6 opacity-60" />
+          {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+          <audio src={previewUrl} className="w-full" controls />
+        </div>
+      ) : null}
+
       {isError && (
         <ErrorPreview label={t("common.error")} className="text-destructive" />
       )}
 
       {!isPreviewLoading && !isError && !previewUrl && (
-        <EmptyImagePreview previewType={previewType} />
+        <EmptyMediaPreview previewType={previewType} />
       )}
 
       {isPreviewLoading && !previewUrl && (
@@ -241,19 +252,22 @@ const HorizontalImagePreviewItem: FC<HorizontalImagePreviewItemProps> = ({
   );
 };
 
-const LocalHorizontalImagePreviewItem: FC<
-  LocalHorizontalImagePreviewItemProps
-> = ({ image, disabled, previewType, onDeleteClick }) => {
+const LocalMediaPreviewItem: FC<LocalMediaPreviewItemProps> = ({
+  disabled,
+  item,
+  previewType,
+  onDeleteClick,
+}) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const imageUrlRef = useRef<string | null>(null);
-  const isUploading = image.status === FileManagerUploadStatus.UPLOADING;
-  const isError = image.status === FileManagerUploadStatus.FAILED;
+  const isUploading = item.status === FileManagerUploadStatus.UPLOADING;
+  const isError = item.status === FileManagerUploadStatus.FAILED;
   const canDelete = isError && !!onDeleteClick && !disabled;
 
   const handleDeleteClick = () => {
     if (!onDeleteClick) return;
 
-    onDeleteClick(image.file.name);
+    onDeleteClick(item.file.name);
   };
 
   const revokeImageUrl = useCallback(() => {
@@ -264,17 +278,19 @@ const LocalHorizontalImagePreviewItem: FC<
   }, []);
 
   const setImageElement = useCallback(
-    (element: HTMLImageElement | HTMLVideoElement | null) => {
+    (
+      element: HTMLAudioElement | HTMLImageElement | HTMLVideoElement | null,
+    ) => {
       revokeImageUrl();
 
       if (!element) return;
 
-      const objectUrl = URL.createObjectURL(image.file);
+      const objectUrl = URL.createObjectURL(item.file);
 
       imageUrlRef.current = objectUrl;
       element.src = objectUrl;
     },
-    [image.file, revokeImageUrl],
+    [item.file, revokeImageUrl],
   );
 
   return (
@@ -287,17 +303,27 @@ const LocalHorizontalImagePreviewItem: FC<
       {previewType === "image" ? (
         <img
           ref={setImageElement}
-          alt={image.file.name}
+          alt={item.file.name}
           className="h-full w-full object-cover transition-transform group-hover:scale-105"
         />
-      ) : (
+      ) : null}
+
+      {previewType === "video" ? (
         // eslint-disable-next-line jsx-a11y/media-has-caption
         <video
           ref={setImageElement}
           className="h-full w-full object-cover transition-transform group-hover:scale-105"
           controls
         />
-      )}
+      ) : null}
+
+      {previewType === "audio" ? (
+        <div className="flex h-full w-full flex-col items-center justify-center gap-2 p-2">
+          <AudioLines className="text-muted-foreground h-6 w-6 opacity-60" />
+          {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+          <audio ref={setImageElement} className="w-full" controls />
+        </div>
+      ) : null}
 
       {isUploading && (
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-1 bg-black/45 text-white backdrop-blur-[1px]">
@@ -324,12 +350,14 @@ const LocalHorizontalImagePreviewItem: FC<
   );
 };
 
-const EmptyImagePreview: FC<{ previewType?: "image" | "video" }> = ({
+const EmptyMediaPreview: FC<{ previewType?: MediaPreviewType }> = ({
   previewType = "image",
 }) => (
   <div className="text-muted-foreground flex flex-col items-center justify-center gap-1">
     {previewType === "video" ? (
       <Video className="h-6 w-6 opacity-40" />
+    ) : previewType === "audio" ? (
+      <AudioLines className="h-6 w-6 opacity-40" />
     ) : (
       <ImageIcon className="h-6 w-6 opacity-40" />
     )}
