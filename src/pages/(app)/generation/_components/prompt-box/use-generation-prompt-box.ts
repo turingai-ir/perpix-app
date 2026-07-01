@@ -7,7 +7,9 @@ import {
 } from "react";
 
 import { useModel } from "../../_hooks/model";
-import { getPromptConfigFieldNames } from "../dynamic-config";
+import {
+  getPromptConfigFieldNames,
+} from "../dynamic-config";
 
 import {
   isJsonConfigSchema,

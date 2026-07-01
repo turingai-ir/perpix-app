@@ -36,6 +36,16 @@ const klingVideoConfigSchema = {
       reference_images: "file-list",
       reference_videos: "file-list",
     },
+    placement: {
+      promptBox: ["mode", "size", "generate_audio"],
+      advancedSettings: [
+        "negative_prompt",
+        "multi_prompt",
+        "duration",
+        "character_orientation",
+        "keep_original_sound",
+      ],
+    },
     enumLabels: {
       mode: {
         text_to_video: "Text to Video",
@@ -324,7 +334,13 @@ test("updates visible video prompt fields when the generation mode changes", asy
   await expect(page.getByRole("combobox", { name: "اندازه" })).toHaveText(
     "720p landscape 16:9",
   );
+  await expect(page.getByRole("spinbutton", { name: "مدت زمان" })).toBeHidden();
   await expect(page.getByText("تصاویر فریم")).toBeHidden();
+
+  await page.getByRole("button", { name: "تنظیمات پیشرفته" }).click();
+  await expect(page.getByRole("spinbutton", { name: "مدت زمان" })).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("dialog")).toBeHidden();
 
   await selectOption(page, "حالت تولید", "Image to Video");
 

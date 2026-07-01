@@ -43,6 +43,25 @@ export const GenerationPromptBox: FC<GenerationPromptBoxProps> = ({
     t,
   });
 
+  const promptBoxInlineFieldNames = promptBox.promptBoxConfigFieldNames.filter(
+    (fieldName) => {
+      if (fieldName === "mode") return false;
+      const meta = promptBox.dynamicForm.getFieldMeta(fieldName);
+      return meta?.inputType !== "array" && meta?.inputType !== "object";
+    },
+  );
+
+  const promptBoxFullWidthFieldNames =
+    promptBox.promptBoxConfigFieldNames.filter((fieldName) => {
+      if (fieldName === "mode") return false;
+      const meta = promptBox.dynamicForm.getFieldMeta(fieldName);
+      return meta?.inputType === "array" || meta?.inputType === "object";
+    });
+
+  const hasModeField =
+    Boolean(promptBox.dynamicForm.properties.mode) &&
+    promptBox.dynamicForm.isFieldVisible("mode");
+
   return (
     <Card className="w-full min-w-0 overflow-hidden px-2">
       {extraContent?.({
@@ -56,6 +75,15 @@ export const GenerationPromptBox: FC<GenerationPromptBoxProps> = ({
           className="flex w-full min-w-0 flex-col gap-4"
           onSubmit={promptBox.handleFormSubmit}
         >
+          {hasModeField && (
+            <div className="border-border/40 flex w-full justify-center border-b pb-3 pt-1">
+              <DynamicPromptConfigField
+                dynamicForm={promptBox.dynamicForm}
+                fieldName="mode"
+                disabled={promptBox.isFormBusy}
+              />
+            </div>
+          )}
           {promptBox.isPromptFieldVisible && (
             <PromptTextarea
               dynamicForm={promptBox.dynamicForm}
@@ -77,7 +105,7 @@ export const GenerationPromptBox: FC<GenerationPromptBoxProps> = ({
                 model={promptBox.model}
                 upgradeLabel={t("common.upgradeRequired")}
               />
-              {promptBox.promptBoxConfigFieldNames.map((fieldName) => (
+              {promptBoxInlineFieldNames.map((fieldName) => (
                 <DynamicPromptConfigField
                   key={fieldName}
                   dynamicForm={promptBox.dynamicForm}
@@ -92,6 +120,19 @@ export const GenerationPromptBox: FC<GenerationPromptBoxProps> = ({
               />
             </div>
           </div>
+          {promptBoxFullWidthFieldNames.length > 0 && (
+            <div className="border-border/60 flex w-full flex-col gap-4 border-t pt-4 pb-2">
+              {promptBoxFullWidthFieldNames.map((fieldName) => (
+                <DynamicPromptConfigField
+                  key={fieldName}
+                  dynamicForm={promptBox.dynamicForm}
+                  fieldName={fieldName}
+                  disabled={promptBox.isFormBusy}
+                  layout="stacked"
+                />
+              ))}
+            </div>
+          )}
         </form>
       </Form>
     </Card>

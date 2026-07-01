@@ -29,6 +29,7 @@ const PROMPT_BOX_CONFIG_FIELD_NAMES = new Set([
   "resolution",
   "duration",
   "generate_audio",
+  "elements",
 ]);
 const ADVANCED_CONFIG_EXCLUDED_FIELD_NAMES = new Set([
   ...PROMPT_FIELD_NAMES,

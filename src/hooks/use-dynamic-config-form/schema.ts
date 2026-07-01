@@ -852,6 +852,7 @@ function resolveWidgetInputType(
     case "textarea":
     case "text":
     case "select":
+    case "switch":
     case "number":
     case "checkbox":
     case "file":
@@ -914,12 +915,24 @@ export function buildFieldMeta(params: {
     configMeta,
   } = params;
 
+  const resolvedWidget = widget ?? prop["x-widget"];
+  let inputType = resolveWidgetInputType(resolvedWidget);
+  if (!inputType) {
+    if (resolvedWidget === "switch") {
+      inputType = prop.enum && prop.enum.length > 0 ? "select" : "checkbox";
+    } else if (resolvedWidget === "list" || resolvedWidget === "elements-list") {
+      inputType = "array";
+    } else {
+      inputType = resolveInputType(prop);
+    }
+  }
+
   return {
     name,
     property: prop,
     required: isRequired(prop, name, requiredFields),
     defaultValue: defaultValues[name],
-    inputType: resolveWidgetInputType(widget) ?? resolveInputType(prop),
+    inputType,
     options: prop.enum,
     optionLabels: resolveOptionLabels(prop, name, enumLabels, configMeta),
     description: prop.description,

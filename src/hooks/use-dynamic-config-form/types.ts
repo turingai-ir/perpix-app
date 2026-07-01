@@ -55,6 +55,7 @@ export type JsonSchemaProperty = {
   additionalProperties?: boolean;
   not?: JsonSchemaProperty;
   "x-required"?: boolean;
+  "x-widget"?: string;
   "x-file"?: {
     type?: "list" | "single" | string;
     accept?: readonly string[];
@@ -89,6 +90,7 @@ export type FieldMeta = {
     | "number"
     | "checkbox"
     | "select"
+    | "switch"
     | "file"
     | "file-list"
     | "array"

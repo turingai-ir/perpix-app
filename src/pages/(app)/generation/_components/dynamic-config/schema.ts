@@ -12,12 +12,17 @@ export function resolvePropertyInputType(
   property: JsonSchemaProperty,
   widget?: string,
 ): FieldInputType {
-  if (widget === "textarea") return "textarea";
-  if (widget === "text") return "text";
-  if (widget === "select") return "select";
-  if (widget === "number") return "number";
-  if (widget === "checkbox") return "checkbox";
-  if (widget === "hidden") return "hidden";
+  const resolvedWidget = widget ?? property["x-widget"];
+  if (resolvedWidget === "textarea") return "textarea";
+  if (resolvedWidget === "text") return "text";
+  if (resolvedWidget === "select") return "select";
+  if (resolvedWidget === "number") return "number";
+  if (resolvedWidget === "checkbox") return "checkbox";
+  if (resolvedWidget === "hidden") return "hidden";
+  if (resolvedWidget === "switch") return "switch";
+  if (resolvedWidget === "list" || resolvedWidget === "elements-list") {
+    return "array";
+  }
   if (property["x-file"]?.type === "list") return "file-list";
   if (property["x-file"]) return "file";
 

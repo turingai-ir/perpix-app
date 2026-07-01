@@ -6,6 +6,7 @@ import { DynamicConfigCheckboxField } from "./controls/checkbox-field";
 import { getFieldLayoutClasses } from "./controls/field-layout";
 import { DynamicConfigNumberField } from "./controls/number-field";
 import { DynamicConfigSelectField } from "./controls/select-field";
+import { DynamicConfigSwitchField } from "./controls/switch-field";
 import { DynamicConfigTextField } from "./controls/text-field";
 import { DynamicConfigTextareaField } from "./controls/textarea-field";
 import type {
@@ -37,6 +38,23 @@ export const DynamicConfigPrimitiveField: FC<{
   property,
 }) => {
   const classes = getFieldLayoutClasses(layout);
+
+  if (inputType === "switch") {
+    return (
+      <DynamicConfigSwitchField
+        classes={classes}
+        disabled={disabled}
+        dynamicForm={dynamicForm}
+        fieldName={fieldName}
+        label={label}
+        optionLabels={optionLabels}
+        options={(options ?? property.enum ?? []).filter(
+          (option) => option !== null,
+        )}
+        property={property}
+      />
+    );
+  }
 
   if (inputType === "select") {
     return (
