@@ -1,9 +1,19 @@
-import { useCallback, useRef, type FC, type ChangeEventHandler } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ChangeEventHandler,
+  type FC,
+} from "react";
 import {
   AlertCircle,
   AudioLines,
   Image as ImageIcon,
   LoaderCircle,
+  Pause,
+  Play,
   Plus,
   Video,
   X,
@@ -228,11 +238,7 @@ const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
       ) : null}
 
       {!isError && previewUrl && previewType === "audio" ? (
-        <div className="flex h-full w-full flex-col items-center justify-center gap-2 p-2">
-          <AudioLines className="text-muted-foreground h-6 w-6 opacity-60" />
-          {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
-          <audio src={previewUrl} className="w-full" controls />
-        </div>
+        <AudioPreviewButton src={previewUrl} />
       ) : null}
 
       {isError && (
@@ -317,13 +323,7 @@ const LocalMediaPreviewItem: FC<LocalMediaPreviewItemProps> = ({
         />
       ) : null}
 
-      {previewType === "audio" ? (
-        <div className="flex h-full w-full flex-col items-center justify-center gap-2 p-2">
-          <AudioLines className="text-muted-foreground h-6 w-6 opacity-60" />
-          {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
-          <audio ref={setImageElement} className="w-full" controls />
-        </div>
-      ) : null}
+      {previewType === "audio" ? <AudioPreviewButton file={item.file} /> : null}
 
       {isUploading && (
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-1 bg-black/45 text-white backdrop-blur-[1px]">
@@ -346,6 +346,72 @@ const LocalMediaPreviewItem: FC<LocalMediaPreviewItemProps> = ({
       {canDelete && (
         <DeleteButton onClick={handleDeleteClick} variant="strong" />
       )}
+    </div>
+  );
+};
+
+const AudioPreviewButton: FC<{ file?: File; src?: string }> = ({
+  file,
+  src,
+}) => {
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const objectUrl = useMemo(
+    () => (file ? URL.createObjectURL(file) : undefined),
+    [file],
+  );
+  const audioSrc = src ?? objectUrl;
+  const Icon = isPlaying ? Pause : Play;
+
+  useEffect(() => {
+    if (!objectUrl) return;
+
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [objectUrl]);
+
+  useEffect(() => {
+    const audioElement = audioRef.current;
+
+    if (!audioElement) return;
+
+    audioElement.pause();
+    audioElement.load();
+    setIsPlaying(false);
+  }, [audioSrc]);
+
+  const handleTogglePlayback = async () => {
+    const audioElement = audioRef.current;
+
+    if (!audioElement) return;
+
+    if (isPlaying) {
+      audioElement.pause();
+      return;
+    }
+
+    await audioElement.play();
+  };
+
+  return (
+    <div className="flex h-full w-full items-center justify-center">
+      {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+      <audio
+        ref={audioRef}
+        src={audioSrc}
+        preload="metadata"
+        onEnded={() => setIsPlaying(false)}
+        onPause={() => setIsPlaying(false)}
+        onPlay={() => setIsPlaying(true)}
+      />
+      <button
+        type="button"
+        className="bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:ring-ring/50 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full transition-colors outline-none focus-visible:ring-3 disabled:pointer-events-none disabled:opacity-50"
+        aria-label={isPlaying ? "Pause audio" : "Play audio"}
+        disabled={!audioSrc}
+        onClick={handleTogglePlayback}
+      >
+        <Icon className="h-5 w-5" />
+      </button>
     </div>
   );
 };
