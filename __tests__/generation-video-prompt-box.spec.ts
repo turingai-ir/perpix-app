@@ -334,11 +334,12 @@ test("updates visible video prompt fields when the generation mode changes", asy
   await expect(page.getByRole("combobox", { name: "اندازه" })).toHaveText(
     "720p landscape 16:9",
   );
-  await expect(page.getByRole("spinbutton", { name: "مدت زمان" })).toBeHidden();
+  await expect(page.getByRole("spinbutton", { name: "مدت زمان" })).toBeVisible();
+  await expect(page.getByText("تولید صدا")).toBeHidden();
   await expect(page.getByText("تصاویر فریم")).toBeHidden();
 
   await page.getByRole("button", { name: "تنظیمات پیشرفته" }).click();
-  await expect(page.getByRole("spinbutton", { name: "مدت زمان" })).toBeVisible();
+  await expect(page.getByRole("dialog").getByText("تولید صدا")).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(page.getByRole("dialog")).toBeHidden();
 

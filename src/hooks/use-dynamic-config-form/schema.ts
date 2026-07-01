@@ -1,4 +1,4 @@
-import Ajv2020 from "ajv/dist/2020";
+import Ajv2020 from "ajv/dist/2020.js";
 import type { ErrorObject, ValidateFunction } from "ajv";
 import type { TFunction } from "i18next";
 import type { DefaultValues, FieldError, Resolver } from "react-hook-form";
@@ -615,18 +615,10 @@ export function buildAjvResolver(
   const validate = getCompiledValidate(configSchema, options?.cacheKey);
 
   return async (values, _context, options) => {
-    const conditionalValues = applyConditionalConstValues(configSchema, values);
-    const visibleFields = getVisibleConfigFields(
-      configSchema,
-      conditionalValues,
-    );
-    const sanitizedValues = sanitizeConfigValues(
-      configSchema,
-      conditionalValues,
-      {
-        visibleFields,
-      },
-    );
+    const visibleFields = getVisibleConfigFields(configSchema, values);
+    const sanitizedValues = sanitizeConfigValues(configSchema, values, {
+      visibleFields,
+    });
     const normalizedValues = normalizeValuesForAjv(
       configSchema,
       sanitizedValues,
@@ -679,7 +671,7 @@ function getEmptyDefaultValue(
       return undefined;
 
     case "boolean":
-      return false;
+      return isRequiredField ? false : undefined;
 
     case "array":
       return [];
@@ -795,9 +787,17 @@ export function sanitizeConfigValues(
   const result: DynamicConfigValues = {};
   const visibleFields =
     options?.visibleFields ?? getVisibleConfigFields(configSchema, values);
+  const visibleValues: DynamicConfigValues = {};
+
+  for (const fieldName of visibleFields) {
+    if (fieldName in values) {
+      visibleValues[fieldName] = values[fieldName];
+    }
+  }
+
   const valuesWithConditionalConsts = applyConditionalConstValues(
     configSchema,
-    values,
+    visibleValues,
   );
 
   for (const [key, prop] of Object.entries(configSchema.properties)) {
@@ -920,7 +920,10 @@ export function buildFieldMeta(params: {
   if (!inputType) {
     if (resolvedWidget === "switch") {
       inputType = prop.enum && prop.enum.length > 0 ? "select" : "checkbox";
-    } else if (resolvedWidget === "list" || resolvedWidget === "elements-list") {
+    } else if (
+      resolvedWidget === "list" ||
+      resolvedWidget === "elements-list"
+    ) {
       inputType = "array";
     } else {
       inputType = resolveInputType(prop);

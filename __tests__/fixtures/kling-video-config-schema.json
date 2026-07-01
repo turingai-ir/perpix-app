@@ -1,0 +1,908 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "KLINGAI_VIDEO_3_0_STANDARD",
+  "type": "object",
+  "required": ["mode"],
+  "additionalProperties": false,
+  "properties": {
+    "mode": {
+      "type": "string",
+      "enum": ["text_to_video", "image_to_video", "motion_control"],
+      "default": "text_to_video",
+      "title": "Generation mode",
+      "x-widget": "switch"
+    },
+    "n": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 1,
+      "default": 1,
+      "title": "Results",
+      "x-widget": "hidden"
+    },
+    "prompt": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 2500,
+      "title": "Prompt",
+      "x-widget": "textarea"
+    },
+    "negative_prompt": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 2500,
+      "title": "Negative prompt",
+      "x-widget": "textarea"
+    },
+    "multi_prompt": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 6,
+      "title": "Multi prompt",
+      "x-widget": "list",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["prompt", "duration"],
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 2500,
+            "title": "Segment prompt",
+            "x-widget": "textarea"
+          },
+          "duration": {
+            "type": "integer",
+            "minimum": 1,
+            "title": "Segment duration",
+            "x-widget": "number"
+          }
+        }
+      }
+    },
+    "frame_images": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "maxItems": 2,
+      "title": "Frame images",
+      "file_type": "list",
+      "x-widget": "file-list",
+      "x-file": {
+        "type": "list",
+        "accept": ["image/*"]
+      }
+    },
+    "reference_videos": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 1,
+      "title": "Reference videos",
+      "items": {
+        "type": "string"
+      },
+      "file_type": "list",
+      "x-widget": "file-list",
+      "x-file": {
+        "type": "list",
+        "accept": ["video/*"]
+      }
+    },
+    "reference_images": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 1,
+      "title": "Reference images",
+      "items": {
+        "type": "string"
+      },
+      "file_type": "list",
+      "x-widget": "file-list",
+      "x-file": {
+        "type": "list",
+        "accept": ["image/*"]
+      }
+    },
+    "elements": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "title": "Elements",
+      "x-widget": "elements-list",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "title": "ID",
+            "x-widget": "text"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "x-widget": "text"
+          },
+          "frontal_image": {
+            "type": "string",
+            "title": "Frontal image",
+            "file_type": "single",
+            "x-widget": "file",
+            "x-file": {
+              "type": "single",
+              "accept": ["image/*"]
+            }
+          },
+          "images": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 3,
+            "title": "Images",
+            "items": {
+              "type": "string"
+            },
+            "file_type": "list",
+            "x-widget": "file-list",
+            "x-file": {
+              "type": "list",
+              "accept": ["image/*"]
+            }
+          },
+          "videos": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 1,
+            "title": "Videos",
+            "items": {
+              "type": "string"
+            },
+            "file_type": "list",
+            "x-widget": "file-list",
+            "x-file": {
+              "type": "list",
+              "accept": ["video/*"]
+            }
+          },
+          "voices": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 1,
+            "title": "Voices",
+            "items": {
+              "type": "string"
+            },
+            "file_type": "list",
+            "x-widget": "file-list",
+            "x-file": {
+              "type": "list",
+              "accept": ["audio/*"]
+            }
+          },
+          "tags": {
+            "type": "array",
+            "minItems": 1,
+            "title": "Tags",
+            "items": {
+              "type": "string",
+              "enum": [
+                "Animal",
+                "Character",
+                "Hottest",
+                "Item",
+                "Costume",
+                "Scene",
+                "Effect",
+                "Others"
+              ]
+            }
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "required": ["images"],
+              "properties": {
+                "images": {
+                  "type": "array",
+                  "minItems": 1
+                }
+              }
+            },
+            "then": {
+              "required": ["frontal_image"],
+              "properties": {
+                "frontal_image": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": ["voices"],
+              "properties": {
+                "voices": {
+                  "type": "array",
+                  "minItems": 1
+                }
+              }
+            },
+            "then": {
+              "required": ["frontal_image"],
+              "properties": {
+                "frontal_image": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": ["videos"],
+              "properties": {
+                "videos": {
+                  "type": "array",
+                  "minItems": 1
+                }
+              }
+            },
+            "then": {
+              "not": {
+                "anyOf": [
+                  {
+                    "required": ["images"]
+                  },
+                  {
+                    "required": ["voices"]
+                  },
+                  {
+                    "required": ["frontal_image"]
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    "size": {
+      "type": "string",
+      "enum": ["1280x720", "960x960", "720x1280"],
+      "default": "1280x720",
+      "title": "Size",
+      "x-widget": "select"
+    },
+    "duration": {
+      "type": "integer",
+      "minimum": 3,
+      "maximum": 15,
+      "default": 5,
+      "enum": [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+      "title": "Duration",
+      "x-widget": "select"
+    },
+    "generate_audio": {
+      "type": "boolean",
+      "default": true,
+      "title": "Generate audio",
+      "x-widget": "checkbox"
+    },
+    "character_orientation": {
+      "type": "string",
+      "enum": ["image", "video"],
+      "default": "image",
+      "title": "Character orientation",
+      "x-widget": "select"
+    },
+    "keep_original_sound": {
+      "type": "boolean",
+      "title": "Keep original sound",
+      "x-widget": "checkbox"
+    },
+    "output_type": {
+      "type": "string",
+      "enum": ["URL"],
+      "default": "URL",
+      "title": "Output type",
+      "x-widget": "hidden"
+    },
+    "output_format": {
+      "type": "string",
+      "enum": ["MP4", "WEBM", "MOV"],
+      "default": "MP4",
+      "title": "Output format",
+      "x-widget": "select"
+    },
+    "output_quality": {
+      "type": "integer",
+      "minimum": 20,
+      "maximum": 99,
+      "default": 95,
+      "title": "Output quality",
+      "x-widget": "number"
+    },
+    "delivery_method": {
+      "type": "string",
+      "enum": ["async"],
+      "default": "async",
+      "title": "Delivery method",
+      "x-widget": "hidden"
+    },
+    "include_cost": {
+      "type": "boolean",
+      "default": true,
+      "x-widget": "hidden"
+    },
+    "ttl": {
+      "type": "integer",
+      "minimum": 60,
+      "title": "TTL",
+      "x-widget": "number"
+    },
+    "safety_check": {
+      "type": "boolean",
+      "default": false,
+      "title": "Safety check",
+      "x-widget": "checkbox"
+    },
+    "safety_mode": {
+      "type": "string",
+      "enum": ["none", "fast", "full"],
+      "default": "none",
+      "title": "Safety mode",
+      "x-widget": "select"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "mode": {
+            "const": "text_to_video"
+          }
+        },
+        "required": ["mode"]
+      },
+      "then": {
+        "required": ["size", "duration"],
+        "properties": {
+          "size": {
+            "type": "string",
+            "enum": ["1280x720", "960x960", "720x1280"]
+          },
+          "duration": {
+            "type": "integer",
+            "minimum": 3,
+            "maximum": 15
+          }
+        },
+        "oneOf": [
+          {
+            "required": ["prompt"],
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "minLength": 2
+              }
+            },
+            "not": {
+              "required": ["multi_prompt"]
+            }
+          },
+          {
+            "required": ["multi_prompt"],
+            "properties": {
+              "multi_prompt": {
+                "type": "array",
+                "minItems": 1
+              }
+            },
+            "not": {
+              "required": ["prompt"]
+            }
+          }
+        ],
+        "not": {
+          "anyOf": [
+            {
+              "required": ["frame_images"]
+            },
+            {
+              "required": ["reference_videos"]
+            },
+            {
+              "required": ["reference_images"]
+            },
+            {
+              "required": ["elements"]
+            },
+            {
+              "required": ["character_orientation"]
+            },
+            {
+              "required": ["keep_original_sound"]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "mode": {
+            "const": "image_to_video"
+          }
+        },
+        "required": ["mode"]
+      },
+      "then": {
+        "required": ["frame_images", "duration"],
+        "properties": {
+          "frame_images": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 2
+          },
+          "duration": {
+            "type": "integer",
+            "minimum": 3,
+            "maximum": 15
+          }
+        },
+        "oneOf": [
+          {
+            "required": ["prompt"],
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "minLength": 2
+              }
+            },
+            "not": {
+              "required": ["multi_prompt"]
+            }
+          },
+          {
+            "required": ["multi_prompt"],
+            "properties": {
+              "multi_prompt": {
+                "type": "array",
+                "minItems": 1
+              }
+            },
+            "not": {
+              "required": ["prompt"]
+            }
+          }
+        ],
+        "not": {
+          "anyOf": [
+            {
+              "required": ["size"]
+            },
+            {
+              "required": ["reference_videos"]
+            },
+            {
+              "required": ["reference_images"]
+            },
+            {
+              "required": ["character_orientation"]
+            },
+            {
+              "required": ["keep_original_sound"]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "mode": {
+            "const": "motion_control"
+          }
+        },
+        "required": ["mode"]
+      },
+      "then": {
+        "required": [
+          "reference_videos",
+          "reference_images",
+          "character_orientation"
+        ],
+        "properties": {
+          "reference_videos": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 1
+          },
+          "reference_images": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 1
+          },
+          "character_orientation": {
+            "type": "string",
+            "enum": ["image", "video"]
+          }
+        },
+        "not": {
+          "anyOf": [
+            {
+              "required": ["size"]
+            },
+            {
+              "required": ["frame_images"]
+            },
+            {
+              "required": ["elements"]
+            },
+            {
+              "required": ["multi_prompt"]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "required": ["elements"],
+        "properties": {
+          "elements": {
+            "type": "array",
+            "minItems": 1
+          }
+        }
+      },
+      "then": {
+        "required": ["frame_images"],
+        "properties": {
+          "mode": {
+            "const": "image_to_video"
+          },
+          "frame_images": {
+            "type": "array",
+            "minItems": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": ["reference_videos"],
+        "properties": {
+          "reference_videos": {
+            "type": "array",
+            "minItems": 1
+          }
+        }
+      },
+      "then": {
+        "required": ["reference_images", "character_orientation"],
+        "properties": {
+          "mode": {
+            "const": "motion_control"
+          },
+          "reference_images": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 1
+          },
+          "character_orientation": {
+            "type": "string",
+            "enum": ["image", "video"]
+          }
+        },
+        "not": {
+          "anyOf": [
+            {
+              "required": ["multi_prompt"]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "required": ["reference_images"],
+        "properties": {
+          "reference_images": {
+            "type": "array",
+            "minItems": 1
+          }
+        }
+      },
+      "then": {
+        "required": ["reference_videos", "character_orientation"],
+        "properties": {
+          "mode": {
+            "const": "motion_control"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": ["character_orientation"],
+        "properties": {
+          "character_orientation": {
+            "type": "string",
+            "enum": ["image", "video"]
+          }
+        }
+      },
+      "then": {
+        "required": ["reference_videos", "reference_images"],
+        "properties": {
+          "mode": {
+            "const": "motion_control"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": ["keep_original_sound"],
+        "properties": {
+          "keep_original_sound": {
+            "type": "boolean"
+          }
+        }
+      },
+      "then": {
+        "required": ["reference_videos"],
+        "properties": {
+          "mode": {
+            "const": "motion_control"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": ["multi_prompt"],
+        "properties": {
+          "multi_prompt": {
+            "type": "array",
+            "minItems": 1
+          }
+        }
+      },
+      "then": {
+        "required": ["duration"],
+        "not": {
+          "anyOf": [
+            {
+              "required": ["prompt"]
+            },
+            {
+              "required": ["reference_videos"]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "required": ["safety_check"],
+        "properties": {
+          "safety_check": {
+            "const": false
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "safety_mode": {
+            "const": "none"
+          }
+        }
+      }
+    }
+  ],
+  "x-ui": {
+    "order": [
+      "mode",
+      "prompt",
+      "negative_prompt",
+      "multi_prompt",
+      "frame_images",
+      "reference_videos",
+      "reference_images",
+      "elements",
+      "size",
+      "duration",
+      "generate_audio",
+      "character_orientation",
+      "keep_original_sound",
+      "output_format",
+      "output_quality",
+      "ttl",
+      "safety_check",
+      "safety_mode"
+    ],
+    "enumLabels": {
+      "mode": {
+        "text_to_video": "Text to Video",
+        "image_to_video": "Image to Video",
+        "motion_control": "Motion Control"
+      },
+      "size": {
+        "1280x720": "720p_16:9",
+        "960x960": "720p_1:1",
+        "720x1280": "720p_9:16"
+      },
+      "duration": {
+        "3": "3s",
+        "4": "4s",
+        "5": "5s",
+        "6": "6s",
+        "7": "7s",
+        "8": "8s",
+        "9": "9s",
+        "10": "10s",
+        "11": "11s",
+        "12": "12s",
+        "13": "13s",
+        "14": "14s",
+        "15": "15s"
+      },
+      "character_orientation": {
+        "image": "Match reference image",
+        "video": "Match reference video"
+      },
+      "safety_mode": {
+        "none": "None",
+        "fast": "Fast - key frames",
+        "full": "Full - all frames"
+      }
+    },
+    "visibility": [
+      {
+        "effect": "SHOW",
+        "fields": [
+          "prompt",
+          "negative_prompt",
+          "multi_prompt",
+          "size",
+          "duration",
+          "generate_audio"
+        ],
+        "condition": {
+          "field": "mode",
+          "operator": "equals",
+          "value": "text_to_video"
+        }
+      },
+      {
+        "effect": "HIDE",
+        "fields": [
+          "frame_images",
+          "reference_videos",
+          "reference_images",
+          "elements",
+          "character_orientation",
+          "keep_original_sound"
+        ],
+        "condition": {
+          "field": "mode",
+          "operator": "equals",
+          "value": "text_to_video"
+        }
+      },
+      {
+        "effect": "SHOW",
+        "fields": [
+          "prompt",
+          "negative_prompt",
+          "multi_prompt",
+          "frame_images",
+          "elements",
+          "duration",
+          "generate_audio"
+        ],
+        "condition": {
+          "field": "mode",
+          "operator": "equals",
+          "value": "image_to_video"
+        }
+      },
+      {
+        "effect": "HIDE",
+        "fields": [
+          "size",
+          "reference_videos",
+          "reference_images",
+          "character_orientation",
+          "keep_original_sound"
+        ],
+        "condition": {
+          "field": "mode",
+          "operator": "equals",
+          "value": "image_to_video"
+        }
+      },
+      {
+        "effect": "SHOW",
+        "fields": [
+          "prompt",
+          "negative_prompt",
+          "reference_videos",
+          "reference_images",
+          "character_orientation",
+          "keep_original_sound"
+        ],
+        "condition": {
+          "field": "mode",
+          "operator": "equals",
+          "value": "motion_control"
+        }
+      },
+      {
+        "effect": "HIDE",
+        "fields": [
+          "multi_prompt",
+          "size",
+          "duration",
+          "frame_images",
+          "elements",
+          "generate_audio"
+        ],
+        "condition": {
+          "field": "mode",
+          "operator": "equals",
+          "value": "motion_control"
+        }
+      },
+      {
+        "effect": "HIDE",
+        "fields": ["prompt"],
+        "condition": {
+          "field": "multi_prompt",
+          "operator": "not_empty"
+        }
+      },
+      {
+        "effect": "HIDE",
+        "fields": ["multi_prompt"],
+        "condition": {
+          "field": "prompt",
+          "operator": "not_empty"
+        }
+      },
+      {
+        "effect": "SHOW",
+        "fields": ["safety_mode"],
+        "condition": {
+          "field": "safety_check",
+          "operator": "equals",
+          "value": true
+        }
+      },
+      {
+        "effect": "HIDE",
+        "fields": ["safety_mode"],
+        "condition": {
+          "field": "safety_check",
+          "operator": "equals",
+          "value": false
+        }
+      }
+    ],
+    "helperText": {
+      "prompt": "Use either Prompt or Multi prompt, not both. Elements can be referenced like <<<element_1>>> in Image-to-Video mode.",
+      "multi_prompt": "Advanced multi-shot mode. Do not use together with Prompt. Segment durations must sum to Duration.",
+      "frame_images": "Image-to-Video only. 1 image becomes the first frame; 2 images become first and last frames.",
+      "reference_videos": "Motion Control only. Requires Reference images and Character orientation according to Runware schema.json.",
+      "elements": "Image-to-Video only. If image-based, frontal image is required. Video elements cannot be combined with images or voices."
+    }
+  }
+}
