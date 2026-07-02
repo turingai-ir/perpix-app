@@ -3,7 +3,7 @@ import { useMemo, type ChangeEventHandler } from "react";
 import {
   type FileManagerAllowedContentType,
   type UserFileItem,
-  useUserFiles,
+  useInfiniteUserFiles,
 } from "@/feature/file-manager";
 
 import { getUserFilesWithUuid } from "./utils";
@@ -27,17 +27,20 @@ export function useMediaFilePicker({
   onFileSelect,
   onUploadedFileSelect,
 }: UseMediaFilePickerOptions) {
-  const { getUserFilesState } = useUserFiles({
+  const { getUserFilesState } = useInfiniteUserFiles({
     contentTypes: acceptedContentTypes,
     enabled: isOpen,
   });
   const userFilesResponse = getUserFilesState.data as
-    | { files?: readonly UserFileItem[] }
+    | { pages?: readonly { files?: readonly UserFileItem[] }[] }
     | undefined;
   const selectedIdsSet = useMemo(() => new Set(selectedIds), [selectedIds]);
   const userFiles = useMemo(
-    () => getUserFilesWithUuid(userFilesResponse?.files),
-    [userFilesResponse?.files],
+    () =>
+      getUserFilesWithUuid(
+        userFilesResponse?.pages?.flatMap((page) => page.files ?? []),
+      ),
+    [userFilesResponse?.pages],
   );
   const isLoadingFiles = getUserFilesState.isPending && !userFilesResponse;
 
@@ -60,6 +63,17 @@ export function useMediaFilePicker({
     await getUserFilesState.refetch();
   };
 
+  const fetchMoreFiles = () => {
+    if (
+      getUserFilesState.hasNextPage &&
+      !getUserFilesState.isFetchingNextPage &&
+      !getUserFilesState.isPending &&
+      !getUserFilesState.isError
+    ) {
+      getUserFilesState.fetchNextPage();
+    }
+  };
+
   const selectUploadedFile = (fileId: string) => {
     if (disabled || selectedIdsSet.has(fileId)) return;
 
@@ -68,7 +82,10 @@ export function useMediaFilePicker({
 
   return {
     handleFileChange,
+    fetchMoreFiles,
+    hasMoreFiles: getUserFilesState.hasNextPage,
     isFetchingFiles: getUserFilesState.isFetching,
+    isFetchingMoreFiles: getUserFilesState.isFetchingNextPage,
     isFilesError: getUserFilesState.isError,
     isLoadingFiles,
     refetchFiles: getUserFilesState.refetch,

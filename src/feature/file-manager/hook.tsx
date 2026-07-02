@@ -69,6 +69,12 @@ interface UseUserFilesOptions {
   offset?: number;
 }
 
+interface UseInfiniteUserFilesOptions {
+  contentTypes: readonly FileManagerAllowedContentType[];
+  enabled?: boolean;
+  limit?: number;
+}
+
 export const useFileManager = (
   requestId: string,
   options: UseFileManagerOptions = {},
@@ -330,6 +336,37 @@ export const useUserFiles = ({
     },
     {
       enabled: enabled && contentTypes.length > 0,
+    },
+  );
+
+  return { getUserFilesState };
+};
+
+export const useInfiniteUserFiles = ({
+  contentTypes,
+  enabled = true,
+  limit = 50,
+}: UseInfiniteUserFilesOptions) => {
+  const { useInfiniteQuery } = useReactQueryApi();
+
+  const getUserFilesState = useInfiniteQuery(
+    "get",
+    "/file-manager/user-files",
+    {
+      params: {
+        query: {
+          content_types: contentTypes,
+          limit,
+          offset: 0,
+        },
+      },
+    },
+    {
+      enabled: enabled && contentTypes.length > 0,
+      initialPageParam: 0,
+      pageParamName: "offset",
+      getNextPageParam: (lastPage, pages) =>
+        lastPage.has_next ? pages.length * limit : undefined,
     },
   );
 

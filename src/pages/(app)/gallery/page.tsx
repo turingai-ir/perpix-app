@@ -29,12 +29,13 @@ import { Heading2, Muted } from "@/components/ui/typography";
 import {
   FILE_MANAGER_ALLOWED_CONTENT_TYPES,
   useFilePreview,
-  useUserFiles,
+  useInfiniteUserFiles,
   type FileManagerAllowedContentType,
   type UserFileItem,
 } from "@/feature/file-manager";
 import { formatFileSize } from "@/feature/media-uploader/utils";
 import { useAppTranslate } from "@/hook";
+import { useInfiniteScroll } from "@/hooks/use-infinitive-scroll";
 import { cn } from "@/lib/utils";
 import { APP_I18_KEYS } from "@/services/i18";
 import { downloadFile } from "@/utils";
@@ -56,15 +57,33 @@ const galleryContentTypes: Record<
 const GalleryPage: FC = () => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const [activeFilter, setActiveFilter] = useState<GalleryFilter>("all");
-  const userFilesState = useUserFiles({
+  const userFilesState = useInfiniteUserFiles({
     contentTypes: galleryContentTypes[activeFilter],
     limit: 50,
   }).getUserFilesState;
 
   const files = useMemo(
-    () => getGalleryFiles(userFilesState.data?.files),
-    [userFilesState.data?.files],
+    () => getGalleryFiles(userFilesState.data?.pages),
+    [userFilesState.data?.pages],
   );
+
+  const fetchMoreFiles = () => {
+    if (
+      userFilesState.hasNextPage &&
+      !userFilesState.isFetchingNextPage &&
+      !userFilesState.isPending &&
+      !userFilesState.isError
+    ) {
+      userFilesState.fetchNextPage();
+    }
+  };
+
+  const loadMoreRef = useInfiniteScroll<HTMLDivElement>({
+    offset: 600,
+    disabled: !userFilesState.hasNextPage || userFilesState.isError,
+    loading: userFilesState.isPending || userFilesState.isFetchingNextPage,
+    onTrigger: fetchMoreFiles,
+  });
 
   const filters: { key: GalleryFilter; label: string }[] = [
     { key: "all", label: t("pages.gallery.filters.all") },
@@ -110,7 +129,7 @@ const GalleryPage: FC = () => {
         ))}
       </div>
 
-      {userFilesState.isPending ? (
+      {userFilesState.isPending && files.length === 0 ? (
         <GallerySkeleton />
       ) : userFilesState.isError ? (
         <GalleryState
@@ -125,10 +144,23 @@ const GalleryPage: FC = () => {
           description={t("pages.gallery.empty.description")}
         />
       ) : (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
-          {files.map((file, index) => (
-            <GalleryFileCard key={file.uuid} file={file} index={index} />
-          ))}
+        <div className="flex flex-col gap-4">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+            {files.map((file, index) => (
+              <GalleryFileCard key={file.uuid} file={file} index={index} />
+            ))}
+          </div>
+
+          {userFilesState.hasNextPage || userFilesState.isFetchingNextPage ? (
+            <div
+              ref={loadMoreRef}
+              className="text-muted-foreground flex min-h-16 items-center justify-center text-sm"
+            >
+              {userFilesState.isFetchingNextPage
+                ? t("pages.gallery.loadingMore")
+                : ""}
+            </div>
+          ) : null}
         </div>
       )}
     </div>
@@ -365,15 +397,22 @@ function getGalleryMediaType(contentType: string): GalleryMediaType {
   return "image";
 }
 
-function getGalleryFiles(files: unknown): GalleryFile[] {
-  if (!Array.isArray(files)) return [];
+function getGalleryFiles(pages: unknown): GalleryFile[] {
+  if (!Array.isArray(pages)) return [];
 
-  return files.filter(
-    (file): file is GalleryFile =>
-      typeof file === "object" &&
-      file !== null &&
-      typeof (file as { uuid?: unknown }).uuid === "string",
-  );
+  return pages.flatMap((page) => {
+    if (!page || typeof page !== "object") return [];
+
+    const files = (page as { files?: unknown }).files;
+    if (!Array.isArray(files)) return [];
+
+    return files.filter(
+      (file): file is GalleryFile =>
+        typeof file === "object" &&
+        file !== null &&
+        typeof (file as { uuid?: unknown }).uuid === "string",
+    );
+  });
 }
 
 export default GalleryPage;

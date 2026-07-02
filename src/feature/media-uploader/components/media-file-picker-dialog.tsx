@@ -50,8 +50,11 @@ export const MediaFilePickerDialog: FC<MediaFilePickerDialogProps> = ({
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const uploadInputId = useId();
   const {
+    fetchMoreFiles,
     handleFileChange,
+    hasMoreFiles,
     isFetchingFiles,
+    isFetchingMoreFiles,
     isFilesError,
     isLoadingFiles,
     refetchFiles,
@@ -106,10 +109,13 @@ export const MediaFilePickerDialog: FC<MediaFilePickerDialogProps> = ({
           <UserFilesSection
             isError={isFilesError}
             isFetching={isFetchingFiles}
+            isFetchingMore={isFetchingMoreFiles}
             isLoading={isLoadingFiles}
+            hasMore={hasMoreFiles}
             previewType={previewType}
             selectedIdsSet={selectedIdsSet}
             userFiles={userFiles}
+            onFetchMore={fetchMoreFiles}
             onRefresh={() => refetchFiles()}
             onSelect={selectUploadedFile}
           />
