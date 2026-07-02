@@ -4,7 +4,6 @@ const defaultCookieOptions: CookieSetOptions = {
   path: "/",
   secure: import.meta.env.MODE === "production",
   sameSite: "lax",
-  httpOnly: import.meta.env.MODE === "production",
 };
 
 export const accessTokenCookieOptions: CookieSetOptions = {
