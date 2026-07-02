@@ -8,6 +8,9 @@ export const APP_ROUTES_KEY = {
   app: {
     path: "/",
   },
+  gallery: {
+    path: "/gallery",
+  },
   profile: {
     root: {
       path: "/profile",

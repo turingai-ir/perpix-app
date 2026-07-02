@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router";
 import {
   BadgeCheck,
   ChevronsUpDown,
+  Images,
   LogOut,
   MessageCircle,
   Sparkles,
@@ -60,6 +61,12 @@ const AppLayoutSidebarContent: FC = () => {
       label: t("pages.app.layout.sidebar.menu.videoGeneration.label"),
       href: APP_ROUTES_KEY.generation.video.path,
       Icon: TbCameraAi,
+    },
+    {
+      key: "gallery",
+      label: t("pages.app.layout.sidebar.menu.gallery.label"),
+      href: APP_ROUTES_KEY.gallery.path,
+      Icon: Images,
     },
   ];
 

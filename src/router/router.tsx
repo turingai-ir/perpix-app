@@ -6,6 +6,7 @@ import { APP_ROUTES_KEY } from "./routes";
 import RootLayout from "@/pages/(root)/layout";
 import AppLayout from "@/pages/(app)/_layout";
 import AppPage from "@/pages/(app)/page";
+import GalleryPage from "@/pages/(app)/gallery/page";
 import GenerationImagePage from "@/pages/(app)/generation/image/page";
 import GenerationVideoPage from "@/pages/(app)/generation/video/page";
 import AuthLoginPage from "@/pages/auth/login/page";
@@ -37,6 +38,10 @@ export const router = createBrowserRouter([
           {
             index: true,
             Component: AppPage,
+          },
+          {
+            path: APP_ROUTES_KEY.gallery.path,
+            Component: GalleryPage,
           },
           {
             path: APP_ROUTES_KEY.generation.image.path,
