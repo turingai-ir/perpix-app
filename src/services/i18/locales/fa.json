@@ -26,6 +26,7 @@
         "character_orientation": "جهت‌گیری کاراکتر",
         "image_search": "جستجوی تصویر",
         "include_cost": "نمایش هزینه",
+        "input_video": "ویدیوی ورودی",
         "keep_original_sound": "حفظ صدای اصلی",
         "mode": "حالت تولید",
         "multi_prompt": "پرامپت چندبخشی",
@@ -57,6 +58,15 @@
         "ttl": "مدت نگهداری",
         "upload_endpoint": "آدرس آپلود",
         "web_search": "جستجوی وب"
+      },
+      "optionLabels": {
+        "mode": {
+          "audio_driven_video": "ویدیوی صوت‌محور",
+          "image_to_video": "عکس به ویدیو",
+          "motion_control": "کنترل حرکت",
+          "text_to_video": "متن به ویدیو",
+          "video_edit": "ویرایش ویدیو"
+        }
       }
     },
     "emptyTitle": "بدون عنوان",

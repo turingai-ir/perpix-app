@@ -17,6 +17,27 @@ export const DynamicPromptConfigField: FC<{
 
   if (!meta) return null;
 
+  const optionLabels = meta.options?.length
+    ? Object.fromEntries(
+        meta.options
+          .filter((option) => option !== null)
+          .map((option) => {
+            const optionValue = String(option);
+
+            return [
+              optionValue,
+              t(
+                `common.dynamicConfig.optionLabels.${fieldName}.${optionValue}`,
+                {
+                  ns: APP_I18_KEYS.RESOURCES.MAIN,
+                  defaultValue: meta.optionLabels?.[optionValue] ?? optionValue,
+                },
+              ),
+            ];
+          }),
+      )
+    : meta.optionLabels;
+
   return (
     <DynamicConfigPropertyField
       dynamicForm={dynamicForm}
@@ -26,7 +47,7 @@ export const DynamicPromptConfigField: FC<{
         ns: APP_I18_KEYS.RESOURCES.MAIN,
         defaultValue: meta.title ?? fieldName,
       })}
-      optionLabels={meta.optionLabels}
+      optionLabels={optionLabels}
       options={meta.options}
       property={meta.property}
       disabled={disabled}
