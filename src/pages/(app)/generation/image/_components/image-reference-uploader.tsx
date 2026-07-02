@@ -1,11 +1,17 @@
 import { useEffect, type FC } from "react";
 import { toast } from "sonner";
 
-import { MediaUploadStrip } from "@/components/custom/media-upload-strip";
+import { useFileManager } from "@/feature/file-manager";
 import {
-  FileManagerUploadStatus,
-  useFileManager,
-} from "@/feature/file-manager";
+  appendMediaId,
+  hasReachedMediaMaxItems,
+  hasUploadingLocalItem,
+  MediaUploadStrip,
+  normalizeMediaIds,
+  removeMediaId,
+  toLocalMediaItems,
+  toUploadedMediaItems,
+} from "@/feature/media-uploader";
 import { useAppTranslate } from "@/hook";
 import type { useDynamicConfigForm } from "@/hooks/use-dynamic-config-form";
 import { FetchHttpError } from "@/utils/custom-fetch/fetch-errors";
@@ -22,15 +28,6 @@ interface Props {
   onUploadingChange?: (isUploading: boolean) => void;
 }
 
-const normalizeImageReferences = (value: unknown): string[] => {
-  if (!Array.isArray(value)) return [];
-
-  return value.filter(
-    (imageId): imageId is string =>
-      typeof imageId === "string" && imageId.length > 0,
-  );
-};
-
 export const ImageReferenceUploader: FC<Props> = ({
   dynamicForm,
   disabled = false,
@@ -44,27 +41,19 @@ export const ImageReferenceUploader: FC<Props> = ({
     dynamicForm.properties[REFERENCE_IMAGES_FIELD];
   const shouldShowImageUploader = Boolean(imagesReferenceProperty);
   const imagesReferenceMaxItems = imagesReferenceProperty?.maxItems;
-  const selectedImages = normalizeImageReferences(
+  const selectedImages = normalizeMediaIds(
     dynamicForm.watch(REFERENCE_IMAGES_FIELD, []),
   );
 
-  const localImageItems = Array.from(pendingUploads.values()).map((upload) => ({
-    file: upload.file,
-    status: upload.status,
-  }));
-  const uploadedImageItems = selectedImages.map((imageId) => ({
-    id: imageId,
-  }));
+  const localImageItems = toLocalMediaItems(pendingUploads.values());
+  const uploadedImageItems = toUploadedMediaItems(selectedImages);
   const isUploadingImage =
-    shouldShowImageUploader &&
-    localImageItems.some(
-      ({ status }) => status === FileManagerUploadStatus.UPLOADING,
-    );
-  const selectedImageSlotsCount =
-    selectedImages.length + localImageItems.length;
-  const hasReachedImagesReferenceMax =
-    imagesReferenceMaxItems !== undefined &&
-    selectedImageSlotsCount >= imagesReferenceMaxItems;
+    shouldShowImageUploader && hasUploadingLocalItem(localImageItems);
+  const hasReachedImagesReferenceMax = hasReachedMediaMaxItems(
+    selectedImages,
+    localImageItems,
+    imagesReferenceMaxItems,
+  );
 
   useEffect(() => {
     onUploadingChange?.(isUploadingImage);
@@ -75,7 +64,7 @@ export const ImageReferenceUploader: FC<Props> = ({
 
     dynamicForm.setValue(
       REFERENCE_IMAGES_FIELD,
-      selectedImages.filter((id) => id !== imageId),
+      removeMediaId(selectedImages, imageId),
       { shouldDirty: true, shouldValidate: true },
     );
   };
@@ -84,6 +73,28 @@ export const ImageReferenceUploader: FC<Props> = ({
     if (disabled) return;
 
     removePendingUpload(fileName);
+  };
+
+  const handleUploadedImageSelect = (imageId: string) => {
+    if (disabled || !shouldShowImageUploader || hasReachedImagesReferenceMax) {
+      return;
+    }
+
+    const nextSelectedImages = normalizeMediaIds(
+      dynamicForm.getValues(REFERENCE_IMAGES_FIELD),
+    );
+    const selectedWithNewImage = appendMediaId(
+      nextSelectedImages,
+      imageId,
+      imagesReferenceMaxItems,
+    );
+
+    if (!selectedWithNewImage) return;
+
+    dynamicForm.setValue(REFERENCE_IMAGES_FIELD, selectedWithNewImage, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
   };
 
   const handleImageSelect = async (file: File) => {
@@ -95,22 +106,24 @@ export const ImageReferenceUploader: FC<Props> = ({
       const uploadedImageId = await requestUpload(file);
 
       if (uploadedImageId) {
-        const nextSelectedImages = normalizeImageReferences(
+        const nextSelectedImages = normalizeMediaIds(
           dynamicForm.getValues(REFERENCE_IMAGES_FIELD),
         );
+        const selectedWithUploadedImage = appendMediaId(
+          nextSelectedImages,
+          uploadedImageId,
+          imagesReferenceMaxItems,
+        );
 
-        if (
-          imagesReferenceMaxItems !== undefined &&
-          nextSelectedImages.length >= imagesReferenceMaxItems
-        ) {
-          return;
-        }
+        if (!selectedWithUploadedImage) return;
 
         dynamicForm.setValue(
           REFERENCE_IMAGES_FIELD,
-          [...nextSelectedImages, uploadedImageId],
+          selectedWithUploadedImage,
           { shouldDirty: true, shouldValidate: true },
         );
+
+        return uploadedImageId;
       }
     } catch (error) {
       if (
@@ -137,6 +150,7 @@ export const ImageReferenceUploader: FC<Props> = ({
       onDeleteClick={handleImageDelete}
       onLocalDeleteClick={handleLocalImageDelete}
       onFileSelect={handleImageSelect}
+      onUploadedFileSelect={handleUploadedImageSelect}
       showPlaceholder={!hasReachedImagesReferenceMax}
       label={t("common.addImage")}
       accept="image/jpeg, image/png"

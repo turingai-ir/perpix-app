@@ -6,10 +6,12 @@ import {
   FileManagerUploadStatus,
   type PendingFile,
 } from "./state";
+import type { FileManagerAllowedContentType } from "./content-types";
 
 import { useReactQueryApi } from "@/hook/app";
 import { APP_I18_KEYS } from "@/services/i18";
 import { useAppTranslate } from "@/hook";
+import type { SchemaFileManagerUploadFileResponse } from "@/services/api/api";
 
 const maxSizeMb = 100;
 const maxSize = maxSizeMb * 1024 * 1024;
@@ -58,6 +60,13 @@ const readImageDimensions = (file: File) =>
 
 interface UseFileManagerOptions {
   allowedFileTypes?: string[];
+}
+
+interface UseUserFilesOptions {
+  contentTypes: readonly FileManagerAllowedContentType[];
+  enabled?: boolean;
+  limit?: number;
+  offset?: number;
 }
 
 export const useFileManager = (
@@ -295,4 +304,34 @@ export const useFilePreview = (
   );
 
   return { getFilePreviewState };
+};
+
+export type UserFileItem = SchemaFileManagerUploadFileResponse;
+
+export const useUserFiles = ({
+  contentTypes,
+  enabled = true,
+  limit = 50,
+  offset = 0,
+}: UseUserFilesOptions) => {
+  const { useQuery } = useReactQueryApi();
+
+  const getUserFilesState = useQuery(
+    "get",
+    "/file-manager/user-files",
+    {
+      params: {
+        query: {
+          content_types: contentTypes,
+          limit,
+          offset,
+        },
+      },
+    },
+    {
+      enabled: enabled && contentTypes.length > 0,
+    },
+  );
+
+  return { getUserFilesState };
 };

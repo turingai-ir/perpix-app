@@ -1,11 +1,17 @@
 import { useEffect, useMemo, type FC } from "react";
 import { toast } from "sonner";
 
-import { MediaUploadStrip } from "@/components/custom/media-upload-strip";
+import { useFileManager } from "@/feature/file-manager";
 import {
-  FileManagerUploadStatus,
-  useFileManager,
-} from "@/feature/file-manager";
+  appendMediaId,
+  hasReachedMediaMaxItems,
+  hasUploadingLocalItem,
+  MediaUploadStrip,
+  normalizeMediaIds,
+  removeMediaId,
+  toLocalMediaItems,
+  toUploadedMediaItems,
+} from "@/feature/media-uploader";
 import { useAppTranslate } from "@/hook";
 import type { JsonSchemaProperty } from "@/hooks/use-dynamic-config-form";
 import { HttpStatus } from "@/utils";
@@ -15,7 +21,6 @@ import {
   getAcceptList,
   getPreviewType,
   isListFileField,
-  normalizeFileIds,
   type MediaPreviewType,
 } from "./media";
 import type { DynamicConfigForm } from "../types";
@@ -51,17 +56,14 @@ export const DynamicConfigFileField: FC<{
     },
   );
 
-  const selectedFileIds = normalizeFileIds(dynamicForm.watch(fieldName));
-  const localItems = Array.from(pendingUploads.values()).map((upload) => ({
-    file: upload.file,
-    status: upload.status,
-  }));
-  const isUploading = localItems.some(
-    ({ status }) => status === FileManagerUploadStatus.UPLOADING,
+  const selectedFileIds = normalizeMediaIds(dynamicForm.watch(fieldName));
+  const localItems = toLocalMediaItems(pendingUploads.values());
+  const isUploading = hasUploadingLocalItem(localItems);
+  const hasReachedMaxItems = hasReachedMediaMaxItems(
+    selectedFileIds,
+    localItems,
+    maxItems,
   );
-  const selectedSlotsCount = selectedFileIds.length + localItems.length;
-  const hasReachedMaxItems =
-    maxItems !== undefined && selectedSlotsCount >= maxItems;
 
   useEffect(() => {
     onUploadingChange?.(isUploading);
@@ -83,11 +85,36 @@ export const DynamicConfigFileField: FC<{
       return;
     }
 
-    setFileValue(selectedFileIds.filter((id) => id !== fileId));
+    setFileValue(removeMediaId(selectedFileIds, fileId));
   };
 
   const handleLocalDelete = (fileName: string) => {
     if (!disabled) removePendingUpload(fileName);
+  };
+
+  const handleUploadedFileSelect = (fileId: string) => {
+    if (disabled) {
+      return;
+    }
+
+    const nextSelectedFileIds = normalizeMediaIds(
+      dynamicForm.getValues(fieldName),
+    );
+
+    if (!isList) {
+      setFileValue(fileId);
+      return;
+    }
+
+    const selectedWithNewFile = appendMediaId(
+      nextSelectedFileIds,
+      fileId,
+      maxItems,
+    );
+
+    if (!selectedWithNewFile) return;
+
+    setFileValue(selectedWithNewFile);
   };
 
   const handleFileSelect = async (file: File) => {
@@ -100,18 +127,23 @@ export const DynamicConfigFileField: FC<{
 
       if (!isList) {
         setFileValue(uploadedFileId);
-        return;
+        return uploadedFileId;
       }
 
-      const nextSelectedFileIds = normalizeFileIds(
+      const nextSelectedFileIds = normalizeMediaIds(
         dynamicForm.getValues(fieldName),
       );
+      const selectedWithUploadedFile = appendMediaId(
+        nextSelectedFileIds,
+        uploadedFileId,
+        maxItems,
+      );
 
-      if (maxItems !== undefined && nextSelectedFileIds.length >= maxItems) {
-        return;
-      }
+      if (!selectedWithUploadedFile) return;
 
-      setFileValue([...nextSelectedFileIds, uploadedFileId]);
+      setFileValue(selectedWithUploadedFile);
+
+      return uploadedFileId;
     } catch (error) {
       if (
         error instanceof FetchHttpError &&
@@ -131,12 +163,13 @@ export const DynamicConfigFileField: FC<{
     <div className="flex w-full min-w-0 flex-col gap-2 py-2">
       <span className="text-muted-foreground text-sm font-normal">{label}</span>
       <MediaUploadStrip
-        uploadedItems={selectedFileIds.map((id) => ({ id }))}
+        uploadedItems={toUploadedMediaItems(selectedFileIds)}
         localItems={localItems}
         disabled={disabled}
         onDeleteClick={handleDelete}
         onLocalDeleteClick={handleLocalDelete}
         onFileSelect={handleFileSelect}
+        onUploadedFileSelect={handleUploadedFileSelect}
         showPlaceholder={!hasReachedMaxItems}
         label={getUploadLabel(previewType, t)}
         accept={acceptList.join(", ")}

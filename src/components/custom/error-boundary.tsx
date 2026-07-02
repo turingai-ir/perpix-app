@@ -1,6 +1,8 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
 
+import { useAppTranslate } from "@/hook";
 import { captureError } from "@/lib/observability";
+import { APP_I18_KEYS } from "@/services/i18";
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -20,7 +22,6 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error("Unhandled React error:", error, errorInfo);
     captureError(error, errorInfo.componentStack ?? undefined);
   }
 
@@ -34,10 +35,12 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 }
 
 function ErrorFallbackPage() {
+  const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
+
   return (
-    <main className="flex min-h-svh items-center justify-center bg-background px-4 text-center text-foreground">
-      <p className="text-base font-medium leading-7 sm:text-lg">
-        متاسفانه خطایی رخ داده است لطفا صفحه را رفرش کنید
+    <main className="bg-background text-foreground flex min-h-svh items-center justify-center px-4 text-center">
+      <p className="text-base leading-7 font-medium sm:text-lg">
+        {t("components.custom.errorBoundary.fallbackMessage")}
       </p>
     </main>
   );

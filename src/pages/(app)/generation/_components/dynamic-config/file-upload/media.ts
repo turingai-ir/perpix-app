@@ -1,20 +1,11 @@
 import type { JsonSchemaProperty } from "@/hooks/use-dynamic-config-form";
+import type { MediaPreviewType } from "@/feature/media-uploader";
 
 import type { DynamicConfigForm } from "../types";
 
-export type MediaPreviewType = "audio" | "image" | "video";
+export type { MediaPreviewType };
 
 export const DEFAULT_FILE_ACCEPT = ["image/jpeg", "image/png"] as const;
-
-export function normalizeFileIds(value: unknown): string[] {
-  if (Array.isArray(value)) {
-    return value.filter(
-      (item): item is string => typeof item === "string" && item.length > 0,
-    );
-  }
-
-  return typeof value === "string" && value.length > 0 ? [value] : [];
-}
 
 export function getAcceptList(property?: JsonSchemaProperty) {
   return property?.["x-file"]?.accept?.length

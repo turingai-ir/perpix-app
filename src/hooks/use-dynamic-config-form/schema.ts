@@ -67,18 +67,18 @@ export function isJsonConfigSchema(value: unknown): value is JsonConfigSchema {
 }
 
 const DEFAULT_VALIDATION_MESSAGES: DynamicConfigValidationMessages = {
-  required: "این فیلد الزامی است",
-  invalidEnum: "مقدار انتخاب‌شده معتبر نیست",
-  invalidString: "مقدار باید متن باشد",
-  invalidNumber: "مقدار باید عدد باشد",
-  invalidInteger: "مقدار باید عدد صحیح باشد",
-  invalidArray: "مقدار باید آرایه باشد",
-  minLength: (min) => `حداقل ${min} کاراکتر لازم است`,
-  maxLength: (max) => `حداکثر ${max} کاراکتر مجاز است`,
-  minNumber: (min) => `حداقل مقدار ${min} است`,
-  maxNumber: (max) => `حداکثر مقدار ${max} است`,
-  minItems: (min) => `حداقل ${min} آیتم لازم است`,
-  maxItems: (max) => `حداکثر ${max} آیتم مجاز است`,
+  required: "This field is required",
+  invalidEnum: "The selected value is invalid",
+  invalidString: "Value must be a string",
+  invalidNumber: "Value must be a number",
+  invalidInteger: "Value must be an integer",
+  invalidArray: "Value must be an array",
+  minLength: (min) => `At least ${min} characters are required`,
+  maxLength: (max) => `At most ${max} characters are allowed`,
+  minNumber: (min) => `Minimum value is ${min}`,
+  maxNumber: (max) => `Maximum value is ${max}`,
+  minItems: (min) => `At least ${min} items are required`,
+  maxItems: (max) => `At most ${max} items are allowed`,
 };
 
 export function createValidationMessages(
