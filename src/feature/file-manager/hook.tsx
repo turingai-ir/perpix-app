@@ -321,6 +321,7 @@ export const useUserFiles = ({
   offset = 0,
 }: UseUserFilesOptions) => {
   const { useQuery } = useReactQueryApi();
+  const safeContentTypes = Array.isArray(contentTypes) ? contentTypes : [];
 
   const getUserFilesState = useQuery(
     "get",
@@ -328,14 +329,14 @@ export const useUserFiles = ({
     {
       params: {
         query: {
-          content_types: contentTypes,
+          content_types: safeContentTypes,
           limit,
           offset,
         },
       },
     },
     {
-      enabled: enabled && contentTypes.length > 0,
+      enabled: enabled && safeContentTypes.length > 0,
     },
   );
 
@@ -348,6 +349,7 @@ export const useInfiniteUserFiles = ({
   limit = 50,
 }: UseInfiniteUserFilesOptions) => {
   const { useInfiniteQuery } = useReactQueryApi();
+  const safeContentTypes = Array.isArray(contentTypes) ? contentTypes : [];
 
   const getUserFilesState = useInfiniteQuery(
     "get",
@@ -355,18 +357,18 @@ export const useInfiniteUserFiles = ({
     {
       params: {
         query: {
-          content_types: contentTypes,
+          content_types: safeContentTypes,
           limit,
           offset: 0,
         },
       },
     },
     {
-      enabled: enabled && contentTypes.length > 0,
+      enabled: enabled && safeContentTypes.length > 0,
       initialPageParam: 0,
       pageParamName: "offset",
-      getNextPageParam: (lastPage, pages) =>
-        lastPage.has_next ? pages.length * limit : undefined,
+      getNextPageParam: (lastPage, _pages, lastPageParam) =>
+        lastPage?.has_next ? Number(lastPageParam ?? 0) + limit : undefined,
     },
   );
 

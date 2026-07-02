@@ -57,7 +57,7 @@ const upsertAiTaskInListCache = (
       },
     },
     (currentData) => {
-      if (!currentData?.pages.length) {
+      if (!currentData?.pages?.length) {
         return currentData;
       }
 
@@ -328,8 +328,10 @@ export const useAiTasksList = (
       enabled: !!task_type,
       initialPageParam: 0,
       pageParamName: "offset",
-      getNextPageParam: (lastPage, pages) =>
-        lastPage.has_next ? pages.length * DEFAULT_PAGE_SIZE : undefined,
+      getNextPageParam: (lastPage, _pages, lastPageParam) =>
+        lastPage.has_next
+          ? Number(lastPageParam ?? 0) + DEFAULT_PAGE_SIZE
+          : undefined,
     },
   );
 
