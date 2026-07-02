@@ -9,6 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAppTranslate } from "@/hook";
 import { APP_I18_KEYS } from "@/services/i18";
 
@@ -37,21 +38,23 @@ export const AdvancedPromptSettingsDialog: FC<{
           {t("common.advancedSettings")}
         </Button>
       </DialogTrigger>
-      <DialogContent className="w-[calc(100vw-2rem)] max-w-[480px]">
+      <DialogContent className="max-h-[min(640px,calc(100dvh-2rem))] w-[calc(100vw-2rem)] max-w-[480px] grid-rows-[auto_minmax(0,1fr)] overflow-hidden">
         <DialogHeader>
           <DialogTitle>{t("common.advancedSettings")}</DialogTitle>
         </DialogHeader>
-        <div className="flex w-full flex-col gap-3">
-          {fieldNames.map((fieldName) => (
-            <DynamicPromptConfigField
-              key={fieldName}
-              dynamicForm={dynamicForm}
-              fieldName={fieldName}
-              disabled={disabled}
-              layout="stacked"
-            />
-          ))}
-        </div>
+        <ScrollArea className="min-h-0 w-full pe-2">
+          <div className="flex w-full flex-col gap-3">
+            {fieldNames.map((fieldName) => (
+              <DynamicPromptConfigField
+                key={fieldName}
+                dynamicForm={dynamicForm}
+                fieldName={fieldName}
+                disabled={disabled}
+                layout="stacked"
+              />
+            ))}
+          </div>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );
