@@ -8,6 +8,7 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 import type { JsonSchemaProperty } from "@/hooks/use-dynamic-config-form";
+import { cn } from "@/lib/utils";
 
 import { coerceSelectValue, resolveFieldValue } from "../../schema";
 import type { DynamicConfigForm, DynamicConfigOptions } from "../../types";
@@ -45,30 +46,32 @@ export const DynamicConfigSwitchField: FC<{
         <FormItem className={classes.item}>
           <FormLabel className={classes.label}>{label}</FormLabel>
           <FormControl>
-            <div className="bg-muted/50 border-input inline-flex h-9 items-center gap-1 rounded-lg border p-1 dark:bg-input/20">
-              {options.map((option) => {
-                const optionStr = String(option);
-                const isSelected = currentValue === optionStr;
-                return (
-                  <Button
-                    key={optionStr}
-                    type="button"
-                    variant={isSelected ? "secondary" : "ghost"}
-                    size="xs"
-                    className={`h-7 px-3 rounded-[6px] text-xs transition-all ${
-                      isSelected
-                        ? "bg-background shadow-xs text-foreground font-semibold dark:bg-muted"
-                        : "text-muted-foreground hover:text-foreground"
-                    }`}
-                    disabled={disabled}
-                    onClick={() => {
-                      field.onChange(coerceSelectValue(optionStr, options));
-                    }}
-                  >
-                    {optionLabels?.[optionStr] ?? optionStr}
-                  </Button>
-                );
-              })}
+            <div className={cn(classes.control, "min-w-0 overflow-x-auto")}>
+              <div className="bg-muted/50 border-input dark:bg-input/20 inline-flex h-9 w-max items-center gap-1 rounded-lg border p-1">
+                {options.map((option) => {
+                  const optionStr = String(option);
+                  const isSelected = currentValue === optionStr;
+                  return (
+                    <Button
+                      key={optionStr}
+                      type="button"
+                      variant={isSelected ? "secondary" : "ghost"}
+                      size="xs"
+                      className={`h-7 shrink-0 rounded-[6px] px-3 text-xs transition-all ${
+                        isSelected
+                          ? "bg-background text-foreground dark:bg-muted font-semibold shadow-xs"
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
+                      disabled={disabled}
+                      onClick={() => {
+                        field.onChange(coerceSelectValue(optionStr, options));
+                      }}
+                    >
+                      {optionLabels?.[optionStr] ?? optionStr}
+                    </Button>
+                  );
+                })}
+              </div>
             </div>
           </FormControl>
         </FormItem>
