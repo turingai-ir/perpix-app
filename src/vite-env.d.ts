@@ -12,5 +12,9 @@ interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
 
+interface Navigator {
+  readonly standalone?: boolean;
+}
+
 declare const __APP_RELEASE__: string;
 declare const __APP_VERSION__: string;

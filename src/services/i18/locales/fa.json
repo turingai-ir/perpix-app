@@ -228,6 +228,23 @@
       "purchase": "خرید",
       "title": "بسته ها"
     },
+    "pwaInstall": {
+      "action": "نصب برنامه",
+      "ios": {
+        "description": "در آیفون نصب مستقیم از داخل مرورگر پشتیبانی نمی‌شود. با دو قدم زیر برنامه را به صفحه اصلی اضافه کنید.",
+        "steps": {
+          "addToHome": {
+            "description": "گزینه Add to Home Screen را بزنید و سپس Add را انتخاب کنید.",
+            "title": "Add to Home Screen را انتخاب کنید"
+          },
+          "share": {
+            "description": "در پایین Safari روی آیکن Share، همان مربع فلش‌دار، بزنید.",
+            "title": "منوی Share را باز کنید"
+          }
+        },
+        "title": "نصب روی آیفون"
+      }
+    },
     "pwaUpdate": {
       "actions": {
         "later": "بعدا",

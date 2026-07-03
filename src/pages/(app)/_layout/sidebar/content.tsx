@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router";
 import {
   BadgeCheck,
   ChevronsUpDown,
+  Download,
   Images,
   LogOut,
   MessageCircle,
@@ -34,6 +35,7 @@ import { cookies } from "@/utils/cookies";
 import { useActiveSubscription, usePricingFeature } from "@/feature/pricing";
 import AppLayoutSidebarHistory from "./history";
 import { useSupportChatWidget } from "@/feature/support-chat";
+import { PwaInstallIosDialog, usePwaInstall } from "@/feature/pwa";
 
 const AppLayoutSidebarContent: FC = () => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
@@ -41,6 +43,7 @@ const AppLayoutSidebarContent: FC = () => {
   const cookie = cookies();
   const { openChatWidget } = useSupportChatWidget();
   const { openPricingFeature } = usePricingFeature();
+  const pwaInstall = usePwaInstall();
 
   const activeSubscriptionState = useActiveSubscription();
 
@@ -180,6 +183,17 @@ const AppLayoutSidebarContent: FC = () => {
                 <BadgeCheck />
                 {t("pages.app.layout.sidebar.user.account")}
               </DropdownMenuItem>
+              {pwaInstall.canInstall ? (
+                <DropdownMenuItem
+                  onSelect={(event) => {
+                    event.preventDefault();
+                    void pwaInstall.requestInstall();
+                  }}
+                >
+                  <Download />
+                  {t("features.pwaInstall.action")}
+                </DropdownMenuItem>
+              ) : null}
               <DropdownMenuItem>
                 {t("common.appVersion", { version: __APP_VERSION__ })}
               </DropdownMenuItem>
@@ -192,6 +206,10 @@ const AppLayoutSidebarContent: FC = () => {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+      <PwaInstallIosDialog
+        open={pwaInstall.isIosGuideOpen}
+        onOpenChange={pwaInstall.setIsIosGuideOpen}
+      />
     </div>
   );
 };
