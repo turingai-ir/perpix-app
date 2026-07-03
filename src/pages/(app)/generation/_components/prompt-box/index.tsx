@@ -50,12 +50,6 @@ export const GenerationPromptBox: FC<GenerationPromptBoxProps> = ({
 
   return (
     <Card className="w-full min-w-0 overflow-hidden px-2">
-      {extraContent?.({
-        dynamicForm: promptBox.dynamicForm,
-        isFormBusy: promptBox.isFormBusy,
-        isUploadingMedia: promptBox.isUploadingMedia,
-        setIsUploadingMedia: promptBox.setIsUploadingMedia,
-      })}
       <Form {...promptBox.dynamicForm.form}>
         <form
           className="flex w-full min-w-0 flex-col gap-4"
@@ -67,6 +61,12 @@ export const GenerationPromptBox: FC<GenerationPromptBoxProps> = ({
               disabled={promptBox.isFormBusy}
             />
           )}
+          {extraContent?.({
+            dynamicForm: promptBox.dynamicForm,
+            isFormBusy: promptBox.isFormBusy,
+            isUploadingMedia: promptBox.isUploadingMedia,
+            setIsUploadingMedia: promptBox.setIsUploadingMedia,
+          })}
           {promptBox.isPromptFieldVisible && (
             <PromptTextarea
               dynamicForm={promptBox.dynamicForm}
