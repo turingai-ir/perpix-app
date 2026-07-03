@@ -82,6 +82,9 @@ const AuthLoginPageEnterPassword: FC = () => {
       data.token,
       accessTokenCookieOptions,
     );
+    setPageState((draft) => {
+      draft.currentView = "START";
+    });
     navigate(APP_ROUTES_KEY.app.path);
     toast.success(t("pages.auth.login.enterPasswordForm.successLoginToast"));
   }
