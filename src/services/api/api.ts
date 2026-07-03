@@ -326,17 +326,15 @@ export interface paths {
         readonly patch?: never;
         readonly trace?: never;
     };
-    readonly "/wallet/wallet/{wallet_uuid}/transactions": {
+    readonly "/wallet/transactions": {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
-            readonly path: {
-                readonly wallet_uuid: string;
-            };
+            readonly path?: never;
             readonly cookie?: never;
         };
         /** Get Wallet Transactions */
-        readonly get: operations["get_wallet_transactions_wallet_wallet__wallet_uuid__transactions_get"];
+        readonly get: operations["get_wallet_transactions_wallet_transactions_get"];
         readonly put?: never;
         readonly post?: never;
         readonly delete?: never;
@@ -400,7 +398,7 @@ export interface paths {
         readonly patch?: never;
         readonly trace?: never;
     };
-    readonly "/payment": {
+    readonly "/payment/list": {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -408,10 +406,9 @@ export interface paths {
             readonly cookie?: never;
         };
         /** List Payments */
-        readonly get: operations["list_payments_payment_get"];
+        readonly get: operations["list_payments_payment_list_get"];
         readonly put?: never;
-        /** Create Payment */
-        readonly post: operations["create_payment_payment_post"];
+        readonly post?: never;
         readonly delete?: never;
         readonly options?: never;
         readonly head?: never;
@@ -431,6 +428,23 @@ export interface paths {
         readonly get: operations["get_payment_status_payment__payment_uuid__get"];
         readonly put?: never;
         readonly post?: never;
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
+    readonly "/payment": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly get?: never;
+        readonly put?: never;
+        /** Create Payment */
+        readonly post: operations["create_payment_payment_post"];
         readonly delete?: never;
         readonly options?: never;
         readonly head?: never;
@@ -502,6 +516,25 @@ export interface paths {
         readonly put?: never;
         readonly post?: never;
         readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
+    readonly "/file-manager/files/{file_uuid}": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path: {
+                readonly file_uuid: string;
+            };
+            readonly cookie?: never;
+        };
+        readonly get?: never;
+        readonly put?: never;
+        readonly post?: never;
+        /** Delete File */
+        readonly delete: operations["delete_file_file_manager_files__file_uuid__delete"];
         readonly options?: never;
         readonly head?: never;
         readonly patch?: never;
@@ -632,6 +665,23 @@ export interface paths {
         readonly patch?: never;
         readonly trace?: never;
     };
+    readonly "/ai-task/webhooks/runware": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly get?: never;
+        readonly put?: never;
+        /** Runware Webhook */
+        readonly post: operations["runware_webhook_ai_task_webhooks_runware_post"];
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
     readonly "/ai-task/list": {
         readonly parameters: {
             readonly query?: never;
@@ -707,7 +757,7 @@ export interface paths {
         readonly patch?: never;
         readonly trace?: never;
     };
-    readonly "/admin/ai-task/user/{user_uuid}/message/{task_message_uuid}": {
+    readonly "/admin/ai-task/user/{user_uuid}/message/{task_message_uuid}/provider-result": {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -719,12 +769,12 @@ export interface paths {
         };
         readonly get?: never;
         readonly put?: never;
-        readonly post?: never;
+        /** Process User Task Manual Provider Result */
+        readonly post: operations["process_user_task_manual_provider_result_admin_ai_task_user__user_uuid__message__task_message_uuid__provider_result_post"];
         readonly delete?: never;
         readonly options?: never;
         readonly head?: never;
-        /** Patch User Task Message */
-        readonly patch: operations["patch_user_task_message_admin_ai_task_user__user_uuid__message__task_message_uuid__patch"];
+        readonly patch?: never;
         readonly trace?: never;
     };
     readonly "/ai-registry/models": {
@@ -1006,7 +1056,7 @@ export interface components {
          * AiRegistryModelOwnerEnum
          * @enum {string}
          */
-        readonly AiRegistryModelOwnerEnum: "OPEN_AI" | "GOOGLE" | "BLACK_FOREST_LABS" | "K_LING_AI" | "BRIA" | "BYTE_DANCE" | "IDEO_GRAM" | "IMAGINE_ART" | "LIGHT_TICKS" | "MID_JOURNEY" | "MINI_MAX" | "PIX_VERSE" | "PRUNA_AI" | "RUNWAY" | "SOURCE_FUL" | "VIDU";
+        readonly AiRegistryModelOwnerEnum: "OPEN_AI" | "GOOGLE" | "BLACK_FOREST_LABS" | "K_LING_AI" | "BRIA" | "BYTE_DANCE" | "IMAGINE_ART" | "LIGHT_TICKS" | "MID_JOURNEY" | "MINI_MAX" | "PIX_VERSE" | "PRUNA_AI" | "RUNWAY" | "SOURCE_FUL" | "VIDU" | "IDEOGRAM";
         /** AiRegistryModelProviderLinkCreateRequest */
         readonly AiRegistryModelProviderLinkCreateRequest: {
             /**
@@ -1186,15 +1236,18 @@ export interface components {
                 readonly [key: string]: unknown;
             } | null;
         };
-        /** AiTaskAdminPatchMessageRequest */
-        readonly AiTaskAdminPatchMessageRequest: {
-            readonly task_status?: components["schemas"]["AiTaskMessageStatusEnum"] | null;
-            /** Message */
-            readonly message?: string | null;
-            /** Ai Model Config */
-            readonly ai_model_config?: {
-                readonly [key: string]: unknown;
-            } | null;
+        /** AiTaskAdminManualProviderResultRequest */
+        readonly AiTaskAdminManualProviderResultRequest: {
+            /** Taskuuid */
+            readonly taskUUID: string;
+            /** Cost */
+            readonly cost?: number | null;
+            /** Imageurl */
+            readonly imageURL?: string | null;
+            /** Videourl */
+            readonly videoURL?: string | null;
+            /** Generated Text */
+            readonly generated_text?: string | null;
         };
         /** AiTaskListResponse */
         readonly AiTaskListResponse: {
@@ -1328,6 +1381,11 @@ export interface components {
         readonly CreatePaymentRequest: {
             /** Amount Usdmicro */
             readonly amount_usdmicro: number;
+            /**
+             * Include Profit Percentage
+             * @default false
+             */
+            readonly include_profit_percentage: boolean;
         };
         /** CreatePaymentResponse */
         readonly CreatePaymentResponse: {
@@ -1699,6 +1757,8 @@ export interface components {
             readonly owner_user_uuid: string;
             /** Transactions */
             readonly transactions: readonly components["schemas"]["WalletTransactionResponse"][];
+            /** Has Next */
+            readonly has_next: boolean;
             /**
              * Created At
              * Format: date-time
@@ -1773,6 +1833,49 @@ export interface components {
          * @enum {string}
          */
         readonly PaymentTargetTypeEnum: "subscription" | "wallet";
+        /** RunwareWebhookItem */
+        readonly RunwareWebhookItem: {
+            /** Taskuuid */
+            readonly taskUUID: string;
+            /** Status */
+            readonly status?: string | null;
+            /** Cost */
+            readonly cost?: number | null;
+            /** Imageurl */
+            readonly imageURL?: string | null;
+            /** Videourl */
+            readonly videoURL?: string | null;
+            /** Text */
+            readonly text?: string | null;
+        } & {
+            readonly [key: string]: unknown;
+        };
+        /** RunwareWebhookRequest */
+        readonly RunwareWebhookRequest: {
+            /** Taskuuid */
+            readonly taskUUID?: string | null;
+            /** Status */
+            readonly status?: string | null;
+            /** Cost */
+            readonly cost?: number | null;
+            /** Imageurl */
+            readonly imageURL?: string | null;
+            /** Videourl */
+            readonly videoURL?: string | null;
+            /** Text */
+            readonly text?: string | null;
+            /** Data */
+            readonly data?: readonly components["schemas"]["RunwareWebhookItem"][] | null;
+            /** Errors */
+            readonly errors?: readonly components["schemas"]["RunwareWebhookItem"][] | null;
+        } & {
+            readonly [key: string]: unknown;
+        };
+        /** RunwareWebhookResponse */
+        readonly RunwareWebhookResponse: {
+            /** Processed */
+            readonly processed: number;
+        };
         /** SubscriptionPlanListResponse */
         readonly SubscriptionPlanListResponse: {
             /** Items */
@@ -2088,6 +2191,12 @@ export interface components {
             /** Context */
             readonly ctx?: Record<string, never>;
         };
+        /**
+         * WalletOperationSourceEnum
+         * @description Stable namespaces used in wallet transaction idempotency keys.
+         * @enum {string}
+         */
+        readonly WalletOperationSourceEnum: "admin" | "ai_task_message" | "payment" | "subscription";
         /** WalletTransactionResponse */
         readonly WalletTransactionResponse: {
             /**
@@ -2229,7 +2338,7 @@ export type SchemaAiRegistryProviderCreateRequest = components['schemas']['AiReg
 export type SchemaAiRegistryProviderDetail = components['schemas']['AiRegistryProviderDetail'];
 export type SchemaAiRegistryProviderNameEnum = components['schemas']['AiRegistryProviderNameEnum'];
 export type SchemaAiRegistryProviderUpdateRequest = components['schemas']['AiRegistryProviderUpdateRequest'];
-export type SchemaAiTaskAdminPatchMessageRequest = components['schemas']['AiTaskAdminPatchMessageRequest'];
+export type SchemaAiTaskAdminManualProviderResultRequest = components['schemas']['AiTaskAdminManualProviderResultRequest'];
 export type SchemaAiTaskListResponse = components['schemas']['AiTaskListResponse'];
 export type SchemaAiTaskMessageResponse = components['schemas']['AiTaskMessageResponse'];
 export type SchemaAiTaskMessageStatusEnum = components['schemas']['AiTaskMessageStatusEnum'];
@@ -2269,6 +2378,9 @@ export type SchemaPaymentListResponse = components['schemas']['PaymentListRespon
 export type SchemaPaymentStatusEnum = components['schemas']['PaymentStatusEnum'];
 export type SchemaPaymentStatusResponse = components['schemas']['PaymentStatusResponse'];
 export type SchemaPaymentTargetTypeEnum = components['schemas']['PaymentTargetTypeEnum'];
+export type SchemaRunwareWebhookItem = components['schemas']['RunwareWebhookItem'];
+export type SchemaRunwareWebhookRequest = components['schemas']['RunwareWebhookRequest'];
+export type SchemaRunwareWebhookResponse = components['schemas']['RunwareWebhookResponse'];
 export type SchemaSubscriptionPlanListResponse = components['schemas']['SubscriptionPlanListResponse'];
 export type SchemaSubscriptionPlanResponse = components['schemas']['SubscriptionPlanResponse'];
 export type SchemaSubscriptionPurchaseRequest = components['schemas']['SubscriptionPurchaseRequest'];
@@ -2288,6 +2400,7 @@ export type SchemaUserStartRequest = components['schemas']['UserStartRequest'];
 export type SchemaUserStartResponse = components['schemas']['UserStartResponse'];
 export type SchemaUserSubscriptionResponse = components['schemas']['UserSubscriptionResponse'];
 export type SchemaValidationError = components['schemas']['ValidationError'];
+export type SchemaWalletOperationSourceEnum = components['schemas']['WalletOperationSourceEnum'];
 export type SchemaWalletTransactionResponse = components['schemas']['WalletTransactionResponse'];
 export type SchemaWalletTransactionTypeEnum = components['schemas']['WalletTransactionTypeEnum'];
 export type SchemaTuringPythonApiModulesAiRegistryPresentationSchemasAiRegistryModelDetail = components['schemas']['turing_python_api__modules__ai_registry__presentation__schemas__AiRegistryModelDetail'];
@@ -2841,16 +2954,16 @@ export interface operations {
             };
         };
     };
-    readonly get_wallet_transactions_wallet_wallet__wallet_uuid__transactions_get: {
+    readonly get_wallet_transactions_wallet_transactions_get: {
         readonly parameters: {
             readonly query?: {
+                readonly type?: components["schemas"]["WalletTransactionTypeEnum"] | null;
+                readonly source?: components["schemas"]["WalletOperationSourceEnum"] | null;
                 readonly offset?: number;
                 readonly limit?: number;
             };
             readonly header?: never;
-            readonly path: {
-                readonly wallet_uuid: string;
-            };
+            readonly path?: never;
             readonly cookie?: never;
         };
         readonly requestBody?: never;
@@ -2967,9 +3080,10 @@ export interface operations {
             };
         };
     };
-    readonly list_payments_payment_get: {
+    readonly list_payments_payment_list_get: {
         readonly parameters: {
             readonly query?: {
+                readonly status?: components["schemas"]["PaymentStatusEnum"] | null;
                 readonly offset?: number;
                 readonly limit?: number;
             };
@@ -2986,6 +3100,37 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["PaymentListResponse"];
+                };
+            };
+            /** @description Validation Error */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    readonly get_payment_status_payment__payment_uuid__get: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path: {
+                readonly payment_uuid: string;
+            };
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["PaymentStatusResponse"];
                 };
             };
             /** @description Validation Error */
@@ -3019,37 +3164,6 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["CreatePaymentResponse"];
-                };
-            };
-            /** @description Validation Error */
-            readonly 422: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    readonly get_payment_status_payment__payment_uuid__get: {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path: {
-                readonly payment_uuid: string;
-            };
-            readonly cookie?: never;
-        };
-        readonly requestBody?: never;
-        readonly responses: {
-            /** @description Successful Response */
-            readonly 200: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["PaymentStatusResponse"];
                 };
             };
             /** @description Validation Error */
@@ -3181,6 +3295,37 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["FileManagerPresignedUrlsResponse"];
+                };
+            };
+            /** @description Validation Error */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    readonly delete_file_file_manager_files__file_uuid__delete: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path: {
+                readonly file_uuid: string;
+            };
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["FileManagerUploadFileResponse"];
                 };
             };
             /** @description Validation Error */
@@ -3487,6 +3632,41 @@ export interface operations {
             };
         };
     };
+    readonly runware_webhook_ai_task_webhooks_runware_post: {
+        readonly parameters: {
+            readonly query: {
+                readonly token: string;
+            };
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody: {
+            readonly content: {
+                readonly "application/json": components["schemas"]["RunwareWebhookRequest"];
+            };
+        };
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["RunwareWebhookResponse"];
+                };
+            };
+            /** @description Validation Error */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     readonly get_tasks_list_ai_task_list_get: {
         readonly parameters: {
             readonly query?: {
@@ -3618,7 +3798,7 @@ export interface operations {
             };
         };
     };
-    readonly patch_user_task_message_admin_ai_task_user__user_uuid__message__task_message_uuid__patch: {
+    readonly process_user_task_manual_provider_result_admin_ai_task_user__user_uuid__message__task_message_uuid__provider_result_post: {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -3630,7 +3810,7 @@ export interface operations {
         };
         readonly requestBody: {
             readonly content: {
-                readonly "application/json": components["schemas"]["AiTaskAdminPatchMessageRequest"];
+                readonly "application/json": components["schemas"]["AiTaskAdminManualProviderResultRequest"];
             };
         };
         readonly responses: {
@@ -4046,7 +4226,7 @@ type ReadonlyArray<T> = [
 ] extends [
     unknown[]
 ] ? Readonly<Exclude<T, undefined>> : Readonly<Exclude<T, undefined>[]>;
-export const aiRegistryModelOwnerEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiRegistryModelOwnerEnum"]> = ["OPEN_AI", "GOOGLE", "BLACK_FOREST_LABS", "K_LING_AI", "BRIA", "BYTE_DANCE", "IDEO_GRAM", "IMAGINE_ART", "LIGHT_TICKS", "MID_JOURNEY", "MINI_MAX", "PIX_VERSE", "PRUNA_AI", "RUNWAY", "SOURCE_FUL", "VIDU"];
+export const aiRegistryModelOwnerEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiRegistryModelOwnerEnum"]> = ["OPEN_AI", "GOOGLE", "BLACK_FOREST_LABS", "K_LING_AI", "BRIA", "BYTE_DANCE", "IMAGINE_ART", "LIGHT_TICKS", "MID_JOURNEY", "MINI_MAX", "PIX_VERSE", "PRUNA_AI", "RUNWAY", "SOURCE_FUL", "VIDU", "IDEOGRAM"];
 export const aiRegistryModelSupportedTypesEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiRegistryModelSupportedTypesEnum"]> = ["TEXT", "IMAGE", "AUDIO", "VIDEO"];
 export const aiRegistryProviderNameEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiRegistryProviderNameEnum"]> = ["RUNWARE", "AIMLAPI"];
 export const aiTaskMessageStatusEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiTaskMessageStatusEnum"]> = ["PENDING", "IN_PROGRESS", "SUCCESS", "FAILED"];
@@ -4055,6 +4235,7 @@ export const aiTaskTypeEnumValues: ReadonlyArray<FlattenedDeepRequired<component
 export const currencyUnitEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["CurrencyUnitEnum"]> = ["USD", "IRR", "USDMICRO"];
 export const paymentStatusEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaymentStatusEnum"]> = ["PENDING", "PAID", "FAILED"];
 export const paymentTargetTypeEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaymentTargetTypeEnum"]> = ["subscription", "wallet"];
+export const walletOperationSourceEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["WalletOperationSourceEnum"]> = ["admin", "ai_task_message", "payment", "subscription"];
 export const walletTransactionTypeEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["WalletTransactionTypeEnum"]> = ["DEPOSIT", "WITHDRAW", "REFUND"];
 
 
@@ -4065,7 +4246,6 @@ export const AiRegistryModelOwnerEnumMap = {
   "K_LING_AI": "K_LING_AI",
   "BRIA": "BRIA",
   "BYTE_DANCE": "BYTE_DANCE",
-  "IDEO_GRAM": "IDEO_GRAM",
   "IMAGINE_ART": "IMAGINE_ART",
   "LIGHT_TICKS": "LIGHT_TICKS",
   "MID_JOURNEY": "MID_JOURNEY",
@@ -4075,6 +4255,7 @@ export const AiRegistryModelOwnerEnumMap = {
   "RUNWAY": "RUNWAY",
   "SOURCE_FUL": "SOURCE_FUL",
   "VIDU": "VIDU",
+  "IDEOGRAM": "IDEOGRAM",
 } as const;
 export type AiRegistryModelOwnerEnumKey = keyof typeof AiRegistryModelOwnerEnumMap;
 export type AiRegistryModelOwnerEnumValue = (typeof AiRegistryModelOwnerEnumMap)[AiRegistryModelOwnerEnumKey];
@@ -4146,6 +4327,15 @@ export const PaymentTargetTypeEnumMap = {
 } as const;
 export type PaymentTargetTypeEnumKey = keyof typeof PaymentTargetTypeEnumMap;
 export type PaymentTargetTypeEnumValue = (typeof PaymentTargetTypeEnumMap)[PaymentTargetTypeEnumKey];
+
+export const WalletOperationSourceEnumMap = {
+  "admin": "admin",
+  "ai_task_message": "ai_task_message",
+  "payment": "payment",
+  "subscription": "subscription",
+} as const;
+export type WalletOperationSourceEnumKey = keyof typeof WalletOperationSourceEnumMap;
+export type WalletOperationSourceEnumValue = (typeof WalletOperationSourceEnumMap)[WalletOperationSourceEnumKey];
 
 export const WalletTransactionTypeEnumMap = {
   "DEPOSIT": "DEPOSIT",
