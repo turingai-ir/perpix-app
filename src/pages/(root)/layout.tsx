@@ -1,5 +1,5 @@
 import { useEffect, type FC } from "react";
-import { Outlet, useLocation, useNavigate } from "react-router";
+import { Outlet, useLocation, useNavigate, useMatches } from "react-router";
 import { toast } from "sonner";
 import { useSetAtom } from "jotai";
 
@@ -162,8 +162,20 @@ const RootLayout: FC = () => {
     }));
   }, [location.hash, location.pathname, location.search, setAppLayoutState]);
 
+  const matches = useMatches();
+  const matchWithTitle = [...matches]
+    .reverse()
+    .find(
+      (m) => m.handle && typeof m.handle === "object" && "title" in m.handle,
+    );
+  const titleKey = matchWithTitle
+    ? (matchWithTitle.handle as { title: string }).title
+    : "";
+  const pageTitle = titleKey ? t(titleKey) : "PerPixAi";
+
   return (
     <>
+      <title>{pageTitle}</title>
       <Outlet />
     </>
   );

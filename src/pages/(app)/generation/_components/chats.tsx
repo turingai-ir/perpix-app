@@ -42,6 +42,7 @@ export const GenerationChats: FC<Props> = ({
 
         return (
           <div
+            id={item.uuid}
             key={item.uuid}
             className={cn("w-full max-w-125", {
               "ml-auto": isUser,

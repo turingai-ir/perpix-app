@@ -24,10 +24,10 @@ export const DynamicConfigFileFields: FC<{
     Record<string, boolean>
   >({});
   const fileFieldNames = dynamicForm.orderedFieldNames.filter((fieldName) => {
-    const property = dynamicForm.properties[fieldName];
+    const meta = dynamicForm.getFieldMeta(fieldName);
 
     return (
-      Boolean(property?.["x-file"]) &&
+      (meta?.inputType === "file" || meta?.inputType === "file-list") &&
       !excludedFields?.has(fieldName) &&
       dynamicForm.isFieldVisible(fieldName)
     );
@@ -55,7 +55,8 @@ export const DynamicConfigFileFields: FC<{
   return (
     <>
       {fileFieldNames.map((fieldName) => {
-        const property = dynamicForm.properties[fieldName];
+        const meta = dynamicForm.getFieldMeta(fieldName);
+        const property = meta?.property ?? dynamicForm.properties[fieldName];
 
         return (
           <DynamicConfigFileField
@@ -63,7 +64,7 @@ export const DynamicConfigFileFields: FC<{
             dynamicForm={dynamicForm}
             fieldName={fieldName}
             label={t(`common.dynamicConfig.fields.${fieldName}`, {
-              defaultValue: property.title ?? fieldName,
+              defaultValue: meta?.title ?? property.title ?? fieldName,
             })}
             property={property}
             disabled={disabled}

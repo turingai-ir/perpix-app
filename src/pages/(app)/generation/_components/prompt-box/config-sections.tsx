@@ -5,6 +5,7 @@ import {
   DynamicPromptConfigField,
   type DynamicConfigForm,
 } from "../dynamic-config";
+import { ModelTokenPriceTooltip } from "../model-token-price-tooltip";
 import { PromptModelSelector } from "./model-selector";
 import { PromptSubmitButton } from "./submit-button";
 
@@ -70,6 +71,10 @@ export const PromptActionsSection: FC<{
         dynamicForm={dynamicForm}
         fieldNames={advancedFieldNames}
         disabled={disabled}
+      />
+      <ModelTokenPriceTooltip
+        isLoading={model.modelState.isLoading}
+        pricingTiers={model.modelState.data?.pricing_tiers}
       />
     </div>
   </div>

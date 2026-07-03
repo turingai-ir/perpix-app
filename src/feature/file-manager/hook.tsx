@@ -1,4 +1,5 @@
 import { useAtom } from "jotai";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
 
 import {
@@ -11,6 +12,7 @@ import type { FileManagerAllowedContentType } from "./content-types";
 import { useReactQueryApi } from "@/hook/app";
 import { APP_I18_KEYS } from "@/services/i18";
 import { useAppTranslate } from "@/hook";
+import { apiClient } from "@/services/api";
 import type { SchemaFileManagerUploadFileResponse } from "@/services/api/api";
 
 const maxSizeMb = 100;
@@ -313,6 +315,39 @@ export const useFilePreview = (
 };
 
 export type UserFileItem = SchemaFileManagerUploadFileResponse;
+
+export const useDeleteUserFile = () => {
+  const queryClient = useQueryClient();
+  const { queryOptions } = useReactQueryApi();
+  const userFilesQueryKey = queryOptions(
+    "get",
+    "/file-manager/user-files",
+  ).queryKey;
+
+  const deleteFileState = useMutation({
+    mutationFn: async (fileUuid: string) => {
+      const { error, response } = await apiClient.DELETE(
+        "/file-manager/files/{file_uuid}" as never,
+        {
+          params: {
+            path: {
+              file_uuid: fileUuid,
+            },
+          },
+        } as never,
+      );
+
+      if (error || !response.ok) {
+        throw new Error("Failed to delete file");
+      }
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: userFilesQueryKey });
+    },
+  });
+
+  return { deleteFileState };
+};
 
 export const useUserFiles = ({
   contentTypes,

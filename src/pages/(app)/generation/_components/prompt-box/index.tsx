@@ -7,12 +7,14 @@ import {
 } from "./config-sections";
 import { PromptTextarea } from "./prompt-textarea";
 import type { GenerationPromptBoxProps } from "./types";
-import { useGenerationPromptBox } from "./use-generation-prompt-box";
-import { usePromptBoxFieldGroups } from "./use-prompt-box-field-groups";
 
 import { Card } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 import { useAppTranslate } from "@/hook";
+import {
+  useGenerationPromptBox,
+  usePromptBoxFieldGroups,
+} from "@/pages/(app)/generation/_hooks";
 
 export const GenerationPromptBox: FC<GenerationPromptBoxProps> = ({
   advancedExcludedFieldNames,

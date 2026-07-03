@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import type { DynamicConfigForm } from "../dynamic-config";
+import type { DynamicConfigForm } from "@/pages/(app)/generation/_components/dynamic-config";
 
 const MODE_FIELD_NAME = "mode";
 const FULL_WIDTH_INPUT_TYPES = new Set(["array", "object"]);

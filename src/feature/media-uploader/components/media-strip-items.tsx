@@ -16,6 +16,7 @@ import {
   EmptyMediaPreview,
   ErrorPreview,
 } from "./media-preview-parts";
+import { VideoPreviewButton } from "./video-preview-button";
 import type {
   LocalMediaItem,
   MediaPreviewType,
@@ -72,12 +73,7 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
       ) : null}
 
       {!isError && previewUrl && previewType === "video" ? (
-        // eslint-disable-next-line jsx-a11y/media-has-caption
-        <video
-          src={previewUrl}
-          className="h-full w-full object-cover transition-transform group-hover:scale-105"
-          controls
-        />
+        <VideoPreviewButton src={previewUrl} />
       ) : null}
 
       {!isError && previewUrl && previewType === "audio" ? (
@@ -127,9 +123,7 @@ export const LocalMediaPreviewItem: FC<LocalMediaPreviewItemProps> = ({
   }, []);
 
   const setImageElement = useCallback(
-    (
-      element: HTMLAudioElement | HTMLImageElement | HTMLVideoElement | null,
-    ) => {
+    (element: HTMLImageElement | null) => {
       revokeImageUrl();
 
       if (!element) return;
@@ -157,14 +151,7 @@ export const LocalMediaPreviewItem: FC<LocalMediaPreviewItemProps> = ({
         />
       ) : null}
 
-      {previewType === "video" ? (
-        // eslint-disable-next-line jsx-a11y/media-has-caption
-        <video
-          ref={setImageElement}
-          className="h-full w-full object-cover transition-transform group-hover:scale-105"
-          controls
-        />
-      ) : null}
+      {previewType === "video" ? <VideoPreviewButton file={item.file} /> : null}
 
       {previewType === "audio" ? <AudioPreviewButton file={item.file} /> : null}
 

@@ -25,7 +25,7 @@ export const PromptModelSelector: FC<{
     onValueChange={model.setCurrentModel}
     disabled={disabled}
   >
-    <SelectTrigger className="w-full md:max-w-72">
+    <SelectTrigger className="w-full">
       <SelectValue placeholder={chooseModelLabel} />
     </SelectTrigger>
     <SelectContent>

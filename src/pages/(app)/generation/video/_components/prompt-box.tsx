@@ -19,6 +19,7 @@ interface Props {
 
 const PROMPT_FIELD_NAMES = new Set([
   "prompt",
+  "input_video",
   "frame_images",
   "reference_images",
   "reference_videos",

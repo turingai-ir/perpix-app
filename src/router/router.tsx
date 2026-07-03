@@ -38,10 +38,16 @@ export const router = createBrowserRouter([
           {
             index: true,
             Component: AppPage,
+            handle: {
+              title: APP_ROUTES_KEY.app.meta.title,
+            },
           },
           {
             path: APP_ROUTES_KEY.gallery.path,
             Component: GalleryPage,
+            handle: {
+              title: APP_ROUTES_KEY.gallery.meta.title,
+            },
           },
           {
             path: APP_ROUTES_KEY.generation.image.path,
@@ -49,10 +55,16 @@ export const router = createBrowserRouter([
               {
                 index: true,
                 Component: GenerationImagePage,
+                handle: {
+                  title: APP_ROUTES_KEY.generation.image.meta.title,
+                },
               },
               {
                 path: APP_ROUTES_KEY.generation.image.history.path,
                 Component: GenerationImagePage,
+                handle: {
+                  title: APP_ROUTES_KEY.generation.image.history.meta.title,
+                },
               },
             ],
           },
@@ -62,10 +74,16 @@ export const router = createBrowserRouter([
               {
                 index: true,
                 Component: GenerationVideoPage,
+                handle: {
+                  title: APP_ROUTES_KEY.generation.video.meta.title,
+                },
               },
               {
                 path: APP_ROUTES_KEY.generation.video.history.path,
                 Component: GenerationVideoPage,
+                handle: {
+                  title: APP_ROUTES_KEY.generation.video.history.meta.title,
+                },
               },
             ],
           },
@@ -74,6 +92,9 @@ export const router = createBrowserRouter([
       {
         path: APP_ROUTES_KEY.auth.login.path,
         Component: AuthLoginPage,
+        handle: {
+          title: APP_ROUTES_KEY.auth.login.meta.title,
+        },
       },
       {
         path: APP_ROUTES_KEY.profile.root.path,
@@ -90,12 +111,18 @@ export const router = createBrowserRouter([
           {
             path: APP_ROUTES_KEY.profile.settings.path,
             Component: ProfileSettingsPage,
+            handle: {
+              title: APP_ROUTES_KEY.profile.settings.meta.title,
+            },
           },
         ],
       },
       {
         path: APP_ROUTES_KEY.payment.result.path,
         Component: PaymentResultPage,
+        handle: {
+          title: APP_ROUTES_KEY.payment.result.meta.title,
+        },
       },
       {
         path: "*",

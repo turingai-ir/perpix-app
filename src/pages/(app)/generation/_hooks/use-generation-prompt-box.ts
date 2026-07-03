@@ -6,17 +6,15 @@ import {
   type SubmitEventHandler,
 } from "react";
 
-import { useModel } from "../../_hooks/model";
-import { getPromptConfigFieldNames } from "../dynamic-config";
-
 import {
   isJsonConfigSchema,
   useDynamicConfigForm,
 } from "@/hooks/use-dynamic-config-form";
+import { getPromptConfigFieldNames } from "@/pages/(app)/generation/_components/dynamic-config";
+import type { GenerationPromptBoxProps } from "@/pages/(app)/generation/_components/prompt-box/types";
+import { useModel } from "@/pages/(app)/generation/_hooks/model";
 import { showDynamicFormErrorsToast } from "@/pages/(app)/generation/_utils/dynamic-form-errors-toast";
 import { getModelDynamicConfig } from "@/pages/(app)/generation/_utils/model-dynamic-config";
-
-import type { GenerationPromptBoxProps } from "./types";
 
 const MIN_PROMPT_LENGTH = 3;
 
