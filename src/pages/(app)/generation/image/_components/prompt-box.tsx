@@ -1,7 +1,6 @@
 import type { FC } from "react";
 
-import { ImageReferenceUploader } from "./image-reference-uploader";
-
+import { DynamicConfigFileFields } from "@/pages/(app)/generation/_components/dynamic-config";
 import { GenerationPromptBox } from "@/pages/(app)/generation/_components/prompt-box";
 import {
   AiRegistryModelSupportedTypesEnumMap,
@@ -27,21 +26,12 @@ export const GenerationImagePromptBox: FC<Props> = (props) => (
   <GenerationPromptBox
     {...props}
     advancedExcludedFieldNames={ADVANCED_CONFIG_EXCLUDED_FIELD_NAMES}
-    configDefaultsResolver={(lastMessageConfig) =>
-      lastMessageConfig
-        ? {
-            ...lastMessageConfig,
-            reference_images:
-              lastMessageConfig.images_generated ??
-              lastMessageConfig.reference_images,
-          }
-        : undefined
-    }
     extraContent={({ dynamicForm, isFormBusy, setIsUploadingMedia }) => (
-      <ImageReferenceUploader
+      <DynamicConfigFileFields
         dynamicForm={dynamicForm}
         disabled={isFormBusy}
         onUploadingChange={setIsUploadingMedia}
+        requestId="image_generation"
       />
     )}
     promptBoxFieldNames={PROMPT_BOX_CONFIG_FIELD_NAMES}
