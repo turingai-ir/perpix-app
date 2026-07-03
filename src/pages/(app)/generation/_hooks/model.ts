@@ -5,6 +5,7 @@ import {
   type QueryClient,
   useQueryClient,
 } from "@tanstack/react-query";
+import { useDebounce } from "react-use";
 
 import { useReactQueryApi } from "@/hook/app";
 import { useActiveSubscription } from "@/feature/pricing";
@@ -192,6 +193,21 @@ export const useAiGenerate = (task_id: string | undefined) => {
 };
 
 const AI_TASK_POLLING_INTERVAL = 10_000;
+const AI_TASK_RESULT_INITIAL_DELAY = 5_000;
+
+const useDelayedPollingStart = (shouldPoll: boolean, resetKey?: string) => {
+  const [delayedPollingKey, setDelayedPollingKey] = useState<string>();
+
+  useDebounce(
+    () => {
+      setDelayedPollingKey(shouldPoll ? resetKey : undefined);
+    },
+    AI_TASK_RESULT_INITIAL_DELAY,
+    [resetKey, shouldPoll],
+  );
+
+  return shouldPoll && !!resetKey && delayedPollingKey === resetKey;
+};
 
 export enum GeneratedMediaField {
   IMAGE = "images_generated",
@@ -251,6 +267,7 @@ export const useAiTaskResultPolling = (
     !!message?.uuid &&
     !isAiTaskMessageTerminal(message, generatedMediaField) &&
     !!message.ai_external_provider_task_id;
+  const canPollResult = useDelayedPollingStart(shouldPoll, message?.uuid);
 
   return useQuery(
     "get",
@@ -263,7 +280,7 @@ export const useAiTaskResultPolling = (
       },
     },
     {
-      enabled: shouldPoll,
+      enabled: canPollResult,
       refetchInterval: (query) => {
         const resultMessage = query.state.data as
           | SchemaAiTaskMessageResponse
