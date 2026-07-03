@@ -3,7 +3,9 @@ import { useMemo, type ChangeEventHandler } from "react";
 import {
   type FileManagerAllowedContentType,
   type UserFileItem,
+  useFilesPreviews,
   useInfiniteUserFiles,
+  userFilesPageLimit,
 } from "@/feature/file-manager";
 
 import { getUserFilesWithUuid } from "./utils";
@@ -30,6 +32,7 @@ export function useMediaFilePicker({
   const { getUserFilesState } = useInfiniteUserFiles({
     contentTypes: acceptedContentTypes,
     enabled: isOpen,
+    limit: userFilesPageLimit,
   });
   const userFilesResponse = getUserFilesState.data as
     | { pages?: readonly { files?: readonly UserFileItem[] }[] }
@@ -41,6 +44,14 @@ export function useMediaFilePicker({
         userFilesResponse?.pages?.flatMap((page) => page.files ?? []),
       ),
     [userFilesResponse?.pages],
+  );
+  const userFileUuids = useMemo(
+    () => userFiles.map((file) => file.uuid),
+    [userFiles],
+  );
+  const { getFilesPreviewsState } = useFilesPreviews(
+    userFileUuids,
+    isOpen && !getUserFilesState.isError,
   );
   const isLoadingFiles = getUserFilesState.isPending && !userFilesResponse;
 
@@ -87,7 +98,10 @@ export function useMediaFilePicker({
     isFetchingFiles: getUserFilesState.isFetching,
     isFetchingMoreFiles: getUserFilesState.isFetchingNextPage,
     isFilesError: getUserFilesState.isError,
+    isFilesPreviewError: getFilesPreviewsState.isError,
+    isFilesPreviewLoading: getFilesPreviewsState.isPending,
     isLoadingFiles,
+    previewUrlsByFileUuid: getFilesPreviewsState.data ?? {},
     refetchFiles: getUserFilesState.refetch,
     selectedIdsSet,
     selectUploadedFile,

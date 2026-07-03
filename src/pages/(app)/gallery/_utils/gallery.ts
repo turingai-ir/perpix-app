@@ -1,8 +1,8 @@
 import { FILE_MANAGER_ALLOWED_CONTENT_TYPES } from "@/feature/file-manager";
+import { getUserFilesWithUuid } from "@/feature/media-uploader";
 
 import type {
   GalleryContentTypes,
-  GalleryFile,
   GalleryFilterItem,
   GalleryMediaType,
 } from "./types";
@@ -31,20 +31,14 @@ export function getGalleryMediaType(contentType: string): GalleryMediaType {
   return "image";
 }
 
-export function getGalleryFiles(pages: unknown): GalleryFile[] {
+export function getGalleryFiles(pages: unknown) {
   if (!Array.isArray(pages)) return [];
 
-  return pages.flatMap((page) => {
-    if (!page || typeof page !== "object") return [];
-
-    const files = (page as { files?: unknown }).files;
-    if (!Array.isArray(files)) return [];
-
-    return files.filter(
-      (file): file is GalleryFile =>
-        typeof file === "object" &&
-        file !== null &&
-        typeof (file as { uuid?: unknown }).uuid === "string",
-    );
-  });
+  return getUserFilesWithUuid(
+    pages.flatMap((page) =>
+      page && typeof page === "object" && Array.isArray(page.files)
+        ? page.files
+        : [],
+    ),
+  );
 }

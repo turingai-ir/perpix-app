@@ -56,7 +56,10 @@ export const MediaFilePickerDialog: FC<MediaFilePickerDialogProps> = ({
     isFetchingFiles,
     isFetchingMoreFiles,
     isFilesError,
+    isFilesPreviewError,
+    isFilesPreviewLoading,
     isLoadingFiles,
+    previewUrlsByFileUuid,
     refetchFiles,
     selectedIdsSet,
     selectUploadedFile,
@@ -110,8 +113,11 @@ export const MediaFilePickerDialog: FC<MediaFilePickerDialogProps> = ({
             isError={isFilesError}
             isFetching={isFetchingFiles}
             isFetchingMore={isFetchingMoreFiles}
+            isPreviewError={isFilesPreviewError}
+            isPreviewLoading={isFilesPreviewLoading}
             isLoading={isLoadingFiles}
             hasMore={hasMoreFiles}
+            previewUrlsByFileUuid={previewUrlsByFileUuid}
             previewType={previewType}
             selectedIdsSet={selectedIdsSet}
             userFiles={userFiles}

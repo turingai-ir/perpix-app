@@ -1,6 +1,10 @@
 import { useMemo, useState } from "react";
 
-import { useInfiniteUserFiles } from "@/feature/file-manager";
+import {
+  useFilesPreviews,
+  useInfiniteUserFiles,
+  userFilesPageLimit,
+} from "@/feature/file-manager";
 import { useInfiniteScroll } from "@/hooks/use-infinitive-scroll";
 
 import { galleryContentTypes, getGalleryFiles } from "../_utils/gallery";
@@ -10,12 +14,17 @@ export const useGalleryFiles = () => {
   const [activeFilter, setActiveFilter] = useState<GalleryFilter>("all");
   const userFilesState = useInfiniteUserFiles({
     contentTypes: galleryContentTypes[activeFilter],
-    limit: 50,
+    limit: userFilesPageLimit,
   }).getUserFilesState;
 
   const files = useMemo(
     () => getGalleryFiles(userFilesState.data?.pages),
     [userFilesState.data?.pages],
+  );
+  const fileUuids = useMemo(() => files.map((file) => file.uuid), [files]);
+  const { getFilesPreviewsState } = useFilesPreviews(
+    fileUuids,
+    !userFilesState.isError,
   );
 
   const fetchMoreFiles = () => {
@@ -39,6 +48,9 @@ export const useGalleryFiles = () => {
   return {
     activeFilter,
     files,
+    filesPreviewUrls: getFilesPreviewsState.data ?? {},
+    isFilesPreviewError: getFilesPreviewsState.isError,
+    isFilesPreviewLoading: getFilesPreviewsState.isPending,
     loadMoreRef,
     setActiveFilter,
     userFilesState,

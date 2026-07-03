@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 import type { LocalMediaItem, UploadedMediaItem } from "./types";
 import {
@@ -21,18 +21,9 @@ export function useMediaUploader({
   uploadedItems,
 }: UseMediaUploaderOptions) {
   const [isFilePickerOpen, setIsFilePickerOpen] = useState(false);
-  const acceptedContentTypes = useMemo(
-    () => getAcceptedContentTypes(accept),
-    [accept],
-  );
-  const isUploading = useMemo(
-    () => hasUploadingLocalItem(localItems),
-    [localItems],
-  );
-  const selectedIds = useMemo(
-    () => getUploadedItemIds(uploadedItems),
-    [uploadedItems],
-  );
+  const acceptedContentTypes = getAcceptedContentTypes(accept);
+  const isUploading = hasUploadingLocalItem(localItems);
+  const selectedIds = getUploadedItemIds(uploadedItems);
 
   const openFilePicker = () => {
     if (!disabled) setIsFilePickerOpen(true);

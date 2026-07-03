@@ -2,7 +2,7 @@ import { Check, FileAudio, FileVideo, Image as ImageIcon } from "lucide-react";
 import type { FC } from "react";
 
 import { Skeleton } from "@/components/ui/skeleton";
-import { useFilePreview } from "@/feature/file-manager";
+import type { FilePreviewUrls } from "@/feature/file-manager";
 import { useAppTranslate } from "@/hook";
 import { cn } from "@/lib/utils";
 import { APP_I18_KEYS } from "@/services/i18";
@@ -13,6 +13,9 @@ import { formatFileSize, type UserFileWithUuid } from "../utils";
 interface UserFileCardProps {
   file: UserFileWithUuid;
   isSelected: boolean;
+  isPreviewError: boolean;
+  isPreviewLoading: boolean;
+  previewUrls: FilePreviewUrls | undefined;
   previewType: MediaPreviewType;
   onSelect: (fileId: string) => void;
 }
@@ -20,14 +23,14 @@ interface UserFileCardProps {
 export const UserFileCard: FC<UserFileCardProps> = ({
   file,
   isSelected,
+  isPreviewError,
+  isPreviewLoading,
+  previewUrls,
   previewType,
   onSelect,
 }) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
-  const { getFilePreviewState } = useFilePreview(file.uuid);
-  const previewUrl = getFilePreviewState.data?.preview_url;
-  const isPreviewLoading = getFilePreviewState.isPending;
-  const isPreviewError = getFilePreviewState.isError;
+  const previewUrl = previewUrls?.preview_url;
   const fileName = file.file_name || t("common.emptyTitle");
 
   return (

@@ -502,19 +502,17 @@ export interface paths {
         readonly patch?: never;
         readonly trace?: never;
     };
-    readonly "/file-manager/files/{file_uuid}/presigned-urls": {
+    readonly "/file-manager/files/presigned-urls": {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
-            readonly path: {
-                readonly file_uuid: string;
-            };
+            readonly path?: never;
             readonly cookie?: never;
         };
-        /** Get File Presigned Urls */
-        readonly get: operations["get_file_presigned_urls_file_manager_files__file_uuid__presigned_urls_get"];
+        readonly get?: never;
         readonly put?: never;
-        readonly post?: never;
+        /** Get File Presigned Urls */
+        readonly post: operations["get_file_presigned_urls_file_manager_files_presigned_urls_post"];
         readonly delete?: never;
         readonly options?: never;
         readonly head?: never;
@@ -1650,8 +1648,23 @@ export interface components {
              */
             readonly expire_at: string;
         };
+        /** FileManagerPresignedUrlsListResponse */
+        readonly FileManagerPresignedUrlsListResponse: {
+            /** Files */
+            readonly files: readonly components["schemas"]["FileManagerPresignedUrlsResponse"][];
+        };
+        /** FileManagerPresignedUrlsRequest */
+        readonly FileManagerPresignedUrlsRequest: {
+            /** File Uuids */
+            readonly file_uuids: readonly string[];
+        };
         /** FileManagerPresignedUrlsResponse */
         readonly FileManagerPresignedUrlsResponse: {
+            /**
+             * File Uuid
+             * Format: uuid
+             */
+            readonly file_uuid: string;
             /** Preview Url */
             readonly preview_url: string;
             /** Download Url */
@@ -2366,6 +2379,8 @@ export type SchemaFileManagerMultipartInitiateRequest = components['schemas']['F
 export type SchemaFileManagerMultipartInitiateResponse = components['schemas']['FileManagerMultipartInitiateResponse'];
 export type SchemaFileManagerMultipartPresignPartRequest = components['schemas']['FileManagerMultipartPresignPartRequest'];
 export type SchemaFileManagerMultipartPresignPartResponse = components['schemas']['FileManagerMultipartPresignPartResponse'];
+export type SchemaFileManagerPresignedUrlsListResponse = components['schemas']['FileManagerPresignedUrlsListResponse'];
+export type SchemaFileManagerPresignedUrlsRequest = components['schemas']['FileManagerPresignedUrlsRequest'];
 export type SchemaFileManagerPresignedUrlsResponse = components['schemas']['FileManagerPresignedUrlsResponse'];
 export type SchemaFileManagerUploadFileResponse = components['schemas']['FileManagerUploadFileResponse'];
 export type SchemaFileManagerUserFilesResponse = components['schemas']['FileManagerUserFilesResponse'];
@@ -3277,16 +3292,18 @@ export interface operations {
             };
         };
     };
-    readonly get_file_presigned_urls_file_manager_files__file_uuid__presigned_urls_get: {
+    readonly get_file_presigned_urls_file_manager_files_presigned_urls_post: {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
-            readonly path: {
-                readonly file_uuid: string;
-            };
+            readonly path?: never;
             readonly cookie?: never;
         };
-        readonly requestBody?: never;
+        readonly requestBody: {
+            readonly content: {
+                readonly "application/json": components["schemas"]["FileManagerPresignedUrlsRequest"];
+            };
+        };
         readonly responses: {
             /** @description Successful Response */
             readonly 200: {
@@ -3294,7 +3311,7 @@ export interface operations {
                     readonly [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": components["schemas"]["FileManagerPresignedUrlsResponse"];
+                    readonly "application/json": components["schemas"]["FileManagerPresignedUrlsListResponse"];
                 };
             };
             /** @description Validation Error */

@@ -1,5 +1,5 @@
 import { useAtom } from "jotai";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
 
 import {
@@ -14,6 +14,8 @@ import { APP_I18_KEYS } from "@/services/i18";
 import { useAppTranslate } from "@/hook";
 import { apiClient } from "@/services/api";
 import type { SchemaFileManagerUploadFileResponse } from "@/services/api/api";
+
+export const userFilesPageLimit = 20;
 
 const maxSizeMb = 100;
 const maxSize = maxSizeMb * 1024 * 1024;
@@ -62,13 +64,6 @@ const readImageDimensions = (file: File) =>
 
 interface UseFileManagerOptions {
   allowedFileTypes?: string[];
-}
-
-interface UseUserFilesOptions {
-  contentTypes: readonly FileManagerAllowedContentType[];
-  enabled?: boolean;
-  limit?: number;
-  offset?: number;
 }
 
 interface UseInfiniteUserFilesOptions {
@@ -226,14 +221,10 @@ export const useFileManager = (
     const uploadErrorMessage = t("common.errorOnUploading");
 
     if (file.size > maxSize) {
-      return Promise.reject(
-        Error(t("common.validationErrors.maxSize", { maxSizeMb })),
-      );
+      throw new Error(t("common.validationErrors.maxSize", { maxSizeMb }));
     }
     if (!isAllowedFileType(file.type, allowedFileTypes)) {
-      return Promise.reject(
-        Error(t("common.validationErrors.invalidFileFormat")),
-      );
+      throw new Error(t("common.validationErrors.invalidFileFormat"));
     }
     if (file.type.startsWith("image/")) {
       const { width, height } = await readImageDimensions(file).catch(() => {
@@ -241,13 +232,11 @@ export const useFileManager = (
       });
 
       if (width < minImageDimension || height < minImageDimension) {
-        return Promise.reject(
-          Error(t("common.validationErrors.imageTooSmall")),
-        );
+        throw new Error(t("common.validationErrors.imageTooSmall"));
       }
     }
     if (pendingUploads.get(file.name)) {
-      return Promise.reject(Error(t("common.validationErrors.duplicateFile")));
+      throw new Error(t("common.validationErrors.duplicateFile"));
     }
 
     setAllPendingUploads((prev) => {
@@ -274,15 +263,15 @@ export const useFileManager = (
 
       if (!uuid) {
         failPendingUpload(file);
-        return Promise.reject(Error(uploadErrorMessage));
+        throw new Error(uploadErrorMessage);
       }
 
       removePendingUpload(file.name);
 
-      return Promise.resolve(uuid);
+      return uuid;
     } catch (e) {
       failPendingUpload(file);
-      return Promise.reject(e instanceof Error ? e : Error(uploadErrorMessage));
+      throw e instanceof Error ? e : new Error(uploadErrorMessage);
     }
   };
 
@@ -297,21 +286,104 @@ export const useFilePreview = (
   fileUuid: string | undefined,
   enabled = true,
 ) => {
-  const { useQuery } = useReactQueryApi();
-  const getFilePreviewState = useQuery(
-    "get",
-    "/file-manager/files/{file_uuid}/presigned-urls",
-    {
-      params: {
-        path: {
-          file_uuid: fileUuid ?? "",
-        },
-      },
+  const getFilePreviewState = useQuery({
+    queryKey: ["file-manager", "files", "presigned-urls", fileUuid],
+    enabled: enabled && !!fileUuid,
+    queryFn: async () => {
+      const previewUrls = await fetchFilePreviewUrls([fileUuid ?? ""]);
+      const filePreviewUrls = previewUrls[fileUuid ?? ""];
+
+      if (!filePreviewUrls) {
+        throw new Error("Failed to fetch file preview URL");
+      }
+
+      return filePreviewUrls;
     },
-    { enabled: enabled && !!fileUuid },
-  );
+  });
 
   return { getFilePreviewState };
+};
+
+export type FilePreviewUrls = FilePreviewUrlsResponse;
+
+type FilePreviewUrlsResponse = {
+  download_url: string;
+  preview_url: string;
+};
+
+const presignedUrlsBatchSize = 20;
+
+const chunkFileUuids = (fileUuids: readonly string[]) => {
+  const chunks: string[][] = [];
+
+  for (
+    let index = 0;
+    index < fileUuids.length;
+    index += presignedUrlsBatchSize
+  ) {
+    chunks.push(fileUuids.slice(index, index + presignedUrlsBatchSize));
+  }
+
+  return chunks;
+};
+
+const fetchFilePreviewUrls = async (fileUuids: readonly string[]) => {
+  const responses = await Promise.all(
+    chunkFileUuids(fileUuids).map(async (chunk) => {
+      const { data, error, response } = await apiClient.POST(
+        "/file-manager/files/presigned-urls" as never,
+        {
+          body: {
+            file_uuids: chunk,
+          },
+        } as never,
+      );
+
+      if (error || !response.ok || !data) {
+        throw new Error("Failed to fetch file preview URLs");
+      }
+
+      return data as {
+        files?: readonly {
+          file_uuid: string;
+          preview_url: string;
+          download_url: string;
+        }[];
+      };
+    }),
+  );
+
+  return responses.reduce<Record<string, FilePreviewUrlsResponse>>(
+    (previewUrlsByFileUuid, currentResponse) => {
+      currentResponse.files?.forEach((file) => {
+        previewUrlsByFileUuid[file.file_uuid] = {
+          download_url: file.download_url,
+          preview_url: file.preview_url,
+        };
+      });
+
+      return previewUrlsByFileUuid;
+    },
+    {},
+  );
+};
+
+export const useFilesPreviews = (
+  fileUuids: readonly string[],
+  enabled = true,
+) => {
+  const safeFileUuids = useMemo(
+    () => Array.from(new Set(fileUuids.filter(Boolean))).sort(),
+    [fileUuids],
+  );
+
+  const getFilesPreviewsState = useQuery({
+    queryKey: ["file-manager", "files", "presigned-urls", safeFileUuids],
+    enabled: enabled && safeFileUuids.length > 0,
+    queryFn: () => fetchFilePreviewUrls(safeFileUuids),
+  });
+
+  return { getFilesPreviewsState };
 };
 
 export type UserFileItem = SchemaFileManagerUploadFileResponse;
@@ -349,42 +421,12 @@ export const useDeleteUserFile = () => {
   return { deleteFileState };
 };
 
-export const useUserFiles = ({
-  contentTypes,
-  enabled = true,
-  limit = 50,
-  offset = 0,
-}: UseUserFilesOptions) => {
-  const { useQuery } = useReactQueryApi();
-  const safeContentTypes = Array.isArray(contentTypes) ? contentTypes : [];
-
-  const getUserFilesState = useQuery(
-    "get",
-    "/file-manager/user-files",
-    {
-      params: {
-        query: {
-          content_types: safeContentTypes,
-          limit,
-          offset,
-        },
-      },
-    },
-    {
-      enabled: enabled && safeContentTypes.length > 0,
-    },
-  );
-
-  return { getUserFilesState };
-};
-
 export const useInfiniteUserFiles = ({
   contentTypes,
   enabled = true,
-  limit = 50,
+  limit = userFilesPageLimit,
 }: UseInfiniteUserFilesOptions) => {
   const { useInfiniteQuery } = useReactQueryApi();
-  const safeContentTypes = Array.isArray(contentTypes) ? contentTypes : [];
 
   const getUserFilesState = useInfiniteQuery(
     "get",
@@ -392,14 +434,14 @@ export const useInfiniteUserFiles = ({
     {
       params: {
         query: {
-          content_types: safeContentTypes,
+          content_types: contentTypes,
           limit,
           offset: 0,
         },
       },
     },
     {
-      enabled: enabled && safeContentTypes.length > 0,
+      enabled: enabled && contentTypes.length > 0,
       initialPageParam: 0,
       pageParamName: "offset",
       getNextPageParam: (lastPage, _pages, lastPageParam) =>

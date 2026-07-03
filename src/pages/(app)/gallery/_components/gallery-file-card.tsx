@@ -13,7 +13,10 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useDeleteUserFile, useFilePreview } from "@/feature/file-manager";
+import {
+  type FilePreviewUrls,
+  useDeleteUserFile,
+} from "@/feature/file-manager";
 import { formatFileSize } from "@/feature/media-uploader/utils";
 import { useAppTranslate } from "@/hook";
 import { cn } from "@/lib/utils";
@@ -26,19 +29,27 @@ import { GalleryPreview } from "./gallery-preview";
 import { getGalleryMediaType } from "../_utils/gallery";
 import type { GalleryFile } from "../_utils/types";
 
-export const GalleryFileCard: FC<{ file: GalleryFile; index: number }> = ({
+interface GalleryFileCardProps {
+  file: GalleryFile;
+  index: number;
+  isPreviewError: boolean;
+  isPreviewLoading: boolean;
+  previewUrls: FilePreviewUrls | undefined;
+}
+
+export const GalleryFileCard: FC<GalleryFileCardProps> = ({
   file,
   index,
+  isPreviewError,
+  isPreviewLoading,
+  previewUrls,
 }) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const [isDownloading, setIsDownloading] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const { getFilePreviewState } = useFilePreview(file.uuid);
   const { deleteFileState } = useDeleteUserFile();
-  const previewUrl = getFilePreviewState.data?.preview_url;
-  const downloadUrl = getFilePreviewState.data?.download_url;
-  const isPreviewLoading = getFilePreviewState.isPending;
-  const isPreviewError = getFilePreviewState.isError;
+  const previewUrl = previewUrls?.preview_url;
+  const downloadUrl = previewUrls?.download_url;
   const fileName = file.file_name || t("common.emptyTitle");
   const mediaType = getGalleryMediaType(file.content_type);
   const mediaLabel = t(`pages.gallery.mediaTypes.${mediaType}`);
