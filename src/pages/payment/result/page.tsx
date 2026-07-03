@@ -20,7 +20,7 @@ function PaymentResultPage() {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
 
   const paymentStatusState = usePaymentStatus(paymentUuid);
-  const paymentsState = usePayments(!!paymentUuid);
+  const paymentsState = usePayments({ enabled: !!paymentUuid });
   const paymentResult = paymentStatusState.data;
   const payments = paymentsState.data
     ? Array.from(

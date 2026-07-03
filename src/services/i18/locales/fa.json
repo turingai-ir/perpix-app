@@ -490,6 +490,9 @@
       }
     },
     "profile": {
+      "payments": {
+        "title": "پرداخت‌ها"
+      },
       "settings": {
         "title": "ویرایش حساب کاربری",
         "userInfo": {
@@ -510,6 +513,9 @@
             "successSetPasswordToast": "اطلاعات کاربری با موفقیت بروزرسانی گردید"
           }
         }
+      },
+      "walletTransactions": {
+        "title": "تراکنش‌های کیف پول"
       }
     },
     "root": {

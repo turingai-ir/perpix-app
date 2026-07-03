@@ -30,6 +30,18 @@ export const APP_ROUTES_KEY = {
         title: "pages.profile.settings.title",
       },
     },
+    payments: {
+      path: "/profile/payments",
+      meta: {
+        title: "pages.profile.payments.title",
+      },
+    },
+    walletTransactions: {
+      path: "/profile/wallet-transactions",
+      meta: {
+        title: "pages.profile.walletTransactions.title",
+      },
+    },
   },
   generation: {
     image: {
@@ -66,4 +78,3 @@ export const APP_ROUTES_KEY = {
     },
   },
 } as const;
-

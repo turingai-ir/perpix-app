@@ -13,13 +13,23 @@ export const usePaymentStatus = (paymentUuid?: string) => {
   );
 };
 
-export const usePayments = (enabled = true) => {
+type UsePaymentsParams = {
+  enabled?: boolean;
+  offset?: number;
+  limit?: number;
+};
+
+export const usePayments = ({
+  enabled = true,
+  offset = 0,
+  limit = 100,
+}: UsePaymentsParams = {}) => {
   const { useQuery } = useReactQueryApi();
 
   return useQuery(
     "get",
-    "/payment",
-    { params: { query: { limit: 100 } } },
+    "/payment/list",
+    { params: { query: { offset, limit } } },
     { enabled },
   );
 };

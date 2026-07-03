@@ -3,13 +3,11 @@ import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Link } from "react-router";
 import { LoaderCircle } from "lucide-react";
 
 import {
   Card,
   CardContent,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -28,7 +26,6 @@ import { Muted } from "@/components/ui/typography";
 import { Button } from "@/components/ui/button";
 import LoadingSection from "@/components/custom/loading-section";
 import ErrorSection from "@/components/custom/error-section";
-import { APP_ROUTES_KEY } from "@/router/routes";
 import { useEditUserInfo, useUser } from "@/feature/user";
 
 const ProfileSettingsPage: FC = () => {
@@ -111,7 +108,7 @@ const ProfileSettingsPage: FC = () => {
       ) : null}
 
       <Activity mode={isUserLoading ? "hidden" : "visible"}>
-        <div className="mx-auto flex min-h-full max-w-xl items-center justify-center p-4">
+        <div className="min-h-full w-full">
           <Card className="w-full">
             <CardHeader>
               <CardTitle>{t("pages.profile.settings.title")}</CardTitle>
@@ -120,7 +117,7 @@ const ProfileSettingsPage: FC = () => {
               <Form {...form}>
                 <form
                   onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-8"
+                  className="grid gap-6 lg:grid-cols-2"
                 >
                   <FormField
                     control={form.control}
@@ -186,7 +183,7 @@ const ProfileSettingsPage: FC = () => {
                     )}
                   />
                   <Button
-                    className="w-full"
+                    className="w-full lg:col-span-2 lg:w-fit lg:min-w-48"
                     type="submit"
                     disabled={editUserInfoState.isPending}
                   >
@@ -199,13 +196,6 @@ const ProfileSettingsPage: FC = () => {
                 </form>
               </Form>
             </CardContent>
-            <CardFooter>
-              <Link className="w-full" to={APP_ROUTES_KEY.app.path}>
-                <Button className="w-full" variant="link">
-                  {t("pages.profile.settings.userInfo.backToHome")}
-                </Button>
-              </Link>
-            </CardFooter>
           </Card>
         </div>
       </Activity>

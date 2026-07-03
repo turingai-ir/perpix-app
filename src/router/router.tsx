@@ -12,6 +12,8 @@ import GenerationVideoPage from "@/pages/(app)/generation/video/page";
 import AuthLoginPage from "@/pages/auth/login/page";
 import ProfileLayout from "@/pages/profile/layout";
 import ProfileSettingsPage from "@/pages/profile/settings/page";
+import ProfilePaymentsPage from "@/pages/profile/payments/page";
+import ProfileWalletTransactionsPage from "@/pages/profile/wallet-transactions/page";
 import PaymentResultPage from "@/pages/payment/result/page";
 import { cookies } from "@/utils/cookies";
 import { APP_KEYS } from "@/utils";
@@ -87,6 +89,37 @@ export const router = createBrowserRouter([
               },
             ],
           },
+          {
+            path: APP_ROUTES_KEY.profile.root.path,
+            Component: ProfileLayout,
+            children: [
+              {
+                index: true,
+                loader: () => redirect(APP_ROUTES_KEY.profile.settings.path),
+              },
+              {
+                path: APP_ROUTES_KEY.profile.settings.path,
+                Component: ProfileSettingsPage,
+                handle: {
+                  title: APP_ROUTES_KEY.profile.settings.meta.title,
+                },
+              },
+              {
+                path: APP_ROUTES_KEY.profile.payments.path,
+                Component: ProfilePaymentsPage,
+                handle: {
+                  title: APP_ROUTES_KEY.profile.payments.meta.title,
+                },
+              },
+              {
+                path: APP_ROUTES_KEY.profile.walletTransactions.path,
+                Component: ProfileWalletTransactionsPage,
+                handle: {
+                  title: APP_ROUTES_KEY.profile.walletTransactions.meta.title,
+                },
+              },
+            ],
+          },
         ],
       },
       {
@@ -95,27 +128,6 @@ export const router = createBrowserRouter([
         handle: {
           title: APP_ROUTES_KEY.auth.login.meta.title,
         },
-      },
-      {
-        path: APP_ROUTES_KEY.profile.root.path,
-        Component: ProfileLayout,
-        loader: () => {
-          const token = cookies().get(APP_KEYS.COOKIES.ACCESS_TOKEN);
-          if (!token) {
-            throw redirect(APP_ROUTES_KEY.auth.login.path);
-          }
-
-          return null;
-        },
-        children: [
-          {
-            path: APP_ROUTES_KEY.profile.settings.path,
-            Component: ProfileSettingsPage,
-            handle: {
-              title: APP_ROUTES_KEY.profile.settings.meta.title,
-            },
-          },
-        ],
       },
       {
         path: APP_ROUTES_KEY.payment.result.path,

@@ -18,6 +18,7 @@ export enum PaidActionScope {
   FILE_MANAGER_READ = "file_manager:read",
   FILE_MANAGER_WRITE = "file_manager:write",
   ADMIN_MANAGE = "admin:manage",
+  SUPERADMIN_MANAGE = "superadmin:manage",
 }
 
 type AsyncAction = (...args: any[]) => Promise<unknown>;
