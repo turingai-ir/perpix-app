@@ -1,5 +1,5 @@
-import { useCallback, useMemo } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useCallback, useEffect, useMemo } from "react";
+import { useLocation, useNavigate, useParams } from "react-router";
 
 import {
   GeneratedMediaField,
@@ -27,6 +27,7 @@ export function useGenerationPage({
   taskType,
 }: UseGenerationPageInput) {
   const params = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
   const chatId = params?.chatId ?? undefined;
   const { aiGenerateState, aiTaskState } = useAiGenerate(chatId);
@@ -77,6 +78,20 @@ export function useGenerationPage({
     lastMessageUuid: lastMessage?.uuid,
     messageCount: displayedMessages.length,
   });
+
+  useEffect(() => {
+    if (!location.hash || isTaskLoading || !displayedMessages.length) {
+      return;
+    }
+
+    const messageUuid = decodeURIComponent(location.hash.slice(1));
+    const messageElement = document.getElementById(messageUuid);
+
+    messageElement?.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
+  }, [displayedMessages.length, isTaskLoading, location.hash]);
 
   const handleForm = useCallback(
     async (data: any, ai_model_uuid: string) => {

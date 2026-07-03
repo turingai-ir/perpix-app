@@ -16,6 +16,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { PaymentRedirectPortal } from "@/feature/payment";
 import { useUser } from "@/feature/user";
+import { AiTaskEventsProvider } from "@/feature/ai-task-events";
 
 const AppLayout: FC = () => {
   const [appLayoutState, setAppLayoutState] = useImmerAtom(appLayoutAtom);
@@ -72,6 +73,7 @@ const AppLayout: FC = () => {
   return (
     <TooltipProvider>
       <PaymentRedirectPortal />
+      <AiTaskEventsProvider />
 
       <main
         className="grid h-dvh w-full min-w-0 grid-cols-[minmax(0,1fr)] overflow-hidden transition-[grid-template-columns] duration-300 ease-in-out lg:grid-cols-[var(--sidebar-width,0px)_minmax(0,calc(100%-var(--sidebar-width,0px)))]"
