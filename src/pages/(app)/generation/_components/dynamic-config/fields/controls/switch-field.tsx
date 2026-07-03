@@ -3,10 +3,11 @@ import type { FC } from "react";
 import { Button } from "@/components/ui/button";
 import {
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
-  FormLabel,
 } from "@/components/ui/form";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import type { JsonSchemaProperty } from "@/hooks/use-dynamic-config-form";
 import { cn } from "@/lib/utils";
 
@@ -19,6 +20,7 @@ export const DynamicConfigSwitchField: FC<{
   disabled?: boolean;
   dynamicForm: DynamicConfigForm;
   fieldName: string;
+  hint?: string;
   label: string;
   optionLabels?: Record<string, string>;
   options: DynamicConfigOptions;
@@ -28,7 +30,7 @@ export const DynamicConfigSwitchField: FC<{
   disabled,
   dynamicForm,
   fieldName,
-  label,
+  hint,
   optionLabels,
   options,
   property,
@@ -44,9 +46,12 @@ export const DynamicConfigSwitchField: FC<{
 
       return (
         <FormItem className={classes.item}>
-          <FormLabel className={classes.label}>{label}</FormLabel>
           <FormControl>
-            <div className={cn(classes.control, "min-w-0 overflow-x-auto")}>
+            <ScrollArea
+              className={cn(classes.control, "min-w-0")}
+              viewportClassName="overflow-x-auto"
+              orientation="horizontal"
+            >
               <div className="bg-muted/50 border-input dark:bg-input/20 inline-flex h-9 w-max items-center gap-1 rounded-lg border p-1">
                 {options.map((option) => {
                   const optionStr = String(option);
@@ -72,8 +77,11 @@ export const DynamicConfigSwitchField: FC<{
                   );
                 })}
               </div>
-            </div>
+            </ScrollArea>
           </FormControl>
+          {hint ? (
+            <FormDescription className={classes.hint}>{hint}</FormDescription>
+          ) : null}
         </FormItem>
       );
     }}

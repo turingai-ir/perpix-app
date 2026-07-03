@@ -14,6 +14,7 @@ export interface DynamicConfigFieldProps {
   disabled?: boolean;
   dynamicForm: DynamicConfigForm;
   fieldName: string;
+  hint?: string;
   label: string;
   layout?: FieldLayout;
   property: JsonSchemaProperty;

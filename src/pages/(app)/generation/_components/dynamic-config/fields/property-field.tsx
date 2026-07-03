@@ -17,6 +17,7 @@ export const DynamicConfigPropertyField: FC<
   disabled,
   dynamicForm,
   fieldName,
+  hint,
   inputType,
   label,
   layout = "inline",
@@ -32,16 +33,29 @@ export const DynamicConfigPropertyField: FC<
   }: {
     fieldName: string;
     property: typeof property;
-  }) => (
-    <DynamicConfigPropertyField
-      dynamicForm={dynamicForm}
-      fieldName={nestedFieldName}
-      label={getNestedLabel(nestedProperty, nestedFieldName)}
-      property={nestedProperty}
-      disabled={disabled}
-      layout="stacked"
-    />
-  );
+  }) => {
+    const nestedMeta = dynamicForm.getFieldMetaForProperty(
+      nestedFieldName,
+      nestedProperty,
+    );
+
+    return (
+      <DynamicConfigPropertyField
+        dynamicForm={dynamicForm}
+        fieldName={nestedFieldName}
+        hint={nestedMeta.hint}
+        inputType={nestedMeta.inputType}
+        label={
+          nestedMeta.title ?? getNestedLabel(nestedProperty, nestedFieldName)
+        }
+        optionLabels={nestedMeta.optionLabels}
+        options={nestedMeta.options}
+        property={nestedMeta.property}
+        disabled={disabled}
+        layout="stacked"
+      />
+    );
+  };
 
   if (resolvedInputType === "hidden" || resolvedInputType === "unknown") {
     return null;
@@ -52,6 +66,7 @@ export const DynamicConfigPropertyField: FC<
       <DynamicConfigFileField
         dynamicForm={dynamicForm}
         fieldName={fieldName}
+        hint={hint}
         label={label}
         property={property}
         disabled={disabled}
@@ -65,6 +80,7 @@ export const DynamicConfigPropertyField: FC<
       <DynamicConfigArrayField
         dynamicForm={dynamicForm}
         fieldName={fieldName}
+        hint={hint}
         label={label}
         property={property}
         disabled={disabled}
@@ -98,6 +114,7 @@ export const DynamicConfigPropertyField: FC<
     <DynamicConfigPrimitiveField
       dynamicForm={dynamicForm}
       fieldName={fieldName}
+      hint={hint}
       inputType={resolvedInputType}
       label={label}
       optionLabels={optionLabels}

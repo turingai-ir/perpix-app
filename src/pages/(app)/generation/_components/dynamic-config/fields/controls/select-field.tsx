@@ -2,6 +2,7 @@ import type { FC } from "react";
 
 import {
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -26,6 +27,7 @@ export const DynamicConfigSelectField: FC<{
   disabled?: boolean;
   dynamicForm: DynamicConfigForm;
   fieldName: string;
+  hint?: string;
   label: string;
   optionLabels?: Record<string, string>;
   options: DynamicConfigOptions;
@@ -35,6 +37,7 @@ export const DynamicConfigSelectField: FC<{
   disabled,
   dynamicForm,
   fieldName,
+  hint,
   label,
   optionLabels,
   options,
@@ -77,6 +80,9 @@ export const DynamicConfigSelectField: FC<{
             </SelectGroup>
           </SelectContent>
         </Select>
+        {hint ? (
+          <FormDescription className={classes.hint}>{hint}</FormDescription>
+        ) : null}
       </FormItem>
     )}
   />

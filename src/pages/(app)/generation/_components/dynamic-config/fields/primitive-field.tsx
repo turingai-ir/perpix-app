@@ -20,6 +20,7 @@ export const DynamicConfigPrimitiveField: FC<{
   disabled?: boolean;
   dynamicForm: DynamicConfigForm;
   fieldName: string;
+  hint?: string;
   inputType: FieldInputType;
   label: string;
   layout?: FieldLayout;
@@ -30,6 +31,7 @@ export const DynamicConfigPrimitiveField: FC<{
   disabled,
   dynamicForm,
   fieldName,
+  hint,
   inputType,
   label,
   layout = "inline",
@@ -46,6 +48,7 @@ export const DynamicConfigPrimitiveField: FC<{
         disabled={disabled}
         dynamicForm={dynamicForm}
         fieldName={fieldName}
+        hint={hint}
         label={label}
         optionLabels={optionLabels}
         options={(options ?? property.enum ?? []).filter(
@@ -63,6 +66,7 @@ export const DynamicConfigPrimitiveField: FC<{
         disabled={disabled}
         dynamicForm={dynamicForm}
         fieldName={fieldName}
+        hint={hint}
         label={label}
         optionLabels={optionLabels}
         options={(options ?? property.enum ?? []).filter(
@@ -80,6 +84,7 @@ export const DynamicConfigPrimitiveField: FC<{
         disabled={disabled}
         dynamicForm={dynamicForm}
         fieldName={fieldName}
+        hint={hint}
         label={label}
         property={property}
       />
@@ -92,6 +97,7 @@ export const DynamicConfigPrimitiveField: FC<{
         disabled={disabled}
         dynamicForm={dynamicForm}
         fieldName={fieldName}
+        hint={hint}
         isStacked={classes.isStacked}
         label={label}
         property={property}
@@ -106,6 +112,7 @@ export const DynamicConfigPrimitiveField: FC<{
         disabled={disabled}
         dynamicForm={dynamicForm}
         fieldName={fieldName}
+        hint={hint}
         label={label}
       />
     );
@@ -117,6 +124,7 @@ export const DynamicConfigPrimitiveField: FC<{
       disabled={disabled}
       dynamicForm={dynamicForm}
       fieldName={fieldName}
+      hint={hint}
       label={label}
     />
   );

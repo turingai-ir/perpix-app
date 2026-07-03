@@ -43,6 +43,7 @@ export const DynamicPromptConfigField: FC<{
       dynamicForm={dynamicForm}
       fieldName={fieldName}
       inputType={meta.inputType}
+      hint={meta.hint}
       label={t(`common.dynamicConfig.fields.${fieldName}`, {
         ns: APP_I18_KEYS.RESOURCES.MAIN,
         defaultValue: meta.title ?? fieldName,

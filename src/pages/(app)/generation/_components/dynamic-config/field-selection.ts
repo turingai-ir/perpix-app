@@ -23,7 +23,6 @@ export function getPromptConfigFieldNames({
   includedFields?: ReadonlySet<string>;
 }) {
   return dynamicForm.orderedFieldNames.filter((fieldName) => {
-    const widget = dynamicForm.configSchema["x-ui"]?.widgets?.[fieldName];
     const meta = dynamicForm.getFieldMeta(fieldName);
 
     if (!meta || meta.inputType === "unknown") return false;
@@ -31,9 +30,7 @@ export function getPromptConfigFieldNames({
     if (HIDDEN_CONFIG_FIELD_NAMES.has(fieldName)) return false;
     if (excludedFields?.has(fieldName)) return false;
     if (includedFields && !includedFields.has(fieldName)) return false;
-    if (widget === "hidden" || !dynamicForm.isFieldVisible(fieldName)) {
-      return false;
-    }
+    if (!dynamicForm.isFieldVisible(fieldName)) return false;
 
     return RENDERABLE_INPUT_TYPES.has(meta.inputType);
   });

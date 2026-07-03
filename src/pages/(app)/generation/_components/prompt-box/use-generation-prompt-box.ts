@@ -7,9 +7,7 @@ import {
 } from "react";
 
 import { useModel } from "../../_hooks/model";
-import {
-  getPromptConfigFieldNames,
-} from "../dynamic-config";
+import { getPromptConfigFieldNames } from "../dynamic-config";
 
 import {
   isJsonConfigSchema,
@@ -22,6 +20,21 @@ import type { GenerationPromptBoxProps } from "./types";
 
 const MIN_PROMPT_LENGTH = 3;
 
+type UseGenerationPromptBoxInput = Pick<
+  GenerationPromptBoxProps,
+  | "advancedExcludedFieldNames"
+  | "configDefaultsResolver"
+  | "isLoading"
+  | "lastMessageConfig"
+  | "lastMessageModelUuid"
+  | "onSubmit"
+  | "promptBoxFieldNames"
+  | "promptClearKey"
+  | "supportedOutputs"
+> & {
+  validationErrorTitle: string;
+};
+
 export function useGenerationPromptBox({
   advancedExcludedFieldNames,
   configDefaultsResolver,
@@ -32,10 +45,8 @@ export function useGenerationPromptBox({
   promptBoxFieldNames,
   promptClearKey,
   supportedOutputs,
-  t,
-}: GenerationPromptBoxProps & {
-  t: (key: string) => string;
-}) {
+  validationErrorTitle,
+}: UseGenerationPromptBoxInput) {
   const model = useModel(supportedOutputs, lastMessageModelUuid);
   const lastPromptClearKeyRef = useRef<string | undefined>(undefined);
   const [isUploadingMedia, setIsUploadingMedia] = useState(false);
@@ -88,6 +99,7 @@ export function useGenerationPromptBox({
   const isSubmitDisabled =
     isFormBusy ||
     isUploadingMedia ||
+    !model.isCurrentModelAllowed ||
     (isPromptFieldVisible && isPromptTooShort);
 
   const handleFormSubmit: SubmitEventHandler<HTMLFormElement> = async (
@@ -99,7 +111,12 @@ export function useGenerationPromptBox({
     const currentPromptTooShort =
       isPromptFieldVisible && currentPrompt.trim().length < MIN_PROMPT_LENGTH;
 
-    if (isFormBusy || isUploadingMedia || currentPromptTooShort) {
+    if (
+      isFormBusy ||
+      isUploadingMedia ||
+      !model.isCurrentModelAllowed ||
+      currentPromptTooShort
+    ) {
       event.preventDefault();
       return;
     }
@@ -112,7 +129,7 @@ export function useGenerationPromptBox({
         showDynamicFormErrorsToast({
           errors,
           properties: dynamicForm.properties,
-          title: t("common.error"),
+          title: validationErrorTitle,
         }),
     );
 

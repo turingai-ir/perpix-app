@@ -1,14 +1,14 @@
 import type { FC } from "react";
 
 import {
-  AdvancedPromptSettingsDialog,
-  DynamicPromptConfigField,
-} from "../dynamic-config";
-import { PromptModelSelector } from "./model-selector";
+  PromptActionsSection,
+  PromptFullWidthFieldsSection,
+  PromptModeSection,
+} from "./config-sections";
 import { PromptTextarea } from "./prompt-textarea";
-import { PromptSubmitButton } from "./submit-button";
 import type { GenerationPromptBoxProps } from "./types";
 import { useGenerationPromptBox } from "./use-generation-prompt-box";
+import { usePromptBoxFieldGroups } from "./use-prompt-box-field-groups";
 
 import { Card } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
@@ -31,36 +31,20 @@ export const GenerationPromptBox: FC<GenerationPromptBoxProps> = ({
   const promptBox = useGenerationPromptBox({
     advancedExcludedFieldNames,
     configDefaultsResolver,
-    extraContent,
     isLoading,
     lastMessageConfig,
     lastMessageModelUuid,
     onSubmit,
     promptBoxFieldNames: includedPromptBoxFieldNames,
     promptClearKey,
-    promptPlaceholderKey,
     supportedOutputs,
-    t,
+    validationErrorTitle: t("common.error"),
   });
 
-  const promptBoxInlineFieldNames = promptBox.promptBoxConfigFieldNames.filter(
-    (fieldName) => {
-      if (fieldName === "mode") return false;
-      const meta = promptBox.dynamicForm.getFieldMeta(fieldName);
-      return meta?.inputType !== "array" && meta?.inputType !== "object";
-    },
-  );
-
-  const promptBoxFullWidthFieldNames =
-    promptBox.promptBoxConfigFieldNames.filter((fieldName) => {
-      if (fieldName === "mode") return false;
-      const meta = promptBox.dynamicForm.getFieldMeta(fieldName);
-      return meta?.inputType === "array" || meta?.inputType === "object";
-    });
-
-  const hasModeField =
-    Boolean(promptBox.dynamicForm.properties.mode) &&
-    promptBox.dynamicForm.isFieldVisible("mode");
+  const fieldGroups = usePromptBoxFieldGroups({
+    dynamicForm: promptBox.dynamicForm,
+    fieldNames: promptBox.promptBoxConfigFieldNames,
+  });
 
   return (
     <Card className="w-full min-w-0 overflow-hidden px-2">
@@ -75,14 +59,11 @@ export const GenerationPromptBox: FC<GenerationPromptBoxProps> = ({
           className="flex w-full min-w-0 flex-col gap-4"
           onSubmit={promptBox.handleFormSubmit}
         >
-          {hasModeField && (
-            <div className="border-border/40 flex w-full justify-center border-b pb-3 pt-1">
-              <DynamicPromptConfigField
-                dynamicForm={promptBox.dynamicForm}
-                fieldName="mode"
-                disabled={promptBox.isFormBusy}
-              />
-            </div>
+          {fieldGroups.hasModeField && (
+            <PromptModeSection
+              dynamicForm={promptBox.dynamicForm}
+              disabled={promptBox.isFormBusy}
+            />
           )}
           {promptBox.isPromptFieldVisible && (
             <PromptTextarea
@@ -91,48 +72,22 @@ export const GenerationPromptBox: FC<GenerationPromptBoxProps> = ({
               placeholder={t(promptPlaceholderKey)}
             />
           )}
-          <div className="flex w-full flex-col justify-between gap-4 md:flex-row">
-            <div>
-              <PromptSubmitButton
-                disabled={promptBox.isSubmitDisabled}
-                isLoading={isLoading}
-              />
-            </div>
-            <div className="flex w-full flex-wrap gap-4">
-              <PromptModelSelector
-                chooseModelLabel={t("common.chooseModel")}
-                disabled={promptBox.isFormBusy}
-                model={promptBox.model}
-                upgradeLabel={t("common.upgradeRequired")}
-              />
-              {promptBoxInlineFieldNames.map((fieldName) => (
-                <DynamicPromptConfigField
-                  key={fieldName}
-                  dynamicForm={promptBox.dynamicForm}
-                  fieldName={fieldName}
-                  disabled={promptBox.isFormBusy}
-                />
-              ))}
-              <AdvancedPromptSettingsDialog
-                dynamicForm={promptBox.dynamicForm}
-                fieldNames={promptBox.advancedFieldNames}
-                disabled={promptBox.isFormBusy}
-              />
-            </div>
-          </div>
-          {promptBoxFullWidthFieldNames.length > 0 && (
-            <div className="border-border/60 flex w-full flex-col gap-4 border-t pt-4 pb-2">
-              {promptBoxFullWidthFieldNames.map((fieldName) => (
-                <DynamicPromptConfigField
-                  key={fieldName}
-                  dynamicForm={promptBox.dynamicForm}
-                  fieldName={fieldName}
-                  disabled={promptBox.isFormBusy}
-                  layout="stacked"
-                />
-              ))}
-            </div>
-          )}
+          <PromptActionsSection
+            advancedFieldNames={promptBox.advancedFieldNames}
+            chooseModelLabel={t("common.chooseModel")}
+            disabled={promptBox.isFormBusy}
+            dynamicForm={promptBox.dynamicForm}
+            inlineFieldNames={fieldGroups.inlineFieldNames}
+            isLoading={isLoading}
+            isSubmitDisabled={promptBox.isSubmitDisabled}
+            model={promptBox.model}
+            upgradeLabel={t("common.upgradeRequired")}
+          />
+          <PromptFullWidthFieldsSection
+            dynamicForm={promptBox.dynamicForm}
+            fieldNames={fieldGroups.fullWidthFieldNames}
+            disabled={promptBox.isFormBusy}
+          />
         </form>
       </Form>
     </Card>

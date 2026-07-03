@@ -19,6 +19,8 @@ import {
 } from "../schema";
 import type { DynamicConfigFieldProps } from "../types";
 
+const HINT_CLASS_NAME = "text-muted-foreground/60 text-[0.7rem] leading-snug";
+
 export const DynamicConfigArrayField: FC<
   DynamicConfigFieldProps & {
     renderObjectFields: (props: {
@@ -30,6 +32,7 @@ export const DynamicConfigArrayField: FC<
   disabled,
   dynamicForm,
   fieldName,
+  hint,
   label,
   property,
   renderObjectFields,
@@ -48,6 +51,7 @@ export const DynamicConfigArrayField: FC<
         dynamicForm={dynamicForm}
         fieldName={fieldName}
         hasReachedMax={hasReachedMax}
+        hint={hint}
         itemsProperty={itemsProperty}
         label={label}
         renderObjectFields={renderObjectFields}
@@ -63,6 +67,7 @@ export const DynamicConfigArrayField: FC<
         dynamicForm={dynamicForm}
         fieldName={fieldName}
         itemsProperty={itemsProperty}
+        hint={hint}
         label={label}
         value={value}
       />
@@ -74,6 +79,7 @@ export const DynamicConfigArrayField: FC<
       disabled={disabled}
       dynamicForm={dynamicForm}
       fieldName={fieldName}
+      hint={hint}
       label={label}
     />
   );
@@ -84,6 +90,7 @@ const ObjectArrayField: FC<{
   dynamicForm: DynamicConfigFieldProps["dynamicForm"];
   fieldName: string;
   hasReachedMax: boolean;
+  hint?: string;
   itemsProperty: JsonSchemaProperty;
   label: string;
   renderObjectFields: (props: {
@@ -96,6 +103,7 @@ const ObjectArrayField: FC<{
   dynamicForm,
   fieldName,
   hasReachedMax,
+  hint,
   itemsProperty,
   label,
   renderObjectFields,
@@ -141,6 +149,7 @@ const ObjectArrayField: FC<{
           {label}
         </Button>
       </div>
+      {hint ? <p className={HINT_CLASS_NAME}>{hint}</p> : null}
       {value.map((_, index) => (
         <div
           key={`${fieldName}-${index}`}
@@ -174,15 +183,25 @@ const EnumArrayField: FC<{
   disabled?: boolean;
   dynamicForm: DynamicConfigFieldProps["dynamicForm"];
   fieldName: string;
+  hint?: string;
   itemsProperty: JsonSchemaProperty;
   label: string;
   value: unknown[];
-}> = ({ disabled, dynamicForm, fieldName, itemsProperty, label, value }) => {
+}> = ({
+  disabled,
+  dynamicForm,
+  fieldName,
+  hint,
+  itemsProperty,
+  label,
+  value,
+}) => {
   const selectedValues = new Set(value.map(String));
 
   return (
     <div className="flex w-full flex-col gap-2">
       <span className="text-muted-foreground text-sm font-normal">{label}</span>
+      {hint ? <p className={HINT_CLASS_NAME}>{hint}</p> : null}
       <div className="flex flex-wrap gap-2">
         {itemsProperty.enum
           ?.filter((option) => option !== null)
@@ -217,8 +236,9 @@ const TextArrayField: FC<{
   disabled?: boolean;
   dynamicForm: DynamicConfigFieldProps["dynamicForm"];
   fieldName: string;
+  hint?: string;
   label: string;
-}> = ({ disabled, dynamicForm, fieldName, label }) => (
+}> = ({ disabled, dynamicForm, fieldName, hint, label }) => (
   <FormField
     control={dynamicForm.control}
     name={fieldName}
@@ -227,6 +247,7 @@ const TextArrayField: FC<{
         <FormLabel className="text-muted-foreground text-sm font-normal">
           {label}
         </FormLabel>
+        {hint ? <p className={HINT_CLASS_NAME}>{hint}</p> : null}
         <FormControl>
           <Textarea
             value={normalizeArrayValue(field.value).join("\n")}

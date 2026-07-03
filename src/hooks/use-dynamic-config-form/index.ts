@@ -70,8 +70,9 @@ export function useDynamicConfigForm({
   const resolver = useMemo(() => {
     return buildAjvResolver(safeConfigSchema, validationMessages, {
       cacheKey: resolvedSchemaKey,
+      configMeta,
     });
-  }, [safeConfigSchema, validationMessages, resolvedSchemaKey]);
+  }, [safeConfigSchema, validationMessages, resolvedSchemaKey, configMeta]);
 
   const defaultValues = useMemo(() => {
     return buildDefaultValues(safeConfigSchema, configDefaults);
@@ -86,12 +87,12 @@ export function useDynamicConfigForm({
   }, [safeConfigSchema]);
 
   const enumLabels = useMemo(() => {
-    return safeConfigSchema["x-ui"]?.enumLabels;
-  }, [safeConfigSchema]);
+    return configMeta?.ui?.labels ?? safeConfigSchema["x-ui"]?.enumLabels;
+  }, [configMeta, safeConfigSchema]);
 
   const orderedFieldNames = useMemo(() => {
-    return getOrderedFieldNames(safeConfigSchema);
-  }, [safeConfigSchema]);
+    return getOrderedFieldNames(safeConfigSchema, configMeta);
+  }, [safeConfigSchema, configMeta]);
 
   const fieldMetas = useMemo(() => {
     return orderedFieldNames.map((name) =>
@@ -134,8 +135,9 @@ export function useDynamicConfigForm({
     return getVisibleConfigFields(
       safeConfigSchema,
       watchedValues as Record<string, unknown>,
+      configMeta,
     );
-  }, [safeConfigSchema, watchedValues]);
+  }, [safeConfigSchema, watchedValues, configMeta]);
 
   const isFieldVisible = useCallback(
     (fieldName: string) => {
@@ -168,6 +170,27 @@ export function useDynamicConfigForm({
       enumLabels,
       configMeta,
     ],
+  );
+
+  const getFieldMetaForProperty = useCallback(
+    (
+      fieldName: string,
+      prop: JsonSchemaProperty,
+      defaultValue?: unknown,
+    ): FieldMeta => {
+      return buildFieldMeta({
+        name: fieldName,
+        prop,
+        requiredFields:
+          prop.required && Array.isArray(prop.required) ? prop.required : [],
+        defaultValues: {
+          [fieldName]: defaultValue,
+        },
+        enumLabels,
+        configMeta,
+      });
+    },
+    [enumLabels, configMeta],
   );
 
   const getCleanValues = useCallback(() => {
@@ -212,6 +235,7 @@ export function useDynamicConfigForm({
     visibleFieldNames,
     isFieldVisible,
     getFieldMeta,
+    getFieldMetaForProperty,
     register: form.register,
     control: form.control,
     handleSubmit,

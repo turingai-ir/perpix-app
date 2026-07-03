@@ -2,6 +2,7 @@ import type { FC } from "react";
 
 import {
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -18,9 +19,10 @@ export const DynamicConfigNumberField: FC<{
   disabled?: boolean;
   dynamicForm: DynamicConfigForm;
   fieldName: string;
+  hint?: string;
   label: string;
   property: JsonSchemaProperty;
-}> = ({ classes, disabled, dynamicForm, fieldName, label, property }) => (
+}> = ({ classes, disabled, dynamicForm, fieldName, hint, label, property }) => (
   <FormField
     control={dynamicForm.control}
     name={fieldName}
@@ -47,6 +49,9 @@ export const DynamicConfigNumberField: FC<{
             className={classes.input}
           />
         </FormControl>
+        {hint ? (
+          <FormDescription className={classes.hint}>{hint}</FormDescription>
+        ) : null}
       </FormItem>
     )}
   />

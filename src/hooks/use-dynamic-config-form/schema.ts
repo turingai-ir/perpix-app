@@ -354,12 +354,15 @@ function uiVisibilityConditionMatches(
 function getUiHiddenFields(
   configSchema: JsonConfigSchema,
   values: Record<string, unknown>,
+  configMeta?: JsonConfigMeta | null,
 ) {
   const fieldNames = getSchemaFieldNames(configSchema);
   const hiddenFields = new Set<string>();
   const showControlledFields = new Set<string>();
+  const visibilityRules =
+    configMeta?.ui?.visibility ?? configSchema["x-ui"]?.visibility ?? [];
 
-  for (const rule of configSchema["x-ui"]?.visibility ?? []) {
+  for (const rule of visibilityRules) {
     if (rule.effect !== "SHOW") continue;
 
     for (const fieldName of rule.fields ?? []) {
@@ -371,7 +374,7 @@ function getUiHiddenFields(
     hiddenFields.add(fieldName);
   }
 
-  for (const rule of configSchema["x-ui"]?.visibility ?? []) {
+  for (const rule of visibilityRules) {
     const matches = uiVisibilityConditionMatches(rule, values);
 
     if (!matches) continue;
@@ -393,10 +396,11 @@ function getUiHiddenFields(
 export function getVisibleConfigFields(
   configSchema: JsonConfigSchema,
   values: Record<string, unknown>,
+  configMeta?: JsonConfigMeta | null,
 ) {
   const visibleFields = getSchemaFieldNames(configSchema);
 
-  for (const fieldName of getUiHiddenFields(configSchema, values)) {
+  for (const fieldName of getUiHiddenFields(configSchema, values, configMeta)) {
     visibleFields.delete(fieldName);
   }
 
@@ -519,7 +523,16 @@ function getAjvErrorPath(error: ErrorObject) {
 function getAjvErrorMessage(
   error: ErrorObject,
   messages: DynamicConfigValidationMessages,
+  configMeta?: JsonConfigMeta | null,
 ) {
+  const fieldErrorMessages =
+    resolveUiFieldMeta(configMeta, getAjvErrorPath(error))?.errors ?? {};
+  const metaMessage =
+    fieldErrorMessages[error.keyword] ??
+    fieldErrorMessages[getAjvErrorType(error)];
+
+  if (metaMessage) return metaMessage;
+
   switch (error.keyword) {
     case "required":
       return messages.required;
@@ -608,14 +621,19 @@ function getCompiledValidate(
 export function buildAjvResolver(
   configSchema: JsonConfigSchema,
   messages: DynamicConfigValidationMessages = DEFAULT_VALIDATION_MESSAGES,
-  options?: {
+  resolverConfig?: {
     cacheKey?: string | number | null;
+    configMeta?: JsonConfigMeta | null;
   },
 ): Resolver<DynamicConfigValues> {
-  const validate = getCompiledValidate(configSchema, options?.cacheKey);
+  const validate = getCompiledValidate(configSchema, resolverConfig?.cacheKey);
 
   return async (values, _context, options) => {
-    const visibleFields = getVisibleConfigFields(configSchema, values);
+    const visibleFields = getVisibleConfigFields(
+      configSchema,
+      values,
+      resolverConfig?.configMeta,
+    );
     const sanitizedValues = sanitizeConfigValues(configSchema, values, {
       visibleFields,
     });
@@ -643,7 +661,11 @@ export function buildAjvResolver(
 
       flatErrors[path] = {
         type: getAjvErrorType(error),
-        message: getAjvErrorMessage(error, messages),
+        message: getAjvErrorMessage(
+          error,
+          messages,
+          resolverConfig?.configMeta,
+        ),
       };
     }
 
@@ -890,10 +912,24 @@ function resolveOptionLabels(
   configMeta?: JsonConfigMeta | null,
 ) {
   return (
+    configMeta?.ui?.labels?.[fieldName] ??
     enumLabels?.[fieldName] ??
     prop.label?.options ??
     configMeta?.labels?.[fieldName]
   );
+}
+
+function normalizeMetaFieldName(fieldName: string) {
+  return fieldName.replace(/\.\d+(?=\.|$)/g, "[]");
+}
+
+function resolveUiFieldMeta(
+  configMeta: JsonConfigMeta | null | undefined,
+  fieldName: string,
+) {
+  const fields = configMeta?.ui?.fields;
+
+  return fields?.[fieldName] ?? fields?.[normalizeMetaFieldName(fieldName)];
 }
 
 export function buildFieldMeta(params: {
@@ -915,40 +951,63 @@ export function buildFieldMeta(params: {
     configMeta,
   } = params;
 
-  const resolvedWidget = widget ?? prop["x-widget"];
+  const uiFieldMeta = resolveUiFieldMeta(configMeta, name);
+  const resolvedWidget = widget ?? uiFieldMeta?.widget ?? prop["x-widget"];
+  const resolvedProperty: JsonSchemaProperty = {
+    ...prop,
+    title: uiFieldMeta?.title ?? prop.title,
+    description: uiFieldMeta?.description ?? prop.description,
+    "x-widget": resolvedWidget,
+    "x-file": uiFieldMeta?.file ?? prop["x-file"],
+  };
   let inputType = resolveWidgetInputType(resolvedWidget);
   if (!inputType) {
     if (resolvedWidget === "switch") {
-      inputType = prop.enum && prop.enum.length > 0 ? "select" : "checkbox";
+      inputType =
+        resolvedProperty.enum && resolvedProperty.enum.length > 0
+          ? "select"
+          : "checkbox";
     } else if (
       resolvedWidget === "list" ||
       resolvedWidget === "elements-list"
     ) {
       inputType = "array";
     } else {
-      inputType = resolveInputType(prop);
+      inputType = resolveInputType(resolvedProperty);
     }
   }
 
   return {
     name,
-    property: prop,
-    required: isRequired(prop, name, requiredFields),
+    property: resolvedProperty,
+    required: isRequired(resolvedProperty, name, requiredFields),
     defaultValue: defaultValues[name],
     inputType,
-    options: prop.enum,
-    optionLabels: resolveOptionLabels(prop, name, enumLabels, configMeta),
-    description: prop.description,
-    title: prop.title,
+    options: resolvedProperty.enum,
+    optionLabels: resolveOptionLabels(
+      resolvedProperty,
+      name,
+      enumLabels,
+      configMeta,
+    ),
+    description: resolvedProperty.description,
+    hint:
+      name === "prompt"
+        ? undefined
+        : (uiFieldMeta?.hint ?? resolvedProperty.description),
+    title: resolvedProperty.title,
   };
 }
 
-export function getOrderedFieldNames(configSchema?: JsonConfigSchema | null) {
+export function getOrderedFieldNames(
+  configSchema?: JsonConfigSchema | null,
+  configMeta?: JsonConfigMeta | null,
+) {
   const schemaFields = Object.keys(configSchema?.properties ?? {});
   const schemaFieldSet = new Set(schemaFields);
   const orderedFields =
-    configSchema?.["x-ui"]?.order?.filter((fieldName) =>
-      schemaFieldSet.has(fieldName),
+    (configMeta?.ui?.order ?? configSchema?.["x-ui"]?.order)?.filter(
+      (fieldName) => schemaFieldSet.has(fieldName),
     ) ?? [];
   const orderedFieldSet = new Set(orderedFields);
   const remainingFields = schemaFields.filter(

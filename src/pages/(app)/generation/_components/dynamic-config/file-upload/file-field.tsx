@@ -25,10 +25,13 @@ import {
 } from "./media";
 import type { DynamicConfigForm } from "../types";
 
+const HINT_CLASS_NAME = "text-muted-foreground/60 text-[0.7rem] leading-snug";
+
 export const DynamicConfigFileField: FC<{
   disabled?: boolean;
   dynamicForm: DynamicConfigForm;
   fieldName: string;
+  hint?: string;
   label: string;
   onValueChange?: (value: string | string[] | undefined) => void;
   onUploadingChange?: (isUploading: boolean) => void;
@@ -38,6 +41,7 @@ export const DynamicConfigFileField: FC<{
   disabled = false,
   dynamicForm,
   fieldName,
+  hint,
   label,
   onValueChange,
   onUploadingChange,
@@ -162,6 +166,7 @@ export const DynamicConfigFileField: FC<{
   return (
     <div className="flex w-full min-w-0 flex-col gap-2 py-2">
       <span className="text-muted-foreground text-sm font-normal">{label}</span>
+      {hint ? <p className={HINT_CLASS_NAME}>{hint}</p> : null}
       <MediaUploadStrip
         uploadedItems={toUploadedMediaItems(selectedFileIds)}
         localItems={localItems}

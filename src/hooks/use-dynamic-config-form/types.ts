@@ -16,6 +16,15 @@ export type JsonConfigUi = {
   visibility?: readonly JsonConfigUiVisibilityRule[];
 };
 
+export type JsonConfigUiField = {
+  widget?: string | null;
+  title?: string | null;
+  description?: string | null;
+  hint?: string | null;
+  file?: JsonSchemaProperty["x-file"] | null;
+  errors?: Record<string, string>;
+};
+
 export type JsonConfigUiVisibilityRule = {
   effect: "SHOW" | "HIDE";
   fields: readonly string[];
@@ -75,6 +84,10 @@ export type JsonConfigSchema = {
 
 export type JsonConfigMeta = {
   labels?: Record<string, Record<string, string>>;
+  ui?: JsonConfigUi & {
+    fields?: Record<string, JsonConfigUiField>;
+    labels?: Record<string, Record<string, string>>;
+  };
 };
 
 export type DynamicConfigValues = Record<string, unknown>;
@@ -100,6 +113,7 @@ export type FieldMeta = {
   options?: readonly (string | number | boolean | null)[];
   optionLabels?: Record<string, string>;
   description?: string;
+  hint?: string;
   title?: string;
 };
 

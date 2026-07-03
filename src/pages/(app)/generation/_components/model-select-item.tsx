@@ -22,7 +22,6 @@ export const ModelSelectItem = ({
     <SelectItem
       key={model.uuid}
       value={model.uuid}
-      disabled={!isAllowed}
       className={cn(!isAllowed && "opacity-70")}
     >
       <span className="flex min-w-0 items-center gap-2">

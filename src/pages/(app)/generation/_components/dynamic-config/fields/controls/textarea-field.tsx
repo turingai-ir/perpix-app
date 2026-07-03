@@ -2,6 +2,7 @@ import type { FC } from "react";
 
 import {
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -16,8 +17,9 @@ export const DynamicConfigTextareaField: FC<{
   disabled?: boolean;
   dynamicForm: DynamicConfigForm;
   fieldName: string;
+  hint?: string;
   label: string;
-}> = ({ classes, disabled, dynamicForm, fieldName, label }) => (
+}> = ({ classes, disabled, dynamicForm, fieldName, hint, label }) => (
   <FormField
     control={dynamicForm.control}
     name={fieldName}
@@ -37,6 +39,9 @@ export const DynamicConfigTextareaField: FC<{
             className="min-h-20"
           />
         </FormControl>
+        {hint ? (
+          <FormDescription className={classes.hint}>{hint}</FormDescription>
+        ) : null}
       </FormItem>
     )}
   />

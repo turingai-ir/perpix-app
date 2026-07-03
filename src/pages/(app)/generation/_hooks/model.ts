@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   type InfiniteData,
   type Query,
@@ -88,9 +88,8 @@ export const useModel = (
   const { useQuery } = useReactQueryApi();
   const activeSubscriptionState = useActiveSubscription();
 
-  const [selectedModel, setCurrentModel] = useState<string | undefined>(
-    initialModelUuid ?? undefined,
-  );
+  const [selectedModel, setCurrentModel] = useState<string>();
+  const currentSelectedModel = selectedModel ?? initialModelUuid ?? undefined;
   const allowedModelNames = activeSubscriptionState.data?.plan
     .allowed_models as readonly string[] | undefined;
 
@@ -105,28 +104,14 @@ export const useModel = (
   const models = modelsListState.data as
     | Array<SchemaAiRegistryModelSummary>
     | undefined;
-  const selectedModelSummary = activeSubscriptionState.isLoading
-    ? undefined
-    : models?.find(
-        (model) =>
-          model.uuid === selectedModel &&
-          isModelAllowed(model, allowedModelNames),
-      );
-  const firstAllowedModel = activeSubscriptionState.isLoading
-    ? undefined
-    : models?.find((model) => isModelAllowed(model, allowedModelNames));
-  const currentModelSummary = selectedModelSummary ?? firstAllowedModel;
+  const selectedModelSummary = models?.find(
+    (model) => model.uuid === currentSelectedModel,
+  );
+  const currentModelSummary = selectedModelSummary ?? models?.[0];
   const currentModel = currentModelSummary?.uuid;
-  const hasAllowedModelInList = models ? Boolean(firstAllowedModel) : true;
   const isCurrentModelAllowed = currentModelSummary
     ? isModelAllowed(currentModelSummary, allowedModelNames)
     : true;
-
-  useEffect(() => {
-    if (initialModelUuid) {
-      setCurrentModel(initialModelUuid);
-    }
-  }, [initialModelUuid]);
 
   const modelState = useQuery(
     "get",
@@ -145,7 +130,6 @@ export const useModel = (
     activeSubscriptionState,
     allowedModelNames,
     currentModel,
-    hasAllowedModelInList,
     isCurrentModelAllowed,
     setCurrentModel,
     modelState,
