@@ -36,7 +36,8 @@ const ProfileLayout: FC = () => {
                 className={({ isActive }) =>
                   cn(
                     "text-muted-foreground hover:bg-muted hover:text-foreground flex h-10 shrink-0 items-center gap-2 rounded-md px-3 text-sm font-medium transition-colors",
-                    isActive && "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
+                    isActive &&
+                      "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
                   )
                 }
               >

@@ -1,4 +1,8 @@
-import { FetchHttpError, FetchNetworkError, FetchTimeoutError } from './fetch-errors';
+import {
+  FetchHttpError,
+  FetchNetworkError,
+  FetchTimeoutError,
+} from "./fetch-errors";
 import {
   combineAbortSignals,
   creatTimeOutAbortController,
@@ -6,7 +10,7 @@ import {
   isErrorAbortError,
   isNetworkError,
   isRetryableStatus,
-} from './helpers';
+} from "./helpers";
 
 interface CustomFetchOptions {
   maxRetries?: number;
@@ -15,7 +19,11 @@ interface CustomFetchOptions {
   timeoutMs?: number;
   retryOnNetworkError?: boolean;
   onTimeout?: () => void;
-  onRetryAttempt?: (info: { attempt: number; error: unknown; nextDelayMs: number }) => void;
+  onRetryAttempt?: (info: {
+    attempt: number;
+    error: unknown;
+    nextDelayMs: number;
+  }) => void;
   onFinalError?: (error: unknown) => void;
 }
 
@@ -92,9 +100,11 @@ export function createCustomFetch(
     while (retriesLeft >= 0) {
       const attempt = (options?.maxRetries ?? 0) - retriesLeft + 1;
       const attemptController = new AbortController();
-      const signals = [attemptController.signal, userSignal, timeoutAbortController?.signal].filter(
-        Boolean,
-      ) as AbortSignal[];
+      const signals = [
+        attemptController.signal,
+        userSignal,
+        timeoutAbortController?.signal,
+      ].filter(Boolean) as AbortSignal[];
       const combinedSignal = combineAbortSignals(signals);
 
       const request = {
@@ -121,7 +131,9 @@ export function createCustomFetch(
         lastError = error;
 
         if (isErrorAbortError(error)) {
-          lastError = timeoutTriggered ? new FetchTimeoutError(lastError, request.input) : error;
+          lastError = timeoutTriggered
+            ? new FetchTimeoutError(lastError, request.input)
+            : error;
           break;
         }
 

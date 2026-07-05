@@ -73,27 +73,25 @@ const MultiImageUploadInput = React.forwardRef<
     };
 
     return (
-      <div className="flex gap-4 flex-wrap">
+      <div className="flex flex-wrap gap-4">
         {previews.map((src, i) => (
           <div
             key={i}
             className={cn(
-              "relative w-18 h-18 border rounded-md overflow-hidden group",
-              disabled && "opacity-50 cursor-not-allowed",
+              "group relative h-18 w-18 overflow-hidden rounded-md border",
+              disabled && "cursor-not-allowed opacity-50",
             )}
           >
             <img
               src={src}
               alt={`Uploaded ${i}`}
-              className="w-full h-full object-cover"
+              className="h-full w-full object-cover"
             />
             {!disabled && (
               <button
                 type="button"
                 onClick={() => handleRemove(i)}
-                className="absolute inset-0 flex items-center justify-center 
-                         bg-black/40 text-white opacity-0 group-hover:opacity-100 
-                         transition-opacity text-3xl font-bold"
+                className="absolute inset-0 flex items-center justify-center bg-black/40 text-3xl font-bold text-white opacity-0 transition-opacity group-hover:opacity-100"
               >
                 ×
               </button>
@@ -104,7 +102,7 @@ const MultiImageUploadInput = React.forwardRef<
         {value.length < maxFiles && !disabled && (
           <label
             className={cn(
-              "w-18 h-18 flex items-center justify-center border-2 border-dashed rounded-md cursor-pointer hover:bg-muted/30 transition-colors",
+              "hover:bg-muted/30 flex h-18 w-18 cursor-pointer items-center justify-center rounded-md border-2 border-dashed transition-colors",
               className,
             )}
           >
@@ -118,7 +116,7 @@ const MultiImageUploadInput = React.forwardRef<
               {...props}
               className="hidden"
             />
-            <span className="text-sm text-center">{label}</span>
+            <span className="text-center text-sm">{label}</span>
           </label>
         )}
       </div>

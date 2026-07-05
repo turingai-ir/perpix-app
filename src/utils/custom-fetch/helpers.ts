@@ -1,4 +1,4 @@
-import { HttpStatus } from './http-status';
+import { HttpStatus } from "./http-status";
 
 export function fakeDelay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -36,26 +36,26 @@ export function isNetworkError(error: unknown): boolean {
     return false;
   }
 
-  if (typeof error?.message !== 'string') {
+  if (typeof error?.message !== "string") {
     return false;
   }
 
   const msg = error?.message.toLowerCase();
 
   return (
-    msg.includes('failed to fetch') ||
-    msg.includes('networkerror') ||
-    msg.includes('load failed') ||
-    msg.includes('network request failed') ||
-    msg.includes('the network connection was lost') ||
-    msg.includes('socket closed')
+    msg.includes("failed to fetch") ||
+    msg.includes("networkerror") ||
+    msg.includes("load failed") ||
+    msg.includes("network request failed") ||
+    msg.includes("the network connection was lost") ||
+    msg.includes("socket closed")
   );
 }
 
 export function isErrorAbortError(error: unknown): boolean {
   return (
-    (error instanceof DOMException && error.name === 'AbortError') ||
-    (error instanceof Error && error.name === 'AbortError')
+    (error instanceof DOMException && error.name === "AbortError") ||
+    (error instanceof Error && error.name === "AbortError")
   );
 }
 
@@ -71,7 +71,7 @@ export function creatTimeOutAbortController(
     controller.abort();
   }, timeoutMs);
 
-  controller.signal.addEventListener('abort', () => {
+  controller.signal.addEventListener("abort", () => {
     clearTimeout(timeoutId);
   });
 
@@ -92,12 +92,12 @@ export function combineAbortSignals(signals: AbortSignal[]): AbortSignal {
       controller.abort();
       break;
     }
-    signal.addEventListener('abort', onAbort, { once: true });
+    signal.addEventListener("abort", onAbort, { once: true });
   }
 
-  controller.signal.addEventListener('abort', () => {
+  controller.signal.addEventListener("abort", () => {
     for (const signal of signals) {
-      signal.removeEventListener('abort', onAbort);
+      signal.removeEventListener("abort", onAbort);
     }
   });
 

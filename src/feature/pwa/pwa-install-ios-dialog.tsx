@@ -32,8 +32,8 @@ export function PwaInstallIosDialog({
         </DialogHeader>
 
         <div className="grid gap-3">
-          <div className="flex items-start gap-3 rounded-lg bg-muted/60 p-3">
-            <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-background ring-1 ring-border">
+          <div className="bg-muted/60 flex items-start gap-3 rounded-lg p-3">
+            <span className="bg-background ring-border flex size-8 shrink-0 items-center justify-center rounded-full ring-1">
               <ShareIcon className="size-4" />
             </span>
             <div className="grid gap-1">
@@ -46,8 +46,8 @@ export function PwaInstallIosDialog({
             </div>
           </div>
 
-          <div className="flex items-start gap-3 rounded-lg bg-muted/60 p-3">
-            <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-background ring-1 ring-border">
+          <div className="bg-muted/60 flex items-start gap-3 rounded-lg p-3">
+            <span className="bg-background ring-border flex size-8 shrink-0 items-center justify-center rounded-full ring-1">
               <SquarePlusIcon className="size-4" />
             </span>
             <div className="grid gap-1">

@@ -12,7 +12,12 @@ import {
 
 import { cn } from "@/lib/utils";
 
-const Toaster = ({ className, style, toastOptions, ...props }: ToasterProps) => {
+const Toaster = ({
+  className,
+  style,
+  toastOptions,
+  ...props
+}: ToasterProps) => {
   const { theme = "system" } = useTheme();
 
   return (

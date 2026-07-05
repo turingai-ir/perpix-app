@@ -31,9 +31,9 @@ export function getViewportBreakpoints(): Record<BreakpointKey, boolean> {
 }
 
 export function useViewportBreakpoint() {
-  const [breakpoints, setBreakpoints] = useState<Record<BreakpointKey, boolean>>(() =>
-    getViewportBreakpoints(),
-  );
+  const [breakpoints, setBreakpoints] = useState<
+    Record<BreakpointKey, boolean>
+  >(() => getViewportBreakpoints());
 
   useEffect(() => {
     const mediaQueries = Object.entries(BREAKPOINTS).map(([key, query]) => {

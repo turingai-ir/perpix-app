@@ -3,7 +3,10 @@ import { useSearchParams } from "react-router";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PaymentStatusEnumMap, type SchemaPaymentListItemResponse } from "@/services/api";
+import {
+  PaymentStatusEnumMap,
+  type SchemaPaymentListItemResponse,
+} from "@/services/api";
 import { dayjs } from "@/lib/dayjs";
 import { formatLocalizedNumber } from "@/utils";
 import { usePayments } from "@/feature/payment";
@@ -31,7 +34,8 @@ function ProfilePaymentsPage() {
     () =>
       paymentsState.data
         ? Array.from(
-            paymentsState.data.items as ArrayLike<SchemaPaymentListItemResponse>,
+            paymentsState.data
+              .items as ArrayLike<SchemaPaymentListItemResponse>,
           )
         : [],
     [paymentsState.data],
@@ -70,7 +74,10 @@ function ProfilePaymentsPage() {
               </thead>
               <tbody className="divide-border divide-y">
                 {payments.map((payment) => (
-                  <tr key={payment.payment_uuid} className="[&>td]:px-4 [&>td]:py-3">
+                  <tr
+                    key={payment.payment_uuid}
+                    className="[&>td]:px-4 [&>td]:py-3"
+                  >
                     <td dir="ltr" className="text-foreground font-mono text-xs">
                       {payment.payment_uuid}
                     </td>
@@ -87,13 +94,28 @@ function ProfilePaymentsPage() {
                         {paymentStatusLabels[payment.status]}
                       </Badge>
                     </td>
-                    <td>{formatLocalizedNumber({ value: payment.amount_irr_without_tax })} ریال</td>
-                    <td>{formatLocalizedNumber({ value: payment.tax_amount_irr })} ریال</td>
+                    <td>
+                      {formatLocalizedNumber({
+                        value: payment.amount_irr_without_tax,
+                      })}{" "}
+                      ریال
+                    </td>
+                    <td>
+                      {formatLocalizedNumber({ value: payment.tax_amount_irr })}{" "}
+                      ریال
+                    </td>
                     <td className="font-medium">
-                      {formatLocalizedNumber({ value: payment.total_amount_irr })} ریال
+                      {formatLocalizedNumber({
+                        value: payment.total_amount_irr,
+                      })}{" "}
+                      ریال
                     </td>
                     <td>{payment.target_type ?? "-"}</td>
-                    <td>{dayjs(payment.created_at).calendar("jalali").format("YYYY/MM/DD HH:mm")}</td>
+                    <td>
+                      {dayjs(payment.created_at)
+                        .calendar("jalali")
+                        .format("YYYY/MM/DD HH:mm")}
+                    </td>
                   </tr>
                 ))}
               </tbody>

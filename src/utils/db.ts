@@ -1,10 +1,13 @@
-import { openDB, type IDBPDatabase } from 'idb';
+import { openDB, type IDBPDatabase } from "idb";
 
-import { APP_KEYS } from './app-keys';
+import { APP_KEYS } from "./app-keys";
 
-type StorageName = (typeof APP_KEYS.DB.STORAGES)[keyof typeof APP_KEYS.DB.STORAGES];
+type StorageName =
+  (typeof APP_KEYS.DB.STORAGES)[keyof typeof APP_KEYS.DB.STORAGES];
 
-export const getDB = async (storageName: StorageName): Promise<IDBPDatabase> => {
+export const getDB = async (
+  storageName: StorageName,
+): Promise<IDBPDatabase> => {
   return openDB(APP_KEYS.DB.NAME, 1, {
     upgrade(db) {
       if (!db.objectStoreNames.contains(storageName)) {
@@ -40,7 +43,10 @@ export const loadAtom = async <T>(
   }
 };
 
-export const deleteAtom = async (storageName: StorageName, key: string): Promise<void> => {
+export const deleteAtom = async (
+  storageName: StorageName,
+  key: string,
+): Promise<void> => {
   try {
     const db = await getDB(storageName);
     await db.delete(storageName, key);

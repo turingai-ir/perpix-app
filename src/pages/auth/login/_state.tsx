@@ -1,14 +1,14 @@
-import { atom } from 'jotai';
+import { atom } from "jotai";
 
 interface AuthLoginPageState {
-  currentView: 'START' | 'PASSWORD' | 'SET_PASSWORD';
+  currentView: "START" | "PASSWORD" | "SET_PASSWORD";
   mobile: string;
   tempToken: string;
 }
 const authLoginPageState = atom<AuthLoginPageState>({
-  currentView: 'START',
-  mobile: '',
-  tempToken: '',
+  currentView: "START",
+  mobile: "",
+  tempToken: "",
 });
 
 export default authLoginPageState;

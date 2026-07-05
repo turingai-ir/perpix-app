@@ -86,7 +86,8 @@ function ProfileWalletTransactionsPage() {
                     <td>
                       <Badge
                         variant={
-                          transaction.type === WalletTransactionTypeEnumMap.WITHDRAW
+                          transaction.type ===
+                          WalletTransactionTypeEnumMap.WITHDRAW
                             ? "destructive"
                             : "secondary"
                         }

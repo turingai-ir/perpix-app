@@ -37,10 +37,7 @@ export function AiTaskEventsProvider() {
       const taskQueryOptions = queryOptions("get", "/ai-task/{task_uuid}", {
         params: { path: { task_uuid: payload.task_uuid } },
       });
-      const aiTasksListQueryKey = queryOptions(
-        "get",
-        "/ai-task/list",
-      ).queryKey;
+      const aiTasksListQueryKey = queryOptions("get", "/ai-task/list").queryKey;
       const walletQueryKey = queryOptions("get", "/wallet/wallet").queryKey;
 
       void queryClient.invalidateQueries({
@@ -86,4 +83,3 @@ export function AiTaskEventsProvider() {
 
   return null;
 }
-

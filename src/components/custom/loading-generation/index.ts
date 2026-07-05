@@ -1,1 +1,1 @@
-export * from './loading-generation';
+export * from "./loading-generation";

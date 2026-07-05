@@ -31,7 +31,7 @@ export function usePwaInstall() {
     useState<BeforeInstallPromptEvent | null>(null);
   const [isIosGuideOpen, setIsIosGuideOpen] = useState(false);
   const [isInstalled, setIsInstalled] = useState(() =>
-    isStandaloneDisplayMode()
+    isStandaloneDisplayMode(),
   );
   const [isIos] = useState(() => isIosDevice());
 
@@ -53,7 +53,7 @@ export function usePwaInstall() {
     return () => {
       window.removeEventListener(
         "beforeinstallprompt",
-        handleBeforeInstallPrompt
+        handleBeforeInstallPrompt,
       );
       window.removeEventListener("appinstalled", handleAppInstalled);
     };
@@ -61,7 +61,7 @@ export function usePwaInstall() {
 
   const canInstall = useMemo(
     () => !isInstalled && (Boolean(installPrompt) || isIos),
-    [installPrompt, isInstalled, isIos]
+    [installPrompt, isInstalled, isIos],
   );
 
   const requestInstall = useCallback(async () => {

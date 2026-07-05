@@ -1,13 +1,13 @@
-import { StrictMode } from 'react';
-import { createRoot, type Root } from 'react-dom/client';
-import { Provider } from 'jotai';
+import { StrictMode } from "react";
+import { createRoot, type Root } from "react-dom/client";
+import { Provider } from "jotai";
 
-import App from './app.tsx';
-import { ErrorBoundary } from './components/custom/error-boundary.tsx';
-import AppContextProvider from './hook/app/provider.tsx';
-import { jotaiStore } from './lib/jotai-store.ts';
+import App from "./app.tsx";
+import { ErrorBoundary } from "./components/custom/error-boundary.tsx";
+import AppContextProvider from "./hook/app/provider.tsx";
+import { jotaiStore } from "./lib/jotai-store.ts";
 
-const container = document.getElementById('root');
+const container = document.getElementById("root");
 
 if (!container) {
   throw new Error('Root element with id "root" was not found.');

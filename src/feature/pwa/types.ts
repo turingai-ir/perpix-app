@@ -14,6 +14,7 @@ export type PwaUpdateOptions = Pick<
   | "onRegisterError"
 > & {
   autoUpdateDelayMs?: PwaAutoUpdateDelay;
+  updateCheckIntervalMs?: PwaAutoUpdateDelay;
 };
 
 export type PwaUpdateState = {

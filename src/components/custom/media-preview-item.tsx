@@ -78,7 +78,7 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
                 />
               ) : (
                 <>
-                  {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+                  {}
                   <video
                     className="h-full w-full object-cover transition-transform group-hover:scale-[1.02]"
                     src={mediaUrl}

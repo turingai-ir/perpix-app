@@ -13,4 +13,3 @@ export type AiTaskMessageEvent = {
   created_at: string;
   updated_at: string;
 };
-

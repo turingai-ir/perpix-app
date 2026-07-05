@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import fs from "fs/promises";
 import path from "path";
 
@@ -45,7 +44,10 @@ const isEnumValueList = (value: unknown): value is Array<string | number> =>
   Array.isArray(value) &&
   value.every((item) => typeof item === "string" || typeof item === "number");
 
-const resolveEnumKeys = (schema: SchemaLike, values: Array<string | number>) => {
+const resolveEnumKeys = (
+  schema: SchemaLike,
+  values: Array<string | number>,
+) => {
   const varNames = schema["x-enum-varnames"];
   const enumNames = schema["x-enumNames"];
 
@@ -60,8 +62,12 @@ const resolveEnumKeys = (schema: SchemaLike, values: Array<string | number>) => 
   return values;
 };
 
-const collectEnumMaps = async (generatedJsonFileFullPath: string): Promise<EnumDef[]> => {
-  const content = JSON.parse(await fs.readFile(generatedJsonFileFullPath, "utf-8"));
+const collectEnumMaps = async (
+  generatedJsonFileFullPath: string,
+): Promise<EnumDef[]> => {
+  const content = JSON.parse(
+    await fs.readFile(generatedJsonFileFullPath, "utf-8"),
+  );
   const schemas = content?.components?.schemas ?? {};
   const enums: EnumDef[] = [];
 
@@ -82,7 +88,10 @@ const renderEnumMaps = (enums: EnumDef[]) =>
   enums
     .map((enumDef) => {
       const entries = enumDef.keys
-        .map((key, index) => `  ${JSON.stringify(key)}: ${JSON.stringify(enumDef.values[index])},`)
+        .map(
+          (key, index) =>
+            `  ${JSON.stringify(key)}: ${JSON.stringify(enumDef.values[index])},`,
+        )
         .join("\n");
 
       return [
@@ -95,7 +104,10 @@ const renderEnumMaps = (enums: EnumDef[]) =>
     })
     .join("\n\n");
 
-const generateClient = async (generatedJsonFileFullPath: string, outputFilePath: string) => {
+const generateClient = async (
+  generatedJsonFileFullPath: string,
+  outputFilePath: string,
+) => {
   const ast = await openapiTS(new URL(`file://${generatedJsonFileFullPath}`), {
     enum: false,
     enumValues: true,
@@ -106,7 +118,9 @@ const generateClient = async (generatedJsonFileFullPath: string, outputFilePath:
     transform: makeBinaryTransform("File"),
   });
 
-  const enumMaps = renderEnumMaps(await collectEnumMaps(generatedJsonFileFullPath));
+  const enumMaps = renderEnumMaps(
+    await collectEnumMaps(generatedJsonFileFullPath),
+  );
   const output = [astToString(ast), enumMaps].filter(Boolean).join("\n\n");
 
   await fs.mkdir(path.dirname(outputFilePath), { recursive: true });
@@ -115,7 +129,10 @@ const generateClient = async (generatedJsonFileFullPath: string, outputFilePath:
   return outputFilePath;
 };
 
-const copyGeneratedApiToService = async (generatedApiPath: string, serviceApiPath: string) => {
+const copyGeneratedApiToService = async (
+  generatedApiPath: string,
+  serviceApiPath: string,
+) => {
   await fs.mkdir(path.dirname(serviceApiPath), { recursive: true });
   await fs.copyFile(generatedApiPath, serviceApiPath);
 
@@ -123,9 +140,18 @@ const copyGeneratedApiToService = async (generatedApiPath: string, serviceApiPat
 };
 
 const main = async () => {
-  const schemaPath = await downloadOpenApiSchema(OPENAPI_URL, TEMP_OPENAPI_JSON_PATH);
-  const generatedFilePath = await generateClient(schemaPath, TEMP_API_OUTPUT_PATH);
-  const finalFilePath = await copyGeneratedApiToService(generatedFilePath, FINAL_API_OUTPUT_PATH);
+  const schemaPath = await downloadOpenApiSchema(
+    OPENAPI_URL,
+    TEMP_OPENAPI_JSON_PATH,
+  );
+  const generatedFilePath = await generateClient(
+    schemaPath,
+    TEMP_API_OUTPUT_PATH,
+  );
+  const finalFilePath = await copyGeneratedApiToService(
+    generatedFilePath,
+    FINAL_API_OUTPUT_PATH,
+  );
 
   console.log(`Generated API types at ${generatedFilePath}`);
   console.log(`Copied generated API types to ${finalFilePath}`);
