@@ -5,6 +5,7 @@ import {
   GeneratedMediaField,
   useAiGenerate,
   useAiTaskResultPolling,
+  isAiTaskMessageTerminal,
 } from "./model";
 import { useScrollToLatestMessage } from "./scroll-to-latest-message";
 
@@ -57,10 +58,25 @@ export function useGenerationPage({
       return aiTaskMessages;
     }
 
-    return aiTaskMessages.map((message) =>
-      message.uuid === resultMessage.uuid ? resultMessage : message,
-    );
-  }, [aiTaskMessages, aiTaskResultState.data]);
+    return aiTaskMessages.map((message) => {
+      if (message.uuid !== resultMessage.uuid) {
+        return message;
+      }
+
+      const currentMessageIsTerminal = isAiTaskMessageTerminal(
+        message,
+        generatedMediaField,
+      );
+      const resultMessageIsTerminal = isAiTaskMessageTerminal(
+        resultMessage,
+        generatedMediaField,
+      );
+
+      return currentMessageIsTerminal && !resultMessageIsTerminal
+        ? message
+        : resultMessage;
+    });
+  }, [aiTaskMessages, aiTaskResultState.data, generatedMediaField]);
   const messageListClearKey =
     taskData && aiTaskMessages.length > 0
       ? `${taskData.uuid}:${aiTaskMessages

@@ -66,11 +66,23 @@ export function AiTaskEventsProvider() {
       const taskQueryOptions = queryOptions("get", "/ai-task/{task_uuid}", {
         params: { path: { task_uuid: payload.task_uuid } },
       });
+      const taskResultQueryOptions = queryOptions(
+        "get",
+        "/ai-task/result/{task_message_uuid}",
+        {
+          params: {
+            path: { task_message_uuid: payload.task_message_uuid },
+          },
+        },
+      );
       const aiTasksListQueryKey = queryOptions("get", "/ai-task/list").queryKey;
       const walletQueryKey = queryOptions("get", "/wallet/wallet").queryKey;
 
       void queryClient.invalidateQueries({
         queryKey: taskQueryOptions.queryKey,
+      });
+      queryClient.removeQueries({
+        queryKey: taskResultQueryOptions.queryKey,
       });
       void queryClient.invalidateQueries({ queryKey: aiTasksListQueryKey });
       void queryClient.refetchQueries({ queryKey: walletQueryKey });
