@@ -17,7 +17,7 @@ services:
         VITE_SENTRY_DSN: ${VITE_SENTRY_DSN}
         VITE_PERPIX_TAX_PERCENT: ${VITE_PERPIX_TAX_PERCENT}
 
-    mem_limit: 500m
+    mem_limit: 700m
     cpus: "0.20"
     logging: *default-logging
     ports:
