@@ -24,6 +24,31 @@ const getTaskUrl = (task: SchemaAiTaskResponse, messageUuid: string) => {
   return `${APP_ROUTES_KEY.generation.image.path}/${task.uuid}#${messageUuid}`;
 };
 
+const PROCESSED_EVENT_TTL_MS = 5 * 60 * 1000;
+const processedEventKeys = new Map<string, number>();
+
+const getEventKey = (payload: AiTaskMessageEvent) =>
+  `${payload.task_uuid}:${payload.task_message_uuid}:${payload.task_status}`;
+
+const hasProcessedEvent = (payload: AiTaskMessageEvent) => {
+  const now = Date.now();
+
+  processedEventKeys.forEach((expiresAt, key) => {
+    if (expiresAt <= now) {
+      processedEventKeys.delete(key);
+    }
+  });
+
+  const eventKey = getEventKey(payload);
+
+  if (processedEventKeys.has(eventKey)) {
+    return true;
+  }
+
+  processedEventKeys.set(eventKey, now + PROCESSED_EVENT_TTL_MS);
+  return false;
+};
+
 export function AiTaskEventsProvider() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -34,6 +59,10 @@ export function AiTaskEventsProvider() {
 
   const handleTaskMessage = useCallback(
     async (payload: AiTaskMessageEvent) => {
+      if (hasProcessedEvent(payload)) {
+        return;
+      }
+
       const taskQueryOptions = queryOptions("get", "/ai-task/{task_uuid}", {
         params: { path: { task_uuid: payload.task_uuid } },
       });

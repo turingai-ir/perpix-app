@@ -10,6 +10,7 @@ const AI_TASK_MESSAGE_EVENT = "ai_task_message";
 const WATCHDOG_TIMEOUT_MS = 20_000;
 const RECONNECT_DELAY_MS = 1_000;
 const FLUSH_INTERVAL_MS = 250;
+const MANUAL_RECONNECT_ERROR_MESSAGE = "SSE manual reconnect scheduled";
 
 interface UseAiTaskEventsInput {
   accessToken: string | undefined;
@@ -112,13 +113,13 @@ export function useAiTaskEvents({
         },
         onerror() {
           scheduleReconnect();
+          throw new Error(MANUAL_RECONNECT_ERROR_MESSAGE);
         },
         onclose() {
           scheduleReconnect();
         },
-      }).catch((error) => {
+      }).catch(() => {
         if (!isDisposed && !activeController?.signal.aborted) {
-          console.error(error);
           scheduleReconnect();
         }
       });

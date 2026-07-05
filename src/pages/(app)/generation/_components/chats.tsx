@@ -20,7 +20,7 @@ interface Props {
   outputType: "image" | "video";
 }
 
-const LOADING_STATUSES = new Set(["PENDING", "IN_PROGRESS", "SUCCESS"]);
+const LOADING_STATUSES = new Set(["PENDING", "IN_PROGRESS"]);
 
 export const GenerationChats: FC<Props> = ({
   getMedia,
