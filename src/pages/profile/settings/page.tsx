@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { LoaderCircle } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useAppTranslate } from "@/hook";
+import { useAppTranslate } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
 import {
   Form,

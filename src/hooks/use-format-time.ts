@@ -1,9 +1,9 @@
-import { useAppTranslate } from "@/hook";
+import { useAppTranslate } from "./i18";
 
-export function useFormateTime() {
+export function useFormatTime() {
   const { t } = useAppTranslate();
 
-  const formate = (totalSeconds: number) => {
+  const format = (totalSeconds: number) => {
     const toLocalizedNumber = (num: number): string => num.toString();
 
     const labels = {
@@ -37,5 +37,5 @@ export function useFormateTime() {
     return parts.join(` ${labels.and} `);
   };
 
-  return { formate };
+  return { format };
 }

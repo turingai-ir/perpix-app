@@ -11,7 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useAppTranslate } from "@/hook";
+import { useAppTranslate } from "@/hooks";
 import { cn } from "@/lib/utils";
 import { APP_I18_KEYS } from "@/services/i18";
 import { useFilePreview } from "@/feature/file-manager";

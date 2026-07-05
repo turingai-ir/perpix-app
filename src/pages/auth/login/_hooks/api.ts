@@ -1,4 +1,4 @@
-import { useReactQueryApi } from "@/hook/app";
+import { useReactQueryApi } from "@/hooks/app";
 
 export const useStart = () => {
   const { useMutation } = useReactQueryApi();

@@ -5,7 +5,7 @@ import { GeneratedMediaField, useGenerationPage } from "../_hooks";
 
 import LoadingSection from "@/components/custom/loading-section";
 import { TypingAnimation } from "@/components/ui/typing-animation";
-import { useAppTranslate } from "@/hook";
+import { useAppTranslate } from "@/hooks";
 import { APP_ROUTES_KEY } from "@/router/routes";
 import { AiRegistryModelSupportedTypesEnumMap } from "@/services/api";
 import { APP_I18_KEYS } from "@/services/i18";

@@ -18,7 +18,7 @@ import {
   useDeleteUserFile,
 } from "@/feature/file-manager";
 import { formatFileSize } from "@/feature/media-uploader/utils";
-import { useAppTranslate } from "@/hook";
+import { useAppTranslate } from "@/hooks";
 import { cn } from "@/lib/utils";
 import { APP_I18_KEYS } from "@/services/i18";
 import { downloadFile } from "@/utils";

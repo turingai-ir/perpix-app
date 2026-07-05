@@ -10,7 +10,7 @@ import type { GenerationPromptBoxProps } from "./types";
 
 import { Card } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
-import { useAppTranslate } from "@/hook";
+import { useAppTranslate } from "@/hooks";
 import {
   useGenerationPromptBox,
   usePromptBoxFieldGroups,

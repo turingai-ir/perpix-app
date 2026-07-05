@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Muted } from "../ui/typography";
 
-import { useAppTranslate } from "@/hook";
+import { useAppTranslate } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
 import { cn } from "@/lib/utils";
 import { MediaPreviewItem } from "@/components/custom/media-preview-item";

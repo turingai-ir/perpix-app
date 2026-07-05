@@ -1,6 +1,6 @@
 import { atom } from "jotai";
 
-import { getViewportBreakpoints } from "@/hook";
+import { getViewportBreakpoints } from "@/hooks";
 
 interface AppLayoutAtom {
   isSidebarOpen: boolean;

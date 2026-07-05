@@ -6,7 +6,7 @@ import { NumericFormat } from "react-number-format";
 
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Muted } from "@/components/ui/typography";
-import { useAppTranslate } from "@/hook";
+import { useAppTranslate } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
 import {
   formatLocalizedNumber,

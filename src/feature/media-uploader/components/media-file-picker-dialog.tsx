@@ -9,7 +9,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import type { FileManagerAllowedContentType } from "@/feature/file-manager";
-import { useAppTranslate } from "@/hook";
+import { useAppTranslate } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
 
 import { LocalUploadStatusItem } from "./local-upload-status-item";

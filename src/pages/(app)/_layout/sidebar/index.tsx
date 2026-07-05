@@ -6,7 +6,7 @@ import appLayoutAtom from "../_state";
 import AppLayoutSidebarContent from "./content";
 
 import { cn } from "@/lib/utils";
-import { useViewportBreakpoint } from "@/hook";
+import { useViewportBreakpoint } from "@/hooks";
 import {
   Sheet,
   SheetContent,

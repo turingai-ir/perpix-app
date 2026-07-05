@@ -12,6 +12,8 @@ export function usePwaUpdate(options: PwaUpdateOptions = {}): PwaUpdateState {
   } = options;
 
   const [isUpdating, setIsUpdating] = useState(false);
+  const [registration, setRegistration] =
+    useState<ServiceWorkerRegistration | null>(null);
 
   // Setup a global controllerchange listener as a bulletproof way to reload the page
   // whenever a new service worker becomes active (e.g. from prompt click or page refresh).
@@ -39,31 +41,35 @@ export function usePwaUpdate(options: PwaUpdateOptions = {}): PwaUpdateState {
     };
   }, []);
 
+  useEffect(() => {
+    if (!registration || updateCheckIntervalMs === false) {
+      return;
+    }
+
+    const intervalId = window.setInterval(() => {
+      void registration.update();
+    }, updateCheckIntervalMs);
+
+    return () => window.clearInterval(intervalId);
+  }, [registration, updateCheckIntervalMs]);
+
   const {
     needRefresh: [needRefresh, setNeedRefresh],
     updateServiceWorker,
   } = useRegisterSW({
     immediate,
-    onRegisteredSW(_swScriptUrl, registration) {
-      if (!registration) {
+    onRegisteredSW(_swScriptUrl, reg) {
+      if (!reg) {
         return;
       }
+
+      setRegistration(reg);
 
       // If there is already a waiting service worker when the page registers/loads,
       // it means the user refreshed/reloaded the app. We skip waiting and activate it immediately.
-      if (registration.waiting) {
-        registration.waiting.postMessage({ type: "SKIP_WAITING" });
+      if (reg.waiting) {
+        reg.waiting.postMessage({ type: "SKIP_WAITING" });
       }
-
-      if (updateCheckIntervalMs === false) {
-        return;
-      }
-
-      const intervalId = window.setInterval(() => {
-        void registration.update();
-      }, updateCheckIntervalMs);
-
-      return () => window.clearInterval(intervalId);
     },
     ...registerOptions,
   });

@@ -2,7 +2,7 @@ import * as React from "react";
 import { toast } from "sonner";
 
 import { cn } from "@/lib/utils";
-import { useAppTranslate } from "@/hook";
+import { useAppTranslate } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
 
 export interface MultiImageUploadInputProps extends Omit<

@@ -6,7 +6,7 @@ import { useNavigate } from "react-router";
 
 import SpotlightCard from "@/components/SpotlightCard";
 import { Heading3, Muted } from "@/components/ui/typography";
-import { useAppTranslate } from "@/hook";
+import { useAppTranslate } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
 import { APP_ROUTES_KEY } from "@/router/routes";
 

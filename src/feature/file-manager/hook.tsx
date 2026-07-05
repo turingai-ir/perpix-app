@@ -9,9 +9,9 @@ import {
 } from "./state";
 import type { FileManagerAllowedContentType } from "./content-types";
 
-import { useReactQueryApi } from "@/hook/app";
+import { useReactQueryApi } from "@/hooks/app";
 import { APP_I18_KEYS } from "@/services/i18";
-import { useAppTranslate } from "@/hook";
+import { useAppTranslate } from "@/hooks";
 import { apiClient } from "@/services/api";
 import type { SchemaFileManagerUploadFileResponse } from "@/services/api/api";
 

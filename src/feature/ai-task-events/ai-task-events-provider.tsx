@@ -6,11 +6,10 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useAiTaskEvents } from "./use-ai-task-events";
 import type { AiTaskMessageEvent } from "./types";
 
-import { useReactQueryApi } from "@/hook/app";
+import { useReactQueryApi } from "@/hooks/app";
 import { APP_ROUTES_KEY } from "@/router/routes";
 import {
   AiRegistryModelSupportedTypesEnumMap,
-  apiClient,
   type SchemaAiTaskResponse,
 } from "@/services/api";
 import { APP_KEYS } from "@/utils";
@@ -78,22 +77,15 @@ export function AiTaskEventsProvider() {
       const aiTasksListQueryKey = queryOptions("get", "/ai-task/list").queryKey;
       const walletQueryKey = queryOptions("get", "/wallet/wallet").queryKey;
 
-      void queryClient.invalidateQueries({
-        queryKey: taskQueryOptions.queryKey,
-      });
       queryClient.removeQueries({
         queryKey: taskResultQueryOptions.queryKey,
       });
       void queryClient.invalidateQueries({ queryKey: aiTasksListQueryKey });
       void queryClient.refetchQueries({ queryKey: walletQueryKey });
 
-      const { data: task } = await apiClient.GET("/ai-task/{task_uuid}", {
-        params: { path: { task_uuid: payload.task_uuid } },
-      });
+      const task = await queryClient.fetchQuery(taskQueryOptions);
 
       if (!task) return;
-
-      queryClient.setQueryData(taskQueryOptions.queryKey, task);
 
       const taskUrl = getTaskUrl(
         task as SchemaAiTaskResponse,

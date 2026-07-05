@@ -3,7 +3,7 @@ import type { FC } from "react";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import type { FilePreviewUrls } from "@/feature/file-manager";
-import { useAppTranslate } from "@/hook";
+import { useAppTranslate } from "@/hooks";
 import { cn } from "@/lib/utils";
 import { APP_I18_KEYS } from "@/services/i18";
 

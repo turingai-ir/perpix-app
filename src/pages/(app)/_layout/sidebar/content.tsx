@@ -15,7 +15,7 @@ import {
 import AppLayoutSidebarWallet from "./wallet";
 
 import { Button } from "@/components/ui/button";
-import { useAppTranslate } from "@/hook";
+import { useAppTranslate } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
 import { APP_KEYS } from "@/utils";
 import { APP_ROUTES_KEY } from "@/router/routes";

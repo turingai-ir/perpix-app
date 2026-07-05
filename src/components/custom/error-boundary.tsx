@@ -1,6 +1,6 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
 
-import { useAppTranslate } from "@/hook";
+import { useAppTranslate } from "@/hooks";
 import { captureError } from "@/lib/observability";
 import { APP_I18_KEYS } from "@/services/i18";
 

@@ -3,7 +3,7 @@ import { AlertCircle, Images, RefreshCw } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Heading2, Muted } from "@/components/ui/typography";
-import { useAppTranslate } from "@/hook";
+import { useAppTranslate } from "@/hooks";
 import { cn } from "@/lib/utils";
 import { APP_I18_KEYS } from "@/services/i18";
 

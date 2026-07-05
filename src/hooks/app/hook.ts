@@ -3,7 +3,7 @@ import { toast } from "sonner";
 
 import { appContext } from "./context";
 
-import { useAppTranslate } from "@/hook/i18";
+import { useAppTranslate } from "@/hooks/i18";
 
 export class OfflineMutationGuardError extends Error {
   constructor() {

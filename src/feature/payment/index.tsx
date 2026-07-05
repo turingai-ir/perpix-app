@@ -10,7 +10,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
-import { useAppTranslate, useSecondsCountDown } from "@/hook";
+import { useAppTranslate, useSecondsCountDown } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
 import { formatLocalizedNumber } from "@/utils";
 

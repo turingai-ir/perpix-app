@@ -7,7 +7,7 @@ import {
 } from "@tanstack/react-query";
 import { useDebounce } from "react-use";
 
-import { useReactQueryApi } from "@/hook/app";
+import { useReactQueryApi } from "@/hooks/app";
 import { useActiveSubscription } from "@/feature/pricing";
 import {
   PaidActionScope,

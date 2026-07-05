@@ -4,7 +4,7 @@ import { CircleCheck, LoaderCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { useAppTranslate } from "@/hook";
+import { useAppTranslate } from "@/hooks";
 import LoadingSection from "@/components/custom/loading-section";
 import ErrorSection from "@/components/custom/error-section";
 import { type SchemaSubscriptionPlanListResponse } from "@/services/api";

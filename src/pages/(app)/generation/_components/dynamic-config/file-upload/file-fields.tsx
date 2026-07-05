@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState, type FC } from "react";
 
-import { useAppTranslate } from "@/hook";
+import { useAppTranslate } from "@/hooks";
 
 import { DynamicConfigFileField } from "./file-field";
 import { clearTopLevelMediaConflicts } from "./media";

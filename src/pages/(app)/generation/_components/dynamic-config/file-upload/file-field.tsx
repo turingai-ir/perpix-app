@@ -12,7 +12,7 @@ import {
   toLocalMediaItems,
   toUploadedMediaItems,
 } from "@/feature/media-uploader";
-import { useAppTranslate } from "@/hook";
+import { useAppTranslate } from "@/hooks";
 import type { JsonSchemaProperty } from "@/hooks/use-dynamic-config-form";
 import { HttpStatus } from "@/utils";
 import { FetchHttpError } from "@/utils/custom-fetch/fetch-errors";

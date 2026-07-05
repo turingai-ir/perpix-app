@@ -9,7 +9,7 @@ import {
   FetchTimeoutError,
 } from "@/utils/custom-fetch/fetch-errors";
 import { APP_KEYS, HttpStatus } from "@/utils";
-import { getViewportBreakpoints, useAppTranslate } from "@/hook";
+import { getViewportBreakpoints, useAppTranslate } from "@/hooks";
 import { appEventBus } from "@/lib/event-bus";
 import { cookies } from "@/utils/cookies";
 import { APP_ROUTES_KEY } from "@/router/routes";

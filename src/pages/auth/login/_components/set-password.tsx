@@ -16,7 +16,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useAppTranslate, useSecondsCountDown } from "@/hook";
+import { useAppTranslate, useSecondsCountDown } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
 import { Heading2, Muted, Paragraph } from "@/components/ui/typography";
 import { APP_KEYS, REGEX } from "@/utils";

@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { FilePreviewUrls } from "@/feature/file-manager";
-import { useAppTranslate } from "@/hook";
-import { useInfiniteScroll } from "@/hooks/use-infinitive-scroll";
+import { useAppTranslate } from "@/hooks";
+import { useInfiniteScroll } from "@/hooks/use-infinite-scroll";
 import { cn } from "@/lib/utils";
 import { APP_I18_KEYS } from "@/services/i18";
 

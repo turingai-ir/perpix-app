@@ -2,7 +2,7 @@ import { LoaderCircle, Upload } from "lucide-react";
 import type { ChangeEventHandler, FC } from "react";
 
 import { Button } from "@/components/ui/button";
-import { useAppTranslate } from "@/hook";
+import { useAppTranslate } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
 
 interface NewFileUploadCardProps {

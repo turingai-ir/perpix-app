@@ -10,7 +10,7 @@ import {
 } from "@/services/api";
 import { Button } from "@/components/ui/button";
 import { formatLocalizedNumber } from "@/utils";
-import { useAppTranslate } from "@/hook";
+import { useAppTranslate } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
 import { APP_ROUTES_KEY } from "@/router/routes";
 import { usePayments, usePaymentStatus } from "@/feature/payment";

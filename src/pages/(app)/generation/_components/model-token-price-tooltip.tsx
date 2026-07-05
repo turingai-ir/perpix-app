@@ -7,7 +7,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useAppTranslate } from "@/hook";
+import { useAppTranslate } from "@/hooks";
 import {
   getTierPriceTokenRange,
   normalizePricingTiers,

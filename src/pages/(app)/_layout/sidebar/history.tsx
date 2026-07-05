@@ -4,8 +4,7 @@ import { Link, useLocation } from "react-router";
 import ErrorSection from "@/components/custom/error-section";
 import LoadingSection from "@/components/custom/loading-section";
 import { Muted } from "@/components/ui/typography";
-import { useAppTranslate } from "@/hook";
-import { useInfiniteScroll } from "@/hooks";
+import { useAppTranslate, useInfiniteScroll } from "@/hooks";
 import { APP_ROUTES_KEY } from "@/router/routes";
 import { AiRegistryModelSupportedTypesEnumMap } from "@/services/api";
 import { APP_I18_KEYS } from "@/services/i18";
@@ -32,6 +31,14 @@ const AppLayoutSidebarHistory: FC = () => {
   }, [pathname]);
 
   const { aiTasksListStatus } = useAiTasksList(taskType);
+  const {
+    hasNextPage,
+    isLoading,
+    isFetchingNextPage,
+    isError,
+    fetchNextPage,
+    data,
+  } = aiTasksListStatus;
 
   const getHistoryHref = useCallback(
     (id: string) => {
@@ -55,11 +62,8 @@ const AppLayoutSidebarHistory: FC = () => {
   );
 
   const historyItems = useMemo(
-    () =>
-      aiTasksListStatus.data?.pages.flatMap((page) =>
-        Array.from(page?.items ?? []),
-      ) ?? [],
-    [aiTasksListStatus.data?.pages],
+    () => data?.pages.flatMap((page) => Array.from(page?.items ?? [])) ?? [],
+    [data?.pages],
   );
 
   const getHistoryTitle = useCallback(
@@ -76,27 +80,15 @@ const AppLayoutSidebarHistory: FC = () => {
   );
 
   const triggerMoreData = useCallback(() => {
-    if (
-      aiTasksListStatus.hasNextPage &&
-      !aiTasksListStatus.isLoading &&
-      !aiTasksListStatus.isFetchingNextPage &&
-      !aiTasksListStatus.isError
-    ) {
-      aiTasksListStatus.fetchNextPage();
+    if (hasNextPage && !isLoading && !isFetchingNextPage && !isError) {
+      fetchNextPage();
     }
-  }, [
-    aiTasksListStatus.fetchNextPage,
-    aiTasksListStatus.hasNextPage,
-    aiTasksListStatus.isError,
-    aiTasksListStatus.isFetchingNextPage,
-    aiTasksListStatus.isLoading,
-  ]);
+  }, [fetchNextPage, hasNextPage, isError, isFetchingNextPage, isLoading]);
 
   const scrollRef = useInfiniteScroll<HTMLDivElement>({
     offset: 500,
-    disabled: !aiTasksListStatus.hasNextPage || aiTasksListStatus.isError,
-    loading:
-      aiTasksListStatus.isLoading || aiTasksListStatus.isFetchingNextPage,
+    disabled: !hasNextPage || isError,
+    loading: isLoading || isFetchingNextPage,
     onTrigger: triggerMoreData,
   });
 

@@ -2,7 +2,7 @@ import type { FC } from "react";
 
 import { GenerationChats } from "@/pages/(app)/generation/_components/chats";
 import { GenerationMediaPlaceholder } from "@/pages/(app)/generation/_components/generation-media-placeholder";
-import { useAppTranslate } from "@/hook";
+import { useAppTranslate } from "@/hooks";
 import type { SchemaAiTaskMessageResponse } from "@/services/api";
 import { APP_I18_KEYS } from "@/services/i18";
 
