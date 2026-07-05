@@ -24,10 +24,10 @@ services:
     restart: unless-stopped
     pull_policy: build
     networks:
-      - turing
+      - perpix
     env_file:
-      - /opt/turing/.env
+      - /opt/perpix/.env
 
 networks:
-  turing:
+  perpix:
     external: true
