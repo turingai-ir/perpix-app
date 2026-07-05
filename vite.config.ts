@@ -47,8 +47,8 @@ export default defineConfig(({ mode }) => ({
       manifest: {
         id: "/",
         name: "PerPix AI",
-        short_name: "PerPixAi",
-        description: "PerPixAi app",
+        short_name: "PerPix",
+        description: "PerPix app",
         start_url: "/",
         scope: "/",
         lang: "fa",
@@ -62,13 +62,13 @@ export default defineConfig(({ mode }) => ({
             sizes: "1280x720",
             type: "image/png",
             form_factor: "wide",
-            label: "PerPixAi desktop workspace",
+            label: "PerPix desktop workspace",
           },
           {
             src: "screenshots/pwa-mobile.png",
             sizes: "540x720",
             type: "image/png",
-            label: "PerPixAi mobile workspace",
+            label: "PerPix mobile workspace",
           },
         ],
         icons: [

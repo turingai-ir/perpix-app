@@ -1,7 +1,7 @@
-const API_BASE_URL = import.meta.env.VITE_PERPIXAI_API_URL;
+const API_BASE_URL = import.meta.env.VITE_PERPIX_API_URL;
 
 if (!API_BASE_URL) {
-  throw new Error("VITE_PERPIXAI_API_URL is not defined");
+  throw new Error("VITE_PERPIX_API_URL is not defined");
 }
 
 export const APP_KEYS = {

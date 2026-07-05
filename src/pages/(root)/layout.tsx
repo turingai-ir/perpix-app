@@ -171,7 +171,7 @@ const RootLayout: FC = () => {
   const titleKey = matchWithTitle
     ? (matchWithTitle.handle as { title: string }).title
     : "";
-  const pageTitle = titleKey ? t(titleKey) : "PerPixAi";
+  const pageTitle = titleKey ? t(titleKey) : "PerPix";
 
   return (
     <>

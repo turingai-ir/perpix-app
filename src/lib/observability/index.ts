@@ -1,4 +1,4 @@
-const SENTRY_DSN = import.meta.env.VITE_SENTRY_DSN;
+const SENTRY_DSN = import.meta.env.VITE_APP_SENTRY_DSN;
 const IS_SENTRY_ENABLED = !import.meta.env.DEV;
 
 if (IS_SENTRY_ENABLED && !SENTRY_DSN) {
