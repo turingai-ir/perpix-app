@@ -117,6 +117,14 @@ const AuthLoginPageSetPassword: FC = () => {
     );
   }
 
+  function handleOtpComplete() {
+    if (setPasswordState.isPending || countDown.seconds <= 0) {
+      return;
+    }
+
+    void form.handleSubmit(onSubmit)();
+  }
+
   return (
     <Card className="w-full max-w-sm">
       <CardHeader>
@@ -195,6 +203,7 @@ const AuthLoginPageSetPassword: FC = () => {
                       inputMode="numeric"
                       pattern="[0-9]*"
                       maxLength={6}
+                      onComplete={handleOtpComplete}
                       {...field}
                     >
                       <InputOTPGroup dir="ltr">
