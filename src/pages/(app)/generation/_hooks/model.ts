@@ -13,7 +13,10 @@ import {
   PaidActionScope,
   usePaidActionGuard,
 } from "@/feature/pricing/paid-action-guard";
-import { isModelAllowed } from "@/pages/(app)/generation/_utils/model-access";
+import {
+  getDefaultAccessibleModel,
+  isModelAllowed,
+} from "@/pages/(app)/generation/_utils/model-access";
 import type {
   AiRegistryModelSupportedTypesEnumKey,
   AiRegistryModelSupportedTypesEnumValue,
@@ -108,7 +111,9 @@ export const useModel = (
   const selectedModelSummary = models?.find(
     (model) => model.uuid === currentSelectedModel,
   );
-  const currentModelSummary = selectedModelSummary ?? models?.[0];
+  const currentModelSummary =
+    selectedModelSummary ??
+    getDefaultAccessibleModel(models, allowedModelNames);
   const currentModel = currentModelSummary?.uuid;
   const isCurrentModelAllowed = currentModelSummary
     ? isModelAllowed(currentModelSummary, allowedModelNames)
