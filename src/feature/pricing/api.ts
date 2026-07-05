@@ -5,9 +5,9 @@ export const useSubscriptionPlans = (enabled = true) => {
   return useQuery("get", "/user/subscription/plans", undefined, { enabled });
 };
 
-export const useActiveSubscription = () => {
+export const useActiveSubscription = (enabled = true) => {
   const { useQuery } = useReactQueryApi();
-  return useQuery("get", "/user/subscription/active");
+  return useQuery("get", "/user/subscription/active", undefined, { enabled });
 };
 
 export const usePurchaseSubscription = () => {

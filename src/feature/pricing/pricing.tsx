@@ -41,8 +41,8 @@ function PricingFeature() {
     useAtomValue(pricingFeatureAtom);
   const { openPricingFeature, closePricingFeature } = usePricingFeature();
 
-  const plansState = useSubscriptionPlans();
-  const activeSubscriptionState = useActiveSubscription();
+  const plansState = useSubscriptionPlans(open);
+  const activeSubscriptionState = useActiveSubscription(open);
   const purchaseSubscriptionState = usePurchaseSubscription();
   const { mutateAsync: purchasePlan } = purchaseSubscriptionState;
   const { openPaymentUrl } = usePaymentRedirect();
