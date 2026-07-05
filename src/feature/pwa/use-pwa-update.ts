@@ -1,47 +1,61 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRegisterSW } from "virtual:pwa-register/react";
 
 import { PWA_UPDATE_CHECK_INTERVAL_MS } from "./config";
 import type { PwaUpdateOptions, PwaUpdateState } from "./types";
 
-async function clearBrowserCaches() {
-  if (!("caches" in window)) {
-    return;
-  }
-
-  const cacheKeys = await window.caches.keys();
-
-  await Promise.all(
-    cacheKeys.map((cacheKey) => window.caches.delete(cacheKey)),
-  );
-}
-
 export function usePwaUpdate(options: PwaUpdateOptions = {}): PwaUpdateState {
   const {
     immediate = true,
-    onNeedReload,
-    onNeedRefresh,
-    onRegisteredSW,
     updateCheckIntervalMs = PWA_UPDATE_CHECK_INTERVAL_MS,
     ...registerOptions
   } = options;
 
   const [isUpdating, setIsUpdating] = useState(false);
-  const [needReload, setNeedReload] = useState(false);
+
+  // Setup a global controllerchange listener as a bulletproof way to reload the page
+  // whenever a new service worker becomes active (e.g. from prompt click or page refresh).
+  useEffect(() => {
+    if (!("serviceWorker" in navigator)) {
+      return;
+    }
+
+    let refreshing = false;
+    const handleControllerChange = () => {
+      if (refreshing) return;
+      refreshing = true;
+      window.location.reload();
+    };
+
+    navigator.serviceWorker.addEventListener(
+      "controllerchange",
+      handleControllerChange,
+    );
+    return () => {
+      navigator.serviceWorker.removeEventListener(
+        "controllerchange",
+        handleControllerChange,
+      );
+    };
+  }, []);
+
   const {
     needRefresh: [needRefresh, setNeedRefresh],
     updateServiceWorker,
   } = useRegisterSW({
     immediate,
-    onNeedRefresh,
-    onNeedReload() {
-      setNeedReload(true);
-      onNeedReload?.();
-    },
-    onRegisteredSW(swScriptUrl, registration) {
-      onRegisteredSW?.(swScriptUrl, registration);
+    onRegisteredSW(_swScriptUrl, registration) {
+      if (!registration) {
+        return;
+      }
 
-      if (!registration || updateCheckIntervalMs === false) {
+      // If there is already a waiting service worker when the page registers/loads,
+      // it means the user refreshed/reloaded the app. We skip waiting and activate it immediately.
+      if (registration.waiting) {
+        registration.waiting.postMessage({ type: "SKIP_WAITING" });
+      }
+
+      if (updateCheckIntervalMs === false) {
         return;
       }
 
@@ -54,36 +68,22 @@ export function usePwaUpdate(options: PwaUpdateOptions = {}): PwaUpdateState {
     ...registerOptions,
   });
 
-  const isUpdateAvailable = needRefresh || needReload;
-
   const update = useCallback(async () => {
     setIsUpdating(true);
-    await clearBrowserCaches();
-
-    if (needReload) {
-      window.location.reload();
-      return;
-    }
-
     await updateServiceWorker(true);
-  }, [needReload, updateServiceWorker]);
+  }, [updateServiceWorker]);
 
   const close = useCallback(() => {
     setNeedRefresh(false);
-    setNeedReload(false);
   }, [setNeedRefresh]);
 
   return useMemo(
     () => ({
-      needRefresh: isUpdateAvailable,
-      status: isUpdating
-        ? "updating"
-        : isUpdateAvailable
-          ? "available"
-          : "idle",
+      needRefresh,
+      status: isUpdating ? "updating" : needRefresh ? "available" : "idle",
       update,
       close,
     }),
-    [close, isUpdateAvailable, isUpdating, update],
+    [close, needRefresh, isUpdating, update],
   );
 }
