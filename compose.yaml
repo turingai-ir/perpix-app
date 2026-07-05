@@ -26,9 +26,6 @@ services:
     pull_policy: build
     networks:
       - perpix
-    env_file:
-      - /opt/perpix/.env
-
 networks:
   perpix:
     external: true
