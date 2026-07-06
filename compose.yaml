@@ -6,26 +6,45 @@ x-logging: &default-logging
 
 services:
   perpix-app:
+    image: perpix-app:latest
     build:
       context: .
+      dockerfile: Dockerfile
       args:
+        PNPM_VERSION: ${PNPM_VERSION:-11.4.0}
+        PACKAGE_REGISTRY: ${PACKAGE_REGISTRY:-https://registry.npmmirror.com}
         VITE_OBJECT_STORAGE_PUBLIC_ENDPOINT: ${VITE_OBJECT_STORAGE_PUBLIC_ENDPOINT}
         VITE_PERPIX_API_URL: ${VITE_PERPIX_API_URL}
         VITE_PERPIX_APP_URL: ${VITE_PERPIX_APP_URL}
-        VITE_APP_FONT_BASE_URL: ${VITE_APP_FONT_BASE_URL}
+        VITE_APP_FONT_BASE_URL: ${VITE_APP_FONT_BASE_URL:-/fonts}
         VITE_APP_PERPIX_TELEGRAM_SUPPORT: ${VITE_APP_PERPIX_TELEGRAM_SUPPORT}
         VITE_APP_SENTRY_DSN: ${VITE_APP_SENTRY_DSN}
         VITE_APP_PERPIX_TAX_PERCENT: ${VITE_APP_PERPIX_TAX_PERCENT}
-
-    mem_limit: 700m
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+      - /var/cache/nginx:size=16m,mode=755,uid=101,gid=101
+      - /var/run:size=4m,mode=755,uid=101,gid=101
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    pids_limit: 128
+    mem_limit: 256m
     cpus: "0.20"
+    healthcheck:
+      test:
+        ["CMD-SHELL", "wget -qO- http://127.0.0.1:8080/healthz | grep -q ok"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
     logging: *default-logging
-    ports:
-      - "4173:80"
     restart: unless-stopped
     pull_policy: build
     networks:
       - perpix
+
 networks:
   perpix:
     external: true

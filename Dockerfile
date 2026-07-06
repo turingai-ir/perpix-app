@@ -1,24 +1,36 @@
-# syntax=docker/dockerfile:1
+# syntax=docker/dockerfile:1.7
 
 FROM node:24-alpine AS builder
 
+SHELL ["/bin/sh", "-e", "-c"]
+
 WORKDIR /app
 
-ENV PNPM_HOME="/root/.local/share/pnpm"
-ENV PATH="${PNPM_HOME}:$PATH"
+ENV CI=true \
+    PNPM_HOME="/pnpm" \
+    PATH="/pnpm:$PATH"
 
-# Enable corepack to get pnpm without a global install.
-RUN corepack enable
+ARG PNPM_VERSION=11.4.0
+ARG PACKAGE_REGISTRY=https://registry.npmmirror.com
+ENV COREPACK_NPM_REGISTRY=${PACKAGE_REGISTRY} \
+    COREPACK_ENABLE_UNSAFE_CUSTOM_URLS=1 \
+    NPM_CONFIG_REGISTRY=${PACKAGE_REGISTRY}
 
-# Install dependencies.
+RUN corepack enable && \
+    corepack prepare "pnpm@${PNPM_VERSION}" --activate || \
+    npm install --global "pnpm@${PNPM_VERSION}"
+
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-RUN pnpm install --frozen-lockfile
+RUN --mount=type=cache,id=perpix-pnpm-store,target=/pnpm/store \
+    pnpm config set store-dir /pnpm/store && \
+    pnpm config set registry "${PACKAGE_REGISTRY}" && \
+    pnpm install --frozen-lockfile
 
-# Copy source and build the app.
 COPY . .
-ENV NODE_ENV=production
 
-# Provide build-time environment variables for Vite.
+ENV NODE_ENV=production \
+    VITE_APP_FONT_BASE_URL=/fonts
+
 ARG VITE_OBJECT_STORAGE_PUBLIC_ENDPOINT
 ARG VITE_PERPIX_API_URL
 ARG VITE_PERPIX_APP_URL
@@ -26,23 +38,25 @@ ARG VITE_APP_FONT_BASE_URL
 ARG VITE_APP_PERPIX_TELEGRAM_SUPPORT
 ARG VITE_APP_SENTRY_DSN
 ARG VITE_APP_PERPIX_TAX_PERCENT
-ENV VITE_OBJECT_STORAGE_PUBLIC_ENDPOINT=${VITE_OBJECT_STORAGE_PUBLIC_ENDPOINT}
-ENV VITE_PERPIX_API_URL=${VITE_PERPIX_API_URL}
-ENV VITE_PERPIX_APP_URL=${VITE_PERPIX_APP_URL}
-ENV VITE_APP_FONT_BASE_URL=${VITE_APP_FONT_BASE_URL}
-ENV VITE_APP_PERPIX_TELEGRAM_SUPPORT=${VITE_APP_PERPIX_TELEGRAM_SUPPORT}
-ENV VITE_APP_SENTRY_DSN=${VITE_APP_SENTRY_DSN}
-ENV VITE_APP_PERPIX_TAX_PERCENT=${VITE_APP_PERPIX_TAX_PERCENT}
+
+ENV VITE_OBJECT_STORAGE_PUBLIC_ENDPOINT=${VITE_OBJECT_STORAGE_PUBLIC_ENDPOINT} \
+    VITE_PERPIX_API_URL=${VITE_PERPIX_API_URL} \
+    VITE_PERPIX_APP_URL=${VITE_PERPIX_APP_URL} \
+    VITE_APP_FONT_BASE_URL=${VITE_APP_FONT_BASE_URL} \
+    VITE_APP_PERPIX_TELEGRAM_SUPPORT=${VITE_APP_PERPIX_TELEGRAM_SUPPORT} \
+    VITE_APP_SENTRY_DSN=${VITE_APP_SENTRY_DSN} \
+    VITE_APP_PERPIX_TAX_PERCENT=${VITE_APP_PERPIX_TAX_PERCENT}
 
 RUN pnpm build
 
-FROM nginx:1.27-alpine AS runner
+FROM nginxinc/nginx-unprivileged:1.27-alpine AS runner
 
+USER nginx
 WORKDIR /usr/share/nginx/html
 
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=builder /app/dist .
+COPY --chown=nginx:nginx nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=builder --chown=nginx:nginx /app/dist .
 
-EXPOSE 80
+EXPOSE 8080
 
 CMD ["nginx", "-g", "daemon off;"]

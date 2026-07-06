@@ -1,9 +1,14 @@
 node_modules
 dist
+dev-dist
+playwright-report
+test-results
 .git
 .gitignore
-Dockerfile
-compose.yaml
+.env
+.env.*
+.vscode
+.agents
 pnpm-debug.log
 npm-debug.log
 yarn-error.log
