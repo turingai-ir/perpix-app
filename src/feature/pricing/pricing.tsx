@@ -153,7 +153,7 @@ function PricingFeature() {
                   <div className="mt-auto pt-7">
                     <Button
                       type="button"
-                      variant={plan?.is_popular ? "default" : "outline"}
+                      variant={plan?.is_recommended ? "default" : "outline"}
                       size="lg"
                       className="w-full"
                       disabled={purchaseSubscriptionState.isPending}
