@@ -10,12 +10,17 @@ import { EditorHeader } from "./editor-header";
 export interface ImageEditorProps {
   src: string;
   onSave?: (dataUrl: string) => void;
+  onSaveToGallery?: (dataUrl: string) => Promise<void>;
 }
 
-export function ImageEditor({ src, onSave }: ImageEditorProps) {
+export function ImageEditor({
+  src,
+  onSave,
+  onSaveToGallery,
+}: ImageEditorProps) {
   return (
     <EditorProvider src={src}>
-      <EditorWorkspace onSave={onSave} />
+      <EditorWorkspace onSave={onSave} onSaveToGallery={onSaveToGallery} />
     </EditorProvider>
   );
 }

@@ -421,6 +421,52 @@ export const useDeleteUserFile = () => {
   return { deleteFileState };
 };
 
+export const useReplaceUserFile = () => {
+  const queryClient = useQueryClient();
+  const { queryOptions } = useReactQueryApi();
+  const userFilesQueryKey = queryOptions(
+    "get",
+    "/file-manager/user-files",
+  ).queryKey;
+
+  const replaceFileState = useMutation({
+    mutationFn: async ({
+      fileUuid,
+      file,
+    }: {
+      fileUuid: string;
+      file: File;
+    }) => {
+      const { error, response } = await apiClient.PUT(
+        "/file-manager/files/{file_uuid}" as never,
+        {
+          params: {
+            path: {
+              file_uuid: fileUuid,
+            },
+          },
+          body: { file: file as unknown as string },
+          bodySerializer: (body: { file?: string | null }) => {
+            const file = body?.file as unknown as File;
+            const formData = new FormData();
+            formData.append("file", file, file.name);
+            return formData;
+          },
+        } as never,
+      );
+
+      if (error || !response.ok) {
+        throw new Error("Failed to replace file");
+      }
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: userFilesQueryKey });
+    },
+  });
+
+  return { replaceFileState };
+};
+
 export const useInfiniteUserFiles = ({
   contentTypes,
   enabled = true,

@@ -5,7 +5,9 @@ import { getPresetFilter } from "./filter-effects";
 export function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((res, rej) => {
     const img = new Image();
-    img.crossOrigin = "anonymous";
+    if (!src.startsWith("blob:") && !src.startsWith("data:")) {
+      img.crossOrigin = "anonymous";
+    }
     img.onload = () => res(img);
     img.onerror = (e) => rej(new Error(`Failed to load image: ${e}`));
     img.src = src;

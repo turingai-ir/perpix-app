@@ -57,6 +57,27 @@ test.describe("Image Editor E2E Tests", () => {
     await expect(page.locator(".konvajs-content")).toBeAttached();
   });
 
+  test("should return to home when uploader has no previous route", async ({
+    page,
+  }) => {
+    await page.getByRole("button", { name: "بازگشت" }).click();
+
+    await expect(page).toHaveURL("/");
+  });
+
+  test("should return to previous route when uploader has route history", async ({
+    page,
+  }) => {
+    await page.goto("/gallery");
+    await page.getByRole("link", { name: /ویرایشگر تصویر/ }).click();
+
+    await expect(page).toHaveURL("/editor");
+
+    await page.getByRole("button", { name: "بازگشت" }).click();
+
+    await expect(page).toHaveURL("/gallery");
+  });
+
   test("should switch between edit panels and cancel back", async ({
     page,
   }) => {

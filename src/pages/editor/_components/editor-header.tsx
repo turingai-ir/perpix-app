@@ -1,17 +1,20 @@
 import { useAtom } from "jotai";
 import { useImageEditor } from "./editor-context";
+import { EditorSaveMenu } from "./editor-save-menu";
 import * as store from "../_hooks/store";
 import { Button } from "@/components/ui/button";
-import { Undo2, Redo2, Loader2, ArrowLeft } from "lucide-react";
-import { useNavigate } from "react-router";
+import { Undo2, Redo2, ArrowLeft } from "lucide-react";
 import { useAppTranslate } from "@/hooks/i18/use-app-translate";
+import { useRouteBack } from "@/hooks/use-route-back";
 
 export function EditorHeader({
   onSave,
+  onSaveToGallery,
 }: {
   onSave?: (dataUrl: string) => void;
+  onSaveToGallery?: (dataUrl: string) => Promise<void>;
 }) {
-  const navigate = useNavigate();
+  const routeBack = useRouteBack();
   const { t } = useAppTranslate();
   const { undo, redo } = useImageEditor();
   const [history] = useAtom(store.historyAtom);
@@ -28,8 +31,9 @@ export function EditorHeader({
       <Button
         variant="ghost"
         size="icon"
-        onClick={() => navigate(-1)}
+        onClick={routeBack}
         disabled={loading || saving}
+        aria-label={t("pages.editor.back")}
         className="rounded-full text-neutral-400 transition-all duration-200 hover:scale-105 hover:bg-neutral-900 hover:text-neutral-100 active:scale-95"
       >
         <ArrowLeft className="h-5 w-5" />
@@ -56,20 +60,13 @@ export function EditorHeader({
         </Button>
       </div>
 
-      <Button
-        onClick={() => srcImage && onSave?.(srcImage)}
+      <EditorSaveMenu
         disabled={loading || saving || !srcImage}
-        className="bg-primary text-primary-foreground hover:bg-primary/95 h-9 rounded-full px-5 font-bold shadow-md transition-all duration-200 hover:scale-103 hover:shadow-lg active:scale-97"
-      >
-        {saving ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ...
-          </>
-        ) : (
-          t("pages.editor.download")
-        )}
-      </Button>
+        saving={saving}
+        srcImage={srcImage}
+        onSave={onSave}
+        onSaveToGallery={onSaveToGallery}
+      />
     </header>
   );
 }

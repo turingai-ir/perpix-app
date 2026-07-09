@@ -11,9 +11,13 @@ import { Button } from "@/components/ui/button";
 
 interface EditorWorkspaceProps {
   onSave?: (dataUrl: string) => void;
+  onSaveToGallery?: (dataUrl: string) => Promise<void>;
 }
 
-export function EditorWorkspace({ onSave }: EditorWorkspaceProps) {
+export function EditorWorkspace({
+  onSave,
+  onSaveToGallery,
+}: EditorWorkspaceProps) {
   const activeTool = useAtomValue(store.activeToolAtom);
   const loading = useAtomValue(store.loadingAtom);
   const [error, setError] = useAtom(store.errorAtom);
@@ -23,7 +27,7 @@ export function EditorWorkspace({ onSave }: EditorWorkspaceProps) {
       className="relative flex h-full w-full flex-col overflow-hidden bg-neutral-950 text-neutral-100"
       dir="rtl"
     >
-      <EditorHeader onSave={onSave} />
+      <EditorHeader onSave={onSave} onSaveToGallery={onSaveToGallery} />
 
       <div className="relative w-full flex-1">
         {loading && (

@@ -125,7 +125,16 @@ export const router = createBrowserRouter([
       },
       {
         path: APP_ROUTES_KEY.editor.path,
-        Component: EditorPage,
+        children: [
+          {
+            index: true,
+            Component: EditorPage,
+          },
+          {
+            path: ":fileUuid",
+            Component: EditorPage,
+          },
+        ],
         loader: () => {
           const token = cookies().get(APP_KEYS.COOKIES.ACCESS_TOKEN);
           if (!token) {

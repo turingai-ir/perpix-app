@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from "react";
-import { Stage, Layer, Image as KonvaImage, Group } from "react-konva";
+import { Stage, Layer } from "react-konva";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import * as store from "../_hooks/store";
 import { useZoomPan } from "../_hooks/use-zoom-pan";
 import { useContainerSize } from "../_hooks/use-container-size";
-import { CropOverlay } from "./crop-overlay";
 import { loadImage } from "../_services/image-processor";
 import { getPresetFilter } from "../_services/filter-effects";
 import Konva from "konva";
+import { EditorCanvasImage } from "./editor-canvas-image";
 
 export function EditorCanvas() {
   const srcImage = useAtomValue(store.srcImageAtom);
@@ -69,8 +69,7 @@ export function EditorCanvas() {
 
   if (!srcImage || !imgEl) return null;
 
-  const scale =
-    Math.min(size.width / imgEl.width, size.height / imgEl.height) * 0.9;
+  const scale = Math.min(size.width / imgEl.width, size.height / imgEl.height);
   const w = imgEl.width * scale,
     h = imgEl.height * scale;
   const x = (size.width - w) / 2,
@@ -104,21 +103,19 @@ export function EditorCanvas() {
         onDragEnd={zp.handleDragEnd}
       >
         <Layer>
-          <Group x={x} y={y}>
-            <KonvaImage
-              ref={imageRef}
-              image={imgEl}
-              width={w}
-              height={h}
-              filters={kFilters}
-              brightness={filters.brightness}
-              contrast={filters.contrast}
-              blurRadius={filters.blur}
-            />
-            {activeTool === "crop" && cropConfig.width > 0 && (
-              <CropOverlay imageWidth={w} imageHeight={h} />
-            )}
-          </Group>
+          <EditorCanvasImage
+            imageRef={imageRef}
+            image={imgEl}
+            x={x}
+            y={y}
+            width={w}
+            height={h}
+            filters={kFilters}
+            brightness={filters.brightness}
+            contrast={filters.contrast}
+            blurRadius={filters.blur}
+            showCropOverlay={activeTool === "crop" && cropConfig.width > 0}
+          />
         </Layer>
       </Stage>
     </div>

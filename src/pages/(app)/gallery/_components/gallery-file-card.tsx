@@ -1,6 +1,7 @@
 import { useState, type FC, type MouseEvent } from "react";
-import { Download, Trash2 } from "lucide-react";
+import { Download, Trash2, Image as ImageIcon } from "lucide-react";
 import { toast } from "sonner";
+import { useNavigate } from "react-router";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -48,6 +49,7 @@ export const GalleryFileCard: FC<GalleryFileCardProps> = ({
   const [isDownloading, setIsDownloading] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const { deleteFileState } = useDeleteUserFile();
+  const navigate = useNavigate();
   const previewUrl = previewUrls?.preview_url;
   const downloadUrl = previewUrls?.download_url;
   const fileName = file.file_name || t("common.emptyTitle");
@@ -191,7 +193,19 @@ export const GalleryFileCard: FC<GalleryFileCardProps> = ({
             ) : null}
           </div>
 
-          <div className="flex w-full shrink-0 items-center justify-center pb-2">
+          <div className="flex w-full shrink-0 items-center justify-center gap-3 pb-2">
+            {mediaType === "image" && (
+              <Button
+                type="button"
+                variant="secondary"
+                size="lg"
+                className="h-11 px-5 text-base gap-2"
+                onClick={() => navigate(`/editor/${file.uuid}`)}
+              >
+                <ImageIcon className="h-4 w-4 text-emerald-500" />
+                <span>{t("pages.editor.edit")}</span>
+              </Button>
+            )}
             <Button
               asChild
               variant="secondary"
