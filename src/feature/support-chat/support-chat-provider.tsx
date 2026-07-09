@@ -4,6 +4,10 @@ const ILA_CHAT_WIDGET_SCRIPT_ID = "ILACHATWIDGETSCRIPT";
 
 export function SupportChatProvider() {
   useEffect(() => {
+    if (import.meta.env.DEV) {
+      return;
+    }
+
     let script: HTMLScriptElement | null = null;
 
     const loadIlaChat = () => {
