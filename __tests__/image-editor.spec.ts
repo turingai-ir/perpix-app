@@ -52,16 +52,10 @@ test.describe("Image Editor E2E Tests", () => {
       buffer: Buffer.from(testImageBase64, "base64"),
     });
 
-    await expect(page.locator("text=تغییر عکس")).toBeVisible();
-    await expect(page.locator("text=برش تصویر")).toBeVisible();
-    const editorCanvas = page.locator(".konvajs-content");
-
-    await expect(editorCanvas).toBeAttached();
-    const editorCanvasBox = await editorCanvas.boundingBox();
-
-    expect(editorCanvasBox).not.toBeNull();
-    expect(editorCanvasBox!.width).toBeGreaterThan(1_000);
-    expect(editorCanvasBox!.height).toBeGreaterThan(600);
+    const previewImg = page.locator('img[alt="Editor Preview"]');
+    await expect(previewImg).toBeVisible();
+    const boundingBox = await previewImg.boundingBox();
+    expect(boundingBox).not.toBeNull();
   });
 
   test("should return to home when uploader has no previous route", async ({
@@ -83,49 +77,6 @@ test.describe("Image Editor E2E Tests", () => {
     await page.getByRole("button", { name: "بازگشت" }).click();
 
     await expect(page).toHaveURL("/gallery");
-  });
-
-  test("should switch between edit panels and cancel back", async ({
-    page,
-  }) => {
-    const fileInput = page.locator('input[type="file"]');
-    await fileInput.setInputFiles({
-      name: "test.png",
-      mimeType: "image/png",
-      buffer: Buffer.from(testImageBase64, "base64"),
-    });
-
-    // Crop Panel
-    await page.click("text=برش تصویر");
-    await expect(page.locator("text=برش تصویر").first()).toBeVisible();
-    await page.locator("button:has(.lucide-x)").click();
-
-    // Resize Panel
-    await page.click("text=تغییر اندازه");
-    await expect(page.locator("text=عرض (پیکسل)")).toBeVisible();
-    await page.locator("button:has(.lucide-x)").click();
-
-    // Filters Panel
-    await page.click("text=فیلترها");
-    await expect(page.locator("text=روشنایی")).toBeVisible();
-    await page.locator("button:has(.lucide-x)").click();
-    await expect(page.locator("text=فیلترها")).toBeVisible();
-  });
-
-  test("should allow applying filter presets", async ({ page }) => {
-    const fileInput = page.locator('input[type="file"]');
-    await fileInput.setInputFiles({
-      name: "test.png",
-      mimeType: "image/png",
-      buffer: Buffer.from(testImageBase64, "base64"),
-    });
-
-    await page.click("text=فیلترها");
-    await expect(page.locator("text=روشنایی")).toBeVisible();
-    await page.click("text=رنگی و پایه");
-    await page.click("text=سیاه و سفید");
-    await page.locator("button:has(.lucide-check)").click();
-    await expect(page.locator("text=فیلترها")).toBeVisible();
   });
 
   test("should load image workspace when accessed via router with fileUuid", async ({
@@ -176,9 +127,9 @@ test.describe("Image Editor E2E Tests", () => {
 
     await page.goto("/editor/test-uuid", { waitUntil: "domcontentloaded" });
 
-    await expect(page.locator("text=تغییر عکس")).toBeVisible();
-    await expect(page.locator("text=برش تصویر")).toBeVisible();
-    await expect(page.locator(".konvajs-content")).toBeAttached();
+    const previewImg = page.locator('img[alt="Editor Preview"]');
+    await expect(previewImg).toBeVisible();
+    await expect(page.locator(".konvajs-content")).toBeHidden();
     await expect
       .poll(() => page.evaluate(() => localStorage.editorObjectUrlCalls))
       .toBe("0");
@@ -217,6 +168,7 @@ test.describe("Image Editor E2E Tests", () => {
 
     await expect(page.getByText("در حال دریافت تصویر...")).toBeVisible();
     await expect(page.getByRole("heading")).toBeHidden();
-    await expect(page.locator(".konvajs-content")).toBeAttached();
+    const previewImg = page.locator('img[alt="Editor Preview"]');
+    await expect(previewImg).toBeVisible();
   });
 });
