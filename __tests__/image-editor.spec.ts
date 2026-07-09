@@ -54,7 +54,14 @@ test.describe("Image Editor E2E Tests", () => {
 
     await expect(page.locator("text=تغییر عکس")).toBeVisible();
     await expect(page.locator("text=برش تصویر")).toBeVisible();
-    await expect(page.locator(".konvajs-content")).toBeAttached();
+    const editorCanvas = page.locator(".konvajs-content");
+
+    await expect(editorCanvas).toBeAttached();
+    const editorCanvasBox = await editorCanvas.boundingBox();
+
+    expect(editorCanvasBox).not.toBeNull();
+    expect(editorCanvasBox!.width).toBeGreaterThan(1_000);
+    expect(editorCanvasBox!.height).toBeGreaterThan(600);
   });
 
   test("should return to home when uploader has no previous route", async ({

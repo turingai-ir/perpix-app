@@ -1,13 +1,15 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { Stage, Layer } from "react-konva";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import * as store from "../_hooks/store";
 import { useZoomPan } from "../_hooks/use-zoom-pan";
 import { useContainerSize } from "../_hooks/use-container-size";
-import { loadImage } from "../_services/image-processor";
-import { getPresetFilter } from "../_services/filter-effects";
 import Konva from "konva";
 import { EditorCanvasImage } from "./editor-canvas-image";
+import { useEditorCanvasLayout } from "../_hooks/use-editor-canvas-layout";
+import { useEditorImageElement } from "../_hooks/use-editor-image-element";
+import { useEditorKonvaFilters } from "../_hooks/use-editor-konva-filters";
+import { useEditorCropInitializer } from "../_hooks/use-editor-crop-initializer";
 
 export function EditorCanvas() {
   const srcImage = useAtomValue(store.srcImageAtom);
@@ -16,25 +18,25 @@ export function EditorCanvas() {
   const zoom = useAtomValue(store.zoomAtom);
   const pan = useAtomValue(store.panAtom);
   const currentDim = useAtomValue(store.currentDimensionsAtom);
-  const setLoading = useSetAtom(store.loadingAtom);
   const [cropConfig, setCropConfig] = useAtom(store.cropConfigAtom);
-  const [imgEl, setImgEl] = useState<HTMLImageElement | null>(null);
+  const imgEl = useEditorImageElement(srcImage);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<Konva.Image>(null);
   const size = useContainerSize(containerRef);
   const zp = useZoomPan();
-
-  useEffect(() => {
-    if (!srcImage) return;
-    setLoading(true);
-    loadImage(srcImage)
-      .then((img) => {
-        setImgEl(img);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, [srcImage, setLoading]);
+  const kFilters = useEditorKonvaFilters(filters);
+  const imageLayout = useEditorCanvasLayout(
+    size,
+    imgEl ? { width: imgEl.width, height: imgEl.height } : null,
+  );
+  useEditorCropInitializer({
+    activeTool,
+    cropConfig,
+    currentDimensions: currentDim,
+    imageElement: imgEl,
+    setCropConfig,
+  });
 
   useEffect(() => {
     if (imageRef.current && imgEl) {
@@ -42,46 +44,11 @@ export function EditorCanvas() {
         imageRef.current.clearCache();
         imageRef.current.cache();
         imageRef.current.getLayer()?.batchDraw();
-      } catch (e) {
-        console.warn("Konva cache failed:", e);
+      } catch {
+        // Konva can reject cache updates for transient image states.
       }
     }
   }, [filters, imgEl]);
-
-  useEffect(() => {
-    if (activeTool === "crop" && cropConfig.width === 0 && imgEl) {
-      setCropConfig({
-        aspect: null,
-        x: 0,
-        y: 0,
-        width: currentDim.width,
-        height: currentDim.height,
-      });
-    }
-  }, [
-    activeTool,
-    cropConfig.width,
-    imgEl,
-    currentDim.width,
-    currentDim.height,
-    setCropConfig,
-  ]);
-
-  if (!srcImage || !imgEl) return null;
-
-  const scale = Math.min(size.width / imgEl.width, size.height / imgEl.height);
-  const w = imgEl.width * scale,
-    h = imgEl.height * scale;
-  const x = (size.width - w) / 2,
-    y = (size.height - h) / 2;
-
-  const presetFilter = getPresetFilter(filters.preset);
-  const kFilters = [
-    ...(filters.brightness !== 0 ? [Konva.Filters.Brighten] : []),
-    ...(filters.contrast !== 0 ? [Konva.Filters.Contrast] : []),
-    ...(filters.blur > 0 ? [Konva.Filters.Blur] : []),
-    ...(presetFilter ? [presetFilter] : []),
-  ];
 
   return (
     <div
@@ -103,19 +70,21 @@ export function EditorCanvas() {
         onDragEnd={zp.handleDragEnd}
       >
         <Layer>
-          <EditorCanvasImage
-            imageRef={imageRef}
-            image={imgEl}
-            x={x}
-            y={y}
-            width={w}
-            height={h}
-            filters={kFilters}
-            brightness={filters.brightness}
-            contrast={filters.contrast}
-            blurRadius={filters.blur}
-            showCropOverlay={activeTool === "crop" && cropConfig.width > 0}
-          />
+          {imgEl && imageLayout && (
+            <EditorCanvasImage
+              imageRef={imageRef}
+              image={imgEl}
+              x={imageLayout.imageX}
+              y={imageLayout.imageY}
+              width={imageLayout.imageWidth}
+              height={imageLayout.imageHeight}
+              filters={kFilters}
+              brightness={filters.brightness}
+              contrast={filters.contrast}
+              blurRadius={filters.blur}
+              showCropOverlay={activeTool === "crop" && cropConfig.width > 0}
+            />
+          )}
         </Layer>
       </Stage>
     </div>
