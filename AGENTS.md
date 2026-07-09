@@ -29,7 +29,7 @@ immutability). \* **Routing System:** `React Router v8` (Utilizing
 code-splitting boundaries). \* **Form & Validation Ecosystem:**
 `React Hook Form` paired with `Zod` schemas. \* **Heavy Interactive
 Canvas:** `Konva` + `React Konva` (Isolated, performance-critical visual
-layers). \* **Offline Layers:** `idb` + `idb-keyval` (IndexedDB
+layers). \* **Offline Layers:** `idb-keyval` (IndexedDB
 abstraction) driven by Workbox-window service workers. \* **Resiliency
 Tracking:** `@sentry/react` error boundaries. \* **Test Automation
 Engine:** `Playwright` (For rigorous component-level behavioral specs

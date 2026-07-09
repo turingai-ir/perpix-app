@@ -38,7 +38,6 @@
     "cmdk": "^1.1.1",
     "dayjs": "^1.11.21",
     "i18next": "^26.3.2",
-    "idb": "^8.0.3",
     "idb-keyval": "^6.2.5",
     "input-otp": "^1.4.2",
     "jalali-plugin-dayjs": "^1.1.4",

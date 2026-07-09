@@ -256,6 +256,58 @@
     }
   },
   "pages": {
+    "editor": {
+      "title": "ویرایشگر تصویر",
+      "smartTitle": "ویرایشگر هوشمند تصویر",
+      "uploaderDesc": "برای شروع، یک عکس را انتخاب کنید. می‌توانید آن را برش دهید، تغییر اندازه دهید یا فیلترهای مختلف اعمال کنید.",
+      "uploaderBtn": "انتخاب عکس از گالری یا دوربین",
+      "changeImage": "تغییر عکس",
+      "cropImage": "برش تصویر",
+      "resizeImage": "تغییر اندازه",
+      "filters": "فیلترها",
+      "download": "دانلود",
+      "widthPx": "عرض (پیکسل)",
+      "heightPx": "ارتفاع (پیکسل)",
+      "brightness": "روشنایی",
+      "contrast": "کنتراست",
+      "blur": "تاری",
+      "sepia": "سپیا",
+      "grayscale": "سیاه و سفید",
+      "filtersTitle": "فیلترهای تصویر",
+      "uploaderError": "لطفاً یک فایل تصویر انتخاب کنید",
+      "uploaderSuccess": "تصویر با موفقیت ویرایش و ذخیره شد",
+      "cropFree": "آزاد",
+      "categories": {
+        "manual": "تنظیمات دستی",
+        "color": "رنگی و پایه",
+        "cinematic": "هنری و سینمایی",
+        "atmosphere": "فصل‌ها و طبیعت"
+      },
+      "presets": {
+        "none": "بدون فیلتر",
+        "grayscale": "سیاه و سفید",
+        "sepia": "سپیا",
+        "vintage": "کلاسیک",
+        "warm": "گرم",
+        "cool": "سرد",
+        "vivid": "پویا",
+        "dramatic": "دراماتیک",
+        "cinematic": "سینمایی",
+        "cyberpunk": "سایبرپانک",
+        "golden": "طلایی",
+        "noir": "نوآر",
+        "matte": "مات",
+        "lomo": "لومو",
+        "retro": "رترو",
+        "rosy": "گلبهی",
+        "forest": "جنگلی",
+        "invert": "معکوس",
+        "fade": "محو",
+        "solarize": "سولاریزه",
+        "noise": "نویز",
+        "winter": "زمستانی"
+      }
+    },
     "app": {
       "layout": {
         "chooseModel": {
@@ -283,6 +335,10 @@
           "menu": {
             "gallery": {
               "label": "گالری"
+            },
+            "editor": {
+              "badge": "آزمایشی",
+              "label": "ویرایشگر تصویر"
             },
             "imageGeneration": {
               "label": "تولید عکس"

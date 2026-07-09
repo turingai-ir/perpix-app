@@ -77,4 +77,10 @@ export const APP_ROUTES_KEY = {
       },
     },
   },
+  editor: {
+    path: "/editor",
+    meta: {
+      title: "pages.editor.title",
+    },
+  },
 } as const;

@@ -1,3 +1,4 @@
+// @ts-ignore
 import { openDB, type IDBPDatabase } from "idb";
 
 import { APP_KEYS } from "./app-keys";
@@ -9,7 +10,7 @@ export const getDB = async (
   storageName: StorageName,
 ): Promise<IDBPDatabase> => {
   return openDB(APP_KEYS.DB.NAME, 1, {
-    upgrade(db) {
+    upgrade(db: any) {
       if (!db.objectStoreNames.contains(storageName)) {
         db.createObjectStore(storageName);
       }

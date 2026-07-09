@@ -529,7 +529,8 @@ export interface paths {
             readonly cookie?: never;
         };
         readonly get?: never;
-        readonly put?: never;
+        /** Replace File */
+        readonly put: operations["replace_file_file_manager_files__file_uuid__put"];
         readonly post?: never;
         /** Delete File */
         readonly delete: operations["delete_file_file_manager_files__file_uuid__delete"];
@@ -1339,6 +1340,11 @@ export interface components {
          * @enum {string}
          */
         readonly AiTaskTypeEnum: "TEXT" | "IMAGE" | "AUDIO" | "VIDEO";
+        /** Body_replace_file_file_manager_files__file_uuid__put */
+        readonly Body_replace_file_file_manager_files__file_uuid__put: {
+            /** File */
+            readonly file?: string | null;
+        };
         /** Body_simple_upload_file_manager_simple_upload_post */
         readonly Body_simple_upload_file_manager_simple_upload_post: {
             /** File */
@@ -2366,6 +2372,7 @@ export type SchemaAiTaskMessageStatusEnum = components['schemas']['AiTaskMessage
 export type SchemaAiTaskResponse = components['schemas']['AiTaskResponse'];
 export type SchemaAiTaskRuleEnum = components['schemas']['AiTaskRuleEnum'];
 export type SchemaAiTaskTypeEnum = components['schemas']['AiTaskTypeEnum'];
+export type SchemaBodyReplaceFileFileManagerFilesFileUuidPut = components['schemas']['Body_replace_file_file_manager_files__file_uuid__put'];
 export type SchemaBodySimpleUploadFileManagerSimpleUploadPost = components['schemas']['Body_simple_upload_file_manager_simple_upload_post'];
 export type SchemaBodyVerifyPaymentPaymentVerifyPost = components['schemas']['Body_verify_payment_payment_verify_post'];
 export type SchemaChargeWalletRequest = components['schemas']['ChargeWalletRequest'];
@@ -3320,6 +3327,41 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["FileManagerPresignedUrlsListResponse"];
+                };
+            };
+            /** @description Validation Error */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    readonly replace_file_file_manager_files__file_uuid__put: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path: {
+                readonly file_uuid: string;
+            };
+            readonly cookie?: never;
+        };
+        readonly requestBody?: {
+            readonly content: {
+                readonly "multipart/form-data": components["schemas"]["Body_replace_file_file_manager_files__file_uuid__put"];
+            };
+        };
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["FileManagerUploadFileResponse"];
                 };
             };
             /** @description Validation Error */

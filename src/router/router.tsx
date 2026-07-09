@@ -15,6 +15,7 @@ import ProfileSettingsPage from "@/pages/profile/settings/page";
 import ProfilePaymentsPage from "@/pages/profile/payments/page";
 import ProfileWalletTransactionsPage from "@/pages/profile/wallet-transactions/page";
 import PaymentResultPage from "@/pages/payment/result/page";
+import EditorPage from "@/pages/editor/page";
 import { cookies } from "@/utils/cookies";
 import { APP_KEYS } from "@/utils";
 import { ErrorFallbackPage } from "@/components/custom/error-boundary";
@@ -121,6 +122,20 @@ export const router = createBrowserRouter([
             ],
           },
         ],
+      },
+      {
+        path: APP_ROUTES_KEY.editor.path,
+        Component: EditorPage,
+        loader: () => {
+          const token = cookies().get(APP_KEYS.COOKIES.ACCESS_TOKEN);
+          if (!token) {
+            throw redirect(APP_ROUTES_KEY.auth.login.path);
+          }
+          return null;
+        },
+        handle: {
+          title: APP_ROUTES_KEY.editor.meta.title,
+        },
       },
       {
         path: APP_ROUTES_KEY.auth.login.path,
