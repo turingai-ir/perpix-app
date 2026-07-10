@@ -1,5 +1,7 @@
 import { useMemo } from "react";
 import { Image as KonvaImage, Layer, Shape, Stage } from "react-konva";
+import { ImageAlignmentGuides } from "./image-alignment-guides";
+import { useImageAlignmentSnap } from "../_hooks/use-image-alignment-snap";
 import { useImageStageSize } from "../_hooks/use-image-stage-size";
 import { useLoadedImage } from "../_hooks/use-loaded-image";
 
@@ -29,6 +31,13 @@ export function ImageEditor({ src }: ImageEditorProps) {
   const image = useLoadedImage(src);
   const { containerRef, stageSize } = useImageStageSize(image);
   const checkerboardPattern = useMemo(() => createCheckerboardPattern(), []);
+  const { alignmentGuides, clearAlignmentGuides, handleImageDragMove } =
+    useImageAlignmentSnap({
+      imageHeight: stageSize?.height ?? 0,
+      imageWidth: stageSize?.width ?? 0,
+      stageHeight: stageSize?.height ?? 0,
+      stageWidth: stageSize?.width ?? 0,
+    });
 
   return (
     <div
@@ -59,6 +68,13 @@ export function ImageEditor({ src }: ImageEditorProps) {
               width={stageSize.width}
               height={stageSize.height}
               draggable
+              onDragMove={handleImageDragMove}
+              onDragEnd={clearAlignmentGuides}
+            />
+            <ImageAlignmentGuides
+              guides={alignmentGuides}
+              stageHeight={stageSize.height}
+              stageWidth={stageSize.width}
             />
           </Layer>
         </Stage>
