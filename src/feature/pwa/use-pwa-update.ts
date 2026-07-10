@@ -15,6 +15,36 @@ export function usePwaUpdate(options: PwaUpdateOptions = {}): PwaUpdateState {
   const [registration, setRegistration] =
     useState<ServiceWorkerRegistration | null>(null);
 
+  // Setup a global controllerchange listener to reload the page when the new SW becomes active.
+  // We use sessionStorage to ensure ONLY the tab that clicked "Update" reloads,
+  // preventing sudden reloads in other tabs where the user might be in the middle of an operation.
+  useEffect(() => {
+    if (!("serviceWorker" in navigator)) {
+      return;
+    }
+
+    let refreshing = false;
+    const handleControllerChange = () => {
+      if (refreshing) return;
+      if (sessionStorage.getItem("pwa-update-initiated") === "true") {
+        refreshing = true;
+        sessionStorage.removeItem("pwa-update-initiated");
+        window.location.reload();
+      }
+    };
+
+    navigator.serviceWorker.addEventListener(
+      "controllerchange",
+      handleControllerChange,
+    );
+    return () => {
+      navigator.serviceWorker.removeEventListener(
+        "controllerchange",
+        handleControllerChange,
+      );
+    };
+  }, []);
+
   useEffect(() => {
     if (!registration || updateCheckIntervalMs === false) {
       return;
@@ -44,6 +74,7 @@ export function usePwaUpdate(options: PwaUpdateOptions = {}): PwaUpdateState {
 
   const update = useCallback(async () => {
     setIsUpdating(true);
+    sessionStorage.setItem("pwa-update-initiated", "true");
     await updateServiceWorker(true);
   }, [updateServiceWorker]);
 
