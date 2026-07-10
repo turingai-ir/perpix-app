@@ -21,11 +21,8 @@ export default function EditorPage() {
   const editorImageUrl =
     getFilePreviewState.data?.download_url ??
     getFilePreviewState.data?.preview_url;
-  const {
-    imageSource,
-    remoteImageLoading,
-    setLocalImageFile,
-  } = useEditorImageSource(editorImageUrl);
+  const { imageSource, remoteImageLoading, setLocalImageFile } =
+    useEditorImageSource(editorImageUrl);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -50,7 +47,7 @@ export default function EditorPage() {
     <div className="bg-background flex h-dvh w-full flex-col">
       {imageSource ? (
         <div className="relative h-full w-full flex-1">
-          <ImageEditor src={imageSource} />
+          <ImageEditor documentId={fileUuid} src={imageSource} />
         </div>
       ) : (
         <EditorUploaderEmpty onFileChange={handleFileChange} />
@@ -58,4 +55,3 @@ export default function EditorPage() {
     </div>
   );
 }
-

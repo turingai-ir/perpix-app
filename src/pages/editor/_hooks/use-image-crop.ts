@@ -4,13 +4,7 @@ import type { CropArea } from "../_model/crop-area";
 
 const FULL_AREA: CropArea = { height: 1, width: 1, x: 0, y: 0 };
 
-export function useImageCrop(image: HTMLImageElement) {
-  const [appliedCrop, setAppliedCrop] = useState<CropArea>(() => ({
-    height: image.naturalHeight,
-    width: image.naturalWidth,
-    x: 0,
-    y: 0,
-  }));
+export function useImageCrop() {
   const [draftCrop, setDraftCrop] = useState<CropArea>(FULL_AREA);
   const [isCropping, setIsCropping] = useState(false);
   const [selectedRatio, setSelectedRatio] = useState<CropRatioId>("free");
@@ -41,18 +35,18 @@ export function useImageCrop(image: HTMLImageElement) {
     setDraftCrop({ height: 1, width, x: (1 - width) / 2, y: 0 });
   };
 
-  const applyCrop = () => {
-    setAppliedCrop({
+  const applyCrop = (appliedCrop: CropArea): CropArea => {
+    const nextCrop = {
       height: appliedCrop.height * draftCrop.height,
       width: appliedCrop.width * draftCrop.width,
       x: appliedCrop.x + appliedCrop.width * draftCrop.x,
       y: appliedCrop.y + appliedCrop.height * draftCrop.y,
-    });
+    };
     setIsCropping(false);
+    return nextCrop;
   };
 
   return {
-    appliedCrop,
     applyCrop,
     beginCrop,
     cancelCrop: () => setIsCropping(false),

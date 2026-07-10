@@ -75,7 +75,7 @@ export default defineConfig({
   /* Run your local dev server before starting the tests */
   webServer: {
     command:
-      "VITE_PERPIX_API_URL=http://127.0.0.1:5179 CHOKIDAR_USEPOLLING=true WATCHPACK_POLLING=true pnpm exec vite --host 127.0.0.1 --port 5179 --strictPort",
+      "VITE_PERPIX_API_URL=http://127.0.0.1:5179 VITE_APP_PERPIX_TELEGRAM_SUPPORT=https://t.me/perpix_support_test CHOKIDAR_USEPOLLING=true WATCHPACK_POLLING=true pnpm exec vite --host 127.0.0.1 --port 5179 --strictPort",
     url: "http://127.0.0.1:5179",
     reuseExistingServer: !process.env.CI,
   },

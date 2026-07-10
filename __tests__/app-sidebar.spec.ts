@@ -28,6 +28,24 @@ test.describe("App sidebar", () => {
     expect(editorBox).not.toBeNull();
     expect(editorBox!.y).toBeGreaterThan(galleryBox!.y);
   });
+
+  test("provides chat and Telegram support options", async ({ page }) => {
+    await page.goto("/");
+
+    await expect(
+      page.getByRole("button", { name: "پشتیبانی چت" }),
+    ).toBeVisible();
+
+    const telegramSupportLink = page.getByRole("link", {
+      name: "پشتیبانی تلگرام",
+    });
+    await expect(telegramSupportLink).toBeVisible();
+    await expect(telegramSupportLink).toHaveAttribute(
+      "href",
+      "https://t.me/perpix_support_test",
+    );
+    await expect(telegramSupportLink).toHaveAttribute("target", "_blank");
+  });
 });
 
 async function mockApi(page: Page) {

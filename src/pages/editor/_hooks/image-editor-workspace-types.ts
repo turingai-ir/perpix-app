@@ -25,11 +25,15 @@ export interface ImageEditorWorkspaceViewModel {
   applyCrop: () => void;
   beginCrop: () => void;
   cancelCrop: () => void;
+  canRedo: boolean;
+  canUndo: boolean;
   changeCrop: (crop: CropArea) => void;
   clearAlignmentGuides: () => void;
   deselectImage: () => void;
   finishImageDrag: (position: CropDisplayOrigin) => void;
   moveImage: (event: Konva.KonvaEventObject<DragEvent>) => void;
+  redo: () => void;
   selectCropRatio: (ratio: CropRatioId) => void;
   selectImage: () => void;
+  undo: () => void;
 }

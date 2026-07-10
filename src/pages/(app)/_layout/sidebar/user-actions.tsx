@@ -1,5 +1,5 @@
 import { type FC } from "react";
-import { MessageCircle, Sparkles } from "lucide-react";
+import { MessageCircle, Send, Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { useActiveSubscription, usePricingFeature } from "@/feature/pricing";
@@ -12,6 +12,7 @@ const AppLayoutSidebarUserActions: FC = () => {
   const { openChatWidget } = useSupportChatWidget();
   const { openPricingFeature } = usePricingFeature();
   const activeSubscriptionState = useActiveSubscription();
+  const telegramSupportUrl = import.meta.env.VITE_APP_PERPIX_TELEGRAM_SUPPORT;
 
   return (
     <div className="flex w-full flex-col gap-2">
@@ -31,7 +32,13 @@ const AppLayoutSidebarUserActions: FC = () => {
         onClick={() => openChatWidget()}
       >
         <MessageCircle />
-        {t("pages.app.layout.sidebar.user.support")}
+        {t("pages.app.layout.sidebar.user.chatSupport")}
+      </Button>
+      <Button asChild className="w-full justify-start" variant="ghost">
+        <a href={telegramSupportUrl} rel="noreferrer" target="_blank">
+          <Send />
+          {t("pages.app.layout.sidebar.user.telegramSupport")}
+        </a>
       </Button>
     </div>
   );

@@ -7,27 +7,26 @@ import {
   denormalizePosition,
   getCenteredPosition,
   normalizeCrop,
-  normalizePosition,
   type CropArea,
   type CropDisplayOrigin,
 } from "../_model/crop-area";
 import type { CropRatioId } from "../_model/crop-ratios";
 import type { ImageEditorWorkspaceViewModel } from "./image-editor-workspace-types";
+import { useImageWorkspaceHistory } from "./use-image-workspace-history";
 
-const ZERO_POSITION: CropDisplayOrigin = { x: 0, y: 0 };
 const ZERO_SIZE = { height: 0, width: 0 };
 
 export function useImageEditorWorkspace(
   image: HTMLImageElement,
   containerRef: RefObject<HTMLDivElement | null>,
+  documentId?: string,
 ): ImageEditorWorkspaceViewModel {
-  const crop = useImageCrop(image);
+  const crop = useImageCrop();
   const [isImageSelected, setIsImageSelected] = useState(false);
-  const [normalizedImagePosition, setNormalizedImagePosition] =
-    useState(ZERO_POSITION);
+  const history = useImageWorkspaceHistory(image, documentId);
   const { imageSize, stageSize } = useImageStageSize(
     image,
-    crop.appliedCrop,
+    history.current.appliedCrop,
     containerRef,
   );
   const cardPosition = getCenteredPosition(
@@ -35,7 +34,11 @@ export function useImageEditorWorkspace(
     imageSize ?? ZERO_SIZE,
   );
   const imagePosition = imageSize
-    ? denormalizePosition(normalizedImagePosition, imageSize, cardPosition)
+    ? denormalizePosition(
+        history.current.normalizedImagePosition,
+        imageSize,
+        cardPosition,
+      )
     : cardPosition;
   const snap = useImageAlignmentSnap({
     imageHeight: imageSize?.height ?? 0,
@@ -46,9 +49,7 @@ export function useImageEditorWorkspace(
 
   const finishImageDrag = (position: CropDisplayOrigin) => {
     if (!imageSize) return;
-    setNormalizedImagePosition(
-      normalizePosition(position, imageSize, cardPosition),
-    );
+    history.finishImageDrag(position, imageSize, cardPosition);
   };
   const changeCrop = (nextCrop: CropArea) => {
     if (!imageSize) return;
@@ -60,7 +61,7 @@ export function useImageEditorWorkspace(
 
   return {
     alignmentGuides: snap.alignmentGuides,
-    appliedCrop: crop.appliedCrop,
+    appliedCrop: history.current.appliedCrop,
     cardPosition,
     displayedCrop: imageSize
       ? denormalizeCrop(crop.draftCrop, imageSize, imagePosition)
@@ -74,7 +75,9 @@ export function useImageEditorWorkspace(
     selectedCropRatio: crop.selectedRatio,
     selectedCropRatioValue: crop.selectedRatioValue,
     stageSize,
-    applyCrop: crop.applyCrop,
+    applyCrop: () => {
+      history.applyCrop(crop.applyCrop(history.current.appliedCrop));
+    },
     beginCrop: crop.beginCrop,
     cancelCrop: crop.cancelCrop,
     changeCrop,
@@ -84,5 +87,9 @@ export function useImageEditorWorkspace(
     moveImage: snap.handleImageDragMove,
     selectCropRatio,
     selectImage: () => setIsImageSelected(true),
+    canRedo: history.canRedo,
+    canUndo: history.canUndo,
+    redo: history.redo,
+    undo: history.undo,
   };
 }

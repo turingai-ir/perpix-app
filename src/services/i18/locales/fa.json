@@ -361,7 +361,8 @@
             "account": "حساب کاربری",
             "logout": "خروج",
             "noPlan": "بدون اشتراک",
-            "support": "پشتیبانی",
+            "chatSupport": "پشتیبانی چت",
+            "telegramSupport": "پشتیبانی تلگرام",
             "upgrade": "خرید اشتراک"
           }
         }

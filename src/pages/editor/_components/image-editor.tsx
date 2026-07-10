@@ -5,15 +5,30 @@ import { ImageEditorToolbar } from "./image-editor-toolbar";
 import { useImageEditorWorkspace } from "../_hooks/use-image-editor-workspace";
 import { useLoadedImage } from "../_hooks/use-loaded-image";
 
-export function ImageEditor({ src }: { src: string }) {
-  const image = useLoadedImage(src);
-  if (!image) return null;
-  return <ImageEditorWorkspace key={src} image={image} />;
+interface ImageEditorProps {
+  documentId?: string;
+  src: string;
 }
 
-function ImageEditorWorkspace({ image }: { image: HTMLImageElement }) {
+export function ImageEditor({ documentId, src }: ImageEditorProps) {
+  const image = useLoadedImage(src);
+  if (!image) return null;
+  return (
+    <ImageEditorWorkspace key={src} documentId={documentId} image={image} />
+  );
+}
+
+interface ImageEditorWorkspaceProps {
+  documentId?: string;
+  image: HTMLImageElement;
+}
+
+function ImageEditorWorkspace({
+  documentId,
+  image,
+}: ImageEditorWorkspaceProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const editor = useImageEditorWorkspace(image, containerRef);
+  const editor = useImageEditorWorkspace(image, containerRef, documentId);
   return (
     <div
       ref={containerRef}
@@ -24,7 +39,11 @@ function ImageEditorWorkspace({ image }: { image: HTMLImageElement }) {
       <ImageEditorHeader
         image={image}
         appliedCrop={editor.appliedCrop}
+        canRedo={editor.canRedo}
+        canUndo={editor.canUndo}
         isCropping={editor.isCropping}
+        onRedo={editor.redo}
+        onUndo={editor.undo}
       />
       {editor.imageSize && editor.stageSize ? (
         <ImageEditorCanvas
