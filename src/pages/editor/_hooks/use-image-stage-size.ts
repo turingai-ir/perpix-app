@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 interface ImageStageSize {
   height: number;
@@ -6,18 +6,19 @@ interface ImageStageSize {
 }
 
 interface ImageStageLayout {
-  containerRef: React.RefObject<HTMLDivElement | null>;
+  imageSize: ImageStageSize | null;
   stageSize: ImageStageSize | null;
 }
 
 export function useImageStageSize(
   image: HTMLImageElement | null,
+  contentSize?: { height: number; width: number } | null,
+  containerRef?: React.RefObject<HTMLDivElement | null>,
 ): ImageStageLayout {
-  const containerRef = useRef<HTMLDivElement>(null);
   const [availableSize, setAvailableSize] = useState({ height: 0, width: 0 });
 
   useEffect(() => {
-    const container = containerRef.current;
+    const container = containerRef?.current;
     if (!container) return;
 
     const resizeObserver = new ResizeObserver(([entry]) => {
@@ -29,23 +30,25 @@ export function useImageStageSize(
 
     resizeObserver.observe(container);
     return () => resizeObserver.disconnect();
-  }, []);
+  }, [containerRef]);
 
   if (!image || !availableSize.width || !availableSize.height) {
-    return { containerRef, stageSize: null };
+    return { imageSize: null, stageSize: null };
   }
 
+  const contentWidth = contentSize?.width ?? image.naturalWidth;
+  const contentHeight = contentSize?.height ?? image.naturalHeight;
   const scale = Math.min(
     1,
-    availableSize.width / image.naturalWidth,
-    availableSize.height / image.naturalHeight,
+    Math.max(1, availableSize.width - 32) / contentWidth,
+    Math.max(1, availableSize.height - 128) / contentHeight,
   );
 
   return {
-    containerRef,
-    stageSize: {
-      height: image.naturalHeight * scale,
-      width: image.naturalWidth * scale,
+    imageSize: {
+      height: contentHeight * scale,
+      width: contentWidth * scale,
     },
+    stageSize: availableSize,
   };
 }

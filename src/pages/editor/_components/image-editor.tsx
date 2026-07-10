@@ -1,84 +1,65 @@
-import { useMemo } from "react";
-import { Image as KonvaImage, Layer, Shape, Stage } from "react-konva";
-import { ImageAlignmentGuides } from "./image-alignment-guides";
-import { useImageAlignmentSnap } from "../_hooks/use-image-alignment-snap";
-import { useImageStageSize } from "../_hooks/use-image-stage-size";
+import { ImageEditorCanvas } from "./image-editor-canvas";
+import { ImageEditorMetadata } from "./image-editor-metadata";
+import { ImageEditorToolbar } from "./image-editor-toolbar";
+import { useImageEditorWorkspace } from "../_hooks/use-image-editor-workspace";
 import { useLoadedImage } from "../_hooks/use-loaded-image";
 
-export interface ImageEditorProps {
-  src: string;
-}
-
-function createCheckerboardPattern(): HTMLCanvasElement {
-  const squareSize = 12;
-  const patternSize = squareSize * 2;
-  const patternCanvas = document.createElement("canvas");
-  const patternContext = patternCanvas.getContext("2d");
-
-  patternCanvas.width = patternSize;
-  patternCanvas.height = patternSize;
-  if (!patternContext) return patternCanvas;
-
-  patternContext.fillStyle = "#f5f5f5";
-  patternContext.fillRect(0, 0, patternSize, patternSize);
-  patternContext.fillStyle = "#d4d4d4";
-  patternContext.fillRect(0, 0, squareSize, squareSize);
-  patternContext.fillRect(squareSize, squareSize, squareSize, squareSize);
-  return patternCanvas;
-}
-
-export function ImageEditor({ src }: ImageEditorProps) {
+export function ImageEditor({ src }: { src: string }) {
   const image = useLoadedImage(src);
-  const { containerRef, stageSize } = useImageStageSize(image);
-  const checkerboardPattern = useMemo(() => createCheckerboardPattern(), []);
-  const { alignmentGuides, clearAlignmentGuides, handleImageDragMove } =
-    useImageAlignmentSnap({
-      imageHeight: stageSize?.height ?? 0,
-      imageWidth: stageSize?.width ?? 0,
-      stageHeight: stageSize?.height ?? 0,
-      stageWidth: stageSize?.width ?? 0,
-    });
+  if (!image) return null;
+  return <ImageEditorWorkspace key={src} image={image} />;
+}
 
+function ImageEditorWorkspace({ image }: { image: HTMLImageElement }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const editor = useImageEditorWorkspace(image, containerRef);
   return (
     <div
       ref={containerRef}
       role="application"
       aria-label="ویرایش تصویر"
-      className="flex h-full w-full items-center justify-center overflow-hidden bg-neutral-950 p-4"
+      className="relative h-full w-full overflow-hidden bg-neutral-950"
     >
-      {image && stageSize ? (
-        <Stage width={stageSize.width} height={stageSize.height}>
-          <Layer>
-            <Shape
-              width={stageSize.width}
-              height={stageSize.height}
-              sceneFunc={(context) => {
-                const pattern = context.createPattern(
-                  checkerboardPattern,
-                  "repeat",
-                );
-                if (!pattern) return;
-                context.fillStyle = pattern;
-                context.fillRect(0, 0, stageSize.width, stageSize.height);
-              }}
-              listening={false}
-            />
-            <KonvaImage
-              image={image}
-              width={stageSize.width}
-              height={stageSize.height}
-              draggable
-              onDragMove={handleImageDragMove}
-              onDragEnd={clearAlignmentGuides}
-            />
-            <ImageAlignmentGuides
-              guides={alignmentGuides}
-              stageHeight={stageSize.height}
-              stageWidth={stageSize.width}
-            />
-          </Layer>
-        </Stage>
+      {editor.imageSize && editor.stageSize ? (
+        <ImageEditorCanvas
+          alignmentGuides={editor.alignmentGuides}
+          appliedCrop={editor.appliedCrop}
+          cardPosition={editor.cardPosition}
+          displayedCrop={editor.displayedCrop}
+          fixedRatio={editor.fixedCropRatio}
+          image={image}
+          imagePosition={editor.imagePosition}
+          imageSize={editor.imageSize}
+          isCropping={editor.isCropping}
+          isImageSelected={editor.isImageSelected}
+          onClearAlignmentGuides={editor.clearAlignmentGuides}
+          onCropChange={editor.changeCrop}
+          onDeselectImage={editor.deselectImage}
+          onImageDragEnd={editor.finishImageDrag}
+          onImageDragMove={editor.moveImage}
+          onSelectImage={editor.selectImage}
+          stageSize={editor.stageSize}
+        />
       ) : null}
+      {editor.imageSize ? (
+        <ImageEditorMetadata
+          crop={editor.draftCrop}
+          imagePosition={editor.imagePosition}
+          imageSize={editor.imageSize}
+          isCropping={editor.isCropping}
+          ratio={editor.selectedCropRatioValue}
+        />
+      ) : null}
+      <ImageEditorToolbar
+        isCropping={editor.isCropping}
+        isImageSelected={editor.isImageSelected}
+        onApplyCrop={editor.applyCrop}
+        onBeginCrop={editor.beginCrop}
+        onCancelCrop={editor.cancelCrop}
+        onSelectRatio={editor.selectCropRatio}
+        selectedRatio={editor.selectedCropRatio}
+      />
     </div>
   );
 }
+import { useRef } from "react";

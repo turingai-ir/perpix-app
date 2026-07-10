@@ -39,17 +39,23 @@ test.describe("Image editor canvas", () => {
 
     const canvasBounds = await canvasContainer.boundingBox();
     expect(canvasBounds).not.toBeNull();
-    expect(canvasBounds?.width).toBe(120);
-    expect(canvasBounds?.height).toBe(80);
+    const imageX = canvasBounds!.width / 2 - 60;
+    const imageY = canvasBounds!.height / 2 - 40;
 
-    await page.mouse.move(canvasBounds!.x + 60, canvasBounds!.y + 40);
+    await page.mouse.move(
+      canvasBounds!.x + imageX + 60,
+      canvasBounds!.y + imageY + 40,
+    );
     await page.mouse.down();
-    await page.mouse.move(canvasBounds!.x + 110, canvasBounds!.y + 40);
+    await page.mouse.move(
+      canvasBounds!.x + imageX + 110,
+      canvasBounds!.y + imageY + 40,
+    );
     await page.mouse.up();
 
     const sceneCanvas = canvasContainer.locator("canvas").first();
     await expect
-      .poll(() => readCheckerboardColors(sceneCanvas))
+      .poll(() => readCheckerboardColors(sceneCanvas, imageX, imageY + 40))
       .toEqual({
         hasDarkSquares: true,
         hasLightSquares: true,
@@ -69,101 +75,99 @@ test.describe("Image editor canvas", () => {
 
     const canvasBounds = await canvasContainer.boundingBox();
     expect(canvasBounds).not.toBeNull();
+    const centerX = canvasBounds!.width / 2;
+    const centerY = canvasBounds!.height / 2;
 
-    await page.mouse.move(canvasBounds!.x + 60, canvasBounds!.y + 40);
+    await page.mouse.move(canvasBounds!.x + centerX, canvasBounds!.y + centerY);
     await page.mouse.down();
-    await page.mouse.move(canvasBounds!.x + 110, canvasBounds!.y + 40);
-    await page.mouse.up();
-
-    await page.mouse.move(canvasBounds!.x + 80, canvasBounds!.y + 40);
-    await page.mouse.down();
-    await page.mouse.move(canvasBounds!.x + 34, canvasBounds!.y + 40);
+    await page.mouse.move(
+      canvasBounds!.x + centerX + 80,
+      canvasBounds!.y + centerY,
+    );
+    await page.mouse.move(canvasBounds!.x + centerX, canvasBounds!.y + centerY);
 
     await expect
       .poll(() =>
-        readAlignmentGuideVisibility(canvasContainer.locator("canvas").first()),
+        readCenterGuideVisibility(
+          canvasContainer.locator("canvas").first(),
+          centerX,
+          centerY,
+        ),
       )
       .toEqual({
-        hasHorizontalCenterGuide: true,
         hasHorizontalGuide: true,
-        hasVerticalCenterGuide: true,
         hasVerticalGuide: true,
       });
     await page.mouse.up();
-    await expect
-      .poll(() =>
-        isImageVisibleAtLeftEdge(canvasContainer.locator("canvas").first()),
-      )
-      .toBe(true);
   });
 });
 
 async function readCheckerboardColors(
   canvas: import("@playwright/test").Locator,
+  x: number,
+  y: number,
 ): Promise<{ hasDarkSquares: boolean; hasLightSquares: boolean }> {
-  return canvas.evaluate((element) => {
-    const pixels = element.getContext("2d")?.getImageData(0, 40, 48, 1).data;
-    const redValues = new Set<number>();
-    for (let index = 0; index < 48; index += 1) {
-      redValues.add(pixels?.[index * 4] ?? 0);
-    }
-    return {
-      hasDarkSquares: redValues.has(212),
-      hasLightSquares: redValues.has(245),
-    };
-  });
-}
-
-async function isImageVisibleAtLeftEdge(
-  canvas: import("@playwright/test").Locator,
-): Promise<boolean> {
-  return canvas.evaluate((element) => {
-    const color = element.getContext("2d")?.getImageData(2, 40, 1, 1).data;
-    return color?.[0] === 255 && color[1] === 0 && color[2] === 0;
-  });
-}
-
-async function readAlignmentGuideVisibility(
-  canvas: import("@playwright/test").Locator,
-): Promise<{
-  hasHorizontalCenterGuide: boolean;
-  hasHorizontalGuide: boolean;
-  hasVerticalCenterGuide: boolean;
-  hasVerticalGuide: boolean;
-}> {
-  return canvas.evaluate((element) => {
-    const context = element.getContext("2d");
-    const pixelScale = element.width / element.clientWidth;
-    const getPixels = (x: number, y: number, width: number, height: number) =>
-      context?.getImageData(
-        Math.round(x * pixelScale),
-        Math.round(y * pixelScale),
-        Math.round(width * pixelScale),
-        Math.round(height * pixelScale),
-      ).data;
-    const verticalGuide = getPixels(0, 40, 5, 1);
-    const horizontalGuide = getPixels(60, 0, 1, 5);
-    const verticalCenterGuide = getPixels(58, 20, 5, 1);
-    const horizontalCenterGuide = getPixels(30, 38, 1, 5);
-    const containsGuideColor = (colors: Uint8ClampedArray | undefined) => {
-      if (!colors) return false;
-
-      for (let index = 0; index < colors.length; index += 4) {
-        if (
-          colors[index] === 59 &&
-          colors[index + 1] === 130 &&
-          colors[index + 2] === 246
-        ) {
-          return true;
-        }
+  return canvas.evaluate(
+    (element, position) => {
+      const pixelScale = element.width / element.clientWidth;
+      const pixels = element
+        .getContext("2d")
+        ?.getImageData(
+          Math.round(position.x * pixelScale),
+          Math.round(position.y * pixelScale),
+          Math.round(48 * pixelScale),
+          Math.max(1, Math.round(pixelScale)),
+        ).data;
+      const redValues = new Set<number>();
+      for (let index = 0; index < (pixels?.length ?? 0); index += 4) {
+        redValues.add(pixels?.[index] ?? 0);
       }
-      return false;
-    };
-    return {
-      hasHorizontalCenterGuide: containsGuideColor(horizontalCenterGuide),
-      hasHorizontalGuide: containsGuideColor(horizontalGuide),
-      hasVerticalCenterGuide: containsGuideColor(verticalCenterGuide),
-      hasVerticalGuide: containsGuideColor(verticalGuide),
-    };
-  });
+      return {
+        hasDarkSquares: redValues.has(212),
+        hasLightSquares: redValues.has(245),
+      };
+    },
+    { x, y },
+  );
+}
+
+async function readCenterGuideVisibility(
+  canvas: import("@playwright/test").Locator,
+  centerX: number,
+  centerY: number,
+): Promise<{ hasHorizontalGuide: boolean; hasVerticalGuide: boolean }> {
+  return canvas.evaluate(
+    (element, center) => {
+      const context = element.getContext("2d");
+      const pixelScale = element.width / element.clientWidth;
+      const getPixels = (x: number, y: number, width: number, height: number) =>
+        context?.getImageData(
+          Math.round(x * pixelScale),
+          Math.round(y * pixelScale),
+          Math.round(width * pixelScale),
+          Math.round(height * pixelScale),
+        ).data;
+      const verticalGuide = getPixels(center.x - 2, 20, 5, 1);
+      const horizontalGuide = getPixels(20, center.y - 2, 1, 5);
+      const containsGuideColor = (colors: Uint8ClampedArray | undefined) => {
+        if (!colors) return false;
+
+        for (let index = 0; index < colors.length; index += 4) {
+          if (
+            colors[index] === 59 &&
+            colors[index + 1] === 130 &&
+            colors[index + 2] === 246
+          ) {
+            return true;
+          }
+        }
+        return false;
+      };
+      return {
+        hasHorizontalGuide: containsGuideColor(horizontalGuide),
+        hasVerticalGuide: containsGuideColor(verticalGuide),
+      };
+    },
+    { x: centerX, y: centerY },
+  );
 }

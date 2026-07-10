@@ -1,11 +1,7 @@
 import type Konva from "konva";
 import { useCallback, useRef, useState } from "react";
 import { getImageAlignmentSnaps } from "./get-image-alignment-snap";
-
-export interface AlignmentGuide {
-  orientation: "horizontal" | "vertical";
-  position: number;
-}
+import type { AlignmentGuide } from "../_model/image-alignment";
 
 interface ImageAlignmentSnapOptions {
   imageHeight: number;
