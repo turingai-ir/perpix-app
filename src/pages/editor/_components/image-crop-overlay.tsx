@@ -49,6 +49,7 @@ export function ImageCropOverlay(props: ImageCropOverlayProps) {
           ),
         })}
         onDragEnd={updateCrop}
+        onTransform={updateCrop}
         onTransformEnd={updateCrop}
         stroke="#ffffff"
         strokeWidth={2}
@@ -65,14 +66,20 @@ export function ImageCropOverlay(props: ImageCropOverlayProps) {
             : undefined
         }
         flipEnabled={false}
+        ignoreStroke={true}
         keepRatio={fixedRatio}
         rotateEnabled={false}
         boundBoxFunc={(oldBox, newBox) => {
           if (newBox.width < 24 || newBox.height < 24) return oldBox;
-          if (newBox.x < bounds.x || newBox.y < bounds.y) return oldBox;
-          if (newBox.x + newBox.width > bounds.x + bounds.width) return oldBox;
-          if (newBox.y + newBox.height > bounds.y + bounds.height)
+          const tolerance = 1;
+          if (
+            newBox.x < bounds.x - tolerance ||
+            newBox.y < bounds.y - tolerance ||
+            newBox.x + newBox.width > bounds.x + bounds.width + tolerance ||
+            newBox.y + newBox.height > bounds.y + bounds.height + tolerance
+          ) {
             return oldBox;
+          }
           return newBox;
         }}
       />

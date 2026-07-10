@@ -1,4 +1,5 @@
 import { ImageEditorCanvas } from "./image-editor-canvas";
+import { ImageEditorHeader } from "./image-editor-header";
 import { ImageEditorMetadata } from "./image-editor-metadata";
 import { ImageEditorToolbar } from "./image-editor-toolbar";
 import { useImageEditorWorkspace } from "../_hooks/use-image-editor-workspace";
@@ -20,6 +21,11 @@ function ImageEditorWorkspace({ image }: { image: HTMLImageElement }) {
       aria-label="ویرایش تصویر"
       className="relative h-full w-full overflow-hidden bg-neutral-950"
     >
+      <ImageEditorHeader
+        image={image}
+        appliedCrop={editor.appliedCrop}
+        isCropping={editor.isCropping}
+      />
       {editor.imageSize && editor.stageSize ? (
         <ImageEditorCanvas
           alignmentGuides={editor.alignmentGuides}

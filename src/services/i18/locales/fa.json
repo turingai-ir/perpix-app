@@ -267,6 +267,8 @@
       "resizeImage": "تغییر اندازه",
       "filters": "فیلترها",
       "download": "دانلود",
+      "downloadSuccess": "تصویر با موفقیت دانلود شد",
+      "downloadError": "خطا در دانلود تصویر",
       "widthPx": "عرض (پیکسل)",
       "heightPx": "ارتفاع (پیکسل)",
       "brightness": "روشنایی",

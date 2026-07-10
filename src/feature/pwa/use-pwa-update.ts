@@ -15,32 +15,6 @@ export function usePwaUpdate(options: PwaUpdateOptions = {}): PwaUpdateState {
   const [registration, setRegistration] =
     useState<ServiceWorkerRegistration | null>(null);
 
-  // Setup a global controllerchange listener as a bulletproof way to reload the page
-  // whenever a new service worker becomes active (e.g. from prompt click or page refresh).
-  useEffect(() => {
-    if (!("serviceWorker" in navigator)) {
-      return;
-    }
-
-    let refreshing = false;
-    const handleControllerChange = () => {
-      if (refreshing) return;
-      refreshing = true;
-      window.location.reload();
-    };
-
-    navigator.serviceWorker.addEventListener(
-      "controllerchange",
-      handleControllerChange,
-    );
-    return () => {
-      navigator.serviceWorker.removeEventListener(
-        "controllerchange",
-        handleControllerChange,
-      );
-    };
-  }, []);
-
   useEffect(() => {
     if (!registration || updateCheckIntervalMs === false) {
       return;
@@ -64,12 +38,6 @@ export function usePwaUpdate(options: PwaUpdateOptions = {}): PwaUpdateState {
       }
 
       setRegistration(reg);
-
-      // If there is already a waiting service worker when the page registers/loads,
-      // it means the user refreshed/reloaded the app. We skip waiting and activate it immediately.
-      if (reg.waiting) {
-        reg.waiting.postMessage({ type: "SKIP_WAITING" });
-      }
     },
     ...registerOptions,
   });
