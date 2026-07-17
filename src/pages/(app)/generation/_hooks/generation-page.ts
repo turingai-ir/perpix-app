@@ -37,7 +37,7 @@ export function useGenerationPage({
   const taskData =
     chatId && queriedTaskData?.uuid === chatId ? queriedTaskData : undefined;
   const aiTaskMessages = useMemo(() => taskData?.messages ?? [], [taskData]);
-  const assistantMessage = useMemo(
+  const lastAssistantMessage = useMemo(
     () =>
       [...aiTaskMessages]
         .reverse()
@@ -46,7 +46,7 @@ export function useGenerationPage({
   );
   const aiTaskResultState = useAiTaskResultPolling(
     taskData?.uuid,
-    assistantMessage,
+    lastAssistantMessage,
     generatedMediaField,
   );
   const displayedMessages = useMemo(() => {
@@ -77,21 +77,30 @@ export function useGenerationPage({
         : resultMessage;
     });
   }, [aiTaskMessages, aiTaskResultState.data, generatedMediaField]);
-  const messageListClearKey =
-    taskData && aiTaskMessages.length > 0
-      ? `${taskData.uuid}:${aiTaskMessages
-          .map((message) => message.uuid)
-          .join(":")}`
+  const lastDisplayedAssistantMessage = useMemo(
+    () =>
+      [...displayedMessages]
+        .reverse()
+        .find((message) => message.role === AiTaskRuleEnumMap.ASSISTANT),
+    [displayedMessages],
+  );
+  const successfulMessageClearKey =
+    taskData && lastDisplayedAssistantMessage?.task_status === "SUCCESS"
+      ? `${taskData.uuid}:${lastDisplayedAssistantMessage.uuid}`
       : undefined;
-  const lastMessage = displayedMessages[displayedMessages.length - 1];
   const isTaskLoading = aiTaskState.isLoading;
   const isGenerating = aiGenerateState.isPending;
-  const isBusy = isGenerating || isTaskLoading;
+  const hasPendingGeneration = displayedMessages.some(
+    (message) =>
+      message.role === AiTaskRuleEnumMap.ASSISTANT &&
+      !isAiTaskMessageTerminal(message, generatedMediaField),
+  );
+  const isBusy = isGenerating || isTaskLoading || hasPendingGeneration;
 
   useScrollToLatestMessage({
     isGenerating,
     isTaskLoading,
-    lastMessageUuid: lastMessage?.uuid,
+    lastMessageUuid: lastDisplayedAssistantMessage?.uuid,
     messageCount: displayedMessages.length,
   });
 
@@ -111,6 +120,8 @@ export function useGenerationPage({
 
   const handleForm = useCallback(
     async (data: any, ai_model_uuid: string) => {
+      if (hasPendingGeneration) return;
+
       const res = await mutateAsync({
         body: {
           task_type: taskType,
@@ -122,16 +133,32 @@ export function useGenerationPage({
 
       navigate(historyPath.replace(":chatId", res.uuid));
     },
-    [chatId, historyPath, mutateAsync, navigate, taskType],
+    [
+      chatId,
+      hasPendingGeneration,
+      historyPath,
+      mutateAsync,
+      navigate,
+      taskType,
+    ],
+  );
+  const handleRetry = useCallback(
+    (message: SchemaAiTaskMessageResponse) => {
+      if (!message.ai_model_uuid) return;
+
+      return handleForm(message.ai_model_config, message.ai_model_uuid);
+    },
+    [handleForm],
   );
 
   return {
     displayedMessages,
     handleForm,
+    handleRetry,
     isBusy,
     isTaskLoading,
-    lastMessage,
-    messageListClearKey,
+    lastAssistantMessage: lastDisplayedAssistantMessage,
+    successfulMessageClearKey,
     shouldShowIntro: !chatId,
   };
 }

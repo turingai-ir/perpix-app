@@ -14,7 +14,8 @@ interface Props {
   isLoading?: boolean;
   lastMessageConfig?: SchemaAiTaskMessageResponse["ai_model_config"];
   lastMessageModelUuid?: SchemaAiTaskMessageResponse["ai_model_uuid"];
-  promptClearKey?: string;
+  lastMessageStatus?: SchemaAiTaskMessageResponse["task_status"];
+  successfulMessageClearKey?: string;
 }
 
 const PROMPT_FIELD_NAMES = new Set([

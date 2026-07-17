@@ -7,7 +7,9 @@ import type { SchemaAiTaskMessageResponse } from "@/services/api";
 import { APP_I18_KEYS } from "@/services/i18";
 
 interface Props {
+  isRetrying?: boolean;
   messages: readonly SchemaAiTaskMessageResponse[];
+  onRetry?: (message: SchemaAiTaskMessageResponse) => void;
 }
 
 const normalizeImageIds = (value: unknown): string[] =>
@@ -21,12 +23,23 @@ const normalizeImageIds = (value: unknown): string[] =>
 const uniqueImageIds = (...imageGroups: unknown[]) =>
   Array.from(new Set(imageGroups.flatMap(normalizeImageIds)));
 
-export const GenerationVideoChats: FC<Props> = ({ messages }) => {
+export const GenerationVideoChats: FC<Props> = ({
+  isRetrying,
+  messages,
+  onRetry,
+}) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
 
   return (
     <GenerationChats
+      failureFallbackDescription={t(
+        "pages.generation.video.generationError.content",
+      )}
+      failureRetryLabel={t("pages.generation.video.generationError.action")}
+      failureTitle={t("pages.generation.video.generationError.title")}
       messages={messages}
+      isRetrying={isRetrying}
+      onRetry={onRetry}
       outputType="video"
       getMedia={(message) => ({
         generatedMedia: normalizeImageIds(

@@ -71,6 +71,14 @@ obey these guidelines to prevent technical debt:
   processes it (e.g., use `workspaceValidationStatus` instead of
   `validWSStatus`).
 
+### 4. Localization Is Mandatory
+
+- **No Hard-Coded UI Copy:** All user-visible text—including button labels,
+  placeholders, validation messages, `title`, `aria-label`, and other
+  assistive text—must be read through the project's `i18next` translation
+  layer. Add the key to the appropriate locale resource and use
+  `useAppTranslate`; never add literal UI strings to React components.
+
 ---
 
 ## Strict Test-Driven Development (TDD) Protocol

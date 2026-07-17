@@ -1,5 +1,7 @@
 import type { FC, ReactNode } from "react";
 
+import { GenerationFailure } from "./generation-failure";
+
 import { ChatBubble } from "@/components/custom";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
@@ -15,16 +17,26 @@ interface GenerationChatMedia {
 }
 
 interface Props {
+  failureFallbackDescription: string;
+  failureRetryLabel: string;
+  failureTitle: string;
   getMedia: (message: SchemaAiTaskMessageResponse) => GenerationChatMedia;
+  isRetrying?: boolean;
   messages: readonly SchemaAiTaskMessageResponse[];
+  onRetry?: (message: SchemaAiTaskMessageResponse) => void;
   outputType: "image" | "video";
 }
 
 const LOADING_STATUSES = new Set(["PENDING", "IN_PROGRESS"]);
 
 export const GenerationChats: FC<Props> = ({
+  failureFallbackDescription,
+  failureRetryLabel,
+  failureTitle,
   getMedia,
+  isRetrying = false,
   messages,
+  onRetry,
   outputType,
 }) => {
   if (!messages.length) return null;
@@ -39,6 +51,8 @@ export const GenerationChats: FC<Props> = ({
           isAssistant &&
           !generatedMedia.length &&
           LOADING_STATUSES.has(item.task_status ?? "");
+        const isFailed = isAssistant && item.task_status === "FAILED";
+        const failureDescription = item.message || failureFallbackDescription;
 
         return (
           <div
@@ -49,6 +63,19 @@ export const GenerationChats: FC<Props> = ({
               "mr-auto": !isUser,
             })}
           >
+            {isFailed ? (
+              <GenerationFailure
+                description={failureDescription}
+                isRetrying={isRetrying}
+                onRetry={
+                  item.ai_model_uuid && onRetry
+                    ? () => onRetry(item)
+                    : undefined
+                }
+                retryLabel={failureRetryLabel}
+                title={failureTitle}
+              />
+            ) : null}
             <ChatBubble
               sender={isUser ? "user" : "agent"}
               avatar={
@@ -59,8 +86,9 @@ export const GenerationChats: FC<Props> = ({
                   />
                 </Avatar>
               }
-              message={isGenerating ? undefined : (item.message ?? "")}
-              status={item.task_status}
+              message={
+                isGenerating || isFailed ? undefined : (item.message ?? "")
+              }
               images={
                 isUser
                   ? userImages

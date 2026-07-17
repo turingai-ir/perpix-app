@@ -24,8 +24,9 @@ export interface GenerationPromptBoxProps {
   isLoading?: boolean;
   lastMessageConfig?: SchemaAiTaskMessageResponse["ai_model_config"];
   lastMessageModelUuid?: SchemaAiTaskMessageResponse["ai_model_uuid"];
+  lastMessageStatus?: SchemaAiTaskMessageResponse["task_status"];
   onSubmit: (data: unknown, ai_model_uuid: string) => Promise<void> | void;
-  promptClearKey?: string;
+  successfulMessageClearKey?: string;
   promptBoxFieldNames: ReadonlySet<string>;
   promptPlaceholderKey: string;
   supportedOutputs: AiRegistryModelSupportedTypesEnumValue[];

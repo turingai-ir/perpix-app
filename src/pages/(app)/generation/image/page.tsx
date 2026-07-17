@@ -21,10 +21,11 @@ const GenerationImagePage = () => {
   const {
     displayedMessages,
     handleForm,
+    handleRetry,
     isBusy,
     isTaskLoading,
-    lastMessage,
-    messageListClearKey,
+    lastAssistantMessage,
+    successfulMessageClearKey,
     shouldShowIntro,
   } = useGenerationPage({
     generatedMediaField: GeneratedMediaField.IMAGE,
@@ -42,7 +43,11 @@ const GenerationImagePage = () => {
 
       <Activity mode={isTaskLoading ? "hidden" : "visible"}>
         <>
-          <GenerationImageChats messages={displayedMessages} />
+          <GenerationImageChats
+            isRetrying={isBusy}
+            messages={displayedMessages}
+            onRetry={handleRetry}
+          />
 
           <div className="mx-auto flex w-full max-w-200 flex-col items-center gap-4 pt-12">
             {shouldShowIntro ? (
@@ -56,10 +61,11 @@ const GenerationImagePage = () => {
 
             <GenerationImagePromptBox
               isLoading={isBusy}
-              lastMessageConfig={lastMessage?.ai_model_config}
-              lastMessageModelUuid={lastMessage?.ai_model_uuid}
+              lastMessageConfig={lastAssistantMessage?.ai_model_config}
+              lastMessageModelUuid={lastAssistantMessage?.ai_model_uuid}
+              lastMessageStatus={lastAssistantMessage?.task_status}
               onSubmit={handleForm}
-              promptClearKey={messageListClearKey}
+              successfulMessageClearKey={successfulMessageClearKey}
             />
           </div>
         </>

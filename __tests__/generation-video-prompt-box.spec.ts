@@ -129,6 +129,133 @@ test("supports multi-prompt mode without requiring the main prompt field", async
   });
 });
 
+test("shows the generation failure reason and retries it in the same chat", async ({
+  page,
+}) => {
+  const failedMessage = {
+    ai_model_config: { mode: "text_to_video", prompt: "Retry this video" },
+    ai_model_uuid: MODEL_UUID,
+    ai_provider_uuid: "provider-1",
+    ai_generation_request_uuid: "request-1",
+    ai_external_provider_task_id: "external-task-1",
+    task_status: "FAILED",
+    cost_usdmicro: null,
+    message: "PROVIDER_RATE_LIMITED",
+    role: "ASSISTANT",
+    uuid: "failed-message-1",
+  };
+  const retryRequest = waitForGenerateRequest(page);
+
+  await mockApi(page, [failedMessage]);
+  await page.goto("/generation/video/task-1");
+
+  await expect(page.getByText("تولید ویدیو ناموفق بود")).toBeVisible();
+  await expect(page.getByText("PROVIDER_RATE_LIMITED")).toBeVisible();
+  await expect(page.getByPlaceholder("شروع به تایپ کنید")).toHaveValue(
+    "Retry this video",
+  );
+  await page
+    .getByRole("alert")
+    .getByRole("button", { name: "تلاش مجدد" })
+    .click();
+
+  await expect(retryRequest).resolves.toMatchObject({
+    task_uuid: "task-1",
+    task_type: "VIDEO",
+    ai_model_uuid: MODEL_UUID,
+    ai_model_config: failedMessage.ai_model_config,
+  });
+});
+
+test("prevents another generation while the chat has a pending request", async ({
+  page,
+}) => {
+  await mockApi(page, [
+    {
+      ai_model_config: { mode: "text_to_video", prompt: "Still rendering" },
+      ai_model_uuid: MODEL_UUID,
+      ai_provider_uuid: "provider-1",
+      ai_generation_request_uuid: "request-1",
+      ai_external_provider_task_id: "external-task-1",
+      task_status: "IN_PROGRESS",
+      cost_usdmicro: null,
+      message: null,
+      role: "ASSISTANT",
+      uuid: "pending-message-1",
+    },
+  ]);
+
+  await page.goto("/generation/video/task-1");
+
+  await expect(page.getByPlaceholder("شروع به تایپ کنید")).toHaveValue(
+    "Still rendering",
+  );
+  await expect(
+    page.getByRole("combobox").filter({ hasText: "Kling 3.0 Standard" }),
+  ).toBeVisible();
+  await expect(page.locator('button[type="submit"]')).toBeDisabled();
+});
+
+test("does not restore the prompt after a successful generation", async ({
+  page,
+}) => {
+  await mockApi(page, [
+    {
+      ai_model_config: { mode: "text_to_video", prompt: "Completed video" },
+      ai_model_uuid: MODEL_UUID,
+      ai_provider_uuid: "provider-1",
+      ai_generation_request_uuid: "request-1",
+      ai_external_provider_task_id: "external-task-1",
+      task_status: "SUCCESS",
+      cost_usdmicro: null,
+      message: null,
+      role: "ASSISTANT",
+      uuid: "successful-message-1",
+    },
+  ]);
+
+  await page.goto("/generation/video/task-1");
+
+  await expect(page.getByPlaceholder("شروع به تایپ کنید")).toHaveValue("");
+});
+
+test("uses the last assistant message when a user message follows it", async ({
+  page,
+}) => {
+  await mockApi(page, [
+    {
+      ai_model_config: { mode: "text_to_video", prompt: "Assistant prompt" },
+      ai_model_uuid: MODEL_UUID,
+      ai_provider_uuid: "provider-1",
+      ai_generation_request_uuid: "request-1",
+      ai_external_provider_task_id: "external-task-1",
+      task_status: "IN_PROGRESS",
+      cost_usdmicro: null,
+      message: null,
+      role: "ASSISTANT",
+      uuid: "assistant-message-1",
+    },
+    {
+      ai_model_config: { mode: "text_to_video", prompt: "User prompt" },
+      ai_model_uuid: MODEL_UUID,
+      ai_provider_uuid: "provider-1",
+      ai_generation_request_uuid: null,
+      ai_external_provider_task_id: null,
+      task_status: "SUCCESS",
+      cost_usdmicro: 0,
+      message: "User prompt",
+      role: "USER",
+      uuid: "user-message-1",
+    },
+  ]);
+
+  await page.goto("/generation/video/task-1");
+
+  await expect(page.getByPlaceholder("شروع به تایپ کنید")).toHaveValue(
+    "Assistant prompt",
+  );
+});
+
 async function openVideoGenerationPage(page: Page) {
   await page.goto("/generation/video");
   await expect(page.getByPlaceholder("شروع به تایپ کنید")).toBeVisible();
@@ -147,7 +274,7 @@ function waitForGenerateRequest(page: Page) {
     .then((request) => request.postDataJSON());
 }
 
-async function mockApi(page: Page) {
+async function mockApi(page: Page, taskMessages: unknown[] = []) {
   await page.route("https://widget.ila.chat/**", async (route) => {
     await route.fulfill({
       contentType: "application/javascript",
@@ -246,7 +373,7 @@ async function mockApi(page: Page) {
           expire_date: new Date().toISOString(),
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
-          messages: [],
+          messages: taskMessages,
         }),
       });
       return;

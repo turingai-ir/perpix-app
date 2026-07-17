@@ -15,8 +15,8 @@ export const PromptTextarea: FC<{
     render={({ field }) => (
       <FormItem>
         <ScrollArea
-          className="h-20 w-full overflow-hidden"
-          viewportClassName="h-20"
+          className="h-30 w-full overflow-hidden"
+          viewportClassName="h-30"
         >
           <FormControl>
             <textarea
@@ -25,10 +25,10 @@ export const PromptTextarea: FC<{
               ref={field.ref}
               onBlur={field.onBlur}
               onChange={field.onChange}
-              rows={3}
+              rows={5}
               wrap="soft"
               disabled={disabled}
-              className="block h-20 w-full resize-none overflow-y-auto border-none wrap-anywhere break-all outline-none"
+              className="block h-30 w-full resize-none overflow-y-auto border-none wrap-anywhere break-all outline-none"
               placeholder={placeholder}
             />
           </FormControl>

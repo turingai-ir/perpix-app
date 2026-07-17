@@ -7,7 +7,9 @@ import type { SchemaAiTaskMessageResponse } from "@/services/api";
 import { APP_I18_KEYS } from "@/services/i18";
 
 interface Props {
+  isRetrying?: boolean;
   messages: readonly SchemaAiTaskMessageResponse[];
+  onRetry?: (message: SchemaAiTaskMessageResponse) => void;
 }
 
 const normalizeImageIds = (value: unknown): string[] =>
@@ -18,12 +20,23 @@ const normalizeImageIds = (value: unknown): string[] =>
       )
     : [];
 
-export const GenerationImageChats: FC<Props> = ({ messages }) => {
+export const GenerationImageChats: FC<Props> = ({
+  isRetrying,
+  messages,
+  onRetry,
+}) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
 
   return (
     <GenerationChats
+      failureFallbackDescription={t(
+        "pages.generation.image.generationError.content",
+      )}
+      failureRetryLabel={t("pages.generation.image.generationError.action")}
+      failureTitle={t("pages.generation.image.generationError.title")}
       messages={messages}
+      isRetrying={isRetrying}
+      onRetry={onRetry}
       outputType="image"
       getMedia={(message) => ({
         generatedMedia: normalizeImageIds(

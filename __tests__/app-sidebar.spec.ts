@@ -70,6 +70,41 @@ test.describe("App sidebar", () => {
     expect(sidebarBackground).not.toBe(headerBackground);
     expect(sidebarShadow).not.toBe("none");
   });
+
+  test("makes the home shortcuts keyboard-accessible links", async ({
+    page,
+  }) => {
+    await page.goto("/");
+
+    const homeShortcuts = page.locator(".card-spotlight");
+
+    await expect(homeShortcuts).toHaveCount(3);
+    await expect(homeShortcuts.nth(0).getByRole("link")).toHaveAttribute(
+      "href",
+      "/generation/image",
+    );
+    await expect(homeShortcuts.nth(1).getByRole("link")).toHaveAttribute(
+      "href",
+      "/generation/video",
+    );
+    await expect(homeShortcuts.nth(2).getByRole("link")).toHaveAttribute(
+      "href",
+      "/profile",
+    );
+  });
+
+  test("identifies the active destination and labels the sidebar control", async ({
+    page,
+  }) => {
+    await page.goto("/generation/image");
+
+    await expect(
+      page.locator("aside").getByRole("link", { name: "تولید عکس" }),
+    ).toHaveAttribute("aria-current", "page");
+    await expect(
+      page.getByRole("button", { name: "بستن نوار کناری" }),
+    ).toHaveAttribute("aria-expanded", "true");
+  });
 });
 
 async function mockApi(page: Page) {

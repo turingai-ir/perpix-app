@@ -17,12 +17,17 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { PaymentRedirectPortal } from "@/feature/payment";
 import { useUser } from "@/feature/user";
 import { AiTaskEventsProvider } from "@/feature/ai-task-events";
+import { useAppTranslate } from "@/hooks";
+import { APP_I18_KEYS } from "@/services/i18";
 
 const AppLayout: FC = () => {
   const [appLayoutState, setAppLayoutState] = useImmerAtom(appLayoutAtom);
   const scrollAreaMyRef = useRef<HTMLDivElement>(null);
-
+  const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const userState = useUser();
+  const sidebarToggleLabel = appLayoutState.isSidebarOpen
+    ? t("pages.app.layout.sidebar.toggle.close")
+    : t("pages.app.layout.sidebar.toggle.open");
 
   const scrollAppLayoutUntilEnd = useEffectEvent(() => {
     const el = scrollAreaMyRef.current;
@@ -97,6 +102,9 @@ const AppLayout: FC = () => {
             <Button
               variant="ghost"
               size="sm"
+              aria-expanded={appLayoutState.isSidebarOpen}
+              aria-label={sidebarToggleLabel}
+              title={sidebarToggleLabel}
               onClick={() => {
                 setAppLayoutState((draft) => {
                   draft.isSidebarOpen = !draft.isSidebarOpen;

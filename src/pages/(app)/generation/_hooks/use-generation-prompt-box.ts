@@ -18,6 +18,29 @@ import { getModelDynamicConfig } from "@/pages/(app)/generation/_utils/model-dyn
 
 const MIN_PROMPT_LENGTH = 3;
 
+function getLastMessageConfigDefaults({
+  configDefaultsResolver,
+  lastMessageConfig,
+  lastMessageStatus,
+}: Pick<
+  UseGenerationPromptBoxInput,
+  "configDefaultsResolver" | "lastMessageConfig" | "lastMessageStatus"
+>): Record<string, unknown> | undefined {
+  const configDefaults = configDefaultsResolver
+    ? configDefaultsResolver(lastMessageConfig)
+    : lastMessageConfig
+      ? ({ ...lastMessageConfig } as Record<string, unknown>)
+      : undefined;
+
+  if (!configDefaults || lastMessageStatus !== "SUCCESS") {
+    return configDefaults;
+  }
+
+  const configDefaultsWithoutPrompt = { ...configDefaults };
+  delete configDefaultsWithoutPrompt.prompt;
+  return configDefaultsWithoutPrompt;
+}
+
 type UseGenerationPromptBoxInput = Pick<
   GenerationPromptBoxProps,
   | "advancedExcludedFieldNames"
@@ -25,9 +48,10 @@ type UseGenerationPromptBoxInput = Pick<
   | "isLoading"
   | "lastMessageConfig"
   | "lastMessageModelUuid"
+  | "lastMessageStatus"
   | "onSubmit"
   | "promptBoxFieldNames"
-  | "promptClearKey"
+  | "successfulMessageClearKey"
   | "supportedOutputs"
 > & {
   validationErrorTitle: string;
@@ -39,30 +63,38 @@ export function useGenerationPromptBox({
   isLoading,
   lastMessageConfig,
   lastMessageModelUuid,
+  lastMessageStatus,
   onSubmit,
   promptBoxFieldNames,
-  promptClearKey,
+  successfulMessageClearKey,
   supportedOutputs,
   validationErrorTitle,
 }: UseGenerationPromptBoxInput) {
   const model = useModel(supportedOutputs, lastMessageModelUuid);
-  const lastPromptClearKeyRef = useRef<string | undefined>(undefined);
+  const lastSuccessfulMessageClearKeyRef = useRef<string | undefined>(
+    undefined,
+  );
   const [isUploadingMedia, setIsUploadingMedia] = useState(false);
   const { configDefaults: modelConfigDefaults, configMeta: modelConfigMeta } =
     getModelDynamicConfig(model.modelState.data);
 
   const dynamicFormConfigDefaults = useMemo(() => {
-    const lastMessageConfigDefaults = configDefaultsResolver
-      ? configDefaultsResolver(lastMessageConfig)
-      : lastMessageConfig
-        ? ({ ...lastMessageConfig } as Record<string, unknown>)
-        : undefined;
+    const lastMessageConfigDefaults = getLastMessageConfigDefaults({
+      configDefaultsResolver,
+      lastMessageConfig,
+      lastMessageStatus,
+    });
 
     return {
       ...(modelConfigDefaults ?? {}),
       ...(lastMessageConfigDefaults ?? {}),
     };
-  }, [configDefaultsResolver, lastMessageConfig, modelConfigDefaults]);
+  }, [
+    configDefaultsResolver,
+    lastMessageConfig,
+    lastMessageStatus,
+    modelConfigDefaults,
+  ]);
 
   const dynamicForm = useDynamicConfigForm({
     autoResetOnSchemaChange: true,
@@ -135,16 +167,20 @@ export function useGenerationPromptBox({
   };
 
   useEffect(() => {
-    if (!promptClearKey) return;
-    if (lastPromptClearKeyRef.current === promptClearKey) return;
+    if (!successfulMessageClearKey) return;
+    if (
+      lastSuccessfulMessageClearKeyRef.current === successfulMessageClearKey
+    ) {
+      return;
+    }
 
-    lastPromptClearKeyRef.current = promptClearKey;
+    lastSuccessfulMessageClearKeyRef.current = successfulMessageClearKey;
     dynamicForm.setValue("prompt", "", {
       shouldDirty: false,
       shouldTouch: false,
       shouldValidate: false,
     });
-  }, [dynamicForm, promptClearKey]);
+  }, [dynamicForm, successfulMessageClearKey]);
 
   return {
     advancedFieldNames,
