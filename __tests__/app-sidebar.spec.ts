@@ -46,6 +46,30 @@ test.describe("App sidebar", () => {
     );
     await expect(telegramSupportLink).toHaveAttribute("target", "_blank");
   });
+
+  test("visually separates the sidebar from the app content", async ({
+    page,
+  }) => {
+    await page.goto("/");
+
+    const sidebar = page.locator("aside");
+    const header = page.locator("header");
+
+    await expect(sidebar).toBeVisible();
+    await expect(header).toBeVisible();
+
+    const [sidebarBackground, headerBackground, sidebarShadow] =
+      await Promise.all([
+        sidebar.evaluate(
+          (element) => getComputedStyle(element).backgroundColor,
+        ),
+        header.evaluate((element) => getComputedStyle(element).backgroundColor),
+        sidebar.evaluate((element) => getComputedStyle(element).boxShadow),
+      ]);
+
+    expect(sidebarBackground).not.toBe(headerBackground);
+    expect(sidebarShadow).not.toBe("none");
+  });
 });
 
 async function mockApi(page: Page) {

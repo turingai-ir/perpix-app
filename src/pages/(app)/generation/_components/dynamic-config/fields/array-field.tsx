@@ -10,13 +10,12 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
-import type { JsonSchemaProperty } from "@/hooks/use-dynamic-config-form";
-
 import {
-  getDefaultValueForProperty,
   getPrimaryType,
-  normalizeArrayValue,
-} from "../schema";
+  type JsonSchemaProperty,
+} from "@/hooks/use-dynamic-config-form";
+
+import { getDefaultValueForProperty, normalizeArrayValue } from "../schema";
 import type { DynamicConfigFieldProps } from "../types";
 
 const HINT_CLASS_NAME = "text-muted-foreground/60 text-[0.7rem] leading-snug";

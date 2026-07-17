@@ -1,5 +1,7 @@
 import type { UseFormProps } from "react-hook-form";
 
+import type { ControlElement, UISchemaElement } from "@jsonforms/core";
+
 export type JsonSchemaType =
   | "string"
   | "integer"
@@ -9,13 +11,6 @@ export type JsonSchemaType =
   | "object"
   | "null";
 
-export type JsonConfigUi = {
-  order?: readonly string[];
-  widgets?: Record<string, string>;
-  enumLabels?: Record<string, Record<string, string>>;
-  visibility?: readonly JsonConfigUiVisibilityRule[];
-};
-
 export type JsonConfigUiField = {
   widget?: string | null;
   title?: string | null;
@@ -23,16 +18,13 @@ export type JsonConfigUiField = {
   hint?: string | null;
   file?: JsonSchemaProperty["x-file"] | null;
   errors?: Record<string, string>;
+  labels?: Record<string, string>;
 };
 
-export type JsonConfigUiVisibilityRule = {
-  effect: "SHOW" | "HIDE";
-  fields: readonly string[];
-  condition: {
-    field: string;
-    operator: "empty" | "not_empty" | "equals" | "not_equals" | "in" | "not_in";
-    value?: unknown;
-    values?: readonly unknown[];
+export type JsonFormsUiSchemaControl = ControlElement & {
+  label?: string;
+  options?: JsonConfigUiField & {
+    detail?: UISchemaElement | string;
   };
 };
 
@@ -40,9 +32,6 @@ export type JsonSchemaProperty = {
   type?: JsonSchemaType | readonly JsonSchemaType[];
   enum?: readonly (string | number | boolean | null)[];
   const?: unknown;
-  label?: {
-    options?: Record<string, string>;
-  };
 
   default?: unknown;
   description?: string;
@@ -60,16 +49,20 @@ export type JsonSchemaProperty = {
   items?: JsonSchemaProperty;
 
   properties?: Record<string, JsonSchemaProperty>;
-  required?: boolean | readonly string[];
+  required?: readonly string[];
   additionalProperties?: boolean;
   not?: JsonSchemaProperty;
-  "x-required"?: boolean;
-  "x-widget"?: string;
   "x-file"?: {
     type?: "list" | "single" | string;
     accept?: readonly string[];
   };
 };
+
+export function getPrimaryType(property: JsonSchemaProperty) {
+  if (!Array.isArray(property.type)) return property.type;
+
+  return property.type.find((type) => type !== "null") ?? property.type[0];
+}
 
 export type JsonConfigSchema = {
   $schema?: string;
@@ -79,15 +72,10 @@ export type JsonConfigSchema = {
   properties: Record<string, JsonSchemaProperty>;
   additionalProperties?: boolean;
   allOf?: readonly unknown[];
-  "x-ui"?: JsonConfigUi;
 };
 
 export type JsonConfigMeta = {
-  labels?: Record<string, Record<string, string>>;
-  ui?: JsonConfigUi & {
-    fields?: Record<string, JsonConfigUiField>;
-    labels?: Record<string, Record<string, string>>;
-  };
+  uischema?: UISchemaElement;
 };
 
 export type DynamicConfigValues = Record<string, unknown>;

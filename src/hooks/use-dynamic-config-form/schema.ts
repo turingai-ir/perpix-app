@@ -4,14 +4,20 @@ import type { TFunction } from "i18next";
 import type { DefaultValues, FieldError, Resolver } from "react-hook-form";
 import { toNestErrors } from "@hookform/resolvers";
 
-import type {
-  DynamicConfigValidationMessages,
-  DynamicConfigValues,
-  FieldMeta,
-  JsonConfigMeta,
-  JsonConfigUiVisibilityRule,
-  JsonConfigSchema,
-  JsonSchemaProperty,
+import {
+  findJsonFormsControl,
+  getJsonFormsControlEntries,
+  getJsonFormsHiddenFields,
+} from "./json-forms-adapter";
+
+import {
+  getPrimaryType,
+  type DynamicConfigValidationMessages,
+  type DynamicConfigValues,
+  type FieldMeta,
+  type JsonConfigMeta,
+  type JsonConfigSchema,
+  type JsonSchemaProperty,
 } from "./types";
 
 const DYNAMIC_CONFIG_VALIDATION_KEY = "common.validationErrors.dynamicConfig";
@@ -144,74 +150,12 @@ function toArray(value: unknown) {
     .filter(Boolean);
 }
 
-function isRequired(
-  prop: JsonSchemaProperty,
-  fieldName: string,
-  requiredFields: readonly string[],
-) {
-  return (
-    prop["x-required"] === true ||
-    prop.required === true ||
-    requiredFields.includes(fieldName)
-  );
+function isRequired(fieldName: string, requiredFields: readonly string[]) {
+  return requiredFields.includes(fieldName);
 }
 
 function nestedRequiredFields(prop: JsonSchemaProperty): readonly string[] {
   return Array.isArray(prop.required) ? prop.required : [];
-}
-
-function getPrimaryType(prop: JsonSchemaProperty) {
-  if (!Array.isArray(prop.type)) return prop.type;
-
-  return prop.type.find((type) => type !== "null") ?? prop.type[0];
-}
-
-function isEmptyDynamicValue(value: unknown) {
-  if (value === undefined || value === null || value === "") return true;
-  if (Array.isArray(value)) return value.length === 0;
-
-  return false;
-}
-
-function hasDynamicValue(values: Record<string, unknown>, fieldName: string) {
-  return fieldName in values && !isEmptyDynamicValue(values[fieldName]);
-}
-
-function propertyMatchesValue(
-  prop: JsonSchemaProperty,
-  value: unknown,
-): boolean {
-  if ("const" in prop && !Object.is(value, prop.const)) return false;
-
-  if (
-    prop.not &&
-    conditionMatches({ properties: { value: prop.not } }, { value })
-  ) {
-    return false;
-  }
-
-  const propType = getPrimaryType(prop);
-
-  if (propType === "array") {
-    if (!Array.isArray(value)) return false;
-    if (prop.minItems !== undefined && value.length < prop.minItems) {
-      return false;
-    }
-    if (prop.maxItems !== undefined && value.length > prop.maxItems) {
-      return false;
-    }
-  }
-
-  if (propType === "string" && typeof value !== "string") return false;
-  if (propType === "boolean" && typeof value !== "boolean") return false;
-  if (
-    (propType === "number" || propType === "integer") &&
-    typeof value !== "number"
-  ) {
-    return false;
-  }
-
-  return true;
 }
 
 function conditionMatches(
@@ -219,46 +163,7 @@ function conditionMatches(
   values: Record<string, unknown>,
 ): boolean {
   if (!isRecord(condition)) return false;
-
-  if (Array.isArray(condition.required)) {
-    const hasRequiredFields = condition.required.every(
-      (fieldName) =>
-        typeof fieldName === "string" && hasDynamicValue(values, fieldName),
-    );
-
-    if (!hasRequiredFields) return false;
-  }
-
-  if (isRecord(condition.properties)) {
-    for (const [fieldName, prop] of Object.entries(condition.properties)) {
-      if (!isRecord(prop)) return false;
-
-      if (!propertyMatchesValue(prop, values[fieldName])) {
-        return false;
-      }
-    }
-  }
-
-  if (Array.isArray(condition.anyOf)) {
-    return condition.anyOf.some((item) => conditionMatches(item, values));
-  }
-
-  if (Array.isArray(condition.allOf)) {
-    return condition.allOf.every((item) => conditionMatches(item, values));
-  }
-
-  if (Array.isArray(condition.oneOf)) {
-    return (
-      condition.oneOf.filter((item) => conditionMatches(item, values))
-        .length === 1
-    );
-  }
-
-  if ("not" in condition) {
-    return !conditionMatches(condition.not, values);
-  }
-
-  return true;
+  return ajv.validate(condition, values) as boolean;
 }
 
 function collectNotRequiredFields(schema: unknown): string[] {
@@ -313,86 +218,6 @@ function getSchemaHiddenFields(
   return hiddenFields;
 }
 
-function uiVisibilityConditionMatches(
-  rule: JsonConfigUiVisibilityRule,
-  values: Record<string, unknown>,
-) {
-  const condition = rule.condition;
-
-  if (!condition) return false;
-
-  const fieldValue = values[condition.field];
-
-  switch (condition.operator) {
-    case "empty":
-      return isEmptyDynamicValue(fieldValue);
-
-    case "not_empty":
-      return !isEmptyDynamicValue(fieldValue);
-
-    case "equals":
-      return Object.is(fieldValue, condition.value);
-
-    case "not_equals":
-      return !Object.is(fieldValue, condition.value);
-
-    case "in":
-      return (condition.values ?? []).some((value) =>
-        Object.is(value, fieldValue),
-      );
-
-    case "not_in":
-      return !(condition.values ?? []).some((value) =>
-        Object.is(value, fieldValue),
-      );
-
-    default:
-      return false;
-  }
-}
-
-function getUiHiddenFields(
-  configSchema: JsonConfigSchema,
-  values: Record<string, unknown>,
-  configMeta?: JsonConfigMeta | null,
-) {
-  const fieldNames = getSchemaFieldNames(configSchema);
-  const hiddenFields = new Set<string>();
-  const showControlledFields = new Set<string>();
-  const visibilityRules =
-    configMeta?.ui?.visibility ?? configSchema["x-ui"]?.visibility ?? [];
-
-  for (const rule of visibilityRules) {
-    if (rule.effect !== "SHOW") continue;
-
-    for (const fieldName of rule.fields ?? []) {
-      if (fieldNames.has(fieldName)) showControlledFields.add(fieldName);
-    }
-  }
-
-  for (const fieldName of showControlledFields) {
-    hiddenFields.add(fieldName);
-  }
-
-  for (const rule of visibilityRules) {
-    const matches = uiVisibilityConditionMatches(rule, values);
-
-    if (!matches) continue;
-
-    for (const fieldName of rule.fields) {
-      if (!fieldNames.has(fieldName)) continue;
-
-      if (rule.effect === "HIDE") {
-        hiddenFields.add(fieldName);
-      } else {
-        hiddenFields.delete(fieldName);
-      }
-    }
-  }
-
-  return hiddenFields;
-}
-
 export function getVisibleConfigFields(
   configSchema: JsonConfigSchema,
   values: Record<string, unknown>,
@@ -400,7 +225,13 @@ export function getVisibleConfigFields(
 ) {
   const visibleFields = getSchemaFieldNames(configSchema);
 
-  for (const fieldName of getUiHiddenFields(configSchema, values, configMeta)) {
+  const uiHiddenFields = getJsonFormsHiddenFields(
+    visibleFields,
+    values,
+    ajv,
+    configMeta,
+  );
+  for (const fieldName of uiHiddenFields) {
     visibleFields.delete(fieldName);
   }
 
@@ -860,7 +691,7 @@ export function buildDefaultValues(
     result[key] = getPropertyDefaultValue(
       prop,
       configDefaults && key in configDefaults ? configDefaults[key] : undefined,
-      isRequired(prop, key, configSchema.required ?? []),
+      isRequired(key, configSchema.required ?? []),
     );
   }
 
@@ -906,17 +737,10 @@ function resolveInputType(prop: JsonSchemaProperty): FieldMeta["inputType"] {
 }
 
 function resolveOptionLabels(
-  prop: JsonSchemaProperty,
   fieldName: string,
-  enumLabels?: Record<string, Record<string, string>>,
   configMeta?: JsonConfigMeta | null,
 ) {
-  return (
-    configMeta?.ui?.labels?.[fieldName] ??
-    enumLabels?.[fieldName] ??
-    prop.label?.options ??
-    configMeta?.labels?.[fieldName]
-  );
+  return resolveUiFieldMeta(configMeta, fieldName)?.labels;
 }
 
 function normalizeMetaFieldName(fieldName: string) {
@@ -927,9 +751,11 @@ function resolveUiFieldMeta(
   configMeta: JsonConfigMeta | null | undefined,
   fieldName: string,
 ) {
-  const fields = configMeta?.ui?.fields;
-
-  return fields?.[fieldName] ?? fields?.[normalizeMetaFieldName(fieldName)];
+  const normalizedFieldName = normalizeMetaFieldName(fieldName);
+  const control = findJsonFormsControl(configMeta, normalizedFieldName);
+  return control
+    ? { ...control.options, title: control.label ?? control.options?.title }
+    : undefined;
 }
 
 export function buildFieldMeta(params: {
@@ -937,27 +763,16 @@ export function buildFieldMeta(params: {
   prop: JsonSchemaProperty;
   requiredFields: readonly string[];
   defaultValues: Record<string, unknown>;
-  widget?: string;
-  enumLabels?: Record<string, Record<string, string>>;
   configMeta?: JsonConfigMeta | null;
 }): FieldMeta {
-  const {
-    name,
-    prop,
-    requiredFields,
-    defaultValues,
-    widget,
-    enumLabels,
-    configMeta,
-  } = params;
+  const { name, prop, requiredFields, defaultValues, configMeta } = params;
 
   const uiFieldMeta = resolveUiFieldMeta(configMeta, name);
-  const resolvedWidget = widget ?? uiFieldMeta?.widget ?? prop["x-widget"];
+  const resolvedWidget = uiFieldMeta?.widget ?? undefined;
   const resolvedProperty: JsonSchemaProperty = {
     ...prop,
     title: uiFieldMeta?.title ?? prop.title,
     description: uiFieldMeta?.description ?? prop.description,
-    "x-widget": resolvedWidget,
     "x-file": uiFieldMeta?.file ?? prop["x-file"],
   };
   let inputType = resolveWidgetInputType(resolvedWidget);
@@ -980,16 +795,11 @@ export function buildFieldMeta(params: {
   return {
     name,
     property: resolvedProperty,
-    required: isRequired(resolvedProperty, name, requiredFields),
+    required: isRequired(name, requiredFields),
     defaultValue: defaultValues[name],
     inputType,
     options: resolvedProperty.enum,
-    optionLabels: resolveOptionLabels(
-      resolvedProperty,
-      name,
-      enumLabels,
-      configMeta,
-    ),
+    optionLabels: resolveOptionLabels(name, configMeta),
     description: resolvedProperty.description,
     hint:
       name === "prompt"
@@ -1005,10 +815,12 @@ export function getOrderedFieldNames(
 ) {
   const schemaFields = Object.keys(configSchema?.properties ?? {});
   const schemaFieldSet = new Set(schemaFields);
-  const orderedFields =
-    (configMeta?.ui?.order ?? configSchema?.["x-ui"]?.order)?.filter(
-      (fieldName) => schemaFieldSet.has(fieldName),
-    ) ?? [];
+  const jsonFormsOrder = getJsonFormsControlEntries(configMeta)
+    .map((entry) => entry.fieldName)
+    .filter((fieldName) => !fieldName.includes("[]"));
+  const orderedFields = jsonFormsOrder.filter((fieldName) =>
+    schemaFieldSet.has(fieldName),
+  );
   const orderedFieldSet = new Set(orderedFields);
   const remainingFields = schemaFields.filter(
     (fieldName) => !orderedFieldSet.has(fieldName),

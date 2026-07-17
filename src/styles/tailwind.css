@@ -186,7 +186,7 @@
 
   --radius: 0.75rem; /* گوشه‌های کمی گردتر برای حس مدرن‌تر */
 
-  --sidebar: oklch(0.97 0.01 240);
+  --sidebar: oklch(0.955 0.018 240);
   --sidebar-foreground: oklch(0.12 0.02 260);
   --sidebar-primary: oklch(0.45 0.22 315);
   --sidebar-primary-foreground: oklch(0.99 0 0);
@@ -194,6 +194,7 @@
   --sidebar-accent-foreground: oklch(0.4 0.2 230);
   --sidebar-border: oklch(0.88 0.01 240);
   --sidebar-ring: oklch(0.45 0.22 315);
+  --sidebar-shadow: 0 0 24px -8px oklch(0.2 0.04 240 / 18%);
 }
 
 .dark {
@@ -233,7 +234,7 @@
   --chart-4: oklch(0.75 0.15 190);
   --chart-5: oklch(0.55 0.25 340);
 
-  --sidebar: oklch(0.12 0.01 240);
+  --sidebar: oklch(0.145 0.018 240);
   --sidebar-foreground: oklch(0.98 0.005 240);
   --sidebar-primary: oklch(0.62 0.26 315);
   --sidebar-primary-foreground: oklch(0.1 0.005 240);
@@ -241,6 +242,7 @@
   --sidebar-accent-foreground: oklch(0.9 0.05 220);
   --sidebar-border: oklch(0.22 0.02 240);
   --sidebar-ring: oklch(0.68 0.22 230);
+  --sidebar-shadow: 0 0 28px -8px oklch(0 0 0 / 60%);
 }
 
 @theme inline {

@@ -16,7 +16,7 @@ interface Props {
 }
 
 const PROMPT_FIELD_NAMES = new Set(["prompt", "reference_images"]);
-const PROMPT_BOX_CONFIG_FIELD_NAMES = new Set(["size", "resolution"]);
+const PROMPT_BOX_CONFIG_FIELD_NAMES = new Set(["resolution", "aspect_ratio"]);
 const ADVANCED_CONFIG_EXCLUDED_FIELD_NAMES = new Set([
   ...PROMPT_FIELD_NAMES,
   ...PROMPT_BOX_CONFIG_FIELD_NAMES,

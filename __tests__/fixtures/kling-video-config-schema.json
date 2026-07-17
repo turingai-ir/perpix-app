@@ -3,7 +3,7 @@
     "model_owner": "K_LING_AI",
     "name": "KLINGAI_VIDEO_3_0_STANDARD",
     "display_name": "Kling 3.0 Standard",
-    "description": "Kling VIDEO 3.0 Standard via Runware for text-to-video, image-to-video, and motion-control generation. This config uses an explicit mode field to make Runware's conditional schema safe for frontend forms and backend payload building.",
+    "description": "مدل Kling VIDEO 3.0 Standard از طریق Runware برای تبدیل متن به ویدیو، تصویر به ویدیو و تولید ویدیو با کنترل حرکت. این پیکربندی از یک فیلد حالت صریح استفاده می‌کند تا طرح‌واره‌های شرطی Runware را برای فرم‌های فرانت‌اند و ساخت داده‌های بک‌اند ایمن سازد.",
     "icon_url": null,
     "tags": [
       "video",
@@ -13,1560 +13,2920 @@
       "elements",
       "native-audio"
     ],
-    "supported_inputs": ["TEXT", "IMAGE", "VIDEO", "AUDIO"],
-    "supported_outputs": ["VIDEO"],
-    "config_schema": {
-      "$schema": "https://json-schema.org/draft/2020-12/schema",
-      "$id": "KLINGAI_VIDEO_3_0_STANDARD",
-      "type": "object",
-      "required": ["mode"],
-      "additionalProperties": false,
-      "properties": {
-        "mode": {
-          "type": "string",
-          "enum": ["text_to_video", "image_to_video", "motion_control"],
-          "default": "text_to_video"
-        },
-        "n": {
-          "type": "integer",
-          "minimum": 1,
-          "maximum": 1,
-          "default": 1
-        },
-        "prompt": {
-          "type": "string",
-          "minLength": 3,
-          "maxLength": 2500
-        },
-        "negative_prompt": {
-          "type": "string",
-          "minLength": 3,
-          "maxLength": 2500
-        },
-        "multi_prompt": {
-          "type": "array",
-          "minItems": 1,
-          "maxItems": 6,
-          "items": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": ["prompt", "duration"],
-            "properties": {
-              "prompt": {
-                "type": "string",
-                "minLength": 3,
-                "maxLength": 2500
-              },
-              "duration": {
-                "type": "integer",
-                "minimum": 1
+    "supported_inputs": [
+      "TEXT",
+      "IMAGE",
+      "VIDEO",
+      "AUDIO"
+    ],
+    "supported_outputs": [
+      "VIDEO"
+    ],
+    "is_active": true,
+    "meta": {
+      "uischema": {
+        "type": "VerticalLayout",
+        "elements": [
+          {
+            "type": "Control",
+            "scope": "#/properties/mode",
+            "label": "حالت تولید",
+            "options": {
+              "widget": "switch",
+              "description": "نوع جریان تولید ویدیو را مشخص می‌کند.",
+              "hint": "با انتخاب حالت، فقط فیلدهای لازم برای متن به ویدیو، تصویر به ویدیو یا motion control نمایش داده می‌شوند.",
+              "labels": {
+                "text_to_video": "متن به ویدیو",
+                "image_to_video": "تصویر به ویدیو",
+                "motion_control": "کنترل حرکت"
               }
             }
-          }
-        },
-        "frame_images": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "minLength": 1
           },
-          "minItems": 1,
-          "maxItems": 2,
-          "file_type": "list"
-        },
-        "reference_videos": {
-          "type": "array",
-          "minItems": 1,
-          "maxItems": 1,
-          "items": {
-            "type": "string",
-            "minLength": 1
-          },
-          "file_type": "list"
-        },
-        "reference_images": {
-          "type": "array",
-          "minItems": 1,
-          "maxItems": 1,
-          "items": {
-            "type": "string",
-            "minLength": 1
-          },
-          "file_type": "list"
-        },
-        "elements": {
-          "type": "array",
-          "minItems": 1,
-          "maxItems": 3,
-          "items": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": ["id"],
-            "properties": {
-              "id": {
-                "type": "string",
-                "minLength": 1
-              },
-              "frontal_image": {
-                "type": "string",
-                "file_type": "single"
-              },
-              "images": {
-                "type": "array",
-                "minItems": 1,
-                "maxItems": 3,
-                "items": {
-                  "type": "string",
-                  "minLength": 1
-                },
-                "file_type": "list"
-              },
-              "videos": {
-                "type": "array",
-                "minItems": 1,
-                "maxItems": 1,
-                "items": {
-                  "type": "string",
-                  "minLength": 1
-                },
-                "file_type": "list"
-              },
-              "voices": {
-                "type": "array",
-                "minItems": 1,
-                "maxItems": 1,
-                "items": {
-                  "type": "string",
-                  "minLength": 1
-                },
-                "file_type": "list"
-              },
-              "tags": {
-                "type": "array",
-                "minItems": 1,
-                "items": {
-                  "type": "string",
-                  "enum": [
-                    "Animal",
-                    "Character",
-                    "Hottest",
-                    "Item",
-                    "Costume",
-                    "Scene",
-                    "Effect",
-                    "Others"
-                  ]
-                }
+          {
+            "type": "Control",
+            "scope": "#/properties/prompt",
+            "label": "پرامپت",
+            "options": {
+              "widget": "textarea",
+              "description": "متن اصلی برای توصیف عناصر، حرکت‌ها و صدای ویدیوی خروجی.",
+              "hint": "از پرامپت یا پرامپت چندبخشی استفاده کنید، نه هر دو. در حالت تصویر به ویدیو می‌توانید عناصر را با الگوی <<<element_1>>> در متن ارجاع دهید. حداکثر ۲۵۰۰ کاراکتر مجاز است.",
+              "errors": {
+                "required": "وارد کردن پرامپت در این حالت الزامی است.",
+                "minLength": "پرامپت باید حداقل ۳ کاراکتر باشد.",
+                "maxLength": "پرامپت نمی‌تواند بیشتر از ۲۵۰۰ کاراکتر باشد."
               }
             },
-            "allOf": [
-              {
-                "if": {
-                  "required": ["images"],
-                  "properties": {
-                    "images": {
-                      "type": "array",
-                      "minItems": 1
-                    }
-                  }
-                },
-                "then": {
-                  "required": ["frontal_image"],
-                  "properties": {
-                    "frontal_image": {
-                      "type": "string",
-                      "minLength": 1
-                    }
-                  }
-                }
-              },
-              {
-                "if": {
-                  "required": ["voices"],
-                  "properties": {
-                    "voices": {
-                      "type": "array",
-                      "minItems": 1
-                    }
-                  }
-                },
-                "then": {
-                  "required": ["frontal_image"],
-                  "properties": {
-                    "frontal_image": {
-                      "type": "string",
-                      "minLength": 1
-                    }
-                  }
-                }
-              },
-              {
-                "if": {
-                  "required": ["videos"],
-                  "properties": {
-                    "videos": {
-                      "type": "array",
-                      "minItems": 1
-                    }
-                  }
-                },
-                "then": {
+            "rule": {
+              "effect": "HIDE",
+              "condition": {
+                "scope": "#",
+                "schema": {
                   "not": {
                     "anyOf": [
                       {
-                        "required": ["images"]
+                        "allOf": [
+                          {
+                            "allOf": [
+                              {
+                                "required": [
+                                  "mode"
+                                ]
+                              },
+                              {
+                                "properties": {
+                                  "mode": {
+                                    "const": "text_to_video"
+                                  }
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "not": {
+                              "allOf": [
+                                {
+                                  "required": [
+                                    "mode"
+                                  ]
+                                },
+                                {
+                                  "properties": {
+                                    "mode": {
+                                      "const": "image_to_video"
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "not": {
+                              "allOf": [
+                                {
+                                  "required": [
+                                    "mode"
+                                  ]
+                                },
+                                {
+                                  "properties": {
+                                    "mode": {
+                                      "const": "motion_control"
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "not": {
+                              "not": {
+                                "anyOf": [
+                                  {
+                                    "not": {
+                                      "required": [
+                                        "multi_prompt"
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "properties": {
+                                      "multi_prompt": {
+                                        "const": null
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "properties": {
+                                      "multi_prompt": {
+                                        "const": ""
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "properties": {
+                                      "multi_prompt": {
+                                        "type": "array",
+                                        "maxItems": 0
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        ]
                       },
                       {
-                        "required": ["voices"]
+                        "allOf": [
+                          {
+                            "allOf": [
+                              {
+                                "required": [
+                                  "mode"
+                                ]
+                              },
+                              {
+                                "properties": {
+                                  "mode": {
+                                    "const": "image_to_video"
+                                  }
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "not": {
+                              "allOf": [
+                                {
+                                  "required": [
+                                    "mode"
+                                  ]
+                                },
+                                {
+                                  "properties": {
+                                    "mode": {
+                                      "const": "motion_control"
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "not": {
+                              "not": {
+                                "anyOf": [
+                                  {
+                                    "not": {
+                                      "required": [
+                                        "multi_prompt"
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "properties": {
+                                      "multi_prompt": {
+                                        "const": null
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "properties": {
+                                      "multi_prompt": {
+                                        "const": ""
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "properties": {
+                                      "multi_prompt": {
+                                        "type": "array",
+                                        "maxItems": 0
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        ]
                       },
                       {
-                        "required": ["frontal_image"]
+                        "allOf": [
+                          {
+                            "allOf": [
+                              {
+                                "required": [
+                                  "mode"
+                                ]
+                              },
+                              {
+                                "properties": {
+                                  "mode": {
+                                    "const": "motion_control"
+                                  }
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "not": {
+                              "not": {
+                                "anyOf": [
+                                  {
+                                    "not": {
+                                      "required": [
+                                        "multi_prompt"
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "properties": {
+                                      "multi_prompt": {
+                                        "const": null
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "properties": {
+                                      "multi_prompt": {
+                                        "const": ""
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "properties": {
+                                      "multi_prompt": {
+                                        "type": "array",
+                                        "maxItems": 0
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        ]
                       }
                     ]
                   }
                 }
               }
-            ]
-          }
-        },
-        "size": {
-          "type": "string",
-          "enum": ["1280x720", "960x960", "720x1280"],
-          "default": "1280x720"
-        },
-        "duration": {
-          "type": "integer",
-          "minimum": 3,
-          "maximum": 15,
-          "default": 5,
-          "enum": [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
-        },
-        "generate_audio": {
-          "type": "boolean",
-          "default": true
-        },
-        "character_orientation": {
-          "type": "string",
-          "enum": ["image", "video"],
-          "default": "image"
-        },
-        "keep_original_sound": {
-          "type": "boolean"
-        },
-        "output_type": {
-          "type": "string",
-          "enum": ["URL"],
-          "default": "URL"
-        },
-        "output_format": {
-          "type": "string",
-          "enum": ["MP4", "WEBM", "MOV"],
-          "default": "MP4"
-        },
-        "output_quality": {
-          "type": "integer",
-          "minimum": 20,
-          "maximum": 99,
-          "default": 95
-        },
-        "delivery_method": {
-          "type": "string",
-          "enum": ["async"],
-          "default": "async"
-        },
-        "include_cost": {
-          "type": "boolean",
-          "default": true
-        }
-      },
-      "allOf": [
-        {
-          "if": {
-            "properties": {
-              "mode": {
-                "const": "text_to_video"
-              }
-            },
-            "required": ["mode"]
+            }
           },
-          "then": {
-            "required": ["size", "duration"],
-            "properties": {
-              "size": {
-                "type": "string",
-                "enum": ["1280x720", "960x960", "720x1280"]
-              },
-              "duration": {
-                "type": "integer",
-                "minimum": 3,
-                "maximum": 15
+          {
+            "type": "Control",
+            "scope": "#/properties/negative_prompt",
+            "label": "پرامپت منفی",
+            "options": {
+              "widget": "textarea",
+              "description": "متنی برای توضیح چیزهایی که نباید در خروجی دیده شوند.",
+              "hint": "برای حذف کیفیت‌های ناخواسته، سبک‌های اشتباه، اشیا یا حرکات نامطلوب استفاده کنید. حداکثر ۲۵۰۰ کاراکتر مجاز است.",
+              "errors": {
+                "minLength": "پرامپت منفی باید حداقل ۳ کاراکتر باشد.",
+                "maxLength": "پرامپت منفی نمی‌تواند بیشتر از ۲۵۰۰ کاراکتر باشد."
               }
             },
-            "oneOf": [
-              {
-                "required": ["prompt"],
-                "properties": {
-                  "prompt": {
-                    "type": "string",
-                    "minLength": 2
+            "rule": {
+              "effect": "HIDE",
+              "condition": {
+                "scope": "#",
+                "schema": {
+                  "not": {
+                    "anyOf": [
+                      {
+                        "allOf": [
+                          {
+                            "allOf": [
+                              {
+                                "required": [
+                                  "mode"
+                                ]
+                              },
+                              {
+                                "properties": {
+                                  "mode": {
+                                    "const": "text_to_video"
+                                  }
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "not": {
+                              "allOf": [
+                                {
+                                  "required": [
+                                    "mode"
+                                  ]
+                                },
+                                {
+                                  "properties": {
+                                    "mode": {
+                                      "const": "image_to_video"
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "not": {
+                              "allOf": [
+                                {
+                                  "required": [
+                                    "mode"
+                                  ]
+                                },
+                                {
+                                  "properties": {
+                                    "mode": {
+                                      "const": "motion_control"
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "allOf": [
+                          {
+                            "allOf": [
+                              {
+                                "required": [
+                                  "mode"
+                                ]
+                              },
+                              {
+                                "properties": {
+                                  "mode": {
+                                    "const": "image_to_video"
+                                  }
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "not": {
+                              "allOf": [
+                                {
+                                  "required": [
+                                    "mode"
+                                  ]
+                                },
+                                {
+                                  "properties": {
+                                    "mode": {
+                                      "const": "motion_control"
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "allOf": [
+                          {
+                            "allOf": [
+                              {
+                                "required": [
+                                  "mode"
+                                ]
+                              },
+                              {
+                                "properties": {
+                                  "mode": {
+                                    "const": "motion_control"
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
                   }
-                },
-                "not": {
-                  "required": ["multi_prompt"]
                 }
+              }
+            }
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/multi_prompt",
+            "label": "پرامپت چندبخشی",
+            "options": {
+              "widget": "list",
+              "description": "چند segment پشت سر هم برای تولید ویدیوی چندشات.",
+              "hint": "همزمان با پرامپت اصلی استفاده نشود. مجموع مدت segmentها باید با مدت کل ویدیو برابر باشد.",
+              "errors": {
+                "minItems": "حداقل ۱ بخش لازم است.",
+                "maxItems": "حداکثر ۶ بخش مجاز است."
               },
-              {
-                "required": ["multi_prompt"],
-                "properties": {
-                  "multi_prompt": {
-                    "type": "array",
-                    "minItems": 1
+              "detail": {
+                "type": "VerticalLayout",
+                "elements": [
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/prompt",
+                    "label": "پرامپت بخش",
+                    "options": {
+                      "widget": "textarea",
+                      "description": "توصیف محتوای این بخش از ویدیو.",
+                      "hint": "برای هر segment حرکت، صحنه و صدای همان بخش را بنویسید.",
+                      "errors": {
+                        "minLength": "پرامپت بخش باید حداقل ۳ کاراکتر باشد.",
+                        "maxLength": "پرامپت بخش نمی‌تواند بیشتر از ۲۵۰۰ کاراکتر باشد."
+                      }
+                    }
+                  },
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/duration",
+                    "label": "مدت بخش",
+                    "options": {
+                      "widget": "number",
+                      "description": "مدت زمان این segment بر حسب ثانیه.",
+                      "hint": "مجموع مدت همه بخش‌ها باید با فیلد مدت ویدیو برابر باشد.",
+                      "errors": {
+                        "minimum": "مدت هر بخش باید حداقل ۱ ثانیه باشد."
+                      }
+                    }
                   }
-                },
-                "not": {
-                  "required": ["prompt"]
-                }
-              }
-            ],
-            "not": {
-              "anyOf": [
-                {
-                  "required": ["frame_images"]
-                },
-                {
-                  "required": ["reference_videos"]
-                },
-                {
-                  "required": ["reference_images"]
-                },
-                {
-                  "required": ["elements"]
-                },
-                {
-                  "required": ["character_orientation"]
-                },
-                {
-                  "required": ["keep_original_sound"]
-                }
-              ]
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "mode": {
-                "const": "image_to_video"
+                ]
               }
             },
-            "required": ["mode"]
-          },
-          "then": {
-            "required": ["frame_images", "duration"],
-            "properties": {
-              "frame_images": {
-                "type": "array",
-                "minItems": 1,
-                "maxItems": 2
-              },
-              "duration": {
-                "type": "integer",
-                "minimum": 3,
-                "maximum": 15
-              }
-            },
-            "oneOf": [
-              {
-                "required": ["prompt"],
-                "properties": {
-                  "prompt": {
-                    "type": "string",
-                    "minLength": 2
+            "rule": {
+              "effect": "HIDE",
+              "condition": {
+                "scope": "#",
+                "schema": {
+                  "not": {
+                    "anyOf": [
+                      {
+                        "allOf": [
+                          {
+                            "allOf": [
+                              {
+                                "required": [
+                                  "mode"
+                                ]
+                              },
+                              {
+                                "properties": {
+                                  "mode": {
+                                    "const": "text_to_video"
+                                  }
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "not": {
+                              "allOf": [
+                                {
+                                  "required": [
+                                    "mode"
+                                  ]
+                                },
+                                {
+                                  "properties": {
+                                    "mode": {
+                                      "const": "image_to_video"
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "not": {
+                              "allOf": [
+                                {
+                                  "required": [
+                                    "mode"
+                                  ]
+                                },
+                                {
+                                  "properties": {
+                                    "mode": {
+                                      "const": "motion_control"
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "not": {
+                              "not": {
+                                "anyOf": [
+                                  {
+                                    "not": {
+                                      "required": [
+                                        "prompt"
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "properties": {
+                                      "prompt": {
+                                        "const": null
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "properties": {
+                                      "prompt": {
+                                        "const": ""
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "properties": {
+                                      "prompt": {
+                                        "type": "array",
+                                        "maxItems": 0
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "allOf": [
+                          {
+                            "allOf": [
+                              {
+                                "required": [
+                                  "mode"
+                                ]
+                              },
+                              {
+                                "properties": {
+                                  "mode": {
+                                    "const": "image_to_video"
+                                  }
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "not": {
+                              "allOf": [
+                                {
+                                  "required": [
+                                    "mode"
+                                  ]
+                                },
+                                {
+                                  "properties": {
+                                    "mode": {
+                                      "const": "motion_control"
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "not": {
+                              "not": {
+                                "anyOf": [
+                                  {
+                                    "not": {
+                                      "required": [
+                                        "prompt"
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "properties": {
+                                      "prompt": {
+                                        "const": null
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "properties": {
+                                      "prompt": {
+                                        "const": ""
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "properties": {
+                                      "prompt": {
+                                        "type": "array",
+                                        "maxItems": 0
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    ]
                   }
-                },
-                "not": {
-                  "required": ["multi_prompt"]
                 }
+              }
+            }
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/frame_images",
+            "label": "تصاویر فریم",
+            "options": {
+              "widget": "file-list",
+              "description": "تصاویر فریم برای محدود کردن نقاط مشخصی از timeline ویدیو.",
+              "hint": "فقط برای تصویر به ویدیو. با یک تصویر، فریم اول تنظیم می‌شود؛ با دو تصویر، فریم اول و آخر مشخص می‌شوند.",
+              "file": {
+                "type": "list",
+                "accept": [
+                  "image/png",
+                  "image/jpeg"
+                ]
               },
-              {
-                "required": ["multi_prompt"],
-                "properties": {
-                  "multi_prompt": {
-                    "type": "array",
-                    "minItems": 1
+              "errors": {
+                "minItems": "حداقل ۱ تصویر فریم لازم است.",
+                "maxItems": "حداکثر ۲ تصویر فریم مجاز است."
+              }
+            },
+            "rule": {
+              "effect": "HIDE",
+              "condition": {
+                "scope": "#",
+                "schema": {
+                  "not": {
+                    "allOf": [
+                      {
+                        "allOf": [
+                          {
+                            "required": [
+                              "mode"
+                            ]
+                          },
+                          {
+                            "properties": {
+                              "mode": {
+                                "const": "image_to_video"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "not": {
+                          "allOf": [
+                            {
+                              "required": [
+                                "mode"
+                              ]
+                            },
+                            {
+                              "properties": {
+                                "mode": {
+                                  "const": "motion_control"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
                   }
-                },
-                "not": {
-                  "required": ["prompt"]
                 }
               }
-            ],
-            "not": {
-              "anyOf": [
-                {
-                  "required": ["size"]
-                },
-                {
-                  "required": ["reference_videos"]
-                },
-                {
-                  "required": ["reference_images"]
-                },
-                {
-                  "required": ["character_orientation"]
-                },
-                {
-                  "required": ["keep_original_sound"]
-                }
-              ]
             }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "mode": {
-                "const": "motion_control"
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/reference_videos",
+            "label": "ویدیوهای مرجع",
+            "options": {
+              "widget": "file-list",
+              "description": "ویدیوی مرجع برای motion control.",
+              "hint": "فقط در حالت motion control استفاده می‌شود و باید همراه تصویر مرجع و جهت‌گیری کاراکتر تنظیم شود.",
+              "file": {
+                "type": "list",
+                "accept": [
+                  "video/mp4"
+                ]
+              },
+              "errors": {
+                "minItems": "حداقل ۱ ویدیوی مرجع لازم است.",
+                "maxItems": "حداکثر ۱ ویدیوی مرجع مجاز است."
               }
             },
-            "required": ["mode"]
+            "rule": {
+              "effect": "HIDE",
+              "condition": {
+                "scope": "#",
+                "schema": {
+                  "not": {
+                    "allOf": [
+                      {
+                        "allOf": [
+                          {
+                            "required": [
+                              "mode"
+                            ]
+                          },
+                          {
+                            "properties": {
+                              "mode": {
+                                "const": "motion_control"
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
           },
-          "then": {
-            "required": [
-              "reference_videos",
-              "reference_images",
-              "character_orientation"
-            ],
-            "properties": {
-              "reference_videos": {
-                "type": "array",
-                "minItems": 1,
-                "maxItems": 1
+          {
+            "type": "Control",
+            "scope": "#/properties/reference_images",
+            "label": "تصاویر مرجع",
+            "options": {
+              "widget": "file-list",
+              "description": "تصویر مرجع برای motion control یا هدایت ظاهر.",
+              "hint": "فقط ۱ تصویر مرجع قابل استفاده است. برای motion control همراه ویدیوی مرجع استفاده می‌شود.",
+              "file": {
+                "type": "list",
+                "accept": [
+                  "image/png",
+                  "image/jpeg"
+                ]
               },
-              "reference_images": {
-                "type": "array",
-                "minItems": 1,
-                "maxItems": 1
-              },
-              "character_orientation": {
-                "type": "string",
-                "enum": ["image", "video"]
+              "errors": {
+                "minItems": "حداقل ۱ تصویر مرجع لازم است.",
+                "maxItems": "حداکثر ۱ تصویر مرجع مجاز است."
               }
             },
-            "not": {
-              "anyOf": [
-                {
-                  "required": ["size"]
-                },
-                {
-                  "required": ["frame_images"]
-                },
-                {
-                  "required": ["elements"]
-                },
-                {
-                  "required": ["multi_prompt"]
+            "rule": {
+              "effect": "HIDE",
+              "condition": {
+                "scope": "#",
+                "schema": {
+                  "not": {
+                    "allOf": [
+                      {
+                        "allOf": [
+                          {
+                            "required": [
+                              "mode"
+                            ]
+                          },
+                          {
+                            "properties": {
+                              "mode": {
+                                "const": "motion_control"
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
                 }
-              ]
-            }
-          }
-        },
-        {
-          "if": {
-            "required": ["elements"],
-            "properties": {
-              "elements": {
-                "type": "array",
-                "minItems": 1
               }
             }
           },
-          "then": {
-            "required": ["frame_images"],
-            "properties": {
-              "mode": {
-                "const": "image_to_video"
+          {
+            "type": "Control",
+            "scope": "#/properties/elements",
+            "label": "عناصر قابل استفاده مجدد",
+            "options": {
+              "widget": "elements-list",
+              "description": "دارایی‌های قابل استفاده مجدد مثل تصویر، ویدیو یا صدا برای ارجاع در پرامپت.",
+              "hint": "فقط برای تصویر به ویدیو. اگر عنصر مبتنی بر تصویر یا صداست، تصویر frontal لازم است. عنصر ویدیویی با تصویر یا صدا ترکیب نمی‌شود.",
+              "errors": {
+                "minItems": "حداقل ۱ عنصر لازم است.",
+                "maxItems": "حداکثر ۳ عنصر مجاز است."
               },
-              "frame_images": {
-                "type": "array",
-                "minItems": 1
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "required": ["reference_videos"],
-            "properties": {
-              "reference_videos": {
-                "type": "array",
-                "minItems": 1
-              }
-            }
-          },
-          "then": {
-            "required": ["reference_images", "character_orientation"],
-            "properties": {
-              "mode": {
-                "const": "motion_control"
-              },
-              "reference_images": {
-                "type": "array",
-                "minItems": 1,
-                "maxItems": 1
-              },
-              "character_orientation": {
-                "type": "string",
-                "enum": ["image", "video"]
+              "detail": {
+                "type": "VerticalLayout",
+                "elements": [
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/id",
+                    "label": "شناسه",
+                    "options": {
+                      "widget": "text",
+                      "description": "شناسه یکتا برای ساخت یا ارجاع به عنصر.",
+                      "hint": "برای ارجاع در پرامپت از ترتیب عناصر مثل <<<element_1>>> استفاده کنید.",
+                      "errors": {
+                        "minLength": "شناسه عنصر الزامی است."
+                      }
+                    }
+                  },
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/frontal_image",
+                    "label": "تصویر روبه‌رو",
+                    "options": {
+                      "widget": "file",
+                      "description": "تصویر مرجع روبه‌رو برای عناصر مبتنی بر تصویر.",
+                      "hint": "برای elements.images یا elements.voices لازم است.",
+                      "file": {
+                        "type": "single",
+                        "accept": [
+                          "image/png",
+                          "image/jpeg"
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/images",
+                    "label": "تصاویر عنصر",
+                    "options": {
+                      "widget": "file-list",
+                      "description": "تصاویر مرجع برای عنصر.",
+                      "hint": "تا ۳ تصویر، و فقط همراه frontal image.",
+                      "file": {
+                        "type": "list",
+                        "accept": [
+                          "image/png",
+                          "image/jpeg"
+                        ]
+                      },
+                      "errors": {
+                        "minItems": "حداقل ۱ تصویر عنصر لازم است.",
+                        "maxItems": "حداکثر ۳ تصویر عنصر مجاز است."
+                      }
+                    }
+                  },
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/videos",
+                    "label": "ویدیوهای عنصر",
+                    "options": {
+                      "widget": "file-list",
+                      "description": "ویدیوی مرجع برای عنصر.",
+                      "hint": "فقط ۱ ویدیو و بدون ترکیب با تصویر یا صدا.",
+                      "file": {
+                        "type": "list",
+                        "accept": [
+                          "video/mp4"
+                        ]
+                      },
+                      "errors": {
+                        "minItems": "حداقل ۱ ویدیوی عنصر لازم است.",
+                        "maxItems": "حداکثر ۱ ویدیوی عنصر مجاز است."
+                      }
+                    }
+                  },
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/voices",
+                    "label": "صداهای عنصر",
+                    "options": {
+                      "widget": "file-list",
+                      "description": "صدای مرجع برای عنصر.",
+                      "hint": "فقط ۱ صدا و فقط همراه frontal image.",
+                      "file": {
+                        "type": "list",
+                        "accept": [
+                          "audio/mpeg",
+                          "audio/wav"
+                        ]
+                      },
+                      "errors": {
+                        "minItems": "حداقل ۱ صدای عنصر لازم است.",
+                        "maxItems": "حداکثر ۱ صدای عنصر مجاز است."
+                      }
+                    }
+                  },
+                  {
+                    "type": "Control",
+                    "scope": "#/properties/tags",
+                    "label": "برچسب‌ها",
+                    "options": {
+                      "widget": "list",
+                      "description": "برچسب‌های دسته‌بندی عنصر.",
+                      "hint": "برای مشخص کردن نوع عنصر مثل Character، Item یا Scene استفاده می‌شود.",
+                      "errors": {
+                        "minItems": "حداقل ۱ برچسب لازم است."
+                      },
+                      "labels": {
+                        "Animal": "حیوان",
+                        "Character": "کاراکتر",
+                        "Hottest": "محبوب",
+                        "Item": "آیتم",
+                        "Costume": "لباس",
+                        "Scene": "صحنه",
+                        "Effect": "افکت",
+                        "Others": "سایر"
+                      }
+                    }
+                  }
+                ]
               }
             },
-            "not": {
-              "anyOf": [
-                {
-                  "required": ["multi_prompt"]
+            "rule": {
+              "effect": "HIDE",
+              "condition": {
+                "scope": "#",
+                "schema": {
+                  "not": {
+                    "allOf": [
+                      {
+                        "allOf": [
+                          {
+                            "required": [
+                              "mode"
+                            ]
+                          },
+                          {
+                            "properties": {
+                              "mode": {
+                                "const": "image_to_video"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "not": {
+                          "allOf": [
+                            {
+                              "required": [
+                                "mode"
+                              ]
+                            },
+                            {
+                              "properties": {
+                                "mode": {
+                                  "const": "motion_control"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
                 }
-              ]
-            }
-          }
-        },
-        {
-          "if": {
-            "required": ["reference_images"],
-            "properties": {
-              "reference_images": {
-                "type": "array",
-                "minItems": 1
               }
             }
           },
-          "then": {
-            "required": ["reference_videos", "character_orientation"],
-            "properties": {
-              "mode": {
-                "const": "motion_control"
+          {
+            "type": "Control",
+            "scope": "#/properties/resolution",
+            "label": "وضوح خروجی",
+            "options": {
+              "widget": "select",
+              "description": "سطح وضوح خروجی.",
+              "hint": "ابعاد دقیق متناسب با نسبت تصویر توسط سرویس تولید انتخاب می‌شود.",
+              "labels": {
+                "720p": "720p"
               }
-            }
-          }
-        },
-        {
-          "if": {
-            "required": ["character_orientation"],
-            "properties": {
-              "character_orientation": {
-                "type": "string",
-                "enum": ["image", "video"]
-              }
-            }
-          },
-          "then": {
-            "required": ["reference_videos", "reference_images"],
-            "properties": {
-              "mode": {
-                "const": "motion_control"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "required": ["keep_original_sound"],
-            "properties": {
-              "keep_original_sound": {
-                "type": "boolean"
-              }
-            }
-          },
-          "then": {
-            "required": ["reference_videos"],
-            "properties": {
-              "mode": {
-                "const": "motion_control"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "required": ["multi_prompt"],
-            "properties": {
-              "multi_prompt": {
-                "type": "array",
-                "minItems": 1
-              }
-            }
-          },
-          "then": {
-            "required": ["duration"],
-            "not": {
-              "anyOf": [
-                {
-                  "required": ["prompt"]
-                },
-                {
-                  "required": ["reference_videos"]
+            },
+            "rule": {
+              "effect": "HIDE",
+              "condition": {
+                "scope": "#",
+                "schema": {
+                  "not": {
+                    "allOf": [
+                      {
+                        "allOf": [
+                          {
+                            "required": [
+                              "mode"
+                            ]
+                          },
+                          {
+                            "properties": {
+                              "mode": {
+                                "const": "text_to_video"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "not": {
+                          "allOf": [
+                            {
+                              "required": [
+                                "mode"
+                              ]
+                            },
+                            {
+                              "properties": {
+                                "mode": {
+                                  "const": "image_to_video"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "not": {
+                          "allOf": [
+                            {
+                              "required": [
+                                "mode"
+                              ]
+                            },
+                            {
+                              "properties": {
+                                "mode": {
+                                  "const": "motion_control"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
                 }
-              ]
+              }
+            }
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/aspect_ratio",
+            "label": "نسبت تصویر",
+            "options": {
+              "widget": "select",
+              "description": "نسبت عرض به ارتفاع خروجی.",
+              "hint": "نسبت مناسب محل نمایش نهایی را انتخاب کنید.",
+              "labels": {
+                "16:9": "16:9",
+                "9:16": "9:16",
+                "1:1": "1:1"
+              }
+            },
+            "rule": {
+              "effect": "HIDE",
+              "condition": {
+                "scope": "#",
+                "schema": {
+                  "not": {
+                    "allOf": [
+                      {
+                        "allOf": [
+                          {
+                            "required": [
+                              "mode"
+                            ]
+                          },
+                          {
+                            "properties": {
+                              "mode": {
+                                "const": "text_to_video"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "not": {
+                          "allOf": [
+                            {
+                              "required": [
+                                "mode"
+                              ]
+                            },
+                            {
+                              "properties": {
+                                "mode": {
+                                  "const": "image_to_video"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "not": {
+                          "allOf": [
+                            {
+                              "required": [
+                                "mode"
+                              ]
+                            },
+                            {
+                              "properties": {
+                                "mode": {
+                                  "const": "motion_control"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/duration",
+            "label": "مدت ویدیو",
+            "options": {
+              "widget": "select",
+              "description": "مدت زمان ویدیوی خروجی بر حسب ثانیه.",
+              "hint": "مدل مدت ۳ تا ۱۵ ثانیه را می‌پذیرد؛ تعداد فریم‌ها بر اساس مدت و fps تعیین می‌شود.",
+              "errors": {
+                "minimum": "مدت ویدیو باید حداقل ۳ ثانیه باشد.",
+                "maximum": "مدت ویدیو نمی‌تواند بیشتر از ۱۵ ثانیه باشد."
+              },
+              "labels": {
+                "3": "3 ثانیه",
+                "4": "4 ثانیه",
+                "5": "5 ثانیه",
+                "6": "6 ثانیه",
+                "7": "7 ثانیه",
+                "8": "8 ثانیه",
+                "9": "9 ثانیه",
+                "10": "10 ثانیه",
+                "11": "11 ثانیه",
+                "12": "12 ثانیه",
+                "13": "13 ثانیه",
+                "14": "14 ثانیه",
+                "15": "15 ثانیه"
+              }
+            },
+            "rule": {
+              "effect": "HIDE",
+              "condition": {
+                "scope": "#",
+                "schema": {
+                  "not": {
+                    "anyOf": [
+                      {
+                        "allOf": [
+                          {
+                            "allOf": [
+                              {
+                                "required": [
+                                  "mode"
+                                ]
+                              },
+                              {
+                                "properties": {
+                                  "mode": {
+                                    "const": "text_to_video"
+                                  }
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "not": {
+                              "allOf": [
+                                {
+                                  "required": [
+                                    "mode"
+                                  ]
+                                },
+                                {
+                                  "properties": {
+                                    "mode": {
+                                      "const": "image_to_video"
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "not": {
+                              "allOf": [
+                                {
+                                  "required": [
+                                    "mode"
+                                  ]
+                                },
+                                {
+                                  "properties": {
+                                    "mode": {
+                                      "const": "motion_control"
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "allOf": [
+                          {
+                            "allOf": [
+                              {
+                                "required": [
+                                  "mode"
+                                ]
+                              },
+                              {
+                                "properties": {
+                                  "mode": {
+                                    "const": "image_to_video"
+                                  }
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "not": {
+                              "allOf": [
+                                {
+                                  "required": [
+                                    "mode"
+                                  ]
+                                },
+                                {
+                                  "properties": {
+                                    "mode": {
+                                      "const": "motion_control"
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/generate_audio",
+            "label": "تولید صدا",
+            "options": {
+              "widget": "checkbox",
+              "description": "تولید صدای native هماهنگ با ویدیو.",
+              "hint": "اگر فعال باشد، مدل می‌تواند دیالوگ و صدای محیط هماهنگ با تصویر تولید کند."
+            },
+            "rule": {
+              "effect": "HIDE",
+              "condition": {
+                "scope": "#",
+                "schema": {
+                  "not": {
+                    "anyOf": [
+                      {
+                        "allOf": [
+                          {
+                            "allOf": [
+                              {
+                                "required": [
+                                  "mode"
+                                ]
+                              },
+                              {
+                                "properties": {
+                                  "mode": {
+                                    "const": "text_to_video"
+                                  }
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "not": {
+                              "allOf": [
+                                {
+                                  "required": [
+                                    "mode"
+                                  ]
+                                },
+                                {
+                                  "properties": {
+                                    "mode": {
+                                      "const": "image_to_video"
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "not": {
+                              "allOf": [
+                                {
+                                  "required": [
+                                    "mode"
+                                  ]
+                                },
+                                {
+                                  "properties": {
+                                    "mode": {
+                                      "const": "motion_control"
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "allOf": [
+                          {
+                            "allOf": [
+                              {
+                                "required": [
+                                  "mode"
+                                ]
+                              },
+                              {
+                                "properties": {
+                                  "mode": {
+                                    "const": "image_to_video"
+                                  }
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "not": {
+                              "allOf": [
+                                {
+                                  "required": [
+                                    "mode"
+                                  ]
+                                },
+                                {
+                                  "properties": {
+                                    "mode": {
+                                      "const": "motion_control"
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/character_orientation",
+            "label": "جهت‌گیری کاراکتر",
+            "options": {
+              "widget": "select",
+              "description": "منبع جهت‌گیری کاراکتر برای motion control.",
+              "hint": "می‌تواند با تصویر مرجع یا ویدیوی مرجع هماهنگ شود.",
+              "labels": {
+                "image": "هماهنگ با تصویر مرجع",
+                "video": "هماهنگ با ویدیوی مرجع"
+              }
+            },
+            "rule": {
+              "effect": "HIDE",
+              "condition": {
+                "scope": "#",
+                "schema": {
+                  "not": {
+                    "allOf": [
+                      {
+                        "allOf": [
+                          {
+                            "required": [
+                              "mode"
+                            ]
+                          },
+                          {
+                            "properties": {
+                              "mode": {
+                                "const": "motion_control"
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/keep_original_sound",
+            "label": "حفظ صدای اصلی",
+            "options": {
+              "widget": "checkbox",
+              "description": "نگه داشتن صدای اصلی ویدیوی مرجع.",
+              "hint": "در motion control وقتی می‌خواهید صدای ویدیوی مرجع حفظ شود فعالش کنید."
+            },
+            "rule": {
+              "effect": "HIDE",
+              "condition": {
+                "scope": "#",
+                "schema": {
+                  "not": {
+                    "allOf": [
+                      {
+                        "allOf": [
+                          {
+                            "required": [
+                              "mode"
+                            ]
+                          },
+                          {
+                            "properties": {
+                              "mode": {
+                                "const": "motion_control"
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/output_format",
+            "label": "فرمت خروجی",
+            "options": {
+              "widget": "select",
+              "description": "فرمت فایل ویدیوی خروجی.",
+              "hint": "MP4 برای پخش عمومی مناسب است، WEBM برای وب بهینه است و MOV برای workflowهای حرفه‌ای رایج است.",
+              "labels": {
+                "MP4": "MP4",
+                "WEBM": "WEBM",
+                "MOV": "MOV"
+              }
+            }
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/output_quality",
+            "label": "کیفیت خروجی",
+            "options": {
+              "widget": "number",
+              "description": "کیفیت فشرده‌سازی خروجی.",
+              "hint": "عدد بالاتر کیفیت بیشتری حفظ می‌کند، اما حجم فایل را افزایش می‌دهد.",
+              "errors": {
+                "minimum": "کیفیت خروجی باید حداقل ۲۰ باشد.",
+                "maximum": "کیفیت خروجی نمی‌تواند بیشتر از ۹۹ باشد."
+              }
+            }
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/n",
+            "label": "تعداد خروجی",
+            "options": {
+              "widget": "hidden",
+              "description": "تعداد ویدیوهایی که با همین تنظیمات تولید می‌شوند.",
+              "errors": {
+                "minimum": "تعداد خروجی باید حداقل ۱ باشد.",
+                "maximum": "حداکثر تعداد خروجی ۱ است."
+              }
+            }
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/output_type",
+            "label": "نوع خروجی",
+            "options": {
+              "widget": "hidden",
+              "description": "نوع تحویل فایل خروجی ویدیو.",
+              "hint": "در این تنظیمات خروجی به صورت URL تحویل داده می‌شود.",
+              "labels": {
+                "URL": "URL"
+              }
+            }
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/delivery_method",
+            "label": "روش تحویل",
+            "options": {
+              "widget": "hidden",
+              "description": "روش دریافت نتیجه تولید ویدیو.",
+              "hint": "برای تولید ویدیو، حالت غیرهمزمان شناسه task را برمی‌گرداند و نتیجه بعداً دریافت می‌شود.",
+              "labels": {
+                "async": "غیرهمزمان"
+              }
+            }
+          },
+          {
+            "type": "Control",
+            "scope": "#/properties/include_cost",
+            "label": "نمایش هزینه",
+            "options": {
+              "widget": "hidden",
+              "description": "درخواست نمایش هزینه task در پاسخ Runware.",
+              "hint": "برای محاسبه هزینه نهایی می‌توان از هزینه گزارش‌شده توسط provider استفاده کرد."
             }
           }
-        }
-      ]
-    },
-    "pricing_by": ["mode", "duration", "generate_audio"],
-    "pricing_tiers": [
-      {
-        "mode": "text_to_video",
-        "duration": 3,
-        "generate_audio": false,
-        "price_usdmicro": 252000
-      },
-      {
-        "mode": "text_to_video",
-        "duration": 3,
-        "generate_audio": true,
-        "price_usdmicro": 378000
-      },
-      {
-        "mode": "text_to_video",
-        "duration": 4,
-        "generate_audio": false,
-        "price_usdmicro": 336000
-      },
-      {
-        "mode": "text_to_video",
-        "duration": 4,
-        "generate_audio": true,
-        "price_usdmicro": 504000
-      },
-      {
-        "mode": "text_to_video",
-        "duration": 5,
-        "generate_audio": false,
-        "price_usdmicro": 420000
-      },
-      {
-        "mode": "text_to_video",
-        "duration": 5,
-        "generate_audio": true,
-        "price_usdmicro": 630000
-      },
-      {
-        "mode": "text_to_video",
-        "duration": 6,
-        "generate_audio": false,
-        "price_usdmicro": 504000
-      },
-      {
-        "mode": "text_to_video",
-        "duration": 6,
-        "generate_audio": true,
-        "price_usdmicro": 756000
-      },
-      {
-        "mode": "text_to_video",
-        "duration": 7,
-        "generate_audio": false,
-        "price_usdmicro": 588000
-      },
-      {
-        "mode": "text_to_video",
-        "duration": 7,
-        "generate_audio": true,
-        "price_usdmicro": 882000
-      },
-      {
-        "mode": "text_to_video",
-        "duration": 8,
-        "generate_audio": false,
-        "price_usdmicro": 672000
-      },
-      {
-        "mode": "text_to_video",
-        "duration": 8,
-        "generate_audio": true,
-        "price_usdmicro": 1008000
-      },
-      {
-        "mode": "text_to_video",
-        "duration": 9,
-        "generate_audio": false,
-        "price_usdmicro": 756000
-      },
-      {
-        "mode": "text_to_video",
-        "duration": 9,
-        "generate_audio": true,
-        "price_usdmicro": 1134000
-      },
-      {
-        "mode": "text_to_video",
-        "duration": 10,
-        "generate_audio": false,
-        "price_usdmicro": 840000
-      },
-      {
-        "mode": "text_to_video",
-        "duration": 10,
-        "generate_audio": true,
-        "price_usdmicro": 1260000
-      },
-      {
-        "mode": "text_to_video",
-        "duration": 11,
-        "generate_audio": false,
-        "price_usdmicro": 924000
-      },
-      {
-        "mode": "text_to_video",
-        "duration": 11,
-        "generate_audio": true,
-        "price_usdmicro": 1386000
-      },
-      {
-        "mode": "text_to_video",
-        "duration": 12,
-        "generate_audio": false,
-        "price_usdmicro": 1008000
-      },
-      {
-        "mode": "text_to_video",
-        "duration": 12,
-        "generate_audio": true,
-        "price_usdmicro": 1512000
-      },
-      {
-        "mode": "text_to_video",
-        "duration": 13,
-        "generate_audio": false,
-        "price_usdmicro": 1092000
-      },
-      {
-        "mode": "text_to_video",
-        "duration": 13,
-        "generate_audio": true,
-        "price_usdmicro": 1638000
-      },
-      {
-        "mode": "text_to_video",
-        "duration": 14,
-        "generate_audio": false,
-        "price_usdmicro": 1176000
-      },
-      {
-        "mode": "text_to_video",
-        "duration": 14,
-        "generate_audio": true,
-        "price_usdmicro": 1764000
-      },
-      {
-        "mode": "text_to_video",
-        "duration": 15,
-        "generate_audio": false,
-        "price_usdmicro": 1260000
-      },
-      {
-        "mode": "text_to_video",
-        "duration": 15,
-        "generate_audio": true,
-        "price_usdmicro": 1890000
-      },
-      {
-        "mode": "image_to_video",
-        "duration": 3,
-        "generate_audio": false,
-        "price_usdmicro": 252000
-      },
-      {
-        "mode": "image_to_video",
-        "duration": 3,
-        "generate_audio": true,
-        "price_usdmicro": 378000
-      },
-      {
-        "mode": "image_to_video",
-        "duration": 4,
-        "generate_audio": false,
-        "price_usdmicro": 336000
-      },
-      {
-        "mode": "image_to_video",
-        "duration": 4,
-        "generate_audio": true,
-        "price_usdmicro": 504000
-      },
-      {
-        "mode": "image_to_video",
-        "duration": 5,
-        "generate_audio": false,
-        "price_usdmicro": 420000
-      },
-      {
-        "mode": "image_to_video",
-        "duration": 5,
-        "generate_audio": true,
-        "price_usdmicro": 630000
-      },
-      {
-        "mode": "image_to_video",
-        "duration": 6,
-        "generate_audio": false,
-        "price_usdmicro": 504000
-      },
-      {
-        "mode": "image_to_video",
-        "duration": 6,
-        "generate_audio": true,
-        "price_usdmicro": 756000
-      },
-      {
-        "mode": "image_to_video",
-        "duration": 7,
-        "generate_audio": false,
-        "price_usdmicro": 588000
-      },
-      {
-        "mode": "image_to_video",
-        "duration": 7,
-        "generate_audio": true,
-        "price_usdmicro": 882000
-      },
-      {
-        "mode": "image_to_video",
-        "duration": 8,
-        "generate_audio": false,
-        "price_usdmicro": 672000
-      },
-      {
-        "mode": "image_to_video",
-        "duration": 8,
-        "generate_audio": true,
-        "price_usdmicro": 1008000
-      },
-      {
-        "mode": "image_to_video",
-        "duration": 9,
-        "generate_audio": false,
-        "price_usdmicro": 756000
-      },
-      {
-        "mode": "image_to_video",
-        "duration": 9,
-        "generate_audio": true,
-        "price_usdmicro": 1134000
-      },
-      {
-        "mode": "image_to_video",
-        "duration": 10,
-        "generate_audio": false,
-        "price_usdmicro": 840000
-      },
-      {
-        "mode": "image_to_video",
-        "duration": 10,
-        "generate_audio": true,
-        "price_usdmicro": 1260000
-      },
-      {
-        "mode": "image_to_video",
-        "duration": 11,
-        "generate_audio": false,
-        "price_usdmicro": 924000
-      },
-      {
-        "mode": "image_to_video",
-        "duration": 11,
-        "generate_audio": true,
-        "price_usdmicro": 1386000
-      },
-      {
-        "mode": "image_to_video",
-        "duration": 12,
-        "generate_audio": false,
-        "price_usdmicro": 1008000
-      },
-      {
-        "mode": "image_to_video",
-        "duration": 12,
-        "generate_audio": true,
-        "price_usdmicro": 1512000
-      },
-      {
-        "mode": "image_to_video",
-        "duration": 13,
-        "generate_audio": false,
-        "price_usdmicro": 1092000
-      },
-      {
-        "mode": "image_to_video",
-        "duration": 13,
-        "generate_audio": true,
-        "price_usdmicro": 1638000
-      },
-      {
-        "mode": "image_to_video",
-        "duration": 14,
-        "generate_audio": false,
-        "price_usdmicro": 1176000
-      },
-      {
-        "mode": "image_to_video",
-        "duration": 14,
-        "generate_audio": true,
-        "price_usdmicro": 1764000
-      },
-      {
-        "mode": "image_to_video",
-        "duration": 15,
-        "generate_audio": false,
-        "price_usdmicro": 1260000
-      },
-      {
-        "mode": "image_to_video",
-        "duration": 15,
-        "generate_audio": true,
-        "price_usdmicro": 1890000
-      },
-      {
-        "mode": "motion_control",
-        "duration": 3,
-        "generate_audio": false,
-        "price_usdmicro": 252000
-      },
-      {
-        "mode": "motion_control",
-        "duration": 3,
-        "generate_audio": true,
-        "price_usdmicro": 378000
-      },
-      {
-        "mode": "motion_control",
-        "duration": 4,
-        "generate_audio": false,
-        "price_usdmicro": 336000
-      },
-      {
-        "mode": "motion_control",
-        "duration": 4,
-        "generate_audio": true,
-        "price_usdmicro": 504000
-      },
-      {
-        "mode": "motion_control",
-        "duration": 5,
-        "generate_audio": false,
-        "price_usdmicro": 420000
-      },
-      {
-        "mode": "motion_control",
-        "duration": 5,
-        "generate_audio": true,
-        "price_usdmicro": 630000
-      },
-      {
-        "mode": "motion_control",
-        "duration": 6,
-        "generate_audio": false,
-        "price_usdmicro": 504000
-      },
-      {
-        "mode": "motion_control",
-        "duration": 6,
-        "generate_audio": true,
-        "price_usdmicro": 756000
-      },
-      {
-        "mode": "motion_control",
-        "duration": 7,
-        "generate_audio": false,
-        "price_usdmicro": 588000
-      },
-      {
-        "mode": "motion_control",
-        "duration": 7,
-        "generate_audio": true,
-        "price_usdmicro": 882000
-      },
-      {
-        "mode": "motion_control",
-        "duration": 8,
-        "generate_audio": false,
-        "price_usdmicro": 672000
-      },
-      {
-        "mode": "motion_control",
-        "duration": 8,
-        "generate_audio": true,
-        "price_usdmicro": 1008000
-      },
-      {
-        "mode": "motion_control",
-        "duration": 9,
-        "generate_audio": false,
-        "price_usdmicro": 756000
-      },
-      {
-        "mode": "motion_control",
-        "duration": 9,
-        "generate_audio": true,
-        "price_usdmicro": 1134000
-      },
-      {
-        "mode": "motion_control",
-        "duration": 10,
-        "generate_audio": false,
-        "price_usdmicro": 840000
-      },
-      {
-        "mode": "motion_control",
-        "duration": 10,
-        "generate_audio": true,
-        "price_usdmicro": 1260000
-      },
-      {
-        "mode": "motion_control",
-        "duration": 11,
-        "generate_audio": false,
-        "price_usdmicro": 924000
-      },
-      {
-        "mode": "motion_control",
-        "duration": 11,
-        "generate_audio": true,
-        "price_usdmicro": 1386000
-      },
-      {
-        "mode": "motion_control",
-        "duration": 12,
-        "generate_audio": false,
-        "price_usdmicro": 1008000
-      },
-      {
-        "mode": "motion_control",
-        "duration": 12,
-        "generate_audio": true,
-        "price_usdmicro": 1512000
-      },
-      {
-        "mode": "motion_control",
-        "duration": 13,
-        "generate_audio": false,
-        "price_usdmicro": 1092000
-      },
-      {
-        "mode": "motion_control",
-        "duration": 13,
-        "generate_audio": true,
-        "price_usdmicro": 1638000
-      },
-      {
-        "mode": "motion_control",
-        "duration": 14,
-        "generate_audio": false,
-        "price_usdmicro": 1176000
-      },
-      {
-        "mode": "motion_control",
-        "duration": 14,
-        "generate_audio": true,
-        "price_usdmicro": 1764000
-      },
-      {
-        "mode": "motion_control",
-        "duration": 15,
-        "generate_audio": false,
-        "price_usdmicro": 1260000
-      },
-      {
-        "mode": "motion_control",
-        "duration": 15,
-        "generate_audio": true,
-        "price_usdmicro": 1890000
+        ]
       }
-    ],
-    "is_active": true,
-    "meta": {
-      "source_schema_url": "https://runware.ai/docs/models/klingai-video-3-0-standard/schema.json",
-      "ui": {
-        "fields": {
+    }
+  },
+  {
+    "RUNWARE": {
+      "external_model_name": {
+        "default": "klingai:kling-video@3-standard"
+      },
+      "external_model_api_url": {
+        "default": ""
+      },
+      "priority": 10,
+      "is_active": true,
+      "config_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "KLINGAI_VIDEO_3_0_STANDARD",
+        "type": "object",
+        "required": [
+          "mode"
+        ],
+        "additionalProperties": false,
+        "properties": {
           "mode": {
-            "widget": "switch",
-            "title": "حالت تولید",
-            "description": "نوع جریان تولید ویدیو را مشخص می‌کند.",
-            "hint": "با انتخاب حالت، فقط فیلدهای لازم برای متن به ویدیو، تصویر به ویدیو یا motion control نمایش داده می‌شوند."
+            "type": "string",
+            "enum": [
+              "text_to_video",
+              "image_to_video",
+              "motion_control"
+            ],
+            "default": "text_to_video"
           },
           "n": {
-            "widget": "hidden",
-            "title": "تعداد خروجی",
-            "description": "تعداد ویدیوهایی که با همین تنظیمات تولید می‌شوند.",
-            "hint": null,
-            "errors": {
-              "minimum": "تعداد خروجی باید حداقل ۱ باشد.",
-              "maximum": "حداکثر تعداد خروجی ۱ است."
-            }
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1,
+            "default": 1
           },
           "prompt": {
-            "widget": "textarea",
-            "title": "پرامپت",
-            "description": "متن اصلی برای توصیف عناصر، حرکت‌ها و صدای ویدیوی خروجی.",
-            "hint": "از پرامپت یا پرامپت چندبخشی استفاده کنید، نه هر دو. در حالت تصویر به ویدیو می‌توانید عناصر را با الگوی <<<element_1>>> در متن ارجاع دهید. حداکثر ۲۵۰۰ کاراکتر مجاز است.",
-            "errors": {
-              "required": "وارد کردن پرامپت در این حالت الزامی است.",
-              "minLength": "پرامپت باید حداقل ۳ کاراکتر باشد.",
-              "maxLength": "پرامپت نمی‌تواند بیشتر از ۲۵۰۰ کاراکتر باشد."
-            }
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 2500
           },
           "negative_prompt": {
-            "widget": "textarea",
-            "title": "پرامپت منفی",
-            "description": "متنی برای توضیح چیزهایی که نباید در خروجی دیده شوند.",
-            "hint": "برای حذف کیفیت‌های ناخواسته، سبک‌های اشتباه، اشیا یا حرکات نامطلوب استفاده کنید. حداکثر ۲۵۰۰ کاراکتر مجاز است.",
-            "errors": {
-              "minLength": "پرامپت منفی باید حداقل ۳ کاراکتر باشد.",
-              "maxLength": "پرامپت منفی نمی‌تواند بیشتر از ۲۵۰۰ کاراکتر باشد."
-            }
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 2500
           },
           "multi_prompt": {
-            "widget": "list",
-            "title": "پرامپت چندبخشی",
-            "description": "چند segment پشت سر هم برای تولید ویدیوی چندشات.",
-            "hint": "همزمان با پرامپت اصلی استفاده نشود. مجموع مدت segmentها باید با مدت کل ویدیو برابر باشد.",
-            "errors": {
-              "minItems": "حداقل ۱ بخش لازم است.",
-              "maxItems": "حداکثر ۶ بخش مجاز است."
-            }
-          },
-          "multi_prompt[].prompt": {
-            "widget": "textarea",
-            "title": "پرامپت بخش",
-            "description": "توصیف محتوای این بخش از ویدیو.",
-            "hint": "برای هر segment حرکت، صحنه و صدای همان بخش را بنویسید.",
-            "errors": {
-              "minLength": "پرامپت بخش باید حداقل ۳ کاراکتر باشد.",
-              "maxLength": "پرامپت بخش نمی‌تواند بیشتر از ۲۵۰۰ کاراکتر باشد."
-            }
-          },
-          "multi_prompt[].duration": {
-            "widget": "number",
-            "title": "مدت بخش",
-            "description": "مدت زمان این segment بر حسب ثانیه.",
-            "hint": "مجموع مدت همه بخش‌ها باید با فیلد مدت ویدیو برابر باشد.",
-            "errors": {
-              "minimum": "مدت هر بخش باید حداقل ۱ ثانیه باشد."
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 6,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "prompt",
+                "duration"
+              ],
+              "properties": {
+                "prompt": {
+                  "type": "string",
+                  "minLength": 3,
+                  "maxLength": 2500
+                },
+                "duration": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
             }
           },
           "frame_images": {
-            "widget": "file-list",
-            "title": "تصاویر فریم",
-            "description": "تصاویر فریم برای محدود کردن نقاط مشخصی از timeline ویدیو.",
-            "hint": "فقط برای تصویر به ویدیو. با یک تصویر، فریم اول تنظیم می‌شود؛ با دو تصویر، فریم اول و آخر مشخص می‌شوند.",
-            "file": {
-              "type": "list",
-              "accept": ["image/png", "image/jpeg"]
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
             },
-            "errors": {
-              "minItems": "حداقل ۱ تصویر فریم لازم است.",
-              "maxItems": "حداکثر ۲ تصویر فریم مجاز است."
-            }
+            "minItems": 1,
+            "maxItems": 2,
+            "file_type": "list"
           },
           "reference_videos": {
-            "widget": "file-list",
-            "title": "ویدیوهای مرجع",
-            "description": "ویدیوی مرجع برای motion control.",
-            "hint": "فقط در حالت motion control استفاده می‌شود و باید همراه تصویر مرجع و جهت‌گیری کاراکتر تنظیم شود.",
-            "file": {
-              "type": "list",
-              "accept": ["video/mp4"]
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
             },
-            "errors": {
-              "minItems": "حداقل ۱ ویدیوی مرجع لازم است.",
-              "maxItems": "حداکثر ۱ ویدیوی مرجع مجاز است."
-            }
+            "file_type": "list"
           },
           "reference_images": {
-            "widget": "file-list",
-            "title": "تصاویر مرجع",
-            "description": "تصویر مرجع برای motion control یا هدایت ظاهر.",
-            "hint": "فقط ۱ تصویر مرجع قابل استفاده است. برای motion control همراه ویدیوی مرجع استفاده می‌شود.",
-            "file": {
-              "type": "list",
-              "accept": ["image/png", "image/jpeg"]
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
             },
-            "errors": {
-              "minItems": "حداقل ۱ تصویر مرجع لازم است.",
-              "maxItems": "حداکثر ۱ تصویر مرجع مجاز است."
-            }
+            "file_type": "list"
           },
           "elements": {
-            "widget": "elements-list",
-            "title": "عناصر قابل استفاده مجدد",
-            "description": "دارایی‌های قابل استفاده مجدد مثل تصویر، ویدیو یا صدا برای ارجاع در پرامپت.",
-            "hint": "فقط برای تصویر به ویدیو. اگر عنصر مبتنی بر تصویر یا صداست، تصویر frontal لازم است. عنصر ویدیویی با تصویر یا صدا ترکیب نمی‌شود.",
-            "errors": {
-              "minItems": "حداقل ۱ عنصر لازم است.",
-              "maxItems": "حداکثر ۳ عنصر مجاز است."
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 3,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "frontal_image": {
+                  "type": "string",
+                  "file_type": "single"
+                },
+                "images": {
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 3,
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "file_type": "list"
+                },
+                "videos": {
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 1,
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "file_type": "list"
+                },
+                "voices": {
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 1,
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "file_type": "list"
+                },
+                "tags": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "Animal",
+                      "Character",
+                      "Hottest",
+                      "Item",
+                      "Costume",
+                      "Scene",
+                      "Effect",
+                      "Others"
+                    ]
+                  }
+                }
+              },
+              "allOf": [
+                {
+                  "if": {
+                    "required": [
+                      "images"
+                    ],
+                    "properties": {
+                      "images": {
+                        "type": "array",
+                        "minItems": 1
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": [
+                      "frontal_image"
+                    ],
+                    "properties": {
+                      "frontal_image": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "required": [
+                      "voices"
+                    ],
+                    "properties": {
+                      "voices": {
+                        "type": "array",
+                        "minItems": 1
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": [
+                      "frontal_image"
+                    ],
+                    "properties": {
+                      "frontal_image": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    }
+                  }
+                },
+                {
+                  "if": {
+                    "required": [
+                      "videos"
+                    ],
+                    "properties": {
+                      "videos": {
+                        "type": "array",
+                        "minItems": 1
+                      }
+                    }
+                  },
+                  "then": {
+                    "not": {
+                      "anyOf": [
+                        {
+                          "required": [
+                            "images"
+                          ]
+                        },
+                        {
+                          "required": [
+                            "voices"
+                          ]
+                        },
+                        {
+                          "required": [
+                            "frontal_image"
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                }
+              ]
             }
           },
-          "elements[].id": {
-            "widget": "text",
-            "title": "شناسه",
-            "description": "شناسه یکتا برای ساخت یا ارجاع به عنصر.",
-            "hint": "برای ارجاع در پرامپت از ترتیب عناصر مثل <<<element_1>>> استفاده کنید.",
-            "errors": {
-              "minLength": "شناسه عنصر الزامی است."
-            }
+          "resolution": {
+            "type": "string",
+            "enum": [
+              "720p"
+            ],
+            "default": "720p"
           },
-          "elements[].description": {
-            "widget": "text",
-            "title": "توضیح",
-            "description": "توضیح متنی درباره عنصر.",
-            "hint": null
-          },
-          "elements[].frontal_image": {
-            "widget": "file",
-            "title": "تصویر روبه‌رو",
-            "description": "تصویر مرجع روبه‌رو برای عناصر مبتنی بر تصویر.",
-            "hint": "برای elements.images یا elements.voices لازم است.",
-            "file": {
-              "type": "single",
-              "accept": ["image/png", "image/jpeg"]
-            }
-          },
-          "elements[].images": {
-            "widget": "file-list",
-            "title": "تصاویر عنصر",
-            "description": "تصاویر مرجع برای عنصر.",
-            "hint": "تا ۳ تصویر، و فقط همراه frontal image.",
-            "file": {
-              "type": "list",
-              "accept": ["image/png", "image/jpeg"]
-            },
-            "errors": {
-              "minItems": "حداقل ۱ تصویر عنصر لازم است.",
-              "maxItems": "حداکثر ۳ تصویر عنصر مجاز است."
-            }
-          },
-          "elements[].videos": {
-            "widget": "file-list",
-            "title": "ویدیوهای عنصر",
-            "description": "ویدیوی مرجع برای عنصر.",
-            "hint": "فقط ۱ ویدیو و بدون ترکیب با تصویر یا صدا.",
-            "file": {
-              "type": "list",
-              "accept": ["video/mp4"]
-            },
-            "errors": {
-              "minItems": "حداقل ۱ ویدیوی عنصر لازم است.",
-              "maxItems": "حداکثر ۱ ویدیوی عنصر مجاز است."
-            }
-          },
-          "elements[].voices": {
-            "widget": "file-list",
-            "title": "صداهای عنصر",
-            "description": "صدای مرجع برای عنصر.",
-            "hint": "فقط ۱ صدا و فقط همراه frontal image.",
-            "file": {
-              "type": "list",
-              "accept": ["audio/mpeg", "audio/wav"]
-            },
-            "errors": {
-              "minItems": "حداقل ۱ صدای عنصر لازم است.",
-              "maxItems": "حداکثر ۱ صدای عنصر مجاز است."
-            }
-          },
-          "elements[].tags": {
-            "widget": "list",
-            "title": "برچسب‌ها",
-            "description": "برچسب‌های دسته‌بندی عنصر.",
-            "hint": "برای مشخص کردن نوع عنصر مثل Character، Item یا Scene استفاده می‌شود.",
-            "errors": {
-              "minItems": "حداقل ۱ برچسب لازم است."
-            }
-          },
-          "size": {
-            "widget": "select",
-            "title": "اندازه ویدیو",
-            "description": "اندازه خروجی ویدیو.",
-            "hint": "گزینه‌های ۷۲۰p در نسبت‌های افقی، مربعی و عمودی پشتیبانی می‌شوند."
+          "aspect_ratio": {
+            "type": "string",
+            "enum": [
+              "16:9",
+              "9:16",
+              "1:1"
+            ],
+            "default": "16:9"
           },
           "duration": {
-            "widget": "select",
-            "title": "مدت ویدیو",
-            "description": "مدت زمان ویدیوی خروجی بر حسب ثانیه.",
-            "hint": "مدل مدت ۳ تا ۱۵ ثانیه را می‌پذیرد؛ تعداد فریم‌ها بر اساس مدت و fps تعیین می‌شود.",
-            "errors": {
-              "minimum": "مدت ویدیو باید حداقل ۳ ثانیه باشد.",
-              "maximum": "مدت ویدیو نمی‌تواند بیشتر از ۱۵ ثانیه باشد."
-            }
+            "type": "integer",
+            "minimum": 3,
+            "maximum": 15,
+            "default": 5,
+            "enum": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15
+            ]
           },
           "generate_audio": {
-            "widget": "checkbox",
-            "title": "تولید صدا",
-            "description": "تولید صدای native هماهنگ با ویدیو.",
-            "hint": "اگر فعال باشد، مدل می‌تواند دیالوگ و صدای محیط هماهنگ با تصویر تولید کند."
+            "type": "boolean",
+            "default": true
           },
           "character_orientation": {
-            "widget": "select",
-            "title": "جهت‌گیری کاراکتر",
-            "description": "منبع جهت‌گیری کاراکتر برای motion control.",
-            "hint": "می‌تواند با تصویر مرجع یا ویدیوی مرجع هماهنگ شود."
+            "type": "string",
+            "enum": [
+              "image",
+              "video"
+            ],
+            "default": "image"
           },
           "keep_original_sound": {
-            "widget": "checkbox",
-            "title": "حفظ صدای اصلی",
-            "description": "نگه داشتن صدای اصلی ویدیوی مرجع.",
-            "hint": "در motion control وقتی می‌خواهید صدای ویدیوی مرجع حفظ شود فعالش کنید."
+            "type": "boolean"
           },
           "output_type": {
-            "widget": "hidden",
-            "title": "نوع خروجی",
-            "description": "نوع تحویل فایل خروجی ویدیو.",
-            "hint": "در این تنظیمات خروجی به صورت URL تحویل داده می‌شود."
+            "type": "string",
+            "enum": [
+              "URL"
+            ],
+            "default": "URL"
           },
           "output_format": {
-            "widget": "select",
-            "title": "فرمت خروجی",
-            "description": "فرمت فایل ویدیوی خروجی.",
-            "hint": "MP4 برای پخش عمومی مناسب است، WEBM برای وب بهینه است و MOV برای workflowهای حرفه‌ای رایج است."
+            "type": "string",
+            "enum": [
+              "MP4",
+              "WEBM",
+              "MOV"
+            ],
+            "default": "MP4"
           },
           "output_quality": {
-            "widget": "number",
-            "title": "کیفیت خروجی",
-            "description": "کیفیت فشرده‌سازی خروجی.",
-            "hint": "عدد بالاتر کیفیت بیشتری حفظ می‌کند، اما حجم فایل را افزایش می‌دهد.",
-            "errors": {
-              "minimum": "کیفیت خروجی باید حداقل ۲۰ باشد.",
-              "maximum": "کیفیت خروجی نمی‌تواند بیشتر از ۹۹ باشد."
-            }
+            "type": "integer",
+            "minimum": 20,
+            "maximum": 99,
+            "default": 95
           },
           "delivery_method": {
-            "widget": "hidden",
-            "title": "روش تحویل",
-            "description": "روش دریافت نتیجه تولید ویدیو.",
-            "hint": "برای تولید ویدیو، حالت غیرهمزمان شناسه task را برمی‌گرداند و نتیجه بعداً دریافت می‌شود."
+            "type": "string",
+            "enum": [
+              "async"
+            ],
+            "default": "async"
           },
           "include_cost": {
-            "widget": "hidden",
-            "title": "نمایش هزینه",
-            "description": "درخواست نمایش هزینه task در پاسخ Runware.",
-            "hint": "برای محاسبه هزینه نهایی می‌توان از هزینه گزارش‌شده توسط provider استفاده کرد."
+            "type": "boolean",
+            "default": true
           }
         },
-        "order": [
-          "mode",
-          "prompt",
-          "negative_prompt",
-          "multi_prompt",
-          "frame_images",
-          "reference_videos",
-          "reference_images",
-          "elements",
-          "size",
-          "duration",
-          "generate_audio",
-          "character_orientation",
-          "keep_original_sound",
-          "output_format",
-          "output_quality"
-        ],
-        "labels": {
-          "mode": {
-            "text_to_video": "متن به ویدیو",
-            "image_to_video": "تصویر به ویدیو",
-            "motion_control": "کنترل حرکت"
-          },
-          "size": {
-            "1280x720": "۷۲۰p افقی ۱۶:۹",
-            "960x960": "۷۲۰p مربعی ۱:۱",
-            "720x1280": "۷۲۰p عمودی ۹:۱۶"
-          },
-          "duration": {
-            "3": "3 ثانیه",
-            "4": "4 ثانیه",
-            "5": "5 ثانیه",
-            "6": "6 ثانیه",
-            "7": "7 ثانیه",
-            "8": "8 ثانیه",
-            "9": "9 ثانیه",
-            "10": "10 ثانیه",
-            "11": "11 ثانیه",
-            "12": "12 ثانیه",
-            "13": "13 ثانیه",
-            "14": "14 ثانیه",
-            "15": "15 ثانیه"
-          },
-          "character_orientation": {
-            "image": "هماهنگ با تصویر مرجع",
-            "video": "هماهنگ با ویدیوی مرجع"
-          },
-          "output_format": {
-            "MP4": "MP4",
-            "WEBM": "WEBM",
-            "MOV": "MOV"
-          },
-          "output_type": {
-            "URL": "URL"
-          },
-          "delivery_method": {
-            "async": "غیرهمزمان"
-          },
-          "elements[].tags": {
-            "Animal": "حیوان",
-            "Character": "کاراکتر",
-            "Hottest": "محبوب",
-            "Item": "آیتم",
-            "Costume": "لباس",
-            "Scene": "صحنه",
-            "Effect": "افکت",
-            "Others": "سایر"
-          }
-        },
-        "visibility": [
+        "allOf": [
           {
-            "effect": "SHOW",
-            "fields": [
-              "prompt",
-              "negative_prompt",
-              "multi_prompt",
-              "size",
-              "duration",
-              "generate_audio"
-            ],
-            "condition": {
-              "field": "mode",
-              "operator": "equals",
-              "value": "text_to_video"
+            "if": {
+              "properties": {
+                "mode": {
+                  "const": "text_to_video"
+                }
+              },
+              "required": [
+                "mode"
+              ]
+            },
+            "then": {
+              "required": [
+                "resolution",
+                "aspect_ratio",
+                "duration"
+              ],
+              "properties": {
+                "duration": {
+                  "type": "integer",
+                  "minimum": 3,
+                  "maximum": 15
+                }
+              },
+              "oneOf": [
+                {
+                  "required": [
+                    "prompt"
+                  ],
+                  "properties": {
+                    "prompt": {
+                      "type": "string",
+                      "minLength": 2
+                    }
+                  },
+                  "not": {
+                    "required": [
+                      "multi_prompt"
+                    ]
+                  }
+                },
+                {
+                  "required": [
+                    "multi_prompt"
+                  ],
+                  "properties": {
+                    "multi_prompt": {
+                      "type": "array",
+                      "minItems": 1
+                    }
+                  },
+                  "not": {
+                    "required": [
+                      "prompt"
+                    ]
+                  }
+                }
+              ],
+              "not": {
+                "anyOf": [
+                  {
+                    "required": [
+                      "frame_images"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "reference_videos"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "reference_images"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "elements"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "character_orientation"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "keep_original_sound"
+                    ]
+                  }
+                ]
+              }
             }
           },
           {
-            "effect": "HIDE",
-            "fields": [
-              "frame_images",
-              "reference_videos",
-              "reference_images",
-              "elements",
-              "character_orientation",
-              "keep_original_sound"
-            ],
-            "condition": {
-              "field": "mode",
-              "operator": "equals",
-              "value": "text_to_video"
+            "if": {
+              "properties": {
+                "mode": {
+                  "const": "image_to_video"
+                }
+              },
+              "required": [
+                "mode"
+              ]
+            },
+            "then": {
+              "required": [
+                "frame_images",
+                "duration"
+              ],
+              "properties": {
+                "frame_images": {
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 2
+                },
+                "duration": {
+                  "type": "integer",
+                  "minimum": 3,
+                  "maximum": 15
+                }
+              },
+              "oneOf": [
+                {
+                  "required": [
+                    "prompt"
+                  ],
+                  "properties": {
+                    "prompt": {
+                      "type": "string",
+                      "minLength": 2
+                    }
+                  },
+                  "not": {
+                    "required": [
+                      "multi_prompt"
+                    ]
+                  }
+                },
+                {
+                  "required": [
+                    "multi_prompt"
+                  ],
+                  "properties": {
+                    "multi_prompt": {
+                      "type": "array",
+                      "minItems": 1
+                    }
+                  },
+                  "not": {
+                    "required": [
+                      "prompt"
+                    ]
+                  }
+                }
+              ],
+              "not": {
+                "anyOf": [
+                  {
+                    "required": [
+                      "resolution",
+                      "aspect_ratio"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "reference_videos"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "reference_images"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "character_orientation"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "keep_original_sound"
+                    ]
+                  }
+                ]
+              }
             }
           },
           {
-            "effect": "SHOW",
-            "fields": [
-              "prompt",
-              "negative_prompt",
-              "multi_prompt",
-              "frame_images",
-              "elements",
-              "duration",
-              "generate_audio"
-            ],
-            "condition": {
-              "field": "mode",
-              "operator": "equals",
-              "value": "image_to_video"
+            "if": {
+              "properties": {
+                "mode": {
+                  "const": "motion_control"
+                }
+              },
+              "required": [
+                "mode"
+              ]
+            },
+            "then": {
+              "required": [
+                "reference_videos",
+                "reference_images",
+                "character_orientation"
+              ],
+              "properties": {
+                "reference_videos": {
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 1
+                },
+                "reference_images": {
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 1
+                },
+                "character_orientation": {
+                  "type": "string",
+                  "enum": [
+                    "image",
+                    "video"
+                  ]
+                }
+              },
+              "not": {
+                "anyOf": [
+                  {
+                    "required": [
+                      "resolution",
+                      "aspect_ratio"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "frame_images"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "elements"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "multi_prompt"
+                    ]
+                  }
+                ]
+              }
             }
           },
           {
-            "effect": "HIDE",
-            "fields": [
-              "size",
-              "reference_videos",
-              "reference_images",
-              "character_orientation",
-              "keep_original_sound"
-            ],
-            "condition": {
-              "field": "mode",
-              "operator": "equals",
-              "value": "image_to_video"
+            "if": {
+              "required": [
+                "elements"
+              ],
+              "properties": {
+                "elements": {
+                  "type": "array",
+                  "minItems": 1
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "frame_images"
+              ],
+              "properties": {
+                "mode": {
+                  "const": "image_to_video"
+                },
+                "frame_images": {
+                  "type": "array",
+                  "minItems": 1
+                }
+              }
             }
           },
           {
-            "effect": "SHOW",
-            "fields": [
-              "prompt",
-              "negative_prompt",
-              "reference_videos",
-              "reference_images",
-              "character_orientation",
-              "keep_original_sound"
-            ],
-            "condition": {
-              "field": "mode",
-              "operator": "equals",
-              "value": "motion_control"
+            "if": {
+              "required": [
+                "reference_videos"
+              ],
+              "properties": {
+                "reference_videos": {
+                  "type": "array",
+                  "minItems": 1
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "reference_images",
+                "character_orientation"
+              ],
+              "properties": {
+                "mode": {
+                  "const": "motion_control"
+                },
+                "reference_images": {
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 1
+                },
+                "character_orientation": {
+                  "type": "string",
+                  "enum": [
+                    "image",
+                    "video"
+                  ]
+                }
+              },
+              "not": {
+                "anyOf": [
+                  {
+                    "required": [
+                      "multi_prompt"
+                    ]
+                  }
+                ]
+              }
             }
           },
           {
-            "effect": "HIDE",
-            "fields": [
-              "multi_prompt",
-              "size",
-              "duration",
-              "frame_images",
-              "elements",
-              "generate_audio"
-            ],
-            "condition": {
-              "field": "mode",
-              "operator": "equals",
-              "value": "motion_control"
+            "if": {
+              "required": [
+                "reference_images"
+              ],
+              "properties": {
+                "reference_images": {
+                  "type": "array",
+                  "minItems": 1
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "reference_videos",
+                "character_orientation"
+              ],
+              "properties": {
+                "mode": {
+                  "const": "motion_control"
+                }
+              }
             }
           },
           {
-            "effect": "HIDE",
-            "fields": ["prompt"],
-            "condition": {
-              "field": "multi_prompt",
-              "operator": "not_empty"
+            "if": {
+              "required": [
+                "character_orientation"
+              ],
+              "properties": {
+                "character_orientation": {
+                  "type": "string",
+                  "enum": [
+                    "image",
+                    "video"
+                  ]
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "reference_videos",
+                "reference_images"
+              ],
+              "properties": {
+                "mode": {
+                  "const": "motion_control"
+                }
+              }
             }
           },
           {
-            "effect": "HIDE",
-            "fields": ["multi_prompt"],
-            "condition": {
-              "field": "prompt",
-              "operator": "not_empty"
+            "if": {
+              "required": [
+                "keep_original_sound"
+              ],
+              "properties": {
+                "keep_original_sound": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "reference_videos"
+              ],
+              "properties": {
+                "mode": {
+                  "const": "motion_control"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "multi_prompt"
+              ],
+              "properties": {
+                "multi_prompt": {
+                  "type": "array",
+                  "minItems": 1
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "duration"
+              ],
+              "not": {
+                "anyOf": [
+                  {
+                    "required": [
+                      "prompt"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "reference_videos"
+                    ]
+                  }
+                ]
+              }
             }
           }
         ]
       },
       "field_mapping": {
-        "RUNWARE": {
-          "n": "numberResults",
-          "prompt": "positivePrompt",
-          "negative_prompt": "negativePrompt",
-          "multi_prompt": "providerSettings.klingai.multiPrompt",
-          "frame_images": "inputs.frameImages",
-          "reference_videos": "inputs.referenceVideos",
-          "reference_images": "inputs.referenceImages",
-          "elements": "inputs.elements",
-          "elements[].frontal_image": "inputs.elements[].frontalImage",
-          "elements[].images": "inputs.elements[].images",
-          "elements[].videos": "inputs.elements[].videos",
-          "elements[].voices": "inputs.elements[].voices",
-          "elements[].tags": "inputs.elements[].tags",
-          "size": "width/height",
-          "duration": "duration",
-          "generate_audio": "providerSettings.klingai.sound",
-          "character_orientation": "providerSettings.klingai.characterOrientation",
-          "keep_original_sound": "providerSettings.klingai.keepOriginalSound",
-          "output_type": "outputType",
-          "output_format": "outputFormat",
-          "output_quality": "outputQuality",
-          "delivery_method": "deliveryMethod",
-          "include_cost": "includeCost"
+        "version": 1,
+        "mappings": {
+          "n": {
+            "operation": "copy",
+            "target": "numberResults"
+          },
+          "prompt": {
+            "operation": "copy",
+            "target": "positivePrompt"
+          },
+          "negative_prompt": {
+            "operation": "copy",
+            "target": "negativePrompt"
+          },
+          "multi_prompt": {
+            "operation": "copy",
+            "target": "providerSettings.klingai.multiPrompt"
+          },
+          "frame_images": {
+            "operation": "copy",
+            "target": "inputs.frameImages"
+          },
+          "reference_videos": {
+            "operation": "copy",
+            "target": "inputs.referenceVideos"
+          },
+          "reference_images": {
+            "operation": "copy",
+            "target": "inputs.referenceImages"
+          },
+          "elements": {
+            "operation": "copy",
+            "target": "inputs.elements"
+          },
+          "elements[].frontal_image": {
+            "operation": "copy",
+            "target": "inputs.elements[].frontalImage"
+          },
+          "elements[].images": {
+            "operation": "copy",
+            "target": "inputs.elements[].images"
+          },
+          "elements[].videos": {
+            "operation": "copy",
+            "target": "inputs.elements[].videos"
+          },
+          "elements[].voices": {
+            "operation": "copy",
+            "target": "inputs.elements[].voices"
+          },
+          "elements[].tags": {
+            "operation": "copy",
+            "target": "inputs.elements[].tags"
+          },
+          "duration": {
+            "operation": "copy",
+            "target": "duration",
+            "exclude_if_present": [
+              "reference_videos"
+            ]
+          },
+          "generate_audio": {
+            "operation": "copy",
+            "target": "providerSettings.klingai.sound",
+            "exclude_if_present": [
+              "reference_videos"
+            ]
+          },
+          "character_orientation": {
+            "operation": "copy",
+            "target": "providerSettings.klingai.characterOrientation"
+          },
+          "keep_original_sound": {
+            "operation": "copy",
+            "target": "providerSettings.klingai.keepOriginalSound"
+          },
+          "output_type": {
+            "operation": "copy",
+            "target": "outputType"
+          },
+          "output_format": {
+            "operation": "copy",
+            "target": "outputFormat"
+          },
+          "output_quality": {
+            "operation": "copy",
+            "target": "outputQuality"
+          },
+          "delivery_method": {
+            "operation": "copy",
+            "target": "deliveryMethod"
+          },
+          "include_cost": {
+            "operation": "copy",
+            "target": "includeCost"
+          },
+          "resolution": {
+            "operation": "lookup",
+            "target": "width/height",
+            "selector": "aspect_ratio",
+            "values": {
+              "720p": {
+                "16:9": "1280x720",
+                "9:16": "720x1280",
+                "1:1": "960x960"
+              }
+            }
+          }
         }
-      }
+      },
+      "pricing_by": [
+        "mode",
+        "duration",
+        "generate_audio"
+      ],
+      "pricing_tiers": [
+        {
+          "mode": "text_to_video",
+          "duration": 3,
+          "generate_audio": false,
+          "price_usdmicro": 252000
+        },
+        {
+          "mode": "text_to_video",
+          "duration": 3,
+          "generate_audio": true,
+          "price_usdmicro": 378000
+        },
+        {
+          "mode": "text_to_video",
+          "duration": 4,
+          "generate_audio": false,
+          "price_usdmicro": 336000
+        },
+        {
+          "mode": "text_to_video",
+          "duration": 4,
+          "generate_audio": true,
+          "price_usdmicro": 504000
+        },
+        {
+          "mode": "text_to_video",
+          "duration": 5,
+          "generate_audio": false,
+          "price_usdmicro": 420000
+        },
+        {
+          "mode": "text_to_video",
+          "duration": 5,
+          "generate_audio": true,
+          "price_usdmicro": 630000
+        },
+        {
+          "mode": "text_to_video",
+          "duration": 6,
+          "generate_audio": false,
+          "price_usdmicro": 504000
+        },
+        {
+          "mode": "text_to_video",
+          "duration": 6,
+          "generate_audio": true,
+          "price_usdmicro": 756000
+        },
+        {
+          "mode": "text_to_video",
+          "duration": 7,
+          "generate_audio": false,
+          "price_usdmicro": 588000
+        },
+        {
+          "mode": "text_to_video",
+          "duration": 7,
+          "generate_audio": true,
+          "price_usdmicro": 882000
+        },
+        {
+          "mode": "text_to_video",
+          "duration": 8,
+          "generate_audio": false,
+          "price_usdmicro": 672000
+        },
+        {
+          "mode": "text_to_video",
+          "duration": 8,
+          "generate_audio": true,
+          "price_usdmicro": 1008000
+        },
+        {
+          "mode": "text_to_video",
+          "duration": 9,
+          "generate_audio": false,
+          "price_usdmicro": 756000
+        },
+        {
+          "mode": "text_to_video",
+          "duration": 9,
+          "generate_audio": true,
+          "price_usdmicro": 1134000
+        },
+        {
+          "mode": "text_to_video",
+          "duration": 10,
+          "generate_audio": false,
+          "price_usdmicro": 840000
+        },
+        {
+          "mode": "text_to_video",
+          "duration": 10,
+          "generate_audio": true,
+          "price_usdmicro": 1260000
+        },
+        {
+          "mode": "text_to_video",
+          "duration": 11,
+          "generate_audio": false,
+          "price_usdmicro": 924000
+        },
+        {
+          "mode": "text_to_video",
+          "duration": 11,
+          "generate_audio": true,
+          "price_usdmicro": 1386000
+        },
+        {
+          "mode": "text_to_video",
+          "duration": 12,
+          "generate_audio": false,
+          "price_usdmicro": 1008000
+        },
+        {
+          "mode": "text_to_video",
+          "duration": 12,
+          "generate_audio": true,
+          "price_usdmicro": 1512000
+        },
+        {
+          "mode": "text_to_video",
+          "duration": 13,
+          "generate_audio": false,
+          "price_usdmicro": 1092000
+        },
+        {
+          "mode": "text_to_video",
+          "duration": 13,
+          "generate_audio": true,
+          "price_usdmicro": 1638000
+        },
+        {
+          "mode": "text_to_video",
+          "duration": 14,
+          "generate_audio": false,
+          "price_usdmicro": 1176000
+        },
+        {
+          "mode": "text_to_video",
+          "duration": 14,
+          "generate_audio": true,
+          "price_usdmicro": 1764000
+        },
+        {
+          "mode": "text_to_video",
+          "duration": 15,
+          "generate_audio": false,
+          "price_usdmicro": 1260000
+        },
+        {
+          "mode": "text_to_video",
+          "duration": 15,
+          "generate_audio": true,
+          "price_usdmicro": 1890000
+        },
+        {
+          "mode": "image_to_video",
+          "duration": 3,
+          "generate_audio": false,
+          "price_usdmicro": 252000
+        },
+        {
+          "mode": "image_to_video",
+          "duration": 3,
+          "generate_audio": true,
+          "price_usdmicro": 378000
+        },
+        {
+          "mode": "image_to_video",
+          "duration": 4,
+          "generate_audio": false,
+          "price_usdmicro": 336000
+        },
+        {
+          "mode": "image_to_video",
+          "duration": 4,
+          "generate_audio": true,
+          "price_usdmicro": 504000
+        },
+        {
+          "mode": "image_to_video",
+          "duration": 5,
+          "generate_audio": false,
+          "price_usdmicro": 420000
+        },
+        {
+          "mode": "image_to_video",
+          "duration": 5,
+          "generate_audio": true,
+          "price_usdmicro": 630000
+        },
+        {
+          "mode": "image_to_video",
+          "duration": 6,
+          "generate_audio": false,
+          "price_usdmicro": 504000
+        },
+        {
+          "mode": "image_to_video",
+          "duration": 6,
+          "generate_audio": true,
+          "price_usdmicro": 756000
+        },
+        {
+          "mode": "image_to_video",
+          "duration": 7,
+          "generate_audio": false,
+          "price_usdmicro": 588000
+        },
+        {
+          "mode": "image_to_video",
+          "duration": 7,
+          "generate_audio": true,
+          "price_usdmicro": 882000
+        },
+        {
+          "mode": "image_to_video",
+          "duration": 8,
+          "generate_audio": false,
+          "price_usdmicro": 672000
+        },
+        {
+          "mode": "image_to_video",
+          "duration": 8,
+          "generate_audio": true,
+          "price_usdmicro": 1008000
+        },
+        {
+          "mode": "image_to_video",
+          "duration": 9,
+          "generate_audio": false,
+          "price_usdmicro": 756000
+        },
+        {
+          "mode": "image_to_video",
+          "duration": 9,
+          "generate_audio": true,
+          "price_usdmicro": 1134000
+        },
+        {
+          "mode": "image_to_video",
+          "duration": 10,
+          "generate_audio": false,
+          "price_usdmicro": 840000
+        },
+        {
+          "mode": "image_to_video",
+          "duration": 10,
+          "generate_audio": true,
+          "price_usdmicro": 1260000
+        },
+        {
+          "mode": "image_to_video",
+          "duration": 11,
+          "generate_audio": false,
+          "price_usdmicro": 924000
+        },
+        {
+          "mode": "image_to_video",
+          "duration": 11,
+          "generate_audio": true,
+          "price_usdmicro": 1386000
+        },
+        {
+          "mode": "image_to_video",
+          "duration": 12,
+          "generate_audio": false,
+          "price_usdmicro": 1008000
+        },
+        {
+          "mode": "image_to_video",
+          "duration": 12,
+          "generate_audio": true,
+          "price_usdmicro": 1512000
+        },
+        {
+          "mode": "image_to_video",
+          "duration": 13,
+          "generate_audio": false,
+          "price_usdmicro": 1092000
+        },
+        {
+          "mode": "image_to_video",
+          "duration": 13,
+          "generate_audio": true,
+          "price_usdmicro": 1638000
+        },
+        {
+          "mode": "image_to_video",
+          "duration": 14,
+          "generate_audio": false,
+          "price_usdmicro": 1176000
+        },
+        {
+          "mode": "image_to_video",
+          "duration": 14,
+          "generate_audio": true,
+          "price_usdmicro": 1764000
+        },
+        {
+          "mode": "image_to_video",
+          "duration": 15,
+          "generate_audio": false,
+          "price_usdmicro": 1260000
+        },
+        {
+          "mode": "image_to_video",
+          "duration": 15,
+          "generate_audio": true,
+          "price_usdmicro": 1890000
+        },
+        {
+          "mode": "motion_control",
+          "duration": 3,
+          "generate_audio": false,
+          "price_usdmicro": 252000
+        },
+        {
+          "mode": "motion_control",
+          "duration": 3,
+          "generate_audio": true,
+          "price_usdmicro": 378000
+        },
+        {
+          "mode": "motion_control",
+          "duration": 4,
+          "generate_audio": false,
+          "price_usdmicro": 336000
+        },
+        {
+          "mode": "motion_control",
+          "duration": 4,
+          "generate_audio": true,
+          "price_usdmicro": 504000
+        },
+        {
+          "mode": "motion_control",
+          "duration": 5,
+          "generate_audio": false,
+          "price_usdmicro": 420000
+        },
+        {
+          "mode": "motion_control",
+          "duration": 5,
+          "generate_audio": true,
+          "price_usdmicro": 630000
+        },
+        {
+          "mode": "motion_control",
+          "duration": 6,
+          "generate_audio": false,
+          "price_usdmicro": 504000
+        },
+        {
+          "mode": "motion_control",
+          "duration": 6,
+          "generate_audio": true,
+          "price_usdmicro": 756000
+        },
+        {
+          "mode": "motion_control",
+          "duration": 7,
+          "generate_audio": false,
+          "price_usdmicro": 588000
+        },
+        {
+          "mode": "motion_control",
+          "duration": 7,
+          "generate_audio": true,
+          "price_usdmicro": 882000
+        },
+        {
+          "mode": "motion_control",
+          "duration": 8,
+          "generate_audio": false,
+          "price_usdmicro": 672000
+        },
+        {
+          "mode": "motion_control",
+          "duration": 8,
+          "generate_audio": true,
+          "price_usdmicro": 1008000
+        },
+        {
+          "mode": "motion_control",
+          "duration": 9,
+          "generate_audio": false,
+          "price_usdmicro": 756000
+        },
+        {
+          "mode": "motion_control",
+          "duration": 9,
+          "generate_audio": true,
+          "price_usdmicro": 1134000
+        },
+        {
+          "mode": "motion_control",
+          "duration": 10,
+          "generate_audio": false,
+          "price_usdmicro": 840000
+        },
+        {
+          "mode": "motion_control",
+          "duration": 10,
+          "generate_audio": true,
+          "price_usdmicro": 1260000
+        },
+        {
+          "mode": "motion_control",
+          "duration": 11,
+          "generate_audio": false,
+          "price_usdmicro": 924000
+        },
+        {
+          "mode": "motion_control",
+          "duration": 11,
+          "generate_audio": true,
+          "price_usdmicro": 1386000
+        },
+        {
+          "mode": "motion_control",
+          "duration": 12,
+          "generate_audio": false,
+          "price_usdmicro": 1008000
+        },
+        {
+          "mode": "motion_control",
+          "duration": 12,
+          "generate_audio": true,
+          "price_usdmicro": 1512000
+        },
+        {
+          "mode": "motion_control",
+          "duration": 13,
+          "generate_audio": false,
+          "price_usdmicro": 1092000
+        },
+        {
+          "mode": "motion_control",
+          "duration": 13,
+          "generate_audio": true,
+          "price_usdmicro": 1638000
+        },
+        {
+          "mode": "motion_control",
+          "duration": 14,
+          "generate_audio": false,
+          "price_usdmicro": 1176000
+        },
+        {
+          "mode": "motion_control",
+          "duration": 14,
+          "generate_audio": true,
+          "price_usdmicro": 1764000
+        },
+        {
+          "mode": "motion_control",
+          "duration": 15,
+          "generate_audio": false,
+          "price_usdmicro": 1260000
+        },
+        {
+          "mode": "motion_control",
+          "duration": 15,
+          "generate_audio": true,
+          "price_usdmicro": 1890000
+        }
+      ]
     }
-  },
-  {
-    "external_model_name": "klingai:kling-video@3-standard",
-    "external_model_api_url": "/",
-    "priority": 10,
-    "is_active": true
   }
 ]

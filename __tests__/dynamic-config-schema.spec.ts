@@ -4,19 +4,39 @@ import { readFileSync } from "node:fs";
 import {
   buildAjvResolver,
   buildDefaultValues,
+  buildFieldMeta,
+  getPrimaryType,
+  type JsonConfigMeta,
   type JsonConfigSchema,
 } from "../src/hooks/use-dynamic-config-form";
 
-const videoConfigSchema = JSON.parse(
+const klingVideoConfig = JSON.parse(
   readFileSync(
     new URL("./fixtures/kling-video-config-schema.json", import.meta.url),
     "utf8",
   ),
-) as JsonConfigSchema;
+) as [
+  { meta: JsonConfigMeta },
+  { RUNWARE: { config_schema: JsonConfigSchema } },
+];
+const videoConfigMeta = klingVideoConfig[0].meta;
+const videoConfigSchema = klingVideoConfig[1].RUNWARE.config_schema;
+
+function buildVideoConfigResolver() {
+  return buildAjvResolver(videoConfigSchema, undefined, {
+    configMeta: videoConfigMeta,
+  });
+}
+
+test("resolves nullable JSON Schema types consistently", () => {
+  expect(getPrimaryType({ type: ["string", "null"] })).toBe("string");
+  expect(getPrimaryType({ type: ["null", "integer"] })).toBe("integer");
+  expect(getPrimaryType({ type: "boolean" })).toBe("boolean");
+});
 
 test("does not let hidden field defaults require motion-control references", async () => {
   const defaults = buildDefaultValues(videoConfigSchema);
-  const resolver = buildAjvResolver(videoConfigSchema);
+  const resolver = buildVideoConfigResolver();
 
   const result = await resolver(
     {
@@ -43,7 +63,7 @@ test("does not let hidden field defaults require motion-control references", asy
 
 test("keeps visible motion-control defaults and validates required references", async () => {
   const defaults = buildDefaultValues(videoConfigSchema);
-  const resolver = buildAjvResolver(videoConfigSchema);
+  const resolver = buildVideoConfigResolver();
 
   const result = await resolver(
     {
@@ -64,7 +84,7 @@ test("keeps visible motion-control defaults and validates required references", 
 
 test("submits motion-control references when all visible requirements are met", async () => {
   const defaults = buildDefaultValues(videoConfigSchema);
-  const resolver = buildAjvResolver(videoConfigSchema);
+  const resolver = buildVideoConfigResolver();
 
   const result = await resolver(
     {
@@ -88,4 +108,25 @@ test("submits motion-control references when all visible requirements are met", 
   });
   expect(result.values).not.toHaveProperty("frame_images");
   expect(result.values).not.toHaveProperty("duration");
+});
+
+test("reads nested array field metadata from the standard detail UI schema", () => {
+  const multiPromptItems = videoConfigSchema.properties.multi_prompt?.items;
+  const promptProperty = multiPromptItems?.properties?.prompt;
+
+  expect(promptProperty).toBeDefined();
+
+  const fieldMeta = buildFieldMeta({
+    name: "multi_prompt.0.prompt",
+    prop: promptProperty!,
+    requiredFields: multiPromptItems?.required ?? [],
+    defaultValues: {},
+    configMeta: videoConfigMeta,
+  });
+
+  expect(fieldMeta).toMatchObject({
+    inputType: "textarea",
+    title: "پرامپت بخش",
+    hint: "برای هر segment حرکت، صحنه و صدای همان بخش را بنویسید.",
+  });
 });

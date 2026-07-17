@@ -1,9 +1,10 @@
 import type { FieldError, FieldErrors } from "react-hook-form";
 import { toast } from "sonner";
 
-import type {
-  DynamicConfigValues,
-  JsonSchemaProperty,
+import {
+  getPrimaryType,
+  type DynamicConfigValues,
+  type JsonSchemaProperty,
 } from "@/hooks/use-dynamic-config-form";
 
 type DynamicFormProperties = Record<string, JsonSchemaProperty>;
@@ -15,12 +16,6 @@ function isFieldError(error: unknown): error is FieldError {
     "message" in error &&
     typeof (error as FieldError).message === "string"
   );
-}
-
-function getPrimaryType(property: JsonSchemaProperty) {
-  if (!Array.isArray(property.type)) return property.type;
-
-  return property.type.find((type) => type !== "null") ?? property.type[0];
 }
 
 function getFieldProperty(

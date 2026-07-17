@@ -26,8 +26,8 @@ const PROMPT_FIELD_NAMES = new Set([
 ]);
 const PROMPT_BOX_CONFIG_FIELD_NAMES = new Set([
   "mode",
-  "size",
   "resolution",
+  "aspect_ratio",
   "video_id",
   "character_orientation",
   "duration",

@@ -1745,11 +1745,6 @@ export interface components {
             readonly ai_model_config: {
                 readonly [key: string]: unknown;
             };
-            /**
-             * Idempotency Key
-             * Format: uuid
-             */
-            readonly idempotency_key: string;
             /** Task Uuid */
             readonly task_uuid?: string | null;
         };

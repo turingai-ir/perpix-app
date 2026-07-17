@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 
 import {
   buildAjvResolver,
@@ -22,6 +22,7 @@ import type {
   JsonSchemaType,
   UseDynamicConfigFormInput,
 } from "./types";
+export { getPrimaryType } from "./types";
 
 import { useAppTranslate } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
@@ -86,10 +87,6 @@ export function useDynamicConfigForm({
     return safeConfigSchema.properties ?? {};
   }, [safeConfigSchema]);
 
-  const enumLabels = useMemo(() => {
-    return configMeta?.ui?.labels ?? safeConfigSchema["x-ui"]?.enumLabels;
-  }, [configMeta, safeConfigSchema]);
-
   const orderedFieldNames = useMemo(() => {
     return getOrderedFieldNames(safeConfigSchema, configMeta);
   }, [safeConfigSchema, configMeta]);
@@ -101,8 +98,6 @@ export function useDynamicConfigForm({
         prop: properties[name],
         requiredFields,
         defaultValues: defaultValues as Record<string, unknown>,
-        widget: safeConfigSchema["x-ui"]?.widgets?.[name],
-        enumLabels,
         configMeta,
       }),
     );
@@ -111,8 +106,6 @@ export function useDynamicConfigForm({
     properties,
     requiredFields,
     defaultValues,
-    safeConfigSchema,
-    enumLabels,
     configMeta,
   ]);
 
@@ -129,7 +122,7 @@ export function useDynamicConfigForm({
     form.reset(defaultValues);
   }, [resolvedSchemaKey, autoResetOnSchemaChange, form, defaultValues]);
 
-  const watchedValues = form.watch();
+  const watchedValues = useWatch({ control: form.control });
 
   const visibleFieldNames = useMemo(() => {
     return getVisibleConfigFields(
@@ -157,19 +150,10 @@ export function useDynamicConfigForm({
         prop,
         requiredFields,
         defaultValues: defaultValues as Record<string, unknown>,
-        widget: safeConfigSchema["x-ui"]?.widgets?.[fieldName],
-        enumLabels,
         configMeta,
       });
     },
-    [
-      properties,
-      requiredFields,
-      defaultValues,
-      safeConfigSchema,
-      enumLabels,
-      configMeta,
-    ],
+    [properties, requiredFields, defaultValues, configMeta],
   );
 
   const getFieldMetaForProperty = useCallback(
@@ -181,16 +165,14 @@ export function useDynamicConfigForm({
       return buildFieldMeta({
         name: fieldName,
         prop,
-        requiredFields:
-          prop.required && Array.isArray(prop.required) ? prop.required : [],
+        requiredFields: prop.required ?? [],
         defaultValues: {
           [fieldName]: defaultValue,
         },
-        enumLabels,
         configMeta,
       });
     },
-    [enumLabels, configMeta],
+    [configMeta],
   );
 
   const getCleanValues = useCallback(() => {

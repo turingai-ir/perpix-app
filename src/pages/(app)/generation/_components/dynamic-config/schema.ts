@@ -1,18 +1,15 @@
-import type { JsonSchemaProperty } from "@/hooks/use-dynamic-config-form";
+import {
+  getPrimaryType,
+  type JsonSchemaProperty,
+} from "@/hooks/use-dynamic-config-form";
 
 import type { DynamicConfigOptions, FieldInputType } from "./types";
-
-export function getPrimaryType(property: JsonSchemaProperty) {
-  if (!Array.isArray(property.type)) return property.type;
-
-  return property.type.find((type) => type !== "null") ?? property.type[0];
-}
 
 export function resolvePropertyInputType(
   property: JsonSchemaProperty,
   widget?: string,
 ): FieldInputType {
-  const resolvedWidget = widget ?? property["x-widget"];
+  const resolvedWidget = widget;
   if (resolvedWidget === "textarea") return "textarea";
   if (resolvedWidget === "text") return "text";
   if (resolvedWidget === "select") return "select";

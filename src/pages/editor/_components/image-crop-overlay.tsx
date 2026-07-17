@@ -66,7 +66,7 @@ export function ImageCropOverlay(props: ImageCropOverlayProps) {
             : undefined
         }
         flipEnabled={false}
-        ignoreStroke={true}
+        ignoreStroke
         keepRatio={fixedRatio}
         rotateEnabled={false}
         boundBoxFunc={(oldBox, newBox) => {
