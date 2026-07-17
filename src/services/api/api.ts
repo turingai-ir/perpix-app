@@ -681,23 +681,6 @@ export interface paths {
         readonly patch?: never;
         readonly trace?: never;
     };
-    readonly "/ai-task/webhooks/runware": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
-        };
-        readonly get?: never;
-        readonly put?: never;
-        /** Runware Webhook */
-        readonly post: operations["runware_webhook_ai_task_webhooks_runware_post"];
-        readonly delete?: never;
-        readonly options?: never;
-        readonly head?: never;
-        readonly patch?: never;
-        readonly trace?: never;
-    };
     readonly "/ai-task/list": {
         readonly parameters: {
             readonly query?: never;
@@ -773,26 +756,6 @@ export interface paths {
         readonly patch?: never;
         readonly trace?: never;
     };
-    readonly "/admin/ai-task/user/{user_uuid}/message/{task_message_uuid}/provider-result": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path: {
-                readonly user_uuid: string;
-                readonly task_message_uuid: string;
-            };
-            readonly cookie?: never;
-        };
-        readonly get?: never;
-        readonly put?: never;
-        /** Process User Task Manual Provider Result */
-        readonly post: operations["process_user_task_manual_provider_result_admin_ai_task_user__user_uuid__message__task_message_uuid__provider_result_post"];
-        readonly delete?: never;
-        readonly options?: never;
-        readonly head?: never;
-        readonly patch?: never;
-        readonly trace?: never;
-    };
     readonly "/ai-registry/models": {
         readonly parameters: {
             readonly query?: never;
@@ -823,6 +786,23 @@ export interface paths {
         readonly get: operations["get_model_ai_registry_models__ai_model_uuid__get"];
         readonly put?: never;
         readonly post?: never;
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
+    readonly "/ai-registry/webhooks/runware": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly get?: never;
+        readonly put?: never;
+        /** Runware Webhook */
+        readonly post: operations["runware_webhook_ai_registry_webhooks_runware_post"];
         readonly delete?: never;
         readonly options?: never;
         readonly head?: never;
@@ -1048,16 +1028,6 @@ export interface components {
             readonly supported_inputs?: readonly components["schemas"]["AiRegistryModelSupportedTypesEnum"][];
             /** Supported Outputs */
             readonly supported_outputs?: readonly components["schemas"]["AiRegistryModelSupportedTypesEnum"][];
-            /** Config Schema */
-            readonly config_schema?: {
-                readonly [key: string]: unknown;
-            };
-            /** Pricing By */
-            readonly pricing_by?: readonly string[];
-            /** Pricing Tiers */
-            readonly pricing_tiers?: readonly {
-                readonly [key: string]: unknown;
-            }[];
             /**
              * Is Active
              * @default true
@@ -1081,9 +1051,13 @@ export interface components {
              */
             readonly ai_provider_uuid: string;
             /** External Model Name */
-            readonly external_model_name: string;
+            readonly external_model_name: {
+                readonly [key: string]: string;
+            };
             /** External Model Api Url */
-            readonly external_model_api_url?: string | null;
+            readonly external_model_api_url?: {
+                readonly [key: string]: string | null;
+            };
             /**
              * Priority
              * @default 10
@@ -1094,6 +1068,20 @@ export interface components {
              * @default true
              */
             readonly is_active: boolean;
+            /** Config Schema */
+            readonly config_schema?: {
+                readonly [key: string]: unknown;
+            };
+            /** Field Mapping */
+            readonly field_mapping?: {
+                readonly [key: string]: unknown;
+            };
+            /** Pricing By */
+            readonly pricing_by?: readonly string[];
+            /** Pricing Tiers */
+            readonly pricing_tiers?: readonly {
+                readonly [key: string]: unknown;
+            }[];
         };
         /** AiRegistryModelProviderLinkDetail */
         readonly AiRegistryModelProviderLinkDetail: {
@@ -1102,24 +1090,60 @@ export interface components {
             /** Ai Model Id */
             readonly ai_model_id: number | null;
             /** External Model Name */
-            readonly external_model_name: string;
+            readonly external_model_name: {
+                readonly [key: string]: string;
+            };
             /** External Model Api Url */
-            readonly external_model_api_url: string | null;
+            readonly external_model_api_url: {
+                readonly [key: string]: string | null;
+            };
             /** Priority */
             readonly priority: number;
             /** Is Active */
             readonly is_active: boolean;
+            /** Config Schema */
+            readonly config_schema: {
+                readonly [key: string]: unknown;
+            };
+            /** Field Mapping */
+            readonly field_mapping: {
+                readonly [key: string]: unknown;
+            };
+            /** Pricing By */
+            readonly pricing_by: readonly string[];
+            /** Pricing Tiers */
+            readonly pricing_tiers: readonly {
+                readonly [key: string]: unknown;
+            }[];
         };
         /** AiRegistryModelProviderLinkUpdateRequest */
         readonly AiRegistryModelProviderLinkUpdateRequest: {
             /** External Model Name */
-            readonly external_model_name?: string | null;
+            readonly external_model_name?: {
+                readonly [key: string]: string;
+            } | null;
             /** External Model Api Url */
-            readonly external_model_api_url?: string | null;
+            readonly external_model_api_url?: {
+                readonly [key: string]: string | null;
+            } | null;
             /** Priority */
             readonly priority?: number | null;
             /** Is Active */
             readonly is_active?: boolean | null;
+            /** Config Schema */
+            readonly config_schema?: {
+                readonly [key: string]: unknown;
+            } | null;
+            /** Field Mapping */
+            readonly field_mapping?: {
+                readonly [key: string]: unknown;
+            } | null;
+            /** Pricing By */
+            readonly pricing_by?: readonly string[] | null;
+            /** Pricing Tiers */
+            readonly pricing_tiers?: readonly {
+                readonly [key: string]: unknown;
+            }[] | null;
         };
         /** AiRegistryModelSummary */
         readonly AiRegistryModelSummary: {
@@ -1170,16 +1194,6 @@ export interface components {
             readonly supported_inputs?: readonly components["schemas"]["AiRegistryModelSupportedTypesEnum"][] | null;
             /** Supported Outputs */
             readonly supported_outputs?: readonly components["schemas"]["AiRegistryModelSupportedTypesEnum"][] | null;
-            /** Config Schema */
-            readonly config_schema?: {
-                readonly [key: string]: unknown;
-            } | null;
-            /** Pricing By */
-            readonly pricing_by?: readonly string[] | null;
-            /** Pricing Tiers */
-            readonly pricing_tiers?: readonly {
-                readonly [key: string]: unknown;
-            }[] | null;
             /** Is Active */
             readonly is_active?: boolean | null;
             /** Meta */
@@ -1252,19 +1266,6 @@ export interface components {
                 readonly [key: string]: unknown;
             } | null;
         };
-        /** AiTaskAdminManualProviderResultRequest */
-        readonly AiTaskAdminManualProviderResultRequest: {
-            /** Taskuuid */
-            readonly taskUUID: string;
-            /** Cost */
-            readonly cost?: number | null;
-            /** Imageurl */
-            readonly imageURL?: string | null;
-            /** Videourl */
-            readonly videoURL?: string | null;
-            /** Generated Text */
-            readonly generated_text?: string | null;
-        };
         /** AiTaskListResponse */
         readonly AiTaskListResponse: {
             /** Items */
@@ -1285,6 +1286,8 @@ export interface components {
              * Format: uuid
              */
             readonly ai_provider_uuid: string;
+            /** Ai Generation Request Uuid */
+            readonly ai_generation_request_uuid: string | null;
             /** Ai External Provider Task Id */
             readonly ai_external_provider_task_id: string | null;
             readonly task_status: components["schemas"]["AiTaskMessageStatusEnum"] | null;
@@ -1742,6 +1745,11 @@ export interface components {
             readonly ai_model_config: {
                 readonly [key: string]: unknown;
             };
+            /**
+             * Idempotency Key
+             * Format: uuid
+             */
+            readonly idempotency_key: string;
             /** Task Uuid */
             readonly task_uuid?: string | null;
         };
@@ -1906,6 +1914,11 @@ export interface components {
         readonly RunwareWebhookResponse: {
             /** Processed */
             readonly processed: number;
+            /**
+             * Failed
+             * @default 0
+             */
+            readonly failed: number;
         };
         /** SubscriptionPlanListResponse */
         readonly SubscriptionPlanListResponse: {
@@ -2223,7 +2236,7 @@ export interface components {
          * @description Stable namespaces used in wallet transaction idempotency keys.
          * @enum {string}
          */
-        readonly WalletOperationSourceEnum: "admin" | "ai_task_message" | "payment" | "subscription";
+        readonly WalletOperationSourceEnum: "admin" | "ai_registry_generation" | "ai_task_message" | "payment" | "subscription";
         /** WalletTransactionResponse */
         readonly WalletTransactionResponse: {
             /**
@@ -2344,6 +2357,39 @@ export interface components {
             /** Provider Links */
             readonly provider_links?: readonly components["schemas"]["AiRegistryModelProviderLinkDetail"][];
         };
+        /**
+         * ApplicationErrorCode
+         * @enum {integer}
+         */
+        readonly ApplicationErrorCode: 900 | 901 | 902 | 999 | 1000 | 1001 | 1002 | 1003 | 1004 | 1005 | 1100 | 1101 | 1102 | 1103 | 1104 | 1105 | 1106 | 1200 | 1201 | 1202 | 1203 | 1204 | 1205 | 1300 | 1301 | 1302 | 1303 | 1304 | 1400 | 1401 | 1402 | 1404 | 1405 | 1406 | 1500 | 1501 | 1502 | 1503 | 1504 | 1505 | 1506 | 1507 | 1508 | 1600 | 1601 | 1602 | 1700 | 1701 | 1702;
+        /** ApplicationErrorResponse */
+        readonly ApplicationErrorResponse: {
+            /**
+             * Detail
+             * @description Translated error message or validation details.
+             */
+            readonly detail: unknown;
+            /** @description Stable application status code for frontend handling. */
+            readonly status_code: components["schemas"]["ApplicationErrorCode"];
+            /**
+             * Request Id
+             * @description Correlation id for tracing the request.
+             * @default null
+             */
+            readonly request_id: string | null;
+            /**
+             * Retry After
+             * @description Seconds until a rate-limited request can retry.
+             * @default null
+             */
+            readonly retry_after: number | null;
+            /**
+             * Required Scopes
+             * @description Subscription scopes required to perform the operation.
+             * @default null
+             */
+            readonly required_scopes: readonly string[] | null;
+        };
     };
     responses: never;
     parameters: never;
@@ -2365,7 +2411,6 @@ export type SchemaAiRegistryProviderCreateRequest = components['schemas']['AiReg
 export type SchemaAiRegistryProviderDetail = components['schemas']['AiRegistryProviderDetail'];
 export type SchemaAiRegistryProviderNameEnum = components['schemas']['AiRegistryProviderNameEnum'];
 export type SchemaAiRegistryProviderUpdateRequest = components['schemas']['AiRegistryProviderUpdateRequest'];
-export type SchemaAiTaskAdminManualProviderResultRequest = components['schemas']['AiTaskAdminManualProviderResultRequest'];
 export type SchemaAiTaskListResponse = components['schemas']['AiTaskListResponse'];
 export type SchemaAiTaskMessageResponse = components['schemas']['AiTaskMessageResponse'];
 export type SchemaAiTaskMessageStatusEnum = components['schemas']['AiTaskMessageStatusEnum'];
@@ -2435,6 +2480,8 @@ export type SchemaWalletTransactionResponse = components['schemas']['WalletTrans
 export type SchemaWalletTransactionTypeEnum = components['schemas']['WalletTransactionTypeEnum'];
 export type SchemaPerpixCoreApiModulesAiRegistryPresentationSchemasAiRegistryModelDetail = components['schemas']['perpix_core_api__modules__ai_registry__presentation__schemas__AiRegistryModelDetail'];
 export type SchemaPerpixCoreApiModulesAiRegistryPresentationSchemasAdminAiRegistryModelDetail = components['schemas']['perpix_core_api__modules__ai_registry__presentation__schemas_admin__AiRegistryModelDetail'];
+export type SchemaApplicationErrorCode = components['schemas']['ApplicationErrorCode'];
+export type SchemaApplicationErrorResponse = components['schemas']['ApplicationErrorResponse'];
 export type $defs = Record<string, never>;
 export interface operations {
     readonly get_info_user_get_info_get: {
@@ -2453,6 +2500,15 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["UserGetInfoResponse"];
+                };
+            };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -2488,6 +2544,15 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
         };
     };
     readonly start_user_start_post: {
@@ -2519,6 +2584,15 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -2554,6 +2628,15 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
         };
     };
     readonly reset_password_user_reset_password_post: {
@@ -2587,6 +2670,15 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
         };
     };
     readonly resend_otp_user_resend_otp_post: {
@@ -2605,6 +2697,15 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["UserResendOtpResponse"];
+                };
+            };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -2640,6 +2741,15 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
         };
     };
     readonly list_users_admin_user_list_get: {
@@ -2658,6 +2768,15 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": readonly components["schemas"]["AdminUserGetInfoResponse"][];
+                };
+            };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -2691,6 +2810,15 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
         };
     };
     readonly get_subscription_plans_user_subscription_plans_get: {
@@ -2711,6 +2839,15 @@ export interface operations {
                     readonly "application/json": components["schemas"]["SubscriptionPlanListResponse"];
                 };
             };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
         };
     };
     readonly get_active_subscription_user_subscription_active_get: {
@@ -2729,6 +2866,15 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["UserSubscriptionResponse"];
+                };
+            };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -2764,6 +2910,15 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
         };
     };
     readonly create_subscription_plan_admin_subscription_plan_post: {
@@ -2795,6 +2950,15 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -2832,6 +2996,15 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
         };
     };
     readonly list_subscription_plans_admin_subscription_plans_get: {
@@ -2861,6 +3034,15 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -2896,6 +3078,15 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
         };
     };
     readonly deactivate_user_subscription_admin_subscription_deactivate_post: {
@@ -2927,6 +3118,15 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -2962,6 +3162,15 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
         };
     };
     readonly get_current_user_wallet_wallet_wallet_get: {
@@ -2980,6 +3189,15 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["GetWalletResponse"];
+                };
+            };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -3016,6 +3234,15 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
         };
     };
     readonly get_wallet_transactions_admin_wallet__wallet_uuid__transactions_get: {
@@ -3049,6 +3276,15 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -3088,6 +3324,15 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
         };
     };
     readonly refresh_currency_exchange_rate_admin_currency_exchange_rate_refresh_get: {
@@ -3106,6 +3351,15 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["CurrencyExchangeRateRefreshResponse"];
+                };
+            };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -3141,6 +3395,15 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
         };
     };
     readonly get_payment_status_payment__payment_uuid__get: {
@@ -3170,6 +3433,15 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -3205,6 +3477,15 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
         };
     };
     readonly verify_payment_payment_verify_post: {
@@ -3238,6 +3519,15 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
         };
     };
     readonly simple_upload_file_manager_simple_upload_post: {
@@ -3269,6 +3559,15 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -3305,6 +3604,15 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
         };
     };
     readonly get_file_presigned_urls_file_manager_files_presigned_urls_post: {
@@ -3336,6 +3644,15 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -3373,6 +3690,15 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
         };
     };
     readonly delete_file_file_manager_files__file_uuid__delete: {
@@ -3402,6 +3728,15 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -3437,6 +3772,15 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
         };
     };
     readonly presign_multipart_part_file_manager_multipart_presign_part_post: {
@@ -3468,6 +3812,15 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -3503,6 +3856,15 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
         };
     };
     readonly get_file_admin_file_manager_files__file_uuid__get: {
@@ -3534,6 +3896,15 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
         };
     };
     readonly delete_file_admin_file_manager_files__file_uuid__delete: {
@@ -3563,6 +3934,15 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -3600,6 +3980,15 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
         };
     };
     readonly delete_bulk_files_admin_file_manager_files_delete_bulk_post: {
@@ -3631,6 +4020,15 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -3666,6 +4064,15 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
         };
     };
     readonly generate_task_ai_task_generate_post: {
@@ -3699,6 +4106,15 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
         };
     };
     readonly get_task_result_ai_task_result__task_message_uuid__get: {
@@ -3730,39 +4146,13 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
-        };
-    };
-    readonly runware_webhook_ai_task_webhooks_runware_post: {
-        readonly parameters: {
-            readonly query: {
-                readonly token: string;
-            };
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
-        };
-        readonly requestBody: {
-            readonly content: {
-                readonly "application/json": components["schemas"]["RunwareWebhookRequest"];
-            };
-        };
-        readonly responses: {
-            /** @description Successful Response */
-            readonly 200: {
+            /** @description Application error */
+            readonly default: {
                 headers: {
                     readonly [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": components["schemas"]["RunwareWebhookResponse"];
-                };
-            };
-            /** @description Validation Error */
-            readonly 422: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -3798,6 +4188,15 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
         };
     };
     readonly get_task_ai_task__task_uuid__get: {
@@ -3827,6 +4226,15 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -3864,6 +4272,15 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
         };
     };
     readonly check_user_task_result_admin_ai_task_user__user_uuid__result__task_message_uuid__get: {
@@ -3896,40 +4313,13 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
-        };
-    };
-    readonly process_user_task_manual_provider_result_admin_ai_task_user__user_uuid__message__task_message_uuid__provider_result_post: {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path: {
-                readonly user_uuid: string;
-                readonly task_message_uuid: string;
-            };
-            readonly cookie?: never;
-        };
-        readonly requestBody: {
-            readonly content: {
-                readonly "application/json": components["schemas"]["AiTaskAdminManualProviderResultRequest"];
-            };
-        };
-        readonly responses: {
-            /** @description Successful Response */
-            readonly 200: {
+            /** @description Application error */
+            readonly default: {
                 headers: {
                     readonly [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": components["schemas"]["AiTaskMessageResponse"];
-                };
-            };
-            /** @description Validation Error */
-            readonly 422: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -3964,6 +4354,15 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
         };
     };
     readonly get_model_ai_registry_models__ai_model_uuid__get: {
@@ -3993,6 +4392,60 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+        };
+    };
+    readonly runware_webhook_ai_registry_webhooks_runware_post: {
+        readonly parameters: {
+            readonly query: {
+                readonly token: string;
+                readonly external_request_uuid: string;
+            };
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody: {
+            readonly content: {
+                readonly "application/json": components["schemas"]["RunwareWebhookRequest"];
+            };
+        };
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["RunwareWebhookResponse"];
+                };
+            };
+            /** @description Validation Error */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -4028,6 +4481,15 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
         };
     };
     readonly get_provider_admin_ai_registry_provider__ai_provider_uuid__get: {
@@ -4057,6 +4519,15 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -4094,6 +4565,15 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
         };
     };
     readonly list_providers_admin_ai_registry_provider_list_get: {
@@ -4112,6 +4592,15 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": readonly components["schemas"]["AiRegistryProviderDetail"][];
+                };
+            };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -4147,6 +4636,15 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
         };
     };
     readonly get_model_admin_ai_registry_model__ai_model_uuid__get: {
@@ -4176,6 +4674,15 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -4213,6 +4720,15 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
         };
     };
     readonly list_models_admin_ai_registry_model_list_get: {
@@ -4242,6 +4758,15 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -4277,6 +4802,15 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -4315,6 +4849,15 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
         };
     };
 }
@@ -4335,8 +4878,9 @@ export const aiTaskTypeEnumValues: ReadonlyArray<FlattenedDeepRequired<component
 export const currencyUnitEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["CurrencyUnitEnum"]> = ["USD", "IRR", "USDMICRO"];
 export const paymentStatusEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaymentStatusEnum"]> = ["PENDING", "PAID", "FAILED"];
 export const paymentTargetTypeEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaymentTargetTypeEnum"]> = ["subscription", "wallet"];
-export const walletOperationSourceEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["WalletOperationSourceEnum"]> = ["admin", "ai_task_message", "payment", "subscription"];
+export const walletOperationSourceEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["WalletOperationSourceEnum"]> = ["admin", "ai_registry_generation", "ai_task_message", "payment", "subscription"];
 export const walletTransactionTypeEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["WalletTransactionTypeEnum"]> = ["DEPOSIT", "WITHDRAW", "REFUND"];
+export const applicationErrorCodeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["ApplicationErrorCode"]> = [900, 901, 902, 999, 1000, 1001, 1002, 1003, 1004, 1005, 1100, 1101, 1102, 1103, 1104, 1105, 1106, 1200, 1201, 1202, 1203, 1204, 1205, 1300, 1301, 1302, 1303, 1304, 1400, 1401, 1402, 1404, 1405, 1406, 1500, 1501, 1502, 1503, 1504, 1505, 1506, 1507, 1508, 1600, 1601, 1602, 1700, 1701, 1702];
 
 
 export const AiRegistryModelOwnerEnumMap = {
@@ -4430,6 +4974,7 @@ export type PaymentTargetTypeEnumValue = (typeof PaymentTargetTypeEnumMap)[Payme
 
 export const WalletOperationSourceEnumMap = {
   "admin": "admin",
+  "ai_registry_generation": "ai_registry_generation",
   "ai_task_message": "ai_task_message",
   "payment": "payment",
   "subscription": "subscription",
@@ -4444,3 +4989,57 @@ export const WalletTransactionTypeEnumMap = {
 } as const;
 export type WalletTransactionTypeEnumKey = keyof typeof WalletTransactionTypeEnumMap;
 export type WalletTransactionTypeEnumValue = (typeof WalletTransactionTypeEnumMap)[WalletTransactionTypeEnumKey];
+
+export const ApplicationErrorCodeMap = {
+  900: 900,
+  901: 901,
+  902: 902,
+  999: 999,
+  1000: 1000,
+  1001: 1001,
+  1002: 1002,
+  1003: 1003,
+  1004: 1004,
+  1005: 1005,
+  1100: 1100,
+  1101: 1101,
+  1102: 1102,
+  1103: 1103,
+  1104: 1104,
+  1105: 1105,
+  1106: 1106,
+  1200: 1200,
+  1201: 1201,
+  1202: 1202,
+  1203: 1203,
+  1204: 1204,
+  1205: 1205,
+  1300: 1300,
+  1301: 1301,
+  1302: 1302,
+  1303: 1303,
+  1304: 1304,
+  1400: 1400,
+  1401: 1401,
+  1402: 1402,
+  1404: 1404,
+  1405: 1405,
+  1406: 1406,
+  1500: 1500,
+  1501: 1501,
+  1502: 1502,
+  1503: 1503,
+  1504: 1504,
+  1505: 1505,
+  1506: 1506,
+  1507: 1507,
+  1508: 1508,
+  1600: 1600,
+  1601: 1601,
+  1602: 1602,
+  1700: 1700,
+  1701: 1701,
+  1702: 1702,
+} as const;
+export type ApplicationErrorCodeKey = keyof typeof ApplicationErrorCodeMap;
+export type ApplicationErrorCodeValue = (typeof ApplicationErrorCodeMap)[ApplicationErrorCodeKey];
