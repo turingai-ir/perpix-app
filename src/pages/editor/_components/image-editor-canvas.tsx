@@ -1,9 +1,13 @@
+import { useRef } from "react";
 import { Layer, Stage } from "react-konva";
+import type Konva from "konva";
 import type { CropArea } from "../_model/crop-area";
 import type { AlignmentGuide } from "../_model/image-alignment";
 import { CheckerboardBackground } from "./checkerboard-background";
 import { ImageAlignmentGuides } from "./image-alignment-guides";
 import { ImageCropOverlay } from "./image-crop-overlay";
+import { EditorGridLayer } from "./editor-grid-layer";
+import { EditorRulerLayer } from "./editor-ruler-layer";
 import {
   EditorCanvasImage,
   type CanvasDragMoveHandler,
@@ -30,10 +34,12 @@ interface ImageEditorCanvasProps {
 }
 
 export function ImageEditorCanvas(props: ImageEditorCanvasProps) {
+  const stageRef = useRef<Konva.Stage>(null);
   const { height, width } = props.stageSize;
   const imageBounds = { ...props.imagePosition, ...props.imageSize };
   return (
     <Stage
+      ref={stageRef}
       width={width}
       height={height}
       onMouseDown={(event) => {
@@ -43,6 +49,10 @@ export function ImageEditorCanvas(props: ImageEditorCanvasProps) {
         if (event.target === event.currentTarget) props.onDeselectImage();
       }}
     >
+      <EditorGridLayer
+        stageSize={props.stageSize}
+        cardPosition={props.cardPosition}
+      />
       <Layer>
         <CheckerboardBackground {...props.cardPosition} {...props.imageSize} />
         <EditorCanvasImage
@@ -74,6 +84,11 @@ export function ImageEditorCanvas(props: ImageEditorCanvasProps) {
           />
         )}
       </Layer>
+      <EditorRulerLayer
+        stageRef={stageRef}
+        stageSize={props.stageSize}
+        cardPosition={props.cardPosition}
+      />
     </Stage>
   );
 }

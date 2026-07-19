@@ -46,6 +46,8 @@ export function EditorCanvasImage(props: EditorCanvasImageProps) {
       y={props.imagePosition.y}
       draggable={!props.isCropping}
       dragBoundFunc={dragBounds}
+      onMouseDown={props.onSelect}
+      onTouchStart={props.onSelect}
       onClick={props.onSelect}
       onTap={props.onSelect}
       onDragStart={props.onSelect}

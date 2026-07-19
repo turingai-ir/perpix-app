@@ -22,8 +22,8 @@ export function getCenteredPosition(
   content: CropDisplaySize,
 ): CropDisplayOrigin {
   return {
-    x: (container.width - content.width) / 2,
-    y: (container.height - content.height) / 2,
+    x: Math.round((container.width - content.width) / 2),
+    y: Math.round((container.height - content.height) / 2),
   };
 }
 
@@ -44,8 +44,8 @@ export function denormalizePosition(
   origin: CropDisplayOrigin,
 ): CropDisplayOrigin {
   return {
-    x: origin.x + position.x * size.width,
-    y: origin.y + position.y * size.height,
+    x: Math.round(origin.x + position.x * size.width),
+    y: Math.round(origin.y + position.y * size.height),
   };
 }
 
@@ -68,9 +68,9 @@ export function denormalizeCrop(
   origin: CropDisplayOrigin = ZERO_ORIGIN,
 ): CropArea {
   return {
-    height: crop.height * size.height,
-    width: crop.width * size.width,
-    x: origin.x + crop.x * size.width,
-    y: origin.y + crop.y * size.height,
+    height: Math.round(crop.height * size.height),
+    width: Math.round(crop.width * size.width),
+    x: Math.round(origin.x + crop.x * size.width),
+    y: Math.round(origin.y + crop.y * size.height),
   };
 }

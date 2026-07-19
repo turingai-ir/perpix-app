@@ -269,6 +269,8 @@
       "grayscale": "سیاه و سفید",
       "filtersTitle": "فیلترهای تصویر",
       "uploaderError": "لطفاً یک فایل تصویر انتخاب کنید",
+      "toggleGrid": "نمایش شبکه",
+      "toggleRuler": "نمایش خط‌کش",
       "uploaderSuccess": "تصویر با موفقیت ویرایش و ذخیره شد",
       "saveOptions": "ذخیره تصویر",
       "edit": "ویرایش",

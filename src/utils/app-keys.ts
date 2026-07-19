@@ -14,6 +14,7 @@ export const APP_KEYS = {
   LOCAL_STORAGE: {
     GLOBAL_JOTAI_ATOM: "global-state",
     FILES_PREVIEW: "files-preview",
+    EDITOR_SETTINGS: "editor-settings",
   },
   COOKIES: {
     ACCESS_TOKEN: "access_token",

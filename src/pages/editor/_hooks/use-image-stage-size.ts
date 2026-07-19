@@ -46,8 +46,8 @@ export function useImageStageSize(
 
   return {
     imageSize: {
-      height: contentHeight * scale,
-      width: contentWidth * scale,
+      height: Math.round(contentHeight * scale),
+      width: Math.round(contentWidth * scale),
     },
     stageSize: availableSize,
   };
