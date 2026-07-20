@@ -28,7 +28,6 @@ export interface GenerationPromptBoxProps {
   onSubmit: (
     data: Readonly<Record<string, unknown>>,
     aiModelUuid: string,
-    aiProviderUuid?: string,
   ) => Promise<void> | void;
   successfulMessageClearKey?: string;
   promptBoxFieldNames: ReadonlySet<string>;

@@ -11,7 +11,6 @@ interface Props {
   onSubmit: (
     data: Readonly<Record<string, unknown>>,
     aiModelUuid: string,
-    aiProviderUuid?: string,
   ) => Promise<void> | void;
   isLoading?: boolean;
   lastMessageConfig?: SchemaAiTaskMessageResponse["ai_model_config"];

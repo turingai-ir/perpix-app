@@ -148,16 +148,6 @@ export function useGenerationPromptBox({
     isUploadingMedia ||
     !model.isCurrentModelAllowed ||
     (isPromptFieldVisible && isPromptTooShort);
-  const pendingProviderValuesRef = useRef<Readonly<
-    Record<string, unknown>
-  > | null>(null);
-
-  const selectProvider = (providerUuid: string) => {
-    setIsProviderUnavailable(false);
-    pendingProviderValuesRef.current = dynamicForm.getValues();
-    model.setSelectedProviderUuid(providerUuid);
-  };
-
   const handleGenerationError = async (error: unknown) => {
     const applicationError = await parseGenerationApplicationError(error);
     if (!applicationError) throw error;
@@ -189,20 +179,6 @@ export function useGenerationPromptBox({
       });
   };
 
-  useEffect(() => {
-    const pendingValues = pendingProviderValuesRef.current;
-    if (!pendingValues || !dynamicForm.isReady || !generationConfig) return;
-
-    const compatibleValues = Object.fromEntries(
-      Object.keys(dynamicForm.properties)
-        .filter((propertyName) => propertyName in pendingValues)
-        .map((propertyName) => [propertyName, pendingValues[propertyName]]),
-    );
-    pendingProviderValuesRef.current = null;
-    dynamicForm.reset({ ...dynamicForm.defaultValues, ...compatibleValues });
-    void dynamicForm.trigger();
-  }, [dynamicForm, generationConfig]);
-
   const handleFormSubmit: SubmitEventHandler<HTMLFormElement> = async (
     event,
   ) => {
@@ -225,11 +201,7 @@ export function useGenerationPromptBox({
     const submitForm = dynamicForm.handleSubmit(
       async (data) => {
         try {
-          await onSubmit(
-            data,
-            model.currentModel ?? "",
-            generationConfig?.resolved_provider.uuid,
-          );
+          await onSubmit(data, model.currentModel ?? "");
         } catch (error) {
           await handleGenerationError(error);
         }
@@ -271,7 +243,6 @@ export function useGenerationPromptBox({
     isUploadingMedia,
     model,
     promptBoxConfigFieldNames,
-    selectProvider,
     setIsUploadingMedia,
   };
 }

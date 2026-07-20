@@ -118,6 +118,9 @@ test("submits text-to-video prompt values with the selected model", async ({
   const generateRequest = waitForGenerateRequest(page);
 
   await openVideoGenerationPage(page);
+  await expect(
+    page.getByRole("combobox", { name: "ارائه‌دهنده هوش مصنوعی" }),
+  ).toHaveCount(0);
   await page
     .getByPlaceholder("شروع به تایپ کنید")
     .fill("A cinematic city shot");
@@ -127,46 +130,13 @@ test("submits text-to-video prompt values with the selected model", async ({
 
   expect(body.ai_model_uuid).toBe(MODEL_UUID);
   expect(body.task_type).toBe("VIDEO");
+  expect(body).not.toHaveProperty("ai_provider_uuid");
   expect(body.ai_model_config).toMatchObject({
     duration: 5,
     generate_audio: true,
     mode: "text_to_video",
     prompt: "A cinematic city shot",
     resolution: "720p",
-  });
-});
-
-test("switches provider while preserving compatible form values", async ({
-  page,
-}) => {
-  const generateRequest = waitForGenerateRequest(page);
-  await openVideoGenerationPage(page);
-  await page
-    .getByPlaceholder("شروع به تایپ کنید")
-    .fill("A provider-safe prompt");
-
-  const providerSelector = page.getByRole("combobox", {
-    name: "ارائه‌دهنده هوش مصنوعی",
-  });
-  await providerSelector.click();
-  await page.getByRole("option", { name: "KIE" }).click();
-
-  await expect(page.getByPlaceholder("شروع به تایپ کنید")).toHaveValue(
-    "A provider-safe prompt",
-  );
-  await page.getByRole("button", { name: "تنظیمات پیشرفته" }).click();
-  await page
-    .getByRole("dialog")
-    .getByRole("textbox", { name: "تنظیم اختصاصی KIE" })
-    .fill("enabled");
-  await page.keyboard.press("Escape");
-  await page.locator('button[type="submit"]').click();
-
-  const body = await generateRequest;
-  expect(body.ai_provider_uuid).toBe(KIE_PROVIDER_UUID);
-  expect(body.ai_model_config).toEqual({
-    kie_setting: "enabled",
-    prompt: "A provider-safe prompt",
   });
 });
 

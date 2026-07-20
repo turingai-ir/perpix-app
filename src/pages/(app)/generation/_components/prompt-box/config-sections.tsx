@@ -7,7 +7,7 @@ import {
 } from "../dynamic-config";
 import { ModelTokenPriceTooltip } from "../model-token-price-tooltip";
 import { PromptModelSelector } from "./model-selector";
-import { PromptProviderSelector } from "./provider-selector";
+import { ProviderIndicator } from "./provider-indicator";
 import { PromptSubmitButton } from "./submit-button";
 
 import type { useModel } from "@/pages/(app)/generation/_hooks/model";
@@ -36,7 +36,6 @@ export const PromptActionsSection: FC<{
   isLoading?: boolean;
   isSubmitDisabled?: boolean;
   model: PromptBoxModel;
-  onProviderChange: (providerUuid: string) => void;
   providerLabel: string;
   upgradeLabel: string;
 }> = ({
@@ -48,7 +47,6 @@ export const PromptActionsSection: FC<{
   isLoading,
   isSubmitDisabled,
   model,
-  onProviderChange,
   providerLabel,
   upgradeLabel,
 }) => (
@@ -63,11 +61,9 @@ export const PromptActionsSection: FC<{
         model={model}
         upgradeLabel={upgradeLabel}
       />
-      <PromptProviderSelector
-        disabled={disabled}
+      <ProviderIndicator
         label={providerLabel}
-        model={model}
-        onProviderChange={onProviderChange}
+        providerName={model.generationConfigState.data?.resolved_provider.name}
       />
       {inlineFieldNames.map((fieldName) => (
         <DynamicPromptConfigField

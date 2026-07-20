@@ -1337,7 +1337,7 @@ export interface components {
              * Format: uuid
              */
             readonly uuid: string;
-            readonly task_type: components["schemas"]["AiRegistryModelSupportedTypesEnum"];
+            readonly task_type: components["schemas"]["GenerationTaskType"];
             /**
              * Expire Date
              * Format: date-time
@@ -1778,7 +1778,7 @@ export interface components {
             readonly ai_model_uuid: string;
             /** Ai Provider Uuid */
             readonly ai_provider_uuid?: string | null;
-            readonly task_type: components["schemas"]["AiRegistryModelSupportedTypesEnum"];
+            readonly task_type: components["schemas"]["GenerationTaskType"];
             /** Ai Model Config */
             readonly ai_model_config: {
                 readonly [key: string]: unknown;
@@ -1811,6 +1811,11 @@ export interface components {
                 readonly [key: string]: unknown;
             };
         };
+        /**
+         * GenerationTaskType
+         * @enum {string}
+         */
+        readonly GenerationTaskType: "TEXT" | "IMAGE" | "AUDIO" | "VIDEO";
         /** GetWalletResponse */
         readonly GetWalletResponse: {
             /**
@@ -2512,6 +2517,7 @@ export type SchemaFileManagerUploadFileResponse = components['schemas']['FileMan
 export type SchemaFileManagerUserFilesResponse = components['schemas']['FileManagerUserFilesResponse'];
 export type SchemaGenerateTaskRequest = components['schemas']['GenerateTaskRequest'];
 export type SchemaGenerationConfigResponse = components['schemas']['GenerationConfigResponse'];
+export type SchemaGenerationTaskType = components['schemas']['GenerationTaskType'];
 export type SchemaGetWalletResponse = components['schemas']['GetWalletResponse'];
 export type SchemaGetWalletTransactionsResponse = components['schemas']['GetWalletTransactionsResponse'];
 export type SchemaHttpValidationError = components['schemas']['HTTPValidationError'];
@@ -4990,6 +4996,7 @@ export const aiTaskRuleEnumValues: ReadonlyArray<FlattenedDeepRequired<component
 export const aiTaskTypeEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiTaskTypeEnum"]> = ["TEXT", "IMAGE", "AUDIO", "VIDEO"];
 export const currencyUnitEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["CurrencyUnitEnum"]> = ["USD", "IRR", "USDMICRO"];
 export const generationConfigResponseSelection_modeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["GenerationConfigResponse"]["selection_mode"]> = ["DEFAULT", "EXPLICIT"];
+export const generationTaskTypeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["GenerationTaskType"]> = ["TEXT", "IMAGE", "AUDIO", "VIDEO"];
 export const paymentStatusEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaymentStatusEnum"]> = ["PENDING", "PAID", "FAILED"];
 export const paymentTargetTypeEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaymentTargetTypeEnum"]> = ["subscription", "wallet"];
 export const walletOperationSourceEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["WalletOperationSourceEnum"]> = ["admin", "ai_registry_generation", "ai_task_message", "payment", "subscription"];
@@ -5071,6 +5078,15 @@ export const CurrencyUnitEnumMap = {
 } as const;
 export type CurrencyUnitEnumKey = keyof typeof CurrencyUnitEnumMap;
 export type CurrencyUnitEnumValue = (typeof CurrencyUnitEnumMap)[CurrencyUnitEnumKey];
+
+export const GenerationTaskTypeMap = {
+  "TEXT": "TEXT",
+  "IMAGE": "IMAGE",
+  "AUDIO": "AUDIO",
+  "VIDEO": "VIDEO",
+} as const;
+export type GenerationTaskTypeKey = keyof typeof GenerationTaskTypeMap;
+export type GenerationTaskTypeValue = (typeof GenerationTaskTypeMap)[GenerationTaskTypeKey];
 
 export const PaymentStatusEnumMap = {
   "PENDING": "PENDING",
