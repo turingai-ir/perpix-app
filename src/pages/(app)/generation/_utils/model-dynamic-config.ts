@@ -1,3 +1,5 @@
+import type { UISchemaElement } from "@jsonforms/core";
+
 import type { JsonConfigMeta } from "@/hooks/use-dynamic-config-form";
 
 type ModelDynamicConfig = {
@@ -22,4 +24,18 @@ export function getModelDynamicConfig(model: unknown): ModelDynamicConfig {
     configDefaults: modelRecord.config_defaults,
     configMeta: modelRecord.meta ?? null,
   };
+}
+
+export function getGenerationConfigMeta(
+  uiSchema: Readonly<Record<string, unknown>> | undefined,
+): JsonConfigMeta | null {
+  if (!isUiSchemaElement(uiSchema)) return null;
+
+  return { uischema: uiSchema };
+}
+
+function isUiSchemaElement(
+  uiSchema: Readonly<Record<string, unknown>> | undefined,
+): uiSchema is Readonly<Record<string, unknown>> & UISchemaElement {
+  return typeof uiSchema?.type === "string";
 }

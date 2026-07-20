@@ -792,6 +792,25 @@ export interface paths {
         readonly patch?: never;
         readonly trace?: never;
     };
+    readonly "/ai-registry/models/{ai_model_uuid}/generation-config": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path: {
+                readonly ai_model_uuid: string;
+            };
+            readonly cookie?: never;
+        };
+        /** Get Generation Config */
+        readonly get: operations["get_generation_config_ai_registry_models__ai_model_uuid__generation_config_get"];
+        readonly put?: never;
+        readonly post?: never;
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
     readonly "/ai-registry/webhooks/runware": {
         readonly parameters: {
             readonly query?: never;
@@ -1168,9 +1187,7 @@ export interface components {
             /** Supported Outputs */
             readonly supported_outputs: readonly components["schemas"]["AiRegistryModelSupportedTypesEnum"][];
             /** Pricing Tiers */
-            readonly pricing_tiers: readonly {
-                readonly [key: string]: unknown;
-            }[];
+            readonly pricing_tiers: readonly number[];
         };
         /**
          * AiRegistryModelSupportedTypesEnum
@@ -1212,6 +1229,8 @@ export interface components {
             readonly api_key?: string | null;
             /** Rate Limit Per Min */
             readonly rate_limit_per_min?: number | null;
+            /** Price To Usdmicro */
+            readonly price_to_usdmicro: number;
             /** Meta */
             readonly meta?: {
                 readonly [key: string]: unknown;
@@ -1231,6 +1250,8 @@ export interface components {
             readonly base_api_url: string | null;
             /** Rate Limit Per Min */
             readonly rate_limit_per_min: number | null;
+            /** Price To Usdmicro */
+            readonly price_to_usdmicro: number;
             /** Meta */
             readonly meta: {
                 readonly [key: string]: unknown;
@@ -1250,7 +1271,7 @@ export interface components {
          * AiRegistryProviderNameEnum
          * @enum {string}
          */
-        readonly AiRegistryProviderNameEnum: "RUNWARE" | "AIMLAPI";
+        readonly AiRegistryProviderNameEnum: "RUNWARE" | "AIMLAPI" | "KIE";
         /** AiRegistryProviderUpdateRequest */
         readonly AiRegistryProviderUpdateRequest: {
             /** Display Name */
@@ -1261,6 +1282,8 @@ export interface components {
             readonly api_key?: string | null;
             /** Rate Limit Per Min */
             readonly rate_limit_per_min?: number | null;
+            /** Price To Usdmicro */
+            readonly price_to_usdmicro?: number | null;
             /** Meta */
             readonly meta?: {
                 readonly [key: string]: unknown;
@@ -1343,6 +1366,19 @@ export interface components {
          * @enum {string}
          */
         readonly AiTaskTypeEnum: "TEXT" | "IMAGE" | "AUDIO" | "VIDEO";
+        /** AvailableGenerationProviderResponse */
+        readonly AvailableGenerationProviderResponse: {
+            /**
+             * Uuid
+             * Format: uuid
+             */
+            readonly uuid: string;
+            readonly name: components["schemas"]["AiRegistryProviderNameEnum"];
+            /** Priority */
+            readonly priority: number;
+            /** Is Default */
+            readonly is_default: boolean;
+        };
         /** Body_replace_file_file_manager_files__file_uuid__put */
         readonly Body_replace_file_file_manager_files__file_uuid__put: {
             /** File */
@@ -1740,6 +1776,8 @@ export interface components {
              * Format: uuid
              */
             readonly ai_model_uuid: string;
+            /** Ai Provider Uuid */
+            readonly ai_provider_uuid?: string | null;
             readonly task_type: components["schemas"]["AiRegistryModelSupportedTypesEnum"];
             /** Ai Model Config */
             readonly ai_model_config: {
@@ -1747,6 +1785,31 @@ export interface components {
             };
             /** Task Uuid */
             readonly task_uuid?: string | null;
+        };
+        /** GenerationConfigResponse */
+        readonly GenerationConfigResponse: {
+            /**
+             * Ai Model Uuid
+             * Format: uuid
+             */
+            readonly ai_model_uuid: string;
+            readonly task_type: components["schemas"]["AiRegistryModelSupportedTypesEnum"];
+            /**
+             * Selection Mode
+             * @enum {string}
+             */
+            readonly selection_mode: "DEFAULT" | "EXPLICIT";
+            readonly resolved_provider: components["schemas"]["ResolvedGenerationProviderResponse"];
+            /** Available Providers */
+            readonly available_providers: readonly components["schemas"]["AvailableGenerationProviderResponse"][];
+            /** Config Schema */
+            readonly config_schema: {
+                readonly [key: string]: unknown;
+            };
+            /** Ui Schema */
+            readonly ui_schema: {
+                readonly [key: string]: unknown;
+            };
         };
         /** GetWalletResponse */
         readonly GetWalletResponse: {
@@ -1867,6 +1930,17 @@ export interface components {
          * @enum {string}
          */
         readonly PaymentTargetTypeEnum: "subscription" | "wallet";
+        /** ResolvedGenerationProviderResponse */
+        readonly ResolvedGenerationProviderResponse: {
+            /**
+             * Uuid
+             * Format: uuid
+             */
+            readonly uuid: string;
+            readonly name: components["schemas"]["AiRegistryProviderNameEnum"];
+            /** Priority */
+            readonly priority: number;
+        };
         /** RunwareWebhookItem */
         readonly RunwareWebhookItem: {
             /** Taskuuid */
@@ -2289,9 +2363,7 @@ export interface components {
             /** Supported Outputs */
             readonly supported_outputs: readonly components["schemas"]["AiRegistryModelSupportedTypesEnum"][];
             /** Pricing Tiers */
-            readonly pricing_tiers: readonly {
-                readonly [key: string]: unknown;
-            }[];
+            readonly pricing_tiers: readonly number[];
             /** Config Schema */
             readonly config_schema: {
                 readonly [key: string]: unknown;
@@ -2330,9 +2402,7 @@ export interface components {
             /** Pricing By */
             readonly pricing_by: readonly string[];
             /** Pricing Tiers */
-            readonly pricing_tiers: readonly {
-                readonly [key: string]: unknown;
-            }[];
+            readonly pricing_tiers: readonly number[];
             /** Is Active */
             readonly is_active: boolean;
             /** Meta */
@@ -2356,7 +2426,7 @@ export interface components {
          * ApplicationErrorCode
          * @enum {integer}
          */
-        readonly ApplicationErrorCode: 900 | 901 | 902 | 999 | 1000 | 1001 | 1002 | 1003 | 1004 | 1005 | 1100 | 1101 | 1102 | 1103 | 1104 | 1105 | 1106 | 1200 | 1201 | 1202 | 1203 | 1204 | 1205 | 1300 | 1301 | 1302 | 1303 | 1304 | 1400 | 1401 | 1402 | 1404 | 1405 | 1406 | 1500 | 1501 | 1502 | 1503 | 1504 | 1505 | 1506 | 1507 | 1508 | 1600 | 1601 | 1602 | 1700 | 1701 | 1702;
+        readonly ApplicationErrorCode: 900 | 901 | 902 | 999 | 1000 | 1001 | 1002 | 1003 | 1004 | 1005 | 1100 | 1101 | 1102 | 1103 | 1104 | 1105 | 1106 | 1200 | 1201 | 1202 | 1203 | 1204 | 1205 | 1300 | 1301 | 1302 | 1303 | 1304 | 1400 | 1401 | 1402 | 1404 | 1405 | 1406 | 1500 | 1501 | 1502 | 1503 | 1504 | 1505 | 1506 | 1507 | 1508 | 1509 | 1510 | 1600 | 1601 | 1602 | 1700 | 1701 | 1702;
         /** ApplicationErrorResponse */
         readonly ApplicationErrorResponse: {
             /**
@@ -2412,6 +2482,7 @@ export type SchemaAiTaskMessageStatusEnum = components['schemas']['AiTaskMessage
 export type SchemaAiTaskResponse = components['schemas']['AiTaskResponse'];
 export type SchemaAiTaskRuleEnum = components['schemas']['AiTaskRuleEnum'];
 export type SchemaAiTaskTypeEnum = components['schemas']['AiTaskTypeEnum'];
+export type SchemaAvailableGenerationProviderResponse = components['schemas']['AvailableGenerationProviderResponse'];
 export type SchemaBodyReplaceFileFileManagerFilesFileUuidPut = components['schemas']['Body_replace_file_file_manager_files__file_uuid__put'];
 export type SchemaBodySimpleUploadFileManagerSimpleUploadPost = components['schemas']['Body_simple_upload_file_manager_simple_upload_post'];
 export type SchemaBodyVerifyPaymentPaymentVerifyPost = components['schemas']['Body_verify_payment_payment_verify_post'];
@@ -2440,6 +2511,7 @@ export type SchemaFileManagerPresignedUrlsResponse = components['schemas']['File
 export type SchemaFileManagerUploadFileResponse = components['schemas']['FileManagerUploadFileResponse'];
 export type SchemaFileManagerUserFilesResponse = components['schemas']['FileManagerUserFilesResponse'];
 export type SchemaGenerateTaskRequest = components['schemas']['GenerateTaskRequest'];
+export type SchemaGenerationConfigResponse = components['schemas']['GenerationConfigResponse'];
 export type SchemaGetWalletResponse = components['schemas']['GetWalletResponse'];
 export type SchemaGetWalletTransactionsResponse = components['schemas']['GetWalletTransactionsResponse'];
 export type SchemaHttpValidationError = components['schemas']['HTTPValidationError'];
@@ -2448,6 +2520,7 @@ export type SchemaPaymentListResponse = components['schemas']['PaymentListRespon
 export type SchemaPaymentStatusEnum = components['schemas']['PaymentStatusEnum'];
 export type SchemaPaymentStatusResponse = components['schemas']['PaymentStatusResponse'];
 export type SchemaPaymentTargetTypeEnum = components['schemas']['PaymentTargetTypeEnum'];
+export type SchemaResolvedGenerationProviderResponse = components['schemas']['ResolvedGenerationProviderResponse'];
 export type SchemaRunwareWebhookItem = components['schemas']['RunwareWebhookItem'];
 export type SchemaRunwareWebhookRequest = components['schemas']['RunwareWebhookRequest'];
 export type SchemaRunwareWebhookResponse = components['schemas']['RunwareWebhookResponse'];
@@ -4400,11 +4473,56 @@ export interface operations {
             };
         };
     };
+    readonly get_generation_config_ai_registry_models__ai_model_uuid__generation_config_get: {
+        readonly parameters: {
+            readonly query: {
+                readonly task_type: components["schemas"]["AiRegistryModelSupportedTypesEnum"];
+                readonly ai_provider_uuid?: string | null;
+            };
+            readonly header?: never;
+            readonly path: {
+                readonly ai_model_uuid: string;
+            };
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["GenerationConfigResponse"];
+                };
+            };
+            /** @description Validation Error */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+        };
+    };
     readonly runware_webhook_ai_registry_webhooks_runware_post: {
         readonly parameters: {
             readonly query: {
                 readonly token: string;
                 readonly external_request_uuid: string;
+                readonly expires?: number | null;
+                readonly version?: number | null;
             };
             readonly header?: never;
             readonly path?: never;
@@ -4729,7 +4847,7 @@ export interface operations {
     readonly list_models_admin_ai_registry_model_list_get: {
         readonly parameters: {
             readonly query?: {
-                readonly only_active?: boolean;
+                readonly is_only_active?: boolean;
             };
             readonly header?: never;
             readonly path?: never;
@@ -4866,16 +4984,17 @@ type ReadonlyArray<T> = [
 ] ? Readonly<Exclude<T, undefined>> : Readonly<Exclude<T, undefined>[]>;
 export const aiRegistryModelOwnerEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiRegistryModelOwnerEnum"]> = ["OPEN_AI", "GOOGLE", "BLACK_FOREST_LABS", "K_LING_AI", "BRIA", "BYTE_DANCE", "IMAGINE_ART", "LIGHT_TICKS", "MID_JOURNEY", "MINI_MAX", "PIX_VERSE", "PRUNA_AI", "RUNWAY", "SOURCE_FUL", "VIDU", "IDEOGRAM"];
 export const aiRegistryModelSupportedTypesEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiRegistryModelSupportedTypesEnum"]> = ["TEXT", "IMAGE", "AUDIO", "VIDEO"];
-export const aiRegistryProviderNameEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiRegistryProviderNameEnum"]> = ["RUNWARE", "AIMLAPI"];
+export const aiRegistryProviderNameEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiRegistryProviderNameEnum"]> = ["RUNWARE", "AIMLAPI", "KIE"];
 export const aiTaskMessageStatusEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiTaskMessageStatusEnum"]> = ["PENDING", "IN_PROGRESS", "SUCCESS", "FAILED"];
 export const aiTaskRuleEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiTaskRuleEnum"]> = ["SYSTEM", "USER", "ASSISTANT", "TOOL", "FUNCTION", "INLINE"];
 export const aiTaskTypeEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiTaskTypeEnum"]> = ["TEXT", "IMAGE", "AUDIO", "VIDEO"];
 export const currencyUnitEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["CurrencyUnitEnum"]> = ["USD", "IRR", "USDMICRO"];
+export const generationConfigResponseSelection_modeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["GenerationConfigResponse"]["selection_mode"]> = ["DEFAULT", "EXPLICIT"];
 export const paymentStatusEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaymentStatusEnum"]> = ["PENDING", "PAID", "FAILED"];
 export const paymentTargetTypeEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaymentTargetTypeEnum"]> = ["subscription", "wallet"];
 export const walletOperationSourceEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["WalletOperationSourceEnum"]> = ["admin", "ai_registry_generation", "ai_task_message", "payment", "subscription"];
 export const walletTransactionTypeEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["WalletTransactionTypeEnum"]> = ["DEPOSIT", "WITHDRAW", "REFUND"];
-export const applicationErrorCodeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["ApplicationErrorCode"]> = [900, 901, 902, 999, 1000, 1001, 1002, 1003, 1004, 1005, 1100, 1101, 1102, 1103, 1104, 1105, 1106, 1200, 1201, 1202, 1203, 1204, 1205, 1300, 1301, 1302, 1303, 1304, 1400, 1401, 1402, 1404, 1405, 1406, 1500, 1501, 1502, 1503, 1504, 1505, 1506, 1507, 1508, 1600, 1601, 1602, 1700, 1701, 1702];
+export const applicationErrorCodeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["ApplicationErrorCode"]> = [900, 901, 902, 999, 1000, 1001, 1002, 1003, 1004, 1005, 1100, 1101, 1102, 1103, 1104, 1105, 1106, 1200, 1201, 1202, 1203, 1204, 1205, 1300, 1301, 1302, 1303, 1304, 1400, 1401, 1402, 1404, 1405, 1406, 1500, 1501, 1502, 1503, 1504, 1505, 1506, 1507, 1508, 1509, 1510, 1600, 1601, 1602, 1700, 1701, 1702];
 
 
 export const AiRegistryModelOwnerEnumMap = {
@@ -4911,6 +5030,7 @@ export type AiRegistryModelSupportedTypesEnumValue = (typeof AiRegistryModelSupp
 export const AiRegistryProviderNameEnumMap = {
   "RUNWARE": "RUNWARE",
   "AIMLAPI": "AIMLAPI",
+  "KIE": "KIE",
 } as const;
 export type AiRegistryProviderNameEnumKey = keyof typeof AiRegistryProviderNameEnumMap;
 export type AiRegistryProviderNameEnumValue = (typeof AiRegistryProviderNameEnumMap)[AiRegistryProviderNameEnumKey];
@@ -5029,6 +5149,8 @@ export const ApplicationErrorCodeMap = {
   1506: 1506,
   1507: 1507,
   1508: 1508,
+  1509: 1509,
+  1510: 1510,
   1600: 1600,
   1601: 1601,
   1602: 1602,

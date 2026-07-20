@@ -43,6 +43,7 @@ export const GenerationPromptBox: FC<GenerationPromptBoxProps> = ({
     successfulMessageClearKey,
     supportedOutputs,
     validationErrorTitle: t("common.error"),
+    validationFieldErrorMessage: t("common.invalidField"),
   });
 
   const fieldGroups = usePromptBoxFieldGroups({
@@ -85,6 +86,8 @@ export const GenerationPromptBox: FC<GenerationPromptBoxProps> = ({
             isLoading={isLoading}
             isSubmitDisabled={promptBox.isSubmitDisabled}
             model={promptBox.model}
+            onProviderChange={promptBox.selectProvider}
+            providerLabel={t("common.aiProvider")}
             upgradeLabel={t("common.upgradeRequired")}
           />
           <PromptFullWidthFieldsSection

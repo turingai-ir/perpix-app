@@ -119,13 +119,18 @@ export function useGenerationPage({
   }, [displayedMessages.length, isTaskLoading, location.hash]);
 
   const handleForm = useCallback(
-    async (data: any, ai_model_uuid: string) => {
+    async (
+      data: Readonly<Record<string, unknown>>,
+      aiModelUuid: string,
+      aiProviderUuid?: string,
+    ) => {
       if (hasPendingGeneration) return;
 
       const res = await mutateAsync({
         body: {
           task_type: taskType,
-          ai_model_uuid,
+          ai_model_uuid: aiModelUuid,
+          ai_provider_uuid: aiProviderUuid,
           ai_model_config: data,
           task_uuid: chatId ?? undefined,
         },
@@ -146,7 +151,11 @@ export function useGenerationPage({
     (message: SchemaAiTaskMessageResponse) => {
       if (!message.ai_model_uuid) return;
 
-      return handleForm(message.ai_model_config, message.ai_model_uuid);
+      return handleForm(
+        message.ai_model_config,
+        message.ai_model_uuid,
+        message.ai_provider_uuid,
+      );
     },
     [handleForm],
   );

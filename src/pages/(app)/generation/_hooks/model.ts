@@ -93,6 +93,10 @@ export const useModel = (
   const activeSubscriptionState = useActiveSubscription();
 
   const [selectedModel, setCurrentModel] = useState<string>();
+  const [providerSelection, setProviderSelection] = useState<{
+    modelUuid?: string;
+    providerUuid?: string;
+  }>({});
   const currentSelectedModel = selectedModel ?? initialModelUuid ?? undefined;
   const allowedModelNames = activeSubscriptionState.data?.plan
     .allowed_models as readonly string[] | undefined;
@@ -115,6 +119,10 @@ export const useModel = (
     selectedModelSummary ??
     getDefaultAccessibleModel(models, allowedModelNames);
   const currentModel = currentModelSummary?.uuid;
+  const selectedProviderUuid =
+    providerSelection.modelUuid === currentModel
+      ? providerSelection.providerUuid
+      : undefined;
   const isCurrentModelAllowed = currentModelSummary
     ? isModelAllowed(currentModelSummary, allowedModelNames)
     : true;
@@ -131,13 +139,32 @@ export const useModel = (
     },
     { enabled: !!currentModel },
   );
+  const generationConfigState = useQuery(
+    "get",
+    "/ai-registry/models/{ai_model_uuid}/generation-config",
+    {
+      params: {
+        path: { ai_model_uuid: currentModel ?? "" },
+        query: {
+          task_type: supportedOutputs[0],
+          ai_provider_uuid: selectedProviderUuid,
+        },
+      },
+    },
+    { enabled: Boolean(currentModel && supportedOutputs[0]) },
+  );
 
   return {
     activeSubscriptionState,
     allowedModelNames,
     currentModel,
+    generationConfigState,
     isCurrentModelAllowed,
     setCurrentModel,
+    selectedProviderUuid,
+    setSelectedProviderUuid: (providerUuid: string) => {
+      setProviderSelection({ modelUuid: currentModel, providerUuid });
+    },
     modelState,
     modelsListState: {
       ...modelsListState,

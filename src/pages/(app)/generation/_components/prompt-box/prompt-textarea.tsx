@@ -1,6 +1,11 @@
 import type { FC } from "react";
 
-import { FormControl, FormField, FormItem } from "@/components/ui/form";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import type { DynamicConfigForm } from "@/pages/(app)/generation/_components/dynamic-config";
 
@@ -32,6 +37,7 @@ export const PromptTextarea: FC<{
               placeholder={placeholder}
             />
           </FormControl>
+          <FormMessage />
         </ScrollArea>
       </FormItem>
     )}

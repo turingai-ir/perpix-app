@@ -14,7 +14,15 @@ import { getPromptConfigFieldNames } from "@/pages/(app)/generation/_components/
 import type { GenerationPromptBoxProps } from "@/pages/(app)/generation/_components/prompt-box/types";
 import { useModel } from "@/pages/(app)/generation/_hooks/model";
 import { showDynamicFormErrorsToast } from "@/pages/(app)/generation/_utils/dynamic-form-errors-toast";
-import { getModelDynamicConfig } from "@/pages/(app)/generation/_utils/model-dynamic-config";
+import {
+  GENERATION_ERROR_CODES,
+  getCanonicalErrorPaths,
+  parseGenerationApplicationError,
+} from "@/pages/(app)/generation/_utils/generation-application-error";
+import {
+  getGenerationConfigMeta,
+  getModelDynamicConfig,
+} from "@/pages/(app)/generation/_utils/model-dynamic-config";
 
 const MIN_PROMPT_LENGTH = 3;
 
@@ -55,6 +63,7 @@ type UseGenerationPromptBoxInput = Pick<
   | "supportedOutputs"
 > & {
   validationErrorTitle: string;
+  validationFieldErrorMessage: string;
 };
 
 export function useGenerationPromptBox({
@@ -69,14 +78,20 @@ export function useGenerationPromptBox({
   successfulMessageClearKey,
   supportedOutputs,
   validationErrorTitle,
+  validationFieldErrorMessage,
 }: UseGenerationPromptBoxInput) {
   const model = useModel(supportedOutputs, lastMessageModelUuid);
   const lastSuccessfulMessageClearKeyRef = useRef<string | undefined>(
     undefined,
   );
   const [isUploadingMedia, setIsUploadingMedia] = useState(false);
+  const [isProviderUnavailable, setIsProviderUnavailable] = useState(false);
   const { configDefaults: modelConfigDefaults, configMeta: modelConfigMeta } =
     getModelDynamicConfig(model.modelState.data);
+  const generationConfig = model.generationConfigState.data;
+  const generationConfigMeta = getGenerationConfigMeta(
+    generationConfig?.ui_schema,
+  );
 
   const dynamicFormConfigDefaults = useMemo(() => {
     const lastMessageConfigDefaults = getLastMessageConfigDefaults({
@@ -99,11 +114,11 @@ export function useGenerationPromptBox({
   const dynamicForm = useDynamicConfigForm({
     autoResetOnSchemaChange: true,
     configDefaults: dynamicFormConfigDefaults,
-    configMeta: modelConfigMeta,
-    configSchema: isJsonConfigSchema(model.modelState.data?.config_schema)
-      ? model.modelState.data.config_schema
+    configMeta: generationConfigMeta ?? modelConfigMeta,
+    configSchema: isJsonConfigSchema(generationConfig?.config_schema)
+      ? generationConfig.config_schema
       : null,
-    schemaKey: model.modelState.data?.uuid,
+    schemaKey: `${model.currentModel}:${generationConfig?.resolved_provider.uuid ?? ""}`,
   });
   const watchedPrompt = dynamicForm.watch("prompt");
   const promptBoxConfigFieldNames = getPromptConfigFieldNames({
@@ -125,12 +140,68 @@ export function useGenerationPromptBox({
     !dynamicForm.isReady ||
     model.activeSubscriptionState.isLoading ||
     model.modelsListState.isLoading ||
-    model.modelState.isLoading;
+    model.modelState.isLoading ||
+    model.generationConfigState.isLoading;
+  const isFormReadOnly = isFormBusy || isProviderUnavailable;
   const isSubmitDisabled =
-    isFormBusy ||
+    isFormReadOnly ||
     isUploadingMedia ||
     !model.isCurrentModelAllowed ||
     (isPromptFieldVisible && isPromptTooShort);
+  const pendingProviderValuesRef = useRef<Readonly<
+    Record<string, unknown>
+  > | null>(null);
+
+  const selectProvider = (providerUuid: string) => {
+    setIsProviderUnavailable(false);
+    pendingProviderValuesRef.current = dynamicForm.getValues();
+    model.setSelectedProviderUuid(providerUuid);
+  };
+
+  const handleGenerationError = async (error: unknown) => {
+    const applicationError = await parseGenerationApplicationError(error);
+    if (!applicationError) throw error;
+    if (
+      applicationError.statusCode ===
+      GENERATION_ERROR_CODES.providerNotAvailableForModel
+    ) {
+      await model.generationConfigState.refetch();
+      return;
+    }
+    if (
+      applicationError.statusCode === GENERATION_ERROR_CODES.noActiveProvider
+    ) {
+      setIsProviderUnavailable(true);
+      return;
+    }
+    if (
+      applicationError.statusCode !== GENERATION_ERROR_CODES.invalidModelConfig
+    ) {
+      throw error;
+    }
+    getCanonicalErrorPaths(applicationError.detail)
+      .filter((fieldPath) => fieldPath in dynamicForm.properties)
+      .forEach((fieldPath) => {
+        dynamicForm.form.setError(fieldPath, {
+          type: "server",
+          message: validationFieldErrorMessage,
+        });
+      });
+  };
+
+  useEffect(() => {
+    const pendingValues = pendingProviderValuesRef.current;
+    if (!pendingValues || !dynamicForm.isReady || !generationConfig) return;
+
+    const compatibleValues = Object.fromEntries(
+      Object.keys(dynamicForm.properties)
+        .filter((propertyName) => propertyName in pendingValues)
+        .map((propertyName) => [propertyName, pendingValues[propertyName]]),
+    );
+    pendingProviderValuesRef.current = null;
+    dynamicForm.reset({ ...dynamicForm.defaultValues, ...compatibleValues });
+    void dynamicForm.trigger();
+  }, [dynamicForm, generationConfig]);
 
   const handleFormSubmit: SubmitEventHandler<HTMLFormElement> = async (
     event,
@@ -153,7 +224,15 @@ export function useGenerationPromptBox({
 
     const submitForm = dynamicForm.handleSubmit(
       async (data) => {
-        await onSubmit(data, model.currentModel ?? "");
+        try {
+          await onSubmit(
+            data,
+            model.currentModel ?? "",
+            generationConfig?.resolved_provider.uuid,
+          );
+        } catch (error) {
+          await handleGenerationError(error);
+        }
       },
       (errors) =>
         showDynamicFormErrorsToast({
@@ -186,12 +265,13 @@ export function useGenerationPromptBox({
     advancedFieldNames,
     dynamicForm,
     handleFormSubmit,
-    isFormBusy,
+    isFormBusy: isFormReadOnly,
     isPromptFieldVisible,
     isSubmitDisabled,
     isUploadingMedia,
     model,
     promptBoxConfigFieldNames,
+    selectProvider,
     setIsUploadingMedia,
   };
 }

@@ -1,4 +1,4 @@
-import { expect, type Page, test } from "@playwright/test";
+import { expect, type Page, type Route, test } from "@playwright/test";
 import { readFileSync } from "node:fs";
 
 import type {
@@ -7,6 +7,8 @@ import type {
 } from "../src/hooks/use-dynamic-config-form";
 
 const MODEL_UUID = "2d1fcf14-a655-47c5-af08-3fa450dc99cc";
+const RUNWARE_PROVIDER_UUID = "638239ab-dcac-49cf-a198-f593cfd45e77";
+const KIE_PROVIDER_UUID = "275aa2a2-ddb7-4b75-b031-ed4bff474612";
 
 test.describe.configure({ mode: "serial" });
 
@@ -78,6 +80,38 @@ test("updates visible video prompt fields when the generation mode changes", asy
   await expect(page.getByText("تولید صدا")).toBeHidden();
 });
 
+test("loads provider generation config when the selected model changes", async ({
+  page,
+}) => {
+  await page.route(
+    (url) => url.pathname === `/ai-registry/models/${MODEL_UUID}`,
+    async (route) => {
+      await route.fulfill({
+        contentType: "application/json",
+        body: JSON.stringify({
+          ...getModelSummary(),
+          config_schema: {},
+          meta: {},
+        }),
+      });
+    },
+  );
+  const generationConfigRequest = page.waitForRequest((request) => {
+    const url = new URL(request.url());
+    return (
+      request.method() === "GET" &&
+      url.pathname === `/ai-registry/models/${MODEL_UUID}/generation-config` &&
+      url.searchParams.get("task_type") === "VIDEO"
+    );
+  });
+
+  await openVideoGenerationPage(page);
+  await generationConfigRequest;
+
+  await expect(page.getByPlaceholder("شروع به تایپ کنید")).toBeVisible();
+  await expect(page.getByLabel("ارائه‌دهنده هوش مصنوعی")).toHaveText("RUNWARE");
+});
+
 test("submits text-to-video prompt values with the selected model", async ({
   page,
 }) => {
@@ -100,6 +134,95 @@ test("submits text-to-video prompt values with the selected model", async ({
     prompt: "A cinematic city shot",
     resolution: "720p",
   });
+});
+
+test("switches provider while preserving compatible form values", async ({
+  page,
+}) => {
+  const generateRequest = waitForGenerateRequest(page);
+  await openVideoGenerationPage(page);
+  await page
+    .getByPlaceholder("شروع به تایپ کنید")
+    .fill("A provider-safe prompt");
+
+  const providerSelector = page.getByRole("combobox", {
+    name: "ارائه‌دهنده هوش مصنوعی",
+  });
+  await providerSelector.click();
+  await page.getByRole("option", { name: "KIE" }).click();
+
+  await expect(page.getByPlaceholder("شروع به تایپ کنید")).toHaveValue(
+    "A provider-safe prompt",
+  );
+  await page.getByRole("button", { name: "تنظیمات پیشرفته" }).click();
+  await page
+    .getByRole("dialog")
+    .getByRole("textbox", { name: "تنظیم اختصاصی KIE" })
+    .fill("enabled");
+  await page.keyboard.press("Escape");
+  await page.locator('button[type="submit"]').click();
+
+  const body = await generateRequest;
+  expect(body.ai_provider_uuid).toBe(KIE_PROVIDER_UUID);
+  expect(body.ai_model_config).toEqual({
+    kie_setting: "enabled",
+    prompt: "A provider-safe prompt",
+  });
+});
+
+test("refetches provider config when the selected provider becomes unavailable", async ({
+  page,
+}) => {
+  let generationConfigRequestCount = 0;
+  await page.route("**/*", async (route) => {
+    const request = route.request();
+    const url = new URL(request.url());
+    if (url.pathname.endsWith("/generation-config")) {
+      generationConfigRequestCount += 1;
+      await route.fallback();
+      return;
+    }
+    if (request.method() !== "POST" || url.pathname !== "/ai-task/generate") {
+      await route.fallback();
+      return;
+    }
+    await fulfillApplicationError(route, 422, 1509, "provider target leaked");
+  });
+
+  await openVideoGenerationPage(page);
+  await page.getByPlaceholder("شروع به تایپ کنید").fill("A valid prompt");
+  await page.locator('button[type="submit"]').click();
+
+  await expect.poll(() => generationConfigRequestCount).toBeGreaterThan(1);
+  await expect(page.getByText("provider target leaked")).toBeHidden();
+});
+
+test("makes the form read-only when no active provider remains", async ({
+  page,
+}) => {
+  await mockGenerateApplicationError(page, 503, 1510, "raw provider error");
+  await openVideoGenerationPage(page);
+  const prompt = page.getByPlaceholder("شروع به تایپ کنید");
+  await prompt.fill("A valid prompt");
+  await page.locator('button[type="submit"]').click();
+
+  await expect(prompt).toBeDisabled();
+  await expect(page.locator('button[type="submit"]')).toBeDisabled();
+  await expect(page.getByText("raw provider error")).toBeHidden();
+});
+
+test("connects canonical validation paths to form fields without leaking provider targets", async ({
+  page,
+}) => {
+  await mockGenerateApplicationError(page, 422, 1506, [
+    { loc: "prompt", msg: "providerPayload.promptText is invalid" },
+  ]);
+  await openVideoGenerationPage(page);
+  await page.getByPlaceholder("شروع به تایپ کنید").fill("A valid prompt");
+  await page.locator('button[type="submit"]').click();
+
+  await expect(page.getByText("مقدار این فیلد معتبر نیست")).toBeVisible();
+  await expect(page.getByText(/providerPayload\.promptText/)).toBeHidden();
 });
 
 test("supports multi-prompt mode without requiring the main prompt field", async ({
@@ -274,6 +397,30 @@ function waitForGenerateRequest(page: Page) {
     .then((request) => request.postDataJSON());
 }
 
+async function mockGenerateApplicationError(
+  page: Page,
+  httpStatus: number,
+  applicationStatus: number,
+  detail: unknown,
+) {
+  await page.route("**/ai-task/generate", async (route) => {
+    await fulfillApplicationError(route, httpStatus, applicationStatus, detail);
+  });
+}
+
+async function fulfillApplicationError(
+  route: Route,
+  httpStatus: number,
+  applicationStatus: number,
+  detail: unknown,
+) {
+  await route.fulfill({
+    status: httpStatus,
+    contentType: "application/json",
+    body: JSON.stringify({ detail, status_code: applicationStatus }),
+  });
+}
+
 async function mockApi(page: Page, taskMessages: unknown[] = []) {
   await page.route("https://widget.ila.chat/**", async (route) => {
     await route.fulfill({
@@ -397,6 +544,64 @@ async function mockApi(page: Page, taskMessages: unknown[] = []) {
           ...getModelSummary(),
           config_schema: klingVideoConfigSchema,
           meta: klingVideoConfigMeta,
+        }),
+      });
+      return;
+    }
+
+    if (
+      request.method() === "GET" &&
+      url.pathname === `/ai-registry/models/${MODEL_UUID}/generation-config`
+    ) {
+      const selectedProviderUuid = url.searchParams.get("ai_provider_uuid");
+      const isKieSelected = selectedProviderUuid === KIE_PROVIDER_UUID;
+      await route.fulfill({
+        contentType: "application/json",
+        body: JSON.stringify({
+          ai_model_uuid: MODEL_UUID,
+          task_type: "VIDEO",
+          selection_mode: isKieSelected ? "EXPLICIT" : "DEFAULT",
+          resolved_provider: {
+            uuid: isKieSelected ? KIE_PROVIDER_UUID : RUNWARE_PROVIDER_UUID,
+            name: isKieSelected ? "KIE" : "RUNWARE",
+            priority: isKieSelected ? 2 : 1,
+          },
+          available_providers: [
+            {
+              uuid: RUNWARE_PROVIDER_UUID,
+              name: "RUNWARE",
+              priority: 1,
+              is_default: true,
+            },
+            {
+              uuid: KIE_PROVIDER_UUID,
+              name: "KIE",
+              priority: 2,
+              is_default: false,
+            },
+          ],
+          config_schema: isKieSelected
+            ? {
+                type: "object",
+                required: ["prompt", "kie_setting"],
+                properties: {
+                  prompt: { type: "string" },
+                  kie_setting: {
+                    type: "string",
+                    title: "تنظیم اختصاصی KIE",
+                  },
+                },
+              }
+            : klingVideoConfigSchema,
+          ui_schema: isKieSelected
+            ? {
+                type: "VerticalLayout",
+                elements: [
+                  { type: "Control", scope: "#/properties/prompt" },
+                  { type: "Control", scope: "#/properties/kie_setting" },
+                ],
+              }
+            : klingVideoConfigMeta.uischema,
         }),
       });
       return;
