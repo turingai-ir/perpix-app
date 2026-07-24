@@ -21,7 +21,7 @@ import {
 } from "./types";
 
 const DYNAMIC_CONFIG_VALIDATION_KEY = "common.validationErrors.dynamicConfig";
-const ajv = new Ajv2020({
+const visibilityAjv = new Ajv2020({
   allErrors: true,
   coerceTypes: true,
   strict: false,
@@ -163,7 +163,7 @@ function conditionMatches(
   values: Record<string, unknown>,
 ): boolean {
   if (!isRecord(condition)) return false;
-  return ajv.validate(condition, values) as boolean;
+  return visibilityAjv.validate(condition, values) as boolean;
 }
 
 function collectNotRequiredFields(schema: unknown): string[] {
@@ -228,7 +228,7 @@ export function getVisibleConfigFields(
   const uiHiddenFields = getJsonFormsHiddenFields(
     visibleFields,
     values,
-    ajv,
+    visibilityAjv,
     configMeta,
   );
   for (const fieldName of uiHiddenFields) {
@@ -422,29 +422,36 @@ function getCompiledValidate(
   configSchema: JsonConfigSchema,
   cacheKey?: string | number | null,
 ) {
-  if (cacheKey !== undefined && cacheKey !== null) {
-    const normalizedCacheKey = String(cacheKey);
+  const normalizedCacheKey =
+    cacheKey === undefined || cacheKey === null ? null : String(cacheKey);
+
+  if (normalizedCacheKey !== null) {
     const cachedValidateEntry = validateByCacheKey.get(normalizedCacheKey);
 
     if (cachedValidateEntry?.schema === configSchema) {
       return cachedValidateEntry.validate;
     }
+  } else {
+    const cachedValidate = validateBySchema.get(configSchema);
 
-    const compiledValidate = ajv.compile(configSchema);
+    if (cachedValidate) return cachedValidate;
+  }
+
+  const compiledValidate = new Ajv2020({
+    allErrors: true,
+    coerceTypes: true,
+    strict: false,
+    validateSchema: false,
+  }).compile(configSchema);
+
+  if (normalizedCacheKey !== null) {
     validateByCacheKey.set(normalizedCacheKey, {
       schema: configSchema,
       validate: compiledValidate,
     });
-
-    return compiledValidate;
+  } else {
+    validateBySchema.set(configSchema, compiledValidate);
   }
-
-  const cachedValidate = validateBySchema.get(configSchema);
-
-  if (cachedValidate) return cachedValidate;
-
-  const compiledValidate = ajv.compile(configSchema);
-  validateBySchema.set(configSchema, compiledValidate);
 
   return compiledValidate;
 }

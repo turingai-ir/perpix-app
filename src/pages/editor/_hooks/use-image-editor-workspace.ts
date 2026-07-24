@@ -1,9 +1,16 @@
 import { useState, type RefObject } from "react";
-import { useAtom } from "jotai";
+import { useSetAtom } from "jotai";
 import { useImageAlignmentSnap } from "./use-image-alignment-snap";
 import { useImageCrop } from "./use-image-crop";
 import { useImageStageSize } from "./use-image-stage-size";
-import { denormalizeCrop, denormalizePosition, getCenteredPosition, normalizeCrop, type CropArea, type CropDisplayOrigin } from "../_model/crop-area";
+import {
+  denormalizeCrop,
+  denormalizePosition,
+  getCenteredPosition,
+  normalizeCrop,
+  type CropArea,
+  type CropDisplayOrigin,
+} from "../_model/crop-area";
 import type { CropRatioId } from "../_model/crop-ratios";
 import type { ImageEditorWorkspaceViewModel } from "./image-editor-workspace-types";
 import { useImageWorkspaceHistory } from "./use-image-workspace-history";
@@ -20,8 +27,8 @@ export function useImageEditorWorkspace(
   const crop = useImageCrop();
   const [isImageSelected, setIsImageSelected] = useState(false);
   const history = useImageWorkspaceHistory(image, documentId);
-  const [, setZoom] = useAtom(zoomAtom);
-  const [, setPan] = useAtom(panAtom);
+  const setZoom = useSetAtom(zoomAtom);
+  const setPan = useSetAtom(panAtom);
 
   const { imageSize, stageSize } = useImageStageSize(
     image,
@@ -72,11 +79,13 @@ export function useImageEditorWorkspace(
     selectedCropRatio: crop.selectedRatio,
     selectedCropRatioValue: crop.selectedRatioValue,
     stageSize,
-    applyCrop: () => history.applyCrop(crop.applyCrop(history.current.appliedCrop)),
+    applyCrop: () =>
+      history.applyCrop(crop.applyCrop(history.current.appliedCrop)),
     beginCrop: crop.beginCrop,
     cancelCrop: crop.cancelCrop,
     changeCrop: (c: CropArea) => {
-      if (imageSize) crop.setDraftCrop(normalizeCrop(c, imageSize, imagePosition));
+      if (imageSize)
+        crop.setDraftCrop(normalizeCrop(c, imageSize, imagePosition));
     },
     clearAlignmentGuides: snap.clearAlignmentGuides,
     deselectImage: () => setIsImageSelected(crop.isCropping),

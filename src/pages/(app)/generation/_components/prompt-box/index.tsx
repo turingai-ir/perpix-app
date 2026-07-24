@@ -86,6 +86,7 @@ export const GenerationPromptBox: FC<GenerationPromptBoxProps> = ({
             isLoading={isLoading}
             isSubmitDisabled={promptBox.isSubmitDisabled}
             model={promptBox.model}
+            promptRequired={promptBox.isPromptFieldVisible}
             upgradeLabel={t("common.upgradeRequired")}
           />
           <PromptFullWidthFieldsSection

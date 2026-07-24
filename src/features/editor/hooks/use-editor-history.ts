@@ -17,18 +17,21 @@ export function useEditorHistory<TSnapshot>(
   const [history, setHistory] = useState(() =>
     createEditorHistory(initialSnapshot),
   );
-  const [isHydrated, setIsHydrated] = useState(!documentId);
+  const [hydratedDocumentId, setHydratedDocumentId] = useState<
+    string | undefined
+  >();
   const hasLocalEditsRef = useRef(false);
+  const isHydrated = !documentId || hydratedDocumentId === documentId;
 
   useEffect(() => {
     if (!documentId) return;
     let isActive = true;
-    setIsHydrated(false);
+    hasLocalEditsRef.current = false;
     void loadEditorSnapshot<TSnapshot>(documentId).then((snapshot) => {
       if (isActive && snapshot && !hasLocalEditsRef.current) {
         setHistory(createEditorHistory(snapshot));
       }
-      if (isActive) setIsHydrated(true);
+      if (isActive) setHydratedDocumentId(documentId);
     });
     return () => {
       isActive = false;
@@ -38,7 +41,7 @@ export function useEditorHistory<TSnapshot>(
   useEffect(() => {
     if (!documentId || !isHydrated) return;
     void saveEditorSnapshot(documentId, history.current);
-  }, [documentId, history.current, isHydrated]);
+  }, [documentId, history, isHydrated]);
   const commit = useCallback((nextSnapshot: TSnapshot) => {
     hasLocalEditsRef.current = true;
     setHistory((currentHistory) =>

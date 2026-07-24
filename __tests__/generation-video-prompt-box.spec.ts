@@ -188,10 +188,15 @@ test("submits text-to-video prompt values with the selected model", async ({
   await expect(
     page.getByRole("combobox", { name: "ارائه‌دهنده هوش مصنوعی" }),
   ).toHaveCount(0);
-  await page
-    .getByPlaceholder("شروع به تایپ کنید")
-    .fill("A cinematic city shot");
-  await page.locator('button[type="submit"]').click();
+  const promptInput = page.getByPlaceholder("شروع به تایپ کنید");
+  const submitButton = page.locator('button[type="submit"]');
+
+  await expect(submitButton).toBeDisabled();
+  await promptInput.fill("No");
+  await expect(submitButton).toBeDisabled();
+  await promptInput.fill("A cinematic city shot");
+  await expect(submitButton).toBeEnabled();
+  await submitButton.click();
 
   const body = await generateRequest;
 

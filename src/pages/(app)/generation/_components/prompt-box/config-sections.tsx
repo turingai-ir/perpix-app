@@ -35,6 +35,7 @@ export const PromptActionsSection: FC<{
   isLoading?: boolean;
   isSubmitDisabled?: boolean;
   model: PromptBoxModel;
+  promptRequired: boolean;
   upgradeLabel: string;
 }> = ({
   advancedFieldNames,
@@ -45,11 +46,17 @@ export const PromptActionsSection: FC<{
   isLoading,
   isSubmitDisabled,
   model,
+  promptRequired,
   upgradeLabel,
 }) => (
   <div className="flex w-full flex-col justify-between gap-4 md:flex-row">
     <div>
-      <PromptSubmitButton disabled={isSubmitDisabled} isLoading={isLoading} />
+      <PromptSubmitButton
+        disabled={isSubmitDisabled}
+        dynamicForm={dynamicForm}
+        isLoading={isLoading}
+        promptRequired={promptRequired}
+      />
     </div>
     <div className="flex w-full flex-wrap gap-4">
       <PromptModelSelector

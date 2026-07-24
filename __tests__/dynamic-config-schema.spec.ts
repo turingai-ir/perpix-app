@@ -34,6 +34,45 @@ test("resolves nullable JSON Schema types consistently", () => {
   expect(getPrimaryType({ type: "boolean" })).toBe("boolean");
 });
 
+test("recompiles an updated schema without colliding on its stable id", async () => {
+  const initialSchema: JsonConfigSchema = {
+    $id: "stable-model-config",
+    type: "object",
+    properties: { prompt: { type: "string", minLength: 3 } },
+    required: ["prompt"],
+    additionalProperties: false,
+  };
+  const updatedSchema: JsonConfigSchema = {
+    $id: "stable-model-config",
+    type: "object",
+    properties: { prompt: { type: "string", minLength: 10 } },
+    required: ["prompt"],
+    additionalProperties: false,
+  };
+  const initialResolver = buildAjvResolver(initialSchema, undefined, {
+    cacheKey: initialSchema.$id,
+  });
+  const updatedResolver = buildAjvResolver(updatedSchema, undefined, {
+    cacheKey: updatedSchema.$id,
+  });
+
+  const initiallyValidResult = await initialResolver(
+    { prompt: "short" },
+    {},
+    {} as never,
+  );
+  const updatedInvalidResult = await updatedResolver(
+    { prompt: "short" },
+    {},
+    {} as never,
+  );
+
+  expect(initiallyValidResult.errors).toEqual({});
+  expect(updatedInvalidResult.errors.prompt).toMatchObject({
+    type: "minLength",
+  });
+});
+
 test("does not let hidden field defaults require motion-control references", async () => {
   const defaults = buildDefaultValues(videoConfigSchema);
   const resolver = buildVideoConfigResolver();

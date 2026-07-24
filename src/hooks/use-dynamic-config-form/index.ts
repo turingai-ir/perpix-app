@@ -112,7 +112,7 @@ export function useDynamicConfigForm({
   const form = useForm<DynamicConfigValues>({
     resolver,
     defaultValues,
-    mode: "onChange",
+    mode: "onBlur",
     ...formOptions,
   });
 
@@ -122,15 +122,21 @@ export function useDynamicConfigForm({
     form.reset(defaultValues);
   }, [resolvedSchemaKey, autoResetOnSchemaChange, form, defaultValues]);
 
-  const watchedValues = useWatch({ control: form.control });
-
-  const visibleFieldNames = useMemo(() => {
-    return getVisibleConfigFields(
-      safeConfigSchema,
-      watchedValues as Record<string, unknown>,
-      configMeta,
-    );
-  }, [safeConfigSchema, watchedValues, configMeta]);
+  const visibleFieldSignature = useWatch({
+    control: form.control,
+    compute: (values) => {
+      return [...getVisibleConfigFields(safeConfigSchema, values, configMeta)]
+        .sort()
+        .join("\u0000");
+    },
+  });
+  const visibleFieldNames = useMemo(
+    () =>
+      new Set(
+        visibleFieldSignature ? visibleFieldSignature.split("\u0000") : [],
+      ),
+    [visibleFieldSignature],
+  );
 
   const isFieldVisible = useCallback(
     (fieldName: string) => {

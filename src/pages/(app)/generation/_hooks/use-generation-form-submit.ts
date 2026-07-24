@@ -28,7 +28,6 @@ export function useGenerationFormSubmit({
   const isPromptFieldVisible =
     Boolean(dynamicForm.properties.prompt) &&
     dynamicForm.isFieldVisible("prompt");
-  const prompt = String(dynamicForm.watch("prompt") ?? "");
   const isFormBusy =
     Boolean(isLoading) ||
     !dynamicForm.isReady ||
@@ -36,15 +35,16 @@ export function useGenerationFormSubmit({
     model.modelsListState.isLoading ||
     model.modelState.isLoading;
   const isSubmitDisabled =
-    isFormBusy ||
-    isUploadingMedia ||
-    !model.isCurrentModelAllowed ||
-    (isPromptFieldVisible && prompt.trim().length < MIN_PROMPT_LENGTH);
+    isFormBusy || isUploadingMedia || !model.isCurrentModelAllowed;
 
   const handleFormSubmit: SubmitEventHandler<HTMLFormElement> = async (
     event,
   ) => {
-    if (isSubmitDisabled) {
+    const prompt = String(dynamicForm.getValues("prompt") ?? "");
+    const isPromptInvalid =
+      isPromptFieldVisible && prompt.trim().length < MIN_PROMPT_LENGTH;
+
+    if (isSubmitDisabled || isPromptInvalid) {
       event.preventDefault();
       return;
     }

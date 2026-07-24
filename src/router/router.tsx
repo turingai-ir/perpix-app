@@ -1,34 +1,33 @@
-import { useEffect } from "react";
+import { useEffect, type ComponentType } from "react";
 import { createBrowserRouter, redirect, useRouteError } from "react-router";
 
 import { APP_ROUTES_KEY } from "./routes";
 
 import RootLayout from "@/pages/(root)/layout";
-import AppLayout from "@/pages/(app)/_layout";
-import AppPage from "@/pages/(app)/page";
-import GalleryPage from "@/pages/(app)/gallery/page";
-import GenerationImagePage from "@/pages/(app)/generation/image/page";
-import GenerationVideoPage from "@/pages/(app)/generation/video/page";
-import AuthLoginPage from "@/pages/auth/login/page";
-import ProfileLayout from "@/pages/profile/layout";
-import ProfileSettingsPage from "@/pages/profile/settings/page";
-import ProfilePaymentsPage from "@/pages/profile/payments/page";
-import ProfileWalletTransactionsPage from "@/pages/profile/wallet-transactions/page";
-import PaymentResultPage from "@/pages/payment/result/page";
-import EditorPage from "@/pages/editor/page";
 import { cookies } from "@/utils/cookies";
 import { APP_KEYS } from "@/utils";
 import { ErrorFallbackPage } from "@/components/custom/error-boundary";
+import LoadingSection from "@/components/custom/loading-section";
 import { captureError } from "@/lib/observability";
+
+type DefaultRouteModule = { default: ComponentType };
+
+const lazyRoute = (loadRouteModule: () => Promise<DefaultRouteModule>) => {
+  return async () => {
+    const routeModule = await loadRouteModule();
+    return { Component: routeModule.default };
+  };
+};
 
 export const router = createBrowserRouter([
   {
     Component: RootLayout,
     errorElement: <RouteErrorFallback />,
+    hydrateFallbackElement: <LoadingSection />,
     children: [
       {
         path: APP_ROUTES_KEY.app.path,
-        Component: AppLayout,
+        lazy: lazyRoute(() => import("@/pages/(app)/_layout")),
         loader: () => {
           const token = cookies().get(APP_KEYS.COOKIES.ACCESS_TOKEN);
           if (!token) {
@@ -40,14 +39,14 @@ export const router = createBrowserRouter([
         children: [
           {
             index: true,
-            Component: AppPage,
+            lazy: lazyRoute(() => import("@/pages/(app)/page")),
             handle: {
               title: APP_ROUTES_KEY.app.meta.title,
             },
           },
           {
             path: APP_ROUTES_KEY.gallery.path,
-            Component: GalleryPage,
+            lazy: lazyRoute(() => import("@/pages/(app)/gallery/page")),
             handle: {
               title: APP_ROUTES_KEY.gallery.meta.title,
             },
@@ -57,14 +56,18 @@ export const router = createBrowserRouter([
             children: [
               {
                 index: true,
-                Component: GenerationImagePage,
+                lazy: lazyRoute(
+                  () => import("@/pages/(app)/generation/image/page"),
+                ),
                 handle: {
                   title: APP_ROUTES_KEY.generation.image.meta.title,
                 },
               },
               {
                 path: APP_ROUTES_KEY.generation.image.history.path,
-                Component: GenerationImagePage,
+                lazy: lazyRoute(
+                  () => import("@/pages/(app)/generation/image/page"),
+                ),
                 handle: {
                   title: APP_ROUTES_KEY.generation.image.history.meta.title,
                 },
@@ -76,14 +79,18 @@ export const router = createBrowserRouter([
             children: [
               {
                 index: true,
-                Component: GenerationVideoPage,
+                lazy: lazyRoute(
+                  () => import("@/pages/(app)/generation/video/page"),
+                ),
                 handle: {
                   title: APP_ROUTES_KEY.generation.video.meta.title,
                 },
               },
               {
                 path: APP_ROUTES_KEY.generation.video.history.path,
-                Component: GenerationVideoPage,
+                lazy: lazyRoute(
+                  () => import("@/pages/(app)/generation/video/page"),
+                ),
                 handle: {
                   title: APP_ROUTES_KEY.generation.video.history.meta.title,
                 },
@@ -92,7 +99,7 @@ export const router = createBrowserRouter([
           },
           {
             path: APP_ROUTES_KEY.profile.root.path,
-            Component: ProfileLayout,
+            lazy: lazyRoute(() => import("@/pages/profile/layout")),
             children: [
               {
                 index: true,
@@ -100,21 +107,23 @@ export const router = createBrowserRouter([
               },
               {
                 path: APP_ROUTES_KEY.profile.settings.path,
-                Component: ProfileSettingsPage,
+                lazy: lazyRoute(() => import("@/pages/profile/settings/page")),
                 handle: {
                   title: APP_ROUTES_KEY.profile.settings.meta.title,
                 },
               },
               {
                 path: APP_ROUTES_KEY.profile.payments.path,
-                Component: ProfilePaymentsPage,
+                lazy: lazyRoute(() => import("@/pages/profile/payments/page")),
                 handle: {
                   title: APP_ROUTES_KEY.profile.payments.meta.title,
                 },
               },
               {
                 path: APP_ROUTES_KEY.profile.walletTransactions.path,
-                Component: ProfileWalletTransactionsPage,
+                lazy: lazyRoute(
+                  () => import("@/pages/profile/wallet-transactions/page"),
+                ),
                 handle: {
                   title: APP_ROUTES_KEY.profile.walletTransactions.meta.title,
                 },
@@ -128,11 +137,11 @@ export const router = createBrowserRouter([
         children: [
           {
             index: true,
-            Component: EditorPage,
+            lazy: lazyRoute(() => import("@/pages/editor/page")),
           },
           {
             path: ":fileUuid",
-            Component: EditorPage,
+            lazy: lazyRoute(() => import("@/pages/editor/page")),
           },
         ],
         loader: () => {
@@ -148,14 +157,14 @@ export const router = createBrowserRouter([
       },
       {
         path: APP_ROUTES_KEY.auth.login.path,
-        Component: AuthLoginPage,
+        lazy: lazyRoute(() => import("@/pages/auth/login/page")),
         handle: {
           title: APP_ROUTES_KEY.auth.login.meta.title,
         },
       },
       {
         path: APP_ROUTES_KEY.payment.result.path,
-        Component: PaymentResultPage,
+        lazy: lazyRoute(() => import("@/pages/payment/result/page")),
         handle: {
           title: APP_ROUTES_KEY.payment.result.meta.title,
         },
