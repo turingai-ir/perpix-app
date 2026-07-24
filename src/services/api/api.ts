@@ -756,6 +756,25 @@ export interface paths {
         readonly patch?: never;
         readonly trace?: never;
     };
+    readonly "/ai-gateway/webhooks/{provider_name}": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path: {
+                readonly provider_name: string;
+            };
+            readonly cookie?: never;
+        };
+        readonly get?: never;
+        readonly put?: never;
+        /** Provider Webhook */
+        readonly post: operations["provider_webhook_ai_gateway_webhooks__provider_name__post"];
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
     readonly "/ai-registry/models": {
         readonly parameters: {
             readonly query?: never;
@@ -786,42 +805,6 @@ export interface paths {
         readonly get: operations["get_model_ai_registry_models__ai_model_uuid__get"];
         readonly put?: never;
         readonly post?: never;
-        readonly delete?: never;
-        readonly options?: never;
-        readonly head?: never;
-        readonly patch?: never;
-        readonly trace?: never;
-    };
-    readonly "/ai-registry/models/{ai_model_uuid}/generation-config": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path: {
-                readonly ai_model_uuid: string;
-            };
-            readonly cookie?: never;
-        };
-        /** Get Generation Config */
-        readonly get: operations["get_generation_config_ai_registry_models__ai_model_uuid__generation_config_get"];
-        readonly put?: never;
-        readonly post?: never;
-        readonly delete?: never;
-        readonly options?: never;
-        readonly head?: never;
-        readonly patch?: never;
-        readonly trace?: never;
-    };
-    readonly "/ai-registry/webhooks/runware": {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
-        };
-        readonly get?: never;
-        readonly put?: never;
-        /** Runware Webhook */
-        readonly post: operations["runware_webhook_ai_registry_webhooks_runware_post"];
         readonly delete?: never;
         readonly options?: never;
         readonly head?: never;
@@ -1030,6 +1013,52 @@ export interface components {
              */
             readonly user_uuid: string;
         };
+        /** AiGatewayProviderWebhookPayload */
+        readonly AiGatewayProviderWebhookPayload: components["schemas"]["JsonValue"];
+        /** AiGatewayProviderWebhookResponse */
+        readonly AiGatewayProviderWebhookResponse: {
+            /** Processed */
+            readonly processed: number;
+        };
+        /** AiRegistryModelAdminSummary */
+        readonly AiRegistryModelAdminSummary: {
+            /**
+             * Uuid
+             * Format: uuid
+             */
+            readonly uuid: string;
+            readonly model_owner: components["schemas"]["AiRegistryModelOwnerEnum"];
+            /** Name */
+            readonly name: string;
+            /** Display Name */
+            readonly display_name: string | null;
+            /** Description */
+            readonly description: string | null;
+            /** Icon Url */
+            readonly icon_url: string | null;
+            /** Tags */
+            readonly tags: readonly string[];
+            /** Supported Inputs */
+            readonly supported_inputs: readonly components["schemas"]["AiRegistryModelSupportedTypesEnum"][];
+            /** Supported Outputs */
+            readonly supported_outputs: readonly components["schemas"]["AiRegistryModelSupportedTypesEnum"][];
+            /** Min Cost */
+            readonly min_cost?: number | null;
+            /** Max Cost */
+            readonly max_cost?: number | null;
+            /** Is Active */
+            readonly is_active: boolean;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            readonly created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            readonly updated_at: string;
+        };
         /** AiRegistryModelCreateRequest */
         readonly AiRegistryModelCreateRequest: {
             readonly model_owner: components["schemas"]["AiRegistryModelOwnerEnum"];
@@ -1041,6 +1070,14 @@ export interface components {
             readonly description?: string | null;
             /** Icon Url */
             readonly icon_url?: string | null;
+            /** Modes Supported */
+            readonly modes_supported?: {
+                readonly [key: string]: unknown;
+            };
+            /** Canonical Ui Schema */
+            readonly canonical_ui_schema?: {
+                readonly [key: string]: unknown;
+            };
             /** Tags */
             readonly tags?: readonly string[];
             /** Supported Inputs */
@@ -1069,14 +1106,6 @@ export interface components {
              * Format: uuid
              */
             readonly ai_provider_uuid: string;
-            /** External Model Name */
-            readonly external_model_name: {
-                readonly [key: string]: string;
-            };
-            /** External Model Api Url */
-            readonly external_model_api_url?: {
-                readonly [key: string]: string | null;
-            };
             /**
              * Priority
              * @default 10
@@ -1087,20 +1116,10 @@ export interface components {
              * @default true
              */
             readonly is_active: boolean;
-            /** Config Schema */
-            readonly config_schema?: {
+            /** Modes */
+            readonly modes?: {
                 readonly [key: string]: unknown;
             };
-            /** Field Mapping */
-            readonly field_mapping?: {
-                readonly [key: string]: unknown;
-            };
-            /** Pricing By */
-            readonly pricing_by?: readonly string[];
-            /** Pricing Tiers */
-            readonly pricing_tiers?: readonly {
-                readonly [key: string]: unknown;
-            }[];
         };
         /** AiRegistryModelProviderLinkDetail */
         readonly AiRegistryModelProviderLinkDetail: {
@@ -1108,61 +1127,27 @@ export interface components {
             readonly ai_provider_id: number | null;
             /** Ai Model Id */
             readonly ai_model_id: number | null;
-            /** External Model Name */
-            readonly external_model_name: {
-                readonly [key: string]: string;
-            };
-            /** External Model Api Url */
-            readonly external_model_api_url: {
-                readonly [key: string]: string | null;
-            };
+            /** Provider Uuid */
+            readonly provider_uuid?: string | null;
             /** Priority */
             readonly priority: number;
             /** Is Active */
             readonly is_active: boolean;
-            /** Config Schema */
-            readonly config_schema: {
+            /** Modes */
+            readonly modes: {
                 readonly [key: string]: unknown;
             };
-            /** Field Mapping */
-            readonly field_mapping: {
-                readonly [key: string]: unknown;
-            };
-            /** Pricing By */
-            readonly pricing_by: readonly string[];
-            /** Pricing Tiers */
-            readonly pricing_tiers: readonly {
-                readonly [key: string]: unknown;
-            }[];
         };
         /** AiRegistryModelProviderLinkUpdateRequest */
         readonly AiRegistryModelProviderLinkUpdateRequest: {
-            /** External Model Name */
-            readonly external_model_name?: {
-                readonly [key: string]: string;
-            } | null;
-            /** External Model Api Url */
-            readonly external_model_api_url?: {
-                readonly [key: string]: string | null;
-            } | null;
             /** Priority */
             readonly priority?: number | null;
             /** Is Active */
             readonly is_active?: boolean | null;
-            /** Config Schema */
-            readonly config_schema?: {
+            /** Modes */
+            readonly modes?: {
                 readonly [key: string]: unknown;
             } | null;
-            /** Field Mapping */
-            readonly field_mapping?: {
-                readonly [key: string]: unknown;
-            } | null;
-            /** Pricing By */
-            readonly pricing_by?: readonly string[] | null;
-            /** Pricing Tiers */
-            readonly pricing_tiers?: readonly {
-                readonly [key: string]: unknown;
-            }[] | null;
         };
         /** AiRegistryModelSummary */
         readonly AiRegistryModelSummary: {
@@ -1186,8 +1171,10 @@ export interface components {
             readonly supported_inputs: readonly components["schemas"]["AiRegistryModelSupportedTypesEnum"][];
             /** Supported Outputs */
             readonly supported_outputs: readonly components["schemas"]["AiRegistryModelSupportedTypesEnum"][];
-            /** Pricing Tiers */
-            readonly pricing_tiers: readonly number[];
+            /** Min Cost */
+            readonly min_cost?: number | null;
+            /** Max Cost */
+            readonly max_cost?: number | null;
         };
         /**
          * AiRegistryModelSupportedTypesEnum
@@ -1205,6 +1192,14 @@ export interface components {
             readonly description?: string | null;
             /** Icon Url */
             readonly icon_url?: string | null;
+            /** Modes Supported */
+            readonly modes_supported?: {
+                readonly [key: string]: unknown;
+            } | null;
+            /** Canonical Ui Schema */
+            readonly canonical_ui_schema?: {
+                readonly [key: string]: unknown;
+            } | null;
             /** Tags */
             readonly tags?: readonly string[] | null;
             /** Supported Inputs */
@@ -1229,8 +1224,8 @@ export interface components {
             readonly api_key?: string | null;
             /** Rate Limit Per Min */
             readonly rate_limit_per_min?: number | null;
-            /** Price To Usdmicro */
-            readonly price_to_usdmicro: number;
+            /** Cost To Usdmicro */
+            readonly cost_to_usdmicro?: number | null;
             /** Meta */
             readonly meta?: {
                 readonly [key: string]: unknown;
@@ -1250,8 +1245,8 @@ export interface components {
             readonly base_api_url: string | null;
             /** Rate Limit Per Min */
             readonly rate_limit_per_min: number | null;
-            /** Price To Usdmicro */
-            readonly price_to_usdmicro: number;
+            /** Cost To Usdmicro */
+            readonly cost_to_usdmicro?: number | null;
             /** Meta */
             readonly meta: {
                 readonly [key: string]: unknown;
@@ -1282,8 +1277,8 @@ export interface components {
             readonly api_key?: string | null;
             /** Rate Limit Per Min */
             readonly rate_limit_per_min?: number | null;
-            /** Price To Usdmicro */
-            readonly price_to_usdmicro?: number | null;
+            /** Cost To Usdmicro */
+            readonly cost_to_usdmicro?: number | null;
             /** Meta */
             readonly meta?: {
                 readonly [key: string]: unknown;
@@ -1304,18 +1299,7 @@ export interface components {
             };
             /** Ai Model Uuid */
             readonly ai_model_uuid: string | null;
-            /**
-             * Ai Provider Uuid
-             * Format: uuid
-             */
-            readonly ai_provider_uuid: string;
-            /** Ai Generation Request Uuid */
-            readonly ai_generation_request_uuid: string | null;
-            /** Ai External Provider Task Id */
-            readonly ai_external_provider_task_id: string | null;
             readonly task_status: components["schemas"]["AiTaskMessageStatusEnum"] | null;
-            /** Cost Usdmicro */
-            readonly cost_usdmicro: number | null;
             /** Message */
             readonly message: string | null;
             readonly role: components["schemas"]["AiTaskRuleEnum"];
@@ -1337,12 +1321,7 @@ export interface components {
              * Format: uuid
              */
             readonly uuid: string;
-            readonly task_type: components["schemas"]["GenerationTaskType"];
-            /**
-             * Expire Date
-             * Format: date-time
-             */
-            readonly expire_date: string;
+            readonly task_type: components["schemas"]["AiRegistryModelSupportedTypesEnum"];
             /**
              * Created At
              * Format: date-time
@@ -1366,19 +1345,6 @@ export interface components {
          * @enum {string}
          */
         readonly AiTaskTypeEnum: "TEXT" | "IMAGE" | "AUDIO" | "VIDEO";
-        /** AvailableGenerationProviderResponse */
-        readonly AvailableGenerationProviderResponse: {
-            /**
-             * Uuid
-             * Format: uuid
-             */
-            readonly uuid: string;
-            readonly name: components["schemas"]["AiRegistryProviderNameEnum"];
-            /** Priority */
-            readonly priority: number;
-            /** Is Default */
-            readonly is_default: boolean;
-        };
         /** Body_replace_file_file_manager_files__file_uuid__put */
         readonly Body_replace_file_file_manager_files__file_uuid__put: {
             /** File */
@@ -1776,9 +1742,7 @@ export interface components {
              * Format: uuid
              */
             readonly ai_model_uuid: string;
-            /** Ai Provider Uuid */
-            readonly ai_provider_uuid?: string | null;
-            readonly task_type: components["schemas"]["GenerationTaskType"];
+            readonly task_type: components["schemas"]["AiRegistryModelSupportedTypesEnum"];
             /** Ai Model Config */
             readonly ai_model_config: {
                 readonly [key: string]: unknown;
@@ -1786,36 +1750,6 @@ export interface components {
             /** Task Uuid */
             readonly task_uuid?: string | null;
         };
-        /** GenerationConfigResponse */
-        readonly GenerationConfigResponse: {
-            /**
-             * Ai Model Uuid
-             * Format: uuid
-             */
-            readonly ai_model_uuid: string;
-            readonly task_type: components["schemas"]["AiRegistryModelSupportedTypesEnum"];
-            /**
-             * Selection Mode
-             * @enum {string}
-             */
-            readonly selection_mode: "DEFAULT" | "EXPLICIT";
-            readonly resolved_provider: components["schemas"]["ResolvedGenerationProviderResponse"];
-            /** Available Providers */
-            readonly available_providers: readonly components["schemas"]["AvailableGenerationProviderResponse"][];
-            /** Config Schema */
-            readonly config_schema: {
-                readonly [key: string]: unknown;
-            };
-            /** Ui Schema */
-            readonly ui_schema: {
-                readonly [key: string]: unknown;
-            };
-        };
-        /**
-         * GenerationTaskType
-         * @enum {string}
-         */
-        readonly GenerationTaskType: "TEXT" | "IMAGE" | "AUDIO" | "VIDEO";
         /** GetWalletResponse */
         readonly GetWalletResponse: {
             /**
@@ -1877,6 +1811,7 @@ export interface components {
             /** Detail */
             readonly detail?: readonly components["schemas"]["ValidationError"][];
         };
+        readonly JsonValue: unknown;
         /** PaymentListItemResponse */
         readonly PaymentListItemResponse: {
             /**
@@ -1935,65 +1870,6 @@ export interface components {
          * @enum {string}
          */
         readonly PaymentTargetTypeEnum: "subscription" | "wallet";
-        /** ResolvedGenerationProviderResponse */
-        readonly ResolvedGenerationProviderResponse: {
-            /**
-             * Uuid
-             * Format: uuid
-             */
-            readonly uuid: string;
-            readonly name: components["schemas"]["AiRegistryProviderNameEnum"];
-            /** Priority */
-            readonly priority: number;
-        };
-        /** RunwareWebhookItem */
-        readonly RunwareWebhookItem: {
-            /** Taskuuid */
-            readonly taskUUID: string;
-            /** Status */
-            readonly status?: string | null;
-            /** Cost */
-            readonly cost?: number | null;
-            /** Imageurl */
-            readonly imageURL?: string | null;
-            /** Videourl */
-            readonly videoURL?: string | null;
-            /** Text */
-            readonly text?: string | null;
-        } & {
-            readonly [key: string]: unknown;
-        };
-        /** RunwareWebhookRequest */
-        readonly RunwareWebhookRequest: {
-            /** Taskuuid */
-            readonly taskUUID?: string | null;
-            /** Status */
-            readonly status?: string | null;
-            /** Cost */
-            readonly cost?: number | null;
-            /** Imageurl */
-            readonly imageURL?: string | null;
-            /** Videourl */
-            readonly videoURL?: string | null;
-            /** Text */
-            readonly text?: string | null;
-            /** Data */
-            readonly data?: readonly components["schemas"]["RunwareWebhookItem"][] | null;
-            /** Errors */
-            readonly errors?: readonly components["schemas"]["RunwareWebhookItem"][] | null;
-        } & {
-            readonly [key: string]: unknown;
-        };
-        /** RunwareWebhookResponse */
-        readonly RunwareWebhookResponse: {
-            /** Processed */
-            readonly processed: number;
-            /**
-             * Failed
-             * @default 0
-             */
-            readonly failed: number;
-        };
         /** SubscriptionPlanListResponse */
         readonly SubscriptionPlanListResponse: {
             /** Items */
@@ -2310,7 +2186,7 @@ export interface components {
          * @description Stable namespaces used in wallet transaction idempotency keys.
          * @enum {string}
          */
-        readonly WalletOperationSourceEnum: "admin" | "ai_registry_generation" | "ai_task_message" | "payment" | "subscription";
+        readonly WalletOperationSourceEnum: "admin" | "ai_gateway_request" | "ai_task_message" | "payment" | "subscription";
         /** WalletTransactionResponse */
         readonly WalletTransactionResponse: {
             /**
@@ -2367,14 +2243,16 @@ export interface components {
             readonly supported_inputs: readonly components["schemas"]["AiRegistryModelSupportedTypesEnum"][];
             /** Supported Outputs */
             readonly supported_outputs: readonly components["schemas"]["AiRegistryModelSupportedTypesEnum"][];
-            /** Pricing Tiers */
-            readonly pricing_tiers: readonly number[];
-            /** Config Schema */
-            readonly config_schema: {
+            /** Min Cost */
+            readonly min_cost?: number | null;
+            /** Max Cost */
+            readonly max_cost?: number | null;
+            /** Modes */
+            readonly modes: {
                 readonly [key: string]: unknown;
             };
-            /** Meta */
-            readonly meta: {
+            /** Canonical Ui Schema */
+            readonly canonical_ui_schema: {
                 readonly [key: string]: unknown;
             };
         };
@@ -2394,20 +2272,24 @@ export interface components {
             readonly description: string | null;
             /** Icon Url */
             readonly icon_url: string | null;
+            /** Modes Supported */
+            readonly modes_supported: {
+                readonly [key: string]: unknown;
+            };
+            /** Canonical Ui Schema */
+            readonly canonical_ui_schema: {
+                readonly [key: string]: unknown;
+            };
             /** Tags */
             readonly tags: readonly string[];
             /** Supported Inputs */
             readonly supported_inputs: readonly components["schemas"]["AiRegistryModelSupportedTypesEnum"][];
             /** Supported Outputs */
             readonly supported_outputs: readonly components["schemas"]["AiRegistryModelSupportedTypesEnum"][];
-            /** Config Schema */
-            readonly config_schema: {
-                readonly [key: string]: unknown;
-            };
-            /** Pricing By */
-            readonly pricing_by: readonly string[];
-            /** Pricing Tiers */
-            readonly pricing_tiers: readonly number[];
+            /** Min Cost */
+            readonly min_cost?: number | null;
+            /** Max Cost */
+            readonly max_cost?: number | null;
             /** Is Active */
             readonly is_active: boolean;
             /** Meta */
@@ -2431,7 +2313,7 @@ export interface components {
          * ApplicationErrorCode
          * @enum {integer}
          */
-        readonly ApplicationErrorCode: 900 | 901 | 902 | 999 | 1000 | 1001 | 1002 | 1003 | 1004 | 1005 | 1100 | 1101 | 1102 | 1103 | 1104 | 1105 | 1106 | 1200 | 1201 | 1202 | 1203 | 1204 | 1205 | 1300 | 1301 | 1302 | 1303 | 1304 | 1400 | 1401 | 1402 | 1404 | 1405 | 1406 | 1500 | 1501 | 1502 | 1503 | 1504 | 1505 | 1506 | 1507 | 1508 | 1509 | 1510 | 1600 | 1601 | 1602 | 1700 | 1701 | 1702;
+        readonly ApplicationErrorCode: 900 | 901 | 902 | 999 | 1000 | 1001 | 1002 | 1003 | 1004 | 1005 | 1100 | 1101 | 1102 | 1103 | 1104 | 1105 | 1106 | 1200 | 1201 | 1202 | 1203 | 1204 | 1205 | 1206 | 1300 | 1301 | 1302 | 1303 | 1304 | 1400 | 1401 | 1500 | 1501 | 1502 | 1600 | 1601 | 1602 | 1700 | 1701 | 1702 | 1800 | 1801 | 1802 | 1803 | 1804 | 1805 | 1806 | 1807;
         /** ApplicationErrorResponse */
         readonly ApplicationErrorResponse: {
             /**
@@ -2469,6 +2351,9 @@ export interface components {
 }
 export type SchemaActivateUserSubscriptionRequest = components['schemas']['ActivateUserSubscriptionRequest'];
 export type SchemaAdminUserGetInfoResponse = components['schemas']['AdminUserGetInfoResponse'];
+export type SchemaAiGatewayProviderWebhookPayload = components['schemas']['AiGatewayProviderWebhookPayload'];
+export type SchemaAiGatewayProviderWebhookResponse = components['schemas']['AiGatewayProviderWebhookResponse'];
+export type SchemaAiRegistryModelAdminSummary = components['schemas']['AiRegistryModelAdminSummary'];
 export type SchemaAiRegistryModelCreateRequest = components['schemas']['AiRegistryModelCreateRequest'];
 export type SchemaAiRegistryModelOwnerEnum = components['schemas']['AiRegistryModelOwnerEnum'];
 export type SchemaAiRegistryModelProviderLinkCreateRequest = components['schemas']['AiRegistryModelProviderLinkCreateRequest'];
@@ -2487,7 +2372,6 @@ export type SchemaAiTaskMessageStatusEnum = components['schemas']['AiTaskMessage
 export type SchemaAiTaskResponse = components['schemas']['AiTaskResponse'];
 export type SchemaAiTaskRuleEnum = components['schemas']['AiTaskRuleEnum'];
 export type SchemaAiTaskTypeEnum = components['schemas']['AiTaskTypeEnum'];
-export type SchemaAvailableGenerationProviderResponse = components['schemas']['AvailableGenerationProviderResponse'];
 export type SchemaBodyReplaceFileFileManagerFilesFileUuidPut = components['schemas']['Body_replace_file_file_manager_files__file_uuid__put'];
 export type SchemaBodySimpleUploadFileManagerSimpleUploadPost = components['schemas']['Body_simple_upload_file_manager_simple_upload_post'];
 export type SchemaBodyVerifyPaymentPaymentVerifyPost = components['schemas']['Body_verify_payment_payment_verify_post'];
@@ -2516,20 +2400,15 @@ export type SchemaFileManagerPresignedUrlsResponse = components['schemas']['File
 export type SchemaFileManagerUploadFileResponse = components['schemas']['FileManagerUploadFileResponse'];
 export type SchemaFileManagerUserFilesResponse = components['schemas']['FileManagerUserFilesResponse'];
 export type SchemaGenerateTaskRequest = components['schemas']['GenerateTaskRequest'];
-export type SchemaGenerationConfigResponse = components['schemas']['GenerationConfigResponse'];
-export type SchemaGenerationTaskType = components['schemas']['GenerationTaskType'];
 export type SchemaGetWalletResponse = components['schemas']['GetWalletResponse'];
 export type SchemaGetWalletTransactionsResponse = components['schemas']['GetWalletTransactionsResponse'];
 export type SchemaHttpValidationError = components['schemas']['HTTPValidationError'];
+export type SchemaJsonValue = components['schemas']['JsonValue'];
 export type SchemaPaymentListItemResponse = components['schemas']['PaymentListItemResponse'];
 export type SchemaPaymentListResponse = components['schemas']['PaymentListResponse'];
 export type SchemaPaymentStatusEnum = components['schemas']['PaymentStatusEnum'];
 export type SchemaPaymentStatusResponse = components['schemas']['PaymentStatusResponse'];
 export type SchemaPaymentTargetTypeEnum = components['schemas']['PaymentTargetTypeEnum'];
-export type SchemaResolvedGenerationProviderResponse = components['schemas']['ResolvedGenerationProviderResponse'];
-export type SchemaRunwareWebhookItem = components['schemas']['RunwareWebhookItem'];
-export type SchemaRunwareWebhookRequest = components['schemas']['RunwareWebhookRequest'];
-export type SchemaRunwareWebhookResponse = components['schemas']['RunwareWebhookResponse'];
 export type SchemaSubscriptionPlanListResponse = components['schemas']['SubscriptionPlanListResponse'];
 export type SchemaSubscriptionPlanResponse = components['schemas']['SubscriptionPlanResponse'];
 export type SchemaSubscriptionPurchaseRequest = components['schemas']['SubscriptionPurchaseRequest'];
@@ -4398,6 +4277,50 @@ export interface operations {
             };
         };
     };
+    readonly provider_webhook_ai_gateway_webhooks__provider_name__post: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path: {
+                readonly provider_name: string;
+            };
+            readonly cookie?: never;
+        };
+        readonly requestBody: {
+            readonly content: {
+                readonly "application/json": components["schemas"]["AiGatewayProviderWebhookPayload"];
+            };
+        };
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["AiGatewayProviderWebhookResponse"];
+                };
+            };
+            /** @description Validation Error */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+        };
+    };
     readonly list_models_ai_registry_models_get: {
         readonly parameters: {
             readonly query?: {
@@ -4457,96 +4380,6 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["perpix_core_api__modules__ai_registry__presentation__schemas__AiRegistryModelDetail"];
-                };
-            };
-            /** @description Validation Error */
-            readonly 422: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Application error */
-            readonly default: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
-                };
-            };
-        };
-    };
-    readonly get_generation_config_ai_registry_models__ai_model_uuid__generation_config_get: {
-        readonly parameters: {
-            readonly query: {
-                readonly task_type: components["schemas"]["AiRegistryModelSupportedTypesEnum"];
-                readonly ai_provider_uuid?: string | null;
-            };
-            readonly header?: never;
-            readonly path: {
-                readonly ai_model_uuid: string;
-            };
-            readonly cookie?: never;
-        };
-        readonly requestBody?: never;
-        readonly responses: {
-            /** @description Successful Response */
-            readonly 200: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["GenerationConfigResponse"];
-                };
-            };
-            /** @description Validation Error */
-            readonly 422: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Application error */
-            readonly default: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
-                };
-            };
-        };
-    };
-    readonly runware_webhook_ai_registry_webhooks_runware_post: {
-        readonly parameters: {
-            readonly query: {
-                readonly token: string;
-                readonly external_request_uuid: string;
-                readonly expires?: number | null;
-                readonly version?: number | null;
-            };
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
-        };
-        readonly requestBody: {
-            readonly content: {
-                readonly "application/json": components["schemas"]["RunwareWebhookRequest"];
-            };
-        };
-        readonly responses: {
-            /** @description Successful Response */
-            readonly 200: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["RunwareWebhookResponse"];
                 };
             };
             /** @description Validation Error */
@@ -4853,7 +4686,7 @@ export interface operations {
     readonly list_models_admin_ai_registry_model_list_get: {
         readonly parameters: {
             readonly query?: {
-                readonly is_only_active?: boolean;
+                readonly only_active?: boolean;
             };
             readonly header?: never;
             readonly path?: never;
@@ -4867,7 +4700,7 @@ export interface operations {
                     readonly [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": readonly components["schemas"]["perpix_core_api__modules__ai_registry__presentation__schemas_admin__AiRegistryModelDetail"][];
+                    readonly "application/json": readonly components["schemas"]["AiRegistryModelAdminSummary"][];
                 };
             };
             /** @description Validation Error */
@@ -4995,13 +4828,11 @@ export const aiTaskMessageStatusEnumValues: ReadonlyArray<FlattenedDeepRequired<
 export const aiTaskRuleEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiTaskRuleEnum"]> = ["SYSTEM", "USER", "ASSISTANT", "TOOL", "FUNCTION", "INLINE"];
 export const aiTaskTypeEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiTaskTypeEnum"]> = ["TEXT", "IMAGE", "AUDIO", "VIDEO"];
 export const currencyUnitEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["CurrencyUnitEnum"]> = ["USD", "IRR", "USDMICRO"];
-export const generationConfigResponseSelection_modeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["GenerationConfigResponse"]["selection_mode"]> = ["DEFAULT", "EXPLICIT"];
-export const generationTaskTypeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["GenerationTaskType"]> = ["TEXT", "IMAGE", "AUDIO", "VIDEO"];
 export const paymentStatusEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaymentStatusEnum"]> = ["PENDING", "PAID", "FAILED"];
 export const paymentTargetTypeEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaymentTargetTypeEnum"]> = ["subscription", "wallet"];
-export const walletOperationSourceEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["WalletOperationSourceEnum"]> = ["admin", "ai_registry_generation", "ai_task_message", "payment", "subscription"];
+export const walletOperationSourceEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["WalletOperationSourceEnum"]> = ["admin", "ai_gateway_request", "ai_task_message", "payment", "subscription"];
 export const walletTransactionTypeEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["WalletTransactionTypeEnum"]> = ["DEPOSIT", "WITHDRAW", "REFUND"];
-export const applicationErrorCodeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["ApplicationErrorCode"]> = [900, 901, 902, 999, 1000, 1001, 1002, 1003, 1004, 1005, 1100, 1101, 1102, 1103, 1104, 1105, 1106, 1200, 1201, 1202, 1203, 1204, 1205, 1300, 1301, 1302, 1303, 1304, 1400, 1401, 1402, 1404, 1405, 1406, 1500, 1501, 1502, 1503, 1504, 1505, 1506, 1507, 1508, 1509, 1510, 1600, 1601, 1602, 1700, 1701, 1702];
+export const applicationErrorCodeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["ApplicationErrorCode"]> = [900, 901, 902, 999, 1000, 1001, 1002, 1003, 1004, 1005, 1100, 1101, 1102, 1103, 1104, 1105, 1106, 1200, 1201, 1202, 1203, 1204, 1205, 1206, 1300, 1301, 1302, 1303, 1304, 1400, 1401, 1500, 1501, 1502, 1600, 1601, 1602, 1700, 1701, 1702, 1800, 1801, 1802, 1803, 1804, 1805, 1806, 1807];
 
 
 export const AiRegistryModelOwnerEnumMap = {
@@ -5079,15 +4910,6 @@ export const CurrencyUnitEnumMap = {
 export type CurrencyUnitEnumKey = keyof typeof CurrencyUnitEnumMap;
 export type CurrencyUnitEnumValue = (typeof CurrencyUnitEnumMap)[CurrencyUnitEnumKey];
 
-export const GenerationTaskTypeMap = {
-  "TEXT": "TEXT",
-  "IMAGE": "IMAGE",
-  "AUDIO": "AUDIO",
-  "VIDEO": "VIDEO",
-} as const;
-export type GenerationTaskTypeKey = keyof typeof GenerationTaskTypeMap;
-export type GenerationTaskTypeValue = (typeof GenerationTaskTypeMap)[GenerationTaskTypeKey];
-
 export const PaymentStatusEnumMap = {
   "PENDING": "PENDING",
   "PAID": "PAID",
@@ -5105,7 +4927,7 @@ export type PaymentTargetTypeEnumValue = (typeof PaymentTargetTypeEnumMap)[Payme
 
 export const WalletOperationSourceEnumMap = {
   "admin": "admin",
-  "ai_registry_generation": "ai_registry_generation",
+  "ai_gateway_request": "ai_gateway_request",
   "ai_task_message": "ai_task_message",
   "payment": "payment",
   "subscription": "subscription",
@@ -5145,6 +4967,7 @@ export const ApplicationErrorCodeMap = {
   1203: 1203,
   1204: 1204,
   1205: 1205,
+  1206: 1206,
   1300: 1300,
   1301: 1301,
   1302: 1302,
@@ -5152,27 +4975,23 @@ export const ApplicationErrorCodeMap = {
   1304: 1304,
   1400: 1400,
   1401: 1401,
-  1402: 1402,
-  1404: 1404,
-  1405: 1405,
-  1406: 1406,
   1500: 1500,
   1501: 1501,
   1502: 1502,
-  1503: 1503,
-  1504: 1504,
-  1505: 1505,
-  1506: 1506,
-  1507: 1507,
-  1508: 1508,
-  1509: 1509,
-  1510: 1510,
   1600: 1600,
   1601: 1601,
   1602: 1602,
   1700: 1700,
   1701: 1701,
   1702: 1702,
+  1800: 1800,
+  1801: 1801,
+  1802: 1802,
+  1803: 1803,
+  1804: 1804,
+  1805: 1805,
+  1806: 1806,
+  1807: 1807,
 } as const;
 export type ApplicationErrorCodeKey = keyof typeof ApplicationErrorCodeMap;
 export type ApplicationErrorCodeValue = (typeof ApplicationErrorCodeMap)[ApplicationErrorCodeKey];
