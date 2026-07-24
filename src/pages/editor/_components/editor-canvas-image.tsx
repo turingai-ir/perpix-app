@@ -18,17 +18,24 @@ interface EditorCanvasImageProps {
   onClearAlignmentGuides: () => void;
   onSelect: () => void;
   stageSize: { height: number; width: number };
+  zoom: number;
 }
 
 export function EditorCanvasImage(props: EditorCanvasImageProps) {
   const dragBounds = (position: { x: number; y: number }) => ({
     x: Math.max(
       0,
-      Math.min(position.x, props.stageSize.width - props.imageSize.width),
+      Math.min(
+        position.x,
+        props.stageSize.width - props.imageSize.width * props.zoom,
+      ),
     ),
     y: Math.max(
       0,
-      Math.min(position.y, props.stageSize.height - props.imageSize.height),
+      Math.min(
+        position.y,
+        props.stageSize.height - props.imageSize.height * props.zoom,
+      ),
     ),
   });
   const image = (

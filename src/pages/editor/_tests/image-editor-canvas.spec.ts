@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 import { openAuthenticatedEditor } from "./image-editor-test-setup";
 import {
   draggableTestImage,
+  largeDraggableTestImage,
   testImageBase64,
 } from "./image-editor-test-image-fixtures";
 
@@ -56,6 +57,40 @@ test.describe("Image editor canvas", () => {
     const sceneCanvas = canvasContainer.locator("canvas").first();
     await expect
       .poll(() => readCheckerboardColors(sceneCanvas, imageX, imageY + 40))
+      .toEqual({
+        hasDarkSquares: true,
+        hasLightSquares: true,
+      });
+  });
+
+  test("allows dragging a large image farther down", async ({ page }) => {
+    await page
+      .getByLabel("انتخاب عکس از گالری یا دوربین")
+      .setInputFiles(largeDraggableTestImage);
+    const canvasContainer = page
+      .getByRole("application", { name: "ویرایش تصویر" })
+      .locator(".konvajs-content");
+    await expect(canvasContainer).toBeVisible();
+
+    const canvasBounds = await canvasContainer.boundingBox();
+    expect(canvasBounds).not.toBeNull();
+    const centerX = canvasBounds!.x + canvasBounds!.width / 2;
+    const centerY = canvasBounds!.y + canvasBounds!.height / 2;
+
+    await page.getByRole("button", { name: "کوچک‌نمایی" }).click();
+    await page.mouse.move(centerX, centerY);
+    await page.mouse.down();
+    await page.mouse.move(centerX, centerY + 180);
+    await page.mouse.up();
+
+    await expect
+      .poll(() =>
+        readCheckerboardColors(
+          canvasContainer.locator("canvas").first(),
+          canvasBounds!.width / 2,
+          150,
+        ),
+      )
       .toEqual({
         hasDarkSquares: true,
         hasLightSquares: true,

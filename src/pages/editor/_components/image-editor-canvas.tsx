@@ -90,6 +90,7 @@ export function ImageEditorCanvas(props: ImageEditorCanvasProps) {
             onSelect={props.onSelectImage}
             onClearAlignmentGuides={props.onClearAlignmentGuides}
             stageSize={props.stageSize}
+            zoom={zoom}
           />
           {props.isCropping && (
             <ImageCropOverlay
