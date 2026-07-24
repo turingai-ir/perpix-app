@@ -7,7 +7,6 @@ import type {
 import { get, set, del } from "idb-keyval";
 
 export const REACT_QUERY_CACHE_TIME = 1000 * 60 * 60 * 24 * 7;
-const REACT_QUERY_STALE_TIME = 1000 * 60 * 5;
 
 if (typeof window !== "undefined") {
   onlineManager.setEventListener((setOnline) => {
@@ -30,7 +29,6 @@ if (typeof window !== "undefined") {
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: REACT_QUERY_STALE_TIME,
       gcTime: REACT_QUERY_CACHE_TIME,
 
       refetchOnWindowFocus: false,

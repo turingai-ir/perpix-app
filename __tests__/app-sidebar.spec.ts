@@ -47,6 +47,27 @@ test.describe("App sidebar", () => {
     await expect(telegramSupportLink).toHaveAttribute("target", "_blank");
   });
 
+  test("blocks wallet charging until a subscription is purchased", async ({
+    page,
+  }) => {
+    await page.goto("/");
+
+    await page.getByRole("button", { name: "افزایش موجودی کیف پول" }).click();
+
+    await expect(
+      page.getByText("برای ادامه، ابتدا اشتراک را خریداری کنید"),
+    ).toBeVisible();
+    await expect(
+      page.getByText(
+        "شما برای شارژ کیف پول باید ابتدا اشتراک خود را خریداری کنید.",
+      ),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: "خرید اشتراک" }),
+    ).toBeVisible();
+    await expect(page.getByRole("button", { name: "پرداخت" })).toBeHidden();
+  });
+
   test("visually separates the sidebar from the app content", async ({
     page,
   }) => {

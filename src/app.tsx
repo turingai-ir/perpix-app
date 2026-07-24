@@ -9,7 +9,6 @@ import {
 import { router } from "@/router/router";
 import { Toaster } from "@/components/ui/sonner";
 import { PwaRegistrationProvider } from "@/feature/pwa";
-import { SupportChatProvider } from "@/feature/support-chat";
 import PricingFeature from "@/feature/pricing";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 
@@ -30,7 +29,7 @@ function App() {
         >
           <Toaster duration={4000} richColors position="top-center" />
           <PwaRegistrationProvider />
-          <SupportChatProvider />
+          {/* <SupportChatProvider /> */}
           <PricingFeature />
           <RouterProvider router={router} />
         </PersistQueryClientProvider>

@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
-import { LoaderCircle } from "lucide-react";
+import { AlertCircle, LoaderCircle } from "lucide-react";
 import { NumericFormat } from "react-number-format";
 
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
@@ -32,6 +32,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { usePaymentRedirect } from "@/feature/payment";
+import { usePricingFeature, useActiveSubscription } from "@/feature/pricing";
 import { useChargeWallet, useWallet } from "@/feature/wallet";
 
 function AppLayoutSidebarWallet() {
@@ -39,7 +40,10 @@ function AppLayoutSidebarWallet() {
 
   const walletState = useWallet();
   const chargeWalletState = useChargeWallet();
+  const activeSubscriptionState = useActiveSubscription();
+  const { openPricingFeature } = usePricingFeature();
   const { openPaymentUrl } = usePaymentRedirect();
+  const shouldBlockWalletCharge = activeSubscriptionState.data?.plan.is_default;
 
   const formSchema = z.object({
     amount: z
@@ -82,6 +86,10 @@ function AppLayoutSidebarWallet() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (shouldBlockWalletCharge) {
+      return;
+    }
+
     const res = await chargeWalletState.mutateAsync({
       body: {
         amount_usdmicro: tokenToMicroDollar(parseInt(values.amount, 10)),
@@ -150,6 +158,7 @@ function AppLayoutSidebarWallet() {
                             dir="ltr"
                             thousandSeparator=","
                             {...field}
+                            disabled={shouldBlockWalletCharge}
                             onChange={(e) =>
                               field.onChange(e.target.value.replace(/,/g, ""))
                             }
@@ -160,19 +169,49 @@ function AppLayoutSidebarWallet() {
                       </FormItem>
                     )}
                   />
-                  <Button
-                    className="w-full"
-                    type="submit"
-                    disabled={chargeWalletState.isPending}
-                  >
-                    {chargeWalletState.isPending ? (
-                      <LoaderCircle className="animate-spin" />
-                    ) : (
-                      t(
-                        "pages.app.layout.sidebar.balanceCard.chargeWallet.nonAction",
-                      )
-                    )}
-                  </Button>
+                  {shouldBlockWalletCharge ? (
+                    <div className="rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-300">
+                      <div className="flex items-start gap-2">
+                        <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+                        <div className="space-y-1">
+                          <p className="font-medium">
+                            {t(
+                              "pages.app.layout.sidebar.balanceCard.chargeWallet.subscriptionRequiredAlert.title",
+                            )}
+                          </p>
+                          <p>
+                            {t(
+                              "pages.app.layout.sidebar.balanceCard.chargeWallet.subscriptionRequiredAlert.description",
+                            )}
+                          </p>
+                        </div>
+                      </div>
+                      <Button
+                        className="mt-4 w-full"
+                        type="button"
+                        variant="outline"
+                        onClick={() => openPricingFeature()}
+                      >
+                        {t(
+                          "pages.app.layout.sidebar.balanceCard.chargeWallet.subscriptionRequiredAlert.cta",
+                        )}
+                      </Button>
+                    </div>
+                  ) : (
+                    <Button
+                      className="w-full"
+                      type="submit"
+                      disabled={chargeWalletState.isPending}
+                    >
+                      {chargeWalletState.isPending ? (
+                        <LoaderCircle className="animate-spin" />
+                      ) : (
+                        t(
+                          "pages.app.layout.sidebar.balanceCard.chargeWallet.nonAction",
+                        )
+                      )}
+                    </Button>
+                  )}
                 </form>
               </DialogContent>
             </Dialog>
