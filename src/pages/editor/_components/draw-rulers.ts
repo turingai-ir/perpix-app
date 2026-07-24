@@ -5,6 +5,8 @@ export function drawRulers(
   stageSize: { width: number; height: number },
   cardPosition: { x: number; y: number },
   rulerSize: number,
+  zoom: number,
+  pan: { x: number; y: number },
 ): void {
   const width = stageSize.width;
   const height = stageSize.height;
@@ -21,20 +23,37 @@ export function drawRulers(
   context.textAlign = "center";
   context.textBaseline = "middle";
 
+  // Determine dynamic tick spacing based on zoom level to prevent crowding
+  let tickSpacing = 10;
+  let labelInterval = 10; // label every 10 ticks
+  if (zoom < 0.25) {
+    tickSpacing = 100;
+    labelInterval = 10; // label every 1000px
+  } else if (zoom < 0.6) {
+    tickSpacing = 50;
+    labelInterval = 10; // label every 500px
+  } else if (zoom > 3.0) {
+    tickSpacing = 5;
+    labelInterval = 10; // label every 50px
+  }
+
+  const spacingOnScreen = tickSpacing * zoom;
+
   // Top Ruler (Horizontal)
-  const startXIdx = Math.ceil((rulerSize - cardPosition.x) / 10);
+  const originScreenX = pan.x + cardPosition.x * zoom;
+  const startXIdx = Math.ceil((rulerSize - originScreenX) / spacingOnScreen);
   for (let i = startXIdx; ; i++) {
-    const x = cardPosition.x + i * 10;
+    const x = originScreenX + i * spacingOnScreen;
     if (x > width) break;
 
-    const val = i * 10;
-    if (i % 10 === 0) {
+    const val = i * tickSpacing;
+    if (i % labelInterval === 0) {
       context.beginPath();
       context.moveTo(x, 10);
       context.lineTo(x, rulerSize);
       context.stroke();
       context.fillText(val.toString(), x, 5);
-    } else if (i % 5 === 0) {
+    } else if (i % (labelInterval / 2) === 0) {
       context.beginPath();
       context.moveTo(x, 14);
       context.lineTo(x, rulerSize);
@@ -48,13 +67,14 @@ export function drawRulers(
   }
 
   // Left Ruler (Vertical)
-  const startYIdx = Math.ceil((rulerSize - cardPosition.y) / 10);
+  const originScreenY = pan.y + cardPosition.y * zoom;
+  const startYIdx = Math.ceil((rulerSize - originScreenY) / spacingOnScreen);
   for (let i = startYIdx; ; i++) {
-    const y = cardPosition.y + i * 10;
+    const y = originScreenY + i * spacingOnScreen;
     if (y > height) break;
 
-    const val = i * 10;
-    if (i % 10 === 0) {
+    const val = i * tickSpacing;
+    if (i % labelInterval === 0) {
       context.beginPath();
       context.moveTo(10, y);
       context.lineTo(rulerSize, y);
@@ -65,7 +85,7 @@ export function drawRulers(
       context.rotate(-Math.PI / 2);
       context.fillText(val.toString(), 0, 0);
       context.restore();
-    } else if (i % 5 === 0) {
+    } else if (i % (labelInterval / 2) === 0) {
       context.beginPath();
       context.moveTo(14, y);
       context.lineTo(rulerSize, y);

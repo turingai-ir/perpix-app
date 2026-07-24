@@ -44,6 +44,7 @@ function ImageEditorWorkspace({
         isCropping={editor.isCropping}
         onRedo={editor.redo}
         onUndo={editor.undo}
+        stageSize={editor.stageSize}
       />
       {editor.imageSize && editor.stageSize ? (
         <ImageEditorCanvas

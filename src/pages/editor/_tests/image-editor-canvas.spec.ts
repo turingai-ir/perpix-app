@@ -147,8 +147,8 @@ async function readCenterGuideVisibility(
           Math.round(width * pixelScale),
           Math.round(height * pixelScale),
         ).data;
-      const verticalGuide = getPixels(center.x - 2, 20, 5, 1);
-      const horizontalGuide = getPixels(20, center.y - 2, 1, 5);
+      const verticalGuide = getPixels(center.x - 2, 50, 5, 1);
+      const horizontalGuide = getPixels(50, center.y - 2, 1, 5);
       const containsGuideColor = (colors: Uint8ClampedArray | undefined) => {
         if (!colors) return false;
 

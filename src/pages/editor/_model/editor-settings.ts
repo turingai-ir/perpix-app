@@ -33,3 +33,7 @@ export const showGridAtom = atom(
     set(editorSettingsAtom, { ...current, showGrid: newValue });
   },
 );
+
+export const zoomAtom = atom<number>(1);
+
+export const panAtom = atom<{ x: number; y: number }>({ x: 0, y: 0 });

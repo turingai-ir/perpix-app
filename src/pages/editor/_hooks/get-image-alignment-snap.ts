@@ -9,9 +9,14 @@ interface ImageAlignmentSnap {
 export function getImageAlignmentSnaps(
   imagePosition: number,
   imageSize: number,
-  stageSize: number,
+  targetStart: number,
+  targetSize: number,
 ): ImageAlignmentSnap[] {
-  const stageGuides = [0, stageSize / 2, stageSize];
+  const targetGuides = [
+    targetStart,
+    targetStart + targetSize / 2,
+    targetStart + targetSize,
+  ];
   const imageGuides = [
     imagePosition,
     imagePosition + imageSize / 2,
@@ -19,11 +24,11 @@ export function getImageAlignmentSnaps(
   ];
   const availableSnaps: ImageAlignmentSnap[] = [];
 
-  for (const stageGuide of stageGuides) {
+  for (const targetGuide of targetGuides) {
     for (const imageGuide of imageGuides) {
-      const delta = stageGuide - imageGuide;
+      const delta = targetGuide - imageGuide;
       if (Math.abs(delta) > SNAP_DISTANCE) continue;
-      availableSnaps.push({ delta, position: stageGuide });
+      availableSnaps.push({ delta, position: targetGuide });
     }
   }
 

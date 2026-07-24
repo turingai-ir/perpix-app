@@ -1,18 +1,14 @@
 import { useState, type RefObject } from "react";
+import { useAtom } from "jotai";
 import { useImageAlignmentSnap } from "./use-image-alignment-snap";
 import { useImageCrop } from "./use-image-crop";
 import { useImageStageSize } from "./use-image-stage-size";
-import {
-  denormalizeCrop,
-  denormalizePosition,
-  getCenteredPosition,
-  normalizeCrop,
-  type CropArea,
-  type CropDisplayOrigin,
-} from "../_model/crop-area";
+import { denormalizeCrop, denormalizePosition, getCenteredPosition, normalizeCrop, type CropArea, type CropDisplayOrigin } from "../_model/crop-area";
 import type { CropRatioId } from "../_model/crop-ratios";
 import type { ImageEditorWorkspaceViewModel } from "./image-editor-workspace-types";
 import { useImageWorkspaceHistory } from "./use-image-workspace-history";
+import { useInitialZoomResets } from "./use-initial-zoom-resets";
+import { zoomAtom, panAtom } from "../_model/editor-settings";
 
 const ZERO_SIZE = { height: 0, width: 0 };
 
@@ -24,6 +20,9 @@ export function useImageEditorWorkspace(
   const crop = useImageCrop();
   const [isImageSelected, setIsImageSelected] = useState(false);
   const history = useImageWorkspaceHistory(image, documentId);
+  const [, setZoom] = useAtom(zoomAtom);
+  const [, setPan] = useAtom(panAtom);
+
   const { imageSize, stageSize } = useImageStageSize(
     image,
     history.current.appliedCrop,
@@ -40,24 +39,22 @@ export function useImageEditorWorkspace(
         cardPosition,
       )
     : cardPosition;
+
+  useInitialZoomResets({
+    stageSize,
+    imageSize,
+    cardPosition,
+    setZoom,
+    setPan,
+  });
+
   const snap = useImageAlignmentSnap({
     imageHeight: imageSize?.height ?? 0,
     imageWidth: imageSize?.width ?? 0,
-    stageHeight: stageSize?.height ?? 0,
-    stageWidth: stageSize?.width ?? 0,
+    cardPosition,
+    cardWidth: imageSize?.width ?? 0,
+    cardHeight: imageSize?.height ?? 0,
   });
-
-  const finishImageDrag = (position: CropDisplayOrigin) => {
-    if (!imageSize) return;
-    history.finishImageDrag(position, imageSize, cardPosition);
-  };
-  const changeCrop = (nextCrop: CropArea) => {
-    if (!imageSize) return;
-    crop.setDraftCrop(normalizeCrop(nextCrop, imageSize, imagePosition));
-  };
-  const selectCropRatio = (ratio: CropRatioId) => {
-    crop.selectRatio(ratio, (imageSize?.width ?? 1) / (imageSize?.height ?? 1));
-  };
 
   return {
     alignmentGuides: snap.alignmentGuides,
@@ -75,17 +72,21 @@ export function useImageEditorWorkspace(
     selectedCropRatio: crop.selectedRatio,
     selectedCropRatioValue: crop.selectedRatioValue,
     stageSize,
-    applyCrop: () => {
-      history.applyCrop(crop.applyCrop(history.current.appliedCrop));
-    },
+    applyCrop: () => history.applyCrop(crop.applyCrop(history.current.appliedCrop)),
     beginCrop: crop.beginCrop,
     cancelCrop: crop.cancelCrop,
-    changeCrop,
+    changeCrop: (c: CropArea) => {
+      if (imageSize) crop.setDraftCrop(normalizeCrop(c, imageSize, imagePosition));
+    },
     clearAlignmentGuides: snap.clearAlignmentGuides,
     deselectImage: () => setIsImageSelected(crop.isCropping),
-    finishImageDrag,
+    finishImageDrag: (p: CropDisplayOrigin) => {
+      if (imageSize) history.finishImageDrag(p, imageSize, cardPosition);
+    },
     moveImage: snap.handleImageDragMove,
-    selectCropRatio,
+    selectCropRatio: (r: CropRatioId) => {
+      crop.selectRatio(r, (imageSize?.width ?? 1) / (imageSize?.height ?? 1));
+    },
     selectImage: () => setIsImageSelected(true),
     canRedo: history.canRedo,
     canUndo: history.canUndo,

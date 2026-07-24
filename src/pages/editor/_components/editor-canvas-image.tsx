@@ -46,8 +46,6 @@ export function EditorCanvasImage(props: EditorCanvasImageProps) {
       y={props.imagePosition.y}
       draggable={!props.isCropping}
       dragBoundFunc={dragBounds}
-      onMouseDown={props.onSelect}
-      onTouchStart={props.onSelect}
       onClick={props.onSelect}
       onTap={props.onSelect}
       onDragStart={props.onSelect}
@@ -62,18 +60,22 @@ export function EditorCanvasImage(props: EditorCanvasImageProps) {
         height={props.imageSize.height}
         fill="rgba(0, 0, 0, 0.001)"
       />
-      {props.isSelected ? (
-        image
-      ) : (
-        <Group
-          clipX={props.cardPosition.x - props.imagePosition.x}
-          clipY={props.cardPosition.y - props.imagePosition.y}
-          clipWidth={props.imageSize.width}
-          clipHeight={props.imageSize.height}
-        >
-          {image}
-        </Group>
-      )}
+      <Group
+        clipX={
+          props.isSelected
+            ? -999999
+            : props.cardPosition.x - props.imagePosition.x
+        }
+        clipY={
+          props.isSelected
+            ? -999999
+            : props.cardPosition.y - props.imagePosition.y
+        }
+        clipWidth={props.isSelected ? 9999999 : props.imageSize.width}
+        clipHeight={props.isSelected ? 9999999 : props.imageSize.height}
+      >
+        {image}
+      </Group>
     </Group>
   );
 }

@@ -6,15 +6,17 @@ import type { AlignmentGuide } from "../_model/image-alignment";
 interface ImageAlignmentSnapOptions {
   imageHeight: number;
   imageWidth: number;
-  stageHeight: number;
-  stageWidth: number;
+  cardPosition: { x: number; y: number };
+  cardWidth: number;
+  cardHeight: number;
 }
 
 export function useImageAlignmentSnap({
   imageHeight,
   imageWidth,
-  stageHeight,
-  stageWidth,
+  cardPosition,
+  cardWidth,
+  cardHeight,
 }: ImageAlignmentSnapOptions) {
   const [alignmentGuides, setAlignmentGuides] = useState<AlignmentGuide[]>([]);
   const previousGuides = useRef<AlignmentGuide[]>([]);
@@ -31,12 +33,14 @@ export function useImageAlignmentSnap({
       const horizontalSnaps = getImageAlignmentSnaps(
         imageNode.x(),
         imageWidth,
-        stageWidth,
+        cardPosition.x,
+        cardWidth,
       );
       const verticalSnaps = getImageAlignmentSnaps(
         imageNode.y(),
         imageHeight,
-        stageHeight,
+        cardPosition.y,
+        cardHeight,
       );
 
       const horizontalSnap = horizontalSnaps[0];
@@ -59,7 +63,14 @@ export function useImageAlignmentSnap({
       }
       updateAlignmentGuides(nextGuides);
     },
-    [imageHeight, imageWidth, stageHeight, stageWidth, updateAlignmentGuides],
+    [
+      imageHeight,
+      imageWidth,
+      cardPosition,
+      cardWidth,
+      cardHeight,
+      updateAlignmentGuides,
+    ],
   );
 
   const clearAlignmentGuides = useCallback(() => {
