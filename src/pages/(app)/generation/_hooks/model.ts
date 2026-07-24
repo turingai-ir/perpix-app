@@ -131,25 +131,10 @@ export const useModel = (
     },
     { enabled: !!currentModel },
   );
-  const generationConfigState = useQuery(
-    "get",
-    "/ai-registry/models/{ai_model_uuid}/generation-config",
-    {
-      params: {
-        path: { ai_model_uuid: currentModel ?? "" },
-        query: {
-          task_type: supportedOutputs[0],
-        },
-      },
-    },
-    { enabled: Boolean(currentModel && supportedOutputs[0]) },
-  );
-
   return {
     activeSubscriptionState,
     allowedModelNames,
     currentModel,
-    generationConfigState,
     isCurrentModelAllowed,
     setCurrentModel,
     modelState,
@@ -283,9 +268,7 @@ export const useAiTaskResultPolling = (
   };
 
   const shouldPoll =
-    !!message?.uuid &&
-    !isAiTaskMessageTerminal(message, generatedMediaField) &&
-    !!message.ai_external_provider_task_id;
+    !!message?.uuid && !isAiTaskMessageTerminal(message, generatedMediaField);
   const canPollResult = useDelayedPollingStart(shouldPoll, message?.uuid);
 
   return useQuery(

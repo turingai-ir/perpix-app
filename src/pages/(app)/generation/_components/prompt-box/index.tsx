@@ -86,7 +86,6 @@ export const GenerationPromptBox: FC<GenerationPromptBoxProps> = ({
             isLoading={isLoading}
             isSubmitDisabled={promptBox.isSubmitDisabled}
             model={promptBox.model}
-            providerLabel={t("common.aiProvider")}
             upgradeLabel={t("common.upgradeRequired")}
           />
           <PromptFullWidthFieldsSection

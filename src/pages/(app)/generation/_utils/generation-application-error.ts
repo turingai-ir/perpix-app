@@ -1,15 +1,7 @@
 import { FetchHttpError } from "@/utils/custom-fetch/fetch-errors";
-import type { SchemaApplicationErrorCode } from "@/services/api";
-
-export const GENERATION_ERROR_CODES = {
-  invalidModelConfig: 1506,
-  providerNotAvailableForModel: 1509,
-  noActiveProvider: 1510,
-} as const satisfies Record<string, SchemaApplicationErrorCode>;
 
 interface GenerationApplicationError {
   detail: unknown;
-  statusCode: number;
 }
 
 interface CanonicalFieldError {
@@ -21,10 +13,8 @@ export async function parseGenerationApplicationError(
 ): Promise<GenerationApplicationError | null> {
   if (!(error instanceof FetchHttpError)) return null;
   const responseBody = await error.parseJson();
-  if (!isRecord(responseBody) || typeof responseBody.status_code !== "number") {
-    return null;
-  }
-  return { detail: responseBody.detail, statusCode: responseBody.status_code };
+  if (!isRecord(responseBody) || !("detail" in responseBody)) return null;
+  return { detail: responseBody.detail };
 }
 
 export function getCanonicalErrorPaths(detail: unknown): string[] {

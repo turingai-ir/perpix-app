@@ -7,7 +7,6 @@ import {
 } from "../dynamic-config";
 import { ModelTokenPriceTooltip } from "../model-token-price-tooltip";
 import { PromptModelSelector } from "./model-selector";
-import { ProviderIndicator } from "./provider-indicator";
 import { PromptSubmitButton } from "./submit-button";
 
 import type { useModel } from "@/pages/(app)/generation/_hooks/model";
@@ -36,7 +35,6 @@ export const PromptActionsSection: FC<{
   isLoading?: boolean;
   isSubmitDisabled?: boolean;
   model: PromptBoxModel;
-  providerLabel: string;
   upgradeLabel: string;
 }> = ({
   advancedFieldNames,
@@ -47,7 +45,6 @@ export const PromptActionsSection: FC<{
   isLoading,
   isSubmitDisabled,
   model,
-  providerLabel,
   upgradeLabel,
 }) => (
   <div className="flex w-full flex-col justify-between gap-4 md:flex-row">
@@ -60,10 +57,6 @@ export const PromptActionsSection: FC<{
         disabled={disabled}
         model={model}
         upgradeLabel={upgradeLabel}
-      />
-      <ProviderIndicator
-        label={providerLabel}
-        providerName={model.generationConfigState.data?.resolved_provider.name}
       />
       {inlineFieldNames.map((fieldName) => (
         <DynamicPromptConfigField
@@ -81,7 +74,10 @@ export const PromptActionsSection: FC<{
       />
       <ModelTokenPriceTooltip
         isLoading={model.modelState.isLoading}
-        pricingTiers={model.modelState.data?.pricing_tiers}
+        pricingTiers={[
+          { price_usdmicro: model.modelState.data?.min_cost },
+          { price_usdmicro: model.modelState.data?.max_cost },
+        ]}
       />
     </div>
   </div>
