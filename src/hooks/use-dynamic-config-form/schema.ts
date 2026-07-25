@@ -661,11 +661,21 @@ export function sanitizeConfigValues(
   );
 
   for (const [key, prop] of Object.entries(configSchema.properties)) {
-    if (!visibleFields.has(key) || !(key in valuesWithConditionalConsts)) {
+    if (!visibleFields.has(key)) {
       continue;
     }
 
-    const value = cleanValueByProperty(prop, valuesWithConditionalConsts[key]);
+    const candidateValue =
+      key in valuesWithConditionalConsts &&
+      valuesWithConditionalConsts[key] !== undefined
+        ? valuesWithConditionalConsts[key]
+        : prop.default;
+
+    if (candidateValue === undefined) {
+      continue;
+    }
+
+    const value = cleanValueByProperty(prop, candidateValue);
 
     if (
       getPrimaryType(prop) === "array" &&

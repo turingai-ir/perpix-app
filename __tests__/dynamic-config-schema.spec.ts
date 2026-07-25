@@ -9,6 +9,7 @@ import {
   type JsonConfigMeta,
   type JsonConfigSchema,
 } from "../src/hooks/use-dynamic-config-form";
+import { getModelDynamicConfig } from "../src/pages/(app)/generation/_utils/model-dynamic-config";
 
 const klingVideoConfig = JSON.parse(
   readFileSync(
@@ -169,3 +170,146 @@ test("reads nested array field metadata from the standard detail UI schema", () 
     hint: "برای هر segment حرکت، صحنه و صدای همان بخش را بنویسید.",
   });
 });
+
+test("validates multi-mode schema using default resolution and aspect_ratio values", async () => {
+  const openAiModel = {
+    uuid: "c469ae94-c0b8-4fdd-b07d-475cfffc0b41",
+    name: "OPENAI_GPT_IMAGE_2",
+    modes: {
+      text_to_image: {
+        value: "text_to_image",
+        config_schema: {
+          $id: "OPENAI_GPT_IMAGE_2_RUNWARE_TEXT_TO_IMAGE",
+          type: "object",
+          properties: {
+            prompt: { type: "string", minLength: 3, maxLength: 3000 },
+            resolution: {
+              type: "string",
+              enum: ["1024px", "2048px"],
+              default: "1024px",
+            },
+            aspect_ratio: {
+              type: "string",
+              enum: ["1:1", "16:9"],
+              default: "1:1",
+            },
+          },
+          required: ["resolution", "aspect_ratio", "prompt"],
+          additionalProperties: false,
+        },
+      },
+    },
+    canonical_ui_schema: {
+      selectors: [
+        {
+          field: "mode",
+          options: [{ value: "text_to_image" }],
+        },
+      ],
+    },
+  };
+
+  const dynamicConfig = getModelDynamicConfig(openAiModel);
+  expect(dynamicConfig.configSchema).not.toBeNull();
+
+  const defaults = buildDefaultValues(
+    dynamicConfig.configSchema!,
+    dynamicConfig.configDefaults,
+  );
+  expect(defaults).toMatchObject({
+    mode: "text_to_image",
+    resolution: "1024px",
+    aspect_ratio: "1:1",
+  });
+
+  const resolver = buildAjvResolver(dynamicConfig.configSchema!, undefined, {
+    configMeta: dynamicConfig.configMeta,
+  });
+
+  const result = await resolver(
+    {
+      ...defaults,
+      prompt: "A beautiful sunset over mountains",
+    },
+    {},
+    {} as never,
+  );
+
+  expect(result.errors).toEqual({});
+  expect(result.values).toMatchObject({
+    mode: "text_to_image",
+    prompt: "A beautiful sunset over mountains",
+    resolution: "1024px",
+    aspect_ratio: "1:1",
+  });
+});
+
+test("validates all 10 real backend model fixtures from perpix-core-api", async () => {
+  const fixturesDir = new URL(
+    "../../perpix-core-api/tests/fixtures/",
+    import.meta.url,
+  );
+  const fixtureFiles = [
+    "BLACK_FOREST_LABS_FLUX_1_1_PRO_ULTRA.json",
+    "BYTEDANCE_SEEDANCE_2_0.json",
+    "GOOGLE_GEMINI_OMNI_FLASH.json",
+    "GOOGLE_NANO_BANANA_2.json",
+    "GOOGLE_NANO_BANANA_2_LITE.json",
+    "GOOGLE_VEO_3_1_FAST.json",
+    "IDEOGRAM_4_0.json",
+    "KLINGAI_VIDEO_3_0_STANDARD.json",
+    "OPENAI_IMAGE_2.json",
+    "RUNWAY_ALEPH_2_0.json",
+  ];
+
+  for (const fileName of fixtureFiles) {
+    const filePath = new URL(fileName, fixturesDir);
+    const modelData = JSON.parse(readFileSync(filePath, "utf8"));
+    const dynamicConfig = getModelDynamicConfig(modelData);
+
+    expect(
+      dynamicConfig.configSchema,
+      `Failed to generate configSchema for ${fileName}`,
+    ).not.toBeNull();
+
+    const defaults = buildDefaultValues(
+      dynamicConfig.configSchema!,
+      dynamicConfig.configDefaults,
+    );
+
+    const resolver = buildAjvResolver(
+      dynamicConfig.configSchema!,
+      undefined,
+      {
+        configMeta: dynamicConfig.configMeta,
+      },
+    );
+
+    const testPrompt = "A futuristic city with flying vehicles";
+    const valuesToValidate: Record<string, unknown> = {
+      ...defaults,
+      prompt: testPrompt,
+    };
+
+    const activeMode = String(defaults.mode);
+    const activeModeConfig = modelData.modes?.[activeMode]?.config_schema;
+    if (activeModeConfig?.required?.includes("reference_images")) {
+      valuesToValidate.reference_images = ["test-ref-image-id"];
+    }
+    if (activeModeConfig?.required?.includes("reference_videos")) {
+      valuesToValidate.reference_videos = ["test-ref-video-id"];
+    }
+    if (activeModeConfig?.required?.includes("frame_images")) {
+      valuesToValidate.frame_images = ["test-frame-image-id"];
+    }
+
+    const result = await resolver(valuesToValidate, {}, {} as never);
+
+    expect(
+      result.errors,
+      `Validation errors for model ${fileName} in mode ${activeMode}: ${JSON.stringify(result.errors, null, 2)}`,
+    ).toEqual({});
+  }
+});
+
+

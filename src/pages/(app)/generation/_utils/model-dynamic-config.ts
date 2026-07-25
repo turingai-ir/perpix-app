@@ -34,11 +34,18 @@ export type ModelDynamicConfig = {
 export function getModelDynamicConfig(model: unknown): ModelDynamicConfig {
   if (!isRecord(model)) return emptyModelDynamicConfig();
 
-  const modes = getModes(model.modes);
+  const targetModel =
+    isRecord(model.model) && isRecord(model.model.modes)
+      ? model.model
+      : isRecord(model.data) && isRecord(model.data.modes)
+        ? model.data
+        : model;
+
+  const modes = getModes(targetModel.modes);
   if (modes.length === 0) return emptyModelDynamicConfig();
 
-  const canonicalUiSchema = isRecord(model.canonical_ui_schema)
-    ? model.canonical_ui_schema
+  const canonicalUiSchema = isRecord(targetModel.canonical_ui_schema)
+    ? targetModel.canonical_ui_schema
     : {};
   const selector = getModeSelector(canonicalUiSchema.selectors);
   const orderedModes = orderModes(modes, selector);
@@ -61,10 +68,37 @@ function buildCombinedModeSchema(
   modeValues: string[],
   defaultMode: string,
 ): JsonConfigSchema {
-  const modeProperties = modes.reduce<Record<string, JsonSchemaProperty>>(
-    (properties, mode) => ({ ...properties, ...mode.config_schema.properties }),
-    {},
-  );
+  const defaultModeConfig = modes.find((m) => m.value === defaultMode);
+  const otherModes = modes.filter((m) => m.value !== defaultMode);
+  const orderedForMerge = [
+    ...otherModes,
+    ...(defaultModeConfig ? [defaultModeConfig] : []),
+  ];
+
+  const modeProperties = orderedForMerge.reduce<
+    Record<string, JsonSchemaProperty>
+  >((properties, mode) => {
+    const merged = { ...properties };
+    for (const [key, prop] of Object.entries(mode.config_schema.properties)) {
+      if (!merged[key]) {
+        merged[key] = { ...prop };
+      } else {
+        const existing = merged[key];
+        const combinedEnum =
+          Array.isArray(existing.enum) && Array.isArray(prop.enum)
+            ? Array.from(new Set([...existing.enum, ...prop.enum]))
+            : prop.enum ?? existing.enum;
+
+        merged[key] = {
+          ...existing,
+          ...prop,
+          default: prop.default ?? existing.default,
+          enum: combinedEnum,
+        };
+      }
+    }
+    return merged;
+  }, {});
   const allFieldNames = Object.keys(modeProperties);
 
   return {
