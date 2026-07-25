@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useForm, useWatch } from "react-hook-form";
 
 import {
@@ -116,10 +116,15 @@ export function useDynamicConfigForm({
     ...formOptions,
   });
 
+  const prevSchemaKeyRef = useRef(resolvedSchemaKey);
+
   useEffect(() => {
     if (!autoResetOnSchemaChange) return;
 
-    form.reset(defaultValues);
+    if (prevSchemaKeyRef.current !== resolvedSchemaKey) {
+      prevSchemaKeyRef.current = resolvedSchemaKey;
+      form.reset(defaultValues);
+    }
   }, [resolvedSchemaKey, autoResetOnSchemaChange, form, defaultValues]);
 
   const visibleFieldSignature = useWatch({

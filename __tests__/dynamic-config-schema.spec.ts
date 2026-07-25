@@ -23,6 +23,10 @@ const klingVideoConfig = JSON.parse(
 const videoConfigMeta = klingVideoConfig[0].meta;
 const videoConfigSchema = klingVideoConfig[1].RUNWARE.config_schema;
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
 function buildVideoConfigResolver() {
   return buildAjvResolver(videoConfigSchema, undefined, {
     configMeta: videoConfigMeta,
@@ -265,7 +269,19 @@ test("validates all 10 real backend model fixtures from perpix-core-api", async 
   for (const fileName of fixtureFiles) {
     const filePath = new URL(fileName, fixturesDir);
     const modelData = JSON.parse(readFileSync(filePath, "utf8"));
-    const dynamicConfig = getModelDynamicConfig(modelData);
+
+    const rawModel = isRecord(modelData.model) ? modelData.model : modelData;
+    const firstProvider = isRecord(modelData.providers)
+      ? Object.values(modelData.providers)[0]
+      : undefined;
+    const providerModes = isRecord(firstProvider) ? firstProvider.modes : undefined;
+
+    const normalizedModel = {
+      ...rawModel,
+      modes: isRecord(rawModel.modes) ? rawModel.modes : providerModes ?? {},
+    };
+
+    const dynamicConfig = getModelDynamicConfig(normalizedModel);
 
     expect(
       dynamicConfig.configSchema,

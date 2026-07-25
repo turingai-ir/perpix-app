@@ -84,6 +84,16 @@ export function useGenerationPage({
         .find((message) => message.role === AiTaskRuleEnumMap.ASSISTANT),
     [displayedMessages],
   );
+  const lastTaskMessage = useMemo(
+    () =>
+      [...displayedMessages]
+        .reverse()
+        .find(
+          (message) =>
+            Boolean(message.ai_model_uuid) && Boolean(message.ai_model_config),
+        ),
+    [displayedMessages],
+  );
   const successfulMessageClearKey =
     taskData && lastDisplayedAssistantMessage?.task_status === "SUCCESS"
       ? `${taskData.uuid}:${lastDisplayedAssistantMessage.uuid}`
@@ -158,6 +168,7 @@ export function useGenerationPage({
     isBusy,
     isTaskLoading,
     lastAssistantMessage: lastDisplayedAssistantMessage,
+    lastTaskMessage,
     successfulMessageClearKey,
     shouldShowIntro: !chatId,
   };

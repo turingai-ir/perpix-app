@@ -25,6 +25,7 @@ const GenerationImagePage = () => {
     isBusy,
     isTaskLoading,
     lastAssistantMessage,
+    lastTaskMessage,
     successfulMessageClearKey,
     shouldShowIntro,
   } = useGenerationPage({
@@ -61,9 +62,18 @@ const GenerationImagePage = () => {
 
             <GenerationImagePromptBox
               isLoading={isBusy}
-              lastMessageConfig={lastAssistantMessage?.ai_model_config}
-              lastMessageModelUuid={lastAssistantMessage?.ai_model_uuid}
-              lastMessageStatus={lastAssistantMessage?.task_status}
+              lastMessageConfig={
+                lastTaskMessage?.ai_model_config ??
+                lastAssistantMessage?.ai_model_config
+              }
+              lastMessageModelUuid={
+                lastTaskMessage?.ai_model_uuid ??
+                lastAssistantMessage?.ai_model_uuid
+              }
+              lastMessageStatus={
+                lastAssistantMessage?.task_status ??
+                lastTaskMessage?.task_status
+              }
               onSubmit={handleForm}
               successfulMessageClearKey={successfulMessageClearKey}
             />

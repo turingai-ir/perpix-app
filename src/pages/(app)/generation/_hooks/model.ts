@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useAtom } from "jotai";
 import {
   type InfiniteData,
   type Query,
@@ -6,6 +7,11 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { useDebounce } from "react-use";
+
+import {
+  selectedImageModelAtom,
+  selectedVideoModelAtom,
+} from "../_state/selected-model-atom";
 
 import { useReactQueryApi } from "@/hooks/app";
 import { useActiveSubscription } from "@/feature/pricing";
@@ -92,8 +98,11 @@ export const useModel = (
   const { useQuery } = useReactQueryApi();
   const activeSubscriptionState = useActiveSubscription();
 
-  const [selectedModel, setCurrentModel] = useState<string>();
-  const currentSelectedModel = selectedModel ?? initialModelUuid ?? undefined;
+  const targetAtom = supportedOutputs.includes("VIDEO")
+    ? selectedVideoModelAtom
+    : selectedImageModelAtom;
+  const [selectedModel, setCurrentModel] = useAtom(targetAtom);
+  const currentSelectedModel = initialModelUuid ?? selectedModel ?? undefined;
   const allowedModelNames = activeSubscriptionState.data?.plan
     .allowed_models as readonly string[] | undefined;
 
@@ -164,13 +173,16 @@ export const useAiGenerate = (task_id: string | undefined) => {
   );
 
   const aiGenerateState = useMutation("post", "/ai-task/generate", {
-    onSuccess(task) {
+    onSuccess(taskData) {
+      const task = taskData as SchemaAiTaskResponse;
       void queryClient.invalidateQueries({ queryKey: userQueryKey });
-      upsertAiTaskInListCache(
-        queryClient,
-        aiTasksListQueryKey,
-        task as SchemaAiTaskResponse,
-      );
+      if (task?.uuid) {
+        const singleTaskQueryKey = queryOptions("get", "/ai-task/{task_uuid}", {
+          params: { path: { task_uuid: task.uuid } },
+        }).queryKey;
+        queryClient.setQueryData(singleTaskQueryKey, task);
+      }
+      upsertAiTaskInListCache(queryClient, aiTasksListQueryKey, task);
       void queryClient.invalidateQueries({
         queryKey: aiTasksListQueryKey,
         refetchType: "none",
