@@ -81,9 +81,6 @@ const AppLayoutSidebarUserProfileMenu: FC = () => {
               {t("features.pwaInstall.action")}
             </DropdownMenuItem>
           ) : null}
-          <DropdownMenuItem>
-            {t("common.appVersion", { version: __APP_VERSION__ })}
-          </DropdownMenuItem>
           <DropdownMenuItem onClick={handleLogout}>
             <LogOut />
             {t("pages.app.layout.sidebar.user.logout")}

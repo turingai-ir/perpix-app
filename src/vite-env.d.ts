@@ -1,5 +1,4 @@
 /// <reference types="vite/client" />
-/// <reference types="vite-plugin-pwa/client" />
 
 interface ImportMetaEnv {
   readonly VITE_PERPIX_API_URL: string;
@@ -20,4 +19,3 @@ interface Navigator {
 }
 
 declare const __APP_RELEASE__: string;
-declare const __APP_VERSION__: string;

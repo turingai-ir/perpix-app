@@ -1,6 +1,5 @@
 {
   "common": {
-    "appVersion": "نسخه: {{version}}",
     "addAudio": "افزودن صدا",
     "addImage": "افزودن عکس",
     "addVideo": "افزودن ویدیو",
