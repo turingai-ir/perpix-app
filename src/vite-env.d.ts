@@ -5,7 +5,7 @@ interface ImportMetaEnv {
   readonly VITE_PERPIX_APP_URL: string;
   readonly VITE_OBJECT_STORAGE_PUBLIC_ENDPOINT: string;
   readonly VITE_APP_FONT_BASE_URL?: string;
-  readonly VITE_APP_PERPIX_TELEGRAM_SUPPORT?: string;
+  readonly VITE_APP_TELEGRAM_SUPPORT?: string;
   readonly VITE_APP_SENTRY_DSN?: string;
   readonly VITE_APP_PERPIX_TAX_PERCENT?: string;
 }

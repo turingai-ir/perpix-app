@@ -13,7 +13,7 @@ const AppLayoutSidebarUserActions: FC = () => {
   // const { openChatWidget } = useSupportChatWidget();
   const { openPricingFeature } = usePricingFeature();
   const activeSubscriptionState = useActiveSubscription();
-  const telegramSupportUrl = import.meta.env.VITE_APP_PERPIX_TELEGRAM_SUPPORT;
+  const telegramSupportUrl = import.meta.env.VITE_APP_TELEGRAM_SUPPORT;
 
   return (
     <div className="flex w-full flex-col gap-2">
