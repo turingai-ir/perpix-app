@@ -1,6 +1,6 @@
 import { type ComponentType, type FC } from "react";
 import { NavLink } from "react-router";
-import { Images, WandSparkles } from "lucide-react";
+import { House, Images, WandSparkles } from "lucide-react";
 import { TbCameraAi, TbPhotoAi } from "react-icons/tb";
 
 import { Badge } from "@/components/ui/badge";
@@ -22,6 +22,12 @@ const AppLayoutSidebarNavigation: FC = () => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
 
   const menuItems: SidebarMenuItem[] = [
+    {
+      key: "home",
+      label: t("pages.app.layout.sidebar.menu.home.label"),
+      href: APP_ROUTES_KEY.app.path,
+      Icon: House,
+    },
     {
       key: "image-generations",
       label: t("pages.app.layout.sidebar.menu.imageGeneration.label"),

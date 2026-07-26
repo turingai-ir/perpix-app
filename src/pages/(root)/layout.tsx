@@ -1,4 +1,4 @@
-import { useEffect, type FC } from "react";
+import { useEffect, useRef, type FC } from "react";
 import { Outlet, useLocation, useNavigate, useMatches } from "react-router";
 import { toast } from "sonner";
 import { useSetAtom } from "jotai";
@@ -9,7 +9,7 @@ import {
   FetchTimeoutError,
 } from "@/utils/custom-fetch/fetch-errors";
 import { APP_KEYS, HttpStatus } from "@/utils";
-import { getViewportBreakpoints, useAppTranslate } from "@/hooks";
+import { useAppTranslate } from "@/hooks";
 import { appEventBus } from "@/lib/event-bus";
 import { cookies } from "@/utils/cookies";
 import { APP_ROUTES_KEY } from "@/router/routes";
@@ -23,6 +23,7 @@ const RootLayout: FC = () => {
   const { openPricingFeature } = usePricingFeature();
   const location = useLocation();
   const setAppLayoutState = useSetAtom(appLayoutAtom);
+  const previousPathnameRef = useRef(location.pathname);
 
   useEffect(() => {
     const errorhandler = async (error: unknown) => {
@@ -152,7 +153,7 @@ const RootLayout: FC = () => {
   }, [cookie, navigate, openPricingFeature, t]);
 
   useEffect(() => {
-    if (getViewportBreakpoints().lg) {
+    if (previousPathnameRef.current === location.pathname) {
       return;
     }
 
@@ -160,7 +161,9 @@ const RootLayout: FC = () => {
       ...state,
       isSidebarOpen: false,
     }));
-  }, [location.hash, location.pathname, location.search, setAppLayoutState]);
+
+    previousPathnameRef.current = location.pathname;
+  }, [location.pathname, setAppLayoutState]);
 
   const matches = useMatches();
   const matchWithTitle = [...matches]

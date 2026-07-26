@@ -18,6 +18,8 @@ const AppLayoutSidebar: FC<{ sidebarWidth: string }> = ({ sidebarWidth }) => {
   const [appLayoutState, setAppLayoutState] = useImmerAtom(appLayoutAtom);
   const breakpoints = useViewportBreakpoint();
 
+  console.log({appLayoutState})
+
   if (breakpoints.lg) {
     return (
       <>

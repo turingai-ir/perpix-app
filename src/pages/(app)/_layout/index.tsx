@@ -1,7 +1,7 @@
 import { useEffect, useEffectEvent, useRef, type FC } from "react";
 import { Outlet } from "react-router";
 import { useImmerAtom } from "jotai-immer";
-import { PanelRight } from "lucide-react";
+import { Menu } from "lucide-react";
 
 import AppLayoutSidebar from "./sidebar";
 import appLayoutAtom from "./_state";
@@ -111,11 +111,8 @@ const AppLayout: FC = () => {
                 });
               }}
             >
-              {appLayoutState.isSidebarOpen ? (
-                <PanelRight className="h-5! w-5!" />
-              ) : (
-                <PanelRight className="h-5! w-5!" />
-              )}
+              <Menu className="h-5! w-5!" />
+              <span>{t("pages.app.layout.sidebar.toggle.menu")}</span>
             </Button>
           </header>
           <section className="relative flex w-full min-w-0 overflow-x-hidden">
