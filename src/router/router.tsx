@@ -2,6 +2,7 @@ import { useEffect, type ComponentType } from "react";
 import { createBrowserRouter, redirect, useRouteError } from "react-router";
 
 import { APP_ROUTES_KEY } from "./routes";
+import { loadRouteModule } from "./dynamic-import-recovery";
 
 import RootLayout from "@/pages/(root)/layout";
 import { cookies } from "@/utils/cookies";
@@ -10,11 +11,11 @@ import { ErrorFallbackPage } from "@/components/custom/error-boundary";
 import LoadingSection from "@/components/custom/loading-section";
 import { captureError } from "@/lib/observability";
 
-type DefaultRouteModule = { default: ComponentType };
-
-const lazyRoute = (loadRouteModule: () => Promise<DefaultRouteModule>) => {
+const lazyRoute = (
+  importRouteModule: () => Promise<{ default: ComponentType }>,
+) => {
   return async () => {
-    const routeModule = await loadRouteModule();
+    const routeModule = await loadRouteModule(importRouteModule);
     return { Component: routeModule.default };
   };
 };
