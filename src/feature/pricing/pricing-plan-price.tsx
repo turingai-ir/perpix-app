@@ -37,33 +37,39 @@ const PricingPlanPrice: FC<PricingPlanPriceProps> = ({
   const discountPercent = getDiscountPercent(basePriceIrr, discountedPriceIrr);
   const hasDiscount = discountedPriceIrr < basePriceIrr;
 
-  if (!hasDiscount) {
-    return (
-      <p className="mt-3 text-4xl font-bold tracking-tight">
-        {discountedPrice} {t("common.rials")}
-      </p>
-    );
-  }
-
   return (
     <dl className="border-border/70 bg-muted/40 mt-5 rounded-xl border p-4 shadow-sm">
-      <div className="flex items-center justify-between gap-3 text-sm">
-        <dt className="text-muted-foreground">
-          {t("features.pricing.previousPrice")}
-        </dt>
-        <dd className="text-muted-foreground decoration-muted-foreground/70 whitespace-nowrap line-through">
-          {previousPrice} {t("common.rials")}
-        </dd>
+      <div className="flex min-h-5 items-center justify-between gap-3 text-sm">
+        {hasDiscount ? (
+          <>
+            <dt className="text-muted-foreground">
+              {t("features.pricing.previousPrice")}
+            </dt>
+            <dd className="text-muted-foreground decoration-muted-foreground/70 whitespace-nowrap line-through">
+              {previousPrice} {t("common.rials")}
+            </dd>
+          </>
+        ) : null}
       </div>
       <div className="border-border/70 my-3 border-t" />
       <div className="flex items-end justify-between gap-3">
-        <dt className="font-medium">{t("features.pricing.discountedPrice")}</dt>
+        <dt className="font-medium">
+          {t(
+            hasDiscount
+              ? "features.pricing.discountedPrice"
+              : "features.pricing.currentPrice",
+          )}
+        </dt>
         <dd className="flex flex-wrap items-center justify-end gap-2 text-end">
-          <span className="rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-bold text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200">
-            {t("features.pricing.discountPercent", {
-              percent: discountPercent,
-            })}
-          </span>
+          {hasDiscount ? (
+            <span className="rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-bold text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200">
+              {t("features.pricing.discountPercent", {
+                percent: discountPercent,
+              })}
+            </span>
+          ) : (
+            <span className="w-20" aria-hidden="true" />
+          )}
           <span className="text-2xl font-bold tracking-tight whitespace-nowrap">
             {discountedPrice} {t("common.rials")}
           </span>

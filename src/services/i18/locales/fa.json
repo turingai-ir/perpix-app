@@ -188,6 +188,7 @@
       "userFiles": "فایل‌های شما"
     },
     "pricing": {
+      "currentPrice": "قیمت",
       "discountedPrice": "قیمت با تخفیف",
       "discountPercent": "{{percent}}٪ تخفیف",
       "description": "شما برای استفاده از امکانات پرپیکس نیاز دارید یکی از بسته های زیر را خریداری کنید",
