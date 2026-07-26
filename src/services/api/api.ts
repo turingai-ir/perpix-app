@@ -1446,8 +1446,10 @@ export interface components {
             readonly scopes?: readonly string[];
             /** Allowed Models */
             readonly allowed_models?: readonly string[];
-            /** Price Usdmicro */
-            readonly price_usdmicro: number;
+            /** Base Price Usdmicro */
+            readonly base_price_usdmicro: number;
+            /** Discounted Price Usdmicro */
+            readonly discounted_price_usdmicro: number;
             /**
              * Duration Days
              * @default 30
@@ -1894,10 +1896,14 @@ export interface components {
             readonly scopes: readonly string[];
             /** Allowed Models */
             readonly allowed_models: readonly string[];
-            /** Price Usdmicro */
-            readonly price_usdmicro: number;
-            /** Price Irr */
-            readonly price_irr?: number | null;
+            /** Base Price Usdmicro */
+            readonly base_price_usdmicro: number;
+            /** Discounted Price Usdmicro */
+            readonly discounted_price_usdmicro: number;
+            /** Base Price Irr */
+            readonly base_price_irr?: number | null;
+            /** Discounted Price Irr */
+            readonly discounted_price_irr?: number | null;
             /** Duration Days */
             readonly duration_days: number;
             /** Balance Gift Amount Usdmicro */
@@ -1964,8 +1970,10 @@ export interface components {
             readonly scopes?: readonly string[] | null;
             /** Allowed Models */
             readonly allowed_models?: readonly string[] | null;
-            /** Price Usdmicro */
-            readonly price_usdmicro?: number | null;
+            /** Base Price Usdmicro */
+            readonly base_price_usdmicro?: number | null;
+            /** Discounted Price Usdmicro */
+            readonly discounted_price_usdmicro?: number | null;
             /** Duration Days */
             readonly duration_days?: number | null;
             /** Balance Gift Amount Usdmicro */
@@ -2313,7 +2321,7 @@ export interface components {
          * ApplicationErrorCode
          * @enum {integer}
          */
-        readonly ApplicationErrorCode: 900 | 901 | 902 | 999 | 1000 | 1001 | 1002 | 1003 | 1004 | 1005 | 1100 | 1101 | 1102 | 1103 | 1104 | 1105 | 1106 | 1200 | 1201 | 1202 | 1203 | 1204 | 1205 | 1206 | 1300 | 1301 | 1302 | 1303 | 1304 | 1400 | 1401 | 1500 | 1501 | 1502 | 1600 | 1601 | 1602 | 1700 | 1701 | 1702 | 1800 | 1801 | 1802 | 1803 | 1804 | 1805 | 1806 | 1807;
+        readonly ApplicationErrorCode: 900 | 901 | 902 | 999 | 1000 | 1001 | 1002 | 1003 | 1004 | 1005 | 1100 | 1101 | 1102 | 1103 | 1104 | 1105 | 1106 | 1200 | 1201 | 1202 | 1203 | 1204 | 1205 | 1206 | 1300 | 1301 | 1302 | 1303 | 1304 | 1400 | 1401 | 1500 | 1501 | 1502 | 1503 | 1600 | 1601 | 1602 | 1700 | 1701 | 1702 | 1800 | 1801 | 1802 | 1803 | 1804 | 1805 | 1806 | 1807;
         /** ApplicationErrorResponse */
         readonly ApplicationErrorResponse: {
             /**
@@ -4832,7 +4840,7 @@ export const paymentStatusEnumValues: ReadonlyArray<FlattenedDeepRequired<compon
 export const paymentTargetTypeEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaymentTargetTypeEnum"]> = ["subscription", "wallet"];
 export const walletOperationSourceEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["WalletOperationSourceEnum"]> = ["admin", "ai_gateway_request", "ai_task_message", "payment", "subscription"];
 export const walletTransactionTypeEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["WalletTransactionTypeEnum"]> = ["DEPOSIT", "WITHDRAW", "REFUND"];
-export const applicationErrorCodeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["ApplicationErrorCode"]> = [900, 901, 902, 999, 1000, 1001, 1002, 1003, 1004, 1005, 1100, 1101, 1102, 1103, 1104, 1105, 1106, 1200, 1201, 1202, 1203, 1204, 1205, 1206, 1300, 1301, 1302, 1303, 1304, 1400, 1401, 1500, 1501, 1502, 1600, 1601, 1602, 1700, 1701, 1702, 1800, 1801, 1802, 1803, 1804, 1805, 1806, 1807];
+export const applicationErrorCodeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["ApplicationErrorCode"]> = [900, 901, 902, 999, 1000, 1001, 1002, 1003, 1004, 1005, 1100, 1101, 1102, 1103, 1104, 1105, 1106, 1200, 1201, 1202, 1203, 1204, 1205, 1206, 1300, 1301, 1302, 1303, 1304, 1400, 1401, 1500, 1501, 1502, 1503, 1600, 1601, 1602, 1700, 1701, 1702, 1800, 1801, 1802, 1803, 1804, 1805, 1806, 1807];
 
 
 export const AiRegistryModelOwnerEnumMap = {
@@ -4978,6 +4986,7 @@ export const ApplicationErrorCodeMap = {
   1500: 1500,
   1501: 1501,
   1502: 1502,
+  1503: 1503,
   1600: 1600,
   1601: 1601,
   1602: 1602,

@@ -8,7 +8,6 @@ import { useAppTranslate } from "@/hooks";
 import LoadingSection from "@/components/custom/loading-section";
 import ErrorSection from "@/components/custom/error-section";
 import { type SchemaSubscriptionPlanListResponse } from "@/services/api";
-import { formatLocalizedNumber } from "@/utils";
 import {
   Sheet,
   SheetContent,
@@ -27,6 +26,7 @@ import {
 import { usePaymentRedirect } from "@/feature/payment";
 import { usePricingFeature } from "./hook";
 import { pricingFeatureAtom } from "./state";
+import PricingPlanPrice from "./pricing-plan-price";
 
 const normalizeList = <T,>(value: unknown): T[] => {
   if (!value) {
@@ -124,12 +124,21 @@ function PricingFeature() {
               {plans?.map((plan) => (
                 <div
                   key={plan?.name}
-                  className={cn("flex w-80 flex-col rounded-lg border p-6", {
-                    "border-foreground": plan?.is_recommended,
-                  })}
+                  className={cn(
+                    "bg-card flex w-full max-w-80 flex-col rounded-2xl border p-6 shadow-sm transition-shadow hover:shadow-md",
+                    {
+                      "border-primary ring-primary/25 ring-1":
+                        plan?.is_recommended,
+                    },
+                  )}
                 >
                   <h3 className="text-lg font-medium">{plan?.display_name}</h3>
-                  <p className="mt-2 text-4xl font-bold">{`${formatLocalizedNumber({ value: plan?.price_irr ?? 0 })} ${t("common.rials")}`}</p>
+                  <PricingPlanPrice
+                    basePriceIrr={plan.base_price_irr ?? 0}
+                    discountedPriceIrr={
+                      plan.discounted_price_irr ?? plan.base_price_irr ?? 0
+                    }
+                  />
                   <p className="text-muted-foreground mt-4 font-medium">
                     {plan?.description}
                   </p>
