@@ -157,6 +157,7 @@ const AuthLoginPageEnterPassword: FC = () => {
               accessTokenCookieOptions,
             );
             setPageState((draft) => {
+              draft.isRegistering = false;
               draft.currentView = "SET_PASSWORD";
             });
             toast.info(t("pages.auth.login.successSendOtp"));

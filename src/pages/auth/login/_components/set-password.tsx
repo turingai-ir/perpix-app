@@ -38,12 +38,13 @@ import {
 } from "@/components/ui/input-otp";
 import { PasswordInput } from "@/components/ui/password-input";
 import { useResendOtp, useSetPassword } from "../_hooks";
+import AuthLoginPageRegistrationPolicies from "./registration-policies";
 
 const AuthLoginPageSetPassword: FC = () => {
   const navigate = useNavigate();
   const cookie = cookies();
   const countDown = useSecondsCountDown(150);
-  const [, setPageState] = useImmerAtom(authLoginPageState);
+  const [pageState, setPageState] = useImmerAtom(authLoginPageState);
 
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const setPasswordState = useSetPassword();
@@ -108,13 +109,18 @@ const AuthLoginPageSetPassword: FC = () => {
       data.token,
       accessTokenCookieOptions,
     );
+    toast.success(
+      t("pages.auth.login.setPasswordForm.successSetPasswordToast"),
+    );
+
+    navigateToApp();
+  }
+
+  function navigateToApp() {
     setPageState((draft) => {
       draft.currentView = "START";
     });
     navigate(APP_ROUTES_KEY.app.path);
-    toast.success(
-      t("pages.auth.login.setPasswordForm.successSetPasswordToast"),
-    );
   }
 
   function handleOtpComplete() {
@@ -247,6 +253,9 @@ const AuthLoginPageSetPassword: FC = () => {
                 </Muted>
               )}
             </div>
+            {pageState.isRegistering ? (
+              <AuthLoginPageRegistrationPolicies />
+            ) : null}
             <Button
               className="w-full"
               type="submit"

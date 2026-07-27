@@ -429,6 +429,13 @@
           "successLoginToast": "با موفقیت وارد شدید"
         },
         "forgetPassword": "فراموشی رمز عبور",
+        "registrationPolicies": {
+          "agreementSuffix": "را مطالعه کرده‌اید و با آن‌ها موافقید.",
+          "description": "با ثبت‌نام در پرپیکس، اعلام می‌کنید که",
+          "privacy": "سیاست حریم خصوصی",
+          "separator": "و",
+          "terms": "شرایط استفاده"
+        },
         "setPasswordForm": {
           "confirmPassword": {
             "description": "تکرار رمز عبور خود را وارد کنید",

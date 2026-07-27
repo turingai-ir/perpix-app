@@ -33,3 +33,9 @@ dev-dist
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+
+
+.agents
+.codex
+
+graphify-out

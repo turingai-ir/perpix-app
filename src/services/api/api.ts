@@ -775,6 +775,61 @@ export interface paths {
         readonly patch?: never;
         readonly trace?: never;
     };
+    readonly "/admin/ai-gateway/requests": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        /** List Requests */
+        readonly get: operations["list_requests_admin_ai_gateway_requests_get"];
+        readonly put?: never;
+        readonly post?: never;
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
+    readonly "/admin/ai-gateway/requests/{request_uuid}/refresh": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path: {
+                readonly request_uuid: string;
+            };
+            readonly cookie?: never;
+        };
+        readonly get?: never;
+        readonly put?: never;
+        /** Get Request */
+        readonly post: operations["get_request_admin_ai_gateway_requests__request_uuid__refresh_post"];
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
+    readonly "/admin/ai-gateway/requests/{request_uuid}": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path: {
+                readonly request_uuid: string;
+            };
+            readonly cookie?: never;
+        };
+        /** Get Request */
+        readonly get: operations["get_request_admin_ai_gateway_requests__request_uuid__get"];
+        readonly put?: never;
+        readonly post?: never;
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
     readonly "/ai-registry/models": {
         readonly parameters: {
             readonly query?: never;
@@ -1013,6 +1068,11 @@ export interface components {
              */
             readonly user_uuid: string;
         };
+        /**
+         * AiGatewayConsumerTypeEnum
+         * @enum {string}
+         */
+        readonly AiGatewayConsumerTypeEnum: "AI_TASK";
         /** AiGatewayProviderWebhookPayload */
         readonly AiGatewayProviderWebhookPayload: components["schemas"]["JsonValue"];
         /** AiGatewayProviderWebhookResponse */
@@ -1020,6 +1080,89 @@ export interface components {
             /** Processed */
             readonly processed: number;
         };
+        /** AiGatewayRequestAdminListResponse */
+        readonly AiGatewayRequestAdminListResponse: {
+            /** Items */
+            readonly items: readonly components["schemas"]["AiGatewayRequestAdminResponse"][];
+            /** Total Count */
+            readonly total_count: number;
+            /** Offset */
+            readonly offset: number;
+            /** Limit */
+            readonly limit: number;
+        };
+        /** AiGatewayRequestAdminResponse */
+        readonly AiGatewayRequestAdminResponse: {
+            /**
+             * Uuid
+             * Format: uuid
+             */
+            readonly uuid: string;
+            /**
+             * User Uuid
+             * Format: uuid
+             */
+            readonly user_uuid: string;
+            /** Wallet Id */
+            readonly wallet_id: number | null;
+            /** Ai Model Id */
+            readonly ai_model_id: number | null;
+            /** Ai Provider Id */
+            readonly ai_provider_id: number | null;
+            /** Consumer Id */
+            readonly consumer_id: number | null;
+            readonly consumer_type: components["schemas"]["AiGatewayConsumerTypeEnum"] | null;
+            readonly task_status: components["schemas"]["AiGatewayStatusEnum"];
+            /** Ai External Provider Task Id */
+            readonly ai_external_provider_task_id: string | null;
+            /** Status Code */
+            readonly status_code: number | null;
+            /** Retry Count */
+            readonly retry_count: number;
+            /** Estimated Cost Usdmicro */
+            readonly estimated_cost_usdmicro: number | null;
+            /** Actual Cost Usdmicro */
+            readonly actual_cost_usdmicro: number | null;
+            /** Ai Model Config */
+            readonly ai_model_config: {
+                readonly [key: string]: unknown;
+            };
+            /** Raw Request */
+            readonly raw_request: {
+                readonly [key: string]: unknown;
+            } | null;
+            /** Raw Response */
+            readonly raw_response: {
+                readonly [key: string]: unknown;
+            } | readonly unknown[] | null;
+            /** Data */
+            readonly data: {
+                readonly [key: string]: unknown;
+            };
+            /** Error */
+            readonly error: {
+                readonly [key: string]: unknown;
+            } | null;
+            /** Expire Date */
+            readonly expire_date: string | null;
+            /** Last Provider Occurred At */
+            readonly last_provider_occurred_at: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            readonly created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            readonly updated_at: string;
+        };
+        /**
+         * AiGatewayStatusEnum
+         * @enum {string}
+         */
+        readonly AiGatewayStatusEnum: "CREATED" | "HOLD_RESERVED" | "PROCESSING" | "COMPLETED" | "FAILED" | "EXPIRED" | "CANCELLED";
         /** AiRegistryModelAdminSummary */
         readonly AiRegistryModelAdminSummary: {
             /**
@@ -1266,7 +1409,7 @@ export interface components {
          * AiRegistryProviderNameEnum
          * @enum {string}
          */
-        readonly AiRegistryProviderNameEnum: "RUNWARE" | "AIMLAPI" | "KIE";
+        readonly AiRegistryProviderNameEnum: "RUNWARE" | "AIMLAPI" | "KIE" | "OPENAI" | "GOOGLE" | "OPENROUTER";
         /** AiRegistryProviderUpdateRequest */
         readonly AiRegistryProviderUpdateRequest: {
             /** Display Name */
@@ -2154,6 +2297,8 @@ export interface components {
             readonly token: string;
             /** Is Verified */
             readonly is_verified: boolean;
+            /** Is Registering */
+            readonly is_registering: boolean;
             /** Next Otp At */
             readonly next_otp_at: string | null;
         };
@@ -2359,8 +2504,12 @@ export interface components {
 }
 export type SchemaActivateUserSubscriptionRequest = components['schemas']['ActivateUserSubscriptionRequest'];
 export type SchemaAdminUserGetInfoResponse = components['schemas']['AdminUserGetInfoResponse'];
+export type SchemaAiGatewayConsumerTypeEnum = components['schemas']['AiGatewayConsumerTypeEnum'];
 export type SchemaAiGatewayProviderWebhookPayload = components['schemas']['AiGatewayProviderWebhookPayload'];
 export type SchemaAiGatewayProviderWebhookResponse = components['schemas']['AiGatewayProviderWebhookResponse'];
+export type SchemaAiGatewayRequestAdminListResponse = components['schemas']['AiGatewayRequestAdminListResponse'];
+export type SchemaAiGatewayRequestAdminResponse = components['schemas']['AiGatewayRequestAdminResponse'];
+export type SchemaAiGatewayStatusEnum = components['schemas']['AiGatewayStatusEnum'];
 export type SchemaAiRegistryModelAdminSummary = components['schemas']['AiRegistryModelAdminSummary'];
 export type SchemaAiRegistryModelCreateRequest = components['schemas']['AiRegistryModelCreateRequest'];
 export type SchemaAiRegistryModelOwnerEnum = components['schemas']['AiRegistryModelOwnerEnum'];
@@ -4329,6 +4478,129 @@ export interface operations {
             };
         };
     };
+    readonly list_requests_admin_ai_gateway_requests_get: {
+        readonly parameters: {
+            readonly query?: {
+                readonly offset?: number;
+                readonly limit?: number;
+                readonly task_status?: components["schemas"]["AiGatewayStatusEnum"] | null;
+                readonly user_uuid?: string | null;
+            };
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["AiGatewayRequestAdminListResponse"];
+                };
+            };
+            /** @description Validation Error */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+        };
+    };
+    readonly get_request_admin_ai_gateway_requests__request_uuid__refresh_post: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path: {
+                readonly request_uuid: string;
+            };
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["AiGatewayRequestAdminResponse"];
+                };
+            };
+            /** @description Validation Error */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+        };
+    };
+    readonly get_request_admin_ai_gateway_requests__request_uuid__get: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path: {
+                readonly request_uuid: string;
+            };
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["AiGatewayRequestAdminResponse"];
+                };
+            };
+            /** @description Validation Error */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Application error */
+            readonly default: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+        };
+    };
     readonly list_models_ai_registry_models_get: {
         readonly parameters: {
             readonly query?: {
@@ -4829,9 +5101,11 @@ type ReadonlyArray<T> = [
 ] extends [
     unknown[]
 ] ? Readonly<Exclude<T, undefined>> : Readonly<Exclude<T, undefined>[]>;
+export const aiGatewayConsumerTypeEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiGatewayConsumerTypeEnum"]> = ["AI_TASK"];
+export const aiGatewayStatusEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiGatewayStatusEnum"]> = ["CREATED", "HOLD_RESERVED", "PROCESSING", "COMPLETED", "FAILED", "EXPIRED", "CANCELLED"];
 export const aiRegistryModelOwnerEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiRegistryModelOwnerEnum"]> = ["OPEN_AI", "GOOGLE", "BLACK_FOREST_LABS", "K_LING_AI", "BRIA", "BYTE_DANCE", "IMAGINE_ART", "LIGHT_TICKS", "MID_JOURNEY", "MINI_MAX", "PIX_VERSE", "PRUNA_AI", "RUNWAY", "SOURCE_FUL", "VIDU", "IDEOGRAM"];
 export const aiRegistryModelSupportedTypesEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiRegistryModelSupportedTypesEnum"]> = ["TEXT", "IMAGE", "AUDIO", "VIDEO"];
-export const aiRegistryProviderNameEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiRegistryProviderNameEnum"]> = ["RUNWARE", "AIMLAPI", "KIE"];
+export const aiRegistryProviderNameEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiRegistryProviderNameEnum"]> = ["RUNWARE", "AIMLAPI", "KIE", "OPENAI", "GOOGLE", "OPENROUTER"];
 export const aiTaskMessageStatusEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiTaskMessageStatusEnum"]> = ["PENDING", "IN_PROGRESS", "SUCCESS", "FAILED"];
 export const aiTaskRuleEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiTaskRuleEnum"]> = ["SYSTEM", "USER", "ASSISTANT", "TOOL", "FUNCTION", "INLINE"];
 export const aiTaskTypeEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiTaskTypeEnum"]> = ["TEXT", "IMAGE", "AUDIO", "VIDEO"];
@@ -4842,6 +5116,24 @@ export const walletOperationSourceEnumValues: ReadonlyArray<FlattenedDeepRequire
 export const walletTransactionTypeEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["WalletTransactionTypeEnum"]> = ["DEPOSIT", "WITHDRAW", "REFUND"];
 export const applicationErrorCodeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["ApplicationErrorCode"]> = [900, 901, 902, 999, 1000, 1001, 1002, 1003, 1004, 1005, 1100, 1101, 1102, 1103, 1104, 1105, 1106, 1200, 1201, 1202, 1203, 1204, 1205, 1206, 1300, 1301, 1302, 1303, 1304, 1400, 1401, 1500, 1501, 1502, 1503, 1600, 1601, 1602, 1700, 1701, 1702, 1800, 1801, 1802, 1803, 1804, 1805, 1806, 1807];
 
+
+export const AiGatewayConsumerTypeEnumMap = {
+  "AI_TASK": "AI_TASK",
+} as const;
+export type AiGatewayConsumerTypeEnumKey = keyof typeof AiGatewayConsumerTypeEnumMap;
+export type AiGatewayConsumerTypeEnumValue = (typeof AiGatewayConsumerTypeEnumMap)[AiGatewayConsumerTypeEnumKey];
+
+export const AiGatewayStatusEnumMap = {
+  "CREATED": "CREATED",
+  "HOLD_RESERVED": "HOLD_RESERVED",
+  "PROCESSING": "PROCESSING",
+  "COMPLETED": "COMPLETED",
+  "FAILED": "FAILED",
+  "EXPIRED": "EXPIRED",
+  "CANCELLED": "CANCELLED",
+} as const;
+export type AiGatewayStatusEnumKey = keyof typeof AiGatewayStatusEnumMap;
+export type AiGatewayStatusEnumValue = (typeof AiGatewayStatusEnumMap)[AiGatewayStatusEnumKey];
 
 export const AiRegistryModelOwnerEnumMap = {
   "OPEN_AI": "OPEN_AI",
@@ -4877,6 +5169,9 @@ export const AiRegistryProviderNameEnumMap = {
   "RUNWARE": "RUNWARE",
   "AIMLAPI": "AIMLAPI",
   "KIE": "KIE",
+  "OPENAI": "OPENAI",
+  "GOOGLE": "GOOGLE",
+  "OPENROUTER": "OPENROUTER",
 } as const;
 export type AiRegistryProviderNameEnumKey = keyof typeof AiRegistryProviderNameEnumMap;
 export type AiRegistryProviderNameEnumValue = (typeof AiRegistryProviderNameEnumMap)[AiRegistryProviderNameEnumKey];

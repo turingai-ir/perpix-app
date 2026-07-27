@@ -80,6 +80,7 @@ const AuthLoginPageStart: FC = () => {
     );
     setPageState((draft) => {
       draft.mobile = values.mobile;
+      draft.isRegistering = data.is_registering;
       draft.currentView = data.is_verified ? "PASSWORD" : "SET_PASSWORD";
     });
   }
