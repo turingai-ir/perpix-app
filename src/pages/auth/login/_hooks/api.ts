@@ -2,25 +2,25 @@ import { useReactQueryApi } from "@/hooks/app";
 
 export const useStart = () => {
   const { useMutation } = useReactQueryApi();
-  return useMutation("post", "/user/start");
+  return useMutation("post", "/api/v1/user/start");
 };
 
 export const useLogin = () => {
   const { useMutation } = useReactQueryApi();
-  return useMutation("post", "/user/login");
+  return useMutation("post", "/api/v1/user/login");
 };
 
 export const useResetPassword = () => {
   const { useMutation } = useReactQueryApi();
-  return useMutation("post", "/user/reset-password");
+  return useMutation("post", "/api/v1/user/reset-password");
 };
 
 export const useSetPassword = () => {
   const { useMutation } = useReactQueryApi();
-  return useMutation("post", "/user/set-password");
+  return useMutation("post", "/api/v1/user/set-password");
 };
 
 export const useResendOtp = () => {
   const { useMutation } = useReactQueryApi();
-  return useMutation("post", "/user/resend-otp");
+  return useMutation("post", "/api/v1/user/resend-otp");
 };

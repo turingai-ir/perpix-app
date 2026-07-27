@@ -84,18 +84,18 @@ export const useFileManager = (
     pendingUploadsGroupedAtom,
   );
 
-  const simpleUpload = useMutation("post", "/file-manager/simple-upload");
+  const simpleUpload = useMutation("post", "/api/v1/file-manager/simple-upload");
   const initiateMultipartUpload = useMutation(
     "post",
-    "/file-manager/multipart/initiate",
+    "/api/v1/file-manager/multipart/initiate",
   );
   const presignMultipartPart = useMutation(
     "post",
-    "/file-manager/multipart/presign-part",
+    "/api/v1/file-manager/multipart/presign-part",
   );
   const completeMultipartUpload = useMutation(
     "post",
-    "/file-manager/multipart/complete",
+    "/api/v1/file-manager/multipart/complete",
   );
 
   const pendingUploads = useMemo(
@@ -331,7 +331,7 @@ const fetchFilePreviewUrls = async (fileUuids: readonly string[]) => {
   const responses = await Promise.all(
     chunkFileUuids(fileUuids).map(async (chunk) => {
       const { data, error, response } = await apiClient.POST(
-        "/file-manager/files/presigned-urls" as never,
+        "/api/v1/file-manager/files/presigned-urls" as never,
         {
           body: {
             file_uuids: chunk,
@@ -393,13 +393,13 @@ export const useDeleteUserFile = () => {
   const { queryOptions } = useReactQueryApi();
   const userFilesQueryKey = queryOptions(
     "get",
-    "/file-manager/user-files",
+    "/api/v1/file-manager/user-files",
   ).queryKey;
 
   const deleteFileState = useMutation({
     mutationFn: async (fileUuid: string) => {
       const { error, response } = await apiClient.DELETE(
-        "/file-manager/files/{file_uuid}" as never,
+        "/api/v1/file-manager/files/{file_uuid}" as never,
         {
           params: {
             path: {
@@ -426,7 +426,7 @@ export const useReplaceUserFile = () => {
   const { queryOptions } = useReactQueryApi();
   const userFilesQueryKey = queryOptions(
     "get",
-    "/file-manager/user-files",
+    "/api/v1/file-manager/user-files",
   ).queryKey;
 
   const replaceFileState = useMutation({
@@ -438,7 +438,7 @@ export const useReplaceUserFile = () => {
       file: File;
     }) => {
       const { error, response } = await apiClient.PUT(
-        "/file-manager/files/{file_uuid}" as never,
+        "/api/v1/file-manager/files/{file_uuid}" as never,
         {
           params: {
             path: {
@@ -476,7 +476,7 @@ export const useInfiniteUserFiles = ({
 
   const getUserFilesState = useInfiniteQuery(
     "get",
-    "/file-manager/user-files",
+    "/api/v1/file-manager/user-files",
     {
       params: {
         query: {

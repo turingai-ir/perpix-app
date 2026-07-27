@@ -2,12 +2,12 @@ import { useReactQueryApi } from "@/hooks/app";
 
 export const useWallet = () => {
   const { useQuery } = useReactQueryApi();
-  return useQuery("get", "/wallet/wallet");
+  return useQuery("get", "/api/v1/wallet/wallet", undefined);
 };
 
 export const useChargeWallet = () => {
   const { useMutation } = useReactQueryApi();
-  return useMutation("post", "/wallet/charge");
+  return useMutation("post", "/api/v1/wallet/charge");
 };
 
 type UseWalletTransactionsParams = {
@@ -21,7 +21,7 @@ export const useWalletTransactions = ({
 }: UseWalletTransactionsParams = {}) => {
   const { useQuery } = useReactQueryApi();
 
-  return useQuery("get", "/wallet/transactions", {
+  return useQuery("get", "/api/v1/wallet/transactions", {
     params: { query: { offset, limit } },
   });
 };

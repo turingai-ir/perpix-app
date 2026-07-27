@@ -5,7 +5,7 @@ import type { AiTaskMessageEvent } from "./types";
 
 import { APP_KEYS } from "@/utils";
 
-const AI_TASK_EVENTS_PATH = "/ai-task/events";
+const AI_TASK_EVENTS_PATH = "/api/v1/ai-task/events";
 const AI_TASK_MESSAGE_EVENT = "ai_task_message";
 const WATCHDOG_TIMEOUT_MS = 20_000;
 const RECONNECT_DELAY_MS = 1_000;

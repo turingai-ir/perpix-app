@@ -2,10 +2,10 @@ import { useReactQueryApi } from "@/hooks/app";
 
 export const useUser = () => {
   const { useQuery } = useReactQueryApi();
-  return useQuery("get", "/user/get-info");
+  return useQuery("get", "/api/v1/user/get-info", undefined);
 };
 
 export const useEditUserInfo = () => {
   const { useMutation } = useReactQueryApi();
-  return useMutation("patch", "/user/edit-info");
+  return useMutation("patch", "/api/v1/user/edit-info");
 };

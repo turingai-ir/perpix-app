@@ -62,20 +62,20 @@ export function AiTaskEventsProvider() {
         return;
       }
 
-      const taskQueryOptions = queryOptions("get", "/ai-task/{task_uuid}", {
+      const taskQueryOptions = queryOptions("get", "/api/v1/ai-task/{task_uuid}", {
         params: { path: { task_uuid: payload.task_uuid } },
       });
       const taskResultQueryOptions = queryOptions(
         "get",
-        "/ai-task/result/{task_message_uuid}",
+        "/api/v1/ai-task/result/{task_message_uuid}",
         {
           params: {
             path: { task_message_uuid: payload.task_message_uuid },
           },
         },
       );
-      const aiTasksListQueryKey = queryOptions("get", "/ai-task/list").queryKey;
-      const walletQueryKey = queryOptions("get", "/wallet/wallet").queryKey;
+      const aiTasksListQueryKey = queryOptions("get", "/api/v1/ai-task/list", undefined).queryKey;
+      const walletQueryKey = queryOptions("get", "/api/v1/wallet/wallet", undefined).queryKey;
 
       queryClient.removeQueries({
         queryKey: taskResultQueryOptions.queryKey,

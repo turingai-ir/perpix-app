@@ -5,7 +5,7 @@ export const usePaymentStatus = (paymentUuid?: string) => {
 
   return useQuery(
     "get",
-    "/payment/{payment_uuid}",
+    "/api/v1/payment/{payment_uuid}",
     {
       params: { path: { payment_uuid: paymentUuid ?? "" } },
     },
@@ -28,7 +28,7 @@ export const usePayments = ({
 
   return useQuery(
     "get",
-    "/payment/list",
+    "/api/v1/payment/list",
     { params: { query: { offset, limit } } },
     { enabled },
   );

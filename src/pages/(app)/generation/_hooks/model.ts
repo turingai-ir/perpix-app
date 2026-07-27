@@ -36,7 +36,7 @@ const DEFAULT_PAGE_SIZE = 50;
 
 const getAiTasksListQueryKey = (
   queryOptions: ReturnType<typeof useReactQueryApi>["queryOptions"],
-) => queryOptions("get", "/ai-task/list").queryKey;
+) => queryOptions("get", "/api/v1/ai-task/list", undefined).queryKey;
 
 const getAiTasksListTaskType = (query: Query) => {
   const init = query.queryKey[2] as
@@ -106,7 +106,7 @@ export const useModel = (
   const allowedModelNames = activeSubscriptionState.data?.plan
     .allowed_models as readonly string[] | undefined;
 
-  const modelsListState = useQuery("get", "/ai-registry/models", {
+  const modelsListState = useQuery("get", "/api/v1/ai-registry/models", {
     params: {
       query: {
         supported_outputs: supportedOutputs,
@@ -130,7 +130,7 @@ export const useModel = (
 
   const modelState = useQuery(
     "get",
-    "/ai-registry/models/{ai_model_uuid}",
+    "/api/v1/ai-registry/models/{ai_model_uuid}",
     {
       params: {
         path: {
@@ -158,12 +158,12 @@ export const useAiGenerate = (task_id: string | undefined) => {
   const { useMutation, useQuery, queryOptions } = useReactQueryApi();
   const queryClient = useQueryClient();
   const { guardAsyncAction } = usePaidActionGuard();
-  const userQueryKey = queryOptions("get", "/user/get-info").queryKey;
+  const userQueryKey = queryOptions("get", "/api/v1/user/get-info", undefined).queryKey;
   const aiTasksListQueryKey = getAiTasksListQueryKey(queryOptions);
 
   const aiTaskState = useQuery(
     "get",
-    "/ai-task/{task_uuid}",
+    "/api/v1/ai-task/{task_uuid}",
     {
       params: { path: { task_uuid: task_id! } },
     },
@@ -172,12 +172,12 @@ export const useAiGenerate = (task_id: string | undefined) => {
     },
   );
 
-  const aiGenerateState = useMutation("post", "/ai-task/generate", {
+  const aiGenerateState = useMutation("post", "/api/v1/ai-task/generate", {
     onSuccess(taskData) {
       const task = taskData as SchemaAiTaskResponse;
       void queryClient.invalidateQueries({ queryKey: userQueryKey });
       if (task?.uuid) {
-        const singleTaskQueryKey = queryOptions("get", "/ai-task/{task_uuid}", {
+        const singleTaskQueryKey = queryOptions("get", "/api/v1/ai-task/{task_uuid}", {
           params: { path: { task_uuid: task.uuid } },
         }).queryKey;
         queryClient.setQueryData(singleTaskQueryKey, task);
@@ -263,12 +263,12 @@ export const useAiTaskResultPolling = (
   const { useQuery, queryOptions } = useReactQueryApi();
   const queryClient = useQueryClient();
   const aiTaskQueryKey = taskUuid
-    ? queryOptions("get", "/ai-task/{task_uuid}", {
+    ? queryOptions("get", "/api/v1/ai-task/{task_uuid}", {
         params: { path: { task_uuid: taskUuid } },
       }).queryKey
     : undefined;
   const aiTasksListQueryKey = getAiTasksListQueryKey(queryOptions);
-  const walletQueryKey = queryOptions("get", "/wallet/wallet").queryKey;
+  const walletQueryKey = queryOptions("get", "/api/v1/wallet/wallet", undefined).queryKey;
 
   const refreshAfterTaskResult = () => {
     if (aiTaskQueryKey) {
@@ -285,7 +285,7 @@ export const useAiTaskResultPolling = (
 
   return useQuery(
     "get",
-    "/ai-task/result/{task_message_uuid}",
+    "/api/v1/ai-task/result/{task_message_uuid}",
     {
       params: {
         path: {
@@ -329,7 +329,7 @@ export const useAiTasksList = (
 
   const aiTasksListStatus = useInfiniteQuery(
     "get",
-    "/ai-task/list",
+    "/api/v1/ai-task/list",
     {
       params: {
         query: {
