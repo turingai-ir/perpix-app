@@ -4,7 +4,19 @@ import { Muted } from "@/components/ui/typography";
 import { useAppTranslate } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
 
-const perpixMainUrl = import.meta.env.VITE_PERPIX_MAIN_URL;
+const defaultPerpixMainUrl = "https://perpixai.ir";
+
+function getPerpixMainUrl(): URL {
+  const configuredPerpixMainUrl = import.meta.env.VITE_PERPIX_MAIN_URL;
+
+  try {
+    return new URL(configuredPerpixMainUrl || defaultPerpixMainUrl);
+  } catch {
+    return new URL(defaultPerpixMainUrl);
+  }
+}
+
+const perpixMainUrl = getPerpixMainUrl();
 const termsUrl = new URL("/terms/", perpixMainUrl).toString();
 const privacyUrl = new URL("/privacy/", perpixMainUrl).toString();
 
