@@ -1,5 +1,5 @@
 import { useImmerAtom } from "jotai-immer";
-import { type FC } from "react";
+import { type CSSProperties, type FC } from "react";
 
 import appLayoutAtom from "../_state";
 
@@ -17,8 +17,6 @@ import {
 const AppLayoutSidebar: FC<{ sidebarWidth: string }> = ({ sidebarWidth }) => {
   const [appLayoutState, setAppLayoutState] = useImmerAtom(appLayoutAtom);
   const breakpoints = useViewportBreakpoint();
-
-  console.log({appLayoutState})
 
   if (breakpoints.lg) {
     return (
@@ -51,11 +49,12 @@ const AppLayoutSidebar: FC<{ sidebarWidth: string }> = ({ sidebarWidth }) => {
       }
     >
       <SheetContent
-        className="bg-sidebar w-(--sidebar-width)"
+        dir="rtl"
+        className="bg-sidebar h-dvh max-h-dvh w-[min(var(--sidebar-width),100dvw)] max-w-full min-w-0 overflow-x-hidden p-0"
         style={
           {
             "--sidebar-width": sidebarWidth,
-          } as React.CSSProperties
+          } as CSSProperties
         }
       >
         <SheetHeader>

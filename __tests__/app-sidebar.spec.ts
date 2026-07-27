@@ -126,6 +126,31 @@ test.describe("App sidebar", () => {
       page.getByRole("button", { name: "بستن نوار کناری" }),
     ).toHaveAttribute("aria-expanded", "true");
   });
+
+  test("keeps the mobile sidebar within the iPhone viewport", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/");
+
+    await page.getByRole("button", { name: "باز کردن نوار کناری" }).click();
+
+    const sidebarSheet = page.locator('[data-slot="sheet-content"]');
+    await expect(sidebarSheet).toBeVisible();
+
+    const dimensions = await sidebarSheet.evaluate((element) => ({
+      clientWidth: element.clientWidth,
+      overflowX: getComputedStyle(element).overflowX,
+      scrollWidth: element.scrollWidth,
+      viewportWidth: window.innerWidth,
+    }));
+
+    expect(dimensions.clientWidth).toBeLessThanOrEqual(
+      dimensions.viewportWidth,
+    );
+    expect(dimensions.scrollWidth).toBe(dimensions.clientWidth);
+    expect(dimensions.overflowX).toBe("hidden");
+  });
 });
 
 async function mockApi(page: Page) {

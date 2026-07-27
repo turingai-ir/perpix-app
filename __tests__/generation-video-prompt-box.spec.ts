@@ -80,6 +80,22 @@ test("updates visible video prompt fields when the generation mode changes", asy
   await expect(page.getByText("تولید صدا")).toBeHidden();
 });
 
+test("shows the generation rules from the prompt box help button", async ({
+  page,
+}) => {
+  await openVideoGenerationPage(page);
+
+  await page.getByRole("button", { name: "راهنمای قوانین تولید" }).click();
+
+  const dialog = page.getByRole("dialog", { name: "قوانین مهم تولید" });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByText("محتوای ممنوعه")).toBeVisible();
+  await expect(dialog.getByText("وضعیت توکن و زمان پردازش")).toBeVisible();
+  await expect(
+    dialog.getByRole("link", { name: "مشاهده قوانین کامل" }),
+  ).toHaveAttribute("href", "https://perpixai.ir/terms/");
+});
+
 test("loads mode config from the model detail without the removed generation-config endpoint", async ({
   page,
 }) => {

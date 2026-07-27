@@ -56,21 +56,21 @@ const AppLayoutSidebarNavigation: FC = () => {
   ];
 
   return (
-    <ul className="flex flex-col gap-1.5">
+    <ul className="flex min-w-0 flex-col gap-1.5">
       {menuItems.map(({ key, label, href, Icon, badge }) => (
-        <li key={key}>
+        <li key={key} className="min-w-0">
           <NavLink
             to={href}
             className={({ isActive }) =>
               cn(
                 buttonVariants({ variant: "ghost" }),
-                "w-full justify-start gap-3",
+                "w-full min-w-0 justify-start gap-3",
                 isActive && "bg-sidebar-accent text-sidebar-accent-foreground",
               )
             }
           >
             <Icon aria-hidden className="h-5 w-5" />
-            <span>{label}</span>
+            <span className="truncate">{label}</span>
             {badge ? (
               <Badge variant="secondary" className="ms-auto">
                 {badge}
