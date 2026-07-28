@@ -4,6 +4,7 @@ import { CircleCheck, LoaderCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAppTranslate } from "@/hooks";
 import LoadingSection from "@/components/custom/loading-section";
 import ErrorSection from "@/components/custom/error-section";
@@ -103,12 +104,15 @@ function PricingFeature() {
 
   return (
     <Sheet open={open} onOpenChange={handleOpenChange}>
-      <SheetContent side="bottom" className="flex h-dvh w-full flex-col">
-        <SheetHeader>
-          <SheetTitle className="text-center text-4xl">
+      <SheetContent
+        side="bottom"
+        className="flex !h-dvh w-full flex-col overflow-hidden"
+      >
+        <SheetHeader className="p-4 sm:p-6">
+          <SheetTitle className="text-center text-2xl sm:text-4xl">
             {t("features.pricing.title")}
           </SheetTitle>
-          <SheetDescription className="text-center text-lg">
+          <SheetDescription className="text-center text-base sm:text-lg">
             {t("features.pricing.description")}
           </SheetDescription>
         </SheetHeader>
@@ -119,13 +123,16 @@ function PricingFeature() {
         )}
 
         {open && plansState.isSuccess ? (
-          <div className="flex flex-1 items-center-safe overflow-y-auto px-6 pt-8">
-            <div className="mx-auto flex max-w-(--breakpoint-lg) flex-col gap-4 lg:flex-row lg:gap-8">
+          <ScrollArea
+            className="h-0 min-h-0 flex-1 overflow-hidden"
+            viewportClassName="h-full touch-pan-y overscroll-contain"
+          >
+            <div className="mx-auto flex w-full max-w-(--breakpoint-lg) flex-col gap-4 px-4 pt-4 sm:px-6 sm:pt-8 lg:flex-row lg:gap-8">
               {plans?.map((plan) => (
                 <div
                   key={plan?.name}
                   className={cn(
-                    "bg-card flex w-full max-w-80 flex-col rounded-2xl border p-6 shadow-sm transition-shadow hover:shadow-md",
+                    "bg-card flex w-full max-w-none flex-col rounded-xl border p-4 shadow-sm transition-shadow hover:shadow-md sm:max-w-80 sm:rounded-2xl sm:p-6",
                     {
                       "border-primary ring-primary/25 ring-1":
                         plan?.is_recommended,
@@ -139,11 +146,11 @@ function PricingFeature() {
                       plan.discounted_price_irr ?? plan.base_price_irr ?? 0
                     }
                   />
-                  <p className="text-muted-foreground mt-4 font-medium">
+                  <p className="text-muted-foreground mt-3 font-medium sm:mt-4">
                     {plan?.description}
                   </p>
 
-                  <Separator className="my-4" />
+                  <Separator className="my-3 sm:my-4" />
 
                   <ul className="space-y-2">
                     {((plan.meta?.features as string[]) ?? []).map(
@@ -159,7 +166,7 @@ function PricingFeature() {
                     )}
                   </ul>
 
-                  <div className="mt-auto pt-7">
+                  <div className="mt-auto pt-5 sm:pt-7">
                     <Button
                       type="button"
                       variant={plan?.is_recommended ? "default" : "outline"}
@@ -189,7 +196,7 @@ function PricingFeature() {
                 </div>
               ))}
             </div>
-          </div>
+          </ScrollArea>
         ) : null}
       </SheetContent>
     </Sheet>
