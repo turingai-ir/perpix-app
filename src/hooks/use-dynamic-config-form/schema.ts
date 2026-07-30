@@ -272,6 +272,56 @@ function applyConditionalConstValues(
   return result;
 }
 
+export function getConditionalProperty(
+  configSchema: JsonConfigSchema,
+  fieldName: string,
+  values: Record<string, unknown>,
+): JsonSchemaProperty | undefined {
+  const property = configSchema.properties[fieldName];
+
+  if (!property) return undefined;
+
+  return applyConditionalPropertyConstraints(
+    configSchema,
+    fieldName,
+    values,
+    property,
+  );
+}
+
+function applyConditionalPropertyConstraints(
+  schema: Record<string, unknown>,
+  fieldName: string,
+  values: Record<string, unknown>,
+  property: JsonSchemaProperty,
+): JsonSchemaProperty {
+  let resolvedProperty = property;
+  const rules = Array.isArray(schema.allOf) ? schema.allOf : [];
+
+  for (const rule of rules) {
+    if (!isRecord(rule) || !conditionMatches(rule.if, values)) continue;
+    if (!isRecord(rule.then)) continue;
+
+    const conditionalProperties = isRecord(rule.then.properties)
+      ? rule.then.properties
+      : undefined;
+    const conditionalProperty = conditionalProperties?.[fieldName];
+
+    if (isRecord(conditionalProperty)) {
+      resolvedProperty = { ...resolvedProperty, ...conditionalProperty };
+    }
+
+    resolvedProperty = applyConditionalPropertyConstraints(
+      rule.then,
+      fieldName,
+      values,
+      resolvedProperty,
+    );
+  }
+
+  return resolvedProperty;
+}
+
 function normalizeValueForAjv(
   prop: JsonSchemaProperty,
   value: unknown,
@@ -781,16 +831,30 @@ export function buildFieldMeta(params: {
   requiredFields: readonly string[];
   defaultValues: Record<string, unknown>;
   configMeta?: JsonConfigMeta | null;
+  configSchema?: JsonConfigSchema;
+  values?: Record<string, unknown>;
 }): FieldMeta {
-  const { name, prop, requiredFields, defaultValues, configMeta } = params;
+  const {
+    name,
+    prop,
+    requiredFields,
+    defaultValues,
+    configMeta,
+    configSchema,
+    values,
+  } = params;
 
   const uiFieldMeta = resolveUiFieldMeta(configMeta, name);
+  const conditionalProperty =
+    values && configSchema
+      ? (getConditionalProperty(configSchema, name, values) ?? prop)
+      : prop;
   const resolvedWidget = uiFieldMeta?.widget ?? undefined;
   const resolvedProperty: JsonSchemaProperty = {
-    ...prop,
-    title: uiFieldMeta?.title ?? prop.title,
-    description: uiFieldMeta?.description ?? prop.description,
-    "x-file": uiFieldMeta?.file ?? prop["x-file"],
+    ...conditionalProperty,
+    title: uiFieldMeta?.title ?? conditionalProperty.title,
+    description: uiFieldMeta?.description ?? conditionalProperty.description,
+    "x-file": uiFieldMeta?.file ?? conditionalProperty["x-file"],
   };
   let inputType = resolveWidgetInputType(resolvedWidget);
   if (!inputType) {

@@ -7,6 +7,7 @@ import {
   buildFieldMeta,
   createValidationMessages,
   EMPTY_CONFIG_SCHEMA,
+  getConditionalProperty,
   getOrderedFieldNames,
   getVisibleConfigFields,
   sanitizeConfigValues,
@@ -99,6 +100,8 @@ export function useDynamicConfigForm({
         requiredFields,
         defaultValues: defaultValues as Record<string, unknown>,
         configMeta,
+        configSchema: safeConfigSchema,
+        values: defaultValues as Record<string, unknown>,
       }),
     );
   }, [
@@ -107,6 +110,7 @@ export function useDynamicConfigForm({
     requiredFields,
     defaultValues,
     configMeta,
+    safeConfigSchema,
   ]);
 
   const form = useForm<DynamicConfigValues>({
@@ -115,6 +119,37 @@ export function useDynamicConfigForm({
     mode: "onBlur",
     ...formOptions,
   });
+  const currentValues = useWatch({ control: form.control });
+
+  useEffect(() => {
+    for (const fieldName of Object.keys(safeConfigSchema.properties)) {
+      const property = getConditionalProperty(
+        safeConfigSchema,
+        fieldName,
+        currentValues,
+      );
+      const options = property?.enum;
+      const currentValue = currentValues[fieldName];
+
+      const isCurrentValueAllowed = options?.some((option) =>
+        Object.is(option, currentValue),
+      );
+
+      if (!options || currentValue === undefined || isCurrentValueAllowed) {
+        continue;
+      }
+
+      const nextValue =
+        property.default !== undefined &&
+        options.some((option) => Object.is(option, property.default))
+          ? property.default
+          : options[0];
+
+      if (nextValue !== undefined) {
+        form.setValue(fieldName, nextValue, { shouldValidate: true });
+      }
+    }
+  }, [currentValues, form, safeConfigSchema]);
 
   const prevSchemaKeyRef = useRef(resolvedSchemaKey);
 
@@ -162,9 +197,18 @@ export function useDynamicConfigForm({
         requiredFields,
         defaultValues: defaultValues as Record<string, unknown>,
         configMeta,
+        configSchema: safeConfigSchema,
+        values: currentValues,
       });
     },
-    [properties, requiredFields, defaultValues, configMeta],
+    [
+      properties,
+      requiredFields,
+      defaultValues,
+      configMeta,
+      safeConfigSchema,
+      currentValues,
+    ],
   );
 
   const getFieldMetaForProperty = useCallback(
@@ -181,9 +225,10 @@ export function useDynamicConfigForm({
           [fieldName]: defaultValue,
         },
         configMeta,
+        values: currentValues,
       });
     },
-    [configMeta],
+    [configMeta, currentValues],
   );
 
   const getCleanValues = useCallback(() => {
