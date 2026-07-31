@@ -17,7 +17,7 @@ export function formatLocalizedNumber({ value }: FormatLocalizedNumberParams) {
     return "";
   }
 
-  return new Intl.NumberFormat(jotaiStore.get(globalAtom).language, {
+  return Intl.NumberFormat(jotaiStore.get(globalAtom).language, {
     maximumFractionDigits: 0,
   }).format(value);
 }
