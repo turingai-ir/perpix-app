@@ -1,85 +1,107 @@
-# Perpix App — Agent Handbook
+# PerPix Frontend Agent Instructions
 
-## 1. Runtime and verification
+## Source of Truth
 
-`perpix-app` is a React 19, TypeScript, and Vite application. Its main tools
-are Tailwind CSS, TanStack Query, Jotai, React Hook Form, Zod, React Router,
-i18next, Workbox, Sentry, and Playwright.
+- Follow the actual dependencies, versions and scripts in `package.json`.
+- Follow existing project patterns before introducing new architecture.
+- Do not install, upgrade or remove dependencies unless explicitly requested.
+- Detailed architecture requirements are stored in:
+  `docs/agent-guides/FRONTEND_ARCHITECTURE_FULL.md`
 
-Run commands from `perpix-app/`:
+## Context Discipline
 
-```bash
-pnpm scripts:generate-api   # Requires the local backend OpenAPI endpoint
-pnpm build                  # tsc -b and Vite production build
-pnpm lint
-pnpm exec playwright test
-```
+- Read only files directly related to the current task.
+- Search for symbols and usages before opening complete files.
+- Do not scan the entire repository unless architectural analysis is required.
+- Never inspect `node_modules`, `dist`, `coverage` or generated output directories.
+- Keep terminal output limited to actionable errors and relevant results.
+- Do not modify or refactor unrelated code.
+- Before reading more than five files, confirm they are necessary for the task.
+- Never print an entire large file when a focused excerpt is sufficient.
+- Treat `src/services/api/api.ts` as a large generated file. Never read it completely; search for the exact symbol, type or endpoint and inspect only the relevant section.
+- Do not edit `src/services/api/api.ts` manually unless explicitly requested.
+- Never read `src/services/i18/locales/fa.json` completely. Search for the exact translation key and inspect only nearby entries.
+- Use `ui-ux-pro-max` only for new pages, complete redesigns or explicit design-system work.
+- Do not load `ui-ux-pro-max` for text changes, bug fixes or minor styling.
 
-`tsconfig.app.json` is strict and enables unused-local/parameter checks. Run
-the relevant test while iterating, then run build, lint, and relevant Playwright
-coverage before handoff. Read the workspace handbook before cross-application or
-structural work.
+## Code Standards
 
-## 2. Source ownership and dependency direction
+- Use TypeScript without introducing `any`.
+- Prefer readable, straightforward React code.
+- Avoid nested ternary expressions.
+- Use the Rule of Three before creating shared abstractions.
+- Preserve accessibility, RTL and existing localization conventions.
+- User-visible text must follow the project's existing i18n system.
+- Components must not perform direct API calls when existing services and hooks handle them.
+- Cross-feature imports must use the feature's public `index.ts` API.
+- Reuse existing components, hooks and utilities before creating new ones.
+- Do not introduce new architectural patterns without a clear project requirement.
 
-All new feature work belongs in `src/features/<feature-name>/`:
+## File Scope
 
-```text
-src/features/<feature-name>/
-├── index.ts        # public API only
-├── model/          # framework-independent types, Zod schemas, formatters
-├── services/       # API, streaming, IndexedDB, data transformation
-├── hooks/          # TanStack Query, Jotai, view-model orchestration
-├── components/     # UI containers and presentational components
-└── _tests/         # feature behavior tests
-```
+- New or substantially modified components and hooks should remain focused and preferably below 100 logical lines.
+- Split files only when they contain multiple responsibilities.
+- Do not refactor unrelated legacy files solely to satisfy a line limit.
+- Make the smallest change that completely solves the requested task.
 
-- Legacy areas such as `src/feature/`, `src/pages/`, and `src/services/` may be
-  modified only when required by the approved scope. Do not silently migrate
-  them during unrelated feature work.
-- Cross-feature imports go through the target feature's `index.ts`; never deep
-  import another feature's internals.
-- Dependencies flow inward: `components → hooks → services → model → core/shared`.
-  Components never fetch or call APIs directly; services never import React.
-- Use the `@/` alias for `src/` imports where it improves clarity.
+## Detailed Architecture Trigger
 
-## 3. Types, APIs, and state
+Read `docs/agent-guides/FRONTEND_ARCHITECTURE_FULL.md` before working on:
 
-- TypeScript is non-negotiably strict: do not use `any`, broad suppressions, or
-  unsafe casts. Validate untrusted input with Zod and narrow unknown data using
-  type guards or discriminated unions.
-- `src/services/api/api.ts` is generated from the backend OpenAPI schema. Never
-  hand-edit it. After an approved backend contract change, run
-  `pnpm scripts:generate-api` and commit the resulting generated type changes.
-- Use TanStack Query for server state, cache invalidation, mutations, and
-  request lifecycle. Use Jotai only for client-local, shared UI state; keep
-  ephemeral state local to the component.
-- Keep API/streaming/IndexedDB details inside feature services. Convert raw
-  transport errors to typed, user-safe states before they reach components.
+- API integrations or generated API contracts
+- Jotai or TanStack Query state
+- Offline-first behavior
+- IndexedDB persistence
+- PWA or service workers
+- React Konva or performance-sensitive canvas code
+- Feature boundaries or architectural changes
+- Large cross-file refactors
 
-## 4. UI, accessibility, and resilience
+Do not load the complete architecture document for isolated text, color, spacing or simple UI changes.
 
-- Every user-visible string—including labels, placeholders, validation messages,
-  `title`, and `aria-label`—uses i18next through `useAppTranslate`. Do not add
-  hard-coded UI copy.
-- Use semantic controls and test user interactions by accessible role and name.
-  Support loading, empty, error, and permission states for data-driven UI.
-- Keep components and custom hooks focused and under 100 lines. Avoid nested
-  ternaries. Do not extract a generic abstraction until it has three real uses.
-- For safe write operations, use optimistic updates and roll back on permanent
-  failure. Persist reload-surviving offline state with `idb-keyval` in services;
-  handle offline mode with localized, non-blocking feedback rather than a blank
-  or frozen interface.
-- Isolate high-frequency Konva updates in local components or Jotai atoms; do
-  not let pointer movement or canvas rendering invalidate parent layouts.
+## Testing Strategy
 
-## 5. Tests and repository intelligence
+Always begin with the smallest relevant validation.
 
-- Follow Red-Green-Refactor with Playwright. Place feature tests in `_tests/` and
-  cover the user flow plus relevant loading, error, offline, rollback, and
-  accessibility behavior.
-- For `/graphify` requests, use the Graphify workflow first. When
-  `graphify-out/graph.json` exists, query the graph before broad source search;
-  after code changes run `graphify update .`.
-- Do not report a change complete while required generation, build, lint, or
-  relevant test gates fail. State exactly what was run and what remains.
+### Trivial UI Changes
+
+For text, color, spacing or isolated styling changes:
+
+- Do not create a new test unless behavior changes.
+- Run only the smallest relevant lint or type validation.
+- Do not run the complete build or Playwright suite unless requested.
+
+### Behavioral Changes
+
+For interactions, bug fixes or business logic:
+
+- Add or update the relevant test.
+- Follow Red-Green-Refactor when practical.
+- Run targeted tests for the affected feature.
+- Do not run unrelated test suites.
+
+### Critical Changes
+
+For API, offline behavior, persistence, routing, authentication, canvas or shared architecture:
+
+- Read the complete architecture document.
+- Apply its TDD and resiliency requirements.
+- Run the relevant build, lint and Playwright validations.
+- Run `generate-api` only when API contracts are involved.
+- Run the complete verification suite before merge or when explicitly requested.
+
+## Terminal and Tool Output
+
+- Use targeted searches instead of repository-wide file reads.
+- Prefer concise commands and filtered output.
+- Do not include complete build logs when only a small error section is relevant.
+- Do not repeatedly run successful commands without a concrete reason.
+- Stop and report the blocker when additional broad analysis is required.
+
+## Completion Report
+
+Keep the final response concise and include:
+
+- Files changed
+- Validation performed
+- Important risks or remaining work
