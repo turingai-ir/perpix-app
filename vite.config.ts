@@ -22,9 +22,17 @@ export default defineConfig({
   },
   plugins: [react(), tailwindcss(), legacy({})],
   server: {
+    host: "localhost",
+    port: 5173,
+    strictPort: true,
     watch: {
       ignored: ["**/.pnpm-store/**", "**/node_modules/**"],
     },
+  },
+  preview: {
+    host: "localhost",
+    port: 5173,
+    strictPort: true,
   },
   build: {
     sourcemap: true,

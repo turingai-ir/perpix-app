@@ -5,12 +5,13 @@ import authLoginPageState from "./_state";
 import AuthLoginPageStart from "./_components/start";
 import AuthLoginPageEnterPassword from "./_components/enter-password";
 import AuthLoginPageSetPassword from "./_components/set-password";
+import LoginShell from "./_components/login-shell";
 
 const AuthLoginPage: FC = () => {
   const [pageState] = useImmerAtom(authLoginPageState);
 
   return (
-    <main className="grid h-dvh w-full place-items-center p-4">
+    <LoginShell>
       <div
         className={
           pageState.currentView === "START"
@@ -50,7 +51,7 @@ const AuthLoginPage: FC = () => {
           <AuthLoginPageSetPassword />
         </Activity>
       </div>
-    </main>
+    </LoginShell>
   );
 };
 
