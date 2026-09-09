@@ -1,264 +1,107 @@
-Markdown \# AGENTS_FRONTEND.md
+# PerPix Frontend Agent Instructions
 
-## Purpose
+## Source of Truth
 
-The core objective of this document is to guide development agents in
-making clean, highly scalable, and production-ready modifications to
-`perpix-app`. This architecture strictly values **uncompromising code
-readability, atomic modularity, rigorous Test-Driven Development (TDD),
-and bulletproof Offline-First/PWA resiliency**.
+- Follow the actual dependencies, versions and scripts in `package.json`.
+- Follow existing project patterns before introducing new architecture.
+- Do not install, upgrade or remove dependencies unless explicitly requested.
+- Detailed architecture requirements are stored in:
+  `docs/agent-guides/FRONTEND_ARCHITECTURE_FULL.md`
 
-We heavily favor clean, descriptive, and straightforward React code over
-complex, over-engineered architectural patterns.
+## Context Discipline
 
----
+- Read only files directly related to the current task.
+- Search for symbols and usages before opening complete files.
+- Do not scan the entire repository unless architectural analysis is required.
+- Never inspect `node_modules`, `dist`, `coverage` or generated output directories.
+- Keep terminal output limited to actionable errors and relevant results.
+- Do not modify or refactor unrelated code.
+- Before reading more than five files, confirm they are necessary for the task.
+- Never print an entire large file when a focused excerpt is sufficient.
+- Treat `src/services/api/api.ts` as a large generated file. Never read it completely; search for the exact symbol, type or endpoint and inspect only the relevant section.
+- Do not edit `src/services/api/api.ts` manually unless explicitly requested.
+- Never read `src/services/i18/locales/fa.json` completely. Search for the exact translation key and inspect only nearby entries.
+- Use `ui-ux-pro-max` only for new pages, complete redesigns or explicit design-system work.
+- Do not load `ui-ux-pro-max` for text changes, bug fixes or minor styling.
 
-## Complete Project Stack & Capabilities
+## Code Standards
 
-Every implementation must strictly leverage and integrate with the
-following ecosystem: \* **Core & Runtime:** React 19+ (Functional
-paradigms, Hooks, Concurrent rendering) inside Vite 8+ (ESM
-architecture). \* **Language:** TypeScript 6+ (Strict type-checking,
-explicit return types for public APIs, no `any`). \* **Styling Engine:**
-Tailwind CSS v4 (Utilizing modern native properties, strict omission of
-heavy styling runtimes). \* **Server State Management:**
-`@tanstack/react-query` v5 + `openapi-react-query` (For auto-generated
-backend type-safety). \* **Local/Client State Management:** `Jotai`
-(Atomic, fine-grained reactivity) + `Jotai-Immer` (For structural
-immutability). \* **Routing System:** `React Router v8` (Utilizing
-code-splitting boundaries). \* **Form & Validation Ecosystem:**
-`React Hook Form` paired with `Zod` schemas. \* **Heavy Interactive
-Canvas:** `Konva` + `React Konva` (Isolated, performance-critical visual
-layers). \* **Offline Layers:** `idb-keyval` (IndexedDB
-abstraction) driven by Workbox-window service workers. \* **Resiliency
-Tracking:** `@sentry/react` error boundaries. \* **Test Automation
-Engine:** `Playwright` (For rigorous component-level behavioral specs
-and E2E simulation).
+- Use TypeScript without introducing `any`.
+- Prefer readable, straightforward React code.
+- Avoid nested ternary expressions.
+- Use the Rule of Three before creating shared abstractions.
+- Preserve accessibility, RTL and existing localization conventions.
+- User-visible text must follow the project's existing i18n system.
+- Components must not perform direct API calls when existing services and hooks handle them.
+- Cross-feature imports must use the feature's public `index.ts` API.
+- Reuse existing components, hooks and utilities before creating new ones.
+- Do not introduce new architectural patterns without a clear project requirement.
 
----
+## File Scope
 
-## The Golden Code Readability & Simplicity Manifesto
+- New or substantially modified components and hooks should remain focused and preferably below 100 logical lines.
+- Split files only when they contain multiple responsibilities.
+- Do not refactor unrelated legacy files solely to satisfy a line limit.
+- Make the smallest change that completely solves the requested task.
 
-Code longevity is determined by its simplicity. Agents must strictly
-obey these guidelines to prevent technical debt:
+## Detailed Architecture Trigger
 
-### 1. File Length and Scope Boundaries
+Read `docs/agent-guides/FRONTEND_ARCHITECTURE_FULL.md` before working on:
 
-- **Strict Line Limit:** No single React component or custom hook file
-  may exceed **100 lines of code**. If a file grows past this
-  boundary, sub-components or analytical sub-hooks must be factored
-  out immediately.
-- **Single Responsibility (SRP):** One file must do exactly one thing.
-  A component handles layout/view execution; a hook handles reactive
-  calculations/data orchestration.
+- API integrations or generated API contracts
+- Jotai or TanStack Query state
+- Offline-first behavior
+- IndexedDB persistence
+- PWA or service workers
+- React Konva or performance-sensitive canvas code
+- Feature boundaries or architectural changes
+- Large cross-file refactors
 
-### 2. Omission of Premature Abstractions
+Do not load the complete architecture document for isolated text, color, spacing or simple UI changes.
 
-- **The Rule of Three:** Do not create generic helper utilities,
-  wrapper components, or shared hooks unless the exact logic is
-  explicitly duplicated in at least **three separate features**. Keep
-  the code local and explicit until abstraction is forced.
+## Testing Strategy
 
-### 3. Declarative and Accessible Syntactical Formatting
+Always begin with the smallest relevant validation.
 
-- **Ban on Nested Ternaries:** Nested ternary expressions
-  (`condition ? a : anotherCondition ? b : c`) are strictly
-  prohibited. Use clean, early returns or explicit block-scoped `if`
-  statements instead.
-- **Self-Explanatory Descriptiveness:** Prioritize long, heavily
-  descriptive names over short, clever code shorthand. A variable must
-  state exactly _what_ data it holds and _why_, rather than _how_ it
-  processes it (e.g., use `workspaceValidationStatus` instead of
-  `validWSStatus`).
+### Trivial UI Changes
 
-### 4. Localization Is Mandatory
+For text, color, spacing or isolated styling changes:
 
-- **No Hard-Coded UI Copy:** All user-visible text—including button labels,
-  placeholders, validation messages, `title`, `aria-label`, and other
-  assistive text—must be read through the project's `i18next` translation
-  layer. Add the key to the appropriate locale resource and use
-  `useAppTranslate`; never add literal UI strings to React components.
+- Do not create a new test unless behavior changes.
+- Run only the smallest relevant lint or type validation.
+- Do not run the complete build or Playwright suite unless requested.
 
----
+### Behavioral Changes
 
-## Strict Test-Driven Development (TDD) Protocol
+For interactions, bug fixes or business logic:
 
-Writing production components or business hooks prior to establishing a
-failing automated test suite is classified as an architectural
-violation. Agents must operate within the continuous
-**Red-Green-Refactor** cycle using Playwright:
+- Add or update the relevant test.
+- Follow Red-Green-Refactor when practical.
+- Run targeted tests for the affected feature.
+- Do not run unrelated test suites.
 
-\`\`\`text ┌────────────────────────────────────────────────────────┐ ▼
-│ \[1. Write Red Test\] ──► \[2. Implement Minimal Code\] ──► \[3.
-Refactor UX & DX\] Step 1: Author the Behavioral Specification (Red)
-Before implementing the target feature, create a corresponding test file
-under the localized **tests**/ directory. The test must mock necessary
-network request states using Playwright network interception and
-validate:
+### Critical Changes
 
-Accessibility Integrity: Interact with elements exclusively via
-user-centric ARIA roles (e.g., role="button", name="Submit"), ensuring
-accessibility is baked in by design.
+For API, offline behavior, persistence, routing, authentication, canvas or shared architecture:
 
-User Flow Scenarios: Explicitly assert how the UI responds to clicks,
-typing, canvas operations, or offline transitions. Execute the suite and
-confirm the test fails with an explicit specification error.
+- Read the complete architecture document.
+- Apply its TDD and resiliency requirements.
+- Run the relevant build, lint and Playwright validations.
+- Run `generate-api` only when API contracts are involved.
+- Run the complete verification suite before merge or when explicitly requested.
 
-Step 2: Implement the Minimal Solution (Green) Write the most
-transparent, least complex React structure or TypeScript hook needed to
-satisfy the failing test assertions. Do not apply intricate layout
-styling, performance caching, or complex edge-case handlers yet. Get the
-test to a passing ("Green") state immediately.
+## Terminal and Tool Output
 
-Step 3: Refactor for Performance & Readability With a stable green test
-suite protecting behavior, clean up the codebase.
+- Use targeted searches instead of repository-wide file reads.
+- Prefer concise commands and filtered output.
+- Do not include complete build logs when only a small error section is relevant.
+- Do not repeatedly run successful commands without a concrete reason.
+- Stop and report the blocker when additional broad analysis is required.
 
-Deduplicate styling classes via the cn() helper (clsx + tailwind-merge).
+## Completion Report
 
-Eliminate unnecessary component re-renders by restructuring Jotai atom
-bindings or wrapping intense canvas math in useMemo. Verify that the
-test suite remains 100% functional and green.
+Keep the final response concise and include:
 
-Feature-Driven Clean Architecture (Vertical Slices) To safeguard scaling
-capabilities in a massive codebase, application components are divided
-into entirely self-contained, autonomous feature slices located in
-src/features/. Cross-feature code leaks are completely mitigated by
-sub-dividing modules into four distinct responsibility rings:
-
-Plaintext src/features/`<feature_name>`{=html}/ ├── **tests**/ \#
-Localized Playwright component/behavioral tests ├── index.ts \# Public
-Gateway API (Strictly controls feature exposure) ├── model/ \#
-Client-side Domain (Zod contracts, TypeScript types, formatters) ├──
-services/ \# Infrastructure / API clients & IndexedDB offline layers ├──
-hooks/ \# ViewModel Layer (TanStack data hooks, dynamic state
-orchestrators) └── components/ \# Presentation View (Smart containers &
-dumb UI items) 1. Model Ring (model/) Core Mandate: Pure Domain
-Representation. Holds local Zod data schemas, static TypeScript types,
-dynamic dictionary structures, and language locale JSON bundles.
-
-Boundaries: Framework-agnostic. Zero React dependencies, zero custom
-hook integrations, and absolutely no styling imports are permitted here.
-
-2.  Services Ring (services/) Core Mandate: Data Synchronization,
-    Abstraction, & Persistence. Contains direct references to endpoints
-    generated by openapi-typescript and encapsulates
-    @microsoft/fetch-event-source event streaming hooks or IndexedDB
-    interactions (idb-keyval).
-
-Boundaries: Responsible for turning raw backend network payloads into
-clean, UI-ready structural interfaces. Never allows raw HTTP error
-strings to directly touch view layouts.
-
-3.  Hooks Ring (hooks/) Core Mandate: ViewModel and Reactive State
-    Orchestration. Houses feature-specific custom React hooks, TanStack
-    Query/Mutation cache configurations, and localized Jotai state
-    atoms.
-
-Boundaries: Connects the UI components to backend services and local
-state layers. Exposes clean data objects and deterministic handler
-callbacks directly to components.
-
-4.  Components Ring (components/) Core Mandate: Visual Presentation.
-    Divided into Smart Components (Containers that extract data and
-    callbacks from local custom hooks) and Dumb Components (Pure
-    presentational components driven solely via explicit incoming
-    props).
-
-Boundaries: Absolutely no direct fetch, API calling, or Axios logic
-inside components. Components focus exclusively on rendering layout
-design, applying Tailwind utility styles, managing motion physics, or
-executing interactive visual matrices inside react-konva.
-
-PWA & Robust Offline-First Governance perpix-app is built to be
-resilient in disconnected environments. Every asynchronous action must
-function perfectly regardless of internet availability:
-
-1.  Mandatory Optimistic Actions When executing write operations
-    (mutations like adding an item or modifying canvas layout data), the
-    custom application hook must immediately compute the expected final
-    output and manipulate the local Jotai or TanStack Query cache state
-    before the network call leaves the client container. If the network
-    successfully resolves, silently commit the state. If it permanently
-    fails, rollback smoothly and trigger a fallback layout.
-
-2.  Autonomous IndexedDB State Sync Any local client-side configuration
-    or state captured via Jotai that must survive an application reload
-    or prolonged network absence must be automatically persisted to
-    IndexedDB using idb-keyval within the feature's services/ layer.
-    Hydration on application boot must be completely non-blocking,
-    checking for operational race conditions before allowing the layout
-    to depend on the state.
-
-3.  Fault Tolerant Offline Error Strategy If a service or hook execution
-    detects a network failure (navigator.onLine === false or an HTTP
-    request failure caused by timeout), it must gracefully fallback to
-    fetching the last known reliable data entry points from the
-    IndexedDB cache. It should notify the user of the disconnected
-    operational mode via a non-disruptive, localized toast alert
-    (sonner), avoiding layout whiteouts or UI freezing.
-
-Module Boundary and Isolation Rules The Public API Gate: A feature
-module can interact with another feature module only via its root
-index.ts file. Deep file parsing across feature boundaries is banned.
-
-Correct: import { WorkspaceCanvas } from '@/features/workspace';
-
-Incorrect: import { CanvasWrapper } from
-'@/features/workspace/components/CanvasWrapper';
-
-Flow Trajectory Rules: Imports must always flow unidirectionally inward
-toward core primitives: components ──► hooks ──► services ──► model ──►
-core/shared.
-
-Performance Isolation (Konva & Heavy UI Layers) Because react-konva
-renders canvas arrays completely outside the native HTML DOM, any state
-updating coordinate grids or matrix dimensions must be strictly
-encapsulated into hyper-localized components or localized Jotai atomic
-variables.
-
-Never let rapid canvas interactions (like dragging shapes or drawing
-paths) bubble rendering cycles up to parent layout components. Maintain
-a stable 60fps interaction rate at all times.
-
-Automated Handover & Verification Chain Prior to finalizing any feature
-modifications, agents must run and pass the following terminal
-verification steps:
-
-API Integrity Verification: pnpm scripts:generate-api (Confirms full
-contract symmetry with the active backend schema).
-
-TypeScript Compilation Check: pnpm build (The command tsc -b must
-execute perfectly without a single compilation warning).
-
-Syntax Lint Audit: pnpm lint (Confirms absolute formatting compliance
-across ESLint and Prettier rule-sets).
-
-Behavioral Regression Suite: pnpm playwright test (Ensures the newly
-authored TDD specifications and all existing legacy feature tests
-execute flawlessly).
-
-Completion Report Requirements Your final response upon execution must
-specify:
-
-Targeted Files: A list of components, hooks, or models created or
-modified.
-
-Offline-First Impact Summary: A concise brief describing how cache
-mutations, IndexedDB persistence (idb-keyval), and network-lost
-scenarios were tested and accounted for.
-
-TDD Validation Diagnostics: Code snippet showing passing Playwright
-diagnostic logs for the newly added feature metrics.
-
-## graphify
-
-This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
-
-When the user types `/graphify`, use the installed graphify skill or instructions before doing anything else.
-
-Rules:
-- For codebase questions, first run `graphify query "<question>"` when graphify-out/graph.json exists. Use `graphify path "<A>" "<B>"` for relationships and `graphify explain "<concept>"` for focused concepts. These return a scoped subgraph, usually much smaller than GRAPH_REPORT.md or raw grep output.
-- Dirty graphify-out/ files are expected after hooks or incremental updates; dirty graph files are not a reason to skip graphify. Only skip graphify if the task is about stale or incorrect graph output, or the user explicitly says not to use it.
-- If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
-- Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
-- After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).
+- Files changed
+- Validation performed
+- Important risks or remaining work
