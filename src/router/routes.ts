@@ -14,6 +14,12 @@ export const APP_ROUTES_KEY = {
       title: "pages.root.title",
     },
   },
+  designPreview: {
+    path: "/design-preview",
+    meta: {
+      title: "pages.designPreview.title",
+    },
+  },
   gallery: {
     path: "/gallery",
     meta: {
