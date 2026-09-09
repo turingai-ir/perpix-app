@@ -134,6 +134,13 @@ export const router = createBrowserRouter([
         ],
       },
       {
+        path: APP_ROUTES_KEY.designPreview.path,
+        lazy: lazyRoute(() => import("@/pages/design-preview/page")),
+        handle: {
+          title: APP_ROUTES_KEY.designPreview.meta.title,
+        },
+      },
+      {
         path: APP_ROUTES_KEY.editor.path,
         children: [
           {

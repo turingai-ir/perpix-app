@@ -1,61 +1,79 @@
-import type { FC } from "react";
-import { TbCameraAi, TbPhotoAi, TbUserCog } from "react-icons/tb";
-import { Link } from "react-router";
+import { AlertTriangle } from "lucide-react";
 
-import SpotlightCard from "@/components/SpotlightCard";
-import { Heading3, Muted } from "@/components/ui/typography";
+import { DashboardAccount } from "./_components/dashboard-account";
+import { DashboardActivity } from "./_components/dashboard-activity";
+import { DashboardFiles } from "./_components/dashboard-files";
+import { DashboardModels } from "./_components/dashboard-models";
+import { DashboardTransactions } from "./_components/dashboard-transactions";
+import { DashboardWelcome } from "./_components/dashboard-welcome";
+import { useDashboardAccount } from "./_hooks/use-dashboard-account";
+import { useDashboardContent } from "./_hooks/use-dashboard-content";
+
 import { useAppTranslate } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
-import { APP_ROUTES_KEY } from "@/router/routes";
 
-const AppPage: FC = () => {
+const AppPage = () => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
-  return (
-    <div className="flex min-h-full w-full items-center p-4">
-      <div className="mx-auto grid w-full max-w-7xl grid-cols-12 gap-8">
-        <SpotlightCard className="col-span-12 h-60 cursor-pointer md:col-span-6 xl:col-span-4">
-          <Link
-            to={APP_ROUTES_KEY.generation.image.path}
-            className="focus-visible:outline-ring flex h-full flex-col gap-4 rounded-xl focus-visible:outline-2 focus-visible:outline-offset-4"
-          >
-            <TbPhotoAi className="h-12 w-12" />
-            <Heading3>
-              {t("pages.root.accessToSections.imageGeneration.title")}
-            </Heading3>
-            <Muted>
-              {t("pages.root.accessToSections.imageGeneration.description")}
-            </Muted>
-          </Link>
-        </SpotlightCard>
-        <SpotlightCard className="col-span-12 h-60 cursor-pointer md:col-span-6 xl:col-span-4">
-          <Link
-            to={APP_ROUTES_KEY.generation.video.path}
-            className="focus-visible:outline-ring flex h-full flex-col gap-4 rounded-xl focus-visible:outline-2 focus-visible:outline-offset-4"
-          >
-            <TbCameraAi className="h-12 w-12" />
-            <Heading3>
-              {t("pages.root.accessToSections.videoGeneration.title")}
-            </Heading3>
-            <Muted>
-              {t("pages.root.accessToSections.videoGeneration.description")}
-            </Muted>
-          </Link>
-        </SpotlightCard>
+  const account = useDashboardAccount();
+  const allowedModels = account.subscription?.plan.allowed_models ?? [];
+  const content = useDashboardContent(allowedModels);
+  const hasPartialError = [
+    account.subscriptionState,
+    account.transactionsState,
+    account.walletState,
+    content.filesState,
+    content.modelsState,
+    content.tasksState,
+  ].some((state) => state.isError);
 
-        <SpotlightCard className="col-span-12 h-60 cursor-pointer md:col-span-6 xl:col-span-4">
-          <Link
-            to={APP_ROUTES_KEY.profile.root.path}
-            className="focus-visible:outline-ring flex h-full flex-col gap-4 rounded-xl focus-visible:outline-2 focus-visible:outline-offset-4"
+  return (
+    <div className="relative min-h-full w-full overflow-hidden bg-[#08090c] text-zinc-100">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-80 bg-[radial-gradient(circle_at_70%_0%,rgba(168,85,247,0.09),transparent_48%)]" />
+      <div className="relative mx-auto w-full max-w-[1500px] space-y-5 px-3 py-4 sm:px-5 sm:py-6 lg:px-8">
+        <DashboardWelcome
+          isVerified={account.user?.is_verified ?? false}
+          userName={account.user?.name ?? null}
+        />
+        {hasPartialError ? (
+          <div
+            role="status"
+            className="flex items-start gap-2 rounded-xl border border-amber-400/15 bg-amber-400/5 px-4 py-3 text-xs leading-6 text-amber-200"
           >
-            <TbUserCog className="h-12 w-12" />
-            <Heading3>
-              {t("pages.root.accessToSections.userProfile.title")}
-            </Heading3>
-            <Muted>
-              {t("pages.root.accessToSections.userProfile.description")}
-            </Muted>
-          </Link>
-        </SpotlightCard>
+            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+            {t("pages.root.dashboard.partialError")}
+          </div>
+        ) : null}
+        <DashboardAccount
+          isLoading={
+            account.walletState.isPending || account.subscriptionState.isPending
+          }
+          subscription={account.subscription}
+          user={account.user}
+          wallet={account.wallet}
+        />
+        <div className="grid min-w-0 gap-5 xl:grid-cols-[minmax(0,1.65fr)_minmax(19rem,0.75fr)]">
+          <div className="min-w-0 space-y-7 rounded-2xl border border-white/8 bg-black/20 p-4 sm:p-5">
+            <DashboardFiles
+              files={content.files}
+              isLoading={content.filesState.isPending}
+              previews={content.previewsState.data ?? {}}
+            />
+            <DashboardModels
+              isLoading={content.modelsState.isPending}
+              models={content.featuredModels}
+            />
+          </div>
+          <aside className="min-w-0 space-y-5">
+            <DashboardActivity
+              isLoading={content.tasksState.isPending}
+              tasks={content.tasks}
+            />
+            <DashboardTransactions
+              isLoading={account.transactionsState.isPending}
+              transactions={account.transactions ?? []}
+            />
+          </aside>
+        </div>
       </div>
     </div>
   );
