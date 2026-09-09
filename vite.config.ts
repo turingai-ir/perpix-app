@@ -22,6 +22,9 @@ export default defineConfig({
   },
   plugins: [react(), tailwindcss(), legacy({})],
   server: {
+    host: "localhost",
+    port: 5173,
+    strictPort: true,
     watch: {
       // Linux inotify limits are shared with editors and other dev servers.
       usePolling: process.platform === "linux",
@@ -36,6 +39,11 @@ export default defineConfig({
         "**/test-results/**",
       ],
     },
+  },
+  preview: {
+    host: "localhost",
+    port: 5173,
+    strictPort: true,
   },
   build: {
     sourcemap: true,

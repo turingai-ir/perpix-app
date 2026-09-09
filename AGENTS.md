@@ -8,6 +8,12 @@
 - Detailed architecture requirements are stored in:
   `docs/agent-guides/FRONTEND_ARCHITECTURE_FULL.md`
 
+## Local Development URL
+
+- Always run and share the app at `http://localhost:5173/`.
+- Use `pnpm dev`; keep port 5173 strict. Do not switch host or fall back to another port when it is occupied.
+- The preview server also uses `localhost:5173`; stop the existing project server before switching between dev and preview.
+
 ## Context Discipline
 
 - Read only files directly related to the current task.
