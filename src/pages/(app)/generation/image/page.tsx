@@ -1,7 +1,9 @@
 import { Activity } from "react";
+import { useLocation } from "react-router";
 
 import { GenerationImageChats, GenerationImagePromptBox } from "./_components";
 import { GeneratedMediaField, useGenerationPage } from "../_hooks";
+import { getGenerationDraftPrompt } from "../_state/generation-draft";
 
 import LoadingSection from "@/components/custom/loading-section";
 import { TypingAnimation } from "@/components/ui/typing-animation";
@@ -11,7 +13,9 @@ import { AiRegistryModelSupportedTypesEnumMap } from "@/services/api";
 import { APP_I18_KEYS } from "@/services/i18";
 
 const GenerationImagePage = () => {
+  const location = useLocation();
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
+  const initialPrompt = getGenerationDraftPrompt(location.state);
   const typingAnimationWords = t(
     "pages.generation.image.typingAnimation.words",
     {
@@ -61,6 +65,7 @@ const GenerationImagePage = () => {
             ) : null}
 
             <GenerationImagePromptBox
+              initialPrompt={initialPrompt}
               isLoading={isBusy}
               lastMessageConfig={
                 lastTaskMessage?.ai_model_config ??

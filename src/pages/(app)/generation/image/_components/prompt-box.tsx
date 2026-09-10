@@ -8,6 +8,7 @@ import {
 } from "@/services/api";
 
 interface Props {
+  initialPrompt?: string;
   onSubmit: (
     data: Readonly<Record<string, unknown>>,
     aiModelUuid: string,
