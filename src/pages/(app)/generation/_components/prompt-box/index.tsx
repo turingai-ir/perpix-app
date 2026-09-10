@@ -20,6 +20,7 @@ export const GenerationPromptBox: FC<GenerationPromptBoxProps> = ({
   advancedExcludedFieldNames,
   configDefaultsResolver,
   extraContent,
+  initialPrompt,
   isLoading,
   lastMessageConfig,
   lastMessageModelUuid,
@@ -34,6 +35,7 @@ export const GenerationPromptBox: FC<GenerationPromptBoxProps> = ({
   const promptBox = useGenerationPromptBox({
     advancedExcludedFieldNames,
     configDefaultsResolver,
+    initialPrompt,
     isLoading,
     lastMessageConfig,
     lastMessageModelUuid,

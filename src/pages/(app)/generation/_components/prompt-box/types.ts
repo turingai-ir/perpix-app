@@ -21,6 +21,7 @@ export interface GenerationPromptBoxProps {
   advancedExcludedFieldNames: ReadonlySet<string>;
   configDefaultsResolver?: ConfigDefaultsResolver;
   extraContent?: (props: PromptBoxExtraContentProps) => ReactNode;
+  initialPrompt?: string;
   isLoading?: boolean;
   lastMessageConfig?: SchemaAiTaskMessageResponse["ai_model_config"];
   lastMessageModelUuid?: SchemaAiTaskMessageResponse["ai_model_uuid"];

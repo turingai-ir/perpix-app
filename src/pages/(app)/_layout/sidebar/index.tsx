@@ -23,7 +23,7 @@ const AppLayoutSidebar: FC<{ sidebarWidth: string }> = ({ sidebarWidth }) => {
       <>
         <aside
           className={cn(
-            "border-sidebar-border bg-sidebar text-sidebar-foreground flex h-full w-(--sidebar-width) flex-col border-e shadow-[var(--sidebar-shadow)] transition-[transform,opacity] duration-300 ease-in-out",
+            "border-sidebar-border bg-sidebar text-sidebar-foreground flex h-full w-(--sidebar-width) flex-col border-e shadow-[var(--sidebar-shadow)] transition-[transform,opacity] duration-300 ease-in-out motion-reduce:transition-none",
             appLayoutState.isSidebarOpen
               ? "translate-x-0 opacity-100"
               : "translate-x-full opacity-0",
