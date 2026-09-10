@@ -2,10 +2,12 @@ import { AlertTriangle } from "lucide-react";
 
 import { DashboardAccount } from "./_components/dashboard-account";
 import { DashboardActivity } from "./_components/dashboard-activity";
+import { DashboardCreativeCommand } from "./_components/dashboard-creative-command";
 import { DashboardFiles } from "./_components/dashboard-files";
 import { DashboardModels } from "./_components/dashboard-models";
+import { DashboardResume } from "./_components/dashboard-resume";
 import { DashboardTransactions } from "./_components/dashboard-transactions";
-import { DashboardWelcome } from "./_components/dashboard-welcome";
+import styles from "./dashboard.module.css";
 import { useDashboardAccount } from "./_hooks/use-dashboard-account";
 import { useDashboardContent } from "./_hooks/use-dashboard-content";
 
@@ -27,13 +29,20 @@ const AppPage = () => {
   ].some((state) => state.isError);
 
   return (
-    <div className="relative min-h-full w-full overflow-hidden bg-[#08090c] text-zinc-100">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-80 bg-[radial-gradient(circle_at_70%_0%,rgba(168,85,247,0.09),transparent_48%)]" />
-      <div className="relative mx-auto w-full max-w-[1500px] space-y-5 px-3 py-4 sm:px-5 sm:py-6 lg:px-8">
-        <DashboardWelcome
-          isVerified={account.user?.is_verified ?? false}
-          userName={account.user?.name ?? null}
-        />
+    <div
+      className={`${styles.page} relative min-h-full w-full overflow-hidden text-zinc-100`}
+    >
+      <div className={`${styles.grid} pointer-events-none`} />
+      <div
+        className={`${styles.aurora} pointer-events-none end-[8%] -top-40 bg-fuchsia-500`}
+      />
+      <div
+        className={`${styles.aurora} pointer-events-none -start-48 top-[38rem] bg-sky-500 [animation-delay:-8s]`}
+      />
+      <div className="relative mx-auto w-full max-w-[1500px] space-y-6 px-3 py-4 sm:px-5 sm:py-6 lg:px-8">
+        <section className={styles.hero}>
+          <DashboardCreativeCommand />
+        </section>
         {hasPartialError ? (
           <div
             role="status"
@@ -43,6 +52,7 @@ const AppPage = () => {
             {t("pages.root.dashboard.partialError")}
           </div>
         ) : null}
+        <DashboardResume task={content.tasks[0]} />
         <DashboardAccount
           isLoading={
             account.walletState.isPending || account.subscriptionState.isPending
@@ -52,7 +62,7 @@ const AppPage = () => {
           wallet={account.wallet}
         />
         <div className="grid min-w-0 gap-5 xl:grid-cols-[minmax(0,1.65fr)_minmax(19rem,0.75fr)]">
-          <div className="min-w-0 space-y-7 rounded-2xl border border-white/8 bg-black/20 p-4 sm:p-5">
+          <div className="min-w-0 space-y-8 rounded-3xl border border-white/8 bg-black/25 p-4 shadow-2xl shadow-black/20 backdrop-blur-xl sm:p-5">
             <DashboardFiles
               files={content.files}
               isLoading={content.filesState.isPending}

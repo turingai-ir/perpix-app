@@ -9,6 +9,7 @@ type Input = Pick<
   GenerationPromptBoxProps,
   | "advancedExcludedFieldNames"
   | "configDefaultsResolver"
+  | "initialPrompt"
   | "isLoading"
   | "lastMessageConfig"
   | "lastMessageModelUuid"

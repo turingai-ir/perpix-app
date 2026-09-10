@@ -16,6 +16,18 @@ export function DashboardFileVisual({
       <img
         src={preview.preview_url}
         alt=""
+        loading="lazy"
+        className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+      />
+    );
+  }
+  if (file.content_type.startsWith("video/") && preview?.preview_url) {
+    return (
+      <video
+        src={preview.preview_url}
+        muted
+        playsInline
+        preload="metadata"
         className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
       />
     );

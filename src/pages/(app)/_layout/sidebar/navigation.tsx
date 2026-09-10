@@ -58,14 +58,26 @@ const AppLayoutSidebarNavigation: FC = () => {
   return (
     <ul className="flex min-w-0 flex-col gap-1.5">
       {menuItems.map(({ key, label, href, Icon, badge }) => (
-        <li key={key} className="min-w-0">
+        <li
+          key={key}
+          className={cn(
+            "min-w-0",
+            key === "gallery" && "border-sidebar-border mt-3 border-t pt-3",
+          )}
+        >
           <NavLink
             to={href}
+            end={key === "home"}
             className={({ isActive }) =>
               cn(
                 buttonVariants({ variant: "ghost" }),
-                "w-full min-w-0 justify-start gap-3",
-                isActive && "bg-sidebar-accent text-sidebar-accent-foreground",
+                "text-sidebar-foreground/75 min-h-12 w-full min-w-0 justify-start gap-3 rounded-xl border border-transparent px-3 motion-reduce:transition-none",
+                key === "image-generations" &&
+                  "text-sidebar-foreground border-fuchsia-400/20 bg-fuchsia-400/5 [&>svg]:text-fuchsia-400",
+                key === "video-generation" &&
+                  "text-sidebar-foreground border-sky-400/20 bg-sky-400/5 [&>svg]:text-sky-400",
+                isActive &&
+                  "border-sidebar-border bg-sidebar-accent text-sidebar-accent-foreground shadow-[inset_-3px_0_var(--color-primary)]",
               )
             }
           >
