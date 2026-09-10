@@ -55,9 +55,9 @@ export function DashboardModels({ isLoading, models }: DashboardModelsProps) {
               <Link
                 key={model.uuid}
                 to={path}
-                className="group flex min-w-0 items-center gap-3 rounded-xl border border-white/8 bg-[#101116] p-3 transition hover:border-fuchsia-400/30 hover:bg-white/[0.04] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-fuchsia-400"
+                className="group relative flex min-w-0 items-center gap-3 overflow-hidden rounded-2xl border border-white/8 bg-gradient-to-br from-white/[0.065] to-white/[0.02] p-3 transition duration-300 before:absolute before:inset-y-0 before:start-0 before:w-px before:bg-gradient-to-b before:from-transparent before:via-fuchsia-300/50 before:to-transparent before:opacity-0 before:transition hover:-translate-y-0.5 hover:border-fuchsia-400/30 hover:bg-white/[0.07] hover:shadow-lg hover:shadow-fuchsia-950/20 hover:before:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-fuchsia-400"
               >
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-white/8 bg-white/[0.04]">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-black/20 shadow-inner">
                   {model.icon_url ? (
                     <img
                       src={model.icon_url}

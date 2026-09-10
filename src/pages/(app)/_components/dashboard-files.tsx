@@ -6,6 +6,7 @@ import { DashboardFileVisual } from "./dashboard-file-visual";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { FilePreviewUrls, UserFileItem } from "@/feature/file-manager";
 import { useAppTranslate } from "@/hooks";
+import { cn } from "@/lib/utils";
 import { APP_ROUTES_KEY } from "@/router/routes";
 import { APP_I18_KEYS } from "@/services/i18";
 
@@ -47,21 +48,30 @@ export function DashboardFiles({
       </div>
       {files.length ? (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-          {files.slice(0, 6).map((file) => (
+          {files.slice(0, 6).map((file, index) => (
             <Link
               key={file.uuid}
               to={APP_ROUTES_KEY.gallery.path}
-              className="group min-w-0 overflow-hidden rounded-xl border border-white/8 bg-[#101116] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-fuchsia-400"
+              className={cn(
+                "group relative min-w-0 overflow-hidden rounded-2xl border border-white/8 bg-[#101116] shadow-lg shadow-black/10 transition duration-300 hover:-translate-y-1 hover:border-fuchsia-300/25 hover:shadow-fuchsia-950/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-fuchsia-400",
+                index === 0 && "sm:col-span-2",
+              )}
             >
-              <div className="aspect-[4/3] overflow-hidden bg-black">
+              <div
+                className={cn(
+                  "aspect-[4/3] overflow-hidden bg-black",
+                  index === 0 && "sm:aspect-[2/1]",
+                )}
+              >
                 <DashboardFileVisual
                   file={file}
                   preview={file.uuid ? previews[file.uuid] : undefined}
                 />
               </div>
-              <div className="flex items-center gap-2 p-3">
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black via-black/45 to-transparent" />
+              <div className="absolute inset-x-0 bottom-0 flex items-center gap-2 p-3 sm:p-4">
                 <Images className="h-4 w-4 shrink-0 text-fuchsia-300" />
-                <span className="truncate text-xs font-medium text-zinc-200">
+                <span className="truncate text-xs font-medium text-white sm:text-sm">
                   {file.file_name || t("common.emptyTitle")}
                 </span>
               </div>

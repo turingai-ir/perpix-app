@@ -42,7 +42,7 @@ export function DashboardAccount({
   return (
     <section
       aria-labelledby="account-heading"
-      className="rounded-2xl border border-white/8 bg-[#101116] p-4 sm:p-5"
+      className="rounded-3xl border border-white/10 bg-white/[0.045] p-4 shadow-xl shadow-black/10 backdrop-blur-xl transition hover:border-white/15 sm:p-5"
     >
       <div className="mb-4 flex items-center justify-between">
         <div>

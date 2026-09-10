@@ -8,6 +8,7 @@ import { getModelDynamicConfig } from "@/pages/(app)/generation/_utils/model-dyn
 type Input = Pick<
   GenerationPromptBoxProps,
   | "configDefaultsResolver"
+  | "initialPrompt"
   | "lastMessageConfig"
   | "lastMessageModelUuid"
   | "lastMessageStatus"
@@ -16,6 +17,7 @@ type Input = Pick<
 
 export function useGenerationDynamicForm({
   configDefaultsResolver,
+  initialPrompt,
   lastMessageConfig,
   lastMessageModelUuid,
   lastMessageStatus,
@@ -36,9 +38,11 @@ export function useGenerationDynamicForm({
     return {
       ...(modelDynamicConfig.configDefaults ?? {}),
       ...(lastMessageDefaults ?? {}),
+      ...(initialPrompt ? { prompt: initialPrompt } : {}),
     };
   }, [
     configDefaultsResolver,
+    initialPrompt,
     lastMessageConfig,
     lastMessageStatus,
     modelDynamicConfig.configDefaults,

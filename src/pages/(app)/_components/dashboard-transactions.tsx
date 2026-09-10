@@ -30,7 +30,7 @@ export function DashboardTransactions({
   return (
     <section
       aria-labelledby="transactions-heading"
-      className="rounded-2xl border border-white/8 bg-[#101116] p-4 sm:p-5"
+      className="rounded-3xl border border-white/10 bg-white/[0.045] p-4 shadow-xl shadow-black/10 backdrop-blur-xl sm:p-5"
     >
       <div className="mb-4 flex items-end justify-between">
         <div>
@@ -61,7 +61,7 @@ export function DashboardTransactions({
             return (
               <div
                 key={transaction.transaction_uuid}
-                className="flex items-center gap-3 rounded-xl p-3 hover:bg-white/[0.03]"
+                className="flex items-center gap-3 rounded-xl border border-transparent p-3 transition hover:border-white/8 hover:bg-white/[0.045]"
               >
                 <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/[0.04]">
                   <Icon className="h-4 w-4 text-zinc-300" />
