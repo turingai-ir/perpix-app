@@ -191,9 +191,17 @@ const mockDashboardApi = async (page: Page) => {
   );
 };
 
-for (const [index, variant] of ["lift", "turn", "material"].entries()) {
+const brandEntrances = [
+  { name: "thunder", keyframe: "thunderImpact", minimumAnimations: 7 },
+  { name: "rift", keyframe: "riftArrival", minimumAnimations: 6 },
+  { name: "forge", keyframe: "forgeFace", minimumAnimations: 10 },
+] as const;
+
+for (const [index, entrance] of brandEntrances.entries()) {
   for (const reducedMotion of ["no-preference", "reduce"] as const) {
-    test(`logo entrance ${variant} with ${reducedMotion}`, async ({ page }) => {
+    test(`logo entrance ${entrance.name} with ${reducedMotion}`, async ({
+      page,
+    }) => {
       await page.emulateMedia({ reducedMotion });
       if (reducedMotion === "reduce") {
         await page.setViewportSize({ width: 375, height: 812 });
@@ -207,17 +215,24 @@ for (const [index, variant] of ["lift", "turn", "material"].entries()) {
       );
       await page.goto("http://localhost:5173/");
       const brand = page.locator("[data-brand-entrance]");
-      await expect(brand).toHaveAttribute("data-brand-entrance", variant);
+      await expect(brand).toHaveAttribute("data-brand-entrance", entrance.name);
       await expect(brand).toHaveAttribute("aria-hidden", "true");
       await expect(brand.locator("img")).toHaveAttribute(
         "src",
         "/android-chrome-512x512.png",
       );
-      const parts = [brand, brand.locator("div"), brand.locator("img")];
+      await expect(brand.locator("svg path")).toHaveCount(3);
+      await expect(brand.locator("div > i")).toHaveCount(11);
+      const visibleParts = [
+        brand,
+        brand.locator("img"),
+        brand.locator('[class*="brandFace"]'),
+        brand.locator('[class*="brandPlinth"]'),
+      ];
       if (reducedMotion === "no-preference") {
         const animations = await brand.evaluate((element) => {
           // Computed styles still describe entrances that have already finished.
-          const names = [element, ...element.querySelectorAll("div, img")]
+          const names = [element, ...element.querySelectorAll("*")]
             .map((part) => {
               const style = getComputedStyle(part);
               return {
@@ -231,15 +246,17 @@ for (const [index, variant] of ["lift", "turn", "material"].entries()) {
             .forEach((animation) => animation.finish());
           return names;
         });
-        expect(animations).toHaveLength(variant === "material" ? 3 : 1);
+        expect(animations.length).toBeGreaterThanOrEqual(
+          entrance.minimumAnimations,
+        );
         expect(animations.every(({ iterations }) => iterations === 1)).toBe(
           true,
         );
         expect(animations.map(({ name }) => name).join(" ")).toContain(
-          variant === "turn" ? "brandTurn" : "brandLift",
+          entrance.keyframe,
         );
       }
-      for (const part of parts) {
+      for (const part of visibleParts) {
         for (const element of await part.all()) {
           await expect(element).toHaveCSS("opacity", "1");
           await expect(element).toHaveCSS("transform", "none");
@@ -283,7 +300,7 @@ for (const [index, variant] of ["lift", "turn", "material"].entries()) {
         await page.goBack();
         await expect(brand).toHaveAttribute(
           "data-brand-entrance",
-          ["lift", "turn", "material"][(index + 1) % 3],
+          brandEntrances[(index + 1) % brandEntrances.length].name,
         );
       }
     });
