@@ -1,6 +1,6 @@
 import { ArrowUpLeft, Image, ShieldCheck, Video } from "lucide-react";
-import { useState } from "react";
 
+import { DashboardBrandEntrance } from "./dashboard-brand-entrance";
 import type { CreativeMode } from "./dashboard-creative-presets";
 import styles from "../dashboard.module.css";
 
@@ -15,10 +15,6 @@ export function DashboardCreationStations({
   onEnter,
 }: DashboardCreationStationsProps) {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
-  const [brandEntrance] = useState(
-    () =>
-      (["lift", "turn", "material"] as const)[Math.floor(Math.random() * 3)],
-  );
 
   return (
     <section
@@ -33,22 +29,7 @@ export function DashboardCreationStations({
           </h1>
           <p>{t("pages.root.dashboard.choice.description")}</p>
         </div>
-        <div
-          className={styles.brandObject}
-          data-brand-entrance={brandEntrance}
-          aria-hidden="true"
-        >
-          <div className={styles.brandPlinth} />
-          <div className={styles.brandFace}>
-            <img
-              src="/android-chrome-512x512.png"
-              width={512}
-              height={512}
-              alt=""
-              draggable={false}
-            />
-          </div>
-        </div>
+        <DashboardBrandEntrance />
       </div>
       <div className={styles.choiceGrid}>
         {(["image", "video"] as const).map((mode) => {
