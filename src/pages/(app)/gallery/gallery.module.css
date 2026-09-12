@@ -1,0 +1,141 @@
+.page {
+  width: 100%;
+  min-width: 0;
+  max-width: 1800px;
+  margin-inline: auto;
+  padding: clamp(16px, 3vw, 40px);
+}
+.header {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(9rem, 18vw, 14rem);
+  align-items: start;
+  gap: clamp(16px, 3vw, 40px);
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: clamp(24px, 4vw, 48px);
+  background:
+    radial-gradient(
+      ellipse at 8% 90%,
+      color-mix(in oklch, var(--primary) 12%, transparent),
+      transparent 65%
+    ),
+    var(--card);
+}
+.brandSlot {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  align-self: start;
+}
+.orbit {
+  position: absolute;
+  inset-inline-end: 4%;
+  top: 50%;
+  width: 270px;
+  height: 270px;
+  transform: translateY(-50%) rotate(-18deg);
+  opacity: 0.55;
+  mask-image: linear-gradient(to bottom, black, transparent);
+}
+.orbit div {
+  position: absolute;
+  inset: 25px;
+  border: 1px solid color-mix(in oklch, var(--primary) 40%, var(--border));
+  border-radius: 40px;
+  background: color-mix(in oklch, var(--primary) 4%, transparent);
+  transform: rotate(20deg);
+}
+.orbit div:nth-child(2) {
+  transform: rotate(40deg);
+}
+.orbit div:nth-child(3) {
+  transform: rotate(60deg);
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.card {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--card);
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+  animation: reveal 320ms ease both;
+}
+.card:hover,
+.card:focus-within {
+  border-color: color-mix(in oklch, var(--primary) 45%, var(--border));
+  box-shadow: 0 8px 28px -18px
+    color-mix(in oklch, var(--foreground) 30%, transparent);
+}
+.preview {
+  aspect-ratio: 4 / 3;
+  background: var(--muted);
+  position: relative;
+  overflow: hidden;
+}
+.compact .preview {
+  aspect-ratio: 1;
+}
+.viewer {
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
+}
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+  }
+  .compact {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+  }
+}
+@media (min-width: 1280px) {
+  .grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .compact {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+@media (max-width: 767px) {
+  .header {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .brandSlot {
+    order: -1;
+    width: min(8rem, 38%);
+    justify-self: end;
+  }
+  .orbit {
+    opacity: 0.15;
+    inset-inline-end: -100px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    animation: none;
+    transition: none;
+  }
+  .viewer {
+    animation: none !important;
+  }
+}

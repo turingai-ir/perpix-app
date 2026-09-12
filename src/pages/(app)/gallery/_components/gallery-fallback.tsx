@@ -6,16 +6,18 @@ import type { GalleryMediaType } from "../_utils/types";
 export const GalleryFallback: FC<{ mediaType: GalleryMediaType }> = ({
   mediaType,
 }) => {
-  const Icon =
-    mediaType === "video"
-      ? FileVideo
-      : mediaType === "audio"
-        ? FileAudio
-        : ImageIcon;
+  const Icon = { video: FileVideo, audio: FileAudio, image: ImageIcon }[
+    mediaType
+  ];
 
   return (
-    <div className="text-muted-foreground flex h-full w-full items-center justify-center">
-      <Icon className="h-9 w-9 opacity-60" />
+    <div
+      aria-hidden="true"
+      className="text-muted-foreground from-primary/10 flex h-full w-full items-center justify-center bg-radial to-transparent"
+    >
+      <span className="bg-background/70 border-border/60 grid size-16 place-items-center rounded-2xl border">
+        <Icon className="size-7" />
+      </span>
     </div>
   );
 };

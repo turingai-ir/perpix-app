@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -20,7 +21,9 @@ export const AdvancedPromptSettingsDialog: FC<{
   disabled?: boolean;
   dynamicForm: DynamicConfigForm;
   fieldNames: readonly string[];
-}> = ({ disabled, dynamicForm, fieldNames }) => {
+  label?: string;
+  simple?: boolean;
+}> = ({ disabled, dynamicForm, fieldNames, label, simple }) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
 
   if (fieldNames.length === 0) return null;
@@ -35,12 +38,17 @@ export const AdvancedPromptSettingsDialog: FC<{
           disabled={disabled}
         >
           <SlidersHorizontal className="h-4 w-4" />
-          {t("common.advancedSettings")}
+          {label ?? t("common.advancedSettings")}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-h-[min(640px,calc(100dvh-2rem))] w-[calc(100vw-2rem)] max-w-[480px] grid-rows-[auto_minmax(0,1fr)] overflow-hidden">
         <DialogHeader>
-          <DialogTitle>{t("common.advancedSettings")}</DialogTitle>
+          <DialogTitle>{label ?? t("common.advancedSettings")}</DialogTitle>
+          {simple && (
+            <DialogDescription>
+              {t("pages.generation.image.studio.settingsHelp")}
+            </DialogDescription>
+          )}
         </DialogHeader>
         <ScrollArea className="min-h-0 w-full pe-2">
           <div className="flex w-full flex-col gap-3">
@@ -51,6 +59,7 @@ export const AdvancedPromptSettingsDialog: FC<{
                 fieldName={fieldName}
                 disabled={disabled}
                 layout="stacked"
+                simple={simple}
               />
             ))}
           </div>
