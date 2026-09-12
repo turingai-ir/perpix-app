@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 
 import {
+  useFilesPreviews,
   useInfiniteUserFiles,
   userFilesPageLimit,
 } from "@/feature/file-manager";
@@ -19,6 +20,11 @@ export const useGalleryFiles = () => {
   const files = useMemo(
     () => getGalleryFiles(userFilesState.data?.pages),
     [userFilesState.data?.pages],
+  );
+  const fileUuids = useMemo(() => files.map((file) => file.uuid), [files]);
+  const { getFilesPreviewsState } = useFilesPreviews(
+    fileUuids,
+    files.length > 0,
   );
 
   const fetchMoreFiles = () => {
@@ -42,6 +48,9 @@ export const useGalleryFiles = () => {
   return {
     activeFilter,
     files,
+    filesPreviewUrls: getFilesPreviewsState.data ?? {},
+    isFilesPreviewError: getFilesPreviewsState.isError,
+    isFilesPreviewLoading: getFilesPreviewsState.isPending,
     loadMoreRef,
     setActiveFilter,
     userFilesState,

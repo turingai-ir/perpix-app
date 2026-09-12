@@ -9,7 +9,8 @@ export const PromptSubmitButton: FC<{
   dynamicForm: DynamicConfigForm;
   isLoading?: boolean;
   promptRequired: boolean;
-}> = ({ disabled, dynamicForm, isLoading, promptRequired }) => {
+  label?: string;
+}> = ({ disabled, dynamicForm, isLoading, promptRequired, label }) => {
   const prompt = String(dynamicForm.watch("prompt") ?? "");
   const isPromptInvalid = promptRequired && prompt.trim().length < 3;
 
@@ -17,9 +18,14 @@ export const PromptSubmitButton: FC<{
     <Button
       type="submit"
       variant="default"
-      className="group flex h-8! w-8! cursor-pointer items-center justify-center rounded-full p-0!"
+      className={
+        label
+          ? "group h-11 w-full gap-2 rounded-xl px-6 md:w-auto"
+          : "group flex h-8! w-8! cursor-pointer items-center justify-center rounded-full p-0!"
+      }
       disabled={disabled || isPromptInvalid}
     >
+      {label ? <span>{label}</span> : null}
       {isLoading ? (
         <Loader2 className="h-5! w-5! animate-spin" />
       ) : (

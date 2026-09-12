@@ -1,0 +1,180 @@
+.page {
+  padding: 12px clamp(12px, 3vw, 32px) 20px;
+  min-height: calc(100svh - 36px);
+}
+.content {
+  gap: clamp(12px, 2vh, 24px);
+}
+.intro {
+  gap: 12px;
+  padding-block: clamp(8px, 2vh, 24px);
+}
+.logoSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 160px;
+  height: clamp(80px, 14svh, 132px);
+  perspective: 600px;
+}
+.logo {
+  width: clamp(64px, 10svh, 96px);
+  aspect-ratio: 1;
+  object-fit: contain;
+  position: relative;
+  z-index: 1;
+  border-radius: 22%;
+}
+.ring,
+.echo {
+  position: absolute;
+  width: 110px;
+  height: 70px;
+  border: 1px solid color-mix(in srgb, var(--primary) 45%, transparent);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.orbit .ring {
+  animation: orbit 4s ease-in-out;
+}
+.orbit .ring::after {
+  content: "";
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--primary);
+  box-shadow: 0 0 12px var(--primary);
+}
+.orbit .echo {
+  animation: orbit 4s ease-in-out reverse;
+  transform: rotate(-35deg);
+}
+.wave .ring {
+  z-index: 2;
+  width: 108px;
+  height: 2px;
+  border: 0;
+  border-radius: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #45e0ff,
+    var(--primary),
+    transparent
+  );
+  box-shadow: 0 0 14px #45e0ff;
+  animation: scan 4s ease-in-out;
+}
+.wave .echo {
+  width: 116px;
+  height: 96px;
+  border-radius: 16px;
+  border-style: dashed;
+  animation: glow 4s ease-in-out;
+}
+.wave .logo {
+  animation: glow 4s ease-in-out;
+}
+.float .logo {
+  transform-origin: bottom center;
+  animation: jelly 4s ease-in-out;
+}
+.float .ring {
+  top: 85%;
+  height: 10px;
+  width: 64px;
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+  filter: blur(5px);
+  animation: shadow 4s ease-in-out;
+}
+.float .echo {
+  display: none;
+}
+@keyframes orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes glow {
+  50% {
+    opacity: 0.55;
+  }
+}
+@keyframes jelly {
+  0%,
+  65%,
+  100% {
+    transform: scale(1);
+  }
+  12% {
+    transform: scale(1.16, 0.82) rotate(-5deg);
+  }
+  28% {
+    transform: translateY(-18px) scale(0.9, 1.12) rotate(7deg);
+  }
+  42% {
+    transform: scale(1.12, 0.88) rotate(-3deg);
+  }
+  53% {
+    transform: translateY(-5px) scale(0.97, 1.03);
+  }
+}
+@keyframes scan {
+  0%,
+  100% {
+    transform: translateY(-42px);
+    opacity: 0;
+  }
+  15%,
+  85% {
+    opacity: 0.8;
+  }
+  50% {
+    transform: translateY(42px);
+  }
+}
+@keyframes shadow {
+  50% {
+    transform: scale(0.7);
+    opacity: 0.4;
+  }
+}
+.stage[data-active="false"] *,
+.stage[data-active="false"] *::after {
+  animation: none !important;
+}
+.stage[data-active="false"] .ring,
+.stage[data-active="false"] .echo {
+  opacity: 0;
+}
+@media (max-height: 760px) {
+  .intro {
+    gap: 8px;
+    padding-block: 6px;
+  }
+  .intro h1 {
+    font-size: clamp(24px, 3vw, 36px);
+  }
+  .intro p {
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .content {
+    gap: 12px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stage *,
+  .stage *::after {
+    animation: none !important;
+  }
+}

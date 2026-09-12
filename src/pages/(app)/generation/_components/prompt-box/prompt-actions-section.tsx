@@ -1,4 +1,4 @@
-import type { FC } from "react";
+import type { FC, ReactNode } from "react";
 
 import {
   AdvancedPromptSettingsDialog,
@@ -16,6 +16,7 @@ type PromptBoxModel = ReturnType<typeof useModel>;
 
 export const PromptActionsSection: FC<{
   advancedFieldNames: readonly string[];
+  advancedSettingsLabel?: string;
   chooseModelLabel: string;
   disabled?: boolean;
   dynamicForm: DynamicConfigForm;
@@ -23,10 +24,14 @@ export const PromptActionsSection: FC<{
   isLoading?: boolean;
   isSubmitDisabled?: boolean;
   model: PromptBoxModel;
+  hideModelSelector?: boolean;
+  modelSelectionContent?: ReactNode;
+  primaryActionLabel?: string;
   promptRequired: boolean;
   upgradeLabel: string;
 }> = ({
   advancedFieldNames,
+  advancedSettingsLabel,
   chooseModelLabel,
   disabled,
   dynamicForm,
@@ -34,38 +39,65 @@ export const PromptActionsSection: FC<{
   isLoading,
   isSubmitDisabled,
   model,
+  hideModelSelector,
+  modelSelectionContent,
+  primaryActionLabel,
   promptRequired,
   upgradeLabel,
 }) => (
-  <div className="flex w-full flex-col justify-between gap-4 md:flex-row">
-    <div>
+  <div
+    className={
+      primaryActionLabel
+        ? "flex w-full flex-col-reverse justify-between gap-3 md:flex-row md:items-end"
+        : "flex w-full flex-col justify-between gap-4 md:flex-row"
+    }
+  >
+    <div
+      className={primaryActionLabel ? "w-full shrink-0 md:w-auto" : undefined}
+    >
       <PromptSubmitButton
         disabled={isSubmitDisabled}
         dynamicForm={dynamicForm}
         isLoading={isLoading}
         promptRequired={promptRequired}
+        label={primaryActionLabel}
       />
     </div>
-    <div className="flex w-full flex-wrap gap-4">
-      <PromptModelSelector
-        chooseModelLabel={chooseModelLabel}
-        disabled={disabled}
-        model={model}
-        upgradeLabel={upgradeLabel}
-      />
-      {inlineFieldNames.map((fieldName) => (
-        <DynamicPromptConfigField
-          key={fieldName}
-          dynamicForm={dynamicForm}
-          fieldName={fieldName}
+    <div className="flex w-full min-w-0 flex-wrap items-end gap-2">
+      {modelSelectionContent}
+      {!hideModelSelector && (
+        <PromptModelSelector
+          chooseModelLabel={chooseModelLabel}
           disabled={disabled}
-          layout="stacked"
+          model={model}
+          upgradeLabel={upgradeLabel}
         />
+      )}
+      {inlineFieldNames.map((fieldName) => (
+        <div
+          key={fieldName}
+          className={
+            primaryActionLabel
+              ? "max-w-full min-w-28 flex-1 sm:min-w-32 sm:flex-none"
+              : "contents"
+          }
+        >
+          <DynamicPromptConfigField
+            key={fieldName}
+            dynamicForm={dynamicForm}
+            fieldName={fieldName}
+            disabled={disabled}
+            layout="stacked"
+            simple={Boolean(primaryActionLabel)}
+          />
+        </div>
       ))}
       <AdvancedPromptSettingsDialog
+        label={advancedSettingsLabel}
         dynamicForm={dynamicForm}
         fieldNames={advancedFieldNames}
         disabled={disabled}
+        simple={Boolean(primaryActionLabel)}
       />
       <GenerationRulesDialog />
       <ModelTokenPriceTooltip

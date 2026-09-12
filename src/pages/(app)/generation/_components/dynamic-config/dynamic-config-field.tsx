@@ -11,7 +11,8 @@ export const DynamicPromptConfigField: FC<{
   dynamicForm: DynamicConfigForm;
   fieldName: string;
   layout?: FieldLayout;
-}> = ({ disabled, dynamicForm, fieldName, layout = "inline" }) => {
+  simple?: boolean;
+}> = ({ disabled, dynamicForm, fieldName, layout = "inline", simple }) => {
   const { t } = useAppTranslate();
   const meta = dynamicForm.getFieldMeta(fieldName);
 
@@ -43,11 +44,22 @@ export const DynamicPromptConfigField: FC<{
       dynamicForm={dynamicForm}
       fieldName={fieldName}
       inputType={meta.inputType}
-      hint={meta.hint}
-      label={t(`common.dynamicConfig.fields.${fieldName}`, {
-        ns: APP_I18_KEYS.RESOURCES.MAIN,
-        defaultValue: meta.title ?? fieldName,
-      })}
+      hint={
+        simple
+          ? t(`pages.generation.image.studio.hints.${fieldName}`, {
+              defaultValue: meta.hint ?? "",
+            })
+          : meta.hint
+      }
+      label={t(
+        `${simple ? "pages.generation.image.studio.fields" : "common.dynamicConfig.fields"}.${fieldName}`,
+        {
+          ns: APP_I18_KEYS.RESOURCES.MAIN,
+          defaultValue: t(`common.dynamicConfig.fields.${fieldName}`, {
+            defaultValue: meta.title ?? fieldName,
+          }),
+        },
+      )}
       optionLabels={optionLabels}
       options={meta.options}
       property={meta.property}

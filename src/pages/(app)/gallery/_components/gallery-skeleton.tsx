@@ -1,9 +1,13 @@
 import { Skeleton } from "@/components/ui/skeleton";
+import styles from "../gallery.module.css";
 
 export const GallerySkeleton = () => (
-  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+  <div className={styles.grid} aria-hidden="true">
     {Array.from({ length: 12 }).map((_, index) => (
-      <Skeleton key={index} className="aspect-square rounded-lg" />
+      <Skeleton
+        key={index}
+        className="aspect-[4/3] rounded-2xl motion-reduce:animate-none"
+      />
     ))}
   </div>
 );
