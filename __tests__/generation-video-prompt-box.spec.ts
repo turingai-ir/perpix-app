@@ -228,6 +228,177 @@ test("submits text-to-video prompt values with the selected model", async ({
   });
 });
 
+test("image studio fits a viewport with long sidebar history without generating", async ({ page }) => {
+  await mockNanoBananaApi(page);
+  await page.route("**/ai-task/generate", (route) => route.abort());
+  await page.setViewportSize({ width: 1920, height: 900 });
+  await page.goto("/generation/image");
+  await expect(page.getByTestId("studio-logo")).toBeVisible();
+  await page.locator("aside nav").evaluate((nav) => {
+    const history = document.createElement("div");
+    history.style.minHeight = "1800px";
+    history.textContent = "Long task history regression fixture";
+    nav.append(history);
+  });
+  for (const size of [
+    { width: 1920, height: 900 },
+    { width: 1366, height: 660 },
+    { width: 1280, height: 720 },
+  ]) {
+    await page.setViewportSize(size);
+    const area = await page.locator('main > [data-slot="scroll-area"]').boundingBox();
+    expect(area!.height).toBeLessThanOrEqual(size.height);
+    const submit = await page.getByRole("button", { name: /ساخت تصویر/ }).boundingBox();
+    expect(submit!.y + submit!.height).toBeLessThanOrEqual(size.height);
+  }
+  await page.setViewportSize({ width: 1920, height: 900 });
+  await page.screenshot({ path: ".tmp-image-studio-long-history.png" });
+  const sidebarScrolls = await page.locator("aside > div").evaluate((el) => {
+    el.scrollTop = 100;
+    return el.scrollTop > 0;
+  });
+  expect(sidebarScrolls).toBe(true);
+});
+
+test("image studio automatically animates briefly each minute without generating", async ({ page }) => {
+  await mockNanoBananaApi(page);
+  await page.route("**/ai-task/generate", (route) => route.abort());
+  await page.clock.install();
+  await page.goto("/generation/image");
+  const logo = page.getByTestId("studio-logo");
+  await expect(logo).toHaveAttribute("data-active", "true");
+  const initialMotion = await logo.getAttribute("data-motion");
+  await page.clock.fastForward(5000);
+  await expect(logo).toHaveAttribute("data-active", "false");
+  expect(await logo.evaluate((el) => el.getAnimations({ subtree: true }).length)).toBe(0);
+  await page.clock.fastForward(55_000);
+  await expect(logo).toHaveAttribute("data-active", "true");
+  expect(await logo.getAttribute("data-motion")).not.toBe(initialMotion);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect(logo).toHaveAttribute("data-active", "false");
+  await page.clock.fastForward(60_000);
+  await expect(logo).toHaveAttribute("data-active", "false");
+  await page.evaluate(() => {
+    Object.defineProperty(document, "hidden", { configurable: true, value: true });
+    document.dispatchEvent(new Event("visibilitychange"));
+  });
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.clock.fastForward(60_000);
+  await expect(logo).toHaveAttribute("data-active", "false");
+});
+
+test("image studio searches models without generating", async ({ page }) => {
+  await mockNanoBananaApi(page);
+  let generateRequests = 0;
+  await page.route("**/ai-task/generate", async (route) => {
+    generateRequests += 1;
+    await route.abort();
+  });
+
+  await page.goto("/generation/image");
+  const model = page.getByRole("combobox").filter({ hasText: /Nano Banana/ });
+  await page.screenshot({
+    path: ".tmp-image-studio-loading.png",
+    fullPage: true,
+  });
+  await expect(model).toBeVisible();
+  const logo = page.getByTestId("studio-logo");
+  await expect(logo).toHaveAttribute("data-motion", /^(orbit|wave|float)$/);
+  for (const size of [
+    { width: 1920, height: 900 },
+    { width: 1366, height: 660 },
+    { width: 1280, height: 720 },
+  ]) {
+    await page.setViewportSize(size);
+    const box = await page
+      .getByRole("button", { name: /ساخت تصویر/ })
+      .boundingBox();
+    expect(box).not.toBeNull();
+    expect(box!.y + box!.height).toBeLessThanOrEqual(size.height);
+  }
+  await model.click();
+  const search = page.getByPlaceholder("جست‌وجوی مدل…");
+  await search.fill("missing-model");
+  await expect(page.getByRole("option", { name: /Nano Banana/ })).toBeHidden();
+  await search.fill("Nano");
+  await page.getByRole("option", { name: /Nano Banana/ }).click();
+  await page.locator('textarea[name="prompt"]').fill("A cinematic portrait");
+  await expect(page.getByRole("button", { name: /ساخت تصویر/ })).toBeEnabled();
+  await page.screenshot({
+    path: ".tmp-image-studio-desktop.png",
+    fullPage: true,
+  });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.keyboard.press("Escape");
+  await expect(model).toBeVisible();
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    ),
+  ).toBe(true);
+  await page.screenshot({
+    path: ".tmp-image-studio-mobile.png",
+    fullPage: true,
+  });
+  expect(generateRequests).toBe(0);
+});
+
+test("image studio switches schema-specific simple settings without generating", async ({
+  page,
+}) => {
+  await mockNanoBananaApi(page);
+  const original = getNanoBananaModelDetail();
+  const alternate = {
+    ...original,
+    uuid: MODEL_UUID,
+    name: "OPEN_AI_TEST_IMAGE",
+    display_name: "Schema test model",
+    modes: {
+      text_to_image: {
+        ...original.modes.text_to_image,
+        config_schema: {
+          type: "object",
+          required: ["prompt"],
+          additionalProperties: false,
+          properties: {
+            prompt: { type: "string" },
+            seed: { type: "integer", minimum: 0, default: 7 },
+          },
+        },
+      },
+    },
+    canonical_ui_schema: {
+      elements: [
+        ...original.canonical_ui_schema.elements.slice(0, 1),
+        { type: "Control", scope: "#/properties/seed", label: "Seed" },
+      ],
+    },
+  };
+  await page.route(
+    (url) => url.pathname.endsWith("/ai-registry/models"),
+    (route) => route.fulfill({ json: [original, alternate] }),
+  );
+  await page.route(
+    (url) => url.pathname.endsWith(`/ai-registry/models/${MODEL_UUID}`),
+    (route) => route.fulfill({ json: alternate }),
+  );
+  let requests = 0;
+  await page.route("**/ai-task/generate", (route) => {
+    requests += 1;
+    return route.abort();
+  });
+  await page.goto("/generation/image");
+  await page
+    .getByRole("combobox")
+    .filter({ hasText: /Nano Banana/ })
+    .click();
+  await page.getByRole("option", { name: /Schema test model/ }).click();
+  await expect(page.getByText("قاب تصویر", { exact: true })).toBeHidden();
+  await page.getByRole("button", { name: /تنظیمات/ }).click();
+  await expect(page.getByText("کد تکرار نتیجه", { exact: true })).toBeVisible();
+  expect(requests).toBe(0);
+});
+
 test("switches Nano Banana image modes using the canonical selector", async ({
   page,
 }) => {
@@ -524,6 +695,7 @@ async function mockApi(page: Page, taskMessages: unknown[] = []) {
   await page.route("**/*", async (route) => {
     const request = route.request();
     const url = new URL(request.url());
+    url.pathname = url.pathname.replace(/^\/api\/v1/, "");
 
     if (request.method() === "GET" && url.pathname === "/user/get-info") {
       await route.fulfill({
@@ -726,7 +898,7 @@ async function mockNanoBananaApi(page: Page) {
     });
   });
   await page.route(
-    (url) => url.pathname === "/ai-registry/models",
+    (url) => url.pathname.endsWith("/ai-registry/models"),
     async (route) => {
       await route.fulfill({
         contentType: "application/json",
@@ -735,7 +907,7 @@ async function mockNanoBananaApi(page: Page) {
     },
   );
   await page.route(
-    (url) => url.pathname === `/ai-registry/models/${NANO_MODEL_UUID}`,
+    (url) => url.pathname.endsWith(`/ai-registry/models/${NANO_MODEL_UUID}`),
     async (route) => {
       await route.fulfill({
         contentType: "application/json",

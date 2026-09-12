@@ -20,6 +20,9 @@ export const GenerationPromptBox: FC<GenerationPromptBoxProps> = ({
   advancedExcludedFieldNames,
   configDefaultsResolver,
   extraContent,
+  modelSelectionContent,
+  primaryActionLabel,
+  advancedSettingsLabel,
   initialPrompt,
   isLoading,
   lastMessageConfig,
@@ -54,13 +57,19 @@ export const GenerationPromptBox: FC<GenerationPromptBoxProps> = ({
   });
 
   return (
-    <Card className="w-full min-w-0 overflow-hidden px-2">
+    <Card
+      className={
+        primaryActionLabel
+          ? "border-border/70 bg-card/95 w-full min-w-0 rounded-3xl p-4 shadow-xl shadow-black/5 sm:p-6"
+          : "w-full min-w-0 overflow-hidden px-2"
+      }
+    >
       <Form {...promptBox.dynamicForm.form}>
         <form
           className="flex w-full min-w-0 flex-col gap-4"
           onSubmit={promptBox.handleFormSubmit}
         >
-          {fieldGroups.hasModeField && (
+          {fieldGroups.hasModeField && !primaryActionLabel && (
             <PromptModeSection
               dynamicForm={promptBox.dynamicForm}
               disabled={promptBox.isFormBusy}
@@ -80,14 +89,26 @@ export const GenerationPromptBox: FC<GenerationPromptBoxProps> = ({
             />
           )}
           <PromptActionsSection
+            advancedSettingsLabel={advancedSettingsLabel}
             advancedFieldNames={promptBox.advancedFieldNames}
             chooseModelLabel={t("common.chooseModel")}
             disabled={promptBox.isFormBusy}
             dynamicForm={promptBox.dynamicForm}
-            inlineFieldNames={fieldGroups.inlineFieldNames}
+            inlineFieldNames={
+              primaryActionLabel && fieldGroups.hasModeField
+                ? ["mode", ...fieldGroups.inlineFieldNames]
+                : fieldGroups.inlineFieldNames
+            }
             isLoading={isLoading}
             isSubmitDisabled={promptBox.isSubmitDisabled}
             model={promptBox.model}
+            hideModelSelector={Boolean(modelSelectionContent)}
+            modelSelectionContent={modelSelectionContent?.({
+              disabled: promptBox.isFormBusy,
+              dynamicForm: promptBox.dynamicForm,
+              model: promptBox.model,
+            })}
+            primaryActionLabel={primaryActionLabel}
             promptRequired={promptBox.isPromptFieldVisible}
             upgradeLabel={t("common.upgradeRequired")}
           />

@@ -1,270 +1,79 @@
-import { useState, type FC, type MouseEvent } from "react";
-import { Download, Trash2, Image as ImageIcon } from "lucide-react";
-import { toast } from "sonner";
-import { useNavigate } from "react-router";
-
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Expand } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  type FilePreviewUrls,
-  useDeleteUserFile,
-} from "@/feature/file-manager";
-import { formatFileSize } from "@/feature/media-uploader/utils";
+import type { FilePreviewUrls } from "@/feature/file-manager";
 import { useAppTranslate } from "@/hooks";
-import { cn } from "@/lib/utils";
 import { APP_I18_KEYS } from "@/services/i18";
-import { downloadFile } from "@/utils";
-
-import { GalleryFallback } from "./gallery-fallback";
 import { GalleryPreview } from "./gallery-preview";
-
+import { GalleryFallback } from "./gallery-fallback";
+import { GalleryActions } from "./gallery-actions";
 import { getGalleryMediaType } from "../_utils/gallery";
 import type { GalleryFile } from "../_utils/types";
+import styles from "../gallery.module.css";
 
-interface GalleryFileCardProps {
+interface Props {
   file: GalleryFile;
   index: number;
-  isPreviewError: boolean;
+  compact: boolean;
   isPreviewLoading: boolean;
-  previewUrls: FilePreviewUrls | undefined;
+  previewUrls?: FilePreviewUrls;
+  onOpen: (trigger: HTMLButtonElement) => void;
 }
-
-export const GalleryFileCard: FC<GalleryFileCardProps> = ({
+export function GalleryFileCard({
   file,
   index,
-  isPreviewError,
+  compact,
   isPreviewLoading,
   previewUrls,
-}) => {
+  onOpen,
+}: Props) {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
-  const [isDownloading, setIsDownloading] = useState(false);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const { deleteFileState } = useDeleteUserFile();
-  const navigate = useNavigate();
-  const previewUrl = previewUrls?.preview_url;
-  const downloadUrl = previewUrls?.download_url;
-  const fileName = file.file_name || t("common.emptyTitle");
+  const name = file.file_name || t("common.emptyTitle");
   const mediaType = getGalleryMediaType(file.content_type);
-  const mediaLabel = t(`pages.gallery.mediaTypes.${mediaType}`);
-  const fileSize = formatFileSize(file.file_size);
-
-  const handleDownload = async (event: MouseEvent<HTMLAnchorElement>) => {
-    if (!downloadUrl || isDownloading) return;
-    event.preventDefault();
-
-    try {
-      setIsDownloading(true);
-      downloadFile(downloadUrl);
-    } catch {
-      toast.error(t("common.error"));
-    } finally {
-      setIsDownloading(false);
-    }
-  };
-
-  const handleDelete = async () => {
-    try {
-      await deleteFileState.mutateAsync(file.uuid);
-      setIsDeleteDialogOpen(false);
-      toast.success(t("pages.gallery.delete.success"));
-    } catch {
-      toast.error(t("pages.gallery.delete.error"));
-    }
-  };
-
   return (
-    <>
-      <Dialog>
-        <div className="bg-background group flex min-w-0 flex-col overflow-hidden rounded-lg border">
-          <div className="bg-muted relative aspect-square w-full overflow-hidden">
-            {!isPreviewError && previewUrl ? (
-              <DialogTrigger asChild>
-                <button
-                  type="button"
-                  className="focus-visible:ring-ring/50 h-full w-full cursor-zoom-in overflow-hidden outline-none focus-visible:ring-3"
-                  aria-label={fileName}
-                >
-                  <GalleryPreview
-                    mediaType={mediaType}
-                    previewUrl={previewUrl}
-                    fileName={fileName}
-                  />
-                </button>
-              </DialogTrigger>
-            ) : null}
-
-            {isPreviewLoading && !previewUrl ? (
-              <Skeleton className="h-full w-full rounded-none" />
-            ) : null}
-
-            {isPreviewError || (!isPreviewLoading && !previewUrl) ? (
-              <GalleryFallback mediaType={mediaType} />
-            ) : null}
-          </div>
-
-          <div className="flex min-w-0 items-start gap-1 p-2">
-            <div className="min-w-0 flex-1">
-              <div className="truncate text-xs font-medium">{fileName}</div>
-              <div className="text-muted-foreground truncate text-[10px]">
-                {mediaLabel}
-                {fileSize ? ` · ${fileSize}` : ""}
-              </div>
-            </div>
-            <Button
-              asChild
-              type="button"
-              variant="ghost"
-              size="icon-sm"
-              className="shrink-0"
-            >
-              <a
-                href={downloadUrl ?? "#"}
-                download
-                aria-disabled={!downloadUrl || isDownloading}
-                className={cn(
-                  (!downloadUrl || isDownloading) &&
-                    "pointer-events-none opacity-50",
-                )}
-                onClick={handleDownload}
-              >
-                <Download />
-                <span className="sr-only">{t("common.download")}</span>
-              </a>
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon-sm"
-              className="text-destructive hover:text-destructive shrink-0"
-              disabled={deleteFileState.isPending}
-              onClick={() => setIsDeleteDialogOpen(true)}
-            >
-              <Trash2 />
-              <span className="sr-only">
-                {t("pages.gallery.actions.delete")}
-              </span>
-            </Button>
-          </div>
-        </div>
-
-        <DialogContent
-          className="bg-background/95 inset-s-0 top-0 flex h-dvh max-h-dvh max-w-none translate-x-0 translate-y-0 flex-col gap-3 rounded-none border-0 p-3 ring-0 sm:max-w-none rtl:translate-x-0"
-          showCloseButton
-        >
-          <DialogTitle className="sr-only">{fileName}</DialogTitle>
-          <DialogDescription className="sr-only">
-            {mediaLabel}
-          </DialogDescription>
-
-          <div className="flex min-h-0 w-full flex-1 items-center justify-center">
-            {mediaType === "image" && previewUrl ? (
-              <img
-                className="max-h-full max-w-full rounded-lg object-contain"
-                src={previewUrl}
-                alt={`gallery-${index}`}
-              />
-            ) : null}
-            {mediaType === "video" && previewUrl ? (
-              // eslint-disable-next-line jsx-a11y/media-has-caption
-              <video
-                className="max-h-full max-w-full rounded-lg"
-                src={previewUrl}
-                controls
-                autoPlay
-              />
-            ) : null}
-            {mediaType === "audio" && previewUrl ? (
-              // eslint-disable-next-line jsx-a11y/media-has-caption
-              <audio
-                className="w-full max-w-xl"
-                src={previewUrl}
-                controls
-                autoPlay
-              />
-            ) : null}
-          </div>
-
-          <div className="flex w-full shrink-0 items-center justify-center gap-3 pb-2">
-            {mediaType === "image" && (
-              <Button
-                type="button"
-                variant="secondary"
-                size="lg"
-                className="h-11 px-5 text-base gap-2"
-                onClick={() => navigate(`/editor/${file.uuid}`)}
-              >
-                <ImageIcon className="h-4 w-4 text-emerald-500" />
-                <span>{t("pages.editor.edit")}</span>
-              </Button>
-            )}
-            <Button
-              asChild
-              variant="secondary"
-              size="lg"
-              className="h-11 px-5 text-base"
-            >
-              <a
-                href={downloadUrl ?? "#"}
-                download
-                aria-disabled={!downloadUrl || isDownloading}
-                className={cn(
-                  (!downloadUrl || isDownloading) &&
-                    "pointer-events-none opacity-50",
-                )}
-                onClick={handleDownload}
-              >
-                <Download />
-                {t("common.download")}
-              </a>
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog
-        open={isDeleteDialogOpen}
-        onOpenChange={(open) => {
-          if (!deleteFileState.isPending) setIsDeleteDialogOpen(open);
-        }}
+    <article
+      className={`${styles.card} group`}
+      style={{ animationDelay: `${Math.min(index, 7) * 35}ms` }}
+    >
+      <button
+        type="button"
+        aria-label={name}
+        onClick={(event) => onOpen(event.currentTarget)}
+        className={`${styles.preview} focus-visible:ring-ring block w-full cursor-zoom-in outline-none focus-visible:ring-2 focus-visible:ring-inset`}
       >
-        <DialogContent>
-          <DialogTitle>{t("pages.gallery.delete.title")}</DialogTitle>
-          <DialogDescription>
-            {t("pages.gallery.delete.description", { fileName })}
-          </DialogDescription>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button
-                type="button"
-                variant="outline"
-                disabled={deleteFileState.isPending}
-              >
-                {t("common.cancel")}
-              </Button>
-            </DialogClose>
-            <Button
-              type="button"
-              variant="destructive"
-              disabled={deleteFileState.isPending}
-              onClick={handleDelete}
-            >
-              <Trash2 />
-              {deleteFileState.isPending
-                ? t("pages.gallery.delete.deleting")
-                : t("pages.gallery.actions.delete")}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </>
+        {previewUrls?.preview_url && (
+          <GalleryPreview
+            key={previewUrls.preview_url}
+            mediaType={mediaType}
+            previewUrl={previewUrls.preview_url}
+            fileName={name}
+            compact={compact}
+            eager={index < 4}
+          />
+        )}
+        {!previewUrls?.preview_url && isPreviewLoading && (
+          <Skeleton className="size-full rounded-none motion-reduce:animate-none" />
+        )}
+        {!previewUrls?.preview_url && !isPreviewLoading && (
+          <GalleryFallback mediaType={mediaType} />
+        )}
+        <span
+          aria-hidden="true"
+          className="bg-background/90 absolute end-3 bottom-3 grid size-9 place-items-center rounded-full opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 motion-reduce:transition-none"
+        >
+          <Expand className="size-4" />
+        </span>
+      </button>
+      <div className="min-w-0 p-3">
+        <h2 className="truncate text-sm font-medium" dir="auto" title={name}>
+          {name}
+        </h2>
+        <div className="mt-1 flex flex-wrap items-center justify-between gap-1">
+          <span className="text-muted-foreground text-xs">
+            {t(`pages.gallery.mediaTypes.${mediaType}`)}
+          </span>
+          <GalleryActions file={file} downloadUrl={previewUrls?.download_url} />
+        </div>
+      </div>
+    </article>
   );
-};
+}

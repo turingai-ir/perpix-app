@@ -81,7 +81,7 @@ const AppLayout: FC = () => {
       <AiTaskEventsProvider />
 
       <main
-        className="grid h-dvh w-full min-w-0 grid-cols-[minmax(0,1fr)] overflow-hidden transition-[grid-template-columns] duration-300 ease-in-out lg:grid-cols-[var(--sidebar-width,0px)_minmax(0,calc(100%-var(--sidebar-width,0px)))]"
+        className="grid h-dvh w-full min-w-0 grid-cols-[minmax(0,1fr)] grid-rows-[minmax(0,1fr)] overflow-hidden transition-[grid-template-columns] duration-300 ease-in-out lg:grid-cols-[var(--sidebar-width,0px)_minmax(0,calc(100%-var(--sidebar-width,0px)))]"
         style={{
           ["--sidebar-width" as any]: appLayoutState.isSidebarOpen
             ? APP_LAYOUT_SIDEBAR_WIDTH
@@ -95,7 +95,7 @@ const AppLayout: FC = () => {
               scrollAreaMyRef.current = r;
             }
           }}
-          className="relative flex h-full max-h-full w-full min-w-0 flex-col overflow-hidden"
+          className="relative flex h-full max-h-full min-h-0 w-full min-w-0 flex-col overflow-hidden"
           viewportClassName="[&>div]:!grid [&>div]:!min-h-full [&>div]:!grid-rows-[auto_1fr]"
         >
           <header className="bg-background sticky top-0 z-10 flex w-full min-w-0 items-center">
