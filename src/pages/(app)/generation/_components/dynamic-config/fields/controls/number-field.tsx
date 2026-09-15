@@ -6,6 +6,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import type { JsonSchemaProperty } from "@/hooks/use-dynamic-config-form";
@@ -38,9 +39,13 @@ export const DynamicConfigNumberField: FC<{
                 : String(resolveFieldValue(field.value, property.default))
             }
             onBlur={field.onBlur}
-            onChange={(event) => field.onChange(event.target.value)}
+            onChange={(event) => {
+              const nextValue = event.target.value;
+              field.onChange(nextValue === "" ? "" : Number(nextValue));
+            }}
             ref={field.ref}
             type="number"
+            step={property.type === "integer" ? 1 : "any"}
             min={property.minimum}
             max={property.maximum}
             disabled={disabled}
@@ -52,6 +57,7 @@ export const DynamicConfigNumberField: FC<{
         {hint ? (
           <FormDescription className={classes.hint}>{hint}</FormDescription>
         ) : null}
+        <FormMessage />
       </FormItem>
     )}
   />

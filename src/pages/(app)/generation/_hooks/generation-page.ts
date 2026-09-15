@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -9,6 +9,7 @@ import {
   isAiTaskMessageTerminal,
 } from "./model";
 import { useScrollToLatestMessage } from "./scroll-to-latest-message";
+import type { OptimisticGenerationTurn } from "../_types/conversation";
 
 import { useReactQueryApi } from "@/hooks/app";
 import { buildRetryConfig } from "@/pages/(app)/generation/_utils/retry-config";
@@ -37,6 +38,9 @@ export function useGenerationPage({
   const queryClient = useQueryClient();
   const { queryOptions } = useReactQueryApi();
   const chatId = params?.chatId ?? undefined;
+  const submissionLockRef = useRef(false);
+  const [optimisticTurn, setOptimisticTurn] =
+    useState<OptimisticGenerationTurn>();
   const { aiGenerateState, aiTaskState } = useAiGenerate(chatId);
   const { mutateAsync } = aiGenerateState;
   const queriedTaskData = aiTaskState.data as SchemaAiTaskResponse | undefined;
@@ -72,14 +76,10 @@ export function useGenerationPage({
         message,
         generatedMediaField,
       );
-      const resultMessageIsTerminal = isAiTaskMessageTerminal(
-        resultMessage,
-        generatedMediaField,
-      );
-
-      return currentMessageIsTerminal && !resultMessageIsTerminal
-        ? message
-        : resultMessage;
+      // A full task snapshot that is already terminal is authoritative. This
+      // prevents an older in-flight polling response from reviving or flipping
+      // a result after SSE refreshed the task.
+      return currentMessageIsTerminal ? message : resultMessage;
     });
   }, [aiTaskMessages, aiTaskResultState.data, generatedMediaField]);
   const lastDisplayedAssistantMessage = useMemo(
@@ -114,10 +114,47 @@ export function useGenerationPage({
       message.role === AiTaskRuleEnumMap.ASSISTANT &&
       !isAiTaskMessageTerminal(message, generatedMediaField),
   );
-  const isBusy = isGenerating || isTaskLoading || hasPendingGeneration;
+  const optimisticTurnForDisplay = useMemo(() => {
+    if (!optimisticTurn) return undefined;
+    const matchedAssistant =
+      optimisticTurn.serverAssistantUuid &&
+      displayedMessages.some(
+        (message) => message.uuid === optimisticTurn.serverAssistantUuid,
+      );
+    const taskHasNewAssistant = Boolean(
+      optimisticTurn.taskUuid &&
+      taskData?.uuid === optimisticTurn.taskUuid &&
+      displayedMessages.filter(
+        (message) => message.role === AiTaskRuleEnumMap.ASSISTANT,
+      ).length > optimisticTurn.baselineAssistantCount,
+    );
+    return matchedAssistant || taskHasNewAssistant ? undefined : optimisticTurn;
+  }, [displayedMessages, optimisticTurn, taskData?.uuid]);
+  const hasOptimisticPending = Boolean(
+    optimisticTurnForDisplay && optimisticTurnForDisplay.status !== "failed",
+  );
+  const isBusy =
+    isGenerating ||
+    isTaskLoading ||
+    hasPendingGeneration ||
+    hasOptimisticPending;
+
+  useEffect(() => {
+    const serverMessage = optimisticTurn?.serverAssistantUuid
+      ? displayedMessages.find(
+          (message) => message.uuid === optimisticTurn.serverAssistantUuid,
+        )
+      : undefined;
+    if (
+      serverMessage &&
+      isAiTaskMessageTerminal(serverMessage, generatedMediaField)
+    ) {
+      submissionLockRef.current = false;
+    }
+  }, [displayedMessages, generatedMediaField, optimisticTurn]);
 
   useScrollToLatestMessage({
-    isGenerating,
+    isGenerating: isGenerating || hasOptimisticPending,
     isTaskLoading,
     lastMessageUuid: lastDisplayedAssistantMessage?.uuid,
     messageCount: displayedMessages.length,
@@ -139,23 +176,86 @@ export function useGenerationPage({
 
   const handleForm = useCallback(
     async (data: Readonly<Record<string, unknown>>, aiModelUuid: string) => {
-      if (hasPendingGeneration) return;
-
-      const res = await mutateAsync({
-        body: {
-          task_type: taskType,
-          ai_model_uuid: aiModelUuid,
-          ai_model_config: data,
-          task_uuid: chatId ?? undefined,
-        },
+      if (submissionLockRef.current || hasPendingGeneration) return;
+      submissionLockRef.current = true;
+      const existingMessageIds = new Set(
+        displayedMessages.map((message) => message.uuid),
+      );
+      const clientAttemptId = crypto.randomUUID();
+      const snapshot = {
+        config: structuredClone(data),
+        modelUuid: aiModelUuid,
+        prompt: String(data.prompt ?? ""),
+        referenceImages: Array.isArray(data.reference_images)
+          ? data.reference_images.filter(
+              (value): value is string => typeof value === "string",
+            )
+          : [],
+      };
+      setOptimisticTurn({
+        baselineAssistantCount: displayedMessages.filter(
+          (message) => message.role === AiTaskRuleEnumMap.ASSISTANT,
+        ).length,
+        baselineMessageCount: displayedMessages.length,
+        clientAttemptId,
+        snapshot,
+        status: "submitting",
+        taskUuid: chatId,
       });
 
-      navigate(historyPath.replace(":chatId", res.uuid));
+      try {
+        const res = await mutateAsync({
+          body: {
+            task_type: taskType,
+            ai_model_uuid: aiModelUuid,
+            ai_model_config: data,
+            task_uuid: chatId ?? undefined,
+          },
+        });
+        const responseTask = res as SchemaAiTaskResponse;
+        const responseMessages = Array.isArray(responseTask.messages)
+          ? responseTask.messages
+          : [];
+        const serverAssistant = [...responseMessages]
+          .reverse()
+          .find(
+            (message) =>
+              message.role === AiTaskRuleEnumMap.ASSISTANT &&
+              !existingMessageIds.has(message.uuid),
+          );
+        setOptimisticTurn((current) =>
+          current?.clientAttemptId === clientAttemptId
+            ? {
+                ...current,
+                serverAssistantUuid: serverAssistant?.uuid,
+                status: "accepted",
+                taskUuid: responseTask.uuid,
+              }
+            : current,
+        );
+        navigate(historyPath.replace(":chatId", responseTask.uuid));
+      } catch (error) {
+        submissionLockRef.current = false;
+        if (
+          error instanceof Error &&
+          error.name === "PaidActionRequirementError"
+        ) {
+          setOptimisticTurn(undefined);
+        } else {
+          setOptimisticTurn((current) =>
+            current?.clientAttemptId === clientAttemptId
+              ? { ...current, errorKind: "network", status: "failed" }
+              : current,
+          );
+        }
+        throw error;
+      }
     },
     [
       chatId,
       hasPendingGeneration,
       historyPath,
+      displayedMessages,
       mutateAsync,
       navigate,
       taskType,
@@ -188,7 +288,8 @@ export function useGenerationPage({
     isTaskLoading,
     lastAssistantMessage: lastDisplayedAssistantMessage,
     lastTaskMessage,
+    optimisticTurn: optimisticTurnForDisplay,
     successfulMessageClearKey,
-    shouldShowIntro: !chatId,
+    shouldShowIntro: !chatId && !optimisticTurnForDisplay,
   };
 }

@@ -15,6 +15,7 @@ import { useAppTranslate } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
 
 import { DynamicPromptConfigField } from "./dynamic-config-field";
+import { ImageSettingsDialog } from "./image-settings-dialog";
 import type { DynamicConfigForm } from "./types";
 
 export const AdvancedPromptSettingsDialog: FC<{
@@ -23,10 +24,21 @@ export const AdvancedPromptSettingsDialog: FC<{
   fieldNames: readonly string[];
   label?: string;
   simple?: boolean;
-}> = ({ disabled, dynamicForm, fieldNames, label, simple }) => {
+  modelName?: string;
+}> = ({ disabled, dynamicForm, fieldNames, label, simple, modelName }) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
 
   if (fieldNames.length === 0) return null;
+
+  if (simple)
+    return (
+      <ImageSettingsDialog
+        disabled={disabled}
+        dynamicForm={dynamicForm}
+        fieldNames={fieldNames}
+        modelName={modelName}
+      />
+    );
 
   return (
     <Dialog>

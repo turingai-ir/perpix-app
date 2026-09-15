@@ -8,6 +8,7 @@ import { useAppTranslate } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
 import { cn } from "@/lib/utils";
 import { MediaPreviewItem } from "@/components/custom/media-preview-item";
+import { ChatMessage } from "@/components/custom/chat-message";
 
 type Sender = "agent" | "user";
 interface ChatBubbleProps {
@@ -18,6 +19,7 @@ interface ChatBubbleProps {
   images?: (string | ReactNode)[];
   videos?: (string | ReactNode)[];
   status?: any;
+  copyMessage?: boolean;
 }
 
 export const ChatBubble: FC<ChatBubbleProps> = ({
@@ -27,6 +29,7 @@ export const ChatBubble: FC<ChatBubbleProps> = ({
   timestamp,
   images,
   status,
+  copyMessage = false,
   videos,
 }) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
@@ -48,8 +51,13 @@ export const ChatBubble: FC<ChatBubbleProps> = ({
             <Muted>{t("common.taskStatus.failed")}</Muted>
           </div>
         ) : null}
-        {message ? (
-          <div className="bg-accent rounded-md p-3">{message}</div>
+        {typeof message === "string" ? (
+          <ChatMessage
+            message={message}
+            showCopy={sender === "user" && copyMessage}
+          />
+        ) : message ? (
+          <div className="bg-accent rounded-xl p-3">{message}</div>
         ) : null}
         {images?.length ? (
           <div
