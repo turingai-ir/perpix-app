@@ -21,6 +21,7 @@ export interface MediaUploadStripProps {
   accept?: string;
   disabled?: boolean;
   previewType?: MediaPreviewType;
+  presentation?: "default" | "composer";
   onFileSelect?: (file: File) => void | Promise<string | void>;
   onUploadedFileSelect?: (id: string) => void;
   onDeleteClick?: (id: string) => void;

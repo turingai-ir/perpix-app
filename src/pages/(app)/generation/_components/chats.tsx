@@ -17,6 +17,7 @@ interface GenerationChatMedia {
 }
 
 interface Props {
+  copyUserMessages?: boolean;
   failureFallbackDescription: string;
   failureRetryLabel: string;
   failureTitle: string;
@@ -25,11 +26,19 @@ interface Props {
   messages: readonly SchemaAiTaskMessageResponse[];
   onRetry?: (message: SchemaAiTaskMessageResponse) => void;
   outputType: "image" | "video";
+  renderAssistantResult?: (input: {
+    generatedMedia: string[];
+    message: SchemaAiTaskMessageResponse;
+    requestMessage?: SchemaAiTaskMessageResponse;
+  }) => ReactNode;
 }
 
-const LOADING_STATUSES = new Set(["PENDING", "IN_PROGRESS"]);
+// SUCCESS without media is not terminal in the API contract; keep a visible
+// recovery state while result polling waits for the file identifiers.
+const LOADING_STATUSES = new Set(["PENDING", "IN_PROGRESS", "SUCCESS"]);
 
 export const GenerationChats: FC<Props> = ({
+  copyUserMessages = false,
   failureFallbackDescription,
   failureRetryLabel,
   failureTitle,
@@ -38,21 +47,34 @@ export const GenerationChats: FC<Props> = ({
   messages,
   onRetry,
   outputType,
+  renderAssistantResult,
 }) => {
   if (!messages.length) return null;
 
   return (
     <div className="flex w-full flex-col gap-2">
-      {messages.map((item) => {
+      {messages.map((item, messageIndex) => {
         const { generatedMedia, placeholder, userImages } = getMedia(item);
         const isUser = item.role === AiTaskRuleEnumMap.USER;
         const isAssistant = item.role === AiTaskRuleEnumMap.ASSISTANT;
+        if (!isUser && !isAssistant) return null;
         const isGenerating =
           isAssistant &&
           !generatedMedia.length &&
           LOADING_STATUSES.has(item.task_status ?? "");
         const isFailed = isAssistant && item.task_status === "FAILED";
         const failureDescription = item.message || failureFallbackDescription;
+        const requestMessage = [...messages.slice(0, messageIndex)]
+          .reverse()
+          .find((message) => message.role === AiTaskRuleEnumMap.USER);
+        const assistantResult =
+          isAssistant && generatedMedia.length && renderAssistantResult
+            ? renderAssistantResult({
+                generatedMedia,
+                message: item,
+                requestMessage,
+              })
+            : undefined;
 
         return (
           <div
@@ -75,37 +97,41 @@ export const GenerationChats: FC<Props> = ({
                 retryLabel={failureRetryLabel}
                 title={failureTitle}
               />
-            ) : null}
-            <ChatBubble
-              sender={isUser ? "user" : "agent"}
-              avatar={
-                <Avatar>
-                  <AvatarImage
-                    src="/android-chrome-512x512.png"
-                    className="grayscale"
-                  />
-                </Avatar>
-              }
-              message={
-                isGenerating || isFailed ? undefined : (item.message ?? "")
-              }
-              images={
-                isUser
-                  ? userImages
-                  : outputType === "image"
+            ) : assistantResult ? (
+              assistantResult
+            ) : (
+              <ChatBubble
+                copyMessage={copyUserMessages}
+                sender={isUser ? "user" : "agent"}
+                avatar={
+                  <Avatar>
+                    <AvatarImage
+                      src="/android-chrome-512x512.png"
+                      className="grayscale"
+                    />
+                  </Avatar>
+                }
+                message={
+                  isGenerating || isFailed ? undefined : (item.message ?? "")
+                }
+                images={
+                  isUser
+                    ? userImages
+                    : outputType === "image"
+                      ? isGenerating
+                        ? [placeholder]
+                        : generatedMedia
+                      : undefined
+                }
+                videos={
+                  !isUser && outputType === "video"
                     ? isGenerating
                       ? [placeholder]
                       : generatedMedia
                     : undefined
-              }
-              videos={
-                !isUser && outputType === "video"
-                  ? isGenerating
-                    ? [placeholder]
-                    : generatedMedia
-                  : undefined
-              }
-            />
+                }
+              />
+            )}
           </div>
         );
       })}

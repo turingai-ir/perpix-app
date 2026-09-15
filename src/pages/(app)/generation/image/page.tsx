@@ -1,4 +1,4 @@
-import { Activity } from "react";
+import { Activity, startTransition, useState } from "react";
 import { useLocation } from "react-router";
 import { Sparkles } from "lucide-react";
 import StudioLogo from "./_components/studio-logo";
@@ -13,11 +13,15 @@ import { useAppTranslate } from "@/hooks";
 import { APP_ROUTES_KEY } from "@/router/routes";
 import { AiRegistryModelSupportedTypesEnumMap } from "@/services/api";
 import { APP_I18_KEYS } from "@/services/i18";
+import { appEventBus } from "@/lib/event-bus";
+import type { GenerationComposerIntent } from "../_types/conversation";
 
 const GenerationImagePage = () => {
   const location = useLocation();
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const initialPrompt = getGenerationDraftPrompt(location.state);
+  const [composerIntent, setComposerIntent] =
+    useState<GenerationComposerIntent>();
   const {
     displayedMessages,
     handleForm,
@@ -26,6 +30,7 @@ const GenerationImagePage = () => {
     isTaskLoading,
     lastAssistantMessage,
     lastTaskMessage,
+    optimisticTurn,
     successfulMessageClearKey,
     shouldShowIntro,
   } = useGenerationPage({
@@ -44,11 +49,48 @@ const GenerationImagePage = () => {
 
       <Activity mode={isTaskLoading ? "hidden" : "visible"}>
         <>
-          <GenerationImageChats
-            isRetrying={isBusy}
-            messages={displayedMessages}
-            onRetry={handleRetry}
-          />
+          <section
+            aria-label={t("pages.generation.image.chat.timelineLabel")}
+            className="mx-auto w-full max-w-5xl px-3 sm:px-6"
+          >
+            <GenerationImageChats
+              isRetrying={isBusy}
+              messages={displayedMessages}
+              onRetry={handleRetry}
+              optimisticTurn={optimisticTurn}
+              onUseAsReference={(fileId) => {
+                startTransition(() => {
+                  setComposerIntent({
+                    id: crypto.randomUUID(),
+                    config: { reference_images: [fileId] },
+                    mergeReferences: true,
+                    requiredFields: ["reference_images"],
+                  });
+                });
+                appEventBus.emit("SCROLL_APP_LAYOUT_UNTIL_END", {
+                  force: true,
+                });
+              }}
+              onEditRequest={(message) => {
+                const modelUuid = message.ai_model_uuid;
+                if (!modelUuid) return;
+                startTransition(() => {
+                  setComposerIntent({
+                    id: crypto.randomUUID(),
+                    config: message.ai_model_config,
+                    modelUuid,
+                  });
+                });
+                appEventBus.emit("SCROLL_APP_LAYOUT_UNTIL_END", {
+                  force: true,
+                });
+              }}
+              onRegenerate={(message) => {
+                if (!message.ai_model_uuid) return;
+                void handleForm(message.ai_model_config, message.ai_model_uuid);
+              }}
+            />
+          </section>
 
           <div
             className={`${styles.content} mx-auto flex w-full max-w-6xl flex-1 flex-col items-center justify-end`}
@@ -71,24 +113,35 @@ const GenerationImagePage = () => {
               </div>
             ) : null}
 
-            <GenerationImagePromptBox
-              initialPrompt={initialPrompt}
-              isLoading={isBusy}
-              lastMessageConfig={
-                lastTaskMessage?.ai_model_config ??
-                lastAssistantMessage?.ai_model_config
-              }
-              lastMessageModelUuid={
-                lastTaskMessage?.ai_model_uuid ??
-                lastAssistantMessage?.ai_model_uuid
-              }
-              lastMessageStatus={
-                lastAssistantMessage?.task_status ??
-                lastTaskMessage?.task_status
-              }
-              onSubmit={handleForm}
-              successfulMessageClearKey={successfulMessageClearKey}
-            />
+            <div
+              data-generation-composer
+              className="from-background via-background/95 sticky bottom-0 z-20 w-full bg-gradient-to-t to-transparent pt-4 pb-2 sm:pt-6"
+            >
+              <GenerationImagePromptBox
+                composerIntent={composerIntent}
+                initialPrompt={initialPrompt}
+                isLoading={isBusy}
+                lastMessageConfig={
+                  lastTaskMessage?.ai_model_config ??
+                  lastAssistantMessage?.ai_model_config
+                }
+                lastMessageModelUuid={
+                  lastTaskMessage?.ai_model_uuid ??
+                  lastAssistantMessage?.ai_model_uuid
+                }
+                lastMessageStatus={
+                  lastAssistantMessage?.task_status ??
+                  lastTaskMessage?.task_status
+                }
+                onSubmit={handleForm}
+                onComposerIntentApplied={(intentId) => {
+                  setComposerIntent((current) =>
+                    current?.id === intentId ? undefined : current,
+                  );
+                }}
+                successfulMessageClearKey={successfulMessageClearKey}
+              />
+            </div>
           </div>
         </>
       </Activity>

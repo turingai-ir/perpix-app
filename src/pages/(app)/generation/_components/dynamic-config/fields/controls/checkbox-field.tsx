@@ -7,6 +7,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import type { JsonSchemaProperty } from "@/hooks/use-dynamic-config-form";
 import { cn } from "@/lib/utils";
@@ -63,6 +64,7 @@ export const DynamicConfigCheckboxField: FC<{
         {hint ? (
           <FormDescription className={HINT_CLASS_NAME}>{hint}</FormDescription>
         ) : null}
+        <FormMessage />
       </FormItem>
     )}
   />

@@ -6,6 +6,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -42,6 +43,7 @@ export const DynamicConfigTextareaField: FC<{
         {hint ? (
           <FormDescription className={classes.hint}>{hint}</FormDescription>
         ) : null}
+        <FormMessage />
       </FormItem>
     )}
   />

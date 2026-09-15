@@ -6,6 +6,7 @@ import {
   FormDescription,
   FormField,
   FormItem,
+  FormMessage,
 } from "@/components/ui/form";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import type { JsonSchemaProperty } from "@/hooks/use-dynamic-config-form";
@@ -31,6 +32,7 @@ export const DynamicConfigSwitchField: FC<{
   dynamicForm,
   fieldName,
   hint,
+  label,
   optionLabels,
   options,
   property,
@@ -48,6 +50,8 @@ export const DynamicConfigSwitchField: FC<{
         <FormItem className={classes.item}>
           <FormControl>
             <ScrollArea
+              role="group"
+              aria-label={label}
               className={cn(classes.control, "min-w-0")}
               viewportClassName="overflow-x-auto"
               orientation="horizontal"
@@ -60,6 +64,7 @@ export const DynamicConfigSwitchField: FC<{
                     <Button
                       key={optionStr}
                       type="button"
+                      aria-pressed={isSelected}
                       variant={isSelected ? "secondary" : "ghost"}
                       size="xs"
                       className={`h-7 shrink-0 rounded-[6px] px-3 text-xs transition-all ${
@@ -82,6 +87,7 @@ export const DynamicConfigSwitchField: FC<{
           {hint ? (
             <FormDescription className={classes.hint}>{hint}</FormDescription>
           ) : null}
+          <FormMessage />
         </FormItem>
       );
     }}
