@@ -35,11 +35,18 @@ const AppLayout: FC = () => {
       return;
     }
 
-    const areaElement = el.childNodes[1] as HTMLDivElement;
+    const areaElement = el.querySelector<HTMLElement>(
+      '[data-slot="scroll-area-viewport"]',
+    );
 
     if (!areaElement) {
       return;
     }
+    const distanceFromEnd =
+      areaElement.scrollHeight -
+      areaElement.scrollTop -
+      areaElement.clientHeight;
+    if (distanceFromEnd > 160) return;
     areaElement.scrollTo({
       top: areaElement.scrollHeight,
       behavior: "smooth",
@@ -49,7 +56,17 @@ const AppLayout: FC = () => {
   useEffect(() => {
     const appEventBusListener = appEventBus.on(
       "SCROLL_APP_LAYOUT_UNTIL_END",
-      () => {
+      (options) => {
+        if (options?.force) {
+          const viewport = scrollAreaMyRef.current?.querySelector<HTMLElement>(
+            '[data-slot="scroll-area-viewport"]',
+          );
+          viewport?.scrollTo({
+            top: viewport.scrollHeight,
+            behavior: "smooth",
+          });
+          return;
+        }
         scrollAppLayoutUntilEnd();
       },
     );

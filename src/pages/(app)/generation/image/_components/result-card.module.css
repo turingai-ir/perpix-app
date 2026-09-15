@@ -1,0 +1,62 @@
+.reveal {
+  position: relative;
+  transform-origin: 50% 42%;
+  animation: imageArrival 900ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.reveal::before {
+  position: absolute;
+  z-index: 20;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 50% 42%,
+    white,
+    var(--primary) 8%,
+    transparent 36%
+  );
+  content: "";
+  animation: arrivalFlash 850ms ease-out both;
+}
+
+@keyframes imageArrival {
+  0% {
+    opacity: 0;
+    filter: brightness(2.4) blur(10px);
+    clip-path: circle(0% at 50% 42%);
+    transform: scale(0.94);
+  }
+  55% {
+    opacity: 1;
+    filter: brightness(1.35) blur(0);
+  }
+  100% {
+    filter: brightness(1);
+    clip-path: circle(150% at 50% 42%);
+    transform: scale(1);
+  }
+}
+
+@keyframes arrivalFlash {
+  0% {
+    opacity: 1;
+    transform: scale(0.1);
+  }
+  45% {
+    opacity: 0.72;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2.6);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal::before {
+    animation: none;
+  }
+  .reveal::before {
+    display: none;
+  }
+}

@@ -1,11 +1,12 @@
 import type { FC } from "react";
 
 import { ImageModelDiscovery } from "./model-discovery";
+import { ImageReferenceInput } from "./image-reference-input";
 
 import { useAppTranslate } from "@/hooks";
 
-import { DynamicConfigFileFields } from "@/pages/(app)/generation/_components/dynamic-config";
 import { GenerationPromptBox } from "@/pages/(app)/generation/_components/prompt-box";
+import type { GenerationComposerIntent } from "@/pages/(app)/generation/_types/conversation";
 import {
   AiRegistryModelSupportedTypesEnumMap,
   type SchemaAiTaskMessageResponse,
@@ -22,6 +23,8 @@ interface Props {
   lastMessageModelUuid?: SchemaAiTaskMessageResponse["ai_model_uuid"];
   lastMessageStatus?: SchemaAiTaskMessageResponse["task_status"];
   successfulMessageClearKey?: string;
+  composerIntent?: GenerationComposerIntent;
+  onComposerIntentApplied?: (intentId: string) => void;
 }
 
 const PROMPT_FIELD_NAMES = new Set(["prompt", "reference_images"]);
@@ -49,11 +52,10 @@ export const GenerationImagePromptBox: FC<Props> = (props) => {
       )}
       advancedExcludedFieldNames={ADVANCED_CONFIG_EXCLUDED_FIELD_NAMES}
       extraContent={({ dynamicForm, isFormBusy, setIsUploadingMedia }) => (
-        <DynamicConfigFileFields
+        <ImageReferenceInput
           dynamicForm={dynamicForm}
           disabled={isFormBusy}
           onUploadingChange={setIsUploadingMedia}
-          requestId="image_generation"
         />
       )}
       promptBoxFieldNames={PROMPT_BOX_CONFIG_FIELD_NAMES}

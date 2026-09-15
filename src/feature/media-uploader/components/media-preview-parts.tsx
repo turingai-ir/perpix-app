@@ -7,7 +7,9 @@ import {
 } from "lucide-react";
 import type { FC } from "react";
 
+import { useAppTranslate } from "@/hooks";
 import { cn } from "@/lib/utils";
+import { APP_I18_KEYS } from "@/services/i18";
 
 import type { MediaPreviewType } from "../types";
 
@@ -43,15 +45,19 @@ export const ErrorPreview: FC<{ label: string; className?: string }> = ({
 export const DeleteButton: FC<{
   onClick: () => void;
   variant?: "default" | "strong";
-}> = ({ onClick, variant = "default" }) => (
-  <button
-    type="button"
-    className={cn(
-      "absolute top-1 right-1 z-20 flex h-6 w-6 cursor-pointer items-center justify-center rounded-full",
-      variant === "strong" ? "bg-destructive" : "bg-destructive/80",
-    )}
-    onClick={onClick}
-  >
-    <X className="text-background h-4 w-4" />
-  </button>
-);
+}> = ({ onClick, variant = "default" }) => {
+  const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
+  return (
+    <button
+      type="button"
+      aria-label={t("features.mediaUploader.actions.remove")}
+      className={cn(
+        "absolute top-1 right-1 z-20 flex size-8 cursor-pointer items-center justify-center rounded-full after:absolute after:-inset-1.5 after:content-['']",
+        variant === "strong" ? "bg-destructive" : "bg-destructive/80",
+      )}
+      onClick={onClick}
+    >
+      <X aria-hidden="true" className="text-background size-4" />
+    </button>
+  );
+};
