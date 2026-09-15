@@ -111,6 +111,7 @@ export type UseDynamicConfigFormInput = {
   configMeta?: JsonConfigMeta | null;
   schemaKey?: string | number | null;
   autoResetOnSchemaChange?: boolean;
+  preserveFieldsOnSchemaChange?: readonly string[];
   formOptions?: Omit<
     UseFormProps<DynamicConfigValues>,
     "resolver" | "defaultValues"

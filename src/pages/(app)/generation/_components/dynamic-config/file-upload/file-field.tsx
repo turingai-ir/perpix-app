@@ -36,6 +36,7 @@ export const DynamicConfigFileField: FC<{
   onValueChange?: (value: string | string[] | undefined) => void;
   onUploadingChange?: (isUploading: boolean) => void;
   property?: JsonSchemaProperty;
+  presentation?: "default" | "composer";
   requestId?: string;
 }> = ({
   disabled = false,
@@ -46,6 +47,7 @@ export const DynamicConfigFileField: FC<{
   onValueChange,
   onUploadingChange,
   property,
+  presentation = "default",
   requestId = "dynamic_config",
 }) => {
   const { t } = useAppTranslate();
@@ -164,8 +166,22 @@ export const DynamicConfigFileField: FC<{
   };
 
   return (
-    <div className="flex w-full min-w-0 flex-col gap-2 py-2">
-      <span className="text-muted-foreground text-sm font-normal">{label}</span>
+    <div
+      className={
+        presentation === "composer"
+          ? "flex min-w-0 flex-col"
+          : "flex w-full min-w-0 flex-col gap-2 py-2"
+      }
+    >
+      <span
+        className={
+          presentation === "composer"
+            ? "sr-only"
+            : "text-muted-foreground text-sm font-normal"
+        }
+      >
+        {label}
+      </span>
       {hint ? <p className={HINT_CLASS_NAME}>{hint}</p> : null}
       <MediaUploadStrip
         uploadedItems={toUploadedMediaItems(selectedFileIds)}
@@ -179,6 +195,7 @@ export const DynamicConfigFileField: FC<{
         label={getUploadLabel(previewType, t)}
         accept={acceptList.join(", ")}
         previewType={previewType}
+        presentation={presentation}
       />
     </div>
   );

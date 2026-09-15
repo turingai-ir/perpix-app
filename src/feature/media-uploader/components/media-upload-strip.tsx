@@ -1,6 +1,7 @@
 import type { FC } from "react";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
 
 import { MediaFilePickerDialog } from "./media-file-picker-dialog";
 import { MediaUploadPlaceholder } from "./media-upload-placeholder";
@@ -16,6 +17,7 @@ export const MediaUploadStrip: FC<MediaUploadStripProps> = ({
   accept = "image/jpeg, image/png",
   disabled = false,
   previewType = "image",
+  presentation = "default",
   onFileSelect,
   onUploadedFileSelect,
   onDeleteClick,
@@ -36,7 +38,12 @@ export const MediaUploadStrip: FC<MediaUploadStripProps> = ({
   });
 
   return (
-    <div className="relative w-full min-w-0">
+    <div
+      className={cn(
+        "relative min-w-0",
+        presentation === "composer" ? "w-auto max-w-64" : "w-full",
+      )}
+    >
       <MediaFilePickerDialog
         accept={accept}
         acceptedContentTypes={acceptedContentTypes}
@@ -52,16 +59,20 @@ export const MediaUploadStrip: FC<MediaUploadStripProps> = ({
         onUploadedFileSelect={onUploadedFileSelect}
       />
       <ScrollArea
-        className="w-full min-w-0"
+        className={cn(
+          "min-w-0",
+          presentation === "composer" ? "w-auto max-w-64" : "w-full",
+        )}
         viewportClassName="overflow-x-auto"
         orientation="horizontal"
       >
-        <div className="flex w-max items-center gap-4">
+        <div className={cn("flex items-center gap-4", "w-max")}>
           {showPlaceholder && (
             <MediaUploadPlaceholder
               disabled={disabled}
               label={label}
               onClick={openFilePicker}
+              presentation={presentation}
             />
           )}
 
@@ -86,10 +97,12 @@ export const MediaUploadStrip: FC<MediaUploadStripProps> = ({
           ))}
         </div>
       </ScrollArea>
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute top-0 bottom-0 left-0 z-4 w-4 backdrop-blur-[2px]"
-      />
+      {presentation !== "composer" && (
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute top-0 bottom-0 left-0 z-4 w-4 backdrop-blur-[2px]"
+        />
+      )}
     </div>
   );
 };

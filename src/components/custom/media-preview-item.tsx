@@ -21,25 +21,40 @@ import { downloadFile } from "@/utils";
 type MediaType = "image" | "video";
 
 interface MediaPreviewItemProps {
+  alt?: string;
+  aspectRatio?: string;
   fileId: string;
   index?: number;
   type: MediaType;
 }
 
 export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
+  alt,
+  aspectRatio = "1 / 1",
   fileId,
   index = 0,
   type,
 }) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [mountedAt] = useState(Date.now);
   const { getFilePreviewState } = useFilePreview(fileId);
   const navigate = useNavigate();
 
-  const isPreviewLoading = getFilePreviewState.isPending;
+  const expireAt = getFilePreviewState.data?.expire_at
+    ? Date.parse(getFilePreviewState.data.expire_at)
+    : Number.NaN;
+  const isExpired = Number.isFinite(expireAt) && expireAt <= mountedAt;
+  const isPreviewLoading =
+    getFilePreviewState.isPending ||
+    (isExpired && getFilePreviewState.isFetching);
   const isError = getFilePreviewState.isError;
-  const mediaUrl = getFilePreviewState.data?.preview_url;
-  const downloadUrl = getFilePreviewState.data?.download_url;
+  const mediaUrl = isExpired
+    ? undefined
+    : getFilePreviewState.data?.preview_url;
+  const downloadUrl = isExpired
+    ? undefined
+    : getFilePreviewState.data?.download_url;
   const mediaLabel = type === "image" ? t("common.image") : t("common.video");
 
   const handleDownload = async (event: MouseEvent<HTMLAnchorElement>) => {
@@ -61,9 +76,10 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
     <Dialog>
       <div
         className={cn(
-          "bg-background flex aspect-square w-full items-center justify-center overflow-hidden rounded-lg border",
+          "bg-background flex w-full items-center justify-center overflow-hidden rounded-lg border",
           isError && "border-destructive/50 bg-destructive/5",
         )}
+        style={{ aspectRatio }}
       >
         {!isError && mediaUrl ? (
           <DialogTrigger asChild>
@@ -76,7 +92,7 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
                 <img
                   className="h-full w-full object-cover transition-transform group-hover:scale-[1.02]"
                   src={mediaUrl}
-                  alt={`img-${index}`}
+                  alt={alt ?? `${mediaLabel} ${index + 1}`}
                 />
               ) : (
                 <>
@@ -124,7 +140,7 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
             <img
               className="max-h-full max-w-full rounded-lg object-contain"
               src={mediaUrl}
-              alt={`img-${index}`}
+              alt={alt ?? `${mediaLabel} ${index + 1}`}
             />
           ) : (
             // eslint-disable-next-line jsx-a11y/media-has-caption
@@ -143,7 +159,7 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
               type="button"
               variant="secondary"
               size="lg"
-              className="h-11 px-5 text-base gap-2"
+              className="h-11 gap-2 px-5 text-base"
               onClick={() => navigate(`/editor/${fileId}`)}
             >
               <ImageIcon className="h-4 w-4 text-emerald-500" />

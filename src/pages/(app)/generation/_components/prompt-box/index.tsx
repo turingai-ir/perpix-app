@@ -19,6 +19,7 @@ import {
 export const GenerationPromptBox: FC<GenerationPromptBoxProps> = ({
   advancedExcludedFieldNames,
   configDefaultsResolver,
+  composerIntent,
   extraContent,
   modelSelectionContent,
   primaryActionLabel,
@@ -29,6 +30,7 @@ export const GenerationPromptBox: FC<GenerationPromptBoxProps> = ({
   lastMessageModelUuid,
   lastMessageStatus,
   onSubmit,
+  onComposerIntentApplied,
   successfulMessageClearKey,
   promptBoxFieldNames: includedPromptBoxFieldNames,
   promptPlaceholderKey,
@@ -38,12 +40,14 @@ export const GenerationPromptBox: FC<GenerationPromptBoxProps> = ({
   const promptBox = useGenerationPromptBox({
     advancedExcludedFieldNames,
     configDefaultsResolver,
+    composerIntent,
     initialPrompt,
     isLoading,
     lastMessageConfig,
     lastMessageModelUuid,
     lastMessageStatus,
     onSubmit,
+    onComposerIntentApplied,
     promptBoxFieldNames: includedPromptBoxFieldNames,
     successfulMessageClearKey,
     supportedOutputs,
@@ -55,12 +59,19 @@ export const GenerationPromptBox: FC<GenerationPromptBoxProps> = ({
     dynamicForm: promptBox.dynamicForm,
     fieldNames: promptBox.promptBoxConfigFieldNames,
   });
+  const fullWidthFields = (
+    <PromptFullWidthFieldsSection
+      dynamicForm={promptBox.dynamicForm}
+      fieldNames={fieldGroups.fullWidthFieldNames}
+      disabled={promptBox.isFormBusy}
+    />
+  );
 
   return (
     <Card
       className={
         primaryActionLabel
-          ? "border-border/70 bg-card/95 w-full min-w-0 rounded-3xl p-4 shadow-xl shadow-black/5 sm:p-6"
+          ? "border-border/80 bg-card/95 w-full min-w-0 rounded-[1.75rem] border p-4 shadow-[0_24px_80px_rgba(0,0,0,0.28)] ring-1 ring-white/3 backdrop-blur-xl sm:p-5"
           : "w-full min-w-0 overflow-hidden px-2"
       }
     >
@@ -69,36 +80,59 @@ export const GenerationPromptBox: FC<GenerationPromptBoxProps> = ({
           className="flex w-full min-w-0 flex-col gap-4"
           onSubmit={promptBox.handleFormSubmit}
         >
+          {primaryActionLabel && promptBox.composerIntentBlocked && (
+            <div
+              className="border-primary/25 bg-primary/7 text-foreground rounded-xl border px-3 py-2 text-sm leading-6"
+              role="status"
+            >
+              {t("pages.generation.image.chat.referenceNeedsModel")}
+            </div>
+          )}
           {fieldGroups.hasModeField && !primaryActionLabel && (
             <PromptModeSection
               dynamicForm={promptBox.dynamicForm}
               disabled={promptBox.isFormBusy}
             />
           )}
-          {extraContent?.({
-            dynamicForm: promptBox.dynamicForm,
-            isFormBusy: promptBox.isFormBusy,
-            isUploadingMedia: promptBox.isUploadingMedia,
-            setIsUploadingMedia: promptBox.setIsUploadingMedia,
-          })}
-          {promptBox.isPromptFieldVisible && (
+          {!primaryActionLabel &&
+            extraContent?.({
+              dynamicForm: promptBox.dynamicForm,
+              isFormBusy: promptBox.isFormBusy,
+              isUploadingMedia: promptBox.isUploadingMedia,
+              setIsUploadingMedia: promptBox.setIsUploadingMedia,
+            })}
+          {promptBox.isPromptFieldVisible && primaryActionLabel && (
+            <div className="border-border/70 bg-muted/15 focus-within:border-primary/45 focus-within:bg-muted/25 focus-within:ring-primary/10 flex min-w-0 items-start gap-3 rounded-2xl border px-3 py-2 transition-colors focus-within:ring-2">
+              {extraContent?.({
+                dynamicForm: promptBox.dynamicForm,
+                isFormBusy: promptBox.isFormBusy,
+                isUploadingMedia: promptBox.isUploadingMedia,
+                setIsUploadingMedia: promptBox.setIsUploadingMedia,
+              })}
+              <PromptTextarea
+                dynamicForm={promptBox.dynamicForm}
+                disabled={promptBox.isFormBusy}
+                placeholder={t(promptPlaceholderKey)}
+                label={t("pages.generation.image.studio.composerLabel")}
+                compact
+              />
+            </div>
+          )}
+          {promptBox.isPromptFieldVisible && !primaryActionLabel && (
             <PromptTextarea
               dynamicForm={promptBox.dynamicForm}
               disabled={promptBox.isFormBusy}
               placeholder={t(promptPlaceholderKey)}
             />
           )}
+          {primaryActionLabel && fullWidthFields}
           <PromptActionsSection
             advancedSettingsLabel={advancedSettingsLabel}
             advancedFieldNames={promptBox.advancedFieldNames}
             chooseModelLabel={t("common.chooseModel")}
             disabled={promptBox.isFormBusy}
             dynamicForm={promptBox.dynamicForm}
-            inlineFieldNames={
-              primaryActionLabel && fieldGroups.hasModeField
-                ? ["mode", ...fieldGroups.inlineFieldNames]
-                : fieldGroups.inlineFieldNames
-            }
+            inlineFieldNames={fieldGroups.inlineFieldNames}
             isLoading={isLoading}
             isSubmitDisabled={promptBox.isSubmitDisabled}
             model={promptBox.model}
@@ -112,11 +146,7 @@ export const GenerationPromptBox: FC<GenerationPromptBoxProps> = ({
             promptRequired={promptBox.isPromptFieldVisible}
             upgradeLabel={t("common.upgradeRequired")}
           />
-          <PromptFullWidthFieldsSection
-            dynamicForm={promptBox.dynamicForm}
-            fieldNames={fieldGroups.fullWidthFieldNames}
-            disabled={promptBox.isFormBusy}
-          />
+          {!primaryActionLabel && fullWidthFields}
         </form>
       </Form>
     </Card>
