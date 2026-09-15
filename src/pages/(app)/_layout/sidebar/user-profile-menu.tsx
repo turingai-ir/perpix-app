@@ -23,6 +23,7 @@ import { APP_ROUTES_KEY } from "@/router/routes";
 import { APP_I18_KEYS } from "@/services/i18";
 import { APP_KEYS } from "@/utils";
 import { cookies } from "@/utils/cookies";
+import { indexedDBPersister, queryClient } from "@/lib/react-query";
 
 const AppLayoutSidebarUserProfileMenu: FC = () => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
@@ -33,9 +34,11 @@ const AppLayoutSidebarUserProfileMenu: FC = () => {
     activeSubscriptionState.data?.plan.display_name ??
     t("features.pricing.plans.free.title");
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     clearPaymentSession();
     cookies().remove(APP_KEYS.COOKIES.ACCESS_TOKEN);
+    queryClient.clear();
+    await indexedDBPersister.removeClient();
     navigate(APP_ROUTES_KEY.auth.login.path);
   };
 
@@ -83,7 +86,7 @@ const AppLayoutSidebarUserProfileMenu: FC = () => {
               {t("features.pwaInstall.action")}
             </DropdownMenuItem>
           ) : null}
-          <DropdownMenuItem onClick={handleLogout}>
+          <DropdownMenuItem onClick={() => void handleLogout()}>
             <LogOut />
             {t("pages.app.layout.sidebar.user.logout")}
           </DropdownMenuItem>

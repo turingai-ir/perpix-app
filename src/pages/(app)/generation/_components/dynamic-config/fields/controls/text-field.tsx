@@ -6,6 +6,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
@@ -42,6 +43,7 @@ export const DynamicConfigTextField: FC<{
         {hint ? (
           <FormDescription className={classes.hint}>{hint}</FormDescription>
         ) : null}
+        <FormMessage />
       </FormItem>
     )}
   />

@@ -429,3 +429,95 @@ test("keeps desk accessible with reduced motion and keyboard navigation", async 
   await expect(video).toBeFocused();
   expect((await video.boundingBox())?.height).toBeGreaterThanOrEqual(44);
 });
+
+test("keeps the image creation turn and composer in view", async ({ page }) => {
+  await mockDashboardApi(page);
+  await page.route("**/api/v1/user/subscription/active", (route) =>
+    route.fulfill({
+      json: {
+        uuid: "generation-subscription",
+        started_at: "2026-09-01T00:00:00Z",
+        expires_at: "2026-10-01T00:00:00Z",
+        plan: {
+          uuid: "generation-plan",
+          name: "pro",
+          display_name: "حرفه‌ای",
+          scopes: ["ai_task:write"],
+          allowed_models: ["flux-pro"],
+          is_active: true,
+        },
+      },
+    }),
+  );
+  await page.route("**/api/v1/ai-task/generate", async (route) => {
+    const request = route.request().postDataJSON() as {
+      ai_model_config: Record<string, unknown>;
+    };
+    await route.fulfill({
+      json: {
+        uuid: "generation-task",
+        task_type: "IMAGE",
+        created_at: "2026-09-15T20:00:00Z",
+        updated_at: "2026-09-15T20:00:00Z",
+        messages: [
+          {
+            uuid: "generation-user-message",
+            role: "USER",
+            message: request.ai_model_config.prompt,
+            ai_model_uuid: "model-1",
+            ai_model_config: request.ai_model_config,
+          },
+          {
+            uuid: "generation-assistant-message",
+            role: "ASSISTANT",
+            message: null,
+            task_status: "IN_PROGRESS",
+            ai_model_uuid: "model-1",
+            ai_model_config: request.ai_model_config,
+          },
+        ],
+      },
+    });
+  });
+  await page.goto("http://localhost:5173/generation/image");
+
+  const prompt = page.getByRole("textbox", { name: "توصیف تصویر" });
+  await prompt.fill("یک شهر آینده‌نگر در شب با نورهای نئونی و جزئیات فراوان");
+  await page.getByRole("button", { name: "بزرگ‌کردن و ویرایش پرامپت" }).click();
+  const expandedPrompt = page.getByRole("dialog").getByRole("textbox");
+  await expect(expandedPrompt).toHaveValue(/شهر آینده‌نگر/);
+  await expandedPrompt.fill(
+    "یک شهر آینده‌نگر در شب، سبک سینمایی و باران نئونی",
+  );
+  await page.getByRole("button", { name: "اعمال تغییرات پرامپت" }).click();
+
+  await page.getByRole("button", { name: "ساخت تصویر" }).click();
+  const unbornMuseum = page.getByLabel("موزه تصاویر متولدنشده");
+  await expect(unbornMuseum).toBeInViewport();
+  await expect(unbornMuseum.getByText("شهر", { exact: true })).toBeVisible();
+  const copyPrompt = page.getByRole("button", { name: "کپی متن پرامپت" });
+  await expect(copyPrompt).toBeVisible();
+  await copyPrompt.click();
+  await expect(
+    page.getByRole("button", { name: "متن پرامپت کپی شد" }),
+  ).toBeVisible();
+
+  const composer = page.locator("[data-generation-composer]");
+  await expect(composer).toBeInViewport();
+  await page.screenshot({
+    path: test.info().outputPath("unborn-museum-desktop.png"),
+    animations: "disabled",
+  });
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await composer.evaluate((element) =>
+    element.scrollIntoView({ block: "end", behavior: "auto" }),
+  );
+  await expect(unbornMuseum).toBeInViewport();
+  await expect(composer).toBeInViewport();
+  const pageWidth = await page.evaluate(() => ({
+    client: document.documentElement.clientWidth,
+    scroll: document.documentElement.scrollWidth,
+  }));
+  expect(pageWidth.scroll).toBe(pageWidth.client);
+});

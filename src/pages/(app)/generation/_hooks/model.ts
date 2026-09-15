@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAtom } from "jotai";
 import {
   type InfiniteData,
   type Query,
   type QueryClient,
+  keepPreviousData,
   useQueryClient,
 } from "@tanstack/react-query";
 import { useDebounce } from "react-use";
@@ -101,8 +102,16 @@ export const useModel = (
   const targetAtom = supportedOutputs.includes("VIDEO")
     ? selectedVideoModelAtom
     : selectedImageModelAtom;
-  const [selectedModel, setCurrentModel] = useAtom(targetAtom);
-  const currentSelectedModel = initialModelUuid ?? selectedModel ?? undefined;
+  const [selectedModel, setSelectedModel] = useAtom(targetAtom);
+  const [explicitModel, setExplicitModel] = useState<string>();
+  const previousInitialModelRef = useRef(initialModelUuid);
+  useEffect(() => {
+    if (previousInitialModelRef.current === initialModelUuid) return;
+    previousInitialModelRef.current = initialModelUuid;
+    setExplicitModel(undefined);
+  }, [initialModelUuid]);
+  const currentSelectedModel =
+    explicitModel ?? initialModelUuid ?? selectedModel ?? undefined;
   const allowedModelNames = activeSubscriptionState.data?.plan
     .allowed_models as readonly string[] | undefined;
 
@@ -138,8 +147,12 @@ export const useModel = (
         },
       },
     },
-    { enabled: !!currentModel },
+    { enabled: !!currentModel, placeholderData: keepPreviousData },
   );
+  const setCurrentModel = (modelUuid: string) => {
+    setExplicitModel(modelUuid);
+    setSelectedModel(modelUuid);
+  };
   return {
     activeSubscriptionState,
     allowedModelNames,
@@ -158,7 +171,11 @@ export const useAiGenerate = (task_id: string | undefined) => {
   const { useMutation, useQuery, queryOptions } = useReactQueryApi();
   const queryClient = useQueryClient();
   const { guardAsyncAction } = usePaidActionGuard();
-  const userQueryKey = queryOptions("get", "/api/v1/user/get-info", undefined).queryKey;
+  const userQueryKey = queryOptions(
+    "get",
+    "/api/v1/user/get-info",
+    undefined,
+  ).queryKey;
   const aiTasksListQueryKey = getAiTasksListQueryKey(queryOptions);
 
   const aiTaskState = useQuery(
@@ -177,9 +194,13 @@ export const useAiGenerate = (task_id: string | undefined) => {
       const task = taskData as SchemaAiTaskResponse;
       void queryClient.invalidateQueries({ queryKey: userQueryKey });
       if (task?.uuid) {
-        const singleTaskQueryKey = queryOptions("get", "/api/v1/ai-task/{task_uuid}", {
-          params: { path: { task_uuid: task.uuid } },
-        }).queryKey;
+        const singleTaskQueryKey = queryOptions(
+          "get",
+          "/api/v1/ai-task/{task_uuid}",
+          {
+            params: { path: { task_uuid: task.uuid } },
+          },
+        ).queryKey;
         queryClient.setQueryData(singleTaskQueryKey, task);
       }
       upsertAiTaskInListCache(queryClient, aiTasksListQueryKey, task);
@@ -187,10 +208,6 @@ export const useAiGenerate = (task_id: string | undefined) => {
         queryKey: aiTasksListQueryKey,
         refetchType: "none",
       });
-
-      if (task_id) {
-        void aiTaskState.refetch();
-      }
     },
   });
   const guardedMutateAsync = guardAsyncAction(
@@ -268,7 +285,11 @@ export const useAiTaskResultPolling = (
       }).queryKey
     : undefined;
   const aiTasksListQueryKey = getAiTasksListQueryKey(queryOptions);
-  const walletQueryKey = queryOptions("get", "/api/v1/wallet/wallet", undefined).queryKey;
+  const walletQueryKey = queryOptions(
+    "get",
+    "/api/v1/wallet/wallet",
+    undefined,
+  ).queryKey;
 
   const refreshAfterTaskResult = () => {
     if (aiTaskQueryKey) {

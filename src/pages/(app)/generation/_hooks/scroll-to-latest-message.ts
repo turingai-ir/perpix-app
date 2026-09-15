@@ -16,7 +16,9 @@ export const useScrollToLatestMessage = ({
   messageCount,
 }: UseScrollToLatestMessageParams) => {
   const scrollToLatestMessage = useEffectEvent(() => {
-    appEventBus.emit("SCROLL_APP_LAYOUT_UNTIL_END", undefined);
+    appEventBus.emit("SCROLL_APP_LAYOUT_UNTIL_END", {
+      force: isGenerating,
+    });
   });
 
   useEffect(() => {

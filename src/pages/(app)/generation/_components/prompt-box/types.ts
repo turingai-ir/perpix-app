@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { GenerationComposerIntent } from "../../_types/conversation";
 
 import type { DynamicConfigForm } from "@/pages/(app)/generation/_components/dynamic-config";
 import type { useModel } from "@/pages/(app)/generation/_hooks/model";
@@ -29,6 +30,7 @@ export interface GenerationPromptBoxProps {
   }) => ReactNode;
   primaryActionLabel?: string;
   advancedSettingsLabel?: string;
+  composerIntent?: GenerationComposerIntent;
   initialPrompt?: string;
   isLoading?: boolean;
   lastMessageConfig?: SchemaAiTaskMessageResponse["ai_model_config"];
@@ -38,6 +40,7 @@ export interface GenerationPromptBoxProps {
     data: Readonly<Record<string, unknown>>,
     aiModelUuid: string,
   ) => Promise<void> | void;
+  onComposerIntentApplied?: (intentId: string) => void;
   successfulMessageClearKey?: string;
   promptBoxFieldNames: ReadonlySet<string>;
   promptPlaceholderKey: string;
