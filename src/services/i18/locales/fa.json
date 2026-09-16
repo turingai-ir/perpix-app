@@ -185,6 +185,15 @@
   },
   "features": {
     "mediaUploader": {
+      "composer": {
+        "references": "تصاویر مرجع",
+        "count": "{{count}} از {{max}}",
+        "add": "افزودن عکس",
+        "full": "ظرفیت تکمیل",
+        "preview": "نمایش تصویر مرجع {{index}}",
+        "remove": "حذف تصویر مرجع {{index}}",
+        "confirm": "افزودن {{count}} عکس"
+      },
       "actions": {
         "close": "بستن",
         "upload": "آپلود",
@@ -196,6 +205,10 @@
       "emptyFiles": "فایلی برای نمایش وجود ندارد.",
       "loadingMore": "در حال بارگذاری فایل‌ها...",
       "newFile": {
+        "clipboardEmpty": "عکسی در کلیپ‌بورد پیدا نشد.",
+        "clipboardUnavailable": "دسترسی به کلیپ‌بورد ممکن نشد؛ با Ctrl+V تصویر را پیست کنید.",
+        "paste": "چسباندن",
+        "pasteHint": "یا با Ctrl+V عکس را پیست کنید.",
         "description": "پس از پایان آپلود، فایل به انتخاب‌ها اضافه می‌شود.",
         "title": "آپلود فایل جدید"
       },

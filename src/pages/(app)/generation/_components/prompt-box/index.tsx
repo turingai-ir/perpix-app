@@ -102,7 +102,7 @@ export const GenerationPromptBox: FC<GenerationPromptBoxProps> = ({
               setIsUploadingMedia: promptBox.setIsUploadingMedia,
             })}
           {promptBox.isPromptFieldVisible && primaryActionLabel && (
-            <div className="border-border/70 bg-muted/15 focus-within:border-primary/45 focus-within:bg-muted/25 focus-within:ring-primary/10 flex min-w-0 items-start gap-3 rounded-2xl border px-3 py-2 transition-colors focus-within:ring-2">
+            <div className="border-border/70 bg-muted/15 focus-within:border-primary/45 focus-within:bg-muted/25 focus-within:ring-primary/10 flex min-w-0 flex-wrap items-start gap-3 rounded-2xl border px-3 py-2 transition-colors focus-within:ring-2">
               {extraContent?.({
                 dynamicForm: promptBox.dynamicForm,
                 isFormBusy: promptBox.isFormBusy,
