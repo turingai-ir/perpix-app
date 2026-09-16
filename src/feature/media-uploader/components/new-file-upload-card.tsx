@@ -1,4 +1,4 @@
-import { LoaderCircle, Upload } from "lucide-react";
+import { ClipboardPaste, LoaderCircle, Upload } from "lucide-react";
 import type { ChangeEventHandler, FC } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ interface NewFileUploadCardProps {
   inputId: string;
   isUploading: boolean;
   onFileChange: ChangeEventHandler<HTMLInputElement>;
+  onPasteClick?: () => void;
 }
 
 export const NewFileUploadCard: FC<NewFileUploadCardProps> = ({
@@ -19,17 +20,23 @@ export const NewFileUploadCard: FC<NewFileUploadCardProps> = ({
   inputId,
   isUploading,
   onFileChange,
+  onPasteClick,
 }) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
 
   return (
-    <div className="bg-muted/40 flex shrink-0 items-center justify-between gap-3 rounded-lg border p-3">
+    <div className="bg-muted/40 flex shrink-0 flex-wrap items-center justify-between gap-3 rounded-lg border p-3">
       <div className="min-w-0">
         <div className="text-foreground text-sm font-medium">
           {t("features.mediaUploader.newFile.title")}
         </div>
         <div className="text-muted-foreground mt-1 text-xs">
           {t("features.mediaUploader.newFile.description")}
+          {onPasteClick && (
+            <span className="ms-1">
+              {t("features.mediaUploader.newFile.pasteHint")}
+            </span>
+          )}
         </div>
       </div>
       <input
@@ -41,14 +48,32 @@ export const NewFileUploadCard: FC<NewFileUploadCardProps> = ({
         disabled={disabled || isUploading}
         onChange={onFileChange}
       />
-      <Button asChild disabled={disabled || isUploading} size="sm">
-        <label htmlFor={inputId} className="cursor-pointer">
-          {isUploading ? <LoaderCircle className="animate-spin" /> : <Upload />}
-          {isUploading
-            ? t("common.uploading")
-            : t("features.mediaUploader.actions.upload")}
-        </label>
-      </Button>
+      <div className="flex shrink-0 flex-wrap items-center gap-2">
+        {onPasteClick && (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled={disabled || isUploading}
+            onClick={onPasteClick}
+          >
+            <ClipboardPaste />
+            {t("features.mediaUploader.newFile.paste")}
+          </Button>
+        )}
+        <Button asChild disabled={disabled || isUploading} size="sm">
+          <label htmlFor={inputId} className="cursor-pointer">
+            {isUploading ? (
+              <LoaderCircle className="animate-spin" />
+            ) : (
+              <Upload />
+            )}
+            {isUploading
+              ? t("common.uploading")
+              : t("features.mediaUploader.actions.upload")}
+          </label>
+        </Button>
+      </div>
     </div>
   );
 };
