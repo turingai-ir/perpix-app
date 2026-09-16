@@ -3,6 +3,12 @@ import { useCallback, useRef, type FC } from "react";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
   FileManagerUploadStatus,
   useFilePreview,
 } from "@/feature/file-manager";
@@ -28,6 +34,8 @@ interface MediaPreviewItemProps {
   item: UploadedMediaItem;
   onDeleteClick?: (id: string) => void;
   previewType: MediaPreviewType;
+  presentation?: "default" | "composer";
+  index?: number;
 }
 
 interface LocalMediaPreviewItemProps {
@@ -35,12 +43,15 @@ interface LocalMediaPreviewItemProps {
   item: LocalMediaItem;
   onDeleteClick?: (fileName: string) => void;
   previewType: MediaPreviewType;
+  presentation?: "default" | "composer";
 }
 
 export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
   disabled,
   item,
   previewType,
+  presentation = "default",
+  index,
   onDeleteClick,
 }) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
@@ -60,16 +71,47 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
   return (
     <div
       className={cn(
-        "group bg-background relative flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-lg border",
+        "group bg-background relative flex shrink-0 items-center justify-center overflow-hidden rounded-lg border",
+        presentation === "composer" ? "size-20" : "size-24",
         isError && "border-destructive/50 bg-destructive/5",
       )}
     >
       {!isError && previewUrl && previewType === "image" ? (
-        <img
-          src={previewUrl}
-          alt="Uploaded item"
-          className="h-full w-full object-cover transition-transform group-hover:scale-105"
-        />
+        presentation === "composer" ? (
+          <Dialog>
+            <DialogTrigger asChild>
+              <button
+                type="button"
+                className="focus-visible:ring-primary/60 size-full overflow-hidden rounded-lg outline-none focus-visible:ring-2"
+                aria-label={t("features.mediaUploader.composer.preview", {
+                  index,
+                })}
+              >
+                <img
+                  src={previewUrl}
+                  alt=""
+                  className="size-full object-cover"
+                />
+              </button>
+            </DialogTrigger>
+            <DialogContent className="w-[calc(100vw-2rem)] max-w-3xl p-3 sm:p-4">
+              <DialogTitle className="sr-only">
+                {t("features.mediaUploader.composer.preview", { index })}
+              </DialogTitle>
+              <img
+                src={previewUrl}
+                alt={t("features.mediaUploader.composer.preview", { index })}
+                className="mx-auto max-h-[75dvh] max-w-full rounded-lg object-contain"
+              />
+            </DialogContent>
+          </Dialog>
+        ) : (
+          <img
+            src={previewUrl}
+            alt="Uploaded item"
+            className="h-full w-full object-cover transition-transform group-hover:scale-105"
+          />
+        )
       ) : null}
 
       {!isError && previewUrl && previewType === "video" ? (
@@ -92,7 +134,16 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
         <Skeleton className="h-full w-full animate-pulse overflow-hidden rounded-lg" />
       )}
 
-      {canDelete && <DeleteButton onClick={handleDeleteClick} />}
+      {canDelete && (
+        <DeleteButton
+          onClick={handleDeleteClick}
+          label={
+            presentation === "composer"
+              ? t("features.mediaUploader.composer.remove", { index })
+              : undefined
+          }
+        />
+      )}
     </div>
   );
 };
@@ -101,6 +152,7 @@ export const LocalMediaPreviewItem: FC<LocalMediaPreviewItemProps> = ({
   disabled,
   item,
   previewType,
+  presentation = "default",
   onDeleteClick,
 }) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
@@ -139,7 +191,8 @@ export const LocalMediaPreviewItem: FC<LocalMediaPreviewItemProps> = ({
   return (
     <div
       className={cn(
-        "group bg-background relative flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-lg border",
+        "group bg-background relative flex shrink-0 items-center justify-center overflow-hidden rounded-lg border",
+        presentation === "composer" ? "size-20" : "size-24",
         isError && "border-destructive/50 bg-destructive/5",
       )}
     >

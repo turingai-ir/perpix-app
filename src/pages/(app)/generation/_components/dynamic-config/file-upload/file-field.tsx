@@ -1,15 +1,17 @@
-import { useEffect, useMemo, type FC } from "react";
+import { useEffect, useEffectEvent, useMemo, useRef, type FC } from "react";
 import { toast } from "sonner";
 
 import { useFileManager } from "@/feature/file-manager";
 import {
   appendMediaId,
+  getClipboardImage,
   hasReachedMediaMaxItems,
   hasUploadingLocalItem,
   MediaUploadStrip,
   normalizeMediaIds,
   removeMediaId,
   toLocalMediaItems,
+  toClipboardImageFile,
   toUploadedMediaItems,
 } from "@/feature/media-uploader";
 import { useAppTranslate } from "@/hooks";
@@ -35,9 +37,11 @@ export const DynamicConfigFileField: FC<{
   label: string;
   onValueChange?: (value: string | string[] | undefined) => void;
   onUploadingChange?: (isUploading: boolean) => void;
+  maxItemsOverride?: number;
   property?: JsonSchemaProperty;
   presentation?: "default" | "composer";
   requestId?: string;
+  pasteFromParentForm?: boolean;
 }> = ({
   disabled = false,
   dynamicForm,
@@ -46,15 +50,20 @@ export const DynamicConfigFileField: FC<{
   label,
   onValueChange,
   onUploadingChange,
+  maxItemsOverride,
   property,
   presentation = "default",
   requestId = "dynamic_config",
+  pasteFromParentForm = false,
 }) => {
   const { t } = useAppTranslate();
+  const containerRef = useRef<HTMLDivElement>(null);
   const acceptList = useMemo(() => getAcceptList(property), [property]);
   const previewType = getPreviewType(acceptList);
   const isList = isListFileField(property);
-  const maxItems = isList ? property?.maxItems : 1;
+  const maxItems = isList
+    ? getMaxItems(property?.maxItems, maxItemsOverride)
+    : 1;
   const { pendingUploads, removePendingUpload, requestUpload } = useFileManager(
     `${requestId}_${fieldName.replace(/\./g, "_")}`,
     {
@@ -165,8 +174,43 @@ export const DynamicConfigFileField: FC<{
     }
   };
 
+  const handlePastedImage = useEffectEvent(async (image: File) => {
+    if (disabled || hasReachedMaxItems) return;
+
+    try {
+      const file = await toClipboardImageFile(image, acceptList);
+      if (!file) {
+        toast.error(t("common.validationErrors.invalidFileFormat"));
+        return;
+      }
+      await handleFileSelect(file);
+    } catch {
+      toast.error(t("common.validationErrors.imageDimensionsUnreadable"));
+    }
+  });
+
+  useEffect(() => {
+    if (!pasteFromParentForm || previewType !== "image") return;
+
+    const form = containerRef.current?.closest("form");
+    if (!form) return;
+
+    const handlePaste = (event: ClipboardEvent) => {
+      if (!event.clipboardData) return;
+      const image = getClipboardImage(event.clipboardData);
+      if (!image) return;
+
+      event.preventDefault();
+      void handlePastedImage(image);
+    };
+
+    form.addEventListener("paste", handlePaste);
+    return () => form.removeEventListener("paste", handlePaste);
+  }, [pasteFromParentForm, previewType]);
+
   return (
     <div
+      ref={containerRef}
       className={
         presentation === "composer"
           ? "flex min-w-0 flex-col"
@@ -196,10 +240,18 @@ export const DynamicConfigFileField: FC<{
         accept={acceptList.join(", ")}
         previewType={previewType}
         presentation={presentation}
+        maxItems={maxItems}
       />
     </div>
   );
 };
+
+function getMaxItems(schemaMaxItems?: number, maxItemsOverride?: number) {
+  if (maxItemsOverride === undefined) return schemaMaxItems;
+  if (schemaMaxItems === undefined) return maxItemsOverride;
+
+  return Math.min(schemaMaxItems, maxItemsOverride);
+}
 
 function getUploadLabel(
   previewType: MediaPreviewType,

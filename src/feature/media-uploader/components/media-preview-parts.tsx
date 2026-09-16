@@ -44,15 +44,16 @@ export const ErrorPreview: FC<{ label: string; className?: string }> = ({
 
 export const DeleteButton: FC<{
   onClick: () => void;
+  label?: string;
   variant?: "default" | "strong";
-}> = ({ onClick, variant = "default" }) => {
+}> = ({ onClick, label, variant = "default" }) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   return (
     <button
       type="button"
-      aria-label={t("features.mediaUploader.actions.remove")}
+      aria-label={label ?? t("features.mediaUploader.actions.remove")}
       className={cn(
-        "absolute top-1 right-1 z-20 flex size-8 cursor-pointer items-center justify-center rounded-full after:absolute after:-inset-1.5 after:content-['']",
+        "absolute top-1 right-1 z-20 flex size-8 cursor-pointer items-center justify-center rounded-full outline-none after:absolute after:-inset-1.5 after:content-[''] focus-visible:ring-2 focus-visible:ring-white",
         variant === "strong" ? "bg-destructive" : "bg-destructive/80",
       )}
       onClick={onClick}

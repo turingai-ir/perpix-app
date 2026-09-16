@@ -3,6 +3,7 @@ import type { FC } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 
+import { ComposerReferenceTray } from "./composer-reference-tray";
 import { MediaFilePickerDialog } from "./media-file-picker-dialog";
 import { MediaUploadPlaceholder } from "./media-upload-placeholder";
 import { LocalMediaPreviewItem, MediaPreviewItem } from "./media-strip-items";
@@ -18,6 +19,7 @@ export const MediaUploadStrip: FC<MediaUploadStripProps> = ({
   disabled = false,
   previewType = "image",
   presentation = "default",
+  maxItems,
   onFileSelect,
   onUploadedFileSelect,
   onDeleteClick,
@@ -36,12 +38,14 @@ export const MediaUploadStrip: FC<MediaUploadStripProps> = ({
     localItems,
     uploadedItems,
   });
+  const hasComposerItems =
+    presentation === "composer" && uploadedItems.length + localItems.length > 0;
 
   return (
     <div
       className={cn(
         "relative min-w-0",
-        presentation === "composer" ? "w-auto max-w-64" : "w-full",
+        presentation === "composer" && !hasComposerItems ? "w-auto" : "w-full",
       )}
     >
       <MediaFilePickerDialog
@@ -54,49 +58,63 @@ export const MediaUploadStrip: FC<MediaUploadStripProps> = ({
         localItems={localItems}
         previewType={previewType}
         selectedIds={selectedIds}
+        maxItems={presentation === "composer" ? maxItems : undefined}
         onFileSelect={onFileSelect}
         onOpenChange={setFilePickerOpen}
         onUploadedFileSelect={onUploadedFileSelect}
       />
-      <ScrollArea
-        className={cn(
-          "min-w-0",
-          presentation === "composer" ? "w-auto max-w-64" : "w-full",
-        )}
-        viewportClassName="overflow-x-auto"
-        orientation="horizontal"
-      >
-        <div className={cn("flex items-center gap-4", "w-max")}>
-          {showPlaceholder && (
-            <MediaUploadPlaceholder
-              disabled={disabled}
-              label={label}
-              onClick={openFilePicker}
-              presentation={presentation}
-            />
+      {hasComposerItems ? (
+        <ComposerReferenceTray
+          uploadedItems={uploadedItems}
+          localItems={localItems}
+          disabled={disabled}
+          previewType={previewType}
+          maxItems={maxItems}
+          onDeleteClick={onDeleteClick}
+          onLocalDeleteClick={onLocalDeleteClick}
+          onAdd={openFilePicker}
+        />
+      ) : (
+        <ScrollArea
+          className={cn(
+            "min-w-0",
+            presentation === "composer" ? "w-auto" : "w-full",
           )}
+          viewportClassName="overflow-x-auto"
+          orientation="horizontal"
+        >
+          <div className={cn("flex items-center gap-4", "w-max")}>
+            {showPlaceholder && (
+              <MediaUploadPlaceholder
+                disabled={disabled}
+                label={label}
+                onClick={openFilePicker}
+                presentation={presentation}
+              />
+            )}
 
-          {localItems.map((item) => (
-            <LocalMediaPreviewItem
-              key={item.file.name}
-              item={item}
-              disabled={disabled}
-              previewType={previewType}
-              onDeleteClick={onLocalDeleteClick}
-            />
-          ))}
+            {localItems.map((item) => (
+              <LocalMediaPreviewItem
+                key={item.file.name}
+                item={item}
+                disabled={disabled}
+                previewType={previewType}
+                onDeleteClick={onLocalDeleteClick}
+              />
+            ))}
 
-          {uploadedItems.map((item) => (
-            <MediaPreviewItem
-              key={item.id}
-              item={item}
-              disabled={disabled}
-              previewType={previewType}
-              onDeleteClick={onDeleteClick}
-            />
-          ))}
-        </div>
-      </ScrollArea>
+            {uploadedItems.map((item) => (
+              <MediaPreviewItem
+                key={item.id}
+                item={item}
+                disabled={disabled}
+                previewType={previewType}
+                onDeleteClick={onDeleteClick}
+              />
+            ))}
+          </div>
+        </ScrollArea>
+      )}
       {presentation !== "composer" && (
         <div
           aria-hidden="true"

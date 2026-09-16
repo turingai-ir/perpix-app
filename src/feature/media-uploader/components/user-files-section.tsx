@@ -25,6 +25,7 @@ interface UserFilesSectionProps {
   previewUrlsByFileUuid: Readonly<Record<string, FilePreviewUrls>>;
   previewType: MediaPreviewType;
   selectedIdsSet: ReadonlySet<string>;
+  toggleableIdsSet?: ReadonlySet<string>;
   userFiles: readonly UserFileWithUuid[];
   onFetchMore: () => void;
   onRefresh: () => void;
@@ -42,6 +43,7 @@ export const UserFilesSection: FC<UserFilesSectionProps> = ({
   previewUrlsByFileUuid,
   previewType,
   selectedIdsSet,
+  toggleableIdsSet,
   userFiles,
   onFetchMore,
   onRefresh,
@@ -96,6 +98,7 @@ export const UserFilesSection: FC<UserFilesSectionProps> = ({
                   key={file.uuid}
                   file={file}
                   isSelected={selectedIdsSet.has(file.uuid)}
+                  isSelectionRemovable={toggleableIdsSet?.has(file.uuid)}
                   isPreviewError={isPreviewError}
                   isPreviewLoading={isPreviewLoading}
                   previewUrls={previewUrlsByFileUuid[file.uuid]}
