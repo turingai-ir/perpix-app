@@ -44,6 +44,13 @@ export function useMediaFilePicker({
   );
   const isLoadingFiles = getUserFilesState.isPending && !userFilesResponse;
 
+  const uploadFile = async (file: File) => {
+    if (disabled || isUploading) return;
+
+    await onFileSelect?.(file);
+    await getUserFilesState.refetch();
+  };
+
   const handleFileChange: ChangeEventHandler<HTMLInputElement> = async (
     event,
   ) => {
@@ -59,8 +66,7 @@ export function useMediaFilePicker({
 
     if (!selectedFile) return;
 
-    await onFileSelect?.(selectedFile);
-    await getUserFilesState.refetch();
+    await uploadFile(selectedFile);
   };
 
   const fetchMoreFiles = () => {
@@ -89,6 +95,7 @@ export function useMediaFilePicker({
 
   return {
     handleFileChange,
+    uploadFile,
     fetchMoreFiles,
     hasMoreFiles: getUserFilesState.hasNextPage,
     isFetchingFiles: getUserFilesState.isFetching,

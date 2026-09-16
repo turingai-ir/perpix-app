@@ -16,12 +16,14 @@ import { formatFileSize, type UserFileWithUuid } from "../utils";
 interface UserFileCardProps {
   file: UserFileWithUuid;
   isSelected: boolean;
+  isSelectionRemovable?: boolean;
   onSelect: (fileId: string) => void;
 }
 
 export const UserFileCard: FC<UserFileCardProps> = ({
   file,
   isSelected,
+  isSelectionRemovable = false,
   onSelect,
 }) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
@@ -44,13 +46,16 @@ export const UserFileCard: FC<UserFileCardProps> = ({
       ref={ref}
       style={{ contentVisibility: "auto", containIntrinsicSize: "auto 220px" }}
       type="button"
+      aria-pressed={isSelected}
       className={cn(
         "group focus-visible:ring-ring/50 bg-background relative flex min-w-0 flex-col overflow-hidden rounded-lg border text-start transition-colors outline-none focus-visible:ring-3 disabled:cursor-default",
         isSelected
           ? "border-primary ring-primary/20 ring-2"
           : "hover:border-primary/40",
       )}
-      disabled={isSelected || unavailable}
+      disabled={
+        (isSelected && !isSelectionRemovable) || (!isSelected && unavailable)
+      }
       onClick={() => onSelect(file.uuid)}
     >
       <UserFilePreview

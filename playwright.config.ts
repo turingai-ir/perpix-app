@@ -1,5 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
 
+const pnpmCommand = process.platform === "win32" ? "pnpm.cmd" : "pnpm";
+
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
@@ -14,20 +16,20 @@ import { defineConfig, devices } from "@playwright/test";
 export default defineConfig({
   testDir: ".",
   testMatch: ["__tests__/**/*.spec.ts", "src/**/_tests/**/*.spec.ts"],
-  /* Run tests in files in parallel */
-  fullyParallel: true,
+  /* The mocked image-composer harness is not safe across concurrent contexts. */
+  fullyParallel: false,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
-  /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : undefined,
+  /* Keep interaction tests stable across local and CI runs. */
+  workers: 1,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: "html",
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('')`. */
-    baseURL: "http://127.0.0.1:5179",
+    baseURL: "http://localhost:5173",
     serviceWorkers: "block",
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
@@ -69,9 +71,8 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command:
-      "VITE_PERPIX_API_URL=http://127.0.0.1:5179 VITE_APP_TELEGRAM_SUPPORT=https://t.me/perpix_support_test CHOKIDAR_USEPOLLING=true WATCHPACK_POLLING=true pnpm exec vite --host 127.0.0.1 --port 5179 --strictPort",
-    url: "http://127.0.0.1:5179",
+    command: `${pnpmCommand} dev -- --host localhost --port 5173 --strictPort`,
+    url: "http://localhost:5173",
     reuseExistingServer: !process.env.CI,
   },
 });

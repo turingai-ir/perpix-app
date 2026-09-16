@@ -10,6 +10,7 @@ import { useAppTranslate } from "@/hooks";
 const TEXT_MODE = "text_to_image";
 const IMAGE_MODE = "image_to_image";
 const REFERENCE_FIELD = "reference_images";
+const MAX_REFERENCE_IMAGES = 5;
 
 export function ImageReferenceInput({
   dynamicForm,
@@ -44,7 +45,11 @@ export function ImageReferenceInput({
 
   return (
     <div
-      className="flex shrink-0 items-start pt-1"
+      className={
+        hasReference
+          ? "order-2 w-full min-w-0"
+          : "flex shrink-0 items-start pt-1"
+      }
       data-generation-mode={String(dynamicForm.watch("mode") ?? "")}
     >
       <DynamicConfigFileField
@@ -53,8 +58,10 @@ export function ImageReferenceInput({
         label={t("pages.generation.image.studio.reference.uploadLabel")}
         property={property}
         disabled={disabled}
+        maxItemsOverride={MAX_REFERENCE_IMAGES}
         requestId="image_generation"
         presentation="composer"
+        pasteFromParentForm
         onUploadingChange={onUploadingChange}
         onValueChange={() =>
           clearTopLevelMediaConflicts(dynamicForm, REFERENCE_FIELD)
