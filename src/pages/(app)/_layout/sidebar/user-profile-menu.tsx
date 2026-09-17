@@ -43,7 +43,11 @@ const AppLayoutSidebarUserProfileMenu: FC = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild className="mt-auto">
-        <Button variant="ghost" size="lg">
+        <Button
+          variant="ghost"
+          size="lg"
+          className="min-h-13 rounded-2xl border border-white/10 bg-white/[0.045] shadow-[inset_0_1px_rgb(255_255_255/0.08)] backdrop-blur-xl hover:bg-white/[0.08]"
+        >
           <AppLayoutSidebarUserAvatar />
           <div className="flex flex-1 text-right text-sm leading-tight">
             <Badge>{planName}</Badge>

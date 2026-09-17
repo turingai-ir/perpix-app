@@ -71,13 +71,13 @@ const AppLayoutSidebarNavigation: FC = () => {
             className={({ isActive }) =>
               cn(
                 buttonVariants({ variant: "ghost" }),
-                "text-sidebar-foreground/75 min-h-12 w-full min-w-0 justify-start gap-3 rounded-xl border border-transparent px-3 motion-reduce:transition-none",
+                "text-sidebar-foreground/75 hover:text-sidebar-foreground min-h-12 w-full min-w-0 justify-start gap-3 rounded-2xl border border-transparent bg-white/[0.025] px-3 shadow-[inset_0_1px_rgb(255_255_255/0.035)] backdrop-blur-md transition-[color,background-color,border-color,transform] hover:-translate-x-0.5 hover:border-white/10 hover:bg-white/[0.07] focus-visible:ring-2 focus-visible:ring-fuchsia-400/45 motion-reduce:transform-none motion-reduce:transition-none",
                 key === "image-generations" &&
                   "text-sidebar-foreground border-fuchsia-400/20 bg-fuchsia-400/5 [&>svg]:text-fuchsia-400",
                 key === "video-generation" &&
                   "text-sidebar-foreground border-sky-400/20 bg-sky-400/5 [&>svg]:text-sky-400",
                 isActive &&
-                  "border-sidebar-border bg-sidebar-accent text-sidebar-accent-foreground shadow-[inset_-3px_0_var(--color-primary)]",
+                  "text-sidebar-accent-foreground border-fuchsia-300/15 bg-gradient-to-l from-fuchsia-400/12 via-violet-400/8 to-sky-400/5 shadow-[inset_-2px_0_#d946ef,0_10px_30px_rgb(0_0_0/0.08)]",
               )
             }
           >

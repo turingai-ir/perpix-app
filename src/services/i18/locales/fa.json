@@ -374,7 +374,8 @@
             "title": "موجودی حساب"
           },
           "history": {
-            "emptyTitle": "بدون عنوان"
+            "emptyTitle": "بدون عنوان",
+            "title": "ساخته‌های اخیر"
           },
           "menu": {
             "home": {
