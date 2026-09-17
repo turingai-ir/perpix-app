@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { GalleryFallback } from "./gallery-fallback";
 import type { GalleryMediaType } from "../_utils/types";
+import styles from "../gallery.module.css";
 
 interface Props {
   mediaType: GalleryMediaType;
@@ -26,7 +27,7 @@ export function GalleryPreview({
       loading={eager ? "eager" : "lazy"}
       decoding="async"
       onError={() => setFailed(true)}
-      className={`size-full ${compact ? "object-cover" : "object-contain p-2"}`}
+      className={`${styles.previewImage} ${compact ? styles.coverImage : styles.containImage}`}
     />
   );
 }

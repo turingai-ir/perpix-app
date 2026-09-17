@@ -16,6 +16,7 @@ import { useAppTranslate } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
 import { downloadFile } from "@/utils";
 import type { GalleryFile } from "../_utils/types";
+import styles from "../gallery.module.css";
 
 export function GalleryActions({
   file,
@@ -37,10 +38,10 @@ export function GalleryActions({
     }
   }
   return (
-    <div className="flex shrink-0">
+    <div className={styles.cardActions}>
       <Button
         variant="ghost"
-        className="size-11"
+        className={styles.cardActionButton}
         aria-label={t("common.download")}
         disabled={!downloadUrl}
         onClick={() => downloadUrl && downloadFile(downloadUrl)}
@@ -56,20 +57,20 @@ export function GalleryActions({
         <DialogTrigger asChild>
           <Button
             variant="ghost"
-            className="text-muted-foreground hover:text-destructive size-11"
+            className={`${styles.cardActionButton} ${styles.deleteAction}`}
             aria-label={t("pages.gallery.actions.delete")}
           >
             <Trash2 />
           </Button>
         </DialogTrigger>
-        <DialogContent showCloseButton={false}>
+        <DialogContent className={styles.deleteDialog} showCloseButton={false}>
           <DialogTitle>{t("pages.gallery.delete.title")}</DialogTitle>
           <DialogDescription>
             {t("pages.gallery.delete.description", {
               fileName: file.file_name || t("common.emptyTitle"),
             })}
           </DialogDescription>
-          <DialogFooter>
+          <DialogFooter className={styles.deleteDialogFooter}>
             <DialogClose asChild>
               <Button
                 variant="outline"
