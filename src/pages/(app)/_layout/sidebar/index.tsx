@@ -4,6 +4,7 @@ import { type CSSProperties, type FC } from "react";
 import appLayoutAtom from "../_state";
 
 import AppLayoutSidebarContent from "./content";
+import styles from "./sidebar.module.css";
 
 import { cn } from "@/lib/utils";
 import { useViewportBreakpoint } from "@/hooks";
@@ -23,7 +24,8 @@ const AppLayoutSidebar: FC<{ sidebarWidth: string }> = ({ sidebarWidth }) => {
       <>
         <aside
           className={cn(
-            "border-sidebar-border bg-sidebar text-sidebar-foreground flex h-full min-h-0 w-(--sidebar-width) flex-col border-e shadow-[var(--sidebar-shadow)] transition-[transform,opacity] duration-300 ease-in-out motion-reduce:transition-none",
+            styles.shell,
+            "text-sidebar-foreground flex h-full min-h-0 w-(--sidebar-width) flex-col border-e transition-[transform,opacity] duration-300 ease-in-out motion-reduce:transition-none",
             appLayoutState.isSidebarOpen
               ? "translate-x-0 opacity-100"
               : "translate-x-full opacity-0",
@@ -50,7 +52,7 @@ const AppLayoutSidebar: FC<{ sidebarWidth: string }> = ({ sidebarWidth }) => {
     >
       <SheetContent
         dir="rtl"
-        className="bg-sidebar h-dvh max-h-dvh w-[min(var(--sidebar-width),100dvw)] max-w-full min-w-0 overflow-x-hidden p-0"
+        className={`${styles.mobileShell} h-dvh max-h-dvh w-[min(var(--sidebar-width),100dvw)] max-w-full min-w-0 overflow-x-hidden p-0`}
         style={
           {
             "--sidebar-width": sidebarWidth,

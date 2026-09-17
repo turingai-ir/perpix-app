@@ -44,6 +44,7 @@ export function ImageResultCard({
   return (
     <article className={`${styles.reveal} ${styles.stage}`}>
       <header className={styles.header}>
+        <ResultSpecRobot ratio={ratio} resolution={resolution} />
         <span className={styles.title}>
           <span className={styles.titleIcon}>
             <img
@@ -55,7 +56,6 @@ export function ImageResultCard({
           </span>
           <span>{t("pages.generation.image.chat.result")}</span>
         </span>
-        <ResultSpecRobot ratio={ratio} resolution={resolution} />
       </header>
       <div
         className={images.length > 1 ? styles.gallery : styles.singleGallery}
