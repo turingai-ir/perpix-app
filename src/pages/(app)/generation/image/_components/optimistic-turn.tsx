@@ -4,6 +4,7 @@ import { GenerationFailure } from "@/pages/(app)/generation/_components/generati
 import { ImageGenerationPlaceholder } from "./image-generation-placeholder";
 import type { OptimisticGenerationTurn } from "@/pages/(app)/generation/_types/conversation";
 import { useAppTranslate } from "@/hooks";
+import { ImageRequestSummary } from "./request-summary";
 
 export function OptimisticImageTurn({
   turn,
@@ -18,20 +19,17 @@ export function OptimisticImageTurn({
   const aspectRatio = String(turn.snapshot.config.aspect_ratio ?? "1:1");
   return (
     <div
-      className="flex w-full flex-col gap-2"
+      className="flex w-full flex-col gap-5 sm:gap-6"
       data-client-attempt={turn.clientAttemptId}
     >
-      <div className="ms-auto w-full max-w-125">
-        <ChatBubble
-          copyMessage
-          sender="user"
-          avatar={null}
-          message={turn.snapshot.prompt}
-          images={[...turn.snapshot.referenceImages]}
+      <div className="w-full">
+        <ImageRequestSummary
+          prompt={turn.snapshot.prompt}
+          referenceImages={turn.snapshot.referenceImages}
         />
       </div>
       <div
-        className="me-auto w-full max-w-125"
+        className="mx-auto w-full max-w-3xl"
         aria-busy={turn.status !== "failed"}
       >
         {turn.status === "failed" ? (

@@ -8,6 +8,7 @@ import { OptimisticImageTurn } from "./optimistic-turn";
 import { ImageResultCard } from "./result-card";
 import { APP_I18_KEYS } from "@/services/i18";
 import { ImageGenerationPlaceholder } from "./image-generation-placeholder";
+import { ImageRequestSummary } from "./request-summary";
 
 interface Props {
   isRetrying?: boolean;
@@ -41,7 +42,7 @@ export const GenerationImageChats: FC<Props> = ({
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
 
   return (
-    <div className="flex w-full flex-col gap-2">
+    <div className="flex w-full flex-col gap-5 sm:gap-6">
       <GenerationChats
         copyUserMessages
         failureFallbackDescription={t(
@@ -53,6 +54,12 @@ export const GenerationImageChats: FC<Props> = ({
         isRetrying={isRetrying}
         onRetry={onRetry}
         outputType="image"
+        renderUserMessage={({ message, userImages }) => (
+          <ImageRequestSummary
+            prompt={message.message ?? ""}
+            referenceImages={userImages}
+          />
+        )}
         renderAssistantResult={({
           generatedMedia,
           message,
