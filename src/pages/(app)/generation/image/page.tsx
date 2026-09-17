@@ -40,7 +40,9 @@ const GenerationImagePage = () => {
   });
 
   return (
-    <div className={`${styles.page} relative flex w-full min-w-0 flex-col`}>
+    <div
+      className={`${styles.page} ${!shouldShowIntro ? styles.conversation : ""} relative flex w-full min-w-0 flex-col`}
+    >
       {isTaskLoading ? (
         <div className="flex min-h-64 w-full items-center justify-center">
           <LoadingSection />
@@ -51,7 +53,7 @@ const GenerationImagePage = () => {
         <>
           <section
             aria-label={t("pages.generation.image.chat.timelineLabel")}
-            className="mx-auto w-full max-w-5xl px-3 sm:px-6"
+            className="mx-auto w-full max-w-4xl px-3 sm:px-6"
           >
             <GenerationImageChats
               isRetrying={isBusy}
@@ -93,7 +95,7 @@ const GenerationImagePage = () => {
           </section>
 
           <div
-            className={`${styles.content} mx-auto flex w-full max-w-6xl flex-1 flex-col items-center justify-end`}
+            className={`${styles.content} mx-auto flex w-full max-w-4xl flex-1 flex-col items-center justify-end`}
           >
             {shouldShowIntro ? (
               <div
