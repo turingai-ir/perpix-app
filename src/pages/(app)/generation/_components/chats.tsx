@@ -26,6 +26,10 @@ interface Props {
   messages: readonly SchemaAiTaskMessageResponse[];
   onRetry?: (message: SchemaAiTaskMessageResponse) => void;
   outputType: "image" | "video";
+  renderUserMessage?: (input: {
+    message: SchemaAiTaskMessageResponse;
+    userImages: string[];
+  }) => ReactNode;
   renderAssistantResult?: (input: {
     generatedMedia: string[];
     message: SchemaAiTaskMessageResponse;
@@ -47,6 +51,7 @@ export const GenerationChats: FC<Props> = ({
   messages,
   onRetry,
   outputType,
+  renderUserMessage,
   renderAssistantResult,
 }) => {
   if (!messages.length) return null;
@@ -75,12 +80,18 @@ export const GenerationChats: FC<Props> = ({
                 requestMessage,
               })
             : undefined;
+        const userMessage =
+          isUser && renderUserMessage
+            ? renderUserMessage({ message: item, userImages: userImages ?? [] })
+            : undefined;
 
         return (
           <div
             id={item.uuid}
             key={item.uuid}
-            className={cn("w-full max-w-125", {
+            className={cn("w-full", {
+              "max-w-125": !assistantResult && !userMessage,
+              "max-w-full": assistantResult || userMessage,
               "ml-auto": isUser,
               "mr-auto": !isUser,
             })}
@@ -97,6 +108,8 @@ export const GenerationChats: FC<Props> = ({
                 retryLabel={failureRetryLabel}
                 title={failureTitle}
               />
+            ) : userMessage ? (
+              userMessage
             ) : assistantResult ? (
               assistantResult
             ) : (
