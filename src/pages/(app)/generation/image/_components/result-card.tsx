@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ImagePlus, PencilLine, RotateCcw, Sparkles } from "lucide-react";
+import { ImagePlus, PencilLine, RotateCcw } from "lucide-react";
 
 import { MediaPreviewItem } from "@/components/custom/media-preview-item";
 import { Button } from "@/components/ui/button";
@@ -41,15 +41,20 @@ export function ImageResultCard({
   const parsedRatio = parseAspectRatio(ratio);
   const resolution = source.ai_model_config?.resolution;
   return (
-    <article
-      className={`${styles.reveal} border-border bg-card/80 overflow-hidden rounded-2xl border p-3 shadow-xl`}
-    >
-      <header className="mb-3 flex items-center justify-between gap-3 px-1">
-        <span className="flex items-center gap-2 text-sm font-semibold">
-          <Sparkles aria-hidden="true" className="text-primary size-4" />
-          {t("pages.generation.image.chat.result")}
+    <article className={`${styles.reveal} ${styles.stage}`}>
+      <header className={styles.header}>
+        <span className={styles.title}>
+          <span className={styles.titleIcon}>
+            <img
+              src="/android-chrome-512x512.png"
+              alt=""
+              className={styles.avatar}
+              aria-hidden="true"
+            />
+          </span>
+          <span>{t("pages.generation.image.chat.result")}</span>
         </span>
-        <span className="text-muted-foreground flex items-center gap-2 text-xs">
+        <span className={styles.metadata}>
           <bdi dir="ltr">{ratio}</bdi>
           {resolution ? (
             <>
@@ -60,18 +65,16 @@ export function ImageResultCard({
         </span>
       </header>
       <div
-        className={
-          images.length > 1 ? "grid grid-cols-2 gap-2" : "flex flex-col"
-        }
+        className={images.length > 1 ? styles.gallery : styles.singleGallery}
       >
         {images.map((fileId, index) => (
           <div
             key={fileId}
-            className="group relative mx-auto w-full overflow-hidden rounded-xl"
+            className={styles.artwork}
             style={
               images.length === 1
                 ? {
-                    maxWidth: `min(100%, calc(65dvh * ${parsedRatio.value}))`,
+                    maxWidth: `min(100%, calc(58dvh * ${parsedRatio.value}))`,
                   }
                 : undefined
             }
@@ -83,29 +86,41 @@ export function ImageResultCard({
               aspectRatio={parsedRatio.css}
               alt={source.message ?? t("common.image")}
             />
-            {onUseAsReference && (
+            {onUseAsReference && images.length > 1 ? (
               <Button
                 type="button"
                 size="sm"
                 variant="secondary"
                 disabled={disabled}
-                className="absolute end-2 bottom-2 min-h-10 rounded-xl shadow-lg"
+                className={styles.imageAction}
                 onClick={() => onUseAsReference(fileId)}
               >
                 <ImagePlus aria-hidden="true" />
                 {t("pages.generation.image.chat.useAsReference")}
               </Button>
-            )}
+            ) : null}
           </div>
         ))}
       </div>
-      <footer className="mt-3 flex flex-wrap items-center gap-2">
+      <footer className={styles.toolbar}>
+        {onUseAsReference && images[0] && images.length === 1 ? (
+          <Button
+            type="button"
+            variant="secondary"
+            disabled={disabled}
+            className={styles.primaryAction}
+            onClick={() => onUseAsReference(images[0])}
+          >
+            <ImagePlus aria-hidden="true" />
+            {t("pages.generation.image.chat.useAsReference")}
+          </Button>
+        ) : null}
         {onEditRequest && (
           <Button
             type="button"
             variant="ghost"
             disabled={disabled}
-            className="min-h-11 rounded-xl"
+            className={styles.secondaryAction}
             onClick={() => onEditRequest(source)}
           >
             <PencilLine aria-hidden="true" />
@@ -117,7 +132,7 @@ export function ImageResultCard({
             type="button"
             variant="ghost"
             disabled={disabled}
-            className="min-h-11 rounded-xl"
+            className={styles.secondaryAction}
             onClick={() => setConfirmOpen(true)}
           >
             <RotateCcw aria-hidden="true" />
