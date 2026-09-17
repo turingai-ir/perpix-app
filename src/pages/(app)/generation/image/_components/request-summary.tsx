@@ -8,7 +8,10 @@ export function ImageRequestSummary({
   referenceImages: readonly string[];
 }) {
   return (
-    <div className="ml-auto flex w-fit max-w-[min(88%,42rem)] flex-col items-end gap-2">
+    <div
+      data-message-role="user"
+      className="ml-auto flex w-fit max-w-[min(88%,42rem)] flex-col items-end gap-2"
+    >
       {referenceImages.length > 0 ? (
         <div className="grid max-w-56 grid-cols-2 gap-2">
           {referenceImages.slice(0, 4).map((fileId, index) => (

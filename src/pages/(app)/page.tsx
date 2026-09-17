@@ -6,6 +6,7 @@ import { DashboardCreativeCommand } from "./_components/dashboard-creative-comma
 import { DashboardFiles } from "./_components/dashboard-files";
 import { DashboardModels } from "./_components/dashboard-models";
 import { DashboardResume } from "./_components/dashboard-resume";
+import { DashboardScrollCompanion } from "./_components/dashboard-scroll-companion";
 import { DashboardTransactions } from "./_components/dashboard-transactions";
 import styles from "./dashboard.module.css";
 import { useDashboardAccount } from "./_hooks/use-dashboard-account";
@@ -32,6 +33,7 @@ const AppPage = () => {
     <div
       className={`${styles.page} relative min-h-full w-full overflow-hidden text-zinc-100`}
     >
+      <DashboardScrollCompanion />
       <div className={`${styles.grid} pointer-events-none`} />
       <div
         className={`${styles.aurora} pointer-events-none end-[8%] -top-40 bg-fuchsia-500`}
