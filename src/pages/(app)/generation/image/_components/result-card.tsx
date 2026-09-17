@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useAppTranslate } from "@/hooks";
 import type { SchemaAiTaskMessageResponse } from "@/services/api";
 import { RegenerateImageDialog } from "./regenerate-dialog";
+import { ResultSpecRobot } from "./result-spec-robot";
 import styles from "./result-card.module.css";
 
 function parseAspectRatio(value: unknown) {
@@ -54,15 +55,7 @@ export function ImageResultCard({
           </span>
           <span>{t("pages.generation.image.chat.result")}</span>
         </span>
-        <span className={styles.metadata}>
-          <bdi dir="ltr">{ratio}</bdi>
-          {resolution ? (
-            <>
-              <span aria-hidden="true">•</span>
-              <bdi dir="ltr">{String(resolution)}</bdi>
-            </>
-          ) : null}
-        </span>
+        <ResultSpecRobot ratio={ratio} resolution={resolution} />
       </header>
       <div
         className={images.length > 1 ? styles.gallery : styles.singleGallery}

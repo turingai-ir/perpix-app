@@ -2,6 +2,7 @@ import { Activity, startTransition, useState } from "react";
 import { useLocation } from "react-router";
 import { Sparkles } from "lucide-react";
 import StudioLogo from "./_components/studio-logo";
+import { NeuralNetworkBackground } from "./_components/neural-network-background";
 import styles from "./studio.module.css";
 
 import { GenerationImageChats, GenerationImagePromptBox } from "./_components";
@@ -43,6 +44,7 @@ const GenerationImagePage = () => {
     <div
       className={`${styles.page} ${!shouldShowIntro ? styles.conversation : ""} relative flex w-full min-w-0 flex-col`}
     >
+      {!shouldShowIntro ? <NeuralNetworkBackground /> : null}
       {isTaskLoading ? (
         <div className="flex min-h-64 w-full items-center justify-center">
           <LoadingSection />
