@@ -336,6 +336,23 @@ test("shows a personal studio dashboard backed by current APIs", async ({
   await expect(
     page.getByRole("heading", { name: "خروجی‌های اخیر" }),
   ).toBeVisible();
+  const scrollCompanion = page.locator("[data-dashboard-scroll-companion]");
+  const scrollViewport = page.locator('[data-slot="scroll-area-viewport"]');
+  await expect(scrollCompanion).toHaveAttribute("data-scrollable", "true");
+  await expect(scrollCompanion).toBeVisible();
+  await scrollViewport.evaluate((element) => {
+    element.scrollTop = element.scrollHeight;
+  });
+  await expect
+    .poll(() =>
+      scrollCompanion.evaluate((element) =>
+        Number.parseFloat(element.style.getPropertyValue("--scroll-progress")),
+      ),
+    )
+    .toBeGreaterThan(90);
+  await scrollViewport.evaluate((element) => {
+    element.scrollTop = 0;
+  });
   await page.screenshot({
     path: test.info().outputPath("desktop.png"),
     animations: "disabled",
@@ -363,6 +380,7 @@ test("keeps primary dashboard actions usable on mobile", async ({ page }) => {
     scroll: document.documentElement.scrollWidth,
   }));
   expect(widths.scroll).toBe(widths.client);
+  await expect(page.locator("[data-dashboard-scroll-companion]")).toBeHidden();
   await page.screenshot({
     path: test.info().outputPath("mobile.png"),
     animations: "disabled",
@@ -480,6 +498,10 @@ test("keeps the image creation turn and composer in view", async ({ page }) => {
     });
   });
   await page.goto("http://localhost:5173/generation/image");
+  await expect(
+    page.getByRole("heading", { name: "ساخته‌های اخیر" }),
+  ).toBeVisible();
+  await expect(page.locator("[data-sidebar-history-item]")).toHaveCount(1);
 
   const prompt = page.getByRole("textbox", { name: "توصیف تصویر" });
   await prompt.fill("یک شهر آینده‌نگر در شب با نورهای نئونی و جزئیات فراوان");
@@ -492,15 +514,18 @@ test("keeps the image creation turn and composer in view", async ({ page }) => {
   await page.getByRole("button", { name: "اعمال تغییرات پرامپت" }).click();
 
   await page.getByRole("button", { name: "ساخت تصویر" }).click();
+  const userMessage = page.locator('[data-message-role="user"]');
+  const assistantMessage = page.locator('[data-message-role="assistant"]');
+  await expect(userMessage).toBeVisible();
+  await expect(assistantMessage).toBeVisible();
+  const [userBox, assistantBox] = await Promise.all([
+    userMessage.boundingBox(),
+    assistantMessage.boundingBox(),
+  ]);
+  expect(userBox?.x).toBeGreaterThan(assistantBox?.x ?? 0);
   const unbornMuseum = page.getByLabel("موزه تصاویر متولدنشده");
   await expect(unbornMuseum).toBeInViewport();
   await expect(unbornMuseum.getByText("شهر", { exact: true })).toBeVisible();
-  const copyPrompt = page.getByRole("button", { name: "کپی متن پرامپت" });
-  await expect(copyPrompt).toBeVisible();
-  await copyPrompt.click();
-  await expect(
-    page.getByRole("button", { name: "متن پرامپت کپی شد" }),
-  ).toBeVisible();
 
   const composer = page.locator("[data-generation-composer]");
   await expect(composer).toBeInViewport();

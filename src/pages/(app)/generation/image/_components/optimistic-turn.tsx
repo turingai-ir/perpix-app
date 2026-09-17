@@ -29,7 +29,8 @@ export function OptimisticImageTurn({
         />
       </div>
       <div
-        className="mx-auto w-full max-w-3xl"
+        data-message-role="assistant"
+        className="mr-auto w-full max-w-3xl"
         aria-busy={turn.status !== "failed"}
       >
         {turn.status === "failed" ? (

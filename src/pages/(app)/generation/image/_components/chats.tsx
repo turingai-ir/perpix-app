@@ -65,15 +65,20 @@ export const GenerationImageChats: FC<Props> = ({
           message,
           requestMessage,
         }) => (
-          <ImageResultCard
-            images={generatedMedia}
-            message={message}
-            requestMessage={requestMessage}
-            onUseAsReference={onUseAsReference}
-            onEditRequest={onEditRequest}
-            onRegenerate={onRegenerate}
-            disabled={isRetrying}
-          />
+          <div
+            data-message-role="assistant"
+            className="mr-auto w-full max-w-3xl"
+          >
+            <ImageResultCard
+              images={generatedMedia}
+              message={message}
+              requestMessage={requestMessage}
+              onUseAsReference={onUseAsReference}
+              onEditRequest={onEditRequest}
+              onRegenerate={onRegenerate}
+              disabled={isRetrying}
+            />
+          </div>
         )}
         getMedia={(message) => ({
           generatedMedia: normalizeImageIds(
