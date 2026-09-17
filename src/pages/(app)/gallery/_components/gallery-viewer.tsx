@@ -1,4 +1,15 @@
-import { useState } from "react";
+import {
+  useRef,
+  useState,
+  type PointerEvent as ReactPointerEvent,
+} from "react";
+import {
+  animate,
+  motion,
+  useMotionTemplate,
+  useMotionValue,
+  useReducedMotion,
+} from "motion/react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -43,6 +54,18 @@ export function GalleryViewer({
 }: Props) {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const [zoomed, setZoomed] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const shouldReduceMotion = useReducedMotion();
+  const dragX = useMotionValue(0);
+  const dragTransform = useMotionTemplate`translate3d(${dragX}px, 0, 0)`;
+  const dragStart = useRef<
+    | {
+        pointerId: number;
+        time: number;
+        x: number;
+      }
+    | undefined
+  >(undefined);
   const index = files.findIndex((file) => file.uuid === selected);
   const file = files[index];
   if (!file) return null;
@@ -56,6 +79,55 @@ export function GalleryViewer({
       onSelect(next.uuid);
     }
   }
+  function handleSwipe(offsetX: number, velocityX: number) {
+    if (zoomed || (Math.abs(offsetX) < 72 && Math.abs(velocityX) < 500)) {
+      return;
+    }
+
+    const rtl = document.documentElement.dir === "rtl";
+    const movedTowardEnd = rtl ? offsetX > 0 : offsetX < 0;
+    move(movedTowardEnd ? 1 : -1);
+  }
+  function getDragOffset(offsetX: number) {
+    const rtl = document.documentElement.dir === "rtl";
+    const movedTowardEnd = rtl ? offsetX > 0 : offsetX < 0;
+    const targetIndex = index + (movedTowardEnd ? 1 : -1);
+    return files[targetIndex] ? offsetX : offsetX * 0.22;
+  }
+  function settleDrag() {
+    setIsDragging(false);
+    void animate(dragX, 0, {
+      type: "spring",
+      duration: shouldReduceMotion ? 0.01 : 0.32,
+      bounce: 0,
+    });
+  }
+  function handlePointerDown(event: ReactPointerEvent<HTMLDivElement>) {
+    if (zoomed || event.button !== 0) return;
+    if (event.nativeEvent.isTrusted) {
+      event.currentTarget.setPointerCapture(event.pointerId);
+    }
+    dragStart.current = {
+      pointerId: event.pointerId,
+      time: performance.now(),
+      x: event.clientX,
+    };
+    setIsDragging(true);
+  }
+  function handlePointerMove(event: ReactPointerEvent<HTMLDivElement>) {
+    const start = dragStart.current;
+    if (!start || start.pointerId !== event.pointerId) return;
+    dragX.set(getDragOffset(event.clientX - start.x));
+  }
+  function handlePointerEnd(event: ReactPointerEvent<HTMLDivElement>) {
+    const start = dragStart.current;
+    if (!start || start.pointerId !== event.pointerId) return;
+    const offsetX = event.clientX - start.x;
+    const elapsed = Math.max(performance.now() - start.time, 1);
+    dragStart.current = undefined;
+    handleSwipe(offsetX, (offsetX / elapsed) * 1000);
+    settleDrag();
+  }
   return (
     <Dialog
       open
@@ -65,7 +137,7 @@ export function GalleryViewer({
     >
       <DialogContent
         showCloseButton={false}
-        className={`${styles.viewer} bg-background inset-s-0 top-0 flex h-dvh max-h-dvh max-w-none translate-x-0 translate-y-0 flex-col gap-4 rounded-none border-0 p-4 sm:max-w-none md:p-6 rtl:translate-x-0`}
+        className={`${styles.viewer} inset-0 flex h-dvh max-h-dvh w-screen max-w-none translate-x-0 translate-y-0 flex-col rounded-none border-0 sm:max-w-none rtl:translate-x-0`}
         onCloseAutoFocus={(event) => {
           event.preventDefault();
           trigger?.focus();
@@ -91,9 +163,9 @@ export function GalleryViewer({
           }
         }}
       >
-        <header className="flex min-w-0 items-center justify-between gap-4">
-          <div className="min-w-0">
-            <DialogTitle dir="auto" className="truncate text-base">
+        <header className={styles.viewerHeader}>
+          <div className={styles.viewerHeading}>
+            <DialogTitle dir="auto" className={styles.viewerTitle}>
               {name}
             </DialogTitle>
             <DialogDescription>
@@ -102,24 +174,41 @@ export function GalleryViewer({
           </div>
           <Button
             variant="outline"
-            className="size-11 shrink-0 rounded-full"
+            className={styles.viewerClose}
             aria-label={t("pages.gallery.studio.close")}
             onClick={onClose}
           >
             <X />
           </Button>
         </header>
-        <div className="bg-muted/40 flex min-h-0 flex-1 items-center justify-center overflow-hidden rounded-2xl border p-2 md:p-4">
-          <GalleryViewerMedia
-            key={`${selected}-${urls?.preview_url}`}
-            url={urls?.preview_url}
-            name={name}
-            mediaType={mediaType}
-            zoomed={zoomed}
-          />
+        <div className={styles.viewerStage}>
+          <motion.div
+            data-gallery-viewer-media
+            className={styles.viewerMediaFrame}
+            data-dragging={isDragging}
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerEnd}
+            onPointerCancel={() => {
+              dragStart.current = undefined;
+              settleDrag();
+            }}
+            style={{
+              touchAction: zoomed ? "auto" : "pan-y",
+              transform: dragTransform,
+            }}
+          >
+            <GalleryViewerMedia
+              key={`${selected}-${urls?.preview_url}`}
+              url={urls?.preview_url}
+              name={name}
+              mediaType={mediaType}
+              zoomed={zoomed}
+            />
+          </motion.div>
         </div>
-        <footer className="flex shrink-0 flex-wrap items-center justify-center gap-2 sm:justify-between">
-          <div className="flex items-center gap-2">
+        <footer className={styles.viewerFooter}>
+          <div className={styles.viewerNavigation}>
             <Button
               variant="outline"
               className="size-11"
@@ -148,7 +237,7 @@ export function GalleryViewer({
               <ArrowLeft className="ltr:rotate-180" />
             </Button>
           </div>
-          <div className="flex gap-2">
+          <div className={styles.viewerActions}>
             {mediaType === "image" && (
               <Button
                 variant="outline"
@@ -186,7 +275,7 @@ export function GalleryViewer({
             )}
           </div>
         </footer>
-        <p className="text-muted-foreground hidden text-center text-xs sm:block">
+        <p className={styles.viewerHint}>
           {t("pages.gallery.studio.viewerHint")}
         </p>
       </DialogContent>

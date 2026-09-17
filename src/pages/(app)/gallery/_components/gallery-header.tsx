@@ -16,19 +16,17 @@ export function GalleryHeader({
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   return (
     <header className={styles.header}>
-      <div className="relative z-10 max-w-2xl">
-        <p className="text-muted-foreground mb-4 flex items-center gap-2 text-sm font-medium">
+      <div className={styles.headerCopy}>
+        <p className={styles.eyebrow}>
           <Sparkles className="size-4" aria-hidden="true" />
           {t("pages.gallery.studio.eyebrow")}
         </p>
-        <h1 className="text-3xl leading-relaxed font-semibold tracking-tight md:text-4xl">
-          {t("pages.gallery.studio.title")}
-        </h1>
-        <p className="text-muted-foreground mt-3 text-base leading-8">
+        <h1 className={styles.title}>{t("pages.gallery.studio.title")}</h1>
+        <p className={styles.description}>
           {t("pages.gallery.studio.description")}
         </p>
-        <div className="mt-6 flex flex-wrap gap-3">
-          <Button asChild className="h-11 rounded-full px-5">
+        <div className={styles.headerActions}>
+          <Button asChild className={styles.createButton}>
             <Link to="/">
               <span>{t("pages.gallery.studio.create")}</span>
               <ArrowUpLeft aria-hidden="true" className="ltr:rotate-90" />
@@ -36,7 +34,7 @@ export function GalleryHeader({
           </Button>
           <Button
             variant="outline"
-            className="bg-background/80 h-11 rounded-full px-4"
+            className={styles.refreshButton}
             disabled={refreshing}
             onClick={onRefresh}
           >
@@ -44,7 +42,7 @@ export function GalleryHeader({
               aria-hidden="true"
               className={refreshing ? "motion-safe:animate-spin" : ""}
             />
-            {t("pages.gallery.actions.refresh")}
+            <span>{t("pages.gallery.actions.refresh")}</span>
           </Button>
         </div>
       </div>
