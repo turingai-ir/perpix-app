@@ -56,23 +56,21 @@ export function GalleryFileCard({
         {!previewUrls?.preview_url && !isPreviewLoading && (
           <GalleryFallback mediaType={mediaType} />
         )}
-        <span
-          aria-hidden="true"
-          className="bg-background/90 absolute end-3 bottom-3 grid size-9 place-items-center rounded-full opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 motion-reduce:transition-none"
-        >
-          <Expand className="size-4" />
+        <span aria-hidden="true" className={styles.openAffordance}>
+          <Expand />
         </span>
+        <span aria-hidden="true" className={styles.previewSheen} />
       </button>
-      <div className="min-w-0 p-3">
-        <h2 className="truncate text-sm font-medium" dir="auto" title={name}>
-          {name}
-        </h2>
-        <div className="mt-1 flex flex-wrap items-center justify-between gap-1">
-          <span className="text-muted-foreground text-xs">
+      <div className={styles.cardBody}>
+        <div className={styles.cardCopy}>
+          <h2 className={styles.cardTitle} dir="auto" title={name}>
+            {name}
+          </h2>
+          <span className={styles.mediaType}>
             {t(`pages.gallery.mediaTypes.${mediaType}`)}
           </span>
-          <GalleryActions file={file} downloadUrl={previewUrls?.download_url} />
         </div>
+        <GalleryActions file={file} downloadUrl={previewUrls?.download_url} />
       </div>
     </article>
   );

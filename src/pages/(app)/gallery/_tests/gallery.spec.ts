@@ -10,7 +10,6 @@ test.afterEach(async ({ page }, info) => {
       ),
       fullPage: true,
     });
-    console.log("Gallery URL:", page.url());
   }
 });
 
@@ -144,7 +143,8 @@ test("has usable mobile controls and no horizontal overflow", async ({
 });
 
 test("supports RTL keyboard navigation and sorting", async ({ page }) => {
-  await page.getByRole("combobox", { name: "مرتب‌سازی" }).selectOption("name");
+  await page.getByRole("combobox", { name: "مرتب‌سازی" }).click();
+  await page.getByRole("option", { name: "نام فایل" }).click();
   await page.getByRole("button", { name: "Aurora.png", exact: true }).click();
   await page.keyboard.press("ArrowLeft");
   await expect(
@@ -153,6 +153,45 @@ test("supports RTL keyboard navigation and sorting", async ({ page }) => {
   await page.keyboard.press("ArrowRight");
   await expect(
     page.getByRole("dialog").getByRole("heading", { name: "Aurora.png" }),
+  ).toBeVisible();
+});
+
+test("supports direct RTL swipe navigation in the viewer", async ({ page }) => {
+  await page.getByRole("button", { name: "Aurora.png", exact: true }).click();
+  const media = page.locator("[data-gallery-viewer-media]");
+  const box = await media.boundingBox();
+  expect(box).not.toBeNull();
+  if (!box) return;
+
+  const centerX = box.x + box.width / 2;
+  const centerY = box.y + box.height / 2;
+  await media.dispatchEvent("pointerdown", {
+    pointerId: 1,
+    pointerType: "touch",
+    isPrimary: true,
+    buttons: 1,
+    clientX: centerX,
+    clientY: centerY,
+  });
+  await media.dispatchEvent("pointermove", {
+    pointerId: 1,
+    pointerType: "touch",
+    isPrimary: true,
+    buttons: 1,
+    clientX: centerX + 120,
+    clientY: centerY,
+  });
+  await media.dispatchEvent("pointerup", {
+    pointerId: 1,
+    pointerType: "touch",
+    isPrimary: true,
+    buttons: 0,
+    clientX: centerX + 120,
+    clientY: centerY,
+  });
+
+  await expect(
+    page.getByRole("dialog").getByRole("heading", { name: "Desert.png" }),
   ).toBeVisible();
 });
 

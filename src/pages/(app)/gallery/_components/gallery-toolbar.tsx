@@ -1,9 +1,17 @@
 import { Grid2X2, LayoutGrid, Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useAppTranslate } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
 import { getGalleryFilters } from "../_utils/gallery";
 import type { GalleryFilter } from "../_utils/types";
+import styles from "../gallery.module.css";
 
 interface Props {
   activeFilter: GalleryFilter;
@@ -19,10 +27,10 @@ interface Props {
 export function GalleryToolbar(props: Props) {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   return (
-    <section className="my-6 space-y-4" aria-label={t("pages.gallery.title")}>
-      <div className="flex flex-wrap items-center justify-between gap-3">
+    <section className={styles.toolbar} aria-label={t("pages.gallery.title")}>
+      <div className={styles.toolbarTopline}>
         <div
-          className="bg-muted flex max-w-full flex-wrap gap-1 rounded-2xl p-1"
+          className={styles.filterRail}
           role="group"
           aria-label={t("pages.gallery.title")}
         >
@@ -32,7 +40,7 @@ export function GalleryToolbar(props: Props) {
               variant={
                 props.activeFilter === filter.key ? "secondary" : "ghost"
               }
-              className="h-11 rounded-xl px-4"
+              className={styles.filterButton}
               aria-pressed={props.activeFilter === filter.key}
               onClick={() => props.onFilter(filter.key)}
             >
@@ -40,12 +48,12 @@ export function GalleryToolbar(props: Props) {
             </Button>
           ))}
         </div>
-        <p className="text-muted-foreground text-sm" role="status">
+        <p className={styles.resultCount} role="status">
           {t("pages.gallery.studio.loaded", { count: props.count })}
         </p>
       </div>
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="bg-card focus-within:ring-ring relative flex min-w-0 basis-full items-center rounded-xl border focus-within:ring-2 sm:flex-1 sm:basis-auto">
+      <div className={styles.toolbarControls}>
+        <div className={styles.searchField}>
           <Search
             className="text-muted-foreground pointer-events-none absolute start-3 size-4"
             aria-hidden="true"
@@ -57,12 +65,12 @@ export function GalleryToolbar(props: Props) {
             placeholder={t("pages.gallery.studio.search")}
             value={props.search}
             onChange={(event) => props.onSearch(event.target.value)}
-            className="h-12 w-full min-w-0 rounded-xl bg-transparent ps-10 pe-12 text-base outline-none [&::-webkit-search-cancel-button]:hidden"
+            className={styles.searchInput}
           />
           {props.search && (
             <Button
               variant="ghost"
-              className="absolute end-0 size-11 rounded-xl"
+              className={styles.clearSearch}
               aria-label={t("pages.gallery.studio.clear")}
               onClick={() => props.onSearch("")}
             >
@@ -70,22 +78,35 @@ export function GalleryToolbar(props: Props) {
             </Button>
           )}
         </div>
-        <select
-          aria-label={t("pages.gallery.studio.sort")}
-          value={props.sort}
-          onChange={(event) => props.onSort(event.target.value)}
-          className="bg-card focus-visible:ring-ring h-12 min-w-0 flex-1 rounded-xl border px-3 text-sm outline-none focus-visible:ring-2 sm:flex-none"
-        >
-          {["original", "name", "size"].map((value) => (
-            <option key={value} value={value}>
-              {t(`pages.gallery.studio.${value}`)}
-            </option>
-          ))}
-        </select>
-        <div className="bg-muted flex gap-1 rounded-xl p-1">
+        <div className={styles.sortControl}>
+          <Select value={props.sort} onValueChange={props.onSort}>
+            <SelectTrigger
+              aria-label={t("pages.gallery.studio.sort")}
+              className={styles.sortSelect}
+            >
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent
+              position="popper"
+              align="start"
+              className={styles.sortContent}
+            >
+              {["original", "name", "size"].map((value) => (
+                <SelectItem
+                  key={value}
+                  value={value}
+                  className={styles.sortItem}
+                >
+                  {t(`pages.gallery.studio.${value}`)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className={styles.layoutPicker}>
           <Button
             variant={props.compact ? "ghost" : "secondary"}
-            className="size-11 rounded-lg"
+            className={styles.layoutButton}
             aria-pressed={!props.compact}
             aria-label={t("pages.gallery.studio.exhibition")}
             onClick={() => props.onCompact(false)}
@@ -94,7 +115,7 @@ export function GalleryToolbar(props: Props) {
           </Button>
           <Button
             variant={props.compact ? "secondary" : "ghost"}
-            className="size-11 rounded-lg"
+            className={styles.layoutButton}
             aria-pressed={props.compact}
             aria-label={t("pages.gallery.studio.compact")}
             onClick={() => props.onCompact(true)}
@@ -103,10 +124,7 @@ export function GalleryToolbar(props: Props) {
           </Button>
         </div>
       </div>
-      <p
-        id="gallery-search-hint"
-        className="text-muted-foreground text-xs leading-6"
-      >
+      <p id="gallery-search-hint" className={styles.searchHint}>
         {t("pages.gallery.studio.searchHint")}
       </p>
     </section>
