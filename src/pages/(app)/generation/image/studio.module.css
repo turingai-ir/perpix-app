@@ -1,160 +1,293 @@
 .page {
+  isolation: isolate;
   padding: 12px clamp(12px, 3vw, 32px) 20px;
   min-height: calc(100svh - 36px);
 }
+
+.page::before,
+.page::after {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+}
+
+.page::before {
+  background:
+    radial-gradient(
+      ellipse at 22% 18%,
+      color-mix(in srgb, var(--primary) 8%, transparent),
+      transparent 28rem
+    ),
+    radial-gradient(ellipse at 82% 54%, rgb(0 153 255 / 5%), transparent 32rem),
+    linear-gradient(
+      180deg,
+      #000 0%,
+      color-mix(in srgb, #000 97%, var(--primary)) 100%
+    );
+}
+
+.page::after {
+  opacity: 0.34;
+  background-image:
+    linear-gradient(
+      28deg,
+      transparent 49.7%,
+      rgb(177 94 255 / 8%) 50%,
+      transparent 50.3%
+    ),
+    linear-gradient(
+      -32deg,
+      transparent 49.7%,
+      rgb(48 184 255 / 6%) 50%,
+      transparent 50.3%
+    );
+  background-position:
+    0 0,
+    1.5rem 2rem;
+  background-size:
+    7rem 6rem,
+    9rem 8rem;
+  mask-image: radial-gradient(ellipse at center, transparent 8%, #000 74%);
+  animation: ambientField 18s linear infinite alternate;
+}
+
+@keyframes ambientField {
+  to {
+    background-position:
+      3rem 1.5rem,
+      -2rem 4rem;
+  }
+}
+.conversation::before {
+  background:
+    radial-gradient(
+      ellipse at 50% 12%,
+      color-mix(in srgb, var(--primary) 4%, transparent),
+      transparent 30rem
+    ),
+    #000;
+}
+
+.conversation::after {
+  opacity: 0.1;
+  animation: none;
+}
+
 .content {
   gap: clamp(12px, 2vh, 24px);
 }
 .intro {
+  isolation: isolate;
+  overflow: hidden;
   gap: 12px;
   padding-block: clamp(8px, 2vh, 24px);
 }
+
+.intro > span,
+.intro > h1,
+.intro > p {
+  position: relative;
+  z-index: 12;
+}
+
 .logoSection {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-}
-.stage {
-  position: relative;
-  display: grid;
-  place-items: center;
-  width: 160px;
-  height: clamp(80px, 14svh, 132px);
-  perspective: 600px;
-}
-.logo {
-  width: clamp(64px, 10svh, 96px);
-  aspect-ratio: 1;
-  object-fit: contain;
-  position: relative;
-  z-index: 1;
-  border-radius: 22%;
-}
-.ring,
-.echo {
   position: absolute;
-  width: 110px;
-  height: 70px;
-  border: 1px solid color-mix(in srgb, var(--primary) 45%, transparent);
-  border-radius: 50%;
+  z-index: 0;
+  inset: 0;
   pointer-events: none;
 }
-.orbit .ring {
-  animation: orbit 4s ease-in-out;
-}
-.orbit .ring::after {
-  content: "";
+
+.neuralStage {
   position: absolute;
-  top: 8px;
-  left: 8px;
-  width: 7px;
-  height: 7px;
+  inset: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      ellipse at 50% 28%,
+      color-mix(in srgb, var(--primary) 13%, transparent),
+      transparent 24%
+    ),
+    radial-gradient(ellipse at 12% 58%, rgb(17 142 255 / 7%), transparent 28%),
+    #000;
+  isolation: isolate;
+  perspective: 600px;
+}
+
+.neuralStage::after {
+  position: absolute;
+  z-index: 10;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(to bottom, #000 0%, transparent 18% 76%, #000 100%),
+    radial-gradient(ellipse at 50% 34%, transparent 22%, #000 94%);
+  content: "";
+}
+
+.vaults i {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 50%;
+  width: calc(24% + var(--vault) * 16%);
+  height: calc(36% + var(--vault) * 18%);
+  border: 1px solid color-mix(in srgb, var(--primary) 42%, transparent);
+  border-bottom: 0;
+  border-radius: 50% 50% 0 0;
+  transform: translate(-50%, -50%);
+  animation: vaultPulse 4.5s ease-in-out infinite;
+  animation-delay: calc(var(--vault) * -0.45s);
+}
+
+.neuralLinks {
+  position: absolute;
+  z-index: 3;
+  inset: 9% 5%;
+  width: 90%;
+  height: 82%;
+  overflow: visible;
+}
+
+.neuralLinks line {
+  vector-effect: non-scaling-stroke;
+  stroke: color-mix(in srgb, var(--primary) 64%, #65e8ff);
+  stroke-width: 0.75;
+  stroke-dasharray: 1 9;
+  stroke-linecap: round;
+  animation: dataFlow 2.5s linear infinite;
+  animation-delay: calc(var(--link) * -0.12s);
+}
+
+.previewNodes i {
+  position: absolute;
+  z-index: 4;
+  top: var(--top);
+  left: var(--left);
+  width: 4px;
+  aspect-ratio: 1;
   border-radius: 50%;
-  background: var(--primary);
-  box-shadow: 0 0 12px var(--primary);
+  background: white;
+  box-shadow:
+    0 0 0.45rem white,
+    0 0 1.25rem var(--primary);
+  animation: nodeFire 2.4s ease-in-out infinite;
+  animation-delay: calc(var(--node) * -0.2s);
 }
-.orbit .echo {
-  animation: orbit 4s ease-in-out reverse;
-  transform: rotate(-35deg);
+
+.neuralCore {
+  position: absolute;
+  z-index: 6;
+  top: 28%;
+  left: 50%;
+  display: grid;
+  width: clamp(4.6rem, 21%, 6.4rem);
+  aspect-ratio: 1;
+  place-items: center;
+  transform: translate(-50%, -50%);
 }
-.wave .ring {
+
+.neuralCore i {
+  position: absolute;
+  inset: 0;
+  border: 1px solid color-mix(in srgb, var(--primary) 70%, white);
+  border-radius: 50%;
+  box-shadow: 0 0 1.4rem color-mix(in srgb, var(--primary) 35%, transparent);
+  animation: coreOrbit 4s linear infinite;
+}
+
+.neuralCore i:nth-child(2) {
+  inset: 12%;
+  border-style: dashed;
+  animation-direction: reverse;
+  animation-duration: 2.8s;
+}
+
+.logo {
+  position: relative;
   z-index: 2;
-  width: 108px;
-  height: 2px;
-  border: 0;
-  border-radius: 0;
+  width: 58%;
+  aspect-ratio: 1;
+  border-radius: 22%;
+  object-fit: contain;
+  filter: drop-shadow(
+    0 0 1rem color-mix(in srgb, var(--primary) 55%, transparent)
+  );
+  animation: logoBreathe 2.8s ease-in-out infinite;
+}
+
+.previewScan {
+  position: absolute;
+  z-index: 8;
+  top: -35%;
+  left: 0;
+  width: 100%;
+  height: 26%;
   background: linear-gradient(
-    90deg,
     transparent,
-    #45e0ff,
-    var(--primary),
+    color-mix(in srgb, var(--primary) 28%, transparent),
     transparent
   );
-  box-shadow: 0 0 14px #45e0ff;
-  animation: scan 4s ease-in-out;
+  mix-blend-mode: screen;
+  animation: previewScan 4.8s ease-in-out infinite;
 }
-.wave .echo {
-  width: 116px;
-  height: 96px;
-  border-radius: 16px;
-  border-style: dashed;
-  animation: glow 4s ease-in-out;
+
+@keyframes vaultPulse {
+  50% {
+    opacity: 0.32;
+    transform: translate(-50%, -50%) scale(0.96);
+  }
 }
-.wave .logo {
-  animation: glow 4s ease-in-out;
-}
-.float .logo {
-  transform-origin: bottom center;
-  animation: jelly 4s ease-in-out;
-}
-.float .ring {
-  top: 85%;
-  height: 10px;
-  width: 64px;
-  background: color-mix(in srgb, var(--primary) 12%, transparent);
-  filter: blur(5px);
-  animation: shadow 4s ease-in-out;
-}
-.float .echo {
-  display: none;
-}
-@keyframes orbit {
+
+@keyframes dataFlow {
   to {
-    transform: rotate(360deg);
+    stroke-dashoffset: -20;
   }
 }
-@keyframes glow {
+
+@keyframes nodeFire {
+  0%,
+  72%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.65);
+  }
+  82% {
+    opacity: 1;
+    transform: scale(1.8);
+  }
+}
+
+@keyframes coreOrbit {
+  to {
+    transform: rotate(360deg) rotateX(55deg);
+  }
+}
+
+@keyframes logoBreathe {
   50% {
-    opacity: 0.55;
+    filter: drop-shadow(
+      0 0 1.8rem color-mix(in srgb, var(--primary) 80%, transparent)
+    );
+    transform: scale(1.06);
   }
 }
-@keyframes jelly {
+
+@keyframes previewScan {
   0%,
-  65%,
-  100% {
-    transform: scale(1);
-  }
-  12% {
-    transform: scale(1.16, 0.82) rotate(-5deg);
-  }
-  28% {
-    transform: translateY(-18px) scale(0.9, 1.12) rotate(7deg);
-  }
-  42% {
-    transform: scale(1.12, 0.88) rotate(-3deg);
-  }
-  53% {
-    transform: translateY(-5px) scale(0.97, 1.03);
-  }
-}
-@keyframes scan {
-  0%,
-  100% {
-    transform: translateY(-42px);
+  18% {
     opacity: 0;
+    transform: translateY(0);
   }
-  15%,
-  85% {
-    opacity: 0.8;
+  35% {
+    opacity: 1;
   }
-  50% {
-    transform: translateY(42px);
+  78%,
+  100% {
+    opacity: 0;
+    transform: translateY(520%);
   }
-}
-@keyframes shadow {
-  50% {
-    transform: scale(0.7);
-    opacity: 0.4;
-  }
-}
-.stage[data-active="false"] *,
-.stage[data-active="false"] *::after {
-  animation: none !important;
-}
-.stage[data-active="false"] .ring,
-.stage[data-active="false"] .echo {
-  opacity: 0;
 }
 @media (max-height: 760px) {
   .intro {
@@ -172,9 +305,26 @@
     gap: 12px;
   }
 }
+
+@media (max-width: 640px) {
+  .neuralCore {
+    top: 24%;
+    width: 4.4rem;
+  }
+
+  .neuralLinks {
+    inset-inline: -18%;
+    width: 136%;
+  }
+
+  .previewNodes i:nth-child(3n) {
+    display: none;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
-  .stage *,
-  .stage *::after {
+  .page::after,
+  .neuralStage *,
+  .neuralStage *::after {
     animation: none !important;
   }
 }
