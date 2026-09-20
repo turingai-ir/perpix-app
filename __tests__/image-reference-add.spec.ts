@@ -143,6 +143,57 @@ test("an image can be pasted into the reference picker", async ({
   expect(imageConversationApi.generateRequests).toHaveLength(0);
 });
 
+test("a newly uploaded reference waits for confirmation and enables add", async ({
+  imageConversationApi,
+  page,
+}) => {
+  imageConversationApi.setTaskMessages(
+    conversationMessages({ prompt: "Fresh upload confirmation" }),
+  );
+  await page.route("**/file-manager/simple-upload", (route) =>
+    route.fulfill({ json: { uuid: "fresh-reference-upload" } }),
+  );
+  await page.goto(`/generation/image/${taskUuid}`, {
+    waitUntil: "domcontentloaded",
+  });
+  await page.getByRole("button", { name: /استفاده به‌عنوان مرجع/ }).click();
+
+  const composer = page.locator("form");
+  const references = composer.locator('[aria-label="تصاویر مرجع"]');
+  const referenceItems = references.locator('[role="listitem"]');
+  await expect(referenceItems).toHaveCount(1);
+  const initialReferenceCount = await referenceItems.count();
+  await composer.getByRole("button", { name: "افزودن عکس" }).click();
+  const dialog = page.getByRole("dialog", { name: "افزودن عکس" });
+
+  await dialog.locator('input[type="file"]').evaluate(async (input) => {
+    const canvas = document.createElement("canvas");
+    canvas.width = 320;
+    canvas.height = 320;
+    const blob = await new Promise<Blob>((resolve, reject) => {
+      canvas.toBlob((image) =>
+        image ? resolve(image) : reject(new Error("No image")),
+      );
+    });
+    const transfer = new DataTransfer();
+    transfer.items.add(
+      new File([blob], "fresh-reference.png", { type: "image/png" }),
+    );
+    Object.defineProperty(input, "files", { value: transfer.files });
+    input.dispatchEvent(new Event("change", { bubbles: true }));
+  });
+
+  const confirmButton = dialog.getByRole("button", {
+    name: /افزودن 1 عکس/,
+  });
+  await expect(confirmButton).toBeEnabled();
+  await expect(referenceItems).toHaveCount(initialReferenceCount);
+
+  await confirmButton.click();
+  await expect(referenceItems).toHaveCount(initialReferenceCount + 1);
+  expect(imageConversationApi.generateRequests).toHaveLength(0);
+});
+
 test("keyboard paste accepts an image from the real browser clipboard", async ({
   imageConversationApi,
   page,

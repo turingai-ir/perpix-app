@@ -1,5 +1,6 @@
 import { CircleCheck, CircleDashed, CircleX, Image, Video } from "lucide-react";
 import { Link } from "react-router";
+import styles from "../dashboard.module.css";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAppTranslate } from "@/hooks";
@@ -34,22 +35,18 @@ export function DashboardActivity({
   if (isLoading) return <Skeleton className="h-80 w-full rounded-2xl" />;
 
   return (
-    <section
-      aria-labelledby="activity-heading"
-      className="rounded-3xl border border-white/10 bg-white/[0.045] p-4 shadow-xl shadow-black/10 backdrop-blur-xl sm:p-5"
-    >
-      <div className="mb-4">
-        <p className="text-xs text-blue-300">
-          {t("pages.root.dashboard.activity.eyebrow")}
-        </p>
-        <h2
-          id="activity-heading"
-          className="mt-1 text-lg font-semibold text-white"
-        >
-          {t("pages.root.dashboard.activity.title")}
-        </h2>
+    <section aria-labelledby="activity-heading" className={styles.glassPanel}>
+      <div className={styles.sectionHeader}>
+        <div>
+          <p className={styles.sectionEyebrowBlue}>
+            {t("pages.root.dashboard.activity.eyebrow")}
+          </p>
+          <h2 id="activity-heading" className={styles.sectionTitle}>
+            {t("pages.root.dashboard.activity.title")}
+          </h2>
+        </div>
       </div>
-      <div className="space-y-1">
+      <div className={styles.dataList}>
         {tasks.length ? (
           tasks.map((task) => {
             const lastMessage = task.messages[task.messages.length - 1];
@@ -63,9 +60,9 @@ export function DashboardActivity({
               <Link
                 key={task.uuid}
                 to={path}
-                className="group flex items-center gap-3 rounded-xl border border-transparent p-3 transition duration-300 hover:border-white/8 hover:bg-white/[0.055] focus-visible:outline-2 focus-visible:outline-fuchsia-400"
+                className={`group ${styles.dataRow}`}
               >
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/8 bg-gradient-to-br from-white/[0.08] to-transparent transition group-hover:border-fuchsia-300/20">
+                <span className={styles.dataIcon}>
                   <MediaIcon className="h-4 w-4 text-zinc-300" />
                 </span>
                 <span className="min-w-0 flex-1">
@@ -89,7 +86,7 @@ export function DashboardActivity({
             );
           })
         ) : (
-          <p className="rounded-xl border border-dashed border-white/10 p-6 text-center text-sm text-zinc-500">
+          <p className={styles.emptyState}>
             {t("pages.root.dashboard.activity.empty")}
           </p>
         )}

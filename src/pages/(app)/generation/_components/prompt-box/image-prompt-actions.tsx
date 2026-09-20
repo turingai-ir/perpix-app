@@ -53,47 +53,53 @@ export function ImagePromptActions({
             )}
           </div>
         )}
-        {inlineFieldNames.map((fieldName) => (
-          <div key={fieldName} className={styles.primaryField}>
-            {fieldName === "aspect_ratio" ? (
-              <AspectRatioPicker
-                dynamicForm={dynamicForm}
-                disabled={disabled}
-              />
-            ) : fieldName === "resolution" ? (
-              <ResolutionPicker dynamicForm={dynamicForm} disabled={disabled} />
-            ) : (
-              <DynamicPromptConfigField
-                dynamicForm={dynamicForm}
-                fieldName={fieldName}
-                disabled={disabled}
-                layout="stacked"
-                simple
-                compact
-              />
-            )}
+        <div className={styles.compactControls}>
+          {inlineFieldNames.map((fieldName) => (
+            <div key={fieldName} className={styles.primaryField}>
+              {fieldName === "aspect_ratio" ? (
+                <AspectRatioPicker
+                  dynamicForm={dynamicForm}
+                  disabled={disabled}
+                />
+              ) : fieldName === "resolution" ? (
+                <ResolutionPicker
+                  dynamicForm={dynamicForm}
+                  disabled={disabled}
+                />
+              ) : (
+                <DynamicPromptConfigField
+                  dynamicForm={dynamicForm}
+                  fieldName={fieldName}
+                  disabled={disabled}
+                  layout="stacked"
+                  simple
+                  compact
+                />
+              )}
+            </div>
+          ))}
+          <div className={styles.tools}>
+            <AdvancedPromptSettingsDialog
+              label={advancedSettingsLabel}
+              dynamicForm={dynamicForm}
+              fieldNames={advancedFieldNames}
+              disabled={disabled}
+              modelName={
+                model.modelState.data?.display_name ??
+                model.modelState.data?.name
+              }
+              simple
+            />
+            <GenerationRulesDialog />
+            <ModelTokenPriceTooltip
+              isLoading={model.modelState.isLoading}
+              pricingTiers={[
+                { price_usdmicro: model.modelState.data?.min_cost },
+                { price_usdmicro: model.modelState.data?.max_cost },
+              ]}
+            />
           </div>
-        ))}
-      </div>
-      <div className={styles.tools}>
-        <AdvancedPromptSettingsDialog
-          label={advancedSettingsLabel}
-          dynamicForm={dynamicForm}
-          fieldNames={advancedFieldNames}
-          disabled={disabled}
-          modelName={
-            model.modelState.data?.display_name ?? model.modelState.data?.name
-          }
-          simple
-        />
-        <GenerationRulesDialog />
-        <ModelTokenPriceTooltip
-          isLoading={model.modelState.isLoading}
-          pricingTiers={[
-            { price_usdmicro: model.modelState.data?.min_cost },
-            { price_usdmicro: model.modelState.data?.max_cost },
-          ]}
-        />
+        </div>
       </div>
       <PromptSubmitButton
         disabled={isSubmitDisabled}
