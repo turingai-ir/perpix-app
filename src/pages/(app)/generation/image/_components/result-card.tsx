@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { ImagePlus, PencilLine, RotateCcw } from "lucide-react";
+import {
+  Check,
+  Columns2,
+  ImagePlus,
+  PencilLine,
+  RotateCcw,
+} from "lucide-react";
 
 import { MediaPreviewItem } from "@/components/custom/media-preview-item";
 import { Button } from "@/components/ui/button";
@@ -8,6 +14,7 @@ import type { SchemaAiTaskMessageResponse } from "@/services/api";
 import { RegenerateImageDialog } from "./regenerate-dialog";
 import { ResultSpecRobot } from "./result-spec-robot";
 import styles from "./result-card.module.css";
+import type { ImageComparisonItem } from "./image-comparison.types";
 
 function parseAspectRatio(value: unknown) {
   const match = String(value ?? "").match(/^(\d+(?:\.\d+)?):(\d+(?:\.\d+)?)$/);
@@ -25,6 +32,9 @@ export function ImageResultCard({
   onUseAsReference,
   onEditRequest,
   onRegenerate,
+  comparedImageIds,
+  comparisonLimitReached,
+  onToggleComparison,
   disabled,
 }: {
   images: string[];
@@ -33,6 +43,9 @@ export function ImageResultCard({
   onUseAsReference?: (fileId: string) => void;
   onEditRequest?: (message: SchemaAiTaskMessageResponse) => void;
   onRegenerate?: (message: SchemaAiTaskMessageResponse) => void;
+  comparedImageIds?: ReadonlySet<string>;
+  comparisonLimitReached?: boolean;
+  onToggleComparison?: (item: ImageComparisonItem) => void;
   disabled?: boolean;
 }) {
   const { t } = useAppTranslate();
@@ -41,6 +54,14 @@ export function ImageResultCard({
   const ratio = String(source.ai_model_config?.aspect_ratio ?? "1:1");
   const parsedRatio = parseAspectRatio(ratio);
   const resolution = source.ai_model_config?.resolution;
+  const prompt = source.message ?? String(source.ai_model_config?.prompt ?? "");
+
+  const getComparisonItem = (fileId: string): ImageComparisonItem => ({
+    aspectRatio: ratio,
+    fileId,
+    prompt,
+    resolution,
+  });
   return (
     <article className={`${styles.reveal} ${styles.stage}`}>
       <header className={styles.header}>
@@ -77,8 +98,33 @@ export function ImageResultCard({
               index={index}
               type="image"
               aspectRatio={parsedRatio.css}
-              alt={source.message ?? t("common.image")}
+              alt={prompt || t("common.image")}
             />
+            {onToggleComparison && images.length > 1 ? (
+              <Button
+                type="button"
+                size="sm"
+                variant="secondary"
+                aria-pressed={comparedImageIds?.has(fileId) ?? false}
+                disabled={
+                  disabled ||
+                  (comparisonLimitReached && !comparedImageIds?.has(fileId))
+                }
+                className={styles.compareAction}
+                onClick={() => onToggleComparison(getComparisonItem(fileId))}
+              >
+                {comparedImageIds?.has(fileId) ? (
+                  <Check aria-hidden="true" />
+                ) : (
+                  <Columns2 aria-hidden="true" />
+                )}
+                {t(
+                  comparedImageIds?.has(fileId)
+                    ? "pages.generation.image.compare.selected"
+                    : "pages.generation.image.compare.add",
+                )}
+              </Button>
+            ) : null}
             {onUseAsReference && images.length > 1 ? (
               <Button
                 type="button"
@@ -99,13 +145,37 @@ export function ImageResultCard({
         {onUseAsReference && images[0] && images.length === 1 ? (
           <Button
             type="button"
-            variant="secondary"
+            variant="default"
             disabled={disabled}
             className={styles.primaryAction}
             onClick={() => onUseAsReference(images[0])}
           >
             <ImagePlus aria-hidden="true" />
             {t("pages.generation.image.chat.useAsReference")}
+          </Button>
+        ) : null}
+        {onToggleComparison && images[0] && images.length === 1 ? (
+          <Button
+            type="button"
+            variant="secondary"
+            aria-pressed={comparedImageIds?.has(images[0]) ?? false}
+            disabled={
+              disabled ||
+              (comparisonLimitReached && !comparedImageIds?.has(images[0]))
+            }
+            className={styles.secondaryAction}
+            onClick={() => onToggleComparison(getComparisonItem(images[0]))}
+          >
+            {comparedImageIds?.has(images[0]) ? (
+              <Check aria-hidden="true" />
+            ) : (
+              <Columns2 aria-hidden="true" />
+            )}
+            {t(
+              comparedImageIds?.has(images[0])
+                ? "pages.generation.image.compare.selected"
+                : "pages.generation.image.compare.add",
+            )}
           </Button>
         ) : null}
         {onEditRequest && (

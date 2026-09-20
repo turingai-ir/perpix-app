@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { Images } from "lucide-react";
 import {
   DynamicConfigFileField,
   type DynamicConfigForm,
@@ -47,11 +48,27 @@ export function ImageReferenceInput({
     <div
       className={
         hasReference
-          ? "order-2 w-full min-w-0"
+          ? "order-2 flex w-full min-w-0 flex-col gap-2"
           : "flex shrink-0 items-start pt-1"
       }
       data-generation-mode={String(dynamicForm.watch("mode") ?? "")}
     >
+      {hasReference ? (
+        <div
+          className="border-primary/20 bg-primary/8 text-foreground flex min-h-11 flex-wrap items-center gap-2 rounded-xl border px-3 py-2 text-xs"
+          role="status"
+        >
+          <Images className="text-primary size-4" aria-hidden="true" />
+          <strong>
+            {t("pages.generation.image.studio.reference.contextActive")}
+          </strong>
+          <span className="text-muted-foreground">
+            {t("pages.generation.image.studio.reference.contextCount", {
+              count: references.length,
+            })}
+          </span>
+        </div>
+      ) : null}
       <DynamicConfigFileField
         dynamicForm={dynamicForm}
         fieldName={REFERENCE_FIELD}

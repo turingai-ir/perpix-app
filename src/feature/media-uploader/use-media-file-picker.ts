@@ -17,6 +17,7 @@ interface UseMediaFilePickerOptions {
   isUploading: boolean;
   selectedIds: readonly string[];
   onFileSelect?: (file: File) => void | Promise<string | void>;
+  onFileUploaded?: (id: string) => void;
   onUploadedFileSelect?: (id: string) => void;
 }
 
@@ -27,6 +28,7 @@ export function useMediaFilePicker({
   isUploading,
   selectedIds,
   onFileSelect,
+  onFileUploaded,
   onUploadedFileSelect,
 }: UseMediaFilePickerOptions) {
   const { getUserFilesState } = useInfiniteUserFiles({
@@ -58,7 +60,8 @@ export function useMediaFilePicker({
   const uploadFile = async (file: File) => {
     if (disabled || isUploading) return;
 
-    await onFileSelect?.(file);
+    const uploadedFileId = await onFileSelect?.(file);
+    if (uploadedFileId) onFileUploaded?.(uploadedFileId);
     await getUserFilesState.refetch();
   };
 
