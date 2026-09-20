@@ -1,5 +1,6 @@
 import { ArrowDownLeft, ArrowUpRight, RotateCcw } from "lucide-react";
 import { Link } from "react-router";
+import styles from "../dashboard.module.css";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAppTranslate } from "@/hooks";
@@ -30,28 +31,25 @@ export function DashboardTransactions({
   return (
     <section
       aria-labelledby="transactions-heading"
-      className="rounded-3xl border border-white/10 bg-white/[0.045] p-4 shadow-xl shadow-black/10 backdrop-blur-xl sm:p-5"
+      className={styles.glassPanel}
     >
-      <div className="mb-4 flex items-end justify-between">
+      <div className={styles.sectionHeader}>
         <div>
-          <p className="text-xs text-fuchsia-300">
+          <p className={styles.sectionEyebrow}>
             {t("pages.root.dashboard.transactions.eyebrow")}
           </p>
-          <h2
-            id="transactions-heading"
-            className="mt-1 text-lg font-semibold text-white"
-          >
+          <h2 id="transactions-heading" className={styles.sectionTitle}>
             {t("pages.root.dashboard.transactions.title")}
           </h2>
         </div>
         <Link
           to={APP_ROUTES_KEY.profile.walletTransactions.path}
-          className="text-xs text-zinc-400 hover:text-white"
+          className={styles.sectionLink}
         >
           {t("pages.root.dashboard.actions.viewAll")}
         </Link>
       </div>
-      <div className="space-y-1">
+      <div className={styles.dataList}>
         {transactions.length ? (
           transactions.map((transaction) => {
             const Icon = transactionIcons[transaction.type];
@@ -61,9 +59,9 @@ export function DashboardTransactions({
             return (
               <div
                 key={transaction.transaction_uuid}
-                className="flex items-center gap-3 rounded-xl border border-transparent p-3 transition hover:border-white/8 hover:bg-white/[0.045]"
+                className={styles.dataRow}
               >
-                <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/[0.04]">
+                <span className={styles.transactionIcon}>
                   <Icon className="h-4 w-4 text-zinc-300" />
                 </span>
                 <span className="min-w-0 flex-1">
@@ -86,7 +84,7 @@ export function DashboardTransactions({
             );
           })
         ) : (
-          <p className="rounded-xl border border-dashed border-white/10 p-6 text-center text-sm text-zinc-500">
+          <p className={styles.emptyState}>
             {t("pages.root.dashboard.transactions.empty")}
           </p>
         )}

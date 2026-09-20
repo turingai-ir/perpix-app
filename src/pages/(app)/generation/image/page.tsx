@@ -1,11 +1,17 @@
 import { Activity, startTransition, useState } from "react";
-import { useLocation } from "react-router";
+import { useLocation, useParams } from "react-router";
 import { Sparkles } from "lucide-react";
 import StudioLogo from "./_components/studio-logo";
 import { NeuralNetworkBackground } from "./_components/neural-network-background";
 import styles from "./studio.module.css";
 
 import { GenerationImageChats, GenerationImagePromptBox } from "./_components";
+import {
+  GenerationFocusState,
+  type GenerationFocusPhase,
+} from "./_components/generation-focus-state";
+import { ImageComparison } from "./_components/image-comparison";
+import type { ImageComparisonItem } from "./_components/image-comparison.types";
 import { GeneratedMediaField, useGenerationPage } from "../_hooks";
 import { getGenerationDraftPrompt } from "../_state/generation-draft";
 
@@ -17,12 +23,24 @@ import { APP_I18_KEYS } from "@/services/i18";
 import { appEventBus } from "@/lib/event-bus";
 import type { GenerationComposerIntent } from "../_types/conversation";
 
-const GenerationImagePage = () => {
+function getFocusPhase(
+  optimisticStatus: string | undefined,
+  taskStatus: string | null | undefined,
+): GenerationFocusPhase {
+  if (optimisticStatus === "submitting") return "submitting";
+  if (taskStatus === "IN_PROGRESS") return "processing";
+  return "queued";
+}
+
+const GenerationImageSession = () => {
   const location = useLocation();
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const initialPrompt = getGenerationDraftPrompt(location.state);
   const [composerIntent, setComposerIntent] =
     useState<GenerationComposerIntent>();
+  const [comparisonItems, setComparisonItems] = useState<ImageComparisonItem[]>(
+    [],
+  );
   const {
     displayedMessages,
     handleForm,
@@ -39,6 +57,21 @@ const GenerationImagePage = () => {
     historyPath: APP_ROUTES_KEY.generation.image.history.path,
     taskType: AiRegistryModelSupportedTypesEnumMap.IMAGE,
   });
+  const lastTaskStatus =
+    lastAssistantMessage?.task_status ?? lastTaskMessage?.task_status;
+  const focusPhase = getFocusPhase(optimisticTurn?.status, lastTaskStatus);
+
+  const handleToggleComparison = (item: ImageComparisonItem) => {
+    startTransition(() => {
+      setComparisonItems((current) => {
+        if (current.some(({ fileId }) => fileId === item.fileId)) {
+          return current.filter(({ fileId }) => fileId !== item.fileId);
+        }
+        if (current.length >= 4) return current;
+        return [...current, item];
+      });
+    });
+  };
 
   return (
     <div
@@ -60,6 +93,11 @@ const GenerationImagePage = () => {
             <GenerationImageChats
               isRetrying={isBusy}
               messages={displayedMessages}
+              comparedImageIds={
+                new Set(comparisonItems.map(({ fileId }) => fileId))
+              }
+              comparisonLimitReached={comparisonItems.length >= 4}
+              onToggleComparison={handleToggleComparison}
               onRetry={handleRetry}
               optimisticTurn={optimisticTurn}
               onUseAsReference={(fileId) => {
@@ -97,10 +135,11 @@ const GenerationImagePage = () => {
           </section>
 
           <div
-            className={`${styles.content} mx-auto flex w-full max-w-4xl flex-1 flex-col items-center justify-end`}
+            className={`${styles.content} mx-auto flex w-full max-w-4xl flex-1 flex-col items-center`}
           >
             {shouldShowIntro ? (
               <div
+                data-generation-intro
                 className={`${styles.intro} relative flex w-full flex-1 flex-col items-center justify-center text-center`}
               >
                 <StudioLogo />
@@ -119,8 +158,19 @@ const GenerationImagePage = () => {
 
             <div
               data-generation-composer
-              className="from-background via-background/95 sticky bottom-0 z-20 w-full bg-gradient-to-t to-transparent pt-4 pb-2 sm:pt-6"
+              className={`${styles.composerDock} from-background via-background/95 sticky bottom-0 z-20 w-full bg-gradient-to-t to-transparent pt-4 pb-2 sm:pt-6`}
             >
+              <ImageComparison
+                disabled={isBusy}
+                items={comparisonItems}
+                onClear={() => setComparisonItems([])}
+                onRemove={(fileId) =>
+                  setComparisonItems((current) =>
+                    current.filter((item) => item.fileId !== fileId),
+                  )
+                }
+              />
+              {isBusy ? <GenerationFocusState phase={focusPhase} /> : null}
               <GenerationImagePromptBox
                 composerIntent={composerIntent}
                 initialPrompt={initialPrompt}
@@ -133,10 +183,7 @@ const GenerationImagePage = () => {
                   lastTaskMessage?.ai_model_uuid ??
                   lastAssistantMessage?.ai_model_uuid
                 }
-                lastMessageStatus={
-                  lastAssistantMessage?.task_status ??
-                  lastTaskMessage?.task_status
-                }
+                lastMessageStatus={lastTaskStatus}
                 onSubmit={handleForm}
                 onComposerIntentApplied={(intentId) => {
                   setComposerIntent((current) =>
@@ -151,6 +198,12 @@ const GenerationImagePage = () => {
       </Activity>
     </div>
   );
+};
+
+const GenerationImagePage = () => {
+  const { chatId } = useParams<{ chatId?: string }>();
+
+  return <GenerationImageSession key={chatId ?? "new"} />;
 };
 
 export default GenerationImagePage;

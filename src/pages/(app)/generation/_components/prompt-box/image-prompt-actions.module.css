@@ -15,6 +15,15 @@
   min-width: 0;
 }
 
+.compactControls {
+  display: flex;
+  min-width: 0;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .primaryField {
   flex: 0 0 auto;
   min-width: 0;
@@ -91,26 +100,63 @@
 @media (max-width: 639px) {
   .actionBar {
     align-items: stretch;
+    gap: 0.5rem;
   }
 
   .primarySettings {
-    display: grid;
+    display: flex;
     flex: none;
     width: 100%;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.75rem;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 0.5rem;
+  }
+
+  .compactControls {
+    width: 100%;
+    justify-content: flex-start;
   }
 
   .modelField {
-    grid-column: 1 / -1;
+    flex: 0 0 100%;
+    min-width: 0;
+    gap: 0;
+  }
+
+  .primaryField {
+    flex: 0 1 auto;
+  }
+
+  .primaryField [data-slot="select-trigger"],
+  .primaryField input,
+  .modelField > button,
+  .primaryField [data-slot="scroll-area"] [class~="inline-flex"] {
+    height: 2.75rem;
+    border-radius: 0.875rem;
+    background: rgb(255 255 255 / 3%);
   }
 
   .tools {
-    width: 100%;
+    width: auto;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    gap: 0.5rem;
     margin-inline-start: 0;
+  }
+
+  .tools > button:not([aria-label]) {
+    flex: 0 1 auto;
+    justify-content: center;
+  }
+
+  .tools > button[aria-label] {
+    flex: 0 0 2.75rem;
+    padding-inline: 0;
   }
 
   .actionBar > button[type="submit"] {
     width: 100%;
+    min-height: 3rem;
+    border-radius: 1rem;
   }
 }

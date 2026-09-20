@@ -128,10 +128,10 @@ test.describe("App sidebar", () => {
     ).toHaveAttribute("aria-expanded", "true");
   });
 
-  test("keeps the mobile sidebar within the iPhone viewport", async ({
+  test("renders the mobile sidebar above its overlay inside the iPhone viewport", async ({
     page,
   }) => {
-    await page.setViewportSize({ width: 390, height: 844 });
+    await page.setViewportSize({ width: 440, height: 956 });
     await page.goto("/");
 
     const sidebarSheet = page.locator('[data-slot="sheet-content"]');
@@ -139,15 +139,30 @@ test.describe("App sidebar", () => {
     await page.keyboard.press("Escape");
     await page.getByRole("button", { name: "باز کردن نوار کناری" }).click();
 
+    const sidebarOverlay = page.locator('[data-slot="sheet-overlay"]');
     await expect(sidebarSheet).toBeVisible();
+    await expect(sidebarSheet).toHaveCSS("transform", "none");
 
     const dimensions = await sidebarSheet.evaluate((element) => ({
+      position: getComputedStyle(element).position,
+      left: element.getBoundingClientRect().left,
+      right: element.getBoundingClientRect().right,
+      top: element.getBoundingClientRect().top,
       clientWidth: element.clientWidth,
       overflowX: getComputedStyle(element).overflowX,
       scrollWidth: element.scrollWidth,
       viewportWidth: window.innerWidth,
     }));
+    const layers = await Promise.all([
+      sidebarSheet.evaluate((element) => Number(getComputedStyle(element).zIndex)),
+      sidebarOverlay.evaluate((element) => Number(getComputedStyle(element).zIndex)),
+    ]);
 
+    expect(dimensions.position).toBe("fixed");
+    expect(layers[0]).toBeGreaterThan(layers[1]);
+    expect(dimensions.top).toBe(0);
+    expect(dimensions.left).toBeGreaterThanOrEqual(0);
+    expect(dimensions.right).toBeLessThanOrEqual(dimensions.viewportWidth);
     expect(dimensions.clientWidth).toBeLessThanOrEqual(
       dimensions.viewportWidth,
     );
@@ -219,7 +234,10 @@ async function mockApi(page: Page) {
       return;
     }
 
-    if (request.method() === "GET" && url.pathname === "/api/v1/ai-task/list") {
+    if (
+      request.method() === "GET" &&
+      url.pathname === "/api/v1/ai-task/list"
+    ) {
       await route.fulfill({
         contentType: "application/json",
         body: JSON.stringify({ items: [], has_next: false }),

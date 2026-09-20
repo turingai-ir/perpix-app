@@ -1,6 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
 
-// Intentionally no webServer: use only the caller's strict localhost:5173 server.
+const pnpmCommand = process.platform === "win32" ? "pnpm.cmd" : "pnpm";
+
 export default defineConfig({
   testDir: ".",
   testMatch: "image-conversation.spec.ts",
@@ -24,4 +25,9 @@ export default defineConfig({
     { name: "desktop", use: { ...devices["Desktop Chrome"] } },
     { name: "mobile", use: { ...devices["Pixel 7"] } },
   ],
+  webServer: {
+    command: `${pnpmCommand} dev -- --host localhost --port 5173 --strictPort`,
+    url: "http://localhost:5173",
+    reuseExistingServer: !process.env.CI,
+  },
 });

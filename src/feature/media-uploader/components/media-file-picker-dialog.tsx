@@ -72,6 +72,13 @@ export const MediaFilePickerDialog: FC<MediaFilePickerDialogProps> = ({
     isUploading,
     selectedIds,
     onFileSelect,
+    onFileUploaded:
+      maxItems === undefined
+        ? undefined
+        : (id) =>
+            setDraftIds((current) =>
+              current.includes(id) ? current : [...current, id],
+            ),
     onUploadedFileSelect,
   });
   const remainingSlots = Math.max(

@@ -41,7 +41,7 @@ const AppPage = () => {
       <div
         className={`${styles.aurora} pointer-events-none -start-48 top-[38rem] bg-sky-500 [animation-delay:-8s]`}
       />
-      <div className="relative mx-auto w-full max-w-[1500px] space-y-6 px-3 py-4 sm:px-5 sm:py-6 lg:px-8">
+      <div className={styles.dashboardShell}>
         <section className={styles.hero}>
           <DashboardCreativeCommand />
         </section>
@@ -63,8 +63,8 @@ const AppPage = () => {
           user={account.user}
           wallet={account.wallet}
         />
-        <div className="grid min-w-0 gap-5 xl:grid-cols-[minmax(0,1.65fr)_minmax(19rem,0.75fr)]">
-          <div className="min-w-0 space-y-8 rounded-3xl border border-white/8 bg-black/25 p-4 shadow-2xl shadow-black/20 backdrop-blur-xl sm:p-5">
+        <div className={styles.dashboardGrid}>
+          <div className={styles.contentWell}>
             <DashboardFiles
               files={content.files}
               isLoading={content.filesState.isPending}
@@ -75,7 +75,7 @@ const AppPage = () => {
               models={content.featuredModels}
             />
           </div>
-          <aside className="min-w-0 space-y-5">
+          <aside className={styles.sideRail}>
             <DashboardActivity
               isLoading={content.tasksState.isPending}
               tasks={content.tasks}

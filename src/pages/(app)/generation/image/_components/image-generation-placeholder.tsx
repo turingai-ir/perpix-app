@@ -59,7 +59,11 @@ export function ImageGenerationPlaceholder({
           </span>
         </div>
       </div>
-      <div className={styles.portal} style={{ aspectRatio: validRatio }}>
+      <div
+        className={styles.portal}
+        data-generation-visual
+        style={{ aspectRatio: validRatio }}
+      >
         <div className={styles.museum} aria-hidden="true">
           <div className={styles.vanishingLight} />
           <div className={styles.architecture} />

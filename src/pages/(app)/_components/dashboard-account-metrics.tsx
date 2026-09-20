@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 
 import { DashboardMetricCard } from "./dashboard-metric-card";
+import styles from "../dashboard.module.css";
 
 import { useAppTranslate } from "@/hooks";
 import type {
@@ -29,12 +30,12 @@ export function DashboardAccountMetrics({
 }: DashboardAccountMetricsProps) {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   return (
-    <div className="grid gap-3 sm:grid-cols-3">
+    <div className={styles.metricsGrid}>
       <DashboardMetricCard
         icon={<WalletCards className="h-5 w-5 text-fuchsia-300" />}
         label={t("pages.root.dashboard.account.balance")}
       >
-        <p className="mt-1 text-2xl font-semibold text-white">
+        <p className={styles.metricValue}>
           {balance}{" "}
           <span className="text-xs font-normal text-zinc-500">
             {t("common.token")}

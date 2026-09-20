@@ -1,0 +1,170 @@
+.shell {
+  --focus-accent: color-mix(in srgb, var(--primary) 78%, #8fdcff);
+  display: flex;
+  width: calc(100% - 1rem);
+  align-items: center;
+  gap: 0.875rem;
+  margin: 0 auto 0.625rem;
+  padding: 0.75rem 0.875rem;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent);
+  border-radius: 1.25rem;
+  background: linear-gradient(115deg, rgb(15 10 23 / 88%), rgb(7 11 18 / 78%));
+  box-shadow:
+    inset 0 1px rgb(255 255 255 / 7%),
+    0 1rem 3rem rgb(0 0 0 / 22%);
+  backdrop-filter: blur(20px) saturate(130%);
+  animation: focusEnter 280ms cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+.orb {
+  position: relative;
+  display: grid;
+  width: 3rem;
+  height: 3rem;
+  flex: none;
+  place-items: center;
+  border: 1px solid rgb(255 255 255 / 12%);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 35% 28%,
+    #fff,
+    var(--focus-accent) 12%,
+    #5924a4 44%,
+    #090712 72%
+  );
+  box-shadow:
+    inset -0.35rem -0.45rem 0.9rem rgb(0 0 0 / 46%),
+    0 0 1.5rem color-mix(in srgb, var(--primary) 35%, transparent);
+  transform-style: preserve-3d;
+}
+
+.orb::before,
+.orb span {
+  position: absolute;
+  inset: -0.35rem;
+  border: 1px solid color-mix(in srgb, var(--focus-accent) 55%, transparent);
+  border-radius: 50%;
+  content: "";
+  transform: rotateX(64deg) rotateZ(12deg);
+  animation: focusOrbit 2.8s linear infinite;
+}
+
+.orb span {
+  inset: -0.18rem;
+  border-color: rgb(255 255 255 / 18%);
+  transform: rotateY(68deg) rotateZ(-18deg);
+  animation-direction: reverse;
+  animation-duration: 3.6s;
+}
+
+.orb svg {
+  width: 1rem;
+  color: white;
+  filter: drop-shadow(0 0 0.45rem white);
+}
+
+.copy {
+  min-width: 0;
+  flex: 1;
+}
+.copy strong {
+  display: block;
+  font-size: 0.875rem;
+}
+.hint {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.2rem;
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+}
+.hint svg {
+  width: 0.85rem;
+  flex: none;
+}
+
+.steps {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.65rem;
+  overflow-x: auto;
+  color: var(--muted-foreground);
+  font-size: 0.68rem;
+  scrollbar-width: none;
+}
+
+.steps li {
+  display: flex;
+  min-width: max-content;
+  align-items: center;
+  gap: 0.3rem;
+  opacity: 0.48;
+}
+.steps li > span {
+  display: grid;
+  width: 1.1rem;
+  height: 1.1rem;
+  place-items: center;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  font-size: 0.58rem;
+}
+.steps svg {
+  width: 0.7rem;
+}
+.steps .complete {
+  color: #74e0b4;
+  opacity: 0.8;
+}
+.steps .active {
+  color: var(--focus-accent);
+  opacity: 1;
+}
+.steps .active svg {
+  animation: focusSpin 1s linear infinite;
+}
+
+@keyframes focusEnter {
+  from {
+    opacity: 0;
+    transform: translateY(0.45rem) scale(0.985);
+  }
+}
+@keyframes focusOrbit {
+  to {
+    transform: rotateX(64deg) rotateZ(372deg);
+  }
+}
+@keyframes focusSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 520px) {
+  .shell {
+    align-items: flex-start;
+  }
+  .orb {
+    width: 2.65rem;
+    height: 2.65rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shell,
+  .orb::before,
+  .orb span,
+  .steps .active svg {
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .shell {
+    background: #100c18;
+    backdrop-filter: none;
+  }
+}

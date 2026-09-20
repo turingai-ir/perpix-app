@@ -423,9 +423,21 @@
   position: absolute;
   inset-inline-end: 0.65rem;
   bottom: 0.65rem;
-  min-height: 2.5rem;
+  min-height: 2.75rem;
   border-radius: 999px;
   box-shadow: 0 0.75rem 2rem rgb(0 0 0 / 45%);
+}
+
+.compareAction {
+  position: absolute;
+  top: 0.65rem;
+  inset-inline-end: 0.65rem;
+  min-height: 2.75rem;
+  border-color: rgb(255 255 255 / 12%);
+  border-radius: 999px;
+  background: rgb(9 9 14 / 78%);
+  box-shadow: 0 0.75rem 2rem rgb(0 0 0 / 42%);
+  backdrop-filter: blur(14px) saturate(125%);
 }
 
 .toolbar {
@@ -440,15 +452,51 @@
 
 .primaryAction,
 .secondaryAction {
-  min-height: 2.5rem;
+  min-height: 2.75rem;
   border-radius: 999px;
   padding-inline: 0.85rem;
-  color: var(--muted-foreground);
 }
 
-.primaryAction:hover,
-.secondaryAction:hover {
-  color: var(--foreground);
+.primaryAction {
+  border: 1px solid color-mix(in srgb, var(--primary) 72%, white 12%);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--primary) 88%, #4e1d81),
+    color-mix(in srgb, var(--primary) 58%, #15111c)
+  );
+  color: white;
+  box-shadow:
+    inset 0 1px rgb(255 255 255 / 18%),
+    0 0.65rem 1.8rem color-mix(in srgb, var(--primary) 22%, transparent);
+}
+
+.secondaryAction {
+  color: var(--muted-foreground);
+  transition:
+    color 160ms ease,
+    background-color 160ms ease,
+    transform 120ms ease;
+}
+
+.primaryAction:active,
+.secondaryAction:active,
+.imageAction:active,
+.compareAction:active {
+  transform: scale(0.97);
+}
+
+@media (hover: hover) {
+  .primaryAction:hover {
+    filter: brightness(1.08);
+  }
+
+  .secondaryAction:hover {
+    color: var(--foreground);
+  }
+
+  .compareAction:hover {
+    background: rgb(20 18 28 / 90%);
+  }
 }
 
 .reveal {
@@ -503,6 +551,11 @@
   .secondaryAction {
     min-height: 2.75rem;
   }
+
+  .imageAction,
+  .compareAction {
+    min-height: 2.75rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -514,5 +567,19 @@
   .antenna,
   .robotShadow {
     animation: none;
+  }
+
+  .primaryAction,
+  .secondaryAction,
+  .imageAction,
+  .compareAction {
+    transition: none;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .compareAction {
+    background: #111118;
+    backdrop-filter: none;
   }
 }

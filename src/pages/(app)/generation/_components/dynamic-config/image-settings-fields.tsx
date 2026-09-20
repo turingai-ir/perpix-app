@@ -37,6 +37,7 @@ export function ImageSettingsFields({
   const renderFields = (names: readonly string[], professional = false) =>
     names.map((name) => {
       const meta = dynamicForm.getFieldMeta(name);
+      const changed = settings.changed.includes(name);
       const label = t(`pages.generation.image.studio.fields.${name}`, {
         defaultValue: meta?.title ?? name,
       });
@@ -44,10 +45,15 @@ export function ImageSettingsFields({
         defaultValue: meta?.hint ?? "",
       });
       return (
-        <div key={name} className={styles.field}>
-          {(settings.changed.includes(name) || (professional && hint)) && (
+        <div
+          key={name}
+          className={styles.field}
+          data-changed={changed || undefined}
+          data-invalid={Boolean(settings.errors[name]) || undefined}
+        >
+          {(changed || (professional && hint)) && (
             <div className={styles.fieldTools}>
-              {settings.changed.includes(name) && (
+              {changed && (
                 <span className={styles.changed}>
                   {t("pages.generation.image.studio.settings.changed")}
                 </span>
