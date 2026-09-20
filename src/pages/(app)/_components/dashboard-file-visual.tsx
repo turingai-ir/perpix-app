@@ -1,6 +1,7 @@
 import { AudioLines, Film } from "lucide-react";
 
 import type { FilePreviewUrls, UserFileItem } from "@/feature/file-manager";
+import styles from "../dashboard.module.css";
 
 interface DashboardFileVisualProps {
   file: UserFileItem;
@@ -17,7 +18,7 @@ export function DashboardFileVisual({
         src={preview.preview_url}
         alt=""
         loading="lazy"
-        className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+        className={styles.fileMedia}
       />
     );
   }
@@ -28,7 +29,7 @@ export function DashboardFileVisual({
         muted
         playsInline
         preload="metadata"
-        className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+        className={styles.fileMedia}
       />
     );
   }

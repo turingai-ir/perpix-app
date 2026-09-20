@@ -132,13 +132,14 @@ export const DynamicConfigFileField: FC<{
     setFileValue(selectedWithNewFile);
   };
 
-  const handleFileSelect = async (file: File) => {
+  const handleFileSelect = async (file: File, selectAfterUpload = true) => {
     if (disabled || hasReachedMaxItems) return;
 
     try {
       const uploadedFileId = await requestUpload(file);
 
       if (!uploadedFileId) return;
+      if (!selectAfterUpload) return uploadedFileId;
 
       if (!isList) {
         setFileValue(uploadedFileId);
@@ -233,7 +234,9 @@ export const DynamicConfigFileField: FC<{
         disabled={disabled}
         onDeleteClick={handleDelete}
         onLocalDeleteClick={handleLocalDelete}
-        onFileSelect={handleFileSelect}
+        onFileSelect={(file) =>
+          handleFileSelect(file, presentation !== "composer")
+        }
         onUploadedFileSelect={handleUploadedFileSelect}
         showPlaceholder={!hasReachedMaxItems}
         label={getUploadLabel(previewType, t)}

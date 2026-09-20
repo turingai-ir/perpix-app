@@ -1,5 +1,6 @@
 import { ArrowUpLeft, AudioLines, Image, Type, Video } from "lucide-react";
 import { Link } from "react-router";
+import styles from "../dashboard.module.css";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAppTranslate } from "@/hooks";
@@ -25,22 +26,19 @@ export function DashboardModels({ isLoading, models }: DashboardModelsProps) {
   if (isLoading) return <Skeleton className="h-56 w-full rounded-2xl" />;
 
   return (
-    <section aria-labelledby="models-heading" className="space-y-4">
-      <div className="flex items-end justify-between">
+    <section aria-labelledby="models-heading" className={styles.contentSection}>
+      <div className={styles.sectionHeader}>
         <div>
-          <p className="text-xs text-fuchsia-300">
+          <p className={styles.sectionEyebrow}>
             {t("pages.root.dashboard.models.eyebrow")}
           </p>
-          <h2
-            id="models-heading"
-            className="mt-1 text-lg font-semibold text-white"
-          >
+          <h2 id="models-heading" className={styles.sectionTitle}>
             {t("pages.root.dashboard.models.title")}
           </h2>
         </div>
       </div>
       {models.length ? (
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className={styles.modelGrid}>
           {models.map((model) => {
             const output = model.supported_outputs[0] ?? "IMAGE";
             const OutputIcon = outputIcon[output];
@@ -55,9 +53,9 @@ export function DashboardModels({ isLoading, models }: DashboardModelsProps) {
               <Link
                 key={model.uuid}
                 to={path}
-                className="group relative flex min-w-0 items-center gap-3 overflow-hidden rounded-2xl border border-white/8 bg-gradient-to-br from-white/[0.065] to-white/[0.02] p-3 transition duration-300 before:absolute before:inset-y-0 before:start-0 before:w-px before:bg-gradient-to-b before:from-transparent before:via-fuchsia-300/50 before:to-transparent before:opacity-0 before:transition hover:-translate-y-0.5 hover:border-fuchsia-400/30 hover:bg-white/[0.07] hover:shadow-lg hover:shadow-fuchsia-950/20 hover:before:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-fuchsia-400"
+                className={`group ${styles.modelCard}`}
               >
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-black/20 shadow-inner">
+                <span className={styles.modelIcon}>
                   {model.icon_url ? (
                     <img
                       src={model.icon_url}
@@ -84,7 +82,7 @@ export function DashboardModels({ isLoading, models }: DashboardModelsProps) {
           })}
         </div>
       ) : (
-        <div className="rounded-xl border border-dashed border-white/10 p-6 text-center text-sm text-zinc-500">
+        <div className={styles.emptyState}>
           {t("pages.root.dashboard.models.empty")}
         </div>
       )}

@@ -1,5 +1,6 @@
 import { ArrowUpLeft, CircleDashed, Image, Video } from "lucide-react";
 import { Link } from "react-router";
+import styles from "../dashboard.module.css";
 
 import { useAppTranslate } from "@/hooks";
 import { APP_ROUTES_KEY } from "@/router/routes";
@@ -25,10 +26,7 @@ export function DashboardResume({ task }: DashboardResumeProps) {
   const isActive = status === "PENDING" || status === "IN_PROGRESS";
 
   return (
-    <Link
-      to={path}
-      className="group flex min-h-20 items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.055] p-3 shadow-xl shadow-black/10 backdrop-blur-xl transition duration-300 hover:-translate-y-0.5 hover:border-fuchsia-300/30 hover:bg-white/[0.08] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-fuchsia-300 sm:p-4"
-    >
+    <Link to={path} className={`group ${styles.resumeCard}`}>
       <span className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-gradient-to-br from-fuchsia-500/20 to-violet-600/5 text-fuchsia-200">
         <MediaIcon className="h-5 w-5" aria-hidden="true" />
         {isActive ? (
