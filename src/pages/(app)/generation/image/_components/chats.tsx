@@ -9,6 +9,7 @@ import { ImageResultCard } from "./result-card";
 import { APP_I18_KEYS } from "@/services/i18";
 import { ImageGenerationPlaceholder } from "./image-generation-placeholder";
 import { ImageRequestSummary } from "./request-summary";
+import type { ImageComparisonItem } from "./image-comparison.types";
 
 interface Props {
   isRetrying?: boolean;
@@ -19,6 +20,9 @@ interface Props {
   onUseAsReference?: (fileId: string) => void;
   onEditRequest?: (message: SchemaAiTaskMessageResponse) => void;
   onRegenerate?: (message: SchemaAiTaskMessageResponse) => void;
+  comparedImageIds?: ReadonlySet<string>;
+  comparisonLimitReached?: boolean;
+  onToggleComparison?: (item: ImageComparisonItem) => void;
 }
 
 const normalizeImageIds = (value: unknown): string[] =>
@@ -38,6 +42,9 @@ export const GenerationImageChats: FC<Props> = ({
   onUseAsReference,
   onEditRequest,
   onRegenerate,
+  comparedImageIds,
+  comparisonLimitReached,
+  onToggleComparison,
 }) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
 
@@ -77,6 +84,9 @@ export const GenerationImageChats: FC<Props> = ({
               onEditRequest={onEditRequest}
               onRegenerate={onRegenerate}
               disabled={isRetrying}
+              comparedImageIds={comparedImageIds}
+              comparisonLimitReached={comparisonLimitReached}
+              onToggleComparison={onToggleComparison}
             />
           </div>
         )}

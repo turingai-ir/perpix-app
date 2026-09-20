@@ -1,6 +1,7 @@
 import { Link } from "react-router";
 
 import { DashboardAccountMetrics } from "./dashboard-account-metrics";
+import styles from "../dashboard.module.css";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAppTranslate } from "@/hooks";
@@ -40,25 +41,19 @@ export function DashboardAccount({
     : t("pages.root.dashboard.account.noExpiry");
 
   return (
-    <section
-      aria-labelledby="account-heading"
-      className="rounded-3xl border border-white/10 bg-white/[0.045] p-4 shadow-xl shadow-black/10 backdrop-blur-xl transition hover:border-white/15 sm:p-5"
-    >
-      <div className="mb-4 flex items-center justify-between">
+    <section aria-labelledby="account-heading" className={styles.glassPanel}>
+      <div className={styles.sectionHeader}>
         <div>
-          <p className="text-xs text-fuchsia-300">
+          <p className={styles.sectionEyebrow}>
             {t("pages.root.dashboard.account.eyebrow")}
           </p>
-          <h2
-            id="account-heading"
-            className="mt-1 text-lg font-semibold text-white"
-          >
+          <h2 id="account-heading" className={styles.sectionTitle}>
             {t("pages.root.dashboard.account.title")}
           </h2>
         </div>
         <Link
           to={APP_ROUTES_KEY.profile.settings.path}
-          className="text-xs text-zinc-400 hover:text-white"
+          className={styles.sectionLink}
         >
           {t("pages.root.dashboard.actions.manage")}
         </Link>

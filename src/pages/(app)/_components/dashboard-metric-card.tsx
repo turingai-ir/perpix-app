@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import styles from "../dashboard.module.css";
 
 interface DashboardMetricCardProps {
   children: ReactNode;
@@ -12,9 +13,9 @@ export function DashboardMetricCard({
   label,
 }: DashboardMetricCardProps) {
   return (
-    <div className="rounded-xl border border-white/8 bg-white/[0.025] p-4">
-      <div className="mb-5">{icon}</div>
-      <p className="text-xs text-zinc-500">{label}</p>
+    <div className={styles.metricCard}>
+      <div className={styles.metricIcon}>{icon}</div>
+      <p className={styles.metricLabel}>{label}</p>
       {children}
     </div>
   );
