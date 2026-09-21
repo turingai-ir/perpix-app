@@ -1,75 +1,54 @@
 import type { FC } from "react";
 
-import { ExclusiveImageInputsHint } from "./exclusive-image-inputs-hint";
+import { VideoReferenceInputs } from "./reference-inputs";
 
-import { DynamicConfigFileFields } from "@/pages/(app)/generation/_components/dynamic-config";
+import { useAppTranslate } from "@/hooks";
 import { GenerationPromptBox } from "@/pages/(app)/generation/_components/prompt-box";
-import {
-  AiRegistryModelSupportedTypesEnumMap,
-  type SchemaAiTaskMessageResponse,
-} from "@/services/api";
+import type { GenerationPromptBoxProps } from "@/pages/(app)/generation/_components/prompt-box/types";
+import { AiRegistryModelSupportedTypesEnumMap } from "@/services/api";
 
-interface Props {
-  initialPrompt?: string;
-  onSubmit: (
-    data: Readonly<Record<string, unknown>>,
-    aiModelUuid: string,
-  ) => Promise<void> | void;
-  isLoading?: boolean;
-  lastMessageConfig?: SchemaAiTaskMessageResponse["ai_model_config"];
-  lastMessageModelUuid?: SchemaAiTaskMessageResponse["ai_model_uuid"];
-  lastMessageStatus?: SchemaAiTaskMessageResponse["task_status"];
-  successfulMessageClearKey?: string;
-}
+type Props = Pick<
+  GenerationPromptBoxProps,
+  | "initialPrompt"
+  | "onSubmit"
+  | "isLoading"
+  | "lastMessageConfig"
+  | "lastMessageModelUuid"
+  | "lastMessageStatus"
+  | "successfulMessageClearKey"
+>;
 
-const PROMPT_FIELD_NAMES = new Set([
+const MEDIA_FIELDS = new Set([
   "prompt",
   "input_video",
   "frame_images",
   "reference_images",
   "reference_videos",
 ]);
-const PROMPT_BOX_CONFIG_FIELD_NAMES = new Set([
+const QUICK_FIELDS = new Set([
   "mode",
-  "resolution",
   "aspect_ratio",
-  "video_id",
-  "character_orientation",
   "duration",
-  "elements",
+  "resolution",
 ]);
-const ADVANCED_CONFIG_EXCLUDED_FIELD_NAMES = new Set([
-  ...PROMPT_FIELD_NAMES,
-  ...PROMPT_BOX_CONFIG_FIELD_NAMES,
-]);
+const ADVANCED_EXCLUDED_FIELDS = new Set([...MEDIA_FIELDS, ...QUICK_FIELDS]);
 
-export const GenerationVideoPromptBox: FC<Props> = (props) => (
-  <GenerationPromptBox
-    {...props}
-    advancedExcludedFieldNames={ADVANCED_CONFIG_EXCLUDED_FIELD_NAMES}
-    extraContent={({
-      dynamicForm,
-      isFormBusy,
-      isUploadingMedia,
-      setIsUploadingMedia,
-    }) => (
-      <>
-        <ExclusiveImageInputsHint
-          configSchema={dynamicForm.configSchema}
-          frameImages={dynamicForm.watch("frame_images")}
-          isUploadingImage={isUploadingMedia}
-          referenceImages={dynamicForm.watch("reference_images")}
-        />
-        <DynamicConfigFileFields
-          dynamicForm={dynamicForm}
-          disabled={isFormBusy}
-          onUploadingChange={setIsUploadingMedia}
-          requestId="video_generation"
-        />
-      </>
-    )}
-    promptBoxFieldNames={PROMPT_BOX_CONFIG_FIELD_NAMES}
-    promptPlaceholderKey="pages.generation.video.promptBox.promptTextArea.placeholder"
-    supportedOutputs={[AiRegistryModelSupportedTypesEnumMap.VIDEO]}
-  />
-);
+export const GenerationVideoPromptBox: FC<Props> = (props) => {
+  const { t } = useAppTranslate();
+
+  return (
+    <GenerationPromptBox
+      {...props}
+      advancedExcludedFieldNames={ADVANCED_EXCLUDED_FIELDS}
+      advancedSettingsLabel={t("pages.generation.video.studio.advanced")}
+      composerLabel={t("pages.generation.video.studio.composerLabel")}
+      extraContent={(inputProps) => <VideoReferenceInputs {...inputProps} />}
+      modelLabel={t("pages.generation.video.studio.model")}
+      primaryActionLabel={t("pages.generation.video.studio.generate")}
+      promptBoxFieldNames={QUICK_FIELDS}
+      promptPlaceholderKey="pages.generation.video.promptBox.promptTextArea.placeholder"
+      showModeSection
+      supportedOutputs={[AiRegistryModelSupportedTypesEnumMap.VIDEO]}
+    />
+  );
+};

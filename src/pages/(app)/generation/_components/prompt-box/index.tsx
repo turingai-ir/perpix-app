@@ -24,6 +24,8 @@ export const GenerationPromptBox: FC<GenerationPromptBoxProps> = ({
   modelSelectionContent,
   primaryActionLabel,
   advancedSettingsLabel,
+  composerLabel,
+  modelLabel,
   initialPrompt,
   isLoading,
   lastMessageConfig,
@@ -34,6 +36,7 @@ export const GenerationPromptBox: FC<GenerationPromptBoxProps> = ({
   successfulMessageClearKey,
   promptBoxFieldNames: includedPromptBoxFieldNames,
   promptPlaceholderKey,
+  showModeSection = false,
   supportedOutputs,
 }) => {
   const { t } = useAppTranslate();
@@ -90,12 +93,13 @@ export const GenerationPromptBox: FC<GenerationPromptBoxProps> = ({
               {t("pages.generation.image.chat.referenceNeedsModel")}
             </div>
           )}
-          {fieldGroups.hasModeField && !primaryActionLabel && (
-            <PromptModeSection
-              dynamicForm={promptBox.dynamicForm}
-              disabled={promptBox.isFormBusy}
-            />
-          )}
+          {fieldGroups.hasModeField &&
+            (showModeSection || !primaryActionLabel) && (
+              <PromptModeSection
+                dynamicForm={promptBox.dynamicForm}
+                disabled={promptBox.isFormBusy}
+              />
+            )}
           {!primaryActionLabel &&
             extraContent?.({
               dynamicForm: promptBox.dynamicForm,
@@ -118,7 +122,10 @@ export const GenerationPromptBox: FC<GenerationPromptBoxProps> = ({
                 dynamicForm={promptBox.dynamicForm}
                 disabled={promptBox.isFormBusy}
                 placeholder={t(promptPlaceholderKey)}
-                label={t("pages.generation.image.studio.composerLabel")}
+                label={
+                  composerLabel ??
+                  t("pages.generation.image.studio.composerLabel")
+                }
                 compact
               />
             </div>
@@ -141,6 +148,7 @@ export const GenerationPromptBox: FC<GenerationPromptBoxProps> = ({
             isLoading={isLoading}
             isSubmitDisabled={promptBox.isSubmitDisabled}
             model={promptBox.model}
+            modelLabel={modelLabel}
             hideModelSelector={Boolean(modelSelectionContent)}
             modelSelectionContent={modelSelectionContent?.({
               disabled: promptBox.isFormBusy,
