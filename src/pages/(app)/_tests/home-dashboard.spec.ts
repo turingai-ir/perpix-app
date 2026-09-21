@@ -546,3 +546,82 @@ test("keeps the image creation turn and composer in view", async ({ page }) => {
   }));
   expect(pageWidth.scroll).toBe(pageWidth.client);
 });
+
+test("turns video generation into an immersive persistent workspace", async ({
+  page,
+}) => {
+  await mockDashboardApi(page);
+  await page.route("**/api/v1/user/subscription/active", (route) =>
+    route.fulfill({
+      json: {
+        uuid: "video-subscription",
+        plan: {
+          uuid: "video-plan",
+          name: "pro",
+          display_name: "حرفه‌ای",
+          scopes: ["ai_task:write"],
+          allowed_models: ["flux-pro"],
+          is_active: true,
+        },
+      },
+    }),
+  );
+  let submittedConfig: Record<string, unknown> = {
+    prompt: "حرکت آرام دوربین به سمت یک شهر در مه",
+  };
+  const videoTask = () => ({
+    uuid: "video-generation-task",
+    task_type: "VIDEO",
+    created_at: "2026-09-15T20:00:00Z",
+    updated_at: "2026-09-15T20:01:00Z",
+    messages: [
+      {
+        uuid: "video-user-message",
+        role: "USER",
+        message: submittedConfig.prompt,
+        ai_model_uuid: "model-1",
+        ai_model_config: submittedConfig,
+      },
+      {
+        uuid: "video-assistant-message",
+        role: "ASSISTANT",
+        task_status: "IN_PROGRESS",
+        ai_model_uuid: "model-1",
+        ai_model_config: submittedConfig,
+      },
+    ],
+  });
+  await page.route("**/api/v1/ai-task/video-generation-task", (route) =>
+    route.fulfill({ json: videoTask() }),
+  );
+  await page.route(
+    "**/api/v1/ai-task/result/video-assistant-message",
+    (route) => route.fulfill({ json: videoTask().messages[1] }),
+  );
+  await page.route("**/api/v1/ai-task/generate", async (route) => {
+    const request = route.request().postDataJSON() as {
+      ai_model_config: Record<string, unknown>;
+    };
+    submittedConfig = request.ai_model_config;
+    await route.fulfill({ json: videoTask() });
+  });
+
+  await page.goto("http://localhost:5173/generation/video");
+  await expect(page.locator("[data-video-director-stage]")).toBeVisible();
+  const composer = page.locator("[data-generation-composer]");
+  await expect(composer).toBeInViewport();
+
+  await page.locator("textarea").fill("حرکت آرام دوربین به سمت یک شهر در مه");
+  await page.getByRole("button", { name: "ساخت ویدیو" }).click();
+  await expect(page.locator('[data-message-role="user"]')).toBeVisible();
+  await expect(page.locator("[data-video-generation-portal]")).toBeVisible();
+  await expect(composer).toBeInViewport();
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(page.locator("[data-video-generation-portal]")).toBeInViewport();
+  const pageWidth = await page.evaluate(() => ({
+    client: document.documentElement.clientWidth,
+    scroll: document.documentElement.scrollWidth,
+  }));
+  expect(pageWidth.scroll).toBe(pageWidth.client);
+});

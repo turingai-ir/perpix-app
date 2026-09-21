@@ -30,6 +30,8 @@ export interface GenerationPromptBoxProps {
   }) => ReactNode;
   primaryActionLabel?: string;
   advancedSettingsLabel?: string;
+  composerLabel?: string;
+  modelLabel?: string;
   composerIntent?: GenerationComposerIntent;
   initialPrompt?: string;
   isLoading?: boolean;
@@ -44,5 +46,6 @@ export interface GenerationPromptBoxProps {
   successfulMessageClearKey?: string;
   promptBoxFieldNames: ReadonlySet<string>;
   promptPlaceholderKey: string;
+  showModeSection?: boolean;
   supportedOutputs: AiRegistryModelSupportedTypesEnumValue[];
 }

@@ -41,35 +41,85 @@ test.beforeEach(async ({ baseURL, context, page }) => {
   await mockApi(page);
 });
 
+test("video director opens without generating and keeps the model controls ready", async ({
+  page,
+}) => {
+  let generations = 0;
+  page.on("request", (request) => {
+    if (request.url().includes("/ai-task/generate")) generations += 1;
+  });
+  await openVideoGenerationPage(page);
+  await expect(
+    page.getByRole("heading", { name: "ایده‌ات را کارگردانی کن." }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("textbox", {
+      name: "صحنه و حرکت ویدیو را توصیف کن",
+    }),
+  ).toHaveValue("");
+  await expect(page.getByRole("combobox", { name: "مدت زمان" })).toContainText(
+    "5",
+  );
+  expect(generations).toBe(0);
+});
+
+test("video studio stays usable on mobile with reduced motion", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await openVideoGenerationPage(page);
+  const submitButton = page.getByRole("button", {
+    name: "ساخت ویدیو",
+    exact: true,
+  });
+  await submitButton.scrollIntoViewIfNeeded();
+  await expect(submitButton).toBeVisible();
+  await expect(submitButton).toBeDisabled();
+  await expect(page.getByTestId("video-director-rig")).toHaveCSS(
+    "animation-name",
+    "none",
+  );
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    ),
+  ).toBe(true);
+});
+
 test("updates visible video prompt fields when the generation mode changes", async ({
   page,
 }) => {
   await openVideoGenerationPage(page);
 
-  await expect(page.getByPlaceholder("شروع به تایپ کنید")).toBeVisible();
+  await expect(
+    page.getByPlaceholder(
+      "صحنه، حرکت سوژه، حرکت دوربین و حال‌وهوای نور را توصیف کن…",
+    ),
+  ).toBeVisible();
   await expect(
     page.getByRole("button", { name: "متن به ویدیو" }),
   ).toBeVisible();
-  await expect(page.getByRole("combobox", { name: "رزولوشن" })).toHaveText(
+  await expect(page.getByRole("combobox", { name: "وضوح تصویر" })).toHaveText(
     "720p",
   );
-  await expect(page.getByRole("combobox", { name: "نسبت تصویر" })).toHaveText(
+  await expect(page.getByRole("combobox", { name: "قاب تصویر" })).toHaveText(
     "16:9",
   );
   await expect(page.getByRole("combobox", { name: "مدت زمان" })).toBeVisible();
-  await expect(page.getByText("تولید صدا")).toBeHidden();
-  await expect(page.getByText("تصاویر فریم")).toBeHidden();
-
-  await page.getByRole("button", { name: "تنظیمات پیشرفته" }).click();
+  await page.getByRole("button", { name: "تنظیمات تصویر" }).click();
+  await page.getByRole("button", { name: "کنترل‌های حرفه‌ای" }).click();
   await expect(page.getByRole("dialog").getByText("تولید صدا")).toBeVisible();
   await page.keyboard.press("Escape");
+  await expect(page.getByText("تصاویر فریم")).toBeHidden();
+
   await expect(page.getByRole("dialog")).toBeHidden();
 
   await page.getByRole("button", { name: "عکس به ویدیو" }).click();
 
   await expect(page.getByText("تصاویر فریم")).toBeVisible();
-  await expect(page.getByRole("combobox", { name: "رزولوشن" })).toBeHidden();
-  await expect(page.getByRole("combobox", { name: "نسبت تصویر" })).toBeHidden();
+  await expect(page.getByRole("combobox", { name: "وضوح تصویر" })).toBeHidden();
+  await expect(page.getByRole("combobox", { name: "قاب تصویر" })).toBeHidden();
   await expect(page.getByText("ویدیوی مرجع", { exact: true })).toBeHidden();
 
   await page.getByRole("button", { name: "کنترل حرکت" }).click();
@@ -77,7 +127,6 @@ test("updates visible video prompt fields when the generation mode changes", asy
   await expect(page.getByText("ویدیوی مرجع", { exact: true })).toBeVisible();
   await expect(page.getByText("تصاویر مرجع")).toBeVisible();
   await expect(page.getByText("تصاویر فریم")).toBeHidden();
-  await expect(page.getByText("تولید صدا")).toBeHidden();
 });
 
 test("shows the generation rules from the prompt box help button", async ({
@@ -189,9 +238,9 @@ test("loads mode config from the model detail without the removed generation-con
   await openVideoGenerationPage(page);
 
   await expect(page.getByPlaceholder("شروع به تایپ کنید")).toBeVisible();
-  await expect(page.getByRole("combobox", { name: "حالت تولید" })).toHaveText(
-    "متن به ویدیو",
-  );
+  await expect(
+    page.getByRole("button", { name: "متن به ویدیو" }),
+  ).toBeVisible();
   expect(legacyGenerationConfigRequestCount).toBe(0);
 });
 
@@ -228,7 +277,9 @@ test("submits text-to-video prompt values with the selected model", async ({
   });
 });
 
-test("image studio fits a viewport with long sidebar history without generating", async ({ page }) => {
+test("image studio fits a viewport with long sidebar history without generating", async ({
+  page,
+}) => {
   await mockNanoBananaApi(page);
   await page.route("**/ai-task/generate", (route) => route.abort());
   await page.setViewportSize({ width: 1920, height: 900 });
@@ -246,9 +297,13 @@ test("image studio fits a viewport with long sidebar history without generating"
     { width: 1280, height: 720 },
   ]) {
     await page.setViewportSize(size);
-    const area = await page.locator('main > [data-slot="scroll-area"]').boundingBox();
+    const area = await page
+      .locator('main > [data-slot="scroll-area"]')
+      .boundingBox();
     expect(area!.height).toBeLessThanOrEqual(size.height);
-    const submit = await page.getByRole("button", { name: /ساخت تصویر/ }).boundingBox();
+    const submit = await page
+      .getByRole("button", { name: /ساخت تصویر/ })
+      .boundingBox();
     expect(submit!.y + submit!.height).toBeLessThanOrEqual(size.height);
   }
   await page.setViewportSize({ width: 1920, height: 900 });
@@ -260,7 +315,9 @@ test("image studio fits a viewport with long sidebar history without generating"
   expect(sidebarScrolls).toBe(true);
 });
 
-test("image studio automatically animates briefly each minute without generating", async ({ page }) => {
+test("image studio automatically animates briefly each minute without generating", async ({
+  page,
+}) => {
   await mockNanoBananaApi(page);
   await page.route("**/ai-task/generate", (route) => route.abort());
   await page.clock.install();
@@ -270,7 +327,9 @@ test("image studio automatically animates briefly each minute without generating
   const initialMotion = await logo.getAttribute("data-motion");
   await page.clock.fastForward(5000);
   await expect(logo).toHaveAttribute("data-active", "false");
-  expect(await logo.evaluate((el) => el.getAnimations({ subtree: true }).length)).toBe(0);
+  expect(
+    await logo.evaluate((el) => el.getAnimations({ subtree: true }).length),
+  ).toBe(0);
   await page.clock.fastForward(55_000);
   await expect(logo).toHaveAttribute("data-active", "true");
   expect(await logo.getAttribute("data-motion")).not.toBe(initialMotion);
@@ -279,7 +338,10 @@ test("image studio automatically animates briefly each minute without generating
   await page.clock.fastForward(60_000);
   await expect(logo).toHaveAttribute("data-active", "false");
   await page.evaluate(() => {
-    Object.defineProperty(document, "hidden", { configurable: true, value: true });
+    Object.defineProperty(document, "hidden", {
+      configurable: true,
+      value: true,
+    });
     document.dispatchEvent(new Event("visibilitychange"));
   });
   await page.emulateMedia({ reducedMotion: "no-preference" });
@@ -441,13 +503,16 @@ test("refetches model metadata after an unclassified application failure", async
     const url = new URL(request.url());
     if (
       request.method() === "GET" &&
-      url.pathname === `/ai-registry/models/${MODEL_UUID}`
+      url.pathname.endsWith(`/ai-registry/models/${MODEL_UUID}`)
     ) {
       modelDetailRequestCount += 1;
       await route.fallback();
       return;
     }
-    if (request.method() !== "POST" || url.pathname !== "/ai-task/generate") {
+    if (
+      request.method() !== "POST" ||
+      !url.pathname.endsWith("/ai-task/generate")
+    ) {
       await route.fallback();
       return;
     }
@@ -496,7 +561,6 @@ test("supports multi-prompt mode without requiring the main prompt field", async
   const generateRequest = waitForGenerateRequest(page);
 
   await openVideoGenerationPage(page);
-  await page.getByRole("button", { name: "تنظیمات پیشرفته" }).click();
   await page.getByRole("button", { name: /پرامپت چندبخشی/ }).click();
 
   await expect(page.getByPlaceholder("شروع به تایپ کنید")).toBeHidden();
@@ -646,7 +710,11 @@ test("uses the last assistant message when a user message follows it", async ({
 
 async function openVideoGenerationPage(page: Page) {
   await page.goto("/generation/video");
-  await expect(page.getByPlaceholder("شروع به تایپ کنید")).toBeVisible();
+  await expect(
+    page.getByPlaceholder(
+      "صحنه، حرکت سوژه، حرکت دوربین و حال‌وهوای نور را توصیف کن…",
+    ),
+  ).toBeVisible();
   await expect(
     page.getByRole("combobox").filter({ hasText: "Kling 3.0 Standard" }),
   ).toBeVisible();
@@ -657,7 +725,7 @@ function waitForGenerateRequest(page: Page) {
     .waitForRequest(
       (request) =>
         request.method() === "POST" &&
-        new URL(request.url()).pathname === "/ai-task/generate",
+        new URL(request.url()).pathname.endsWith("/ai-task/generate"),
     )
     .then((request) => request.postDataJSON());
 }
@@ -811,7 +879,17 @@ async function mockApi(page: Page, taskMessages: unknown[] = []) {
       return;
     }
 
-    await route.continue();
+    // Fail closed: only local static development assets may reach the network.
+    if (
+      url.origin === "http://localhost:5173" &&
+      request.method() === "GET" &&
+      !["fetch", "xhr"].includes(request.resourceType()) &&
+      !url.pathname.startsWith("/api/")
+    ) {
+      await route.continue();
+      return;
+    }
+    await route.abort("blockedbyclient");
   });
 }
 

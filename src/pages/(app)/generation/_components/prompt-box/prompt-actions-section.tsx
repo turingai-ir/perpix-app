@@ -25,6 +25,7 @@ export type PromptActionsSectionProps = {
   isLoading?: boolean;
   isSubmitDisabled?: boolean;
   model: PromptBoxModel;
+  modelLabel?: string;
   hideModelSelector?: boolean;
   modelSelectionContent?: ReactNode;
   primaryActionLabel?: string;
