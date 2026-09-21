@@ -16,6 +16,7 @@ const pnpmCommand = process.platform === "win32" ? "pnpm.cmd" : "pnpm";
 export default defineConfig({
   testDir: ".",
   testMatch: ["__tests__/**/*.spec.ts", "src/**/_tests/**/*.spec.ts"],
+  testIgnore: [".kilo/**"],
   /* The mocked image-composer harness is not safe across concurrent contexts. */
   fullyParallel: false,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
