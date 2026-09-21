@@ -1,27 +1,23 @@
 import { Activity } from "react";
-import { useLocation } from "react-router";
+import { useLocation, useParams } from "react-router";
 
 import { GenerationVideoChats, GenerationVideoPromptBox } from "./_components";
+import { VideoAtmosphere } from "./_components/atmosphere";
+import { VideoDirectorStage } from "./_components/director-stage";
+import styles from "./studio.module.css";
 import { GeneratedMediaField, useGenerationPage } from "../_hooks";
 import { getGenerationDraftPrompt } from "../_state/generation-draft";
 
 import LoadingSection from "@/components/custom/loading-section";
-import { TypingAnimation } from "@/components/ui/typing-animation";
 import { useAppTranslate } from "@/hooks";
 import { APP_ROUTES_KEY } from "@/router/routes";
 import { AiRegistryModelSupportedTypesEnumMap } from "@/services/api";
 import { APP_I18_KEYS } from "@/services/i18";
 
-const GenerationVideoPage = () => {
+function GenerationVideoSession() {
   const location = useLocation();
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const initialPrompt = getGenerationDraftPrompt(location.state);
-  const typingAnimationWords = t(
-    "pages.generation.video.typingAnimation.words",
-    {
-      returnObjects: true,
-    },
-  ) as string[];
   const {
     displayedMessages,
     handleForm,
@@ -30,16 +26,22 @@ const GenerationVideoPage = () => {
     isTaskLoading,
     lastAssistantMessage,
     lastTaskMessage,
-    successfulMessageClearKey,
+    optimisticTurn,
     shouldShowIntro,
+    successfulMessageClearKey,
   } = useGenerationPage({
     generatedMediaField: GeneratedMediaField.VIDEO,
     historyPath: APP_ROUTES_KEY.generation.video.history.path,
     taskType: AiRegistryModelSupportedTypesEnumMap.VIDEO,
   });
+  const lastTaskStatus =
+    lastAssistantMessage?.task_status ?? lastTaskMessage?.task_status;
 
   return (
-    <div className="relative flex w-full min-w-0 flex-col overflow-x-hidden px-4 pt-4 pb-20">
+    <main
+      className={`${styles.page} ${!shouldShowIntro ? styles.conversation : ""}`}
+    >
+      <VideoAtmosphere subdued={!shouldShowIntro} />
       {isTaskLoading ? (
         <div className="flex min-h-64 w-full items-center justify-center">
           <LoadingSection />
@@ -47,23 +49,22 @@ const GenerationVideoPage = () => {
       ) : null}
 
       <Activity mode={isTaskLoading ? "hidden" : "visible"}>
-        <>
-          <GenerationVideoChats
-            isRetrying={isBusy}
-            messages={displayedMessages}
-            onRetry={handleRetry}
-          />
+        <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-1 flex-col">
+          <section
+            aria-label={t("pages.generation.video.studio.timelineLabel")}
+            className="w-full px-1 sm:px-3"
+          >
+            <GenerationVideoChats
+              isRetrying={isBusy}
+              messages={displayedMessages}
+              onRetry={handleRetry}
+              optimisticTurn={optimisticTurn}
+            />
+          </section>
 
-          <div className="mx-auto flex w-full max-w-200 flex-col items-center gap-4 pt-12">
-            {shouldShowIntro ? (
-              <TypingAnimation
-                loop
-                blinkCursor
-                cursorStyle="block"
-                words={typingAnimationWords}
-              />
-            ) : null}
+          {shouldShowIntro ? <VideoDirectorStage /> : null}
 
+          <div className={styles.composerDock} data-generation-composer>
             <GenerationVideoPromptBox
               initialPrompt={initialPrompt}
               isLoading={isBusy}
@@ -75,18 +76,20 @@ const GenerationVideoPage = () => {
                 lastTaskMessage?.ai_model_uuid ??
                 lastAssistantMessage?.ai_model_uuid
               }
-              lastMessageStatus={
-                lastAssistantMessage?.task_status ??
-                lastTaskMessage?.task_status
-              }
+              lastMessageStatus={lastTaskStatus}
               onSubmit={handleForm}
               successfulMessageClearKey={successfulMessageClearKey}
             />
           </div>
-        </>
+        </div>
       </Activity>
-    </div>
+    </main>
   );
+}
+
+const GenerationVideoPage = () => {
+  const { chatId } = useParams<{ chatId?: string }>();
+  return <GenerationVideoSession key={chatId ?? "new"} />;
 };
 
 export default GenerationVideoPage;

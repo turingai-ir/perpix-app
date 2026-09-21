@@ -23,6 +23,7 @@ export function ImagePromptActions({
   isLoading,
   isSubmitDisabled,
   model,
+  modelLabel,
   hideModelSelector,
   modelSelectionContent,
   primaryActionLabel,
@@ -37,10 +38,12 @@ export function ImagePromptActions({
           <div
             className={styles.modelField}
             role="group"
-            aria-label={t("pages.generation.image.studio.modelLabel")}
+            aria-label={
+              modelLabel ?? t("pages.generation.image.studio.modelLabel")
+            }
           >
             <span className={styles.modelLabel}>
-              {t("pages.generation.image.studio.modelLabel")}
+              {modelLabel ?? t("pages.generation.image.studio.modelLabel")}
             </span>
             {modelSelectionContent}
             {!hideModelSelector && (
