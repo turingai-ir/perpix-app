@@ -9,7 +9,11 @@ export const usePaymentStatus = (paymentUuid?: string) => {
     {
       params: { path: { payment_uuid: paymentUuid ?? "" } },
     },
-    { enabled: !!paymentUuid },
+    {
+      enabled: !!paymentUuid,
+      refetchInterval: (query) =>
+        query.state.data?.status === "PENDING" ? 2_500 : false,
+    },
   );
 };
 

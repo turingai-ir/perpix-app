@@ -151,8 +151,12 @@ test.describe("App sidebar", () => {
       viewportWidth: window.innerWidth,
     }));
     const layers = await Promise.all([
-      sidebarSheet.evaluate((element) => Number(getComputedStyle(element).zIndex)),
-      sidebarOverlay.evaluate((element) => Number(getComputedStyle(element).zIndex)),
+      sidebarSheet.evaluate((element) =>
+        Number(getComputedStyle(element).zIndex),
+      ),
+      sidebarOverlay.evaluate((element) =>
+        Number(getComputedStyle(element).zIndex),
+      ),
     ]);
 
     expect(dimensions.position).toBe("fixed");
@@ -231,10 +235,27 @@ async function mockApi(page: Page) {
       return;
     }
 
+    if (request.method() === "GET" && url.pathname === "/api/v1/ai-task/list") {
+      await route.fulfill({
+        contentType: "application/json",
+        body: JSON.stringify({ items: [], has_next: false }),
+      });
+      return;
+    }
+
     if (
       request.method() === "GET" &&
-      url.pathname === "/api/v1/ai-task/list"
+      url.pathname === "/api/v1/ai-task/events"
     ) {
+      await route.fulfill({
+        status: 200,
+        contentType: "text/event-stream",
+        body: "",
+      });
+      return;
+    }
+
+    if (url.pathname.startsWith("/api/")) {
       await route.fulfill({
         contentType: "application/json",
         body: JSON.stringify({ items: [], has_next: false }),

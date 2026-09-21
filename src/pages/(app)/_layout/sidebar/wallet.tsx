@@ -1,108 +1,19 @@
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import z from "zod";
-import { AlertCircle, LoaderCircle } from "lucide-react";
-import { NumericFormat } from "react-number-format";
-
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Muted } from "@/components/ui/typography";
 import { useAppTranslate } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
-import {
-  formatLocalizedNumber,
-  microDollarToToken,
-  tokenToMicroDollar,
-} from "@/utils";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { usePaymentRedirect } from "@/feature/payment";
+import { formatLocalizedNumber, microDollarToToken } from "@/utils";
 import { usePricingFeature, useActiveSubscription } from "@/feature/pricing";
-import { useChargeWallet, useWallet } from "@/feature/wallet";
+import { useWallet, WalletChargeFlow } from "@/feature/wallet";
 
 function AppLayoutSidebarWallet() {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
 
   const walletState = useWallet();
-  const chargeWalletState = useChargeWallet();
   const activeSubscriptionState = useActiveSubscription();
   const { openPricingFeature } = usePricingFeature();
-  const { openPaymentUrl } = usePaymentRedirect();
   const shouldBlockWalletCharge = activeSubscriptionState.data?.plan.is_default;
-
-  const formSchema = z.object({
-    amount: z
-      .string({
-        error: t("common.validationErrors.required", {
-          name: t("common.token"),
-        }),
-      })
-      .refine(
-        (s) => {
-          const n = Number(s);
-          return !Number.isNaN(n) && n >= 10;
-        },
-        {
-          message: t("common.validationErrors.min", {
-            name: t("common.token"),
-            min: formatLocalizedNumber({ value: 10 }),
-          }),
-        },
-      )
-      .refine(
-        (s) => {
-          const n = Number(s);
-          return !Number.isNaN(n) && n <= 1_000_000;
-        },
-        {
-          message: t("common.validationErrors.max", {
-            name: t("common.token"),
-            max: formatLocalizedNumber({ value: 1_000_000 }),
-          }),
-        },
-      ),
-  });
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      amount: "",
-    },
-    mode: "onChange",
-  });
-
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    if (shouldBlockWalletCharge) {
-      return;
-    }
-
-    const res = await chargeWalletState.mutateAsync({
-      body: {
-        amount_usdmicro: tokenToMicroDollar(parseInt(values.amount, 10)),
-      },
-    });
-    openPaymentUrl({
-      paymentUrl: res.payment_url,
-      amountIrrWithoutTax: res.amount_irr_without_tax,
-      taxPercent: res.tax_percent,
-      taxAmountIrr: res.tax_amount_irr,
-      totalAmountIrr: res.total_amount_irr,
-    });
-  }
+  const balanceUsdmicro = walletState.data?.balance_usdmicro ?? 0;
 
   return (
     <Card className="text-sidebar-foreground overflow-hidden rounded-[1.35rem] border border-white/10 bg-white/[0.045] shadow-[inset_0_1px_rgb(255_255_255/0.09),0_12px_32px_rgb(0_0_0/0.1)] backdrop-blur-xl">
@@ -121,101 +32,11 @@ function AppLayoutSidebarWallet() {
             </div>
             <small>{t("common.token")}</small>
           </div>
-          <Form {...form}>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button className="p-0!" variant="link">
-                  {t("pages.app.layout.sidebar.balanceCard.chargeWallet.title")}
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-106.25">
-                <DialogHeader className="text-right!">
-                  <DialogTitle className="mb-4">
-                    {t(
-                      "pages.app.layout.sidebar.balanceCard.chargeWallet.title",
-                    )}
-                  </DialogTitle>
-                  <DialogDescription>
-                    {t(
-                      "pages.app.layout.sidebar.balanceCard.chargeWallet.description",
-                    )}
-                  </DialogDescription>
-                </DialogHeader>
-
-                <form
-                  onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-8"
-                >
-                  <FormField
-                    control={form.control}
-                    name="amount"
-                    render={({ field, fieldState }) => (
-                      <FormItem>
-                        <FormLabel>{t("common.token")}</FormLabel>
-                        <FormControl>
-                          <NumericFormat
-                            customInput={Input}
-                            dir="ltr"
-                            thousandSeparator=","
-                            {...field}
-                            disabled={shouldBlockWalletCharge}
-                            onChange={(e) =>
-                              field.onChange(e.target.value.replace(/,/g, ""))
-                            }
-                            autoComplete="off"
-                          />
-                        </FormControl>
-                        {fieldState.error ? <FormMessage /> : null}
-                      </FormItem>
-                    )}
-                  />
-                  {shouldBlockWalletCharge ? (
-                    <div className="rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-300">
-                      <div className="flex items-start gap-2">
-                        <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
-                        <div className="space-y-1">
-                          <p className="font-medium">
-                            {t(
-                              "pages.app.layout.sidebar.balanceCard.chargeWallet.subscriptionRequiredAlert.title",
-                            )}
-                          </p>
-                          <p>
-                            {t(
-                              "pages.app.layout.sidebar.balanceCard.chargeWallet.subscriptionRequiredAlert.description",
-                            )}
-                          </p>
-                        </div>
-                      </div>
-                      <Button
-                        className="mt-4 w-full"
-                        type="button"
-                        variant="outline"
-                        onClick={() => openPricingFeature()}
-                      >
-                        {t(
-                          "pages.app.layout.sidebar.balanceCard.chargeWallet.subscriptionRequiredAlert.cta",
-                        )}
-                      </Button>
-                    </div>
-                  ) : (
-                    <Button
-                      className="w-full"
-                      type="submit"
-                      disabled={chargeWalletState.isPending}
-                    >
-                      {chargeWalletState.isPending ? (
-                        <LoaderCircle className="animate-spin" />
-                      ) : (
-                        t(
-                          "pages.app.layout.sidebar.balanceCard.chargeWallet.nonAction",
-                        )
-                      )}
-                    </Button>
-                  )}
-                </form>
-              </DialogContent>
-            </Dialog>
-          </Form>
+          <WalletChargeFlow
+            balanceUsdmicro={balanceUsdmicro}
+            requiresSubscription={shouldBlockWalletCharge === true}
+            onOpenPricing={() => openPricingFeature()}
+          />
         </div>
       </CardHeader>
     </Card>
