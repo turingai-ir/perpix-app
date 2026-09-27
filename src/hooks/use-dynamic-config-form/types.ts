@@ -32,7 +32,6 @@ export type JsonSchemaProperty = {
   type?: JsonSchemaType | readonly JsonSchemaType[];
   enum?: readonly (string | number | boolean | null)[];
   const?: unknown;
-  "x-pricing-only"?: boolean;
 
   default?: unknown;
   description?: string;
