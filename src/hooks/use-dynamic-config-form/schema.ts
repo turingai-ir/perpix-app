@@ -791,9 +791,15 @@ function resolveInputType(prop: JsonSchemaProperty): FieldMeta["inputType"] {
   if (prop["x-file"]?.type === "list") return "file-list";
   if (prop["x-file"]) return "file";
 
+  const hasEnumOptions = Boolean(prop.enum && prop.enum.length > 0);
+  const isConstOnly =
+    "const" in prop && prop.const !== undefined && !hasEnumOptions;
+
+  if (prop["x-pricing-only"] || isConstOnly) return "hidden";
+
   const propType = getPrimaryType(prop);
 
-  if (prop.enum && prop.enum.length > 0) return "select";
+  if (hasEnumOptions) return "select";
   if (propType === "string")
     return (prop.maxLength ?? 0) > 200 ? "textarea" : "text";
   if (propType === "integer" || propType === "number") return "number";
@@ -856,13 +862,16 @@ export function buildFieldMeta(params: {
     description: uiFieldMeta?.description ?? conditionalProperty.description,
     "x-file": uiFieldMeta?.file ?? conditionalProperty["x-file"],
   };
+  const hasEnumOptions = Boolean(
+    resolvedProperty.enum && resolvedProperty.enum.length > 0,
+  );
   let inputType = resolveWidgetInputType(resolvedWidget);
+  if (inputType === "select" && !hasEnumOptions) {
+    inputType = undefined;
+  }
   if (!inputType) {
     if (resolvedWidget === "switch") {
-      inputType =
-        resolvedProperty.enum && resolvedProperty.enum.length > 0
-          ? "select"
-          : "checkbox";
+      inputType = hasEnumOptions ? "select" : "checkbox";
     } else if (
       resolvedWidget === "list" ||
       resolvedWidget === "elements-list"
@@ -871,6 +880,9 @@ export function buildFieldMeta(params: {
     } else {
       inputType = resolveInputType(resolvedProperty);
     }
+  }
+  if (resolvedProperty["x-pricing-only"]) {
+    inputType = "hidden";
   }
 
   return {

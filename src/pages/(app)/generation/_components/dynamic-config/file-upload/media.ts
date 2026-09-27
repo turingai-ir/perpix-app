@@ -44,11 +44,39 @@ export function clearTopLevelMediaConflicts(
       shouldDirty: true,
       shouldValidate: true,
     });
+    dynamicForm.setValue("input_video", undefined, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
     return;
   }
 
-  if (fieldName === "reference_images" || fieldName === "reference_videos") {
+  if (fieldName === "reference_videos") {
     dynamicForm.setValue("frame_images", [], {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+    dynamicForm.setValue("input_video", undefined, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+    return;
+  }
+
+  if (fieldName === "reference_images") {
+    dynamicForm.setValue("frame_images", [], {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+    return;
+  }
+
+  if (fieldName === "input_video") {
+    dynamicForm.setValue("frame_images", [], {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+    dynamicForm.setValue("reference_videos", [], {
       shouldDirty: true,
       shouldValidate: true,
     });

@@ -56,6 +56,7 @@ export type JsonSchemaProperty = {
     type?: "list" | "single" | string;
     accept?: readonly string[];
   };
+  "x-pricing-only"?: boolean;
 };
 
 export function getPrimaryType(property: JsonSchemaProperty) {
