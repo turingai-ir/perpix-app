@@ -846,3 +846,35 @@ function getNanoBananaModelDetail() {
     },
   };
 }
+
+test("Seedance duration is selectable except in automatic video editing", async ({
+  page,
+}) => {
+  const config = JSON.parse(
+    readFileSync(
+      new URL("./fixtures/seedance-video-config.json", import.meta.url),
+      "utf8",
+    ),
+  );
+  await page.route(`**/ai-registry/models/${MODEL_UUID}`, async (route) => {
+    await route.fulfill({ json: { ...getModelDetail(), ...config } });
+  });
+  await openVideoGenerationPage(page);
+  const duration = page.getByRole("combobox", { name: "مدت زمان" });
+  await expect(duration).toBeVisible();
+  await duration.click();
+  await page.getByRole("option", { name: "6 ثانیه", exact: true }).click();
+  await expect(duration).toContainText("6");
+  await page.getByRole("button", { name: "ویرایش ویدیو", exact: true }).click();
+  await expect(duration).toHaveCount(0);
+  for (const label of [
+    "عکس به ویدیو",
+    "ویدیوی صوت‌محور",
+    "تولید ویدیو با مرجع",
+    "تمدید ویدیو",
+    "متن به ویدیو",
+  ]) {
+    await page.getByRole("button", { name: label, exact: true }).click();
+    await expect(duration).toBeVisible();
+  }
+});

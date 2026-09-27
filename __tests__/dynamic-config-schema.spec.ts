@@ -274,11 +274,13 @@ test("validates all 10 real backend model fixtures from perpix-core-api", async 
     const firstProvider = isRecord(modelData.providers)
       ? Object.values(modelData.providers)[0]
       : undefined;
-    const providerModes = isRecord(firstProvider) ? firstProvider.modes : undefined;
+    const providerModes = isRecord(firstProvider)
+      ? firstProvider.modes
+      : undefined;
 
     const normalizedModel = {
       ...rawModel,
-      modes: isRecord(rawModel.modes) ? rawModel.modes : providerModes ?? {},
+      modes: isRecord(rawModel.modes) ? rawModel.modes : (providerModes ?? {}),
     };
 
     const dynamicConfig = getModelDynamicConfig(normalizedModel);
@@ -293,13 +295,9 @@ test("validates all 10 real backend model fixtures from perpix-core-api", async 
       dynamicConfig.configDefaults,
     );
 
-    const resolver = buildAjvResolver(
-      dynamicConfig.configSchema!,
-      undefined,
-      {
-        configMeta: dynamicConfig.configMeta,
-      },
-    );
+    const resolver = buildAjvResolver(dynamicConfig.configSchema!, undefined, {
+      configMeta: dynamicConfig.configMeta,
+    });
 
     const testPrompt = "A futuristic city with flying vehicles";
     const valuesToValidate: Record<string, unknown> = {
@@ -328,4 +326,63 @@ test("validates all 10 real backend model fixtures from perpix-core-api", async 
   }
 });
 
-
+test("Seedance keeps duration constraints and pricing-only visibility within the active mode", async () => {
+  const model: unknown = JSON.parse(
+    readFileSync(
+      new URL("./fixtures/seedance-video-config.json", import.meta.url),
+      "utf8",
+    ),
+  );
+  const { configSchema, configMeta } = getModelDynamicConfig(model);
+  if (!configSchema) throw new Error("Expected Seedance schema");
+  const resolver = buildAjvResolver(configSchema, undefined, { configMeta });
+  for (const duration of [4, 5, 12, 30]) {
+    const result = await resolver(
+      {
+        mode: "text_to_video",
+        prompt: "A bird flying",
+        duration,
+        resolution: "720p",
+        aspect_ratio: "16:9",
+      },
+      {},
+      {} as never,
+    );
+    expect(result.errors).toEqual({});
+    expect(result.values).toMatchObject({ duration });
+  }
+  const result = await resolver(
+    {
+      mode: "video_edit",
+      prompt: "Change the lighting",
+      input_video: "https://example.com/video.mp4",
+      duration: 5,
+      resolution: "720p",
+    },
+    {},
+    {} as never,
+  );
+  expect(result.errors).toEqual({});
+  expect(result.values).toMatchObject({ duration: 30 });
+  for (const mode of [
+    "text_to_video",
+    "video_edit",
+    "image_to_video",
+    "audio_driven_video",
+    "reference_to_video",
+    "video_extend",
+    "text_to_video",
+  ]) {
+    const meta = buildFieldMeta({
+      name: "duration",
+      prop: configSchema.properties.duration,
+      requiredFields: [],
+      defaultValues: {},
+      configSchema,
+      configMeta,
+      values: { mode },
+    });
+    expect(meta.inputType).toBe(mode === "video_edit" ? "hidden" : "select");
+    expect(meta.property.const).toBe(mode === "video_edit" ? 30 : undefined);
+  }
+});

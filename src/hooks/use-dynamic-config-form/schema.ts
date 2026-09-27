@@ -885,6 +885,10 @@ export function buildFieldMeta(params: {
     inputType = "hidden";
   }
 
+  if (resolvedProperty["x-pricing-only"] === true) {
+    inputType = "hidden";
+  }
+
   return {
     name,
     property: resolvedProperty,

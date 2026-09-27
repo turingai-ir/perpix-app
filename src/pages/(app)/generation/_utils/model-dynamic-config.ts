@@ -87,7 +87,7 @@ function buildCombinedModeSchema(
         const combinedEnum =
           Array.isArray(existing.enum) && Array.isArray(prop.enum)
             ? Array.from(new Set([...existing.enum, ...prop.enum]))
-            : prop.enum ?? existing.enum;
+            : (prop.enum ?? existing.enum);
 
         merged[key] = {
           ...existing,
@@ -99,6 +99,12 @@ function buildCombinedModeSchema(
     }
     return merged;
   }, {});
+  // These constraints belong to each mode's conditional branch, not the
+  // shared property: one editing mode must not constrain every other mode.
+  for (const property of Object.values(modeProperties)) {
+    delete property.const;
+    delete property["x-pricing-only"];
+  }
   const allFieldNames = Object.keys(modeProperties);
 
   return {
