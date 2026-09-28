@@ -1,11 +1,11 @@
 .composer {
-  border: 1px solid rgb(255 255 255 / 13%);
-  border-radius: 24px;
-  background: rgb(21 20 29 / 88%);
+  border: 1px solid rgb(255 255 255 / 10%);
+  border-radius: 18px;
+  background: rgb(17 17 19 / 96%);
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 7%),
-    0 16px 48px rgb(0 0 0 / 22%);
-  backdrop-filter: blur(24px) saturate(130%);
+    inset 0 1px 0 rgb(255 255 255 / 6%),
+    0 20px 60px rgb(0 0 0 / 28%);
+  backdrop-filter: blur(18px) saturate(115%);
   color: #f6f4fb;
   overflow: clip;
 }
@@ -17,16 +17,16 @@
 .body {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  padding: 22px 18px;
+  gap: 14px;
+  padding: 18px 16px;
 }
 .heading span {
-  font-size: 11px;
-  color: #c2b5dd;
+  font-size: 10px;
+  color: rgb(255 255 255 / 48%);
 }
 .heading h2 {
-  margin-top: 5px;
-  font-size: 20px;
+  margin-top: 4px;
+  font-size: 18px;
   font-weight: 700;
 }
 .composer textarea {
@@ -42,7 +42,7 @@
 }
 .composer :is(button, input, textarea, summary):focus-visible,
 .modelDialog :is(button, input):focus-visible {
-  outline: 2px solid #c4a3ff;
+  outline: 2px solid color-mix(in srgb, var(--primary) 74%, white);
   outline-offset: 3px;
 }
 .settings {
@@ -94,9 +94,9 @@
   position: sticky;
   bottom: 0;
   z-index: 3;
-  padding: 16px 18px max(16px, env(safe-area-inset-bottom));
+  padding: 14px 16px max(14px, env(safe-area-inset-bottom));
   border-top: 1px solid rgb(255 255 255 / 10%);
-  background: #1a1723;
+  background: rgb(17 17 19 / 98%);
 }
 .cost {
   display: flex;
@@ -131,10 +131,16 @@
 .submit > button[type="submit"] {
   flex: 1;
   min-height: 48px;
-  border-radius: 14px;
-  background: linear-gradient(125deg, #9160f2, #7254d7);
-  color: white;
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 22%);
+  border-radius: 12px;
+  background: linear-gradient(
+    125deg,
+    color-mix(in srgb, var(--primary) 88%, white),
+    var(--primary)
+  );
+  color: var(--primary-foreground);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 20%),
+    0 8px 24px color-mix(in srgb, var(--primary) 22%, transparent);
 }
 .submit > button:not([type="submit"]) {
   min-width: 44px;
@@ -154,15 +160,15 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  min-height: 76px;
+  min-height: 68px;
   width: 100%;
   padding: 14px;
-  border: 1px solid rgb(191 161 250 / 24%);
-  border-radius: 16px;
+  border: 1px solid rgb(255 255 255 / 11%);
+  border-radius: 14px;
   background: linear-gradient(
     120deg,
-    rgb(161 123 223 / 10%),
-    rgb(255 255 255 / 3%)
+    color-mix(in srgb, var(--primary) 10%, transparent),
+    rgb(255 255 255 / 2%)
   );
   text-align: start;
   cursor: pointer;
@@ -184,7 +190,7 @@
   width: 40px;
   height: 40px;
   flex-shrink: 0;
-  border-radius: 12px;
+  border-radius: 10px;
   background: rgb(255 255 255 / 7%);
 }
 .modelIcon img {
@@ -211,13 +217,13 @@
   overflow-wrap: anywhere;
 }
 .modelDialog {
-  width: min(560px, calc(100% - 32px));
-  max-width: 560px;
+  width: min(500px, calc(100% - 32px));
+  max-width: 500px;
   gap: 16px;
   padding: 24px;
   border: 1px solid rgb(255 255 255 / 16%);
-  border-radius: 24px;
-  background: #1c1924;
+  border-radius: 18px;
+  background: #151517;
   color: #f6f4fb;
   box-shadow: 0 32px 100px rgb(0 0 0 / 55%);
 }
@@ -307,10 +313,10 @@
   gap: 12px;
 }
 .referenceGroup {
-  padding: 12px;
+  padding: 10px;
   border: 1px solid rgb(255 255 255 / 11%);
-  border-radius: 16px;
-  background: rgb(255 255 255 / 3%);
+  border-radius: 14px;
+  background: rgb(255 255 255 / 2.5%);
   min-width: 0;
 }
 .referenceMeta {
@@ -335,7 +341,7 @@
 }
 @media (min-width: 1100px) {
   .composer form {
-    max-height: calc(100dvh - 80px);
+    max-height: calc(100dvh - 56px);
   }
   .body {
     overflow-y: auto;
@@ -348,7 +354,7 @@
 }
 @media (max-width: 600px) {
   .composer {
-    border-radius: 20px;
+    border-radius: 16px;
   }
   .body {
     padding: 18px 16px;
