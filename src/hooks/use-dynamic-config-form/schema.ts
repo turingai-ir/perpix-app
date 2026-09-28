@@ -166,6 +166,38 @@ function conditionMatches(
   return visibilityAjv.validate(condition, values) as boolean;
 }
 
+export function getRequiredConfigFields(
+  schema: unknown,
+  values: Record<string, unknown>,
+): Set<string> {
+  const required = new Set<string>();
+  if (!isRecord(schema)) return required;
+  for (const name of Array.isArray(schema.required) ? schema.required : []) {
+    if (typeof name === "string") required.add(name);
+  }
+  const branches = Array.isArray(schema.allOf) ? [...schema.allOf] : [];
+  if (isRecord(schema.if)) {
+    branches.push(
+      conditionMatches(schema.if, values) ? schema.then : schema.else,
+    );
+  }
+  for (const branch of branches) {
+    for (const name of getRequiredConfigFields(branch, values))
+      required.add(name);
+  }
+  // Alternatives do not make every input mandatory: only their common requirements do.
+  for (const alternatives of [schema.oneOf, schema.anyOf]) {
+    if (!Array.isArray(alternatives) || !alternatives.length) continue;
+    const sets = alternatives.map((branch) =>
+      getRequiredConfigFields(branch, values),
+    );
+    for (const name of sets[0]) {
+      if (sets.every((fields) => fields.has(name))) required.add(name);
+    }
+  }
+  return required;
+}
+
 function collectNotRequiredFields(schema: unknown): string[] {
   if (!isRecord(schema)) return [];
 
@@ -876,7 +908,10 @@ export function buildFieldMeta(params: {
   return {
     name,
     property: resolvedProperty,
-    required: isRequired(name, requiredFields),
+    required:
+      values && configSchema
+        ? getRequiredConfigFields(configSchema, values).has(name)
+        : isRequired(name, requiredFields),
     defaultValue: defaultValues[name],
     inputType,
     options: resolvedProperty.enum,

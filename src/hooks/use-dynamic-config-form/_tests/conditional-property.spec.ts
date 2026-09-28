@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-import { getConditionalProperty } from "../schema";
+import { getConditionalProperty, getRequiredConfigFields } from "../schema";
 
 const imageSchema = {
   type: "object" as const,
@@ -55,4 +55,27 @@ test("limits dependent select options to the active schema condition", () => {
       resolution: "1536px",
     })?.enum,
   ).toEqual(["3:2", "2:3"]);
+});
+
+test("required indicators follow the active mode without requiring every alternative", () => {
+  const schema = {
+    required: ["mode"],
+    allOf: [
+      {
+        if: {
+          properties: { mode: { const: "reference" } },
+          required: ["mode"],
+        },
+        then: { required: ["references"] },
+        else: { oneOf: [{ required: ["prompt"] }, { required: ["shots"] }] },
+      },
+    ],
+  };
+  expect([...getRequiredConfigFields(schema, { mode: "reference" })]).toEqual([
+    "mode",
+    "references",
+  ]);
+  expect([...getRequiredConfigFields(schema, { mode: "text" })]).toEqual([
+    "mode",
+  ]);
 });

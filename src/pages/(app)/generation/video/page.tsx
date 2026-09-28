@@ -49,22 +49,8 @@ function GenerationVideoSession() {
       ) : null}
 
       <Activity mode={isTaskLoading ? "hidden" : "visible"}>
-        <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-1 flex-col">
-          <section
-            aria-label={t("pages.generation.video.studio.timelineLabel")}
-            className="w-full px-1 sm:px-3"
-          >
-            <GenerationVideoChats
-              isRetrying={isBusy}
-              messages={displayedMessages}
-              onRetry={handleRetry}
-              optimisticTurn={optimisticTurn}
-            />
-          </section>
-
-          {shouldShowIntro ? <VideoDirectorStage /> : null}
-
-          <div className={styles.composerDock} data-generation-composer>
+        <div className={styles.workspace}>
+          <div className={styles.composerPanel} data-generation-composer>
             <GenerationVideoPromptBox
               initialPrompt={initialPrompt}
               isLoading={isBusy}
@@ -81,6 +67,18 @@ function GenerationVideoSession() {
               successfulMessageClearKey={successfulMessageClearKey}
             />
           </div>
+          <section
+            aria-label={t("pages.generation.video.studio.timelineLabel")}
+            className={styles.resultsPanel}
+          >
+            {shouldShowIntro ? <VideoDirectorStage /> : null}
+            <GenerationVideoChats
+              isRetrying={isBusy}
+              messages={displayedMessages}
+              onRetry={handleRetry}
+              optimisticTurn={optimisticTurn}
+            />
+          </section>
         </div>
       </Activity>
     </main>
