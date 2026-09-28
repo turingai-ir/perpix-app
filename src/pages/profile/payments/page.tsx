@@ -1,138 +1,142 @@
-import { useMemo } from "react";
+import { useState } from "react";
+import { CheckCheck, Clock3, CircleX, ReceiptText } from "lucide-react";
 import { useSearchParams } from "react-router";
-
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  PaymentStatusEnumMap,
-  type SchemaPaymentListItemResponse,
-} from "@/services/api";
-import { dayjs } from "@/lib/dayjs";
-import { formatLocalizedNumber } from "@/utils";
 import { usePayments } from "@/feature/payment";
-import { PaginationFooter } from "@/pages/profile/_components/pagination-footer";
-import {
-  ProfileListEmpty,
-  ProfileListError,
-  ProfileListLoading,
-} from "@/pages/profile/_components/profile-list-state";
+import { useAppTranslate } from "@/hooks";
+import type { SchemaPaymentListItemResponse } from "@/services/api";
+import { FinanceHero } from "../_components/finance-hero";
+import { FinanceToolbar } from "../_components/finance-toolbar";
+import { FinanceFeedback } from "../_components/finance-feedback";
+import { PaginationFooter } from "../_components/pagination-footer";
+import { financeNumber, financeOffset } from "../_components/finance-format";
+import { PaymentRecord } from "./payment-record";
+import "../finance.css";
 
-const PAGE_LIMIT = 100;
+const PAGE_LIMIT = 20;
+const filters = ["all", "PAID", "PENDING", "FAILED"] as const;
 
-const paymentStatusLabels = {
-  [PaymentStatusEnumMap.PENDING]: "در انتظار",
-  [PaymentStatusEnumMap.PAID]: "پرداخت شده",
-  [PaymentStatusEnumMap.FAILED]: "ناموفق",
-};
-
-function ProfilePaymentsPage() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const offset = Number(searchParams.get("offset") ?? 0);
-  const safeOffset = Number.isFinite(offset) && offset > 0 ? offset : 0;
-  const paymentsState = usePayments({ offset: safeOffset, limit: PAGE_LIMIT });
-  const payments = useMemo(
-    () =>
-      paymentsState.data
-        ? Array.from(
-            paymentsState.data
-              .items as ArrayLike<SchemaPaymentListItemResponse>,
-          )
-        : [],
-    [paymentsState.data],
+export default function ProfilePaymentsPage() {
+  const { t, i18n } = useAppTranslate();
+  const [params, setParams] = useSearchParams();
+  const offset = financeOffset(params.get("offset"));
+  const query = usePayments({ offset, limit: PAGE_LIMIT });
+  const [selected, setSelected] = useState("all");
+  const [search, setSearch] = useState("");
+  // The API wrapper maps readonly arrays as objects; normalize at this boundary.
+  const payments = Array.from(
+    (query.data?.items ?? []) as ArrayLike<SchemaPaymentListItemResponse>,
   );
-
-  const goToOffset = (nextOffset: number) => {
-    setSearchParams({ offset: String(Math.max(0, nextOffset)) });
+  const visible = payments.filter(
+    (item) =>
+      (selected === "all" || item.status === selected) &&
+      item.payment_uuid.toLowerCase().includes(search.trim().toLowerCase()),
+  );
+  const metrics = [
+    {
+      label: "paidTotal",
+      icon: CheckCheck,
+      value: payments
+        .filter((item) => item.status === "PAID")
+        .reduce((total, item) => total + item.total_amount_irr, 0),
+      unit: "rial",
+      tone: "positive",
+    },
+    {
+      label: "pendingCount",
+      icon: Clock3,
+      value: payments.filter((item) => item.status === "PENDING").length,
+      unit: "recordUnit",
+      tone: "pending",
+    },
+    {
+      label: "failedCount",
+      icon: CircleX,
+      value: payments.filter((item) => item.status === "FAILED").length,
+      unit: "recordUnit",
+      tone: "negative",
+    },
+  ] as const;
+  const clear = () => {
+    setSelected("all");
+    setSearch("");
   };
-
+  function goToOffset(next: number) {
+    clear();
+    setParams((previous) => {
+      const updated = new URLSearchParams(previous);
+      updated.set("offset", String(Math.max(0, next)));
+      return updated;
+    });
+  }
   return (
-    <Card className="min-h-full">
-      <CardHeader>
-        <CardTitle>پرداخت‌ها</CardTitle>
-      </CardHeader>
-      <CardContent className="p-0">
-        {paymentsState.isLoading ? <ProfileListLoading /> : null}
-        {paymentsState.isError ? (
-          <ProfileListError onRetry={() => paymentsState.refetch()} />
-        ) : null}
-        {paymentsState.isSuccess && payments.length === 0 ? (
-          <ProfileListEmpty title="پرداختی برای نمایش وجود ندارد" />
-        ) : null}
-        {payments.length > 0 ? (
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-4xl text-sm">
-              <thead className="bg-muted/60 text-muted-foreground">
-                <tr className="[&>th]:px-4 [&>th]:py-3 [&>th]:text-right [&>th]:font-medium">
-                  <th>کد پیگیری</th>
-                  <th>وضعیت</th>
-                  <th>مبلغ اولیه</th>
-                  <th>مالیات</th>
-                  <th>مبلغ نهایی</th>
-                  <th>نوع</th>
-                  <th>تاریخ</th>
-                </tr>
-              </thead>
-              <tbody className="divide-border divide-y">
-                {payments.map((payment) => (
-                  <tr
-                    key={payment.payment_uuid}
-                    className="[&>td]:px-4 [&>td]:py-3"
-                  >
-                    <td dir="ltr" className="text-foreground font-mono text-xs">
-                      {payment.payment_uuid}
-                    </td>
-                    <td>
-                      <Badge
-                        variant={
-                          payment.status === PaymentStatusEnumMap.PAID
-                            ? "default"
-                            : payment.status === PaymentStatusEnumMap.FAILED
-                              ? "destructive"
-                              : "secondary"
-                        }
-                      >
-                        {paymentStatusLabels[payment.status]}
-                      </Badge>
-                    </td>
-                    <td>
-                      {formatLocalizedNumber({
-                        value: payment.amount_irr_without_tax,
-                      })}{" "}
-                      ریال
-                    </td>
-                    <td>
-                      {formatLocalizedNumber({ value: payment.tax_amount_irr })}{" "}
-                      ریال
-                    </td>
-                    <td className="font-medium">
-                      {formatLocalizedNumber({
-                        value: payment.total_amount_irr,
-                      })}{" "}
-                      ریال
-                    </td>
-                    <td>{payment.target_type ?? "-"}</td>
-                    <td>
-                      {dayjs(payment.created_at)
-                        .calendar("jalali")
-                        .format("YYYY/MM/DD HH:mm")}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+    <div className="finance-page finance-page--payments">
+      <FinanceHero variant="payments" />
+      <div className="finance-section-heading">
+        <span className="finance-eyebrow">
+          <ReceiptText size={16} aria-hidden="true" />
+          {t("pages.profile.finance.paymentArchive")}
+        </span>
+        <p>{t("pages.profile.finance.pageScope")}</p>
+      </div>
+      <dl className="finance-metrics">
+        {metrics.map(({ label, icon: Icon, value, unit, tone }) => (
+          <div key={label} className={`finance-metric finance-metric--${tone}`}>
+            <Icon size={20} aria-hidden="true" />
+            <div>
+              <dt>{t(`pages.profile.finance.${label}`)}</dt>
+              <dd>
+                {query.data ? financeNumber(value, i18n.language) : "—"}
+                <small>{t(`pages.profile.finance.${unit}`)}</small>
+              </dd>
+            </div>
           </div>
-        ) : null}
-      </CardContent>
-      <PaginationFooter
-        offset={safeOffset}
-        limit={PAGE_LIMIT}
-        hasNext={paymentsState.data?.has_next ?? false}
-        isFetching={paymentsState.isFetching}
-        onPrevious={() => goToOffset(safeOffset - PAGE_LIMIT)}
-        onNext={() => goToOffset(safeOffset + PAGE_LIMIT)}
-      />
-    </Card>
+        ))}
+      </dl>
+      <section
+        className="finance-ledger"
+        aria-label={t("pages.profile.finance.paymentArchive")}
+      >
+        <FinanceToolbar
+          options={filters}
+          selected={selected}
+          search={search}
+          onSelect={setSelected}
+          onSearch={setSearch}
+          onRefresh={() => query.refetch()}
+          fetching={query.isFetching}
+        />
+        <FinanceFeedback
+          loading={query.isPending}
+          error={query.isError}
+          paused={query.fetchStatus === "paused"}
+          hasData={!!query.data}
+          empty={query.isSuccess && payments.length === 0}
+          noResults={query.isSuccess && visible.length === 0}
+          variant="payments"
+          onRetry={() => query.refetch()}
+          onClear={clear}
+        />
+        {payments.length > 0 && (
+          <p className="finance-result-count" role="status">
+            {t("pages.profile.finance.resultCount", {
+              value: financeNumber(visible.length, i18n.language),
+            })}
+          </p>
+        )}
+        <div className="finance-records" aria-busy={query.isFetching}>
+          {visible.map((payment) => (
+            <PaymentRecord key={payment.payment_uuid} payment={payment} />
+          ))}
+        </div>
+        <PaginationFooter
+          offset={offset}
+          count={payments.length}
+          hasNext={query.data?.has_next ?? false}
+          isFetching={query.isFetching}
+          onPrevious={() => goToOffset(offset - PAGE_LIMIT)}
+          onNext={() => goToOffset(offset + PAGE_LIMIT)}
+        />
+      </section>
+    </div>
   );
 }
-
-export default ProfilePaymentsPage;

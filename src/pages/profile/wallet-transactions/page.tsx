@@ -1,137 +1,151 @@
-import { useMemo } from "react";
+import { useState } from "react";
+import { ArrowDownLeft, ArrowUpRight, RotateCcw, Orbit } from "lucide-react";
 import { useSearchParams } from "react-router";
-
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  WalletTransactionTypeEnumMap,
-  type SchemaWalletTransactionResponse,
-} from "@/services/api";
-import { dayjs } from "@/lib/dayjs";
-import { formatLocalizedNumber, microDollarToToken } from "@/utils";
 import { useWalletTransactions } from "@/feature/wallet";
-import { PaginationFooter } from "@/pages/profile/_components/pagination-footer";
-import {
-  ProfileListEmpty,
-  ProfileListError,
-  ProfileListLoading,
-} from "@/pages/profile/_components/profile-list-state";
+import { useAppTranslate } from "@/hooks";
+import type { SchemaWalletTransactionResponse } from "@/services/api";
+import { FinanceHero } from "../_components/finance-hero";
+import { FinanceToolbar } from "../_components/finance-toolbar";
+import { FinanceFeedback } from "../_components/finance-feedback";
+import { PaginationFooter } from "../_components/pagination-footer";
+import { financeNumber, financeOffset } from "../_components/finance-format";
+import { WalletRecord } from "./wallet-record";
+import { WalletBalance } from "./wallet-balance";
+import "../finance.css";
 
-const PAGE_LIMIT = 100;
+const PAGE_LIMIT = 20;
+const filters = ["all", "DEPOSIT", "WITHDRAW", "REFUND"] as const;
 
-const transactionTypeLabels = {
-  [WalletTransactionTypeEnumMap.DEPOSIT]: "واریز",
-  [WalletTransactionTypeEnumMap.WITHDRAW]: "برداشت",
-  [WalletTransactionTypeEnumMap.REFUND]: "بازگشت",
-};
-
-function ProfileWalletTransactionsPage() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const offset = Number(searchParams.get("offset") ?? 0);
-  const safeOffset = Number.isFinite(offset) && offset > 0 ? offset : 0;
-  const transactionsState = useWalletTransactions({
-    offset: safeOffset,
-    limit: PAGE_LIMIT,
-  });
-  const transactions = useMemo(
-    () =>
-      transactionsState.data
-        ? Array.from(
-            transactionsState.data
-              .transactions as ArrayLike<SchemaWalletTransactionResponse>,
-          )
-        : [],
-    [transactionsState.data],
+export default function ProfileWalletTransactionsPage() {
+  const { t, i18n } = useAppTranslate();
+  const [params, setParams] = useSearchParams();
+  const offset = financeOffset(params.get("offset"));
+  const query = useWalletTransactions({ offset, limit: PAGE_LIMIT });
+  const [selected, setSelected] = useState("all");
+  const [search, setSearch] = useState("");
+  // The API wrapper maps readonly arrays as objects; normalize at this boundary.
+  const transactions = Array.from(
+    (query.data?.transactions ??
+      []) as ArrayLike<SchemaWalletTransactionResponse>,
   );
-
-  const goToOffset = (nextOffset: number) => {
-    setSearchParams({ offset: String(Math.max(0, nextOffset)) });
+  const visible = transactions.filter(
+    (item) =>
+      (selected === "all" || item.type === selected) &&
+      item.transaction_uuid.toLowerCase().includes(search.trim().toLowerCase()),
+  );
+  const metrics = [
+    {
+      label: "depositTotal",
+      type: "DEPOSIT",
+      icon: ArrowDownLeft,
+      tone: "positive",
+    },
+    {
+      label: "withdrawTotal",
+      type: "WITHDRAW",
+      icon: ArrowUpRight,
+      tone: "pending",
+    },
+    { label: "refundTotal", type: "REFUND", icon: RotateCcw, tone: "neutral" },
+  ] as const;
+  const clear = () => {
+    setSelected("all");
+    setSearch("");
   };
-
+  function goToOffset(next: number) {
+    clear();
+    setParams((previous) => {
+      const updated = new URLSearchParams(previous);
+      updated.set("offset", String(Math.max(0, next)));
+      return updated;
+    });
+  }
   return (
-    <Card className="min-h-full">
-      <CardHeader>
-        <CardTitle>تراکنش‌های کیف پول</CardTitle>
-      </CardHeader>
-      <CardContent className="p-0">
-        {transactionsState.isLoading ? <ProfileListLoading /> : null}
-        {transactionsState.isError ? (
-          <ProfileListError onRetry={() => transactionsState.refetch()} />
-        ) : null}
-        {transactionsState.isSuccess && transactions.length === 0 ? (
-          <ProfileListEmpty title="تراکنشی برای نمایش وجود ندارد" />
-        ) : null}
-        {transactions.length > 0 ? (
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-4xl text-sm">
-              <thead className="bg-muted/60 text-muted-foreground">
-                <tr className="[&>th]:px-4 [&>th]:py-3 [&>th]:text-right [&>th]:font-medium">
-                  <th>کد تراکنش</th>
-                  <th>نوع</th>
-                  <th>مبلغ</th>
-                  <th>موجودی قبل</th>
-                  <th>موجودی بعد</th>
-                  <th>تاریخ</th>
-                </tr>
-              </thead>
-              <tbody className="divide-border divide-y">
-                {transactions.map((transaction) => (
-                  <tr
-                    key={transaction.transaction_uuid}
-                    className="[&>td]:px-4 [&>td]:py-3"
-                  >
-                    <td dir="ltr" className="text-foreground font-mono text-xs">
-                      {transaction.transaction_uuid}
-                    </td>
-                    <td>
-                      <Badge
-                        variant={
-                          transaction.type ===
-                          WalletTransactionTypeEnumMap.WITHDRAW
-                            ? "destructive"
-                            : "secondary"
-                        }
-                      >
-                        {transactionTypeLabels[transaction.type]}
-                      </Badge>
-                    </td>
-                    <td className="font-medium">
-                      {formatLocalizedNumber({
-                        value: microDollarToToken(transaction.amount_usdmicro),
-                      })}
-                    </td>
-                    <td>
-                      {formatLocalizedNumber({
-                        value: microDollarToToken(transaction.balance_before),
-                      })}
-                    </td>
-                    <td>
-                      {formatLocalizedNumber({
-                        value: microDollarToToken(transaction.balance_after),
-                      })}
-                    </td>
-                    <td>
-                      {dayjs(transaction.created_at)
-                        .calendar("jalali")
-                        .format("YYYY/MM/DD HH:mm")}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+    <div className="finance-page finance-page--wallet">
+      <FinanceHero variant="wallet">
+        <WalletBalance />
+      </FinanceHero>
+      <div className="finance-section-heading">
+        <span className="finance-eyebrow">
+          <Orbit size={16} aria-hidden="true" />
+          {t("pages.profile.finance.walletArchive")}
+        </span>
+        <p>{t("pages.profile.finance.pageScope")}</p>
+      </div>
+      <dl className="finance-metrics">
+        {metrics.map(({ label, type, icon: Icon, tone }) => (
+          <div key={label} className={`finance-metric finance-metric--${tone}`}>
+            <Icon size={20} aria-hidden="true" />
+            <div>
+              <dt>{t(`pages.profile.finance.${label}`)}</dt>
+              <dd>
+                {query.data
+                  ? financeNumber(
+                      transactions
+                        .filter((item) => item.type === type)
+                        .reduce(
+                          (total, item) =>
+                            total + Math.abs(item.amount_usdmicro),
+                          0,
+                        ),
+                      i18n.language,
+                      true,
+                    )
+                  : "—"}
+                <small>{t("pages.profile.finance.token")}</small>
+              </dd>
+            </div>
           </div>
-        ) : null}
-      </CardContent>
-      <PaginationFooter
-        offset={safeOffset}
-        limit={PAGE_LIMIT}
-        hasNext={transactionsState.data?.has_next ?? false}
-        isFetching={transactionsState.isFetching}
-        onPrevious={() => goToOffset(safeOffset - PAGE_LIMIT)}
-        onNext={() => goToOffset(safeOffset + PAGE_LIMIT)}
-      />
-    </Card>
+        ))}
+      </dl>
+      <section
+        className="finance-ledger"
+        aria-label={t("pages.profile.finance.walletArchive")}
+      >
+        <FinanceToolbar
+          options={filters}
+          selected={selected}
+          search={search}
+          onSelect={setSelected}
+          onSearch={setSearch}
+          onRefresh={() => query.refetch()}
+          fetching={query.isFetching}
+        />
+        <FinanceFeedback
+          loading={query.isPending}
+          error={query.isError}
+          paused={query.fetchStatus === "paused"}
+          hasData={!!query.data}
+          empty={query.isSuccess && transactions.length === 0}
+          noResults={query.isSuccess && visible.length === 0}
+          variant="wallet"
+          onRetry={() => query.refetch()}
+          onClear={clear}
+        />
+        {transactions.length > 0 && (
+          <p className="finance-result-count" role="status">
+            {t("pages.profile.finance.resultCount", {
+              value: financeNumber(visible.length, i18n.language),
+            })}
+          </p>
+        )}
+        <div className="finance-records" aria-busy={query.isFetching}>
+          {visible.map((transaction) => (
+            <WalletRecord
+              key={transaction.transaction_uuid}
+              transaction={transaction}
+            />
+          ))}
+        </div>
+        <PaginationFooter
+          offset={offset}
+          count={transactions.length}
+          hasNext={query.data?.has_next ?? false}
+          isFetching={query.isFetching}
+          onPrevious={() => goToOffset(offset - PAGE_LIMIT)}
+          onNext={() => goToOffset(offset + PAGE_LIMIT)}
+        />
+      </section>
+    </div>
   );
 }
-
-export default ProfileWalletTransactionsPage;
