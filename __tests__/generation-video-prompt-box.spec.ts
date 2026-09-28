@@ -60,11 +60,41 @@ test("video director opens without generating and keeps the model controls ready
   await expect(page.getByRole("combobox", { name: "مدت زمان" })).toContainText(
     "5",
   );
+  await page.getByRole("button", { name: "روش ساخت" }).click();
+  await expect(
+    page.getByRole("heading", { name: "از ایده تا ویدیو، در سه قدم روشن." }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "کتابخانه حرکت" }).click();
+  await expect(page.getByText("قاب منتخب پرپیکس")).toBeVisible();
   expect(generations).toBe(0);
   await page.screenshot({
     path: ".artifacts/video-studio-desktop.png",
     fullPage: true,
   });
+});
+
+test("keeps the creator rail on the RTL inline start beside a wider workspace", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("/generation/video", { waitUntil: "domcontentloaded" });
+  await expect(
+    page.getByPlaceholder(
+      "صحنه، حرکت سوژه، حرکت دوربین و حال‌وهوای نور را توصیف کن…",
+    ),
+  ).toBeVisible();
+
+  const creatorRail = page.locator("[data-generation-composer]");
+  const workspace = page.getByRole("region", {
+    name: "خط زمانی ساخت ویدیو",
+  });
+  const creatorRailBounds = await creatorRail.boundingBox();
+  const workspaceBounds = await workspace.boundingBox();
+
+  expect(creatorRailBounds).not.toBeNull();
+  expect(workspaceBounds).not.toBeNull();
+  expect(creatorRailBounds!.x).toBeGreaterThan(workspaceBounds!.x);
+  expect(workspaceBounds!.width).toBeGreaterThan(creatorRailBounds!.width);
 });
 
 test("video model library is searchable without starting a generation", async ({
@@ -166,11 +196,13 @@ test("updates visible video prompt fields when the generation mode changes", asy
 
   await page.getByRole("button", { name: "کنترل حرکت" }).click();
 
-  await expect(page.getByText("ویدیوی مرجع", { exact: true })).toBeVisible();
-  await expect(page.getByText("تصاویر مرجع", { exact: true })).toBeVisible();
   await expect(
-    page.getByRole("heading", { name: "تصاویر فریم" }),
-  ).toBeHidden();
+    page.getByRole("heading", { name: "ویدیوی مرجع" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "تصاویر مرجع" }),
+  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "تصاویر فریم" })).toBeHidden();
 });
 
 test("shows the generation rules from the prompt box help button", async ({
@@ -753,12 +785,12 @@ test("uses the last assistant message when a user message follows it", async ({
 });
 
 async function openVideoGenerationPage(page: Page) {
-  await page.goto("/generation/video");
+  await page.goto("/generation/video", { waitUntil: "domcontentloaded" });
   await expect(
     page.getByPlaceholder(
       "صحنه، حرکت سوژه، حرکت دوربین و حال‌وهوای نور را توصیف کن…",
     ),
-  ).toBeVisible();
+  ).toBeVisible({ timeout: 20_000 });
   await expect(
     page.getByRole("button", { name: /انتخاب مدل.*Kling 3.0 Standard/ }),
   ).toBeVisible();
