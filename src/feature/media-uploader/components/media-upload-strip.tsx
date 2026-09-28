@@ -57,7 +57,7 @@ export const MediaUploadStrip: FC<MediaUploadStripProps> = ({
         label={label}
         localItems={localItems}
         selectedIds={selectedIds}
-        maxItems={presentation === "composer" ? maxItems : undefined}
+        maxItems={maxItems}
         onFileSelect={onFileSelect}
         onOpenChange={setFilePickerOpen}
         onUploadedFileSelect={onUploadedFileSelect}

@@ -3,6 +3,7 @@ import type { FC } from "react";
 
 import { useAppTranslate } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
+import { formatLocalizedNumber } from "@/utils";
 
 import { LocalMediaPreviewItem, MediaPreviewItem } from "./media-strip-items";
 import type { MediaUploadStripProps } from "../types";
@@ -25,14 +26,14 @@ export const ComposerReferenceTray: FC<Props> = ({
   localItems,
   disabled = false,
   previewType = "image",
-  maxItems = 5,
+  maxItems,
   onDeleteClick,
   onLocalDeleteClick,
   onAdd,
 }) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const count = uploadedItems.length + localItems.length;
-  const isFull = count >= maxItems;
+  const isFull = maxItems !== undefined && count >= maxItems;
 
   return (
     <div className="border-border/60 flex w-full min-w-0 flex-col gap-2 border-t pt-3">
@@ -42,10 +43,12 @@ export const ComposerReferenceTray: FC<Props> = ({
             {t("features.mediaUploader.composer.references")}
           </span>
           <span className="text-muted-foreground" aria-live="polite">
-            {t("features.mediaUploader.composer.count", {
-              count,
-              max: maxItems,
-            })}
+            {maxItems === undefined
+              ? formatLocalizedNumber({ value: count })
+              : t("features.mediaUploader.composer.count", {
+                  count,
+                  max: maxItems,
+                })}
           </span>
         </div>
         <button
