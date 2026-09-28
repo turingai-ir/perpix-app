@@ -1,0 +1,15 @@
+# Dependency, build, test, and tool-generated outputs.
+node_modules/
+dist/
+coverage/
+playwright-report/
+test-results/
+graphify-out/
+.artifacts/
+.tmp/
+
+# Local agent/editor state; project source and documentation remain in scope.
+.codex/
+.claude/
+.agents/
+.kilo/
