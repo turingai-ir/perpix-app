@@ -61,6 +61,34 @@ test("video director opens without generating and keeps the model controls ready
     "5",
   );
   expect(generations).toBe(0);
+  await page.screenshot({
+    path: ".artifacts/video-studio-desktop.png",
+    fullPage: true,
+  });
+});
+
+test("video model library is searchable without starting a generation", async ({
+  page,
+}) => {
+  let generations = 0;
+  await page.route("**/ai-task/generate", (route) => {
+    generations += 1;
+    return route.abort();
+  });
+  await page.goto("/generation/video");
+  await page.getByRole("button", { name: /انتخاب مدل.*Kling/ }).click();
+  const search = page.getByRole("searchbox", { name: "جست‌وجوی مدل" });
+  await search.fill("not-a-model");
+  await expect(page.getByText("مدلی با این نام پیدا نشد.")).toBeVisible();
+  await search.fill("kling");
+  await expect(
+    page
+      .getByRole("dialog")
+      .getByRole("button", { name: /Kling 3.0 Standard/ }),
+  ).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("dialog")).toBeHidden();
+  expect(generations).toBe(0);
 });
 
 test("video studio stays usable on mobile with reduced motion", async ({
@@ -75,7 +103,7 @@ test("video studio stays usable on mobile with reduced motion", async ({
   });
   await submitButton.scrollIntoViewIfNeeded();
   await expect(submitButton).toBeVisible();
-  await expect(submitButton).toBeDisabled();
+  // Kling allows prompt OR multi-prompt. The schema validates the chosen alternative on submit.
   await expect(page.getByTestId("video-director-rig")).toHaveCSS(
     "animation-name",
     "none",
@@ -85,6 +113,20 @@ test("video studio stays usable on mobile with reduced motion", async ({
       () => document.documentElement.scrollWidth <= window.innerWidth,
     ),
   ).toBe(true);
+  await page.screenshot({
+    path: ".artifacts/video-studio-mobile.png",
+    fullPage: true,
+  });
+  await page.getByRole("button", { name: /انتخاب مدل.*Kling/ }).click();
+  await expect(
+    page.getByRole("searchbox", { name: "جست‌وجوی مدل" }),
+  ).toBeVisible();
+  const bounds = await page.getByRole("dialog").boundingBox();
+  expect(bounds).not.toBeNull();
+  expect(bounds!.x).toBeGreaterThanOrEqual(0);
+  expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(376);
+  expect(bounds!.y + bounds!.height).toBeLessThanOrEqual(813);
+  await page.screenshot({ path: ".artifacts/video-studio-mobile-models.png" });
 });
 
 test("updates visible video prompt fields when the generation mode changes", async ({
@@ -100,24 +142,24 @@ test("updates visible video prompt fields when the generation mode changes", asy
   await expect(
     page.getByRole("button", { name: "متن به ویدیو" }),
   ).toBeVisible();
-  await expect(page.getByRole("combobox", { name: "وضوح تصویر" })).toHaveText(
+  await expect(page.getByRole("combobox", { name: "رزولوشن" })).toHaveText(
     "720p",
   );
-  await expect(page.getByRole("combobox", { name: "قاب تصویر" })).toHaveText(
+  await expect(page.getByRole("combobox", { name: "نسبت تصویر" })).toHaveText(
     "16:9",
   );
   await expect(page.getByRole("combobox", { name: "مدت زمان" })).toBeVisible();
-  await page.getByRole("button", { name: "تنظیمات تصویر" }).click();
-  await page.getByRole("button", { name: "کنترل‌های حرفه‌ای" }).click();
-  await expect(page.getByRole("dialog").getByText("تولید صدا")).toBeVisible();
-  await page.keyboard.press("Escape");
+  await page.getByText("تنظیمات تکمیلی", { exact: true }).click();
+  await expect(page.getByText("تولید صدا", { exact: true })).toBeVisible();
   await expect(page.getByText("تصاویر فریم")).toBeHidden();
 
   await expect(page.getByRole("dialog")).toBeHidden();
 
   await page.getByRole("button", { name: "عکس به ویدیو" }).click();
 
-  await expect(page.getByText("تصاویر فریم")).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "تصاویر فریم" }),
+  ).toBeVisible();
   await expect(page.getByRole("combobox", { name: "وضوح تصویر" })).toBeHidden();
   await expect(page.getByRole("combobox", { name: "قاب تصویر" })).toBeHidden();
   await expect(page.getByText("ویدیوی مرجع", { exact: true })).toBeHidden();
@@ -125,8 +167,10 @@ test("updates visible video prompt fields when the generation mode changes", asy
   await page.getByRole("button", { name: "کنترل حرکت" }).click();
 
   await expect(page.getByText("ویدیوی مرجع", { exact: true })).toBeVisible();
-  await expect(page.getByText("تصاویر مرجع")).toBeVisible();
-  await expect(page.getByText("تصاویر فریم")).toBeHidden();
+  await expect(page.getByText("تصاویر مرجع", { exact: true })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "تصاویر فریم" }),
+  ).toBeHidden();
 });
 
 test("shows the generation rules from the prompt box help button", async ({
@@ -716,7 +760,7 @@ async function openVideoGenerationPage(page: Page) {
     ),
   ).toBeVisible();
   await expect(
-    page.getByRole("combobox").filter({ hasText: "Kling 3.0 Standard" }),
+    page.getByRole("button", { name: /انتخاب مدل.*Kling 3.0 Standard/ }),
   ).toBeVisible();
 }
 

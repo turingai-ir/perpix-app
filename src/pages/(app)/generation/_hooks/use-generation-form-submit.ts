@@ -33,16 +33,27 @@ export function useGenerationFormSubmit({
     !dynamicForm.isReady ||
     model.activeSubscriptionState.isLoading ||
     model.modelsListState.isLoading ||
-    model.modelState.isLoading;
+    model.modelState.isLoading ||
+    model.modelState.isPlaceholderData ||
+    model.modelState.data?.uuid !== model.currentModel;
   const isSubmitDisabled =
-    isFormBusy || isUploadingMedia || !model.isCurrentModelAllowed;
+    isFormBusy ||
+    isUploadingMedia ||
+    !model.isCurrentModelAllowed ||
+    model.modelState.isError ||
+    model.modelsListState.isError ||
+    model.activeSubscriptionState.isError;
 
   const handleFormSubmit: SubmitEventHandler<HTMLFormElement> = async (
     event,
   ) => {
     const prompt = String(dynamicForm.getValues("prompt") ?? "");
+    const promptMeta = dynamicForm.getFieldMeta("prompt");
     const isPromptInvalid =
-      isPromptFieldVisible && prompt.trim().length < MIN_PROMPT_LENGTH;
+      isPromptFieldVisible &&
+      Boolean(promptMeta?.required) &&
+      prompt.trim().length <
+        (promptMeta?.property.minLength ?? MIN_PROMPT_LENGTH);
 
     if (isSubmitDisabled || isPromptInvalid) {
       event.preventDefault();
