@@ -1,6 +1,6 @@
 import { Coins, WifiOff } from "lucide-react";
 
-import styles from "../studio.module.css";
+import styles from "../composer.module.css";
 import { Button } from "@/components/ui/button";
 import { useAppTranslate } from "@/hooks";
 import { GenerationRulesDialog } from "@/pages/(app)/generation/_components/prompt-box/generation-rules-dialog";
@@ -12,13 +12,13 @@ import { formatLocalizedNumber } from "@/utils";
 type Studio = ReturnType<typeof useGenerationPromptBox>;
 export function VideoStudioFooter({
   studio,
-  offline,
+  offline = false,
   isLoading,
   model,
 }: {
   studio: Studio;
   model: Studio["model"];
-  offline: boolean;
+  offline?: boolean;
   isLoading?: boolean;
 }) {
   const { t } = useAppTranslate();
