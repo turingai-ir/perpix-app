@@ -12,7 +12,11 @@ export const PromptSubmitButton: FC<{
   label?: string;
 }> = ({ disabled, dynamicForm, isLoading, promptRequired, label }) => {
   const prompt = String(dynamicForm.watch("prompt") ?? "");
-  const isPromptInvalid = promptRequired && prompt.trim().length < 3;
+  const promptMeta = dynamicForm.getFieldMeta("prompt");
+  const isPromptInvalid =
+    promptRequired &&
+    Boolean(promptMeta?.required) &&
+    prompt.trim().length < (promptMeta?.property.minLength ?? 3);
 
   return (
     <Button
