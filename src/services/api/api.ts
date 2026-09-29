@@ -220,34 +220,63 @@ export interface paths {
         readonly patch?: never;
         readonly trace?: never;
     };
-    readonly "/api/v1/payment/list": {
+    readonly "/api/v2/payment-intents": {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
             readonly path?: never;
             readonly cookie?: never;
         };
-        /** List Payments */
-        readonly get: operations["list_payments_api_v1_payment_list_get"];
+        /** List authenticated user's payment intents */
+        readonly get: operations["get_payment_intents_api_v2_payment_intents_get"];
         readonly put?: never;
-        readonly post?: never;
+        /**
+         * Create payment checkout intent
+         * @description Initiates a new checkout intent, quotes verified catalog prices, and dispatches execution to the gateway.
+         */
+        readonly post: operations["create_payment_api_v2_payment_intents_post"];
         readonly delete?: never;
         readonly options?: never;
         readonly head?: never;
         readonly patch?: never;
         readonly trace?: never;
     };
-    readonly "/api/v1/payment/{payment_uuid}": {
+    readonly "/api/v2/payment-intents/{intent_uuid}/executions": {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
             readonly path: {
-                readonly payment_uuid: string;
+                readonly intent_uuid: string;
             };
             readonly cookie?: never;
         };
-        /** Get Payment Status */
-        readonly get: operations["get_payment_status_api_v1_payment__payment_uuid__get"];
+        readonly get?: never;
+        readonly put?: never;
+        /**
+         * Retry payment execution
+         * @description Initiates a retry execution for a failed or expired payment intent using an idempotent key.
+         */
+        readonly post: operations["retry_payment_api_v2_payment_intents__intent_uuid__executions_post"];
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
+    readonly "/api/v2/payment-intents/{intent_uuid}": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path: {
+                readonly intent_uuid: string;
+            };
+            readonly cookie?: never;
+        };
+        /**
+         * Get payment intent status
+         * @description Retrieves the current status of a payment intent owned by the authenticated user.
+         */
+        readonly get: operations["get_payment_intent_api_v2_payment_intents__intent_uuid__get"];
         readonly put?: never;
         readonly post?: never;
         readonly delete?: never;
@@ -256,34 +285,61 @@ export interface paths {
         readonly patch?: never;
         readonly trace?: never;
     };
-    readonly "/api/v1/payment": {
+    readonly "/api/v2/payment-executions/{execution_uuid}": {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
-            readonly path?: never;
+            readonly path: {
+                readonly execution_uuid: string;
+            };
             readonly cookie?: never;
         };
-        readonly get?: never;
+        /** Get payment status from browser return execution */
+        readonly get: operations["get_payment_execution_api_v2_payment_executions__execution_uuid__get"];
         readonly put?: never;
-        /** Create Payment */
-        readonly post: operations["create_payment_api_v1_payment_post"];
+        readonly post?: never;
         readonly delete?: never;
         readonly options?: never;
         readonly head?: never;
         readonly patch?: never;
         readonly trace?: never;
     };
-    readonly "/api/v1/payment/verify": {
+    readonly "/api/v2/payment-return/{execution_uuid}": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path: {
+                readonly execution_uuid: string;
+            };
+            readonly cookie?: never;
+        };
+        /**
+         * Handle gateway return callback
+         * @description Synchronizes the payment through the recovery path, then returns to the frontend.
+         */
+        readonly get: operations["payment_return_api_v2_payment_return__execution_uuid__get"];
+        readonly put?: never;
+        readonly post?: never;
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
+    readonly "/api/v2/readiness": {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
             readonly path?: never;
             readonly cookie?: never;
         };
-        readonly get?: never;
+        /**
+         * Core readiness probe
+         * @description Verifies Core database and reports payment subsystem readiness. Provider outages do not fail Core readiness.
+         */
+        readonly get: operations["readiness_api_v2_readiness_get"];
         readonly put?: never;
-        /** Verify Payment */
-        readonly post: operations["verify_payment_api_v1_payment_verify_post"];
+        readonly post?: never;
         readonly delete?: never;
         readonly options?: never;
         readonly head?: never;
@@ -580,7 +636,7 @@ export interface components {
          * AiRegistryModelOwnerEnum
          * @enum {string}
          */
-        readonly AiRegistryModelOwnerEnum: "OPEN_AI" | "GOOGLE" | "BLACK_FOREST_LABS" | "K_LING_AI" | "BRIA" | "BYTE_DANCE" | "IMAGINE_ART" | "LIGHT_TICKS" | "MID_JOURNEY" | "MINI_MAX" | "PIX_VERSE" | "PRUNA_AI" | "RUNWAY" | "SOURCE_FUL" | "VIDU" | "IDEOGRAM";
+        readonly AiRegistryModelOwnerEnum: "OPEN_AI" | "GOOGLE" | "BLACK_FOREST_LABS" | "K_LING_AI" | "BRIA" | "BYTE_DANCE" | "IMAGINE_ART" | "LIGHT_TICKS" | "MID_JOURNEY" | "MINI_MAX" | "PIX_VERSE" | "PRUNA_AI" | "RUNWAY" | "SOURCE_FUL" | "VIDU" | "IDEOGRAM" | "X_AI";
         /** AiRegistryModelSummary */
         readonly AiRegistryModelSummary: {
             /**
@@ -684,68 +740,31 @@ export interface components {
             /** File */
             readonly file?: string | null;
         };
-        /** Body_verify_payment_api_v1_payment_verify_post */
-        readonly Body_verify_payment_api_v1_payment_verify_post: {
-            /** Status */
-            readonly status: number;
-            /** Data */
-            readonly data: string;
-            /** Errorcode */
-            readonly errorCode?: string | null;
-        };
-        /** ChargeWalletResponse */
-        readonly ChargeWalletResponse: {
-            /**
-             * Payment Uuid
-             * Format: uuid
-             */
-            readonly payment_uuid: string;
-            /** Payment Url */
-            readonly payment_url: string;
-            /** Amount Usdmicro */
-            readonly amount_usdmicro: number;
-            /** Amount Irr Without Tax */
-            readonly amount_irr_without_tax: number;
-            /** Tax Percent */
-            readonly tax_percent: number;
-            /** Tax Amount Irr */
-            readonly tax_amount_irr: number;
-            /** Total Amount Irr */
-            readonly total_amount_irr: number;
-            /**
-             * Wallet Uuid
-             * Format: uuid
-             */
-            readonly wallet_uuid: string;
-        };
         /** CreatePaymentRequest */
         readonly CreatePaymentRequest: {
-            /** Amount Usdmicro */
-            readonly amount_usdmicro: number;
             /**
-             * Include Profit Percentage
-             * @default false
-             */
-            readonly include_profit_percentage: boolean;
-        };
-        /** CreatePaymentResponse */
-        readonly CreatePaymentResponse: {
-            /**
-             * Payment Uuid
+             * Intent Uuid
              * Format: uuid
              */
-            readonly payment_uuid: string;
-            /** Amount Irr Without Tax */
-            readonly amount_irr_without_tax: number;
-            /** Tax Percent */
-            readonly tax_percent: number;
-            /** Tax Amount Irr */
-            readonly tax_amount_irr: number;
-            /** Total Amount Irr */
-            readonly total_amount_irr: number;
-            /** Payment Url */
-            readonly payment_url: string;
+            readonly intent_uuid: string;
+            /**
+             * Target Type
+             * @enum {string}
+             */
+            readonly target_type: "wallet_topup" | "subscription";
+            /**
+             * Target Uuid
+             * Format: uuid
+             */
+            readonly target_uuid: string;
+            /** Amount Usdmicro */
+            readonly amount_usdmicro?: number | null;
         };
+        /**
+         * DispatchStatus
+         * @enum {string}
+         */
+        readonly DispatchStatus: "UNCONFIRMED" | "CONFIRMED";
         /** FileManagerMultipartCompleteRequest */
         readonly FileManagerMultipartCompleteRequest: {
             /** Upload Id */
@@ -967,64 +986,71 @@ export interface components {
             /** Detail */
             readonly detail?: readonly components["schemas"]["ValidationError"][];
         };
-        /** PaymentListItemResponse */
-        readonly PaymentListItemResponse: {
-            /**
-             * Payment Uuid
-             * Format: uuid
-             */
-            readonly payment_uuid: string;
-            /** Amount Irr Without Tax */
-            readonly amount_irr_without_tax: number;
-            /** Tax Percent */
-            readonly tax_percent: number;
-            /** Tax Amount Irr */
-            readonly tax_amount_irr: number;
-            /** Total Amount Irr */
-            readonly total_amount_irr: number;
-            readonly status: components["schemas"]["PaymentStatusEnum"];
-            /** Payment Url */
-            readonly payment_url: string | null;
-            readonly target_type: components["schemas"]["PaymentTargetTypeEnum"] | null;
-            /** Target Uuid */
-            readonly target_uuid: string | null;
+        /**
+         * PaymentExecutionStatus
+         * @enum {string}
+         */
+        readonly PaymentExecutionStatus: "CREATING" | "PENDING" | "UNKNOWN" | "SUCCEEDED" | "FAILED" | "EXPIRED";
+        /**
+         * PaymentFinancialStatus
+         * @enum {string}
+         */
+        readonly PaymentFinancialStatus: "PENDING" | "SUCCEEDED" | "CLOSED";
+        /**
+         * PaymentFulfillmentStatus
+         * @enum {string}
+         */
+        readonly PaymentFulfillmentStatus: "NOT_READY" | "PENDING" | "SUCCEEDED" | "NEEDS_REVIEW";
+        /** PaymentHistoryItemResponse */
+        readonly PaymentHistoryItemResponse: {
+            readonly payment: components["schemas"]["PaymentResponse"];
+            /** Target Type */
+            readonly target_type: string;
             /**
              * Created At
              * Format: date-time
              */
             readonly created_at: string;
-            /**
-             * Updated At
-             * Format: date-time
-             */
-            readonly updated_at: string;
         };
         /** PaymentListResponse */
         readonly PaymentListResponse: {
             /** Items */
-            readonly items: readonly components["schemas"]["PaymentListItemResponse"][];
+            readonly items: readonly components["schemas"]["PaymentHistoryItemResponse"][];
             /** Has Next */
             readonly has_next: boolean;
         };
-        /**
-         * PaymentStatusEnum
-         * @enum {string}
-         */
-        readonly PaymentStatusEnum: "PENDING" | "PAID" | "FAILED";
-        /** PaymentStatusResponse */
-        readonly PaymentStatusResponse: {
+        /** PaymentResponse */
+        readonly PaymentResponse: {
             /**
-             * Payment Uuid
+             * Id
              * Format: uuid
              */
-            readonly payment_uuid: string;
-            readonly status: components["schemas"]["PaymentStatusEnum"];
+            readonly id: string;
+            /**
+             * Execution Uuid
+             * Format: uuid
+             */
+            readonly execution_uuid: string;
+            readonly status: components["schemas"]["PaymentExecutionStatus"];
+            readonly financial_status: components["schemas"]["PaymentFinancialStatus"];
+            readonly fulfillment_status: components["schemas"]["PaymentFulfillmentStatus"];
+            readonly dispatch_status: components["schemas"]["DispatchStatus"];
+            /**
+             * Outcome
+             * @enum {string}
+             */
+            readonly outcome: "ready" | "pending" | "succeeded" | "failed" | "expired" | "review";
+            /** Currency */
+            readonly currency: string;
+            /** Amount */
+            readonly amount: string;
+            /** Expires At */
+            readonly expires_at: string | null;
+            /** Payment Url */
+            readonly payment_url: string | null;
         };
-        /**
-         * PaymentTargetTypeEnum
-         * @enum {string}
-         */
-        readonly PaymentTargetTypeEnum: "subscription" | "wallet";
+        /** RetryPaymentRequest */
+        readonly RetryPaymentRequest: Record<string, never>;
         /** SubscriptionPlanListResponse */
         readonly SubscriptionPlanListResponse: {
             /** Items */
@@ -1085,34 +1111,23 @@ export interface components {
         /** SubscriptionPurchaseRequest */
         readonly SubscriptionPurchaseRequest: {
             /**
+             * Intent Uuid
+             * Format: uuid
+             */
+            readonly intent_uuid: string;
+            /**
              * Plan Uuid
              * Format: uuid
              */
             readonly plan_uuid: string;
         };
-        /** SubscriptionPurchaseResponse */
-        readonly SubscriptionPurchaseResponse: {
-            /**
-             * Payment Uuid
-             * Format: uuid
-             */
-            readonly payment_uuid: string;
-            /** Payment Url */
-            readonly payment_url: string;
-            /** Amount Usdmicro */
-            readonly amount_usdmicro: number;
-            /** Amount Irr Without Tax */
-            readonly amount_irr_without_tax: number;
-            /** Tax Percent */
-            readonly tax_percent: number;
-            /** Tax Amount Irr */
-            readonly tax_amount_irr: number;
-            /** Total Amount Irr */
-            readonly total_amount_irr: number;
-            readonly plan: components["schemas"]["SubscriptionPlanResponse"];
-        };
         /** UserChargeWalletRequest */
         readonly UserChargeWalletRequest: {
+            /**
+             * Intent Uuid
+             * Format: uuid
+             */
+            readonly intent_uuid: string;
             /** Amount Usdmicro */
             readonly amount_usdmicro: number;
         };
@@ -1318,7 +1333,7 @@ export interface components {
          * @description Stable namespaces used in wallet transaction idempotency keys.
          * @enum {string}
          */
-        readonly WalletOperationSourceEnum: "admin" | "ai_gateway_request" | "ai_task_message" | "payment" | "subscription";
+        readonly WalletOperationSourceEnum: "admin" | "ai_gateway_request" | "ai_task_message" | "subscription";
         /** WalletTransactionResponse */
         readonly WalletTransactionResponse: {
             /**
@@ -1372,10 +1387,8 @@ export type SchemaAiTaskRuleEnum = components['schemas']['AiTaskRuleEnum'];
 export type SchemaAiTaskTypeEnum = components['schemas']['AiTaskTypeEnum'];
 export type SchemaBodyReplaceFileApiV1FileManagerFilesFileUuidPut = components['schemas']['Body_replace_file_api_v1_file_manager_files__file_uuid__put'];
 export type SchemaBodySimpleUploadApiV1FileManagerSimpleUploadPost = components['schemas']['Body_simple_upload_api_v1_file_manager_simple_upload_post'];
-export type SchemaBodyVerifyPaymentApiV1PaymentVerifyPost = components['schemas']['Body_verify_payment_api_v1_payment_verify_post'];
-export type SchemaChargeWalletResponse = components['schemas']['ChargeWalletResponse'];
 export type SchemaCreatePaymentRequest = components['schemas']['CreatePaymentRequest'];
-export type SchemaCreatePaymentResponse = components['schemas']['CreatePaymentResponse'];
+export type SchemaDispatchStatus = components['schemas']['DispatchStatus'];
 export type SchemaFileManagerMultipartCompleteRequest = components['schemas']['FileManagerMultipartCompleteRequest'];
 export type SchemaFileManagerMultipartCompletedPart = components['schemas']['FileManagerMultipartCompletedPart'];
 export type SchemaFileManagerMultipartInitiateRequest = components['schemas']['FileManagerMultipartInitiateRequest'];
@@ -1391,15 +1404,16 @@ export type SchemaGenerateTaskRequest = components['schemas']['GenerateTaskReque
 export type SchemaGetWalletResponse = components['schemas']['GetWalletResponse'];
 export type SchemaGetWalletTransactionsResponse = components['schemas']['GetWalletTransactionsResponse'];
 export type SchemaHttpValidationError = components['schemas']['HTTPValidationError'];
-export type SchemaPaymentListItemResponse = components['schemas']['PaymentListItemResponse'];
+export type SchemaPaymentExecutionStatus = components['schemas']['PaymentExecutionStatus'];
+export type SchemaPaymentFinancialStatus = components['schemas']['PaymentFinancialStatus'];
+export type SchemaPaymentFulfillmentStatus = components['schemas']['PaymentFulfillmentStatus'];
+export type SchemaPaymentHistoryItemResponse = components['schemas']['PaymentHistoryItemResponse'];
 export type SchemaPaymentListResponse = components['schemas']['PaymentListResponse'];
-export type SchemaPaymentStatusEnum = components['schemas']['PaymentStatusEnum'];
-export type SchemaPaymentStatusResponse = components['schemas']['PaymentStatusResponse'];
-export type SchemaPaymentTargetTypeEnum = components['schemas']['PaymentTargetTypeEnum'];
+export type SchemaPaymentResponse = components['schemas']['PaymentResponse'];
+export type SchemaRetryPaymentRequest = components['schemas']['RetryPaymentRequest'];
 export type SchemaSubscriptionPlanListResponse = components['schemas']['SubscriptionPlanListResponse'];
 export type SchemaSubscriptionPlanResponse = components['schemas']['SubscriptionPlanResponse'];
 export type SchemaSubscriptionPurchaseRequest = components['schemas']['SubscriptionPurchaseRequest'];
-export type SchemaSubscriptionPurchaseResponse = components['schemas']['SubscriptionPurchaseResponse'];
 export type SchemaUserChargeWalletRequest = components['schemas']['UserChargeWalletRequest'];
 export type SchemaUserEditInfoRequest = components['schemas']['UserEditInfoRequest'];
 export type SchemaUserEditInfoResponse = components['schemas']['UserEditInfoResponse'];
@@ -1683,7 +1697,7 @@ export interface operations {
                     readonly [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": components["schemas"]["SubscriptionPurchaseResponse"];
+                    readonly "application/json": components["schemas"]["PaymentResponse"];
                 };
             };
             /** @description Validation Error */
@@ -1716,7 +1730,7 @@ export interface operations {
                     readonly [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": components["schemas"]["ChargeWalletResponse"];
+                    readonly "application/json": components["schemas"]["PaymentResponse"];
                 };
             };
             /** @description Validation Error */
@@ -1784,10 +1798,9 @@ export interface operations {
             };
         };
     };
-    readonly list_payments_api_v1_payment_list_get: {
+    readonly get_payment_intents_api_v2_payment_intents_get: {
         readonly parameters: {
             readonly query?: {
-                readonly status?: components["schemas"]["PaymentStatusEnum"] | null;
                 readonly offset?: number;
                 readonly limit?: number;
             };
@@ -1817,38 +1830,7 @@ export interface operations {
             };
         };
     };
-    readonly get_payment_status_api_v1_payment__payment_uuid__get: {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path: {
-                readonly payment_uuid: string;
-            };
-            readonly cookie?: never;
-        };
-        readonly requestBody?: never;
-        readonly responses: {
-            /** @description Successful Response */
-            readonly 200: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["PaymentStatusResponse"];
-                };
-            };
-            /** @description Validation Error */
-            readonly 422: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    readonly create_payment_api_v1_payment_post: {
+    readonly create_payment_api_v2_payment_intents_post: {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -1861,13 +1843,31 @@ export interface operations {
             };
         };
         readonly responses: {
+            /** @description OK */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["PaymentResponse"];
+                };
+            };
             /** @description Successful Response */
             readonly 201: {
                 headers: {
                     readonly [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": components["schemas"]["CreatePaymentResponse"];
+                    readonly "application/json": components["schemas"]["PaymentResponse"];
+                };
+            };
+            /** @description Accepted */
+            readonly 202: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["PaymentResponse"];
                 };
             };
             /** @description Validation Error */
@@ -1881,26 +1881,48 @@ export interface operations {
             };
         };
     };
-    readonly verify_payment_api_v1_payment_verify_post: {
+    readonly retry_payment_api_v2_payment_intents__intent_uuid__executions_post: {
         readonly parameters: {
             readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
+            readonly header: {
+                readonly "Idempotency-Key": string;
+            };
+            readonly path: {
+                readonly intent_uuid: string;
+            };
             readonly cookie?: never;
         };
-        readonly requestBody: {
+        readonly requestBody?: {
             readonly content: {
-                readonly "application/x-www-form-urlencoded": components["schemas"]["Body_verify_payment_api_v1_payment_verify_post"];
+                readonly "application/json": components["schemas"]["RetryPaymentRequest"] | null;
             };
         };
         readonly responses: {
-            /** @description Successful Response */
-            readonly 303: {
+            /** @description OK */
+            readonly 200: {
                 headers: {
                     readonly [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": unknown;
+                    readonly "application/json": components["schemas"]["PaymentResponse"];
+                };
+            };
+            /** @description Successful Response */
+            readonly 201: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["PaymentResponse"];
+                };
+            };
+            /** @description Accepted */
+            readonly 202: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["PaymentResponse"];
                 };
             };
             /** @description Validation Error */
@@ -1910,6 +1932,119 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    readonly get_payment_intent_api_v2_payment_intents__intent_uuid__get: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path: {
+                readonly intent_uuid: string;
+            };
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["PaymentResponse"];
+                };
+            };
+            /** @description Validation Error */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    readonly get_payment_execution_api_v2_payment_executions__execution_uuid__get: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path: {
+                readonly execution_uuid: string;
+            };
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["PaymentResponse"];
+                };
+            };
+            /** @description Validation Error */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    readonly payment_return_api_v2_payment_return__execution_uuid__get: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path: {
+                readonly execution_uuid: string;
+            };
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 303: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    readonly readiness_api_v2_readiness_get: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": {
+                        readonly [key: string]: string;
+                    };
                 };
             };
         };
@@ -2412,14 +2547,18 @@ type ReadonlyArray<T> = [
 ] extends [
     unknown[]
 ] ? Readonly<Exclude<T, undefined>> : Readonly<Exclude<T, undefined>[]>;
-export const aiRegistryModelOwnerEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiRegistryModelOwnerEnum"]> = ["OPEN_AI", "GOOGLE", "BLACK_FOREST_LABS", "K_LING_AI", "BRIA", "BYTE_DANCE", "IMAGINE_ART", "LIGHT_TICKS", "MID_JOURNEY", "MINI_MAX", "PIX_VERSE", "PRUNA_AI", "RUNWAY", "SOURCE_FUL", "VIDU", "IDEOGRAM"];
+export const aiRegistryModelOwnerEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiRegistryModelOwnerEnum"]> = ["OPEN_AI", "GOOGLE", "BLACK_FOREST_LABS", "K_LING_AI", "BRIA", "BYTE_DANCE", "IMAGINE_ART", "LIGHT_TICKS", "MID_JOURNEY", "MINI_MAX", "PIX_VERSE", "PRUNA_AI", "RUNWAY", "SOURCE_FUL", "VIDU", "IDEOGRAM", "X_AI"];
 export const aiRegistryModelSupportedTypesEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiRegistryModelSupportedTypesEnum"]> = ["TEXT", "IMAGE", "AUDIO", "VIDEO"];
 export const aiTaskMessageStatusEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiTaskMessageStatusEnum"]> = ["PENDING", "IN_PROGRESS", "SUCCESS", "FAILED"];
 export const aiTaskRuleEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiTaskRuleEnum"]> = ["SYSTEM", "USER", "ASSISTANT", "TOOL", "FUNCTION", "INLINE"];
 export const aiTaskTypeEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiTaskTypeEnum"]> = ["TEXT", "IMAGE", "AUDIO", "VIDEO"];
-export const paymentStatusEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaymentStatusEnum"]> = ["PENDING", "PAID", "FAILED"];
-export const paymentTargetTypeEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaymentTargetTypeEnum"]> = ["subscription", "wallet"];
-export const walletOperationSourceEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["WalletOperationSourceEnum"]> = ["admin", "ai_gateway_request", "ai_task_message", "payment", "subscription"];
+export const createPaymentRequestTarget_typeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["CreatePaymentRequest"]["target_type"]> = ["wallet_topup", "subscription"];
+export const dispatchStatusValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["DispatchStatus"]> = ["UNCONFIRMED", "CONFIRMED"];
+export const paymentExecutionStatusValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaymentExecutionStatus"]> = ["CREATING", "PENDING", "UNKNOWN", "SUCCEEDED", "FAILED", "EXPIRED"];
+export const paymentFinancialStatusValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaymentFinancialStatus"]> = ["PENDING", "SUCCEEDED", "CLOSED"];
+export const paymentFulfillmentStatusValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaymentFulfillmentStatus"]> = ["NOT_READY", "PENDING", "SUCCEEDED", "NEEDS_REVIEW"];
+export const paymentResponseOutcomeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaymentResponse"]["outcome"]> = ["ready", "pending", "succeeded", "failed", "expired", "review"];
+export const walletOperationSourceEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["WalletOperationSourceEnum"]> = ["admin", "ai_gateway_request", "ai_task_message", "subscription"];
 export const walletTransactionTypeEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["WalletTransactionTypeEnum"]> = ["DEPOSIT", "WITHDRAW", "REFUND"];
 
 
@@ -2440,6 +2579,7 @@ export const AiRegistryModelOwnerEnumMap = {
   "SOURCE_FUL": "SOURCE_FUL",
   "VIDU": "VIDU",
   "IDEOGRAM": "IDEOGRAM",
+  "X_AI": "X_AI",
 } as const;
 export type AiRegistryModelOwnerEnumKey = keyof typeof AiRegistryModelOwnerEnumMap;
 export type AiRegistryModelOwnerEnumValue = (typeof AiRegistryModelOwnerEnumMap)[AiRegistryModelOwnerEnumKey];
@@ -2482,26 +2622,45 @@ export const AiTaskTypeEnumMap = {
 export type AiTaskTypeEnumKey = keyof typeof AiTaskTypeEnumMap;
 export type AiTaskTypeEnumValue = (typeof AiTaskTypeEnumMap)[AiTaskTypeEnumKey];
 
-export const PaymentStatusEnumMap = {
-  "PENDING": "PENDING",
-  "PAID": "PAID",
-  "FAILED": "FAILED",
+export const DispatchStatusMap = {
+  "UNCONFIRMED": "UNCONFIRMED",
+  "CONFIRMED": "CONFIRMED",
 } as const;
-export type PaymentStatusEnumKey = keyof typeof PaymentStatusEnumMap;
-export type PaymentStatusEnumValue = (typeof PaymentStatusEnumMap)[PaymentStatusEnumKey];
+export type DispatchStatusKey = keyof typeof DispatchStatusMap;
+export type DispatchStatusValue = (typeof DispatchStatusMap)[DispatchStatusKey];
 
-export const PaymentTargetTypeEnumMap = {
-  "subscription": "subscription",
-  "wallet": "wallet",
+export const PaymentExecutionStatusMap = {
+  "CREATING": "CREATING",
+  "PENDING": "PENDING",
+  "UNKNOWN": "UNKNOWN",
+  "SUCCEEDED": "SUCCEEDED",
+  "FAILED": "FAILED",
+  "EXPIRED": "EXPIRED",
 } as const;
-export type PaymentTargetTypeEnumKey = keyof typeof PaymentTargetTypeEnumMap;
-export type PaymentTargetTypeEnumValue = (typeof PaymentTargetTypeEnumMap)[PaymentTargetTypeEnumKey];
+export type PaymentExecutionStatusKey = keyof typeof PaymentExecutionStatusMap;
+export type PaymentExecutionStatusValue = (typeof PaymentExecutionStatusMap)[PaymentExecutionStatusKey];
+
+export const PaymentFinancialStatusMap = {
+  "PENDING": "PENDING",
+  "SUCCEEDED": "SUCCEEDED",
+  "CLOSED": "CLOSED",
+} as const;
+export type PaymentFinancialStatusKey = keyof typeof PaymentFinancialStatusMap;
+export type PaymentFinancialStatusValue = (typeof PaymentFinancialStatusMap)[PaymentFinancialStatusKey];
+
+export const PaymentFulfillmentStatusMap = {
+  "NOT_READY": "NOT_READY",
+  "PENDING": "PENDING",
+  "SUCCEEDED": "SUCCEEDED",
+  "NEEDS_REVIEW": "NEEDS_REVIEW",
+} as const;
+export type PaymentFulfillmentStatusKey = keyof typeof PaymentFulfillmentStatusMap;
+export type PaymentFulfillmentStatusValue = (typeof PaymentFulfillmentStatusMap)[PaymentFulfillmentStatusKey];
 
 export const WalletOperationSourceEnumMap = {
   "admin": "admin",
   "ai_gateway_request": "ai_gateway_request",
   "ai_task_message": "ai_task_message",
-  "payment": "payment",
   "subscription": "subscription",
 } as const;
 export type WalletOperationSourceEnumKey = keyof typeof WalletOperationSourceEnumMap;

@@ -92,15 +92,13 @@ function AppLayoutSidebarWallet() {
 
     const res = await chargeWalletState.mutateAsync({
       body: {
+        intent_uuid: crypto.randomUUID(),
         amount_usdmicro: tokenToMicroDollar(parseInt(values.amount, 10)),
       },
     });
     openPaymentUrl({
       paymentUrl: res.payment_url,
-      amountIrrWithoutTax: res.amount_irr_without_tax,
-      taxPercent: res.tax_percent,
-      taxAmountIrr: res.tax_amount_irr,
-      totalAmountIrr: res.total_amount_irr,
+      totalAmountIrr: Number(res.amount) || 0,
     });
   }
 

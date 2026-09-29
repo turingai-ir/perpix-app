@@ -4,47 +4,27 @@ import { Check } from "lucide-react";
 
 import LoadingSection from "@/components/custom/loading-section";
 import ErrorSection from "@/components/custom/error-section";
-import {
-  PaymentStatusEnumMap,
-  type SchemaPaymentListItemResponse,
-} from "@/services/api";
+import { PaymentExecutionStatusMap } from "@/services/api";
 import { Button } from "@/components/ui/button";
 import { formatLocalizedNumber } from "@/utils";
 import { useAppTranslate } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
 import { APP_ROUTES_KEY } from "@/router/routes";
-import { usePayments, usePaymentStatus } from "@/feature/payment";
+import { usePaymentStatus } from "@/feature/payment";
 
 function PaymentResultPage() {
   const { paymentUuid } = useParams<{ paymentUuid: string }>();
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
 
   const paymentStatusState = usePaymentStatus(paymentUuid);
-  const paymentsState = usePayments({ enabled: !!paymentUuid });
   const paymentResult = paymentStatusState.data;
-  const payments = paymentsState.data
-    ? Array.from(
-        paymentsState.data.items as ArrayLike<SchemaPaymentListItemResponse>,
-      )
-    : [];
-  const payment = payments.find(
-    (item: SchemaPaymentListItemResponse) => item.payment_uuid === paymentUuid,
-  );
-  const isPaid = paymentResult?.status === PaymentStatusEnumMap.PAID;
+  const isPaid =
+    paymentResult?.outcome === "succeeded" ||
+    paymentResult?.status === PaymentExecutionStatusMap.SUCCEEDED;
   const paymentRows = [
     {
-      label: t("pages.payment.result.initialAmount"),
-      value: payment?.amount_irr_without_tax ?? 0,
-    },
-    {
-      label: t("pages.payment.result.tax", {
-        percent: formatLocalizedNumber({ value: payment?.tax_percent ?? 0 }),
-      }),
-      value: payment?.tax_amount_irr ?? 0,
-    },
-    {
       label: t("pages.payment.result.amount"),
-      value: payment?.total_amount_irr ?? 0,
+      value: Number(paymentResult?.amount) || 0,
     },
   ];
 

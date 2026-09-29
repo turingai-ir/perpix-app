@@ -1,15 +1,15 @@
 import { useReactQueryApi } from "@/hooks/app";
 
-export const usePaymentStatus = (paymentUuid?: string) => {
+export const usePaymentStatus = (executionUuid?: string) => {
   const { useQuery } = useReactQueryApi();
 
   return useQuery(
     "get",
-    "/api/v1/payment/{payment_uuid}",
+    "/api/v2/payment-executions/{execution_uuid}",
     {
-      params: { path: { payment_uuid: paymentUuid ?? "" } },
+      params: { path: { execution_uuid: executionUuid ?? "" } },
     },
-    { enabled: !!paymentUuid },
+    { enabled: !!executionUuid },
   );
 };
 
@@ -28,7 +28,7 @@ export const usePayments = ({
 
   return useQuery(
     "get",
-    "/api/v1/payment/list",
+    "/api/v2/payment-intents",
     { params: { query: { offset, limit } } },
     { enabled },
   );
