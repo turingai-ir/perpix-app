@@ -24,7 +24,7 @@
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(320px, 352px);
+  grid-template-columns: minmax(320px, 352px) minmax(0, 1fr);
   align-items: start;
   gap: 10px;
   direction: ltr;
@@ -38,10 +38,10 @@
 .composerPanel {
   position: sticky;
   top: 10px;
-  grid-column: 2;
+  grid-column: 1;
 }
 .resultsPanel {
-  grid-column: 1;
+  grid-column: 2;
   grid-row: 1;
   min-height: calc(100dvh - 56px);
   overflow: hidden;

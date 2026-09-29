@@ -10,6 +10,8 @@ import { mockAuthenticatedSession } from "./support/auth-session";
 const MODEL_UUID = "2d1fcf14-a655-47c5-af08-3fa450dc99cc";
 const NANO_MODEL_UUID = "a509b349-d43f-4065-9cf2-de444bf4aa2c";
 const RUNWARE_PROVIDER_UUID = "638239ab-dcac-49cf-a198-f593cfd45e77";
+const VIDEO_PROMPT_PLACEHOLDER =
+  "صحنه، حرکت سوژه، حرکت دوربین و حال‌وهوای نور را توصیف کن…";
 
 test.describe.configure({ mode: "serial" });
 
@@ -68,16 +70,12 @@ test("video director opens without generating and keeps the model controls ready
   });
 });
 
-test("keeps the creator rail on the RTL inline start beside a wider workspace", async ({
+test("keeps the creator rail on the left beside a wider workspace", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto("/generation/video", { waitUntil: "domcontentloaded" });
-  await expect(
-    page.getByPlaceholder(
-      "صحنه، حرکت سوژه، حرکت دوربین و حال‌وهوای نور را توصیف کن…",
-    ),
-  ).toBeVisible();
+  await expect(page.getByPlaceholder(VIDEO_PROMPT_PLACEHOLDER)).toBeVisible();
 
   const creatorRail = page.locator("[data-generation-composer]");
   const workspace = page.getByRole("region", {
@@ -88,7 +86,7 @@ test("keeps the creator rail on the RTL inline start beside a wider workspace", 
 
   expect(creatorRailBounds).not.toBeNull();
   expect(workspaceBounds).not.toBeNull();
-  expect(creatorRailBounds!.x).toBeGreaterThan(workspaceBounds!.x);
+  expect(creatorRailBounds!.x).toBeLessThan(workspaceBounds!.x);
   expect(workspaceBounds!.width).toBeGreaterThan(creatorRailBounds!.width);
 });
 
@@ -159,14 +157,9 @@ test("updates visible video prompt fields when the generation mode changes", asy
 }) => {
   await openVideoGenerationPage(page);
 
-  await expect(
-    page.getByPlaceholder(
-      "صحنه، حرکت سوژه، حرکت دوربین و حال‌وهوای نور را توصیف کن…",
-    ),
-  ).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: "متن به ویدیو" }),
-  ).toBeVisible();
+  await expect(page.getByPlaceholder(VIDEO_PROMPT_PLACEHOLDER)).toBeVisible();
+  const textMode = page.getByRole("radio", { name: "متن به ویدیو" });
+  await expect(textMode).toBeVisible();
   await expect(page.getByRole("combobox", { name: "رزولوشن" })).toHaveText(
     "720p",
   );
@@ -180,7 +173,11 @@ test("updates visible video prompt fields when the generation mode changes", asy
 
   await expect(page.getByRole("dialog")).toBeHidden();
 
-  await page.getByRole("button", { name: "عکس به ویدیو" }).click();
+  await textMode.focus();
+  await page.keyboard.press("ArrowLeft");
+  await expect(
+    page.getByRole("radio", { name: "عکس به ویدیو" }),
+  ).toHaveAttribute("aria-checked", "true");
 
   await expect(
     page.getByRole("heading", { name: "تصاویر فریم" }),
@@ -189,7 +186,7 @@ test("updates visible video prompt fields when the generation mode changes", asy
   await expect(page.getByRole("combobox", { name: "قاب تصویر" })).toBeHidden();
   await expect(page.getByText("ویدیوی مرجع", { exact: true })).toBeHidden();
 
-  await page.getByRole("button", { name: "کنترل حرکت" }).click();
+  await page.getByRole("radio", { name: "کنترل حرکت" }).click();
 
   await expect(
     page.getByRole("heading", { name: "ویدیوی مرجع" }),
@@ -198,6 +195,11 @@ test("updates visible video prompt fields when the generation mode changes", asy
     page.getByRole("heading", { name: "تصاویر مرجع" }),
   ).toBeVisible();
   await expect(page.getByRole("heading", { name: "تصاویر فریم" })).toBeHidden();
+  await expect(
+    page.getByPlaceholder(
+      "حرکت کاراکتر و نحوهٔ دنبال‌کردن ویدیوی مرجع را توصیف کن…",
+    ),
+  ).toBeVisible();
 });
 
 test("shows the generation rules from the prompt box help button", async ({
@@ -308,10 +310,8 @@ test("loads mode config from the model detail without the removed generation-con
 
   await openVideoGenerationPage(page);
 
-  await expect(page.getByPlaceholder("شروع به تایپ کنید")).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: "متن به ویدیو" }),
-  ).toBeVisible();
+  await expect(page.getByPlaceholder(VIDEO_PROMPT_PLACEHOLDER)).toBeVisible();
+  await expect(page.getByRole("radio", { name: "متن به ویدیو" })).toBeVisible();
   expect(legacyGenerationConfigRequestCount).toBe(0);
 });
 
@@ -324,11 +324,11 @@ test("submits text-to-video prompt values with the selected model", async ({
   await expect(
     page.getByRole("combobox", { name: "ارائه‌دهنده هوش مصنوعی" }),
   ).toHaveCount(0);
-  const promptInput = page.getByPlaceholder("شروع به تایپ کنید");
+  const promptInput = page.getByPlaceholder(VIDEO_PROMPT_PLACEHOLDER);
   const submitButton = page.locator('button[type="submit"]');
 
   await expect(submitButton).toBeDisabled();
-  await promptInput.fill("No");
+  await promptInput.fill("N");
   await expect(submitButton).toBeDisabled();
   await promptInput.fill("A cinematic city shot");
   await expect(submitButton).toBeEnabled();
@@ -550,7 +550,7 @@ test("switches Nano Banana image modes using the canonical selector", async ({
   await modeSelector.click();
   await page.getByRole("option", { name: "تبدیل متن به تصویر" }).click();
   await page
-    .getByPlaceholder("شروع به تایپ کنید")
+    .getByPlaceholder(VIDEO_PROMPT_PLACEHOLDER)
     .fill("A quiet mountain lake");
   await page.locator('button[type="submit"]').click();
 
@@ -591,7 +591,7 @@ test("refetches model metadata after an unclassified application failure", async
   });
 
   await openVideoGenerationPage(page);
-  await page.getByPlaceholder("شروع به تایپ کنید").fill("A valid prompt");
+  await page.getByPlaceholder(VIDEO_PROMPT_PLACEHOLDER).fill("A valid prompt");
   await page.locator('button[type="submit"]').click();
 
   await expect.poll(() => modelDetailRequestCount).toBeGreaterThan(1);
@@ -603,7 +603,7 @@ test("does not lock the form for an unmapped application error", async ({
 }) => {
   await mockGenerateApplicationError(page, 503, "raw provider error");
   await openVideoGenerationPage(page);
-  const prompt = page.getByPlaceholder("شروع به تایپ کنید");
+  const prompt = page.getByPlaceholder(VIDEO_PROMPT_PLACEHOLDER);
   await prompt.fill("A valid prompt");
   await page.locator('button[type="submit"]').click();
 
@@ -619,7 +619,7 @@ test("connects canonical validation paths to form fields without leaking provide
     { loc: "prompt", msg: "providerPayload.promptText is invalid" },
   ]);
   await openVideoGenerationPage(page);
-  await page.getByPlaceholder("شروع به تایپ کنید").fill("A valid prompt");
+  await page.getByPlaceholder(VIDEO_PROMPT_PLACEHOLDER).fill("A valid prompt");
   await page.locator('button[type="submit"]').click();
 
   await expect(page.getByText("مقدار این فیلد معتبر نیست")).toBeVisible();
@@ -632,9 +632,10 @@ test("supports multi-prompt mode without requiring the main prompt field", async
   const generateRequest = waitForGenerateRequest(page);
 
   await openVideoGenerationPage(page);
+  await page.getByText("تنظیمات تکمیلی", { exact: true }).click();
   await page.getByRole("button", { name: /پرامپت چندبخشی/ }).click();
 
-  await expect(page.getByPlaceholder("شروع به تایپ کنید")).toBeHidden();
+  await expect(page.getByPlaceholder(VIDEO_PROMPT_PLACEHOLDER)).toBeHidden();
 
   await page.getByRole("textbox", { name: "پرامپت بخش" }).fill("Opening shot");
   await page.getByRole("spinbutton", { name: "مدت بخش" }).fill("5");
@@ -674,7 +675,7 @@ test("shows the generation failure reason and retries it in the same chat", asyn
 
   await expect(page.getByText("تولید ویدیو ناموفق بود")).toBeVisible();
   await expect(page.getByText("PROVIDER_RATE_LIMITED")).toBeVisible();
-  await expect(page.getByPlaceholder("شروع به تایپ کنید")).toHaveValue(
+  await expect(page.getByPlaceholder(VIDEO_PROMPT_PLACEHOLDER)).toHaveValue(
     "Retry this video",
   );
   await page
@@ -710,11 +711,11 @@ test("prevents another generation while the chat has a pending request", async (
 
   await page.goto("/generation/video/task-1");
 
-  await expect(page.getByPlaceholder("شروع به تایپ کنید")).toHaveValue(
+  await expect(page.getByPlaceholder(VIDEO_PROMPT_PLACEHOLDER)).toHaveValue(
     "Still rendering",
   );
   await expect(
-    page.getByRole("combobox").filter({ hasText: "Kling 3.0 Standard" }),
+    page.getByRole("button", { name: /انتخاب مدل.*Kling 3\.0 Standard/ }),
   ).toBeVisible();
   await expect(page.locator('button[type="submit"]')).toBeDisabled();
 });
@@ -739,7 +740,7 @@ test("does not restore the prompt after a successful generation", async ({
 
   await page.goto("/generation/video/task-1");
 
-  await expect(page.getByPlaceholder("شروع به تایپ کنید")).toHaveValue("");
+  await expect(page.getByPlaceholder(VIDEO_PROMPT_PLACEHOLDER)).toHaveValue("");
 });
 
 test("uses the last assistant message when a user message follows it", async ({
@@ -774,7 +775,7 @@ test("uses the last assistant message when a user message follows it", async ({
 
   await page.goto("/generation/video/task-1");
 
-  await expect(page.getByPlaceholder("شروع به تایپ کنید")).toHaveValue(
+  await expect(page.getByPlaceholder(VIDEO_PROMPT_PLACEHOLDER)).toHaveValue(
     "Assistant prompt",
   );
 });

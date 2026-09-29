@@ -3,6 +3,7 @@ import { ArrowUp, Loader2, Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import type { DynamicConfigForm } from "@/pages/(app)/generation/_components/dynamic-config";
+import { isGenerationPromptInvalid } from "@/pages/(app)/generation/_hooks/use-generation-form-submit";
 
 export const PromptSubmitButton: FC<{
   disabled?: boolean;
@@ -11,12 +12,14 @@ export const PromptSubmitButton: FC<{
   promptRequired: boolean;
   label?: string;
 }> = ({ disabled, dynamicForm, isLoading, promptRequired, label }) => {
-  const prompt = String(dynamicForm.watch("prompt") ?? "");
-  const promptMeta = dynamicForm.getFieldMeta("prompt");
-  const isPromptInvalid =
-    promptRequired &&
-    Boolean(promptMeta?.required) &&
-    prompt.trim().length < (promptMeta?.property.minLength ?? 3);
+  const prompt = dynamicForm.watch("prompt");
+  const multiPrompt = dynamicForm.watch("multi_prompt");
+  const isPromptInvalid = isGenerationPromptInvalid({
+    dynamicForm,
+    isPromptFieldVisible: promptRequired,
+    multiPrompt,
+    prompt,
+  });
 
   return (
     <Button

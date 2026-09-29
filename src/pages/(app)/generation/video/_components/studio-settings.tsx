@@ -6,6 +6,8 @@ import { useAppTranslate } from "@/hooks";
 import { DynamicPromptConfigField } from "@/pages/(app)/generation/_components/dynamic-config";
 import type { useGenerationPromptBox } from "@/pages/(app)/generation/_hooks";
 
+const QUICK_FIELD_ORDER = ["duration", "aspect_ratio", "resolution"];
+
 export function VideoStudioSettings({
   studio,
 }: {
@@ -45,6 +47,11 @@ export function VideoStudioSettings({
       <div className={styles.configGrid}>
         {studio.promptBoxConfigFieldNames
           .filter((name) => name !== "mode")
+          .sort(
+            (first, second) =>
+              QUICK_FIELD_ORDER.indexOf(first) -
+              QUICK_FIELD_ORDER.indexOf(second),
+          )
           .map(renderField)}
         {required.map(renderField)}
       </div>

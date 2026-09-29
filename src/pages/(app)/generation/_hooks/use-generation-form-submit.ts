@@ -8,6 +8,45 @@ import { handleGenerationApplicationError } from "@/pages/(app)/generation/_util
 
 const MIN_PROMPT_LENGTH = 3;
 
+export function isGenerationPromptInvalid({
+  dynamicForm,
+  isPromptFieldVisible,
+  multiPrompt,
+  prompt,
+}: {
+  dynamicForm: DynamicConfigForm;
+  isPromptFieldVisible: boolean;
+  multiPrompt: unknown;
+  prompt: unknown;
+}) {
+  if (!isPromptFieldVisible) return false;
+
+  const promptMeta = dynamicForm.getFieldMeta("prompt");
+  const supportsMultiPrompt =
+    Boolean(dynamicForm.getFieldMeta("multi_prompt")) &&
+    dynamicForm.getValues("mode") === "text_to_video";
+  const promptMinLength = supportsMultiPrompt
+    ? Math.max(promptMeta?.property.minLength ?? 0, MIN_PROMPT_LENGTH)
+    : (promptMeta?.property.minLength ?? MIN_PROMPT_LENGTH);
+  const hasValidMultiPrompt =
+    supportsMultiPrompt &&
+    Array.isArray(multiPrompt) &&
+    multiPrompt.some(
+      (shot) =>
+        typeof shot === "object" &&
+        shot !== null &&
+        "prompt" in shot &&
+        String(shot.prompt).trim().length >= promptMinLength,
+    );
+  const needsPrompt = Boolean(promptMeta?.required) || supportsMultiPrompt;
+
+  return (
+    needsPrompt &&
+    String(prompt ?? "").trim().length < promptMinLength &&
+    !hasValidMultiPrompt
+  );
+}
+
 type Input = Pick<GenerationPromptBoxProps, "isLoading" | "onSubmit"> & {
   dynamicForm: DynamicConfigForm;
   isUploadingMedia: boolean;
@@ -47,13 +86,12 @@ export function useGenerationFormSubmit({
   const handleFormSubmit: SubmitEventHandler<HTMLFormElement> = async (
     event,
   ) => {
-    const prompt = String(dynamicForm.getValues("prompt") ?? "");
-    const promptMeta = dynamicForm.getFieldMeta("prompt");
-    const isPromptInvalid =
-      isPromptFieldVisible &&
-      Boolean(promptMeta?.required) &&
-      prompt.trim().length <
-        (promptMeta?.property.minLength ?? MIN_PROMPT_LENGTH);
+    const isPromptInvalid = isGenerationPromptInvalid({
+      dynamicForm,
+      isPromptFieldVisible,
+      multiPrompt: dynamicForm.getValues("multi_prompt"),
+      prompt: dynamicForm.getValues("prompt"),
+    });
 
     if (isSubmitDisabled || isPromptInvalid) {
       event.preventDefault();
