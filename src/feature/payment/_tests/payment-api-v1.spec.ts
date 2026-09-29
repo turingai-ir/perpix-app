@@ -47,3 +47,65 @@ test("payment result requests execution status from Core v1", async ({
 
   await request;
 });
+
+test("pending payment is not shown as failed and refreshes to success", async ({
+  page,
+}) => {
+  const executionUuid = "22222222-2222-4222-8222-222222222222";
+  let requests = 0;
+  let releaseSuccess: () => void = () => {};
+  const allowSuccess = new Promise<void>((resolve) => {
+    releaseSuccess = resolve;
+  });
+  await page.route("**/api/v1/payment-executions/**", async (route) => {
+    requests += 1;
+    if (requests > 1) {
+      await allowSuccess;
+    }
+    await route.fulfill({
+      contentType: "application/json",
+      body: JSON.stringify({
+        outcome: requests === 1 ? "pending" : "succeeded",
+        status: requests === 1 ? "PENDING" : "SUCCEEDED",
+        amount: "100000",
+      }),
+    });
+  });
+
+  await page.goto(`/payment/verify/${executionUuid}`);
+
+  await expect(
+    page.getByRole("heading", { name: "در انتظار تایید پرداخت" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "پرداخت ناموفق" }),
+  ).toBeHidden();
+  releaseSuccess();
+  await expect(
+    page.getByRole("heading", { name: "پرداخت موفق" }),
+  ).toBeVisible();
+  expect(requests).toBeGreaterThanOrEqual(2);
+});
+
+test("a successful execution awaiting review is not shown as fulfilled", async ({
+  page,
+}) => {
+  const executionUuid = "33333333-3333-4333-8333-333333333333";
+  await page.route("**/api/v1/payment-executions/**", async (route) => {
+    await route.fulfill({
+      contentType: "application/json",
+      body: JSON.stringify({
+        outcome: "review",
+        status: "SUCCEEDED",
+        amount: "100000",
+      }),
+    });
+  });
+
+  await page.goto(`/payment/verify/${executionUuid}`);
+
+  await expect(
+    page.getByRole("heading", { name: "نیاز به بررسی پرداخت" }),
+  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "پرداخت موفق" })).toBeHidden();
+});

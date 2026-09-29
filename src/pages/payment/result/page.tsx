@@ -1,10 +1,9 @@
 import { Activity } from "react";
 import { Link, useParams } from "react-router";
-import { Check } from "lucide-react";
+import { Check, CircleAlert } from "lucide-react";
 
 import LoadingSection from "@/components/custom/loading-section";
 import ErrorSection from "@/components/custom/error-section";
-import { PaymentExecutionStatusMap } from "@/services/api";
 import { Button } from "@/components/ui/button";
 import { formatLocalizedNumber } from "@/utils";
 import { useAppTranslate } from "@/hooks";
@@ -18,9 +17,21 @@ function PaymentResultPage() {
 
   const paymentStatusState = usePaymentStatus(paymentUuid);
   const paymentResult = paymentStatusState.data;
-  const isPaid =
-    paymentResult?.outcome === "succeeded" ||
-    paymentResult?.status === PaymentExecutionStatusMap.SUCCEEDED;
+  const isPaid = paymentResult?.outcome === "succeeded";
+  const isPending =
+    paymentResult?.outcome === "pending" || paymentResult?.outcome === "ready";
+  const needsReview = paymentResult?.outcome === "review";
+  const isFailed =
+    paymentResult?.outcome === "failed" || paymentResult?.outcome === "expired";
+  let secondaryTitle = t("pages.payment.result.failed.title");
+  let secondaryDescription = t("pages.payment.result.failed.description");
+  if (isPending) {
+    secondaryTitle = t("pages.payment.result.pending.title");
+    secondaryDescription = t("pages.payment.result.pending.description");
+  } else if (needsReview) {
+    secondaryTitle = t("pages.payment.result.review.title");
+    secondaryDescription = t("pages.payment.result.review.description");
+  }
   const paymentRows = [
     {
       label: t("pages.payment.result.amount"),
@@ -113,19 +124,37 @@ function PaymentResultPage() {
           <div className="w-full max-w-lg">
             <div className="mb-8 flex justify-center">
               <div className="relative">
-                <div className="absolute inset-0 rounded-full bg-red-500/20 blur-xl dark:bg-red-400/10" />
-                <div className="relative flex items-center justify-center rounded-full bg-linear-to-br from-red-50 to-red-100 p-6 dark:from-red-950/40 dark:to-red-900/20">
-                  <Check className="h-12 w-12 stroke-3 text-red-500 dark:text-red-400" />
+                <div
+                  className={
+                    isFailed
+                      ? "absolute inset-0 rounded-full bg-red-500/20 blur-xl dark:bg-red-400/10"
+                      : "absolute inset-0 rounded-full bg-amber-500/20 blur-xl dark:bg-amber-400/10"
+                  }
+                />
+                <div
+                  className={
+                    isFailed
+                      ? "relative flex items-center justify-center rounded-full bg-linear-to-br from-red-50 to-red-100 p-6 dark:from-red-950/40 dark:to-red-900/20"
+                      : "relative flex items-center justify-center rounded-full bg-linear-to-br from-amber-50 to-amber-100 p-6 dark:from-amber-950/40 dark:to-amber-900/20"
+                  }
+                >
+                  <CircleAlert
+                    className={
+                      isFailed
+                        ? "h-12 w-12 stroke-3 text-red-500 dark:text-red-400"
+                        : "h-12 w-12 stroke-3 text-amber-500 dark:text-amber-400"
+                    }
+                  />
                 </div>
               </div>
             </div>
 
             <div className="mb-8 text-center">
               <h1 className="text-foreground mb-3 text-3xl font-bold md:text-4xl">
-                {t("pages.payment.result.failed.title")}
+                {secondaryTitle}
               </h1>
               <p className="text-muted-foreground text-base leading-relaxed">
-                {t("pages.payment.result.failed.description")}
+                {secondaryDescription}
               </p>
             </div>
 
@@ -153,7 +182,9 @@ function PaymentResultPage() {
                   <span
                     className={
                       index === paymentRows.length - 1
-                        ? "text-2xl font-bold text-red-500 dark:text-red-400"
+                        ? isFailed
+                          ? "text-2xl font-bold text-red-500 dark:text-red-400"
+                          : "text-2xl font-bold text-amber-500 dark:text-amber-400"
                         : "text-foreground font-medium"
                     }
                   >
@@ -167,7 +198,13 @@ function PaymentResultPage() {
 
             <div className="space-y-3">
               <Link to={APP_ROUTES_KEY.app.path}>
-                <Button className="h-11 w-full bg-red-500 font-semibold text-white transition-colors hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-700">
+                <Button
+                  className={
+                    isFailed
+                      ? "h-11 w-full bg-red-500 font-semibold text-white transition-colors hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-700"
+                      : "h-11 w-full bg-amber-500 font-semibold text-white transition-colors hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-700"
+                  }
+                >
                   {t("pages.payment.result.return")}
                 </Button>
               </Link>

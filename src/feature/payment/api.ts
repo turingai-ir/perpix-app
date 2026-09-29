@@ -9,7 +9,13 @@ export const usePaymentStatus = (executionUuid?: string) => {
     {
       params: { path: { execution_uuid: executionUuid ?? "" } },
     },
-    { enabled: !!executionUuid },
+    {
+      enabled: !!executionUuid,
+      refetchInterval: (query) => {
+        const outcome = query.state.data?.outcome;
+        return outcome === "pending" || outcome === "ready" ? 3000 : false;
+      },
+    },
   );
 };
 
