@@ -220,7 +220,7 @@ export interface paths {
         readonly patch?: never;
         readonly trace?: never;
     };
-    readonly "/api/v2/payment-intents": {
+    readonly "/api/v1/payment-intents": {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -228,20 +228,20 @@ export interface paths {
             readonly cookie?: never;
         };
         /** List authenticated user's payment intents */
-        readonly get: operations["get_payment_intents_api_v2_payment_intents_get"];
+        readonly get: operations["get_payment_intents_api_v1_payment_intents_get"];
         readonly put?: never;
         /**
          * Create payment checkout intent
          * @description Initiates a new checkout intent, quotes verified catalog prices, and dispatches execution to the gateway.
          */
-        readonly post: operations["create_payment_api_v2_payment_intents_post"];
+        readonly post: operations["create_payment_api_v1_payment_intents_post"];
         readonly delete?: never;
         readonly options?: never;
         readonly head?: never;
         readonly patch?: never;
         readonly trace?: never;
     };
-    readonly "/api/v2/payment-intents/{intent_uuid}/executions": {
+    readonly "/api/v1/payment-intents/{intent_uuid}/executions": {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -256,14 +256,14 @@ export interface paths {
          * Retry payment execution
          * @description Initiates a retry execution for a failed or expired payment intent using an idempotent key.
          */
-        readonly post: operations["retry_payment_api_v2_payment_intents__intent_uuid__executions_post"];
+        readonly post: operations["retry_payment_api_v1_payment_intents__intent_uuid__executions_post"];
         readonly delete?: never;
         readonly options?: never;
         readonly head?: never;
         readonly patch?: never;
         readonly trace?: never;
     };
-    readonly "/api/v2/payment-intents/{intent_uuid}": {
+    readonly "/api/v1/payment-intents/{intent_uuid}": {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -276,7 +276,7 @@ export interface paths {
          * Get payment intent status
          * @description Retrieves the current status of a payment intent owned by the authenticated user.
          */
-        readonly get: operations["get_payment_intent_api_v2_payment_intents__intent_uuid__get"];
+        readonly get: operations["get_payment_intent_api_v1_payment_intents__intent_uuid__get"];
         readonly put?: never;
         readonly post?: never;
         readonly delete?: never;
@@ -285,7 +285,7 @@ export interface paths {
         readonly patch?: never;
         readonly trace?: never;
     };
-    readonly "/api/v2/payment-executions/{execution_uuid}": {
+    readonly "/api/v1/payment-executions/{execution_uuid}": {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -295,7 +295,7 @@ export interface paths {
             readonly cookie?: never;
         };
         /** Get payment status from browser return execution */
-        readonly get: operations["get_payment_execution_api_v2_payment_executions__execution_uuid__get"];
+        readonly get: operations["get_payment_execution_api_v1_payment_executions__execution_uuid__get"];
         readonly put?: never;
         readonly post?: never;
         readonly delete?: never;
@@ -304,7 +304,7 @@ export interface paths {
         readonly patch?: never;
         readonly trace?: never;
     };
-    readonly "/api/v2/payment-return/{execution_uuid}": {
+    readonly "/api/v1/payment-return/{execution_uuid}": {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -317,7 +317,7 @@ export interface paths {
          * Handle gateway return callback
          * @description Synchronizes the payment through the recovery path, then returns to the frontend.
          */
-        readonly get: operations["payment_return_api_v2_payment_return__execution_uuid__get"];
+        readonly get: operations["payment_return_api_v1_payment_return__execution_uuid__get"];
         readonly put?: never;
         readonly post?: never;
         readonly delete?: never;
@@ -326,7 +326,7 @@ export interface paths {
         readonly patch?: never;
         readonly trace?: never;
     };
-    readonly "/api/v2/readiness": {
+    readonly "/api/v1/readiness": {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -337,7 +337,7 @@ export interface paths {
          * Core readiness probe
          * @description Verifies Core database and reports payment subsystem readiness. Provider outages do not fail Core readiness.
          */
-        readonly get: operations["readiness_api_v2_readiness_get"];
+        readonly get: operations["readiness_api_v1_readiness_get"];
         readonly put?: never;
         readonly post?: never;
         readonly delete?: never;
@@ -1798,7 +1798,7 @@ export interface operations {
             };
         };
     };
-    readonly get_payment_intents_api_v2_payment_intents_get: {
+    readonly get_payment_intents_api_v1_payment_intents_get: {
         readonly parameters: {
             readonly query?: {
                 readonly offset?: number;
@@ -1830,7 +1830,7 @@ export interface operations {
             };
         };
     };
-    readonly create_payment_api_v2_payment_intents_post: {
+    readonly create_payment_api_v1_payment_intents_post: {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -1881,7 +1881,7 @@ export interface operations {
             };
         };
     };
-    readonly retry_payment_api_v2_payment_intents__intent_uuid__executions_post: {
+    readonly retry_payment_api_v1_payment_intents__intent_uuid__executions_post: {
         readonly parameters: {
             readonly query?: never;
             readonly header: {
@@ -1936,7 +1936,7 @@ export interface operations {
             };
         };
     };
-    readonly get_payment_intent_api_v2_payment_intents__intent_uuid__get: {
+    readonly get_payment_intent_api_v1_payment_intents__intent_uuid__get: {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -1967,7 +1967,7 @@ export interface operations {
             };
         };
     };
-    readonly get_payment_execution_api_v2_payment_executions__execution_uuid__get: {
+    readonly get_payment_execution_api_v1_payment_executions__execution_uuid__get: {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -1998,7 +1998,7 @@ export interface operations {
             };
         };
     };
-    readonly payment_return_api_v2_payment_return__execution_uuid__get: {
+    readonly payment_return_api_v1_payment_return__execution_uuid__get: {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -2027,7 +2027,7 @@ export interface operations {
             };
         };
     };
-    readonly readiness_api_v2_readiness_get: {
+    readonly readiness_api_v1_readiness_get: {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
