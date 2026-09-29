@@ -109,3 +109,77 @@ test("a successful execution awaiting review is not shown as fulfilled", async (
   ).toBeVisible();
   await expect(page.getByRole("heading", { name: "پرداخت موفق" })).toBeHidden();
 });
+
+test("history distinguishes paid, uncredited, and review states and refreshes on SSE", async ({
+  page,
+}) => {
+  const intentUuid = "44444444-4444-4444-8444-444444444444";
+  const executionUuid = "55555555-5555-4555-8555-555555555555";
+  let listRequests = 0;
+  let eventReleased = false;
+  let releaseEvent: () => void = () => {};
+  const eventReady = new Promise<void>((resolve) => {
+    releaseEvent = resolve;
+  });
+  await page.route("**/api/v1/payment-intents?**", async (route) => {
+    listRequests += 1;
+    await route.fulfill({
+      contentType: "application/json",
+      body: JSON.stringify({
+        items: [
+          {
+            payment: {
+              id: intentUuid,
+              execution_uuid: executionUuid,
+              status: "SUCCEEDED",
+              financial_status: "SUCCEEDED",
+              fulfillment_status: eventReleased ? "SUCCEEDED" : "PENDING",
+              outcome: "succeeded",
+              amount: "100000",
+              currency: "IRR",
+            },
+            target_type: "wallet_topup",
+            created_at: "2026-09-24T12:00:00Z",
+          },
+          {
+            payment: {
+              id: "66666666-6666-4666-8666-666666666666",
+              execution_uuid: "77777777-7777-4777-8777-777777777777",
+              status: "SUCCEEDED",
+              financial_status: "SUCCEEDED",
+              fulfillment_status: "NEEDS_REVIEW",
+              outcome: "review",
+              amount: "200000",
+              currency: "IRR",
+            },
+            target_type: "subscription",
+            created_at: "2026-09-24T11:00:00Z",
+          },
+        ],
+        has_next: false,
+      }),
+    });
+  });
+  await page.route("**/api/v1/payment-events", async (route) => {
+    await eventReady;
+    await route.fulfill({
+      contentType: "text/event-stream",
+      body: `:connected\n\nevent: payment_changed\ndata: {"intent_uuid":"${intentUuid}","execution_uuid":"${executionUuid}"}\n\n`,
+    });
+  });
+
+  await page.goto("/profile/payments");
+  await expect(
+    page.getByRole("columnheader", { name: "وضعیت پرداخت" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("columnheader", { name: "وضعیت شارژ/اشتراک" }),
+  ).toBeVisible();
+  await expect(page.getByText("در انتظار شارژ")).toBeVisible();
+  await expect(page.getByText("نیاز به بررسی شارژ/اشتراک")).toBeVisible();
+  await expect(page.getByText("پرداخت موفق، نیاز به بررسی")).toBeVisible();
+  eventReleased = true;
+  releaseEvent();
+  await expect(page.getByText("شارژ انجام شد")).toBeVisible();
+  expect(listRequests).toBeGreaterThanOrEqual(2);
+});

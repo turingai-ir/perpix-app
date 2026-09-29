@@ -84,7 +84,6 @@
     "hour": "ساعت",
     "image": "عکس",
     "minute": "دقیقه",
-
     "older": "قدیمی تر",
     "rials": "ریال",
     "seconds": "ثانیه",
@@ -603,7 +602,36 @@
     },
     "profile": {
       "payments": {
-        "title": "پرداخت‌ها"
+        "title": "پرداخت‌ها",
+        "empty": "پرداختی برای نمایش وجود ندارد",
+        "trackingCode": "کد پیگیری",
+        "financialTitle": "وضعیت پرداخت",
+        "fulfillmentTitle": "وضعیت شارژ/اشتراک",
+        "amount": "مبلغ",
+        "type": "نوع",
+        "date": "تاریخ",
+        "financial": {
+          "succeeded": "پرداخت موفق",
+          "review": "نیاز به بررسی پرداخت",
+          "failed": "پرداخت ناموفق",
+          "expired": "مهلت پرداخت تمام شد",
+          "pending": "در انتظار پرداخت",
+          "paidReview": "پرداخت موفق، نیاز به بررسی"
+        },
+        "fulfillment": {
+          "walletSucceeded": "شارژ انجام شد",
+          "subscriptionSucceeded": "اشتراک فعال شد",
+          "walletPending": "در انتظار شارژ",
+          "subscriptionPending": "در انتظار فعال‌سازی",
+          "review": "نیاز به بررسی شارژ/اشتراک",
+          "notReady": "پس از پرداخت",
+          "completed": "انجام شد",
+          "pending": "در انتظار انجام"
+        },
+        "target": {
+          "wallet": "شارژ کیف پول",
+          "subscription": "اشتراک"
+        }
       },
       "settings": {
         "title": "ویرایش حساب کاربری",

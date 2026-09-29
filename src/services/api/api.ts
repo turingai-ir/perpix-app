@@ -220,6 +220,23 @@ export interface paths {
         readonly patch?: never;
         readonly trace?: never;
     };
+    readonly "/api/v1/payment-events": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        /** Stream the authenticated user's payment changes */
+        readonly get: operations["stream_payment_events_api_v1_payment_events_get"];
+        readonly put?: never;
+        readonly post?: never;
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
     readonly "/api/v1/payment-intents": {
         readonly parameters: {
             readonly query?: never;
@@ -746,7 +763,7 @@ export interface components {
              * Intent Uuid
              * Format: uuid
              */
-            readonly intent_uuid: string;
+            readonly intent_uuid?: string;
             /**
              * Target Type
              * @enum {string}
@@ -1114,7 +1131,7 @@ export interface components {
              * Intent Uuid
              * Format: uuid
              */
-            readonly intent_uuid: string;
+            readonly intent_uuid?: string;
             /**
              * Plan Uuid
              * Format: uuid
@@ -1127,7 +1144,7 @@ export interface components {
              * Intent Uuid
              * Format: uuid
              */
-            readonly intent_uuid: string;
+            readonly intent_uuid?: string;
             /** Amount Usdmicro */
             readonly amount_usdmicro: number;
         };
@@ -1795,6 +1812,24 @@ export interface operations {
                 content: {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
+            };
+        };
+    };
+    readonly stream_payment_events_api_v1_payment_events_get: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

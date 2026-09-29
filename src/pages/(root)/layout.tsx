@@ -15,6 +15,7 @@ import { cookies } from "@/utils/cookies";
 import { APP_ROUTES_KEY } from "@/router/routes";
 import { usePricingFeature } from "@/feature/pricing";
 import appLayoutAtom from "@/pages/(app)/_layout/_state";
+import { PaymentEventsProvider } from "@/features/payments";
 
 const RootLayout: FC = () => {
   const { t } = useAppTranslate();
@@ -179,6 +180,7 @@ const RootLayout: FC = () => {
   return (
     <>
       <title>{pageTitle}</title>
+      <PaymentEventsProvider />
       <Outlet />
     </>
   );
