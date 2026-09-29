@@ -1,13 +1,14 @@
 import type { FC } from "react";
+import { useWatch } from "react-hook-form";
 
 import { VideoModelPicker } from "./model-picker";
+import { VideoModeTabs } from "./video-mode-tabs";
 import { VideoReferenceBoard } from "./reference-board";
 import { VideoStudioFooter } from "./studio-footer";
 import { VideoStudioSettings } from "./studio-settings";
 import styles from "../composer.module.css";
 import { Form } from "@/components/ui/form";
 import { useAppTranslate } from "@/hooks";
-import { DynamicPromptConfigField } from "@/pages/(app)/generation/_components/dynamic-config";
 import { PromptTextarea } from "@/pages/(app)/generation/_components/prompt-box/prompt-textarea";
 import type { GenerationPromptBoxProps } from "@/pages/(app)/generation/_components/prompt-box/types";
 import { useGenerationPromptBox } from "@/pages/(app)/generation/_hooks";
@@ -42,6 +43,14 @@ export const GenerationVideoPromptBox: FC<Props> = (props) => {
     validationFieldErrorMessage: t("common.invalidField"),
   });
   const { dynamicForm, model, isFormBusy } = studio;
+  const mode = useWatch({ control: dynamicForm.control, name: "mode" });
+  const defaultPromptPlaceholder = t(
+    "pages.generation.video.promptBox.promptTextArea.placeholder",
+  );
+  const promptPlaceholder = t(
+    `pages.generation.video.studio.modePlaceholders.${String(mode ?? "default")}`,
+    { defaultValue: defaultPromptPlaceholder },
+  );
 
   return (
     <div className={styles.composer} data-generation-composer-card>
@@ -60,23 +69,17 @@ export const GenerationVideoPromptBox: FC<Props> = (props) => {
                 model.modelsListState.isLoading
               }
             />
-            {dynamicForm.isFieldVisible("mode") && (
-              <DynamicPromptConfigField
-                dynamicForm={dynamicForm}
-                fieldName="mode"
-                disabled={isFormBusy || studio.isUploadingMedia}
-                layout="stacked"
-              />
-            )}
+            <VideoModeTabs
+              dynamicForm={dynamicForm}
+              disabled={isFormBusy || studio.isUploadingMedia}
+            />
             <VideoReferenceBoard key={model.currentModel} studio={studio} />
             {studio.isPromptFieldVisible && (
               <PromptTextarea
                 dynamicForm={dynamicForm}
                 disabled={isFormBusy}
                 label={t("pages.generation.video.studio.composerLabel")}
-                placeholder={t(
-                  "pages.generation.video.promptBox.promptTextArea.placeholder",
-                )}
+                placeholder={promptPlaceholder}
               />
             )}
             <VideoStudioSettings studio={studio} />
