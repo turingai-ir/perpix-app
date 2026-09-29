@@ -55,12 +55,12 @@ function GenerationVideoSession() {
               initialPrompt={initialPrompt}
               isLoading={isBusy}
               lastMessageConfig={
-                lastTaskMessage?.ai_model_config ??
-                lastAssistantMessage?.ai_model_config
+                lastAssistantMessage?.ai_model_config ??
+                lastTaskMessage?.ai_model_config
               }
               lastMessageModelUuid={
-                lastTaskMessage?.ai_model_uuid ??
-                lastAssistantMessage?.ai_model_uuid
+                lastAssistantMessage?.ai_model_uuid ??
+                lastTaskMessage?.ai_model_uuid
               }
               lastMessageStatus={lastTaskStatus}
               onSubmit={handleForm}

@@ -17,8 +17,8 @@
 .body {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  padding: 18px 16px;
+  gap: 16px;
+  padding: 18px 16px 22px;
 }
 .heading span {
   font-size: 10px;
@@ -39,6 +39,52 @@
 }
 .composer button {
   touch-action: manipulation;
+}
+.modeField {
+  display: grid;
+  gap: 8px;
+}
+.modeLabel {
+  color: rgb(255 255 255 / 58%);
+  font-size: 11px;
+  font-weight: 600;
+}
+.modeTabs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(92px, 1fr));
+  gap: 4px;
+  max-width: 100%;
+  padding: 4px;
+  border: 1px solid rgb(255 255 255 / 9%);
+  border-radius: 12px;
+  background: rgb(0 0 0 / 22%);
+}
+.modeTab {
+  min-height: 40px;
+  min-width: 0;
+  padding: 0 12px;
+  border-radius: 9px;
+  color: rgb(255 255 255 / 58%);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.55;
+  transition:
+    color 160ms var(--ease-out),
+    background-color 160ms var(--ease-out),
+    box-shadow 160ms var(--ease-out),
+    transform 120ms var(--ease-out);
+}
+.modeTab[aria-checked="true"] {
+  background: rgb(255 255 255 / 10%);
+  color: #fff;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 8%);
+}
+.modeTab:active:not(:disabled) {
+  transform: scale(0.97);
+}
+.modeTab:disabled {
+  cursor: wait;
+  opacity: 0.5;
 }
 .composer :is(button, input, textarea, summary):focus-visible,
 .modelDialog :is(button, input):focus-visible {
@@ -333,7 +379,8 @@
   font-size: 12px;
   line-height: 1.8;
 }
-@media (hover: hover) {
+@media (hover: hover) and (pointer: fine) {
+  .modeTab:hover:not([aria-checked="true"]):not(:disabled),
   .modelTrigger:hover,
   .modelOption:hover {
     background-color: rgb(190 150 255 / 10%);
@@ -358,6 +405,9 @@
   }
   .body {
     padding: 18px 16px;
+  }
+  .modeTab {
+    min-height: 44px;
   }
   .modelDialog {
     top: auto;
