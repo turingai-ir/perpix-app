@@ -73,7 +73,16 @@ const RootLayout: FC = () => {
         if (error.response.status === HttpStatus.UNPROCESSABLE_ENTITY) {
           try {
             const parseError = await error.response.clone().json();
-            if (parseError?.detail && parseError.detail instanceof Array) {
+            if (typeof parseError?.detail === "string") {
+              toast.error(
+                <div className="flex flex-col gap-1">
+                  <span>{parseError.detail}</span>
+                </div>,
+              );
+            } else if (
+              parseError?.detail &&
+              parseError.detail instanceof Array
+            ) {
               const messages: string[] = [];
               parseError.detail.forEach((i: any) => {
                 if (i?.msg && typeof i?.msg === "string") {
