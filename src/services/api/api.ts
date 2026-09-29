@@ -746,7 +746,7 @@ export interface components {
              * Intent Uuid
              * Format: uuid
              */
-            readonly intent_uuid: string;
+            readonly intent_uuid?: string;
             /**
              * Target Type
              * @enum {string}
@@ -1114,7 +1114,7 @@ export interface components {
              * Intent Uuid
              * Format: uuid
              */
-            readonly intent_uuid: string;
+            readonly intent_uuid?: string;
             /**
              * Plan Uuid
              * Format: uuid
@@ -1127,7 +1127,7 @@ export interface components {
              * Intent Uuid
              * Format: uuid
              */
-            readonly intent_uuid: string;
+            readonly intent_uuid?: string;
             /** Amount Usdmicro */
             readonly amount_usdmicro: number;
         };

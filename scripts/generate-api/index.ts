@@ -18,7 +18,6 @@ type SchemaLike = {
 };
 
 const OPENAPI_URL = "http://localhost:8000/api-schema-6f47a9d2c18b4e30.json";
-const OPENAPI_V2_URL = "http://localhost:8000/api/v2/openapi.json";
 const TEMP_DIR = path.resolve("./scripts/generate-api/_output");
 const TEMP_OPENAPI_JSON_PATH = path.join(TEMP_DIR, "openapi.json");
 const TEMP_API_OUTPUT_PATH = path.join(TEMP_DIR, "api.ts");
@@ -35,39 +34,10 @@ const downloadOpenApiSchema = async (targetPath: string) => {
     );
   }
 
-  const baseSchema = (await response.json()) as Record<string, any>;
-
-  try {
-    const v2Response = await fetch(OPENAPI_V2_URL, {
-      signal: AbortSignal.timeout(5000),
-    });
-    if (v2Response.ok) {
-      const v2Schema = (await v2Response.json()) as Record<string, any>;
-      baseSchema.paths = {
-        ...baseSchema.paths,
-        ...v2Schema.paths,
-      };
-      if (v2Schema.components?.schemas) {
-        baseSchema.components = baseSchema.components ?? {};
-        baseSchema.components.schemas = {
-          ...baseSchema.components.schemas,
-          ...v2Schema.components.schemas,
-        };
-      }
-      if (v2Schema.components?.securitySchemes) {
-        baseSchema.components = baseSchema.components ?? {};
-        baseSchema.components.securitySchemes = {
-          ...baseSchema.components.securitySchemes,
-          ...v2Schema.components.securitySchemes,
-        };
-      }
-    }
-  } catch {
-    // If v2 schema cannot be reached, continue with base schema
-  }
+  const schema = await response.text();
 
   await fs.mkdir(path.dirname(targetPath), { recursive: true });
-  await fs.writeFile(targetPath, JSON.stringify(baseSchema, null, 2), "utf-8");
+  await fs.writeFile(targetPath, schema, "utf-8");
 
   return targetPath;
 };
