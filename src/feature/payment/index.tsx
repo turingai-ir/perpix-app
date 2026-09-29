@@ -20,18 +20,18 @@ const PAYMENT_REDIRECT_COUNTDOWN_SECONDS = 10;
 
 type PaymentRedirectParams = {
   paymentUrl?: string | null;
+  totalAmountIrr?: number | null;
   amountIrrWithoutTax?: number | null;
   taxPercent?: number | null;
   taxAmountIrr?: number | null;
-  totalAmountIrr?: number | null;
 };
 
 type PendingPaymentRedirect = {
   paymentUrl: string;
-  amountIrrWithoutTax: number;
-  taxPercent: number;
-  taxAmountIrr: number;
   totalAmountIrr: number;
+  amountIrrWithoutTax?: number | null;
+  taxPercent?: number | null;
+  taxAmountIrr?: number | null;
 };
 
 type PaymentRedirectContextValue = {
@@ -44,10 +44,10 @@ const paymentRedirectListeners = new Set<PaymentRedirectListener>();
 
 function emitPaymentRedirect({
   paymentUrl,
-  amountIrrWithoutTax = 0,
-  taxPercent = 0,
-  taxAmountIrr = 0,
   totalAmountIrr = 0,
+  amountIrrWithoutTax,
+  taxPercent,
+  taxAmountIrr,
 }: PaymentRedirectParams) {
   if (!paymentUrl) {
     return;
@@ -56,10 +56,10 @@ function emitPaymentRedirect({
   paymentRedirectListeners.forEach((listener) => {
     listener({
       paymentUrl,
-      amountIrrWithoutTax: amountIrrWithoutTax ?? 0,
-      taxPercent: taxPercent ?? 0,
-      taxAmountIrr: taxAmountIrr ?? 0,
       totalAmountIrr: totalAmountIrr ?? 0,
+      amountIrrWithoutTax,
+      taxPercent,
+      taxAmountIrr,
     });
   });
 }
@@ -127,27 +127,31 @@ export function PaymentRedirectPortal() {
         </DialogHeader>
 
         <div className="bg-muted/30 space-y-4 rounded-lg border p-4">
+          {pendingPayment?.taxAmountIrr ? (
+            <>
+              <div className="flex items-center justify-between gap-4">
+                <span className="text-muted-foreground">
+                  {t("pages.payment.redirect.initialAmount")}
+                </span>
+                <span className="font-medium">
+                  {formatCurrency(pendingPayment?.amountIrrWithoutTax ?? 0)}
+                </span>
+              </div>
+              <div className="flex items-center justify-between gap-4">
+                <span className="text-muted-foreground">
+                  {t("pages.payment.redirect.tax", {
+                    percent: formatLocalizedNumber({
+                      value: pendingPayment?.taxPercent ?? 0,
+                    }),
+                  })}
+                </span>
+                <span className="font-medium">
+                  {formatCurrency(pendingPayment?.taxAmountIrr ?? 0)}
+                </span>
+              </div>
+            </>
+          ) : null}
           <div className="flex items-center justify-between gap-4">
-            <span className="text-muted-foreground">
-              {t("pages.payment.redirect.initialAmount")}
-            </span>
-            <span className="font-medium">
-              {formatCurrency(pendingPayment?.amountIrrWithoutTax ?? 0)}
-            </span>
-          </div>
-          <div className="flex items-center justify-between gap-4">
-            <span className="text-muted-foreground">
-              {t("pages.payment.redirect.tax", {
-                percent: formatLocalizedNumber({
-                  value: pendingPayment?.taxPercent ?? 0,
-                }),
-              })}
-            </span>
-            <span className="font-medium">
-              {formatCurrency(pendingPayment?.taxAmountIrr ?? 0)}
-            </span>
-          </div>
-          <div className="flex items-center justify-between gap-4 border-t pt-4">
             <span className="font-medium">
               {t("pages.payment.redirect.finalAmount")}
             </span>

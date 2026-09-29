@@ -4,8 +4,8 @@ import { useSearchParams } from "react-router";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  PaymentStatusEnumMap,
-  type SchemaPaymentListItemResponse,
+  PaymentExecutionStatusMap,
+  type SchemaPaymentHistoryItemResponse,
 } from "@/services/api";
 import { dayjs } from "@/lib/dayjs";
 import { formatLocalizedNumber } from "@/utils";
@@ -19,10 +19,13 @@ import {
 
 const PAGE_LIMIT = 100;
 
-const paymentStatusLabels = {
-  [PaymentStatusEnumMap.PENDING]: "در انتظار",
-  [PaymentStatusEnumMap.PAID]: "پرداخت شده",
-  [PaymentStatusEnumMap.FAILED]: "ناموفق",
+const paymentStatusLabels: Record<string, string> = {
+  [PaymentExecutionStatusMap.SUCCEEDED]: "پرداخت شده",
+  [PaymentExecutionStatusMap.PENDING]: "در انتظار",
+  [PaymentExecutionStatusMap.CREATING]: "در حال ایجاد",
+  [PaymentExecutionStatusMap.UNKNOWN]: "نامشخص",
+  [PaymentExecutionStatusMap.FAILED]: "ناموفق",
+  [PaymentExecutionStatusMap.EXPIRED]: "منقضی شده",
 };
 
 function ProfilePaymentsPage() {
@@ -32,10 +35,10 @@ function ProfilePaymentsPage() {
   const paymentsState = usePayments({ offset: safeOffset, limit: PAGE_LIMIT });
   const payments = useMemo(
     () =>
-      paymentsState.data
+      paymentsState.data?.items
         ? Array.from(
             paymentsState.data
-              .items as ArrayLike<SchemaPaymentListItemResponse>,
+              .items as ArrayLike<SchemaPaymentHistoryItemResponse>,
           )
         : [],
     [paymentsState.data],
@@ -65,56 +68,40 @@ function ProfilePaymentsPage() {
                 <tr className="[&>th]:px-4 [&>th]:py-3 [&>th]:text-right [&>th]:font-medium">
                   <th>کد پیگیری</th>
                   <th>وضعیت</th>
-                  <th>مبلغ اولیه</th>
-                  <th>مالیات</th>
-                  <th>مبلغ نهایی</th>
+                  <th>مبلغ</th>
                   <th>نوع</th>
                   <th>تاریخ</th>
                 </tr>
               </thead>
               <tbody className="divide-border divide-y">
-                {payments.map((payment) => (
-                  <tr
-                    key={payment.payment_uuid}
-                    className="[&>td]:px-4 [&>td]:py-3"
-                  >
+                {payments.map(({ payment, target_type, created_at }) => (
+                  <tr key={payment.id} className="[&>td]:px-4 [&>td]:py-3">
                     <td dir="ltr" className="text-foreground font-mono text-xs">
-                      {payment.payment_uuid}
+                      {payment.id}
                     </td>
                     <td>
                       <Badge
                         variant={
-                          payment.status === PaymentStatusEnumMap.PAID
+                          payment.status === PaymentExecutionStatusMap.SUCCEEDED
                             ? "default"
-                            : payment.status === PaymentStatusEnumMap.FAILED
+                            : payment.status === PaymentExecutionStatusMap.FAILED ||
+                              payment.status === PaymentExecutionStatusMap.EXPIRED
                               ? "destructive"
                               : "secondary"
                         }
                       >
-                        {paymentStatusLabels[payment.status]}
+                        {paymentStatusLabels[payment.status] ?? payment.status}
                       </Badge>
                     </td>
                     <td>
                       {formatLocalizedNumber({
-                        value: payment.amount_irr_without_tax,
+                        value: Number(payment.amount) || 0,
                       })}{" "}
                       ریال
                     </td>
+                    <td>{target_type ?? "-"}</td>
                     <td>
-                      {formatLocalizedNumber({ value: payment.tax_amount_irr })}{" "}
-                      ریال
-                    </td>
-                    <td className="font-medium">
-                      {formatLocalizedNumber({
-                        value: payment.total_amount_irr,
-                      })}{" "}
-                      ریال
-                    </td>
-                    <td>{payment.target_type ?? "-"}</td>
-                    <td>
-                      {dayjs(payment.created_at)
-                        .calendar("jalali")
-                        .format("YYYY/MM/DD HH:mm")}
+                      {dayjs(created_at).locale("fa").format("YYYY/MM/DD HH:mm")}
                     </td>
                   </tr>
                 ))}
@@ -122,15 +109,15 @@ function ProfilePaymentsPage() {
             </table>
           </div>
         ) : null}
+        <PaginationFooter
+          offset={safeOffset}
+          limit={PAGE_LIMIT}
+          hasNext={paymentsState.data?.has_next ?? false}
+          isFetching={paymentsState.isFetching}
+          onPrevious={() => goToOffset(safeOffset - PAGE_LIMIT)}
+          onNext={() => goToOffset(safeOffset + PAGE_LIMIT)}
+        />
       </CardContent>
-      <PaginationFooter
-        offset={safeOffset}
-        limit={PAGE_LIMIT}
-        hasNext={paymentsState.data?.has_next ?? false}
-        isFetching={paymentsState.isFetching}
-        onPrevious={() => goToOffset(safeOffset - PAGE_LIMIT)}
-        onNext={() => goToOffset(safeOffset + PAGE_LIMIT)}
-      />
     </Card>
   );
 }
