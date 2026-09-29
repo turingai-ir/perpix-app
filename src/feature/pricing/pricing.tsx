@@ -78,6 +78,7 @@ function PricingFeature() {
     async (planId: string) => {
       return await purchasePlan({
         body: {
+          intent_uuid: crypto.randomUUID(),
           plan_uuid: planId,
         },
       });
@@ -177,10 +178,7 @@ function PricingFeature() {
                         const res = await handlePurchasePlan(plan?.uuid ?? "");
                         openPaymentUrl({
                           paymentUrl: res.payment_url,
-                          amountIrrWithoutTax: res.amount_irr_without_tax,
-                          taxPercent: res.tax_percent,
-                          taxAmountIrr: res.tax_amount_irr,
-                          totalAmountIrr: res.total_amount_irr,
+                          totalAmountIrr: Number(res.amount) || 0,
                         });
                       }}
                     >
