@@ -12,26 +12,23 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { useAppTranslate, useSecondsCountDown } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
-import { formatLocalizedNumber } from "@/utils";
+import { formatLocalizedNumber, formatTomanAmount } from "@/utils";
 
 export * from "./api";
+export * from "./checkout-session";
+export * from "./status";
+export { PaymentEventsProvider } from "./payment-events";
 
 const PAYMENT_REDIRECT_COUNTDOWN_SECONDS = 10;
 
 type PaymentRedirectParams = {
   paymentUrl?: string | null;
-  totalAmountIrr?: number | null;
-  amountIrrWithoutTax?: number | null;
-  taxPercent?: number | null;
-  taxAmountIrr?: number | null;
+  totalAmountIrr?: string | null;
 };
 
 type PendingPaymentRedirect = {
   paymentUrl: string;
-  totalAmountIrr: number;
-  amountIrrWithoutTax?: number | null;
-  taxPercent?: number | null;
-  taxAmountIrr?: number | null;
+  totalAmountIrr: string;
 };
 
 type PaymentRedirectContextValue = {
@@ -44,10 +41,7 @@ const paymentRedirectListeners = new Set<PaymentRedirectListener>();
 
 function emitPaymentRedirect({
   paymentUrl,
-  totalAmountIrr = 0,
-  amountIrrWithoutTax,
-  taxPercent,
-  taxAmountIrr,
+  totalAmountIrr = "0",
 }: PaymentRedirectParams) {
   if (!paymentUrl) {
     return;
@@ -56,10 +50,7 @@ function emitPaymentRedirect({
   paymentRedirectListeners.forEach((listener) => {
     listener({
       paymentUrl,
-      totalAmountIrr: totalAmountIrr ?? 0,
-      amountIrrWithoutTax,
-      taxPercent,
-      taxAmountIrr,
+      totalAmountIrr: totalAmountIrr ?? "0",
     });
   });
 }
@@ -108,13 +99,6 @@ export function PaymentRedirectPortal() {
     ((PAYMENT_REDIRECT_COUNTDOWN_SECONDS - seconds) /
       PAYMENT_REDIRECT_COUNTDOWN_SECONDS) *
     100;
-  const formatCurrency = useCallback(
-    (amountIrr: number) =>
-      t("pages.payment.redirect.amountRials", {
-        amount: formatLocalizedNumber({ value: amountIrr }),
-      }),
-    [t],
-  );
 
   return (
     <Dialog open={!!pendingPayment}>
@@ -127,36 +111,13 @@ export function PaymentRedirectPortal() {
         </DialogHeader>
 
         <div className="bg-muted/30 space-y-4 rounded-lg border p-4">
-          {pendingPayment?.taxAmountIrr ? (
-            <>
-              <div className="flex items-center justify-between gap-4">
-                <span className="text-muted-foreground">
-                  {t("pages.payment.redirect.initialAmount")}
-                </span>
-                <span className="font-medium">
-                  {formatCurrency(pendingPayment?.amountIrrWithoutTax ?? 0)}
-                </span>
-              </div>
-              <div className="flex items-center justify-between gap-4">
-                <span className="text-muted-foreground">
-                  {t("pages.payment.redirect.tax", {
-                    percent: formatLocalizedNumber({
-                      value: pendingPayment?.taxPercent ?? 0,
-                    }),
-                  })}
-                </span>
-                <span className="font-medium">
-                  {formatCurrency(pendingPayment?.taxAmountIrr ?? 0)}
-                </span>
-              </div>
-            </>
-          ) : null}
           <div className="flex items-center justify-between gap-4">
             <span className="font-medium">
               {t("pages.payment.redirect.finalAmount")}
             </span>
             <span className="text-lg font-semibold">
-              {formatCurrency(pendingPayment?.totalAmountIrr ?? 0)}
+              {formatTomanAmount(pendingPayment?.totalAmountIrr ?? "0")}{" "}
+              {t("common.tomans")}
             </span>
           </div>
         </div>

@@ -33,3 +33,11 @@ export const usePayments = ({
     { enabled },
   );
 };
+
+export const useRetryPayment = () => {
+  const { useMutation } = useReactQueryApi();
+  return useMutation(
+    "post",
+    "/api/v1/payment-intents/{intent_uuid}/executions",
+  );
+};

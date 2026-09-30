@@ -16,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useActiveSubscription } from "@/feature/pricing";
+import { clearPaymentSession } from "@/feature/payment";
 import { usePwaInstall } from "@/feature/pwa";
 import { useAppTranslate } from "@/hooks";
 import { APP_ROUTES_KEY } from "@/router/routes";
@@ -33,6 +34,7 @@ const AppLayoutSidebarUserProfileMenu: FC = () => {
     t("features.pricing.plans.free.title");
 
   const handleLogout = () => {
+    clearPaymentSession();
     cookies().remove(APP_KEYS.COOKIES.ACCESS_TOKEN);
     navigate(APP_ROUTES_KEY.auth.login.path);
   };

@@ -1,16 +1,43 @@
 import { jotaiStore } from "@/lib/jotai-store";
 import { globalAtom } from "@/state";
 
-const TOKEN_CALCULATOR = 1_000;
-export const microDollarToToken = (amount: number) => amount / TOKEN_CALCULATOR;
-
 type FormatLocalizedNumberParams = {
   value: number;
 };
 
-export const tokenToMicroDollar = (amount: number) => amount * TOKEN_CALCULATOR;
+function exactInteger(value: string | number | bigint): bigint | null {
+  if (typeof value === "bigint") return value;
+  if (typeof value === "number") {
+    return Number.isSafeInteger(value) ? BigInt(value) : null;
+  }
+  return /^-?\d+$/.test(value) ? BigInt(value) : null;
+}
 
-export const rialToToman = (amount: number) => amount / 10;
+function formatScaledInteger(
+  value: string | number | bigint,
+  divisor: bigint,
+): string {
+  const amount = exactInteger(value);
+  if (amount === null) return "";
+  return Intl.NumberFormat(jotaiStore.get(globalAtom).language).format(
+    amount / divisor,
+  );
+}
+
+export const formatTokenAmount = (
+  amountUsdmicro: string | number | bigint,
+): string => formatScaledInteger(amountUsdmicro, 1000n);
+
+export const formatTomanAmount = (
+  amountIrr: string | number | bigint,
+): string => formatScaledInteger(amountIrr, 10n);
+
+export function parseTokenAmount(value: string): number | null {
+  const normalized = persianNumbersToEnglish(value);
+  if (!/^\d+$/.test(normalized)) return null;
+  const amount = BigInt(normalized) * 1000n;
+  return amount <= BigInt(Number.MAX_SAFE_INTEGER) ? Number(amount) : null;
+}
 
 export function formatLocalizedNumber({ value }: FormatLocalizedNumberParams) {
   if (typeof value !== "number") {

@@ -1,13 +1,31 @@
 import { useReactQueryApi } from "@/hooks/app";
+import {
+  clearCheckoutIntentUuid,
+  getCheckoutIntentUuid,
+} from "@/feature/payment";
 
-export const useWallet = () => {
+export const useWallet = (enabled = true) => {
   const { useQuery } = useReactQueryApi();
-  return useQuery("get", "/api/v1/wallet/wallet", undefined);
+  return useQuery("get", "/api/v1/wallet/wallet", undefined, { enabled });
 };
 
 export const useChargeWallet = () => {
   const { useMutation } = useReactQueryApi();
-  return useMutation("post", "/api/v1/wallet/charge");
+  const mutation = useMutation("post", "/api/v1/wallet/charge");
+  return {
+    ...mutation,
+    charge: async (amountUsdmicro: number) => {
+      const key = `wallet-charge:${amountUsdmicro}`;
+      const result = await mutation.mutateAsync({
+        body: {
+          intent_uuid: getCheckoutIntentUuid(key),
+          amount_usdmicro: amountUsdmicro,
+        },
+      });
+      clearCheckoutIntentUuid(key);
+      return result;
+    },
+  };
 };
 
 type UseWalletTransactionsParams = {

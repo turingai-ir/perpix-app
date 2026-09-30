@@ -15,6 +15,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useAppTranslate } from "@/hooks";
+import { clearPaymentSession } from "@/feature/payment";
 import { APP_I18_KEYS } from "@/services/i18";
 import { Heading2, Muted, Paragraph } from "@/components/ui/typography";
 import { APP_KEYS, REGEX } from "@/utils";
@@ -73,6 +74,7 @@ const AuthLoginPageStart: FC = () => {
         phone_number: values.mobile,
       },
     });
+    clearPaymentSession();
     cookie.set(
       APP_KEYS.COOKIES.ACCESS_TOKEN,
       data.token,

@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
@@ -10,8 +11,8 @@ import { useAppTranslate } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
 import {
   formatLocalizedNumber,
-  microDollarToToken,
-  tokenToMicroDollar,
+  formatTokenAmount,
+  parseTokenAmount,
 } from "@/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -38,6 +39,7 @@ import { useChargeWallet, useWallet } from "@/feature/wallet";
 function AppLayoutSidebarWallet() {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
 
+  const navigate = useNavigate();
   const walletState = useWallet();
   const chargeWalletState = useChargeWallet();
   const activeSubscriptionState = useActiveSubscription();
@@ -54,8 +56,8 @@ function AppLayoutSidebarWallet() {
       })
       .refine(
         (s) => {
-          const n = Number(s);
-          return !Number.isNaN(n) && n >= 10;
+          const amount = parseTokenAmount(s);
+          return amount !== null && amount >= 10_000;
         },
         {
           message: t("common.validationErrors.min", {
@@ -66,8 +68,8 @@ function AppLayoutSidebarWallet() {
       )
       .refine(
         (s) => {
-          const n = Number(s);
-          return !Number.isNaN(n) && n <= 1_000_000;
+          const amount = parseTokenAmount(s);
+          return amount !== null && amount <= 1_000_000_000;
         },
         {
           message: t("common.validationErrors.max", {
@@ -75,7 +77,10 @@ function AppLayoutSidebarWallet() {
             max: formatLocalizedNumber({ value: 1_000_000 }),
           }),
         },
-      ),
+      )
+      .refine((s) => parseTokenAmount(s) !== null, {
+        message: t("common.validationErrors.invalidNumber"),
+      }),
   });
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -86,20 +91,19 @@ function AppLayoutSidebarWallet() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    if (shouldBlockWalletCharge) {
-      return;
-    }
+    if (shouldBlockWalletCharge) return;
 
-    const res = await chargeWalletState.mutateAsync({
-      body: {
-        intent_uuid: crypto.randomUUID(),
-        amount_usdmicro: tokenToMicroDollar(parseInt(values.amount, 10)),
-      },
-    });
-    openPaymentUrl({
-      paymentUrl: res.payment_url,
-      totalAmountIrr: Number(res.amount) || 0,
-    });
+    const amountUsdmicro = parseTokenAmount(values.amount);
+    if (amountUsdmicro === null) return;
+    const res = await chargeWalletState.charge(amountUsdmicro);
+    if (res.payment_url) {
+      openPaymentUrl({
+        paymentUrl: res.payment_url,
+        totalAmountIrr: res.amount,
+      });
+    } else {
+      navigate(`/payment/verify/${res.execution_uuid}`);
+    }
   }
 
   return (
@@ -111,11 +115,7 @@ function AppLayoutSidebarWallet() {
           </CardTitle>
           <div className="flex items-center gap-1">
             <div className="text-sidebar-foreground text-2xl font-semibold tracking-tight">
-              {formatLocalizedNumber({
-                value: microDollarToToken(
-                  walletState.data?.balance_usdmicro || 0,
-                ),
-              })}
+              {formatTokenAmount(walletState.data?.balance_usdmicro ?? 0)}
             </div>
             <small>{t("common.token")}</small>
           </div>

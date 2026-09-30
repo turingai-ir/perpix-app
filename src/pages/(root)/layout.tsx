@@ -14,6 +14,7 @@ import { appEventBus } from "@/lib/event-bus";
 import { cookies } from "@/utils/cookies";
 import { APP_ROUTES_KEY } from "@/router/routes";
 import { usePricingFeature } from "@/feature/pricing";
+import { clearPaymentSession, PaymentEventsProvider } from "@/feature/payment";
 import appLayoutAtom from "@/pages/(app)/_layout/_state";
 
 const RootLayout: FC = () => {
@@ -40,6 +41,7 @@ const RootLayout: FC = () => {
         error instanceof FetchHttpError &&
         error.response.status === HttpStatus.UNAUTHORIZED
       ) {
+        clearPaymentSession();
         cookie.remove(APP_KEYS.COOKIES.ACCESS_TOKEN);
         navigate(APP_ROUTES_KEY.auth.login.path);
       }
@@ -188,6 +190,7 @@ const RootLayout: FC = () => {
   return (
     <>
       <title>{pageTitle}</title>
+      <PaymentEventsProvider />
       <Outlet />
     </>
   );
