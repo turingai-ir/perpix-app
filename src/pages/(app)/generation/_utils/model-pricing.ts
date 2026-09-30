@@ -1,8 +1,6 @@
-import { microDollarToToken } from "@/utils";
-
 type PricingTier = Record<string, unknown>;
 
-export type ModelTokenRange = {
+export type ModelUsdmicroRange = {
   max: number;
   min: number;
 };
@@ -13,23 +11,25 @@ export const normalizePricingTiers = (
   return Array.isArray(pricingTiers) ? pricingTiers : [];
 };
 
-export const getTierPriceTokenRange = (
+export const getTierPriceUsdmicroRange = (
   pricingTiers: readonly PricingTier[],
-): ModelTokenRange | null => {
+): ModelUsdmicroRange | null => {
   let min: number | undefined;
   let max: number | undefined;
 
   pricingTiers.forEach((tier) => {
     const price = tier.price_usdmicro;
 
-    if (typeof price !== "number" || !Number.isFinite(price)) {
+    if (
+      typeof price !== "number" ||
+      !Number.isSafeInteger(price) ||
+      price < 0
+    ) {
       return;
     }
 
-    const token = microDollarToToken(price);
-
-    min = min === undefined ? token : Math.min(min, token);
-    max = max === undefined ? token : Math.max(max, token);
+    min = min === undefined ? price : Math.min(min, price);
+    max = max === undefined ? price : Math.max(max, price);
   });
 
   if (min === undefined || max === undefined) {

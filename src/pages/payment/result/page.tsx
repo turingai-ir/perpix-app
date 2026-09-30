@@ -1,181 +1,139 @@
-import { Activity } from "react";
+import { useEffect } from "react";
 import { Link, useParams } from "react-router";
-import { Check } from "lucide-react";
+import { Check, Clock3, CircleAlert } from "lucide-react";
 
 import LoadingSection from "@/components/custom/loading-section";
 import ErrorSection from "@/components/custom/error-section";
-import { PaymentExecutionStatusMap } from "@/services/api";
 import { Button } from "@/components/ui/button";
-import { formatLocalizedNumber } from "@/utils";
+import {
+  clearRetryExecutionUuid,
+  getPaymentViewStatus,
+  getRetryExecutionUuid,
+  usePaymentStatus,
+  useRetryPayment,
+} from "@/feature/payment";
 import { useAppTranslate } from "@/hooks";
-import { APP_I18_KEYS } from "@/services/i18";
 import { APP_ROUTES_KEY } from "@/router/routes";
-import { usePaymentStatus } from "@/feature/payment";
+import { APP_I18_KEYS } from "@/services/i18";
+import { formatTomanAmount } from "@/utils";
 
 function PaymentResultPage() {
   const { paymentUuid } = useParams<{ paymentUuid: string }>();
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
+  const {
+    data: payment,
+    refetch,
+    isLoading,
+    isError,
+  } = usePaymentStatus(paymentUuid);
+  const retryState = useRetryPayment();
+  const status = payment ? getPaymentViewStatus(payment) : "pending";
 
-  const paymentStatusState = usePaymentStatus(paymentUuid);
-  const paymentResult = paymentStatusState.data;
-  const isPaid =
-    paymentResult?.outcome === "succeeded" ||
-    paymentResult?.status === PaymentExecutionStatusMap.SUCCEEDED;
-  const paymentRows = [
-    {
-      label: t("pages.payment.result.amount"),
-      value: Number(paymentResult?.amount) || 0,
-    },
-  ];
+  useEffect(() => {
+    if (
+      !paymentUuid ||
+      !payment ||
+      (status !== "pending" && status !== "processing")
+    )
+      return;
+    const timer = window.setInterval(() => {
+      void refetch();
+    }, 3000);
+    return () => window.clearInterval(timer);
+  }, [paymentUuid, payment, status, refetch]);
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-dvh items-center justify-center">
+        <LoadingSection />
+      </div>
+    );
+  }
+  if (isError || !payment) {
+    return (
+      <div className="flex min-h-dvh items-center justify-center">
+        <ErrorSection onRetry={() => refetch()} />
+      </div>
+    );
+  }
+
+  const canRetry =
+    payment.financial_status === "PENDING" &&
+    (payment.status === "FAILED" || payment.status === "EXPIRED");
+  const retryPayment = async () => {
+    const result = await retryState.mutateAsync({
+      params: {
+        path: { intent_uuid: payment.id },
+        header: { "Idempotency-Key": getRetryExecutionUuid(payment.id) },
+      },
+    });
+    clearRetryExecutionUuid(payment.id);
+    window.location.assign(
+      result.payment_url ?? `/payment/verify/${result.execution_uuid}`,
+    );
+  };
+
+  const Icon =
+    status === "succeeded"
+      ? Check
+      : status === "failed" || status === "review"
+        ? CircleAlert
+        : Clock3;
+  const tone =
+    status === "succeeded"
+      ? "text-green-600"
+      : status === "failed" || status === "review"
+        ? "text-red-600"
+        : "text-amber-600";
 
   return (
-    <div className="h-dvh w-full">
-      {paymentStatusState.isLoading ? (
-        <div className="flex h-full w-full items-center justify-center">
-          <LoadingSection />
+    <main className="bg-background flex min-h-dvh items-center justify-center px-4 py-8">
+      <div className="w-full max-w-lg space-y-8 text-center" aria-live="polite">
+        <Icon className={`mx-auto size-14 ${tone}`} aria-hidden="true" />
+        <div className="space-y-3">
+          <h1 className="text-foreground text-3xl font-bold">
+            {t(`pages.payment.result.states.${status}.title`)}
+          </h1>
+          <p className="text-muted-foreground">
+            {t(`pages.payment.result.states.${status}.description`)}
+          </p>
+          {payment.financial_status === "SUCCEEDED" &&
+          payment.fulfillment_status !== "SUCCEEDED" ? (
+            <p className="text-muted-foreground">
+              {t("pages.payment.result.fulfillmentPending")}
+            </p>
+          ) : null}
         </div>
-      ) : null}
-      {paymentStatusState.isError ? (
-        <div className="flex h-full w-full items-center justify-center">
-          <ErrorSection onRetry={() => paymentStatusState.refetch()} />
-        </div>
-      ) : null}
-      <Activity mode={paymentResult && isPaid ? "visible" : "hidden"}>
-        <div className="bg-background flex min-h-screen items-center justify-center px-4 py-8">
-          <div className="w-full max-w-lg">
-            <div className="mb-8 flex justify-center">
-              <div className="relative">
-                <div className="absolute inset-0 rounded-full bg-green-500/20 blur-xl dark:bg-green-400/10" />
-                <div className="relative flex items-center justify-center rounded-full bg-linear-to-br from-green-50 to-green-100 p-6 dark:from-green-950/40 dark:to-green-900/20">
-                  <Check className="h-12 w-12 stroke-3 text-green-500 dark:text-green-400" />
-                </div>
-              </div>
-            </div>
-
-            <div className="mb-8 text-center">
-              <h1 className="text-foreground mb-3 text-3xl font-bold md:text-4xl">
-                {t("pages.payment.result.successful.title")}
-              </h1>
-              <p className="text-muted-foreground text-base leading-relaxed">
-                {t("pages.payment.result.successful.description")}
-              </p>
-            </div>
-
-            <div className="bg-card border-border mb-8 space-y-4 rounded-xl border p-6">
-              <div className="flex flex-col items-start justify-between gap-4 lg:flex-row">
-                <span className="text-muted-foreground text-sm">
-                  {t("pages.payment.result.trackingCode")}
-                </span>
-                <span
-                  dir="ltr"
-                  className="text-foreground font-mono font-semibold"
-                >
-                  {paymentUuid ?? ""}
-                </span>
-              </div>
-              <div className="bg-border h-px" />
-              {paymentRows.map((row, index) => (
-                <div
-                  key={row.label}
-                  className="flex flex-col items-start justify-between gap-4 lg:flex-row"
-                >
-                  <span className="text-muted-foreground text-sm">
-                    {row.label}
-                  </span>
-                  <span
-                    className={
-                      index === paymentRows.length - 1
-                        ? "text-2xl font-bold text-green-500 dark:text-green-400"
-                        : "text-foreground font-medium"
-                    }
-                  >
-                    {`${formatLocalizedNumber({
-                      value: row.value,
-                    })} ${t("common.rials")}`}
-                  </span>
-                </div>
-              ))}
-            </div>
-
-            <div className="space-y-3">
-              <Link to={APP_ROUTES_KEY.app.path}>
-                <Button className="h-11 w-full bg-green-500 font-semibold text-white transition-colors hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-700">
-                  {t("pages.payment.result.return")}
-                </Button>
-              </Link>
-            </div>
+        <div className="bg-card space-y-4 rounded-xl border p-6 text-right">
+          <div className="flex flex-wrap justify-between gap-2">
+            <span>{t("pages.payment.result.trackingCode")}</span>
+            <span dir="ltr" className="font-mono text-xs">
+              {payment.execution_uuid}
+            </span>
+          </div>
+          <div className="flex justify-between gap-2">
+            <span>{t("pages.payment.result.amount")}</span>
+            <span>
+              {formatTomanAmount(payment.amount)} {t("common.tomans")}
+            </span>
           </div>
         </div>
-      </Activity>
-
-      <Activity mode={paymentResult && !isPaid ? "visible" : "hidden"}>
-        <div className="bg-background flex min-h-screen items-center justify-center px-4 py-8">
-          <div className="w-full max-w-lg">
-            <div className="mb-8 flex justify-center">
-              <div className="relative">
-                <div className="absolute inset-0 rounded-full bg-red-500/20 blur-xl dark:bg-red-400/10" />
-                <div className="relative flex items-center justify-center rounded-full bg-linear-to-br from-red-50 to-red-100 p-6 dark:from-red-950/40 dark:to-red-900/20">
-                  <Check className="h-12 w-12 stroke-3 text-red-500 dark:text-red-400" />
-                </div>
-              </div>
-            </div>
-
-            <div className="mb-8 text-center">
-              <h1 className="text-foreground mb-3 text-3xl font-bold md:text-4xl">
-                {t("pages.payment.result.failed.title")}
-              </h1>
-              <p className="text-muted-foreground text-base leading-relaxed">
-                {t("pages.payment.result.failed.description")}
-              </p>
-            </div>
-
-            <div className="bg-card border-border mb-8 space-y-4 rounded-xl border p-6">
-              <div className="flex flex-col items-start justify-between gap-4 lg:flex-row">
-                <span className="text-muted-foreground text-sm">
-                  {t("pages.payment.result.trackingCode")}
-                </span>
-                <span
-                  dir="ltr"
-                  className="text-foreground font-mono font-semibold"
-                >
-                  {paymentUuid ?? ""}
-                </span>
-              </div>
-              <div className="bg-border h-px" />
-              {paymentRows.map((row, index) => (
-                <div
-                  key={row.label}
-                  className="flex flex-col items-start justify-between gap-4 lg:flex-row"
-                >
-                  <span className="text-muted-foreground text-sm">
-                    {row.label}
-                  </span>
-                  <span
-                    className={
-                      index === paymentRows.length - 1
-                        ? "text-2xl font-bold text-red-500 dark:text-red-400"
-                        : "text-foreground font-medium"
-                    }
-                  >
-                    {`${formatLocalizedNumber({
-                      value: row.value,
-                    })} ${t("common.rials")}`}
-                  </span>
-                </div>
-              ))}
-            </div>
-
-            <div className="space-y-3">
-              <Link to={APP_ROUTES_KEY.app.path}>
-                <Button className="h-11 w-full bg-red-500 font-semibold text-white transition-colors hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-700">
-                  {t("pages.payment.result.return")}
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </Activity>
-    </div>
+        {canRetry ? (
+          <Button
+            disabled={retryState.isPending}
+            onClick={() => void retryPayment()}
+            className="w-full"
+          >
+            {t("pages.payment.result.retry")}
+          </Button>
+        ) : null}
+        <Button asChild variant="outline" className="w-full">
+          <Link to={APP_ROUTES_KEY.app.path}>
+            {t("pages.payment.result.return")}
+          </Link>
+        </Button>
+      </div>
+    </main>
   );
 }
 

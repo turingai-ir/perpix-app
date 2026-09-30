@@ -2,7 +2,7 @@ import { type FC } from "react";
 
 import { useAppTranslate } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
-import { formatLocalizedNumber } from "@/utils";
+import { formatTomanAmount } from "@/utils";
 
 type PricingPlanPriceProps = {
   basePriceIrr: number;
@@ -12,15 +12,22 @@ type PricingPlanPriceProps = {
 const getDiscountPercent = (
   basePriceIrr: number,
   discountedPriceIrr: number,
-): number => {
-  if (basePriceIrr <= 0) {
-    return 0;
+): number | null => {
+  if (
+    !Number.isSafeInteger(basePriceIrr) ||
+    !Number.isSafeInteger(discountedPriceIrr) ||
+    basePriceIrr <= 0 ||
+    discountedPriceIrr >= basePriceIrr
+  ) {
+    return null;
   }
 
-  return Math.max(
-    0,
-    Math.round(((basePriceIrr - discountedPriceIrr) / basePriceIrr) * 100),
-  );
+  const discountHundredths =
+    (BigInt(basePriceIrr) - BigInt(discountedPriceIrr)) * 100n;
+  const base = BigInt(basePriceIrr);
+  return discountHundredths % base === 0n
+    ? Number(discountHundredths / base)
+    : null;
 };
 
 const PricingPlanPrice: FC<PricingPlanPriceProps> = ({
@@ -28,12 +35,8 @@ const PricingPlanPrice: FC<PricingPlanPriceProps> = ({
   discountedPriceIrr,
 }) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
-  const previousPrice = formatLocalizedNumber({
-    value: basePriceIrr,
-  });
-  const discountedPrice = formatLocalizedNumber({
-    value: discountedPriceIrr,
-  });
+  const previousPrice = formatTomanAmount(basePriceIrr);
+  const discountedPrice = formatTomanAmount(discountedPriceIrr);
   const discountPercent = getDiscountPercent(basePriceIrr, discountedPriceIrr);
   const hasDiscount = discountedPriceIrr < basePriceIrr;
 
@@ -46,7 +49,7 @@ const PricingPlanPrice: FC<PricingPlanPriceProps> = ({
               {t("features.pricing.previousPrice")}
             </dt>
             <dd className="text-muted-foreground decoration-muted-foreground/70 whitespace-nowrap line-through">
-              {previousPrice} {t("common.rials")}
+              {previousPrice} {t("common.tomans")}
             </dd>
           </>
         ) : null}
@@ -61,7 +64,7 @@ const PricingPlanPrice: FC<PricingPlanPriceProps> = ({
           )}
         </dt>
         <dd className="flex flex-wrap items-center justify-end gap-2 text-end">
-          {hasDiscount ? (
+          {discountPercent !== null ? (
             <span className="rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-bold text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200">
               {t("features.pricing.discountPercent", {
                 percent: discountPercent,
@@ -71,7 +74,7 @@ const PricingPlanPrice: FC<PricingPlanPriceProps> = ({
             <span className="w-20" aria-hidden="true" />
           )}
           <span className="text-2xl font-bold tracking-tight whitespace-nowrap">
-            {discountedPrice} {t("common.rials")}
+            {discountedPrice} {t("common.tomans")}
           </span>
         </dd>
       </div>

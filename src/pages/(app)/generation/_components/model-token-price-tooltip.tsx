@@ -9,10 +9,10 @@ import {
 } from "@/components/ui/popover";
 import { useAppTranslate } from "@/hooks";
 import {
-  getTierPriceTokenRange,
+  getTierPriceUsdmicroRange,
   normalizePricingTiers,
 } from "@/pages/(app)/generation/_utils/model-pricing";
-import { formatLocalizedNumber } from "@/utils";
+import { formatTokenAmount } from "@/utils";
 
 export const ModelTokenPriceTooltip: FC<{
   isLoading?: boolean;
@@ -23,8 +23,8 @@ export const ModelTokenPriceTooltip: FC<{
     () => normalizePricingTiers(pricingTiers),
     [pricingTiers],
   );
-  const tokenRange = useMemo(
-    () => getTierPriceTokenRange(normalizedPricingTiers),
+  const priceRange = useMemo(
+    () => getTierPriceUsdmicroRange(normalizedPricingTiers),
     [normalizedPricingTiers],
   );
 
@@ -33,15 +33,15 @@ export const ModelTokenPriceTooltip: FC<{
       return t("pages.generation.modelTokenPrice.loading");
     }
 
-    if (!tokenRange) {
+    if (!priceRange) {
       return t("pages.generation.modelTokenPrice.empty");
     }
 
     return t("pages.generation.modelTokenPrice.range", {
-      max: formatLocalizedNumber({ value: tokenRange.max }),
-      min: formatLocalizedNumber({ value: tokenRange.min }),
+      max: formatTokenAmount(priceRange.max),
+      min: formatTokenAmount(priceRange.min),
     });
-  }, [isLoading, t, tokenRange]);
+  }, [isLoading, t, priceRange]);
 
   return (
     <Popover>

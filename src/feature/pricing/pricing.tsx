@@ -45,7 +45,6 @@ function PricingFeature() {
   const plansState = useSubscriptionPlans(open);
   const activeSubscriptionState = useActiveSubscription(open);
   const purchaseSubscriptionState = usePurchaseSubscription();
-  const { mutateAsync: purchasePlan } = purchaseSubscriptionState;
   const { openPaymentUrl } = usePaymentRedirect();
 
   const planItems = useMemo(
@@ -76,14 +75,17 @@ function PricingFeature() {
 
   const handlePurchasePlan = useCallback(
     async (planId: string) => {
-      return await purchasePlan({
-        body: {
-          intent_uuid: crypto.randomUUID(),
-          plan_uuid: planId,
-        },
-      });
+      const res = await purchaseSubscriptionState.purchase(planId);
+      if (res.payment_url) {
+        openPaymentUrl({
+          paymentUrl: res.payment_url,
+          totalAmountIrr: res.amount,
+        });
+      } else {
+        window.location.assign(`/payment/verify/${res.execution_uuid}`);
+      }
     },
-    [purchasePlan],
+    [purchaseSubscriptionState, openPaymentUrl],
   );
 
   const handleOpenChange = useCallback(
@@ -141,12 +143,19 @@ function PricingFeature() {
                   )}
                 >
                   <h3 className="text-lg font-medium">{plan?.display_name}</h3>
-                  <PricingPlanPrice
-                    basePriceIrr={plan.base_price_irr ?? 0}
-                    discountedPriceIrr={
-                      plan.discounted_price_irr ?? plan.base_price_irr ?? 0
-                    }
-                  />
+                  {typeof plan.base_price_irr === "number" &&
+                  Number.isSafeInteger(plan.base_price_irr) &&
+                  typeof plan.discounted_price_irr === "number" &&
+                  Number.isSafeInteger(plan.discounted_price_irr) ? (
+                    <PricingPlanPrice
+                      basePriceIrr={plan.base_price_irr}
+                      discountedPriceIrr={plan.discounted_price_irr}
+                    />
+                  ) : (
+                    <p className="text-muted-foreground mt-5 text-sm">
+                      {t("features.pricing.priceUnavailable")}
+                    </p>
+                  )}
                   <p className="text-muted-foreground mt-3 font-medium sm:mt-4">
                     {plan?.description}
                   </p>
@@ -173,13 +182,15 @@ function PricingFeature() {
                       variant={plan?.is_recommended ? "default" : "outline"}
                       size="lg"
                       className="w-full"
-                      disabled={purchaseSubscriptionState.isPending}
+                      disabled={
+                        purchaseSubscriptionState.isPending ||
+                        typeof plan.base_price_irr !== "number" ||
+                        !Number.isSafeInteger(plan.base_price_irr) ||
+                        typeof plan.discounted_price_irr !== "number" ||
+                        !Number.isSafeInteger(plan.discounted_price_irr)
+                      }
                       onClick={async () => {
-                        const res = await handlePurchasePlan(plan?.uuid ?? "");
-                        openPaymentUrl({
-                          paymentUrl: res.payment_url,
-                          totalAmountIrr: Number(res.amount) || 0,
-                        });
+                        await handlePurchasePlan(plan.uuid);
                       }}
                     >
                       {purchaseSubscriptionState.isPending &&

@@ -8,7 +8,9 @@ import {
   type SchemaWalletTransactionResponse,
 } from "@/services/api";
 import { dayjs } from "@/lib/dayjs";
-import { formatLocalizedNumber, microDollarToToken } from "@/utils";
+import { formatTokenAmount } from "@/utils";
+import { useAppTranslate } from "@/hooks";
+import { APP_I18_KEYS } from "@/services/i18";
 import { useWalletTransactions } from "@/feature/wallet";
 import { PaginationFooter } from "@/pages/profile/_components/pagination-footer";
 import {
@@ -26,6 +28,7 @@ const transactionTypeLabels = {
 };
 
 function ProfileWalletTransactionsPage() {
+  const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const [searchParams, setSearchParams] = useSearchParams();
   const offset = Number(searchParams.get("offset") ?? 0);
   const safeOffset = Number.isFinite(offset) && offset > 0 ? offset : 0;
@@ -96,19 +99,16 @@ function ProfileWalletTransactionsPage() {
                       </Badge>
                     </td>
                     <td className="font-medium">
-                      {formatLocalizedNumber({
-                        value: microDollarToToken(transaction.amount_usdmicro),
-                      })}
+                      {formatTokenAmount(transaction.amount_usdmicro)}{" "}
+                      {t("common.token")}
                     </td>
                     <td>
-                      {formatLocalizedNumber({
-                        value: microDollarToToken(transaction.balance_before),
-                      })}
+                      {formatTokenAmount(transaction.balance_before)}{" "}
+                      {t("common.token")}
                     </td>
                     <td>
-                      {formatLocalizedNumber({
-                        value: microDollarToToken(transaction.balance_after),
-                      })}
+                      {formatTokenAmount(transaction.balance_after)}{" "}
+                      {t("common.token")}
                     </td>
                     <td>
                       {dayjs(transaction.created_at)
