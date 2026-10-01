@@ -63,9 +63,7 @@ test("unverified return stays pending instead of showing failure", async ({
   ).toBeVisible();
 });
 
-test("failed open payment retries with an idempotency key", async ({
-  page,
-}) => {
+test("failed open payment retries without a client UUID", async ({ page }) => {
   const newExecutionUuid = "c0202000-0000-4000-8000-000000000007";
   await page.route("**/api/v1/payment-executions/*", (route) =>
     route.fulfill({
@@ -102,5 +100,5 @@ test("failed open payment retries with an idempotency key", async ({
   await page.goto(`/payment/verify/${paymentId}`);
   await page.getByRole("button", { name: "تلاش دوباره برای پرداخت" }).click();
   await expect(page).toHaveURL(`/payment/verify/${newExecutionUuid}`);
-  expect(retryKey).toMatch(/^[0-9a-f-]{36}$/);
+  expect(retryKey).toBeUndefined();
 });

@@ -77,10 +77,7 @@ function PricingFeature() {
     async (planId: string) => {
       const res = await purchaseSubscriptionState.purchase(planId);
       if (res.payment_url) {
-        openPaymentUrl({
-          paymentUrl: res.payment_url,
-          totalAmountIrr: res.amount,
-        });
+        openPaymentUrl(res);
       } else {
         window.location.assign(`/payment/verify/${res.execution_uuid}`);
       }
@@ -148,6 +145,7 @@ function PricingFeature() {
                   typeof plan.discounted_price_irr === "number" &&
                   Number.isSafeInteger(plan.discounted_price_irr) ? (
                     <PricingPlanPrice
+                      currency={plan.currency}
                       basePriceIrr={plan.base_price_irr}
                       discountedPriceIrr={plan.discounted_price_irr}
                     />

@@ -1,8 +1,4 @@
 import { useReactQueryApi } from "@/hooks/app";
-import {
-  clearCheckoutIntentUuid,
-  getCheckoutIntentUuid,
-} from "@/feature/payment";
 
 export const useSubscriptionPlans = (enabled = true) => {
   const { useQuery } = useReactQueryApi();
@@ -23,16 +19,7 @@ export const usePurchaseSubscription = () => {
   const mutation = useMutation("post", "/api/v1/user/subscription/purchase");
   return {
     ...mutation,
-    purchase: async (planUuid: string) => {
-      const key = `subscription-purchase:${planUuid}`;
-      const result = await mutation.mutateAsync({
-        body: {
-          intent_uuid: getCheckoutIntentUuid(key),
-          plan_uuid: planUuid,
-        },
-      });
-      clearCheckoutIntentUuid(key);
-      return result;
-    },
+    purchase: (planUuid: string) =>
+      mutation.mutateAsync({ body: { plan_uuid: planUuid } }),
   };
 };

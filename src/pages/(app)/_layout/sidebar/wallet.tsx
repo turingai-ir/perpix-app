@@ -97,10 +97,7 @@ function AppLayoutSidebarWallet() {
     if (amountUsdmicro === null) return;
     const res = await chargeWalletState.charge(amountUsdmicro);
     if (res.payment_url) {
-      openPaymentUrl({
-        paymentUrl: res.payment_url,
-        totalAmountIrr: res.amount,
-      });
+      openPaymentUrl(res);
     } else {
       navigate(`/payment/verify/${res.execution_uuid}`);
     }

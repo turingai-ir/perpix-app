@@ -13,7 +13,7 @@ import {
 } from "@/pages/profile/_components/profile-list-state";
 import { APP_I18_KEYS } from "@/services/i18";
 import type { SchemaPaymentHistoryItemResponse } from "@/services/api";
-import { formatTomanAmount } from "@/utils";
+import { PaymentAmount } from "@/features/payment";
 
 const PAGE_LIMIT = 100;
 
@@ -99,7 +99,10 @@ function ProfilePaymentsPage() {
                         </Badge>
                       </td>
                       <td>
-                        {formatTomanAmount(payment.amount)} {t("common.tomans")}
+                        <PaymentAmount
+                          amount={payment.amount}
+                          currency={payment.currency}
+                        />
                       </td>
                       <td>
                         {t(

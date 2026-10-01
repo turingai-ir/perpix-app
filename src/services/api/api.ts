@@ -267,7 +267,7 @@ export interface paths {
     readonly put?: never;
     /**
      * Retry payment execution
-     * @description Initiates a retry execution for a failed or expired payment intent using an idempotent key.
+     * @description Initiates a retry execution for a failed or expired payment intent. Core creates the execution UUID.
      */
     readonly post: operations["retry_payment_api_v1_payment_intents__intent_uuid__executions_post"];
     readonly delete?: never;
@@ -1082,10 +1082,40 @@ export interface components {
         | "failed"
         | "expired"
         | "review";
-      /** Currency */
-      readonly currency: string;
+      /** @description Settlement currency for amount, base_amount, tax_amount and total_amount. */
+      readonly currency: components["schemas"]["SupportedCurrency"];
       /** Amount */
       readonly amount: string;
+      /**
+       * Base Amount Usdmicro
+       * @description Base price in micro USD, as an integer string.
+       */
+      readonly base_amount_usdmicro: string;
+      /**
+       * Tax Amount Usdmicro
+       * @description Tax in micro USD, as an integer string.
+       */
+      readonly tax_amount_usdmicro: string;
+      /**
+       * Total Amount Usdmicro
+       * @description Base price plus tax in micro USD, as an integer string.
+       */
+      readonly total_amount_usdmicro: string;
+      /**
+       * Base Amount
+       * @description Saved base price in currency units (IRR for rial payments).
+       */
+      readonly base_amount: string;
+      /**
+       * Tax Amount
+       * @description Saved tax in currency units (IRR for rial payments).
+       */
+      readonly tax_amount: string;
+      /**
+       * Total Amount
+       * @description Saved final amount in currency units; identical to amount.
+       */
+      readonly total_amount: string;
       /** Expires At */
       readonly expires_at: string | null;
       /** Payment Url */
@@ -1102,6 +1132,11 @@ export interface components {
     };
     /** SubscriptionPlanResponse */
     readonly SubscriptionPlanResponse: {
+      /**
+       * @description Currency of the converted *_irr prices.
+       * @default IRR
+       */
+      readonly currency: components["schemas"]["SupportedCurrency"];
       /**
        * Uuid
        * Format: uuid
@@ -1153,23 +1188,18 @@ export interface components {
     /** SubscriptionPurchaseRequest */
     readonly SubscriptionPurchaseRequest: {
       /**
-       * Intent Uuid
-       * Format: uuid
-       */
-      readonly intent_uuid?: string;
-      /**
        * Plan Uuid
        * Format: uuid
        */
       readonly plan_uuid: string;
     };
+    /**
+     * SupportedCurrency
+     * @enum {string}
+     */
+    readonly SupportedCurrency: "IRR";
     /** UserChargeWalletRequest */
     readonly UserChargeWalletRequest: {
-      /**
-       * Intent Uuid
-       * Format: uuid
-       */
-      readonly intent_uuid?: string;
       /** Amount Usdmicro */
       readonly amount_usdmicro: number;
     };
@@ -1492,6 +1522,8 @@ export type SchemaSubscriptionPlanResponse =
   components["schemas"]["SubscriptionPlanResponse"];
 export type SchemaSubscriptionPurchaseRequest =
   components["schemas"]["SubscriptionPurchaseRequest"];
+export type SchemaSupportedCurrency =
+  components["schemas"]["SupportedCurrency"];
 export type SchemaUserChargeWalletRequest =
   components["schemas"]["UserChargeWalletRequest"];
 export type SchemaUserEditInfoRequest =
@@ -1947,9 +1979,7 @@ export interface operations {
   readonly retry_payment_api_v1_payment_intents__intent_uuid__executions_post: {
     readonly parameters: {
       readonly query?: never;
-      readonly header: {
-        readonly "Idempotency-Key": string;
-      };
+      readonly header?: never;
       readonly path: {
         readonly intent_uuid: string;
       };
@@ -2666,6 +2696,9 @@ export const paymentFulfillmentStatusValues: ReadonlyArray<
 export const paymentResponseOutcomeValues: ReadonlyArray<
   FlattenedDeepRequired<components>["schemas"]["PaymentResponse"]["outcome"]
 > = ["ready", "pending", "succeeded", "failed", "expired", "review"];
+export const supportedCurrencyValues: ReadonlyArray<
+  FlattenedDeepRequired<components>["schemas"]["SupportedCurrency"]
+> = ["IRR"];
 export const walletOperationSourceEnumValues: ReadonlyArray<
   FlattenedDeepRequired<components>["schemas"]["WalletOperationSourceEnum"]
 > = ["admin", "ai_gateway_request", "ai_task_message", "subscription"];
@@ -2777,6 +2810,13 @@ export type PaymentFulfillmentStatusKey =
   keyof typeof PaymentFulfillmentStatusMap;
 export type PaymentFulfillmentStatusValue =
   (typeof PaymentFulfillmentStatusMap)[PaymentFulfillmentStatusKey];
+
+export const SupportedCurrencyMap = {
+  IRR: "IRR",
+} as const;
+export type SupportedCurrencyKey = keyof typeof SupportedCurrencyMap;
+export type SupportedCurrencyValue =
+  (typeof SupportedCurrencyMap)[SupportedCurrencyKey];
 
 export const WalletOperationSourceEnumMap = {
   admin: "admin",

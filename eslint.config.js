@@ -13,6 +13,7 @@ import mantine from "eslint-config-mantine";
 export default tseslint.config(
   {
     ignores: [
+      ".agents/**",
       "dist",
       "dev-dist",
       "build",
