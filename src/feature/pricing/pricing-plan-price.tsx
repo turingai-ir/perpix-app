@@ -2,9 +2,14 @@ import { type FC } from "react";
 
 import { useAppTranslate } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
-import { formatTomanAmount } from "@/utils";
+import { PaymentAmount } from "@/features/payment";
+import {
+  SupportedCurrencyMap,
+  type SchemaSupportedCurrency,
+} from "@/services/api";
 
 type PricingPlanPriceProps = {
+  currency?: SchemaSupportedCurrency;
   basePriceIrr: number;
   discountedPriceIrr: number;
 };
@@ -33,10 +38,9 @@ const getDiscountPercent = (
 const PricingPlanPrice: FC<PricingPlanPriceProps> = ({
   basePriceIrr,
   discountedPriceIrr,
+  currency = SupportedCurrencyMap.IRR,
 }) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
-  const previousPrice = formatTomanAmount(basePriceIrr);
-  const discountedPrice = formatTomanAmount(discountedPriceIrr);
   const discountPercent = getDiscountPercent(basePriceIrr, discountedPriceIrr);
   const hasDiscount = discountedPriceIrr < basePriceIrr;
 
@@ -49,7 +53,7 @@ const PricingPlanPrice: FC<PricingPlanPriceProps> = ({
               {t("features.pricing.previousPrice")}
             </dt>
             <dd className="text-muted-foreground decoration-muted-foreground/70 whitespace-nowrap line-through">
-              {previousPrice} {t("common.tomans")}
+              <PaymentAmount amount={basePriceIrr} currency={currency} />
             </dd>
           </>
         ) : null}
@@ -74,7 +78,7 @@ const PricingPlanPrice: FC<PricingPlanPriceProps> = ({
             <span className="w-20" aria-hidden="true" />
           )}
           <span className="text-2xl font-bold tracking-tight whitespace-nowrap">
-            {discountedPrice} {t("common.tomans")}
+            <PaymentAmount amount={discountedPriceIrr} currency={currency} />
           </span>
         </dd>
       </div>

@@ -30,7 +30,30 @@ export const formatTokenAmount = (
 
 export const formatTomanAmount = (
   amountIrr: string | number | bigint,
-): string => formatScaledInteger(amountIrr, 10n);
+): string => {
+  const amount = exactInteger(amountIrr);
+  if (amount === null) return "";
+  const language = jotaiStore.get(globalAtom).language;
+  const formatter = Intl.NumberFormat(language);
+  const remainder = amount < 0n ? -(amount % 10n) : amount % 10n;
+  const whole = formatter.format(amount / 10n);
+  if (remainder === 0n) return whole;
+  const decimal =
+    Intl.NumberFormat(language)
+      .formatToParts(1.1)
+      .find((part) => part.type === "decimal")?.value ?? ".";
+  const sign =
+    amount < 0n && amount / 10n === 0n
+      ? formatter
+          .formatToParts(-1)
+          .filter(
+            (part) => part.type === "minusSign" || part.type === "literal",
+          )
+          .map((part) => part.value)
+          .join("")
+      : "";
+  return `${sign}${whole}${decimal}${formatter.format(remainder)}`;
+};
 
 export function parseTokenAmount(value: string): number | null {
   const normalized = persianNumbersToEnglish(value);

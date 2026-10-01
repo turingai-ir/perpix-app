@@ -6,16 +6,14 @@ import LoadingSection from "@/components/custom/loading-section";
 import ErrorSection from "@/components/custom/error-section";
 import { Button } from "@/components/ui/button";
 import {
-  clearRetryExecutionUuid,
   getPaymentViewStatus,
-  getRetryExecutionUuid,
   usePaymentStatus,
   useRetryPayment,
 } from "@/feature/payment";
 import { useAppTranslate } from "@/hooks";
 import { APP_ROUTES_KEY } from "@/router/routes";
 import { APP_I18_KEYS } from "@/services/i18";
-import { formatTomanAmount } from "@/utils";
+import { PaymentAmount } from "@/features/payment";
 
 function PaymentResultPage() {
   const { paymentUuid } = useParams<{ paymentUuid: string }>();
@@ -64,10 +62,8 @@ function PaymentResultPage() {
     const result = await retryState.mutateAsync({
       params: {
         path: { intent_uuid: payment.id },
-        header: { "Idempotency-Key": getRetryExecutionUuid(payment.id) },
       },
     });
-    clearRetryExecutionUuid(payment.id);
     window.location.assign(
       result.payment_url ?? `/payment/verify/${result.execution_uuid}`,
     );
@@ -114,7 +110,10 @@ function PaymentResultPage() {
           <div className="flex justify-between gap-2">
             <span>{t("pages.payment.result.amount")}</span>
             <span>
-              {formatTomanAmount(payment.amount)} {t("common.tomans")}
+              <PaymentAmount
+                amount={payment.amount}
+                currency={payment.currency}
+              />
             </span>
           </div>
         </div>

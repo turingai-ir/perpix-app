@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 
 const walletUuid = "c0202000-0000-4000-8000-000000000002";
 const executionUuid = "c0202000-0000-4000-8000-000000000003";
+const intentUuid = "c0202000-0000-4000-8000-000000000005";
 
 test("wallet checkout starts in the wallet service", async ({
   page,
@@ -43,7 +44,7 @@ test("wallet checkout starts in the wallet service", async ({
     checkoutBody = route.request().postDataJSON() as Record<string, unknown>;
     await route.fulfill({
       json: {
-        id: checkoutBody.intent_uuid,
+        id: intentUuid,
         execution_uuid: executionUuid,
         status: "PENDING",
         financial_status: "PENDING",
@@ -51,7 +52,13 @@ test("wallet checkout starts in the wallet service", async ({
         dispatch_status: "CONFIRMED",
         outcome: "ready",
         currency: "IRR",
-        amount: "20000",
+        amount: "22100",
+        base_amount: "20090",
+        tax_amount: "2010",
+        total_amount: "22100",
+        base_amount_usdmicro: "10000",
+        tax_amount_usdmicro: "1000",
+        total_amount_usdmicro: "11000",
         expires_at: null,
         payment_url: "https://pay.example/checkout",
       },
@@ -74,10 +81,25 @@ test("wallet checkout starts in the wallet service", async ({
   await expect(
     page.getByRole("heading", { name: "تایید مبلغ پرداخت" }),
   ).toBeVisible();
+  const confirmation = page.getByRole("dialog").filter({
+    has: page.getByRole("heading", { name: "تایید مبلغ پرداخت" }),
+  });
+  await expect(
+    confirmation.getByText("مبلغ پایه", { exact: true }),
+  ).toBeVisible();
+  await expect(confirmation.getByText("مالیات", { exact: true })).toBeVisible();
+  await expect(confirmation).toContainText("۲٬۰۰۹ تومان");
+  await expect(confirmation).toContainText("۲۰۱ تومان");
+  await expect(confirmation).toContainText("۲٬۲۱۰ تومان");
   expect(checkoutBody).toMatchObject({ amount_usdmicro: 10000 });
   expect(checkoutBody).not.toHaveProperty("target_type");
   expect(checkoutBody).not.toHaveProperty("target_uuid");
-  expect(checkoutBody?.intent_uuid).toEqual(expect.any(String));
+  expect(checkoutBody).not.toHaveProperty("intent_uuid");
+  await page.route("https://pay.example/checkout", (route) =>
+    route.fulfill({ contentType: "text/html", body: "Gateway" }),
+  );
+  await confirmation.getByRole("button", { name: "ادامه پرداخت" }).click();
+  await expect(page).toHaveURL("https://pay.example/checkout");
 });
 
 test("subscription checkout starts in the subscription service", async ({
@@ -164,7 +186,7 @@ test("subscription checkout starts in the subscription service", async ({
     checkoutBody = route.request().postDataJSON() as Record<string, unknown>;
     await route.fulfill({
       json: {
-        id: checkoutBody.intent_uuid,
+        id: intentUuid,
         execution_uuid: executionUuid,
         status: "PENDING",
         financial_status: "PENDING",
@@ -172,7 +194,13 @@ test("subscription checkout starts in the subscription service", async ({
         dispatch_status: "CONFIRMED",
         outcome: "ready",
         currency: "IRR",
-        amount: "20000",
+        amount: "22100",
+        base_amount: "20091",
+        tax_amount: "2009",
+        total_amount: "22100",
+        base_amount_usdmicro: "10000",
+        tax_amount_usdmicro: "1000",
+        total_amount_usdmicro: "11000",
         expires_at: null,
         payment_url: "https://pay.example/checkout",
       },
@@ -201,7 +229,23 @@ test("subscription checkout starts in the subscription service", async ({
   await expect(
     page.getByRole("heading", { name: "تایید مبلغ پرداخت" }),
   ).toBeVisible();
+  const confirmation = page.getByRole("dialog").filter({
+    has: page.getByRole("heading", { name: "تایید مبلغ پرداخت" }),
+  });
+  await expect(
+    confirmation.getByText("مبلغ پایه", { exact: true }),
+  ).toBeVisible();
+  await expect(confirmation.getByText("مالیات", { exact: true })).toBeVisible();
+  await expect(confirmation).toContainText("۲٬۰۰۹٫۱ تومان");
+  await expect(confirmation).toContainText("۲۰۰٫۹ تومان");
+  await expect(confirmation).toContainText("۲٬۲۱۰ تومان");
   expect(checkoutBody).toMatchObject({ plan_uuid: planUuid });
   expect(checkoutBody).not.toHaveProperty("target_type");
   expect(checkoutBody).not.toHaveProperty("amount_usdmicro");
+  expect(checkoutBody).not.toHaveProperty("intent_uuid");
+  await page.route("https://pay.example/checkout", (route) =>
+    route.fulfill({ contentType: "text/html", body: "Gateway" }),
+  );
+  await confirmation.getByRole("button", { name: "ادامه پرداخت" }).click();
+  await expect(page).toHaveURL("https://pay.example/checkout");
 });

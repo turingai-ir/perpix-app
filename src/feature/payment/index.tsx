@@ -12,7 +12,11 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { useAppTranslate, useSecondsCountDown } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
-import { formatLocalizedNumber, formatTomanAmount } from "@/utils";
+import { formatLocalizedNumber } from "@/utils";
+import {
+  PaymentBreakdown,
+  type PaymentBreakdownData,
+} from "@/features/payment";
 
 export * from "./api";
 export * from "./checkout-session";
@@ -21,14 +25,12 @@ export { PaymentEventsProvider } from "./payment-events";
 
 const PAYMENT_REDIRECT_COUNTDOWN_SECONDS = 10;
 
-type PaymentRedirectParams = {
-  paymentUrl?: string | null;
-  totalAmountIrr?: string | null;
+type PaymentRedirectParams = PaymentBreakdownData & {
+  payment_url: string | null;
 };
 
-type PendingPaymentRedirect = {
-  paymentUrl: string;
-  totalAmountIrr: string;
+type PendingPaymentRedirect = PaymentBreakdownData & {
+  payment_url: string;
 };
 
 type PaymentRedirectContextValue = {
@@ -39,20 +41,10 @@ type PaymentRedirectListener = (params: PendingPaymentRedirect) => void;
 
 const paymentRedirectListeners = new Set<PaymentRedirectListener>();
 
-function emitPaymentRedirect({
-  paymentUrl,
-  totalAmountIrr = "0",
-}: PaymentRedirectParams) {
-  if (!paymentUrl) {
-    return;
-  }
-
-  paymentRedirectListeners.forEach((listener) => {
-    listener({
-      paymentUrl,
-      totalAmountIrr: totalAmountIrr ?? "0",
-    });
-  });
+function emitPaymentRedirect(payment: PaymentRedirectParams) {
+  if (!payment.payment_url) return;
+  const pending = { ...payment, payment_url: payment.payment_url };
+  paymentRedirectListeners.forEach((listener) => listener(pending));
 }
 
 export function PaymentRedirectPortal() {
@@ -70,7 +62,7 @@ export function PaymentRedirectPortal() {
     }
 
     hasRedirectedRef.current = true;
-    window.location.assign(pendingPayment.paymentUrl);
+    window.location.assign(pendingPayment.payment_url);
   }, [pendingPayment]);
 
   useEffect(() => {
@@ -110,17 +102,7 @@ export function PaymentRedirectPortal() {
           </DialogDescription>
         </DialogHeader>
 
-        <div className="bg-muted/30 space-y-4 rounded-lg border p-4">
-          <div className="flex items-center justify-between gap-4">
-            <span className="font-medium">
-              {t("pages.payment.redirect.finalAmount")}
-            </span>
-            <span className="text-lg font-semibold">
-              {formatTomanAmount(pendingPayment?.totalAmountIrr ?? "0")}{" "}
-              {t("common.tomans")}
-            </span>
-          </div>
-        </div>
+        {pendingPayment && <PaymentBreakdown payment={pendingPayment} />}
 
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
