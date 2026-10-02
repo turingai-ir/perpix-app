@@ -35,7 +35,6 @@ dev-dist
 /playwright/.auth/
 
 
-.agents
-.codex
+
 
 graphify-out

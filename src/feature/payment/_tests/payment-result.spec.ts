@@ -4,7 +4,7 @@ const paymentId = "c0202000-0000-4000-8000-000000000001";
 
 function paymentResponse(
   financialStatus: "PENDING" | "SUCCEEDED",
-  fulfillmentStatus: "NOT_READY" | "PENDING" | "NEEDS_REVIEW",
+  fulfillmentStatus: "NOT_READY" | "PENDING" | "NEEDS_REVIEW" | "SUCCEEDED",
 ) {
   return {
     id: paymentId,
@@ -21,22 +21,22 @@ function paymentResponse(
   };
 }
 
-test("paid payment awaiting wallet credit shows fulfillment pending", async ({
-  page,
-}) => {
+test("paid payment awaiting fulfillment shows processing", async ({ page }) => {
   await page.route("**/api/v1/payment-executions/*", (route) =>
     route.fulfill({ json: paymentResponse("SUCCEEDED", "PENDING") }),
   );
   await page.goto(`/payment/verify/${paymentId}`);
   await expect(
-    page.getByRole("heading", { name: "پرداخت انجام شد؛ در حال شارژ حساب" }),
+    page.getByRole("heading", {
+      name: "پرداخت انجام شد؛ در حال تکمیل درخواست",
+    }),
   ).toBeVisible();
   await expect(
-    page.getByText("موجودی یا اشتراک هنوز اعمال نشده است."),
+    page.getByText("درخواست شما هنوز تکمیل نشده است."),
   ).toBeVisible();
 });
 
-test("payment under review does not claim wallet was credited", async ({
+test("payment under review does not claim the request was completed", async ({
   page,
 }) => {
   await page.route("**/api/v1/payment-executions/*", (route) =>
@@ -47,7 +47,7 @@ test("payment under review does not claim wallet was credited", async ({
     page.getByRole("heading", { name: "پرداخت نیاز به بررسی دارد" }),
   ).toBeVisible();
   await expect(
-    page.getByText("موجودی یا اشتراک هنوز اعمال نشده است."),
+    page.getByText("درخواست شما هنوز تکمیل نشده است."),
   ).toBeVisible();
 });
 
@@ -101,4 +101,17 @@ test("failed open payment retries without a client UUID", async ({ page }) => {
   await page.getByRole("button", { name: "تلاش دوباره برای پرداخت" }).click();
   await expect(page).toHaveURL(`/payment/verify/${newExecutionUuid}`);
   expect(retryKey).toBeUndefined();
+});
+
+test("fulfilled payment uses a service-independent success message", async ({
+  page,
+}) => {
+  await page.route("**/api/v1/payment-executions/*", (route) =>
+    route.fulfill({ json: paymentResponse("SUCCEEDED", "SUCCEEDED") }),
+  );
+  await page.goto(`/payment/verify/${paymentId}`);
+  await expect(
+    page.getByRole("heading", { name: "پرداخت تکمیل شد", exact: true }),
+  ).toBeVisible();
+  await expect(page.getByText("درخواست شما با موفقیت تکمیل شد.")).toBeVisible();
 });
