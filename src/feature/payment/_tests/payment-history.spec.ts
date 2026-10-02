@@ -14,17 +14,9 @@ function history(financialStatus: "PENDING" | "SUCCEEDED", taxAmount: string) {
           financial_status: financialStatus,
           fulfillment_status:
             financialStatus === "SUCCEEDED" ? "PENDING" : "NOT_READY",
-          dispatch_status: "CONFIRMED",
-          outcome: financialStatus === "SUCCEEDED" ? "succeeded" : "ready",
+          requires_review: false,
           currency: "IRR",
           amount: "90071992547409930",
-          base_amount: (90071992547409930n - BigInt(taxAmount)).toString(),
-          tax_amount: taxAmount,
-          total_amount: "90071992547409930",
-          base_amount_usdmicro: "10000",
-          tax_amount_usdmicro: taxAmount === "0" ? "0" : "1000",
-          total_amount_usdmicro: taxAmount === "0" ? "10000" : "11000",
-          expires_at: null,
           payment_url: null,
         },
         target_type: taxAmount === "0" ? "custom_service" : "wallet_topup",
@@ -50,13 +42,34 @@ for (const taxAmount of ["2010", "0"]) {
         json: { uuid: "user-1", name: "Test", email: "test@example.com" },
       }),
     );
-    await page.route("**/api/v1/wallet/wallet", (route) =>
-      route.fulfill({
+    let walletRequests = 0;
+    await page.route("**/api/v1/wallet/wallet", (route) => {
+      walletRequests += 1;
+      return route.fulfill({
         json: { wallet_uuid: intentUuid, balance_usdmicro: 0, is_active: true },
-      }),
-    );
+      });
+    });
     await page.route("**/api/v1/user/subscription/active", (route) =>
       route.fulfill({ json: { plan: { uuid: "plan-1", is_default: false } } }),
+    );
+    let detailsCount = 0;
+    await page.route(
+      `**/api/v1/payment-intents/${intentUuid}/details`,
+      (route) => {
+        detailsCount += 1;
+        return route.fulfill({
+          json: {
+            id: intentUuid,
+            currency: "IRR",
+            base_amount: (90071992547409930n - BigInt(taxAmount)).toString(),
+            tax_amount: taxAmount,
+            total_amount: "90071992547409930",
+            base_amount_usdmicro: "10000",
+            tax_amount_usdmicro: taxAmount === "0" ? "0" : "1000",
+            total_amount_usdmicro: taxAmount === "0" ? "10000" : "11000",
+          },
+        });
+      },
     );
     let requestCount = 0;
     await page.route("**/api/v1/payment-intents?*", (route) => {
@@ -65,28 +78,25 @@ for (const taxAmount of ["2010", "0"]) {
         json: history(requestCount === 1 ? "PENDING" : "SUCCEEDED", taxAmount),
       });
     });
+    let streamRequests = 0;
     await page.route("**/api/v1/payment-events", async (route) => {
+      streamRequests += 1;
       await new Promise((resolve) => setTimeout(resolve, 600));
       await route.fulfill({
         status: 200,
         contentType: "text/event-stream",
-        body: `event: payment_changed\ndata: ${JSON.stringify({ intent_uuid: intentUuid, execution_uuid: executionUuid })}\n\n`,
+        body:
+          streamRequests === 1
+            ? `event: payment_changed\ndata: ${JSON.stringify({ intent_uuid: intentUuid, execution_uuid: executionUuid })}\n\n`
+            : ": connected\n\n",
       });
     });
 
     await page.goto("/profile/payments");
     await expect(page.getByText("پرداخت شده؛ در حال اعمال")).toBeVisible();
     await expect(page.getByText("در حال اعمال", { exact: true })).toBeVisible();
+    const beforeReconnect = walletRequests;
     const table = page.getByRole("table");
-    await expect(
-      table.getByRole("columnheader", { name: "مبلغ پایه", exact: true }),
-    ).toBeVisible();
-    await expect(
-      table.getByRole("columnheader", { name: "مالیات", exact: true }),
-    ).toBeVisible();
-    await expect(
-      table.getByRole("columnheader", { name: "مبلغ کل", exact: true }),
-    ).toBeVisible();
     const cells = table
       .getByRole("row")
       .filter({ hasText: intentUuid })
@@ -95,17 +105,30 @@ for (const taxAmount of ["2010", "0"]) {
     const baseTomans =
       taxAmount === "0" ? 9007199254740993n : 9007199254740792n;
     await expect(cells.nth(3)).toHaveText(
-      `${formatter.format(baseTomans)} تومان`,
-    );
-    await expect(cells.nth(4)).toHaveText(
-      `${formatter.format(taxAmount === "0" ? 0n : 201n)} تومان`,
-    );
-    await expect(cells.nth(5)).toHaveText(
       `${formatter.format(9007199254740993n)} تومان`,
     );
-    await expect(cells.nth(6)).toHaveText(
+    await expect(cells.nth(4)).toHaveText(
       taxAmount === "0" ? "سایر" : "شارژ کیف پول",
     );
+    expect(detailsCount).toBe(0);
+    await page.getByRole("button", { name: "جزئیات مبلغ" }).click();
+    const dialog = page.getByRole("dialog");
+    await expect(
+      dialog
+        .getByText(`${formatter.format(baseTomans)} تومان`, {
+          exact: true,
+        })
+        .first(),
+    ).toBeVisible();
+    await expect(
+      dialog.getByText(
+        `${formatter.format(taxAmount === "0" ? 0n : 201n)} تومان`,
+        { exact: true },
+      ),
+    ).toBeVisible();
+    expect(detailsCount).toBeGreaterThan(0);
     expect(requestCount).toBeGreaterThan(1);
+    await expect.poll(() => streamRequests).toBeGreaterThan(1);
+    await expect.poll(() => walletRequests).toBeGreaterThan(beforeReconnect);
   });
 }

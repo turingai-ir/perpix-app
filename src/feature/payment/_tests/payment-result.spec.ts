@@ -9,14 +9,12 @@ function paymentResponse(
   return {
     id: paymentId,
     execution_uuid: paymentId,
-    status: financialStatus === "SUCCEEDED" ? "SUCCEEDED" : "UNKNOWN",
+    status: financialStatus === "SUCCEEDED" ? "SUCCEEDED" : "PENDING",
     financial_status: financialStatus,
     fulfillment_status: fulfillmentStatus,
-    dispatch_status: "CONFIRMED",
-    outcome: financialStatus === "SUCCEEDED" ? "succeeded" : "pending",
+    requires_review: fulfillmentStatus === "NEEDS_REVIEW",
     currency: "IRR",
     amount: "250000",
-    expires_at: null,
     payment_url: null,
   };
 }
@@ -75,9 +73,6 @@ test("failed open payment retries without a client UUID", async ({ page }) => {
         status: route.request().url().endsWith(newExecutionUuid)
           ? "PENDING"
           : "FAILED",
-        outcome: route.request().url().endsWith(newExecutionUuid)
-          ? "pending"
-          : "failed",
       },
     }),
   );
@@ -91,9 +86,8 @@ test("failed open payment retries without a client UUID", async ({ page }) => {
           ...paymentResponse("PENDING", "NOT_READY"),
           execution_uuid: newExecutionUuid,
           status: "PENDING",
-          outcome: "pending",
         },
-        status: 202,
+        status: 201,
       });
     },
   );
@@ -114,4 +108,23 @@ test("fulfilled payment uses a service-independent success message", async ({
     page.getByRole("heading", { name: "پرداخت تکمیل شد", exact: true }),
   ).toBeVisible();
   await expect(page.getByText("درخواست شما با موفقیت تکمیل شد.")).toBeVisible();
+});
+
+test("reviewed failed attempt cannot be retried", async ({ page }) => {
+  await page.route("**/api/v1/payment-executions/*", (route) =>
+    route.fulfill({
+      json: {
+        ...paymentResponse("PENDING", "NOT_READY"),
+        status: "FAILED",
+        requires_review: true,
+      },
+    }),
+  );
+  await page.goto(`/payment/verify/${paymentId}`);
+  await expect(
+    page.getByRole("heading", { name: "پرداخت نیاز به بررسی دارد" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "تلاش دوباره برای پرداخت" }),
+  ).toHaveCount(0);
 });

@@ -2,7 +2,7 @@ import type { SchemaPaymentResponse } from "@/services/api";
 
 type PaymentState = Pick<
   SchemaPaymentResponse,
-  "status" | "financial_status" | "fulfillment_status"
+  "status" | "financial_status" | "fulfillment_status" | "requires_review"
 >;
 
 export type PaymentViewStatus =
@@ -13,7 +13,8 @@ export type PaymentViewStatus =
   | "review";
 
 export function getPaymentViewStatus(payment: PaymentState): PaymentViewStatus {
-  if (payment.fulfillment_status === "NEEDS_REVIEW") return "review";
+  if (payment.requires_review || payment.fulfillment_status === "NEEDS_REVIEW")
+    return "review";
   if (payment.financial_status === "SUCCEEDED") {
     return payment.fulfillment_status === "SUCCEEDED"
       ? "succeeded"

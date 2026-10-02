@@ -28,6 +28,8 @@ export function PaymentEventsProvider() {
   useEffect(() => {
     if (!accessToken) return;
     const controller = new AbortController();
+    let connected = false;
+    let retryDelay = 3000;
     const refreshPaymentQueries = () => {
       void queryClient.invalidateQueries({
         predicate: ({ queryKey }) =>
@@ -43,7 +45,8 @@ export function PaymentEventsProvider() {
       signal: controller.signal,
       onopen(response) {
         if (!response.ok) throw new Error(`Payment events: ${response.status}`);
-        refreshPaymentQueries();
+        if (connected) refreshPaymentQueries();
+        connected = true;
         return Promise.resolve();
       },
       onmessage(message) {
@@ -55,13 +58,16 @@ export function PaymentEventsProvider() {
           return;
         }
         if (!paymentEvent.safeParse(payload).success) return;
+        retryDelay = 3000;
         refreshPaymentQueries();
       },
       onclose() {
         throw new Error("Payment event stream closed");
       },
       onerror() {
-        return 3000;
+        const delay = retryDelay;
+        retryDelay = Math.min(retryDelay * 2, 30000);
+        return delay;
       },
     }).catch(() => {
       // The stream is optional; status pages continue polling while it is unavailable.
