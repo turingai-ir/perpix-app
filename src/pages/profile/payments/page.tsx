@@ -54,7 +54,9 @@ function ProfilePaymentsPage() {
                   <th>{t("pages.profile.payments.trackingCode")}</th>
                   <th>{t("pages.profile.payments.paymentStatus")}</th>
                   <th>{t("pages.profile.payments.fulfillmentStatus")}</th>
-                  <th>{t("pages.profile.payments.amount")}</th>
+                  <th>{t("pages.profile.payments.baseAmount")}</th>
+                  <th>{t("pages.profile.payments.taxAmount")}</th>
+                  <th>{t("pages.profile.payments.totalAmount")}</th>
                   <th>{t("pages.profile.payments.type")}</th>
                   <th>{t("pages.profile.payments.date")}</th>
                 </tr>
@@ -100,14 +102,28 @@ function ProfilePaymentsPage() {
                       </td>
                       <td>
                         <PaymentAmount
-                          amount={payment.amount}
+                          amount={payment.base_amount}
                           currency={payment.currency}
                         />
                       </td>
                       <td>
-                        {t(
-                          `pages.profile.payments.targets.${target_type === "wallet_topup" ? "wallet_topup" : target_type === "subscription" ? "subscription" : "other"}`,
-                        )}
+                        <PaymentAmount
+                          amount={payment.tax_amount}
+                          currency={payment.currency}
+                        />
+                      </td>
+                      <td className="font-semibold">
+                        <PaymentAmount
+                          amount={payment.total_amount}
+                          currency={payment.currency}
+                        />
+                      </td>
+                      <td>
+                        {t(`pages.profile.payments.targets.${target_type}`, {
+                          defaultValue: t(
+                            "pages.profile.payments.targets.other",
+                          ),
+                        })}
                       </td>
                       <td>
                         {dayjs(created_at)
