@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
 import { useSearchParams } from "react-router";
 
 import { Badge } from "@/components/ui/badge";
@@ -12,8 +14,7 @@ import {
   ProfileListLoading,
 } from "@/pages/profile/_components/profile-list-state";
 import { APP_I18_KEYS } from "@/services/i18";
-import type { SchemaPaymentHistoryItemResponse } from "@/services/api";
-import { PaymentAmount } from "@/features/payment";
+import { PaymentAmount, PaymentDetailsDialog } from "@/features/payment";
 
 const PAGE_LIMIT = 100;
 
@@ -21,13 +22,10 @@ function ProfilePaymentsPage() {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const [searchParams, setSearchParams] = useSearchParams();
   const offset = Number(searchParams.get("offset") ?? 0);
-  const safeOffset = Number.isFinite(offset) && offset > 0 ? offset : 0;
+  const safeOffset = Number.isSafeInteger(offset) && offset > 0 ? offset : 0;
   const paymentsState = usePayments({ offset: safeOffset, limit: PAGE_LIMIT });
-  const payments: SchemaPaymentHistoryItemResponse[] = paymentsState.data?.items
-    ? Array.from(
-        paymentsState.data.items as ArrayLike<SchemaPaymentHistoryItemResponse>,
-      )
-    : [];
+  const payments = Array.from(paymentsState.data?.items ?? []);
+  const [detailsId, setDetailsId] = useState<string | null>(null);
 
   const goToOffset = (nextOffset: number) => {
     setSearchParams({ offset: String(Math.max(0, nextOffset)) });
@@ -38,6 +36,12 @@ function ProfilePaymentsPage() {
       <CardHeader>
         <CardTitle>{t("pages.profile.payments.title")}</CardTitle>
       </CardHeader>
+      {detailsId ? (
+        <PaymentDetailsDialog
+          intentUuid={detailsId}
+          onClose={() => setDetailsId(null)}
+        />
+      ) : null}
       <CardContent className="p-0">
         {paymentsState.isLoading ? <ProfileListLoading /> : null}
         {paymentsState.isError ? (
@@ -54,11 +58,10 @@ function ProfilePaymentsPage() {
                   <th>{t("pages.profile.payments.trackingCode")}</th>
                   <th>{t("pages.profile.payments.paymentStatus")}</th>
                   <th>{t("pages.profile.payments.fulfillmentStatus")}</th>
-                  <th>{t("pages.profile.payments.baseAmount")}</th>
-                  <th>{t("pages.profile.payments.taxAmount")}</th>
                   <th>{t("pages.profile.payments.totalAmount")}</th>
                   <th>{t("pages.profile.payments.type")}</th>
                   <th>{t("pages.profile.payments.date")}</th>
+                  <th>{t("pages.profile.payments.details")}</th>
                 </tr>
               </thead>
               <tbody className="divide-border divide-y">
@@ -100,21 +103,9 @@ function ProfilePaymentsPage() {
                           )}
                         </Badge>
                       </td>
-                      <td>
-                        <PaymentAmount
-                          amount={payment.base_amount}
-                          currency={payment.currency}
-                        />
-                      </td>
-                      <td>
-                        <PaymentAmount
-                          amount={payment.tax_amount}
-                          currency={payment.currency}
-                        />
-                      </td>
                       <td className="font-semibold">
                         <PaymentAmount
-                          amount={payment.total_amount}
+                          amount={payment.amount}
                           currency={payment.currency}
                         />
                       </td>
@@ -129,6 +120,14 @@ function ProfilePaymentsPage() {
                         {dayjs(created_at)
                           .locale("fa")
                           .format("YYYY/MM/DD HH:mm")}
+                      </td>
+                      <td>
+                        <Button
+                          variant="outline"
+                          onClick={() => setDetailsId(payment.id)}
+                        >
+                          {t("pages.profile.payments.details")}
+                        </Button>
                       </td>
                     </tr>
                   );

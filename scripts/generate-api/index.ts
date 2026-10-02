@@ -3,6 +3,7 @@ import path from "path";
 
 import openapiTS, { astToString } from "openapi-typescript";
 
+import { publicApiSchema } from "./public-schema";
 import { makeBinaryTransform } from "./transform";
 
 type EnumDef = {
@@ -34,7 +35,7 @@ const downloadOpenApiSchema = async (targetPath: string) => {
     );
   }
 
-  const schema = await response.text();
+  const schema = JSON.stringify(publicApiSchema(await response.json()));
 
   await fs.mkdir(path.dirname(targetPath), { recursive: true });
   await fs.writeFile(targetPath, schema, "utf-8");

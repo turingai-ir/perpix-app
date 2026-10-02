@@ -1,3 +1,5 @@
+import { getPaymentViewStatus } from "./status";
+
 import { useReactQueryApi } from "@/hooks/app";
 
 export const usePaymentStatus = (executionUuid?: string) => {
@@ -9,7 +11,15 @@ export const usePaymentStatus = (executionUuid?: string) => {
     {
       params: { path: { execution_uuid: executionUuid ?? "" } },
     },
-    { enabled: !!executionUuid },
+    {
+      enabled: !!executionUuid,
+      refetchInterval: (query) => {
+        const payment = query.state.data;
+        if (!payment || query.state.status === "error") return false;
+        const status = getPaymentViewStatus(payment);
+        return status === "pending" || status === "processing" ? 3000 : false;
+      },
+    },
   );
 };
 

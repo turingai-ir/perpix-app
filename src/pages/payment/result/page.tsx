@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { Link, useParams } from "react-router";
 import { Check, Clock3, CircleAlert } from "lucide-react";
 
@@ -27,19 +26,6 @@ function PaymentResultPage() {
   const retryState = useRetryPayment();
   const status = payment ? getPaymentViewStatus(payment) : "pending";
 
-  useEffect(() => {
-    if (
-      !paymentUuid ||
-      !payment ||
-      (status !== "pending" && status !== "processing")
-    )
-      return;
-    const timer = window.setInterval(() => {
-      void refetch();
-    }, 3000);
-    return () => window.clearInterval(timer);
-  }, [paymentUuid, payment, status, refetch]);
-
   if (isLoading) {
     return (
       <div className="flex min-h-dvh items-center justify-center">
@@ -56,16 +42,19 @@ function PaymentResultPage() {
   }
 
   const canRetry =
+    !payment.requires_review &&
+    payment.fulfillment_status !== "NEEDS_REVIEW" &&
     payment.financial_status === "PENDING" &&
     (payment.status === "FAILED" || payment.status === "EXPIRED");
-  const retryPayment = async () => {
-    const result = await retryState.mutateAsync({
-      params: {
-        path: { intent_uuid: payment.id },
+  const retryPayment = () => {
+    retryState.mutate(
+      { params: { path: { intent_uuid: payment.id } } },
+      {
+        onSuccess: (result) =>
+          window.location.assign(
+            result.payment_url ?? `/payment/verify/${result.execution_uuid}`,
+          ),
       },
-    });
-    window.location.assign(
-      result.payment_url ?? `/payment/verify/${result.execution_uuid}`,
     );
   };
 
@@ -120,7 +109,7 @@ function PaymentResultPage() {
         {canRetry ? (
           <Button
             disabled={retryState.isPending}
-            onClick={() => void retryPayment()}
+            onClick={retryPayment}
             className="w-full"
           >
             {t("pages.payment.result.retry")}

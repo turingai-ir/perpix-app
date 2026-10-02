@@ -1,12 +1,12 @@
 import {
-  type SchemaPaymentResponse,
+  type SchemaPaymentDetailsResponse,
   type SchemaSupportedCurrency,
   SupportedCurrencyMap,
 } from "@/services/api";
 import { formatTomanAmount } from "@/utils";
 
 export type PaymentBreakdown = Pick<
-  SchemaPaymentResponse,
+  SchemaPaymentDetailsResponse,
   "currency" | "base_amount" | "tax_amount" | "total_amount"
 >;
 

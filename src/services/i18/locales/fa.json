@@ -610,6 +610,7 @@
       "payments": {
         "title": "پرداخت‌ها",
         "empty": "پرداختی برای نمایش وجود ندارد",
+        "details": "جزئیات مبلغ",
         "trackingCode": "کد پیگیری",
         "paymentStatus": "وضعیت پرداخت",
         "fulfillmentStatus": "وضعیت تکمیل درخواست",
