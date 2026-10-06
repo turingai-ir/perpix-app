@@ -13,7 +13,7 @@ import type {
   SchemaUserSubscriptionResponse,
 } from "@/services/api";
 import { APP_I18_KEYS } from "@/services/i18";
-import { formatLocalizedNumber, microDollarToToken } from "@/utils";
+import { formatTokenAmount } from "@/utils";
 
 interface DashboardAccountProps {
   isLoading: boolean;
@@ -30,9 +30,7 @@ export function DashboardAccount({
 }: DashboardAccountProps) {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   if (isLoading) return <Skeleton className="h-44 w-full rounded-2xl" />;
-  const balance = formatLocalizedNumber({
-    value: microDollarToToken(wallet?.balance_usdmicro ?? 0),
-  });
+  const balance = formatTokenAmount(wallet?.balance_usdmicro ?? 0);
   const expiry = subscription?.expires_at
     ? dayjs(subscription.expires_at)
         .calendar("jalali")

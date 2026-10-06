@@ -22,7 +22,7 @@ import { formatLocalizedNumber } from "@/utils";
 const PRESET_AMOUNTS = [100, 500, 1_000, 5_000] as const;
 
 type TokenAmountStepProps = {
-  balance: number;
+  balance: string;
   initialAmount: string;
   isError: boolean;
   isPending: boolean;
@@ -71,7 +71,7 @@ export function TokenAmountStep(props: TokenAmountStepProps) {
             )}
           </span>{" "}
           <strong className="text-foreground tabular-nums">
-            {formatLocalizedNumber({ value: props.balance })}{" "}
+            {props.balance}{" "}
             {t("common.token")}
           </strong>
         </div>
