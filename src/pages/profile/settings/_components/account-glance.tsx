@@ -6,7 +6,7 @@ import { useWallet } from "@/feature/wallet";
 import { useAppTranslate } from "@/hooks";
 import { APP_ROUTES_KEY } from "@/router/routes";
 import { APP_I18_KEYS } from "@/services/i18";
-import { formatLocalizedNumber, microDollarToToken } from "@/utils";
+import { formatTokenAmount } from "@/utils";
 
 export function AccountGlance() {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
@@ -16,9 +16,7 @@ export function AccountGlance() {
   if (wallet.isError) {
     walletValue = t("pages.profile.settings.unavailable");
   } else if (wallet.isSuccess) {
-    walletValue = formatLocalizedNumber({
-      value: microDollarToToken(wallet.data.balance_usdmicro),
-    });
+    walletValue = formatTokenAmount(wallet.data.balance_usdmicro);
   }
 
   let planValue = t("pages.profile.settings.loading");

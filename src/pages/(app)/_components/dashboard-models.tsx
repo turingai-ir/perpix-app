@@ -7,7 +7,7 @@ import { useAppTranslate } from "@/hooks";
 import { APP_ROUTES_KEY } from "@/router/routes";
 import type { SchemaAiRegistryModelSummary } from "@/services/api";
 import { APP_I18_KEYS } from "@/services/i18";
-import { formatLocalizedNumber, microDollarToToken } from "@/utils";
+import { formatTokenAmount } from "@/utils";
 
 interface DashboardModelsProps {
   isLoading: boolean;
@@ -46,9 +46,7 @@ export function DashboardModels({ isLoading, models }: DashboardModelsProps) {
               output === "VIDEO"
                 ? APP_ROUTES_KEY.generation.video.path
                 : APP_ROUTES_KEY.generation.image.path;
-            const minimumCost = formatLocalizedNumber({
-              value: microDollarToToken(model.min_cost ?? 0),
-            });
+            const minimumCost = formatTokenAmount(model.min_cost ?? 0);
             return (
               <Link
                 key={model.uuid}
