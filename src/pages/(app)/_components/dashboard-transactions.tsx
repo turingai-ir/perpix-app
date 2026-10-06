@@ -8,7 +8,7 @@ import { dayjs } from "@/lib/dayjs";
 import { APP_ROUTES_KEY } from "@/router/routes";
 import type { SchemaWalletTransactionResponse } from "@/services/api";
 import { APP_I18_KEYS } from "@/services/i18";
-import { formatLocalizedNumber, microDollarToToken } from "@/utils";
+import { formatTokenAmount } from "@/utils";
 
 interface DashboardTransactionsProps {
   isLoading: boolean;
@@ -53,9 +53,7 @@ export function DashboardTransactions({
         {transactions.length ? (
           transactions.map((transaction) => {
             const Icon = transactionIcons[transaction.type];
-            const amount = formatLocalizedNumber({
-              value: microDollarToToken(transaction.amount_usdmicro),
-            });
+            const amount = formatTokenAmount(transaction.amount_usdmicro);
             return (
               <div
                 key={transaction.transaction_uuid}

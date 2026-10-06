@@ -1,13 +1,12 @@
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { usePaymentRedirect } from "@/feature/payment";
 import { useAppTranslate } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
-import type { SchemaChargeWalletResponse } from "@/services/api";
-import { microDollarToToken, tokenToMicroDollar } from "@/utils";
+import { formatTokenAmount, parseTokenAmount } from "@/utils";
 
 import { CheckoutStepMotion } from "./checkout-step-motion";
-import { PaymentReviewStep } from "./payment-review-step";
 import { SubscriptionRequiredStep } from "./subscription-required-step";
 import { TokenAmountStep } from "./token-amount-step";
 import { useChargeWallet } from "./api";
@@ -26,27 +25,31 @@ export function WalletChargeFlow({
 }: WalletChargeFlowProps) {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const chargeWalletState = useChargeWallet();
+  const { openPaymentUrl } = usePaymentRedirect();
   const [open, setOpen] = useState(false);
   const [amount, setAmount] = useState("");
-  const [payment, setPayment] = useState<SchemaChargeWalletResponse | null>(
-    null,
-  );
 
   const handleOpenChange = (nextOpen: boolean) => {
     setOpen(nextOpen);
     if (!nextOpen) {
-      setPayment(null);
       chargeWalletState.reset();
     }
   };
   const createPayment = async (nextAmount: string) => {
+    const amountUsdmicro = parseTokenAmount(nextAmount);
+    if (amountUsdmicro === null) return;
     setAmount(nextAmount);
     chargeWalletState.reset();
     try {
       const response = await chargeWalletState.mutateAsync({
-        body: { amount_usdmicro: tokenToMicroDollar(Number(nextAmount)) },
+        body: { amount_usdmicro: amountUsdmicro },
       });
-      setPayment(response);
+      handleOpenChange(false);
+      if (response.payment_url) {
+        openPaymentUrl(response);
+      } else {
+        window.location.assign(`/payment/verify/${response.execution_uuid}`);
+      }
     } catch {
       // The mutation state renders the localized recovery action.
     }
@@ -54,7 +57,7 @@ export function WalletChargeFlow({
 
   let content = (
     <TokenAmountStep
-      balance={microDollarToToken(balanceUsdmicro)}
+      balance={formatTokenAmount(balanceUsdmicro)}
       initialAmount={amount}
       isError={chargeWalletState.isError}
       isPending={chargeWalletState.isPending}
@@ -71,15 +74,6 @@ export function WalletChargeFlow({
           handleOpenChange(false);
           onOpenPricing();
         }}
-      />
-    );
-  } else if (payment) {
-    stepKey = "review";
-    content = (
-      <PaymentReviewStep
-        payment={payment}
-        onBack={() => setPayment(null)}
-        onPay={() => window.location.assign(payment.payment_url)}
       />
     );
   }

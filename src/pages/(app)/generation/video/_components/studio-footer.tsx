@@ -6,8 +6,8 @@ import { useAppTranslate } from "@/hooks";
 import { GenerationRulesDialog } from "@/pages/(app)/generation/_components/prompt-box/generation-rules-dialog";
 import { PromptSubmitButton } from "@/pages/(app)/generation/_components/prompt-box/submit-button";
 import type { useGenerationPromptBox } from "@/pages/(app)/generation/_hooks";
-import { getTierPriceTokenRange } from "@/pages/(app)/generation/_utils/model-pricing";
-import { formatLocalizedNumber } from "@/utils";
+import { getTierPriceUsdmicroRange } from "@/pages/(app)/generation/_utils/model-pricing";
+import { formatTokenAmount } from "@/utils";
 
 type Studio = ReturnType<typeof useGenerationPromptBox>;
 export function VideoStudioFooter({
@@ -27,7 +27,7 @@ export function VideoStudioFooter({
     !model.modelState.isPlaceholderData &&
     !model.modelState.isError;
   const range = hasCurrentModelPrice
-    ? getTierPriceTokenRange([
+    ? getTierPriceUsdmicroRange([
         { price_usdmicro: model.modelState.data?.min_cost },
         { price_usdmicro: model.modelState.data?.max_cost },
       ])
@@ -77,8 +77,8 @@ export function VideoStudioFooter({
         <strong>
           {range
             ? t("pages.generation.modelTokenPrice.range", {
-                min: formatLocalizedNumber({ value: range.min }),
-                max: formatLocalizedNumber({ value: range.max }),
+                min: formatTokenAmount(range.min),
+                max: formatTokenAmount(range.max),
               })
             : t("pages.generation.modelTokenPrice.empty")}
         </strong>
