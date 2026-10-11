@@ -38,3 +38,10 @@ dev-dist
 
 
 graphify-out
+
+# Local development tooling and generated artifacts
+/.artifacts/
+/.codex/skills/
+/.codex/higgsfield-video.png
+/.impeccable/
+/.agents/skills/ui-ux-pro-max/
