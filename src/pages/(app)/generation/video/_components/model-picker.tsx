@@ -49,7 +49,7 @@ function ModelIcon({ url, name }: { url?: string | null; name: string }) {
   const localLogo = getLocalModelLogo(name);
   const source = [localLogo?.src, url].find(
     (candidate): candidate is string =>
-      Boolean(candidate) && !failedSources.includes(candidate),
+      candidate != null && !failedSources.includes(candidate),
   );
 
   return (
