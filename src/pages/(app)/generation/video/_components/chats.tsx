@@ -66,7 +66,6 @@ export const GenerationVideoChats: FC<Props> = ({
               aspectRatio={String(
                 message.ai_model_config?.aspect_ratio ?? "16:9",
               )}
-              prompt={String(message.ai_model_config?.prompt ?? "")}
             />
           ),
           userImages: uniqueImageIds(

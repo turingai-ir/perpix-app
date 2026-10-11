@@ -132,6 +132,54 @@
     transform: translateY(0.45rem) scale(0.985);
   }
 }
+
+.shell[data-media="video"] {
+  align-items: flex-start;
+  border-color: var(--border);
+  border-radius: 12px;
+  background: var(--background);
+  box-shadow: 0 6px 20px rgb(0 0 0 / 8%);
+  backdrop-filter: none;
+  animation: none;
+}
+.shell[data-media="video"] .orb {
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--primary) 10%, var(--background));
+  box-shadow: none;
+}
+.shell[data-media="video"] .orb::before,
+.shell[data-media="video"] .orb span {
+  display: none;
+}
+.shell[data-media="video"] .orb svg {
+  width: 20px;
+  color: var(--primary);
+  filter: none;
+}
+.shell[data-media="video"] .hint {
+  line-height: 1.8;
+}
+.shell[data-media="video"] .steps {
+  flex-wrap: wrap;
+  overflow: visible;
+  gap: 8px 14px;
+  font-size: 11px;
+}
+.shell[data-media="video"] .steps li {
+  opacity: 1;
+}
+.shell[data-media="video"] .complete {
+  color: var(--foreground);
+}
+.shell[data-media="video"] .active {
+  color: var(--primary);
+}
+.shell[data-media="video"] .steps .active svg {
+  animation: none;
+}
 @keyframes focusOrbit {
   to {
     transform: rotateX(64deg) rotateZ(372deg);

@@ -1,6 +1,8 @@
 import { SlidersHorizontal } from "lucide-react";
 import { useEffect, useRef } from "react";
 
+import { VideoDurationControl } from "./video-duration-control";
+import { VideoFormatControl } from "./video-format-control";
 import styles from "../composer.module.css";
 import { useAppTranslate } from "@/hooks";
 import { DynamicPromptConfigField } from "@/pages/(app)/generation/_components/dynamic-config";
@@ -15,9 +17,18 @@ export function VideoStudioSettings({
 }) {
   const { t } = useAppTranslate();
   const { dynamicForm, isFormBusy } = studio;
+  const durationMeta = dynamicForm.getFieldMeta("duration");
+  const showDuration =
+    durationMeta &&
+    durationMeta.inputType !== "hidden" &&
+    dynamicForm.isFieldVisible("duration");
+  const quickFields = studio.promptBoxConfigFieldNames.filter(
+    (name) => name !== "duration",
+  );
+  if (showDuration) quickFields.unshift("duration");
   const advanced = studio.advancedFieldNames.filter((name) => {
     const type = dynamicForm.getFieldMeta(name)?.inputType;
-    return type !== "file" && type !== "file-list";
+    return name !== "duration" && type !== "file" && type !== "file-list";
   });
   const required = advanced.filter(
     (name) => dynamicForm.getFieldMeta(name)?.required,
@@ -33,19 +44,40 @@ export function VideoStudioSettings({
   useEffect(() => {
     if (hasHiddenError && advancedRef.current) advancedRef.current.open = true;
   }, [hasHiddenError, dynamicForm.form.formState.submitCount]);
-  const renderField = (fieldName: string) => (
-    <DynamicPromptConfigField
-      key={fieldName}
-      dynamicForm={dynamicForm}
-      fieldName={fieldName}
-      disabled={isFormBusy}
-      layout="stacked"
-    />
-  );
+  const renderField = (fieldName: string) => {
+    if (fieldName === "duration") {
+      return (
+        <VideoDurationControl
+          key={fieldName}
+          dynamicForm={dynamicForm}
+          disabled={isFormBusy}
+        />
+      );
+    }
+    if (fieldName === "aspect_ratio" || fieldName === "resolution") {
+      return (
+        <VideoFormatControl
+          key={fieldName}
+          dynamicForm={dynamicForm}
+          fieldName={fieldName}
+          disabled={isFormBusy}
+        />
+      );
+    }
+    return (
+      <DynamicPromptConfigField
+        key={fieldName}
+        dynamicForm={dynamicForm}
+        fieldName={fieldName}
+        disabled={isFormBusy}
+        layout="stacked"
+      />
+    );
+  };
   return (
     <div className={styles.settings}>
       <div className={styles.configGrid}>
-        {studio.promptBoxConfigFieldNames
+        {quickFields
           .filter((name) => name !== "mode")
           .sort(
             (first, second) =>
