@@ -43,7 +43,6 @@ export function OptimisticVideoTurn({
         ) : (
           <VideoGenerationPortal
             aspectRatio={String(config.aspect_ratio ?? "16:9")}
-            prompt={turn.snapshot.prompt}
           />
         )}
       </div>

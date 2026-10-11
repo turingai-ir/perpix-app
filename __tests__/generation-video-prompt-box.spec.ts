@@ -1,4 +1,10 @@
-import { expect, type Page, type Route, test } from "@playwright/test";
+import {
+  expect,
+  type Locator,
+  type Page,
+  type Route,
+  test,
+} from "@playwright/test";
 import { readFileSync } from "node:fs";
 
 import type {
@@ -10,8 +16,7 @@ import { mockAuthenticatedSession } from "./support/auth-session";
 const MODEL_UUID = "2d1fcf14-a655-47c5-af08-3fa450dc99cc";
 const NANO_MODEL_UUID = "a509b349-d43f-4065-9cf2-de444bf4aa2c";
 const RUNWARE_PROVIDER_UUID = "638239ab-dcac-49cf-a198-f593cfd45e77";
-const VIDEO_PROMPT_PLACEHOLDER =
-  "صحنه، حرکت سوژه، حرکت دوربین و حال‌وهوای نور را توصیف کن…";
+const VIDEO_PROMPT_PLACEHOLDER = "صحنه، حرکت سوژه و دوربین و نور رو تعریف کن…";
 
 test.describe.configure({ mode: "serial" });
 
@@ -26,6 +31,15 @@ const klingVideoConfig = JSON.parse(
 ];
 const klingVideoConfigMeta = klingVideoConfig[0].meta;
 const klingVideoConfigSchema = klingVideoConfig[1].RUNWARE.config_schema;
+const seedanceVideoConfig = JSON.parse(
+  readFileSync(
+    new URL("./fixtures/seedance-video-config.json", import.meta.url),
+    "utf8",
+  ),
+) as {
+  canonical_ui_schema: JsonConfigMeta;
+  modes: Record<string, unknown>;
+};
 
 test.beforeEach(async ({ page }) => {
   await mockAuthenticatedSession(page);
@@ -38,31 +52,25 @@ test.beforeEach(async ({ page }) => {
   await mockApi(page);
 });
 
-test("video director opens without generating and keeps the model controls ready", async ({
+test("video studio opens without generating and keeps the model controls ready", async ({
   page,
 }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
   let generations = 0;
   page.on("request", (request) => {
     if (request.url().includes("/ai-task/generate")) generations += 1;
   });
   await openVideoGenerationPage(page);
   await expect(
-    page.getByRole("heading", { name: "ایده‌ات را کارگردانی کن." }),
+    page.getByRole("heading", { name: "توی ذهنت پخش می‌شه؟ بسازش." }),
   ).toBeVisible();
-  await expect(
-    page.getByRole("textbox", {
-      name: "صحنه و حرکت ویدیو را توصیف کن",
-    }),
-  ).toHaveValue("");
-  await expect(page.getByRole("combobox", { name: "مدت زمان" })).toContainText(
-    "5",
+  await expect(page.getByPlaceholder(VIDEO_PROMPT_PLACEHOLDER)).toHaveValue("");
+  await expect(page.getByRole("slider", { name: "مدت زمان" })).toHaveAttribute(
+    "aria-valuetext",
+    "5 ثانیه",
   );
-  await page.getByRole("button", { name: "روش ساخت" }).click();
-  await expect(
-    page.getByRole("heading", { name: "از ایده تا ویدیو، در سه قدم روشن." }),
-  ).toBeVisible();
-  await page.getByRole("button", { name: "کتابخانه حرکت" }).click();
-  await expect(page.getByText("قاب منتخب پرپیکس")).toBeVisible();
+  await expect(page.locator("[data-generation-intro]")).toBeVisible();
+  await expect(page.locator("[data-generation-composer]")).toBeVisible();
   expect(generations).toBe(0);
   await page.screenshot({
     path: ".artifacts/video-studio-desktop.png",
@@ -70,39 +78,306 @@ test("video director opens without generating and keeps the model controls ready
   });
 });
 
-test("keeps the creator rail on the left beside a wider workspace", async ({
+test("idle cinema is a static composition preview without generating a video", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await openVideoGenerationPage(page);
+  const cinema = page.locator('[data-video-cinema="idle"]');
+  await expect(cinema).toBeVisible();
+  await expect(cinema.getByText("قاب ویدیوی تو")).toBeVisible();
+  await expect(cinema.getByRole("button")).toHaveCount(0);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect(cinema.locator("[data-video-preview-frame]")).toHaveCSS(
+    "animation-name",
+    "none",
+  );
+  await expect(page.getByPlaceholder(VIDEO_PROMPT_PLACEHOLDER)).toHaveValue("");
+});
+
+test("long video prompts collapse without hiding the failure or losing line breaks", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  const prompt = `VIDEO EDIT / CHARACTER REPLACEMENT\n${"Keep the source composition and original timing.\n".repeat(65)}`;
+  const config = { mode: "text_to_video", prompt };
+  await mockApi(page, [
+    {
+      ai_model_config: config,
+      ai_model_uuid: MODEL_UUID,
+      role: "USER",
+      message: prompt,
+      uuid: "long-prompt",
+      task_status: "SUCCESS",
+    },
+    {
+      ai_model_config: config,
+      ai_model_uuid: MODEL_UUID,
+      role: "ASSISTANT",
+      message: null,
+      uuid: "failed-long-prompt",
+      task_status: "FAILED",
+    },
+  ]);
+  await page.goto("/generation/video/task-1");
+  const summary = page.locator("[data-video-request-summary]").first();
+  const expand = summary.getByRole("button", { name: "نمایش متن کامل" });
+  await expect(expand).toHaveAttribute("aria-expanded", "false");
+  await expect(page.getByRole("alert")).toBeInViewport();
+  await expand.click();
+  await expect(
+    summary.getByRole("button", { name: "نمایش کمتر" }),
+  ).toHaveAttribute("aria-expanded", "true");
+  await expect(summary.locator("p")).toHaveCSS("white-space", "pre-wrap");
+  await expect(summary.locator("p")).toHaveAttribute("dir", "auto");
+  await summary.getByRole("button", { name: "نمایش کمتر" }).click();
+  await expect(page.getByRole("alert")).toBeInViewport();
+});
+
+test("a create-only video model has no redundant group button and keeps reference controls readable", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  const detail = getModelDetail();
+  await page.route(`**/ai-registry/models/${MODEL_UUID}`, (route) =>
+    route.fulfill({
+      json: {
+        ...detail,
+        modes: Object.fromEntries(
+          Object.entries(detail.modes)
+            .filter(([mode]) => mode !== "motion_control")
+            .map(([mode, entry]) => [
+              mode,
+              {
+                ...entry,
+                config_schema: {
+                  ...entry.config_schema,
+                  properties: {
+                    ...entry.config_schema.properties,
+                    mode: {
+                      type: "string",
+                      enum: ["text_to_video", "image_to_video"],
+                      default: "text_to_video",
+                    },
+                  },
+                },
+              },
+            ]),
+        ),
+        canonical_ui_schema: {
+          ...detail.canonical_ui_schema,
+          selectors: detail.canonical_ui_schema.selectors.map((selector) => ({
+            ...selector,
+            options: selector.options.filter(
+              (option) => option.value !== "motion_control",
+            ),
+          })),
+        },
+      },
+    }),
+  );
+  await openVideoGenerationPage(page);
+  const composer = page.locator("[data-generation-composer-card]");
+  await expect(composer.getByRole("group", { name: "روش ساخت" })).toBeHidden();
+  const imageMode = composer.getByRole("radio", { name: "عکس به ویدیو" });
+  await imageMode.click();
+  await expect(imageMode).toHaveAttribute("aria-checked", "true");
+  await imageMode.press("ArrowRight");
+  await expect(
+    composer.getByRole("radio", { name: "متن به ویدیو" }),
+  ).toBeFocused();
+  await imageMode.click();
+  await expect(
+    composer.getByRole("heading", { name: "تصاویر فریم" }),
+  ).toBeVisible();
+  const upload = composer.getByRole("button", {
+    name: "افزودن عکس",
+    exact: true,
+  });
+  await expect(upload).toBeVisible();
+  expect((await upload.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+  await page.screenshot({
+    path: ".artifacts/video-composer-references-desktop.png",
+  });
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.getByRole("button", { name: "Close", exact: true }).click();
+  await composer.scrollIntoViewIfNeeded();
+  await expect(upload).toBeVisible();
+  expect(
+    await page.evaluate(() => document.documentElement.scrollWidth),
+  ).toBeLessThanOrEqual(375);
+  await page.screenshot({
+    path: ".artifacts/video-composer-references-mobile.png",
+    fullPage: true,
+  });
+});
+
+test("populated video references retain large previews and a labeled add control", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  const prompt = "A cinematic portrait in natural light";
+  await mockApi(page, [
+    {
+      ai_model_config: {
+        mode: "image_to_video",
+        prompt,
+        frame_images: ["reference-1"],
+      },
+      ai_model_uuid: MODEL_UUID,
+      role: "USER",
+      message: prompt,
+      uuid: "reference-message",
+      task_status: "SUCCESS",
+    },
+  ]);
+  await page.route("**/file-manager/files/presigned-urls", (route) =>
+    route.fulfill({
+      json: {
+        files: [
+          {
+            file_uuid: "reference-1",
+            preview_url: "http://localhost:5173/android-chrome-512x512.png",
+            download_url: "http://localhost:5173/android-chrome-512x512.png",
+            expire_at: new Date(Date.now() + 3_600_000).toISOString(),
+          },
+        ],
+      },
+    }),
+  );
+  await page.goto("/generation/video/task-1");
+  const composer = page.locator("[data-generation-composer-card]");
+  const preview = composer.getByRole("button", { name: "دیدن عکس مرجع 1" });
+  await expect(preview).toBeVisible();
+  expect((await preview.boundingBox())!.width).toBeGreaterThanOrEqual(76);
+  const add = composer.getByRole("button", { name: "افزودن عکس", exact: true });
+  await expect(add).toBeVisible();
+  await expect(add).toHaveText("افزودن عکس");
+  await preview.click();
+  await expect(page.getByRole("dialog")).toBeVisible();
+  await page.keyboard.press("Escape");
+  await composer.getByRole("button", { name: "حذف عکس مرجع 1" }).click();
+  await expect(preview).toHaveCount(0);
+  await expect(add).toBeVisible();
+});
+
+test("video media dock gives audio references type-aware controls", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.route(
+    (url) => url.pathname.endsWith(`/ai-registry/models/${MODEL_UUID}`),
+    (route) =>
+      route.fulfill({
+        json: { ...getModelSummary(), ...seedanceVideoConfig },
+      }),
+  );
+  await openVideoGenerationPage(page);
+  const composer = page.locator("[data-generation-composer-card]");
+  await composer.getByRole("radio", { name: "ویدیوی صوت‌محور" }).click();
+  const audioDock = composer.locator(
+    '[data-media-upload-presentation="video-dock"][data-media-type="audio"]',
+  );
+  await expect(audioDock).toBeVisible();
+  const addAudio = audioDock.getByRole("button", {
+    name: "افزودن صدا",
+    exact: true,
+  });
+  await expect(addAudio).toBeVisible();
+  expect((await addAudio.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+  const addImage = composer
+    .locator('[data-media-type="image"]')
+    .getByRole("button", { name: "افزودن عکس", exact: true })
+    .first();
+  await expect(addImage).toBeVisible();
+  await expect(addImage).not.toHaveAttribute("data-media-type", "audio");
+  await page.screenshot({ path: ".artifacts/video-media-dock-audio.png" });
+});
+
+test("keeps the video composer in a compact side rail beside the timeline", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto("/generation/video", { waitUntil: "domcontentloaded" });
   await expect(page.getByPlaceholder(VIDEO_PROMPT_PLACEHOLDER)).toBeVisible();
 
-  const creatorRail = page.locator("[data-generation-composer]");
+  const composer = page.locator("[data-generation-composer]");
   const workspace = page.getByRole("region", {
     name: "خط زمانی ساخت ویدیو",
   });
-  const creatorRailBounds = await creatorRail.boundingBox();
+  const composerBounds = await composer.boundingBox();
   const workspaceBounds = await workspace.boundingBox();
 
-  expect(creatorRailBounds).not.toBeNull();
+  expect(composerBounds).not.toBeNull();
   expect(workspaceBounds).not.toBeNull();
-  expect(creatorRailBounds!.x).toBeLessThan(workspaceBounds!.x);
-  expect(workspaceBounds!.width).toBeGreaterThan(creatorRailBounds!.width);
+  expect(composerBounds!.x).toBeGreaterThan(
+    workspaceBounds!.x + workspaceBounds!.width,
+  );
+  expect(composerBounds!.y).toBeLessThanOrEqual(workspaceBounds!.y + 20);
+  expect(composerBounds!.width).toBeLessThan(workspaceBounds!.width * 0.7);
 });
 
 test("video model library is searchable without starting a generation", async ({
   page,
 }) => {
   let generations = 0;
+  await page.route(
+    (url) => url.pathname.endsWith("/ai-registry/models"),
+    (route) =>
+      route.fulfill({
+        json: [
+          getModelSummary(),
+          {
+            ...getModelSummary(),
+            uuid: "wan-model",
+            name: "WAN_VIDEO_3_0",
+            display_name: "Wan 3.0",
+            model_owner: "ALIBABA",
+            min_cost: 410_000,
+            max_cost: 3_000_000,
+          },
+          {
+            ...getModelSummary(),
+            uuid: "grok-model",
+            name: "GROK_IMAGINE_VIDEO",
+            display_name: "Grok Imagine Video",
+            model_owner: "X_AI",
+          },
+          {
+            ...getModelSummary(),
+            uuid: "seedance-model",
+            name: "SEEDANCE_2_5",
+            display_name: "Seedance 2.5",
+            model_owner: "BYTE_DANCE",
+          },
+          {
+            ...getModelSummary(),
+            uuid: "aleph-model",
+            name: "ALEPH_2_0",
+            display_name: "Aleph 2.0",
+            model_owner: "RUNWAY",
+          },
+        ],
+      }),
+  );
   await page.route("**/ai-task/generate", (route) => {
     generations += 1;
     return route.abort();
   });
   await page.goto("/generation/video");
   await page.getByRole("button", { name: /انتخاب مدل.*Kling/ }).click();
-  const search = page.getByRole("searchbox", { name: "جست‌وجوی مدل" });
+  const dialog = page.getByRole("dialog");
+  await expect(
+    dialog.getByText("رفرنس زیاد؟ ویدیوی بلند؟ این یکی کم نمیاره."),
+  ).toBeVisible();
+  await expect(dialog.locator('[data-model-mark="W"]')).toBeVisible();
+  await expect(dialog.locator('[data-model-mark="x"]')).toBeVisible();
+  await expect(dialog.locator('[data-model-mark="S"]')).toBeVisible();
+  await expect(dialog.locator('[data-model-mark="A"]')).toBeVisible();
+  await page.screenshot({ path: ".artifacts/video-model-picker-desktop.png" });
+  const search = page.getByRole("searchbox", { name: "اسم مدل رو بزن…" });
   await search.fill("not-a-model");
-  await expect(page.getByText("مدلی با این نام پیدا نشد.")).toBeVisible();
+  await expect(page.getByText("چیزی با این اسم پیدا نکردیم.")).toBeVisible();
   await search.fill("kling");
   await expect(
     page
@@ -120,14 +395,16 @@ test("video studio stays usable on mobile with reduced motion", async ({
   await page.setViewportSize({ width: 375, height: 812 });
   await page.emulateMedia({ reducedMotion: "reduce" });
   await openVideoGenerationPage(page);
-  const submitButton = page.getByRole("button", {
-    name: "ساخت ویدیو",
+  await expect(page.locator('[data-video-cinema="idle"]')).toBeInViewport();
+  await page.screenshot({ path: ".artifacts/video-studio-mobile-intro.png" });
+  const submitButton = page.locator("footer").getByRole("button", {
+    name: "بسازش",
     exact: true,
   });
   await submitButton.scrollIntoViewIfNeeded();
   await expect(submitButton).toBeVisible();
   // Kling allows prompt OR multi-prompt. The schema validates the chosen alternative on submit.
-  await expect(page.getByTestId("video-director-rig")).toHaveCSS(
+  await expect(page.locator("[data-generation-intro]")).toHaveCSS(
     "animation-name",
     "none",
   );
@@ -136,13 +413,18 @@ test("video studio stays usable on mobile with reduced motion", async ({
       () => document.documentElement.scrollWidth <= window.innerWidth,
     ),
   ).toBe(true);
+  await page.evaluate(() => {
+    document.querySelectorAll<HTMLElement>("*").forEach((element) => {
+      if (element.scrollTop) element.scrollTop = 0;
+    });
+  });
   await page.screenshot({
     path: ".artifacts/video-studio-mobile.png",
     fullPage: true,
   });
   await page.getByRole("button", { name: /انتخاب مدل.*Kling/ }).click();
   await expect(
-    page.getByRole("searchbox", { name: "جست‌وجوی مدل" }),
+    page.getByRole("searchbox", { name: "اسم مدل رو بزن…" }),
   ).toBeVisible();
   const bounds = await page.getByRole("dialog").boundingBox();
   expect(bounds).not.toBeNull();
@@ -160,14 +442,14 @@ test("updates visible video prompt fields when the generation mode changes", asy
   await expect(page.getByPlaceholder(VIDEO_PROMPT_PLACEHOLDER)).toBeVisible();
   const textMode = page.getByRole("radio", { name: "متن به ویدیو" });
   await expect(textMode).toBeVisible();
-  await expect(page.getByRole("combobox", { name: "رزولوشن" })).toHaveText(
+  await expect(page.getByRole("button", { name: /^رزولوشن:/ })).toHaveText(
     "720p",
   );
-  await expect(page.getByRole("combobox", { name: "نسبت تصویر" })).toHaveText(
+  await expect(page.getByRole("button", { name: /^نسبت تصویر:/ })).toHaveText(
     "16:9",
   );
-  await expect(page.getByRole("combobox", { name: "مدت زمان" })).toBeVisible();
-  await page.getByText("تنظیمات تکمیلی", { exact: true }).click();
+  await expect(page.getByRole("slider", { name: "مدت زمان" })).toBeVisible();
+  await page.getByText("ریزکاری‌های بیشتر", { exact: true }).click();
   await expect(page.getByText("تولید صدا", { exact: true })).toBeVisible();
   await expect(page.getByText("تصاویر فریم")).toBeHidden();
 
@@ -175,6 +457,7 @@ test("updates visible video prompt fields when the generation mode changes", asy
 
   await textMode.focus();
   await page.keyboard.press("ArrowLeft");
+  await page.screenshot({ path: ".artifacts/video-studio-references.png" });
   await expect(
     page.getByRole("radio", { name: "عکس به ویدیو" }),
   ).toHaveAttribute("aria-checked", "true");
@@ -186,7 +469,7 @@ test("updates visible video prompt fields when the generation mode changes", asy
   await expect(page.getByRole("combobox", { name: "قاب تصویر" })).toBeHidden();
   await expect(page.getByText("ویدیوی مرجع", { exact: true })).toBeHidden();
 
-  await page.getByRole("radio", { name: "کنترل حرکت" }).click();
+  await page.getByRole("button", { name: "کنترل حرکت" }).click();
 
   await expect(
     page.getByRole("heading", { name: "ویدیوی مرجع" }),
@@ -346,6 +629,24 @@ test("submits text-to-video prompt values with the selected model", async ({
     prompt: "A cinematic city shot",
     resolution: "720p",
   });
+});
+
+test("accepts a selected video duration and submits it as a number", async ({
+  page,
+}) => {
+  const generateRequest = waitForGenerateRequest(page);
+  await openVideoGenerationPage(page);
+
+  const duration = page.getByRole("slider", { name: "مدت زمان" });
+  await selectDurationIndex(duration, 7);
+  await expect(duration).toHaveAttribute("aria-valuetext", "10 ثانیه");
+  await page
+    .getByPlaceholder(VIDEO_PROMPT_PLACEHOLDER)
+    .fill("A cinematic city shot");
+
+  await expect(page.getByText("مقدار انتخاب شده معتبر نیست")).toHaveCount(0);
+  await page.locator('button[type="submit"]').click();
+  expect((await generateRequest).ai_model_config.duration).toBe(10);
 });
 
 test("image studio fits a viewport with long sidebar history without generating", async ({
@@ -632,7 +933,7 @@ test("supports multi-prompt mode without requiring the main prompt field", async
   const generateRequest = waitForGenerateRequest(page);
 
   await openVideoGenerationPage(page);
-  await page.getByText("تنظیمات تکمیلی", { exact: true }).click();
+  await page.getByText("ریزکاری‌های بیشتر", { exact: true }).click();
   await page.getByRole("button", { name: /پرامپت چندبخشی/ }).click();
 
   await expect(page.getByPlaceholder(VIDEO_PROMPT_PLACEHOLDER)).toBeHidden();
@@ -673,14 +974,16 @@ test("shows the generation failure reason and retries it in the same chat", asyn
   await mockApi(page, [failedMessage]);
   await page.goto("/generation/video/task-1");
 
-  await expect(page.getByText("تولید ویدیو ناموفق بود")).toBeVisible();
+  await expect(
+    page.getByText("این ویدیو ساخته نشد", { exact: true }),
+  ).toBeVisible();
   await expect(page.getByText("PROVIDER_RATE_LIMITED")).toBeVisible();
   await expect(page.getByPlaceholder(VIDEO_PROMPT_PLACEHOLDER)).toHaveValue(
     "Retry this video",
   );
   await page
     .getByRole("alert")
-    .getByRole("button", { name: "تلاش مجدد" })
+    .getByRole("button", { name: "دوباره امتحان کن" })
     .click();
 
   await expect(retryRequest).resolves.toMatchObject({
@@ -696,7 +999,11 @@ test("prevents another generation while the chat has a pending request", async (
 }) => {
   await mockApi(page, [
     {
-      ai_model_config: { mode: "text_to_video", prompt: "Still rendering" },
+      ai_model_config: {
+        mode: "text_to_video",
+        prompt: "Still rendering",
+        aspect_ratio: "9:16",
+      },
       ai_model_uuid: MODEL_UUID,
       ai_provider_uuid: "provider-1",
       ai_generation_request_uuid: "request-1",
@@ -718,6 +1025,69 @@ test("prevents another generation while the chat has a pending request", async (
     page.getByRole("button", { name: /انتخاب مدل.*Kling 3\.0 Standard/ }),
   ).toBeVisible();
   await expect(page.locator('button[type="submit"]')).toBeDisabled();
+  await expect(page.locator('button[type="submit"]')).toBeInViewport();
+  await expect(
+    page.getByText("ایده‌ات رفته پشت دوربین", { exact: true }),
+  ).toBeVisible();
+  const portal = page.locator("[data-video-generation-portal]");
+  const portalBounds = await portal.boundingBox();
+  const titleBounds = await portal
+    .getByText("این برداشت، توی راهه.")
+    .boundingBox();
+  const frameBounds = await portal
+    .locator("[data-video-preview-frame]")
+    .boundingBox();
+  expect(portalBounds).not.toBeNull();
+  expect(titleBounds).not.toBeNull();
+  expect(frameBounds).not.toBeNull();
+  expect(portalBounds!.width).toBeGreaterThan(400);
+  expect(frameBounds!.height).toBeGreaterThan(frameBounds!.width);
+  expect(titleBounds!.x).toBeGreaterThanOrEqual(portalBounds!.x);
+  expect(titleBounds!.x + titleBounds!.width).toBeLessThanOrEqual(
+    portalBounds!.x + portalBounds!.width,
+  );
+  const cinema = portal.locator('[data-video-cinema="rendering"]');
+  await cinema.scrollIntoViewIfNeeded();
+  await cinema.getByRole("button", { name: "توقف انیمیشن" }).click();
+  await expect(cinema).toHaveAttribute("data-paused", "true");
+  await cinema.getByRole("button", { name: "ادامه انیمیشن" }).click();
+  await expect(cinema).toHaveAttribute("data-paused", "false");
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect(cinema.getByRole("button")).toBeHidden();
+  await expect(portal.locator("[data-video-preview-frame]")).toHaveCSS(
+    "animation-name",
+    "none",
+  );
+  await portal.screenshot({ path: ".artifacts/video-studio-rendering.png" });
+  await page.evaluate(() => {
+    document.querySelectorAll<HTMLElement>("*").forEach((element) => {
+      if (element.scrollTop) element.scrollTop = 0;
+    });
+  });
+  await page.screenshot({
+    path: ".impeccable/review/video-pending-desktop.png",
+    fullPage: true,
+  });
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.getByRole("button", { name: "Close", exact: true }).click();
+  await expect(portal).toBeVisible();
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
+  await portal.screenshot({
+    path: ".artifacts/video-studio-rendering-mobile.png",
+  });
+  await page.evaluate(() => {
+    document.querySelectorAll<HTMLElement>("*").forEach((element) => {
+      if (element.scrollTop) element.scrollTop = 0;
+    });
+  });
+  await page.screenshot({
+    path: ".impeccable/review/video-pending-mobile.png",
+    fullPage: true,
+  });
 });
 
 test("does not restore the prompt after a successful generation", async ({
@@ -782,14 +1152,24 @@ test("uses the last assistant message when a user message follows it", async ({
 
 async function openVideoGenerationPage(page: Page) {
   await page.goto("/generation/video", { waitUntil: "domcontentloaded" });
-  await expect(
-    page.getByPlaceholder(
-      "صحنه، حرکت سوژه، حرکت دوربین و حال‌وهوای نور را توصیف کن…",
-    ),
-  ).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByPlaceholder(VIDEO_PROMPT_PLACEHOLDER)).toBeVisible({
+    timeout: 20_000,
+  });
   await expect(
     page.getByRole("button", { name: /انتخاب مدل.*Kling 3.0 Standard/ }),
   ).toBeVisible();
+}
+
+async function selectDurationIndex(duration: Locator, index: number) {
+  await duration.focus();
+  await duration.press("Home");
+  await duration.press("ArrowRight");
+  const incrementKey =
+    (await duration.inputValue()) === "1" ? "ArrowRight" : "ArrowLeft";
+  await duration.press("Home");
+  for (let step = 0; step < index; step += 1) {
+    await duration.press(incrementKey);
+  }
 }
 
 function waitForGenerateRequest(page: Page) {
@@ -1194,21 +1574,162 @@ test("Seedance duration is selectable except in automatic video editing", async 
     await route.fulfill({ json: { ...getModelDetail(), ...config } });
   });
   await openVideoGenerationPage(page);
-  const duration = page.getByRole("combobox", { name: "مدت زمان" });
+  const duration = page.getByRole("slider", { name: "مدت زمان" });
   await expect(duration).toBeVisible();
-  await duration.click();
-  await page.getByRole("option", { name: "6 ثانیه", exact: true }).click();
-  await expect(duration).toContainText("6");
+  await selectDurationIndex(duration, 2);
+  await expect(duration).toHaveAttribute("aria-valuetext", "6 ثانیه");
   await page.getByRole("button", { name: "ویرایش ویدیو", exact: true }).click();
   await expect(duration).toHaveCount(0);
-  for (const label of [
-    "عکس به ویدیو",
-    "ویدیوی صوت‌محور",
-    "تولید ویدیو با مرجع",
-    "تمدید ویدیو",
-    "متن به ویدیو",
-  ]) {
-    await page.getByRole("button", { name: label, exact: true }).click();
-    await expect(duration).toBeVisible();
-  }
+  await page.getByRole("radio", { name: "ادامه ویدیو" }).click();
+  await expect(duration).toBeVisible();
 });
+
+test("uses model-specific duration bounds and compact format choices", async ({
+  page,
+}) => {
+  const config = JSON.parse(
+    readFileSync(
+      new URL("./fixtures/seedance-video-config.json", import.meta.url),
+      "utf8",
+    ),
+  );
+  config.modes.text_to_video.config_schema.properties.duration = {
+    default: 5,
+    minimum: 3,
+    maximum: 12,
+    type: "integer",
+  };
+  await page.route(`**/ai-registry/models/${MODEL_UUID}`, async (route) => {
+    await route.fulfill({ json: { ...getModelDetail(), ...config } });
+  });
+  const generateRequest = waitForGenerateRequest(page);
+  await openVideoGenerationPage(page);
+
+  const duration = page.getByRole("slider", { name: "مدت زمان" });
+  await expect(duration).toHaveAttribute("min", "3");
+  await expect(duration).toHaveAttribute("max", "12");
+  await duration.focus();
+  await duration.press("End");
+  await expect(duration).toHaveAttribute("aria-valuetext", "12 ثانیه");
+
+  await page.getByTestId("video-aspect_ratio-control").click();
+  await page.getByRole("button", { name: "9:16", exact: true }).click();
+  await page.getByTestId("video-resolution-control").click();
+  await page.getByRole("button", { name: "1080p", exact: true }).click();
+  await page
+    .getByPlaceholder(VIDEO_PROMPT_PLACEHOLDER)
+    .fill("A cinematic city shot");
+  await page.locator('button[type="submit"]').click();
+
+  expect((await generateRequest).ai_model_config).toMatchObject({
+    duration: 12,
+    aspect_ratio: "9:16",
+    resolution: "1080p",
+  });
+});
+
+for (const durationSchema of [
+  { type: ["string", "integer"], enum: ["auto", 3, 7, 12], default: "auto" },
+  {
+    anyOf: [
+      { type: "string", const: "auto" },
+      { type: "integer", minimum: 3, maximum: 12 },
+    ],
+    default: "auto",
+  },
+]) {
+  for (const automatic of [true, false]) {
+    test(`duration supports ${"enum" in durationSchema ? "mixed enum" : "bounded union"} and submits ${automatic ? "auto" : "numeric maximum"}`, async ({
+      page,
+    }) => {
+      await mockDurationSchema(page, durationSchema);
+      await openVideoGenerationPage(page);
+      const duration = page.getByRole("slider", { name: "مدت زمان" });
+      await expect(duration).toBeVisible();
+      await expect(duration).toHaveAttribute("aria-valuetext", "خودکار");
+      await duration.focus();
+      await duration.press("End");
+      await expect(duration).toHaveAttribute("aria-valuetext", "12 ثانیه");
+      if (automatic) {
+        await duration.press("Home");
+        await expect(duration).toHaveAttribute("aria-valuetext", "خودکار");
+      }
+      await page
+        .getByPlaceholder(VIDEO_PROMPT_PLACEHOLDER)
+        .fill("A cinematic city shot");
+      const request = waitForGenerateRequest(page);
+      await page.locator('button[type="submit"]').click();
+      expect((await request).ai_model_config.duration).toBe(
+        automatic ? "auto" : 12,
+      );
+    });
+  }
+}
+
+test("duration resynchronizes an out-of-range value when the video mode changes", async ({
+  page,
+}) => {
+  await mockDurationSchema(page, {
+    type: "integer",
+    minimum: 3,
+    maximum: 12,
+    default: 5,
+  });
+  await openVideoGenerationPage(page);
+  const duration = page.getByRole("slider", { name: "مدت زمان" });
+  await duration.focus();
+  await duration.press("End");
+  await page.getByRole("radio", { name: "عکس به ویدیو" }).click();
+  await expect(duration).toHaveAttribute("aria-valuetext", "4 ثانیه");
+  await page.getByRole("textbox").fill("A cinematic city shot");
+  const request = waitForGenerateRequest(page);
+  await page.locator('button[type="submit"]').click();
+  expect((await request).ai_model_config.duration).toBe(4);
+});
+
+async function mockDurationSchema(
+  page: Page,
+  duration: Record<string, unknown>,
+) {
+  const schema = (property: Record<string, unknown>) => ({
+    type: "object",
+    required: ["prompt", "duration"],
+    properties: {
+      prompt: { type: "string", minLength: 3 },
+      duration: property,
+    },
+  });
+  await page.route(`**/ai-registry/models/${MODEL_UUID}`, (route) =>
+    route.fulfill({
+      json: {
+        ...getModelDetail(),
+        modes: {
+          text_to_video: {
+            value: "text_to_video",
+            config_schema: schema(duration),
+          },
+          image_to_video: {
+            value: "image_to_video",
+            config_schema: schema({
+              type: "integer",
+              minimum: 3,
+              maximum: 6,
+              default: 4,
+            }),
+          },
+        },
+        canonical_ui_schema: {
+          selectors: [
+            {
+              options: [
+                { value: "text_to_video", order: 0 },
+                { value: "image_to_video", order: 1 },
+              ],
+            },
+          ],
+          elements: [],
+        },
+      },
+    }),
+  );
+}

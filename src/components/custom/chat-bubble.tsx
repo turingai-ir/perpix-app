@@ -9,6 +9,7 @@ import { APP_I18_KEYS } from "@/services/i18";
 import { cn } from "@/lib/utils";
 import { MediaPreviewItem } from "@/components/custom/media-preview-item";
 import { ChatMessage } from "@/components/custom/chat-message";
+import { VideoOutputItem } from "@/components/custom/video-output-item";
 
 type Sender = "agent" | "user";
 interface ChatBubbleProps {
@@ -89,7 +90,7 @@ export const ChatBubble: FC<ChatBubbleProps> = ({
             {videos.map((video, index) => (
               <div key={index} className="h-full w-full">
                 {typeof video === "string" ? (
-                  <MediaPreviewItem fileId={video} index={index} type="video" />
+                  <VideoOutputItem fileId={video} index={index} />
                 ) : (
                   video
                 )}

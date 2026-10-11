@@ -14,6 +14,8 @@ type Props = Pick<
   | "localItems"
   | "disabled"
   | "previewType"
+  | "presentation"
+  | "label"
   | "maxItems"
   | "onDeleteClick"
   | "onLocalDeleteClick"
@@ -26,6 +28,8 @@ export const ComposerReferenceTray: FC<Props> = ({
   localItems,
   disabled = false,
   previewType = "image",
+  presentation = "composer",
+  label,
   maxItems,
   onDeleteClick,
   onLocalDeleteClick,
@@ -34,13 +38,20 @@ export const ComposerReferenceTray: FC<Props> = ({
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const count = uploadedItems.length + localItems.length;
   const isFull = maxItems !== undefined && count >= maxItems;
+  const isVideoDock = presentation === "video-dock";
 
   return (
-    <div className="border-border/60 flex w-full min-w-0 flex-col gap-2 border-t pt-3">
+    <div
+      className="border-border/60 flex w-full min-w-0 flex-col gap-2 border-t pt-3"
+      data-media-dock={isVideoDock || undefined}
+      data-media-type={previewType}
+    >
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2 text-xs">
           <span className="font-medium">
-            {t("features.mediaUploader.composer.references")}
+            {isVideoDock
+              ? t(`features.mediaUploader.videoDock.selected.${previewType}`)
+              : t("features.mediaUploader.composer.references")}
           </span>
           <span className="text-muted-foreground" aria-live="polite">
             {maxItems === undefined
@@ -60,13 +71,20 @@ export const ComposerReferenceTray: FC<Props> = ({
           <Plus aria-hidden="true" className="size-4" />
           {isFull
             ? t("features.mediaUploader.composer.full")
-            : t("features.mediaUploader.composer.add")}
+            : isVideoDock && label
+              ? label
+              : t("features.mediaUploader.composer.add")}
         </button>
       </div>
       <div
         className="flex flex-wrap gap-2"
         role="list"
-        aria-label={t("features.mediaUploader.composer.references")}
+        aria-label={
+          isVideoDock
+            ? t(`features.mediaUploader.videoDock.selected.${previewType}`)
+            : t("features.mediaUploader.composer.references")
+        }
+        data-media-preview-list={isVideoDock || undefined}
       >
         {localItems.map((item) => (
           <div role="listitem" key={item.file.name}>
@@ -74,7 +92,7 @@ export const ComposerReferenceTray: FC<Props> = ({
               item={item}
               disabled={disabled}
               previewType={previewType}
-              presentation="composer"
+              presentation={presentation}
               onDeleteClick={onLocalDeleteClick}
             />
           </div>
@@ -85,7 +103,7 @@ export const ComposerReferenceTray: FC<Props> = ({
               item={item}
               disabled={disabled}
               previewType={previewType}
-              presentation="composer"
+              presentation={presentation}
               index={index + 1}
               onDeleteClick={onDeleteClick}
             />

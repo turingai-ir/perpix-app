@@ -1,0 +1,113 @@
+.output {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--background);
+  box-shadow: 0 12px 30px rgb(0 0 0 / 10%);
+}
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+}
+.title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--foreground);
+  font-size: 14px;
+  font-weight: 700;
+}
+.title svg {
+  width: 18px;
+  height: 18px;
+  color: var(--primary);
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted-foreground);
+  font-size: 12px;
+}
+.badge svg {
+  width: 14px;
+  height: 14px;
+}
+.screen {
+  display: flex;
+  min-height: 160px;
+  align-items: center;
+  justify-content: center;
+  background: #050507;
+}
+.screen video {
+  display: block;
+  width: 100%;
+  max-height: min(55dvh, 32rem);
+  object-fit: contain;
+}
+.error {
+  color: var(--muted-foreground);
+  padding: 24px;
+  font-size: 14px;
+  line-height: 1.8;
+}
+.screen .error {
+  color: #d4d4dc;
+}
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  border-top: 1px solid var(--border);
+}
+.hint {
+  flex: 1 1 160px;
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: 12px;
+  line-height: 1.8;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.dialog {
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 20px;
+}
+.dialog .screen {
+  min-height: 0;
+}
+.dialog .screen video {
+  max-height: calc(100dvh - 13rem);
+}
+@media (max-width: 520px) {
+  .header,
+  .footer {
+    padding: 12px 14px;
+  }
+  .header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .actions {
+    width: 100%;
+  }
+  .actions > button {
+    flex: 1;
+  }
+  .dialog .screen video {
+    max-height: calc(100dvh - 16rem);
+  }
+}

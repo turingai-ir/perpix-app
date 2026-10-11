@@ -17,7 +17,11 @@ import { APP_I18_KEYS } from "@/services/i18";
 import { LocalUploadStatusItem } from "./local-upload-status-item";
 import { NewFileUploadCard } from "./new-file-upload-card";
 import { UserFilesSection } from "./user-files-section";
-import type { LocalMediaItem } from "../types";
+import type {
+  LocalMediaItem,
+  MediaPreviewType,
+  MediaUploadPresentation,
+} from "../types";
 import { useMediaFilePicker } from "../use-media-file-picker";
 
 interface MediaFilePickerDialogProps {
@@ -28,6 +32,8 @@ interface MediaFilePickerDialogProps {
   isUploading: boolean;
   label?: string;
   localItems: LocalMediaItem[];
+  previewType: MediaPreviewType;
+  presentation?: MediaUploadPresentation;
   selectedIds: string[];
   maxItems?: number;
   onFileSelect?: (file: File) => void | Promise<string | void>;
@@ -43,6 +49,8 @@ export const MediaFilePickerDialog: FC<MediaFilePickerDialogProps> = ({
   isUploading,
   label,
   localItems,
+  previewType,
+  presentation = "default",
   selectedIds,
   maxItems,
   onFileSelect,
@@ -171,7 +179,11 @@ export const MediaFilePickerDialog: FC<MediaFilePickerDialogProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent
-        className="flex max-h-[min(720px,calc(100dvh-2rem))] w-[calc(100vw-2rem)] max-w-3xl grid-rows-none flex-col overflow-hidden p-0 sm:max-w-3xl"
+        className={
+          presentation === "video-dock"
+            ? "flex max-h-[min(720px,calc(100dvh-2rem))] w-[calc(100vw-2rem)] max-w-3xl grid-rows-none flex-col overflow-hidden border-white/15 bg-[#14151a]/94 p-0 shadow-2xl backdrop-blur-2xl sm:max-w-3xl"
+            : "flex max-h-[min(720px,calc(100dvh-2rem))] w-[calc(100vw-2rem)] max-w-3xl grid-rows-none flex-col overflow-hidden p-0 sm:max-w-3xl"
+        }
         showCloseButton={!isUploading}
         onPaste={handlePaste}
       >
@@ -260,9 +272,12 @@ export const MediaFilePickerDialog: FC<MediaFilePickerDialogProps> = ({
                 disabled={disabled || isUploading || stagedIds.length === 0}
                 onClick={handleConfirm}
               >
-                {t("features.mediaUploader.composer.confirm", {
-                  count: stagedIds.length,
-                })}
+                {t(
+                  presentation === "video-dock"
+                    ? `features.mediaUploader.videoDock.confirm.${previewType}`
+                    : "features.mediaUploader.composer.confirm",
+                  { count: stagedIds.length },
+                )}
               </Button>
             )}
           </div>

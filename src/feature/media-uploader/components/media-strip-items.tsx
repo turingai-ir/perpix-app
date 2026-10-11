@@ -26,6 +26,7 @@ import { VideoPreviewButton } from "./video-preview-button";
 import type {
   LocalMediaItem,
   MediaPreviewType,
+  MediaUploadPresentation,
   UploadedMediaItem,
 } from "../types";
 
@@ -34,7 +35,7 @@ interface MediaPreviewItemProps {
   item: UploadedMediaItem;
   onDeleteClick?: (id: string) => void;
   previewType: MediaPreviewType;
-  presentation?: "default" | "composer";
+  presentation?: MediaUploadPresentation;
   index?: number;
 }
 
@@ -44,7 +45,7 @@ interface LocalMediaPreviewItemProps {
   onDeleteClick?: (id: string) => void;
   onRetry?: (file: File) => void | Promise<string | void>;
   previewType: MediaPreviewType;
-  presentation?: "default" | "composer";
+  presentation?: MediaUploadPresentation;
 }
 
 export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
@@ -73,20 +74,29 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
     <div
       className={cn(
         "group bg-background relative flex shrink-0 items-center justify-center overflow-hidden rounded-lg border",
-        presentation === "composer" ? "size-20" : "size-24",
+        presentation === "composer"
+          ? "size-20"
+          : presentation === "video-dock"
+            ? "size-24 rounded-2xl"
+            : "size-24",
         isError && "border-destructive/50 bg-destructive/5",
       )}
+      data-media-preview={presentation === "video-dock" || undefined}
+      data-media-type={previewType}
     >
       {!isError && previewUrl && previewType === "image" ? (
-        presentation === "composer" ? (
+        presentation === "composer" || presentation === "video-dock" ? (
           <Dialog>
             <DialogTrigger asChild>
               <button
                 type="button"
                 className="focus-visible:ring-primary/60 size-full overflow-hidden rounded-lg outline-none focus-visible:ring-2"
-                aria-label={t("features.mediaUploader.composer.preview", {
-                  index,
-                })}
+                aria-label={t(
+                  presentation === "video-dock"
+                    ? `features.mediaUploader.videoDock.preview.${previewType}`
+                    : "features.mediaUploader.composer.preview",
+                  { index },
+                )}
               >
                 <img
                   src={previewUrl}
@@ -97,11 +107,21 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
             </DialogTrigger>
             <DialogContent className="w-[calc(100vw-2rem)] max-w-3xl p-3 sm:p-4">
               <DialogTitle className="sr-only">
-                {t("features.mediaUploader.composer.preview", { index })}
+                {t(
+                  presentation === "video-dock"
+                    ? `features.mediaUploader.videoDock.preview.${previewType}`
+                    : "features.mediaUploader.composer.preview",
+                  { index },
+                )}
               </DialogTitle>
               <img
                 src={previewUrl}
-                alt={t("features.mediaUploader.composer.preview", { index })}
+                alt={t(
+                  presentation === "video-dock"
+                    ? `features.mediaUploader.videoDock.preview.${previewType}`
+                    : "features.mediaUploader.composer.preview",
+                  { index },
+                )}
                 className="mx-auto max-h-[75dvh] max-w-full rounded-lg object-contain"
               />
             </DialogContent>
@@ -139,9 +159,13 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
         <DeleteButton
           onClick={handleDeleteClick}
           label={
-            presentation === "composer"
-              ? t("features.mediaUploader.composer.remove", { index })
-              : undefined
+            presentation === "video-dock"
+              ? t(`features.mediaUploader.videoDock.remove.${previewType}`, {
+                  index,
+                })
+              : presentation === "composer"
+                ? t("features.mediaUploader.composer.remove", { index })
+                : undefined
           }
         />
       )}
@@ -194,9 +218,15 @@ export const LocalMediaPreviewItem: FC<LocalMediaPreviewItemProps> = ({
     <div
       className={cn(
         "group bg-background relative flex shrink-0 items-center justify-center overflow-hidden rounded-lg border",
-        presentation === "composer" ? "size-20" : "size-24",
+        presentation === "composer"
+          ? "size-20"
+          : presentation === "video-dock"
+            ? "size-24 rounded-2xl"
+            : "size-24",
         isError && "border-destructive/50 bg-destructive/5",
       )}
+      data-media-preview={presentation === "video-dock" || undefined}
+      data-media-type={previewType}
     >
       {previewType === "image" ? (
         <img

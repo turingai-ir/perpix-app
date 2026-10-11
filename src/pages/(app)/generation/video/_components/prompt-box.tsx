@@ -57,31 +57,40 @@ export const GenerationVideoPromptBox: FC<Props> = (props) => {
       <Form {...dynamicForm.form}>
         <form aria-busy={isFormBusy} onSubmit={studio.handleFormSubmit}>
           <div className={styles.body}>
-            <header className={styles.heading}>
-              <span>{t("pages.generation.video.studio.eyebrow")}</span>
-              <h2>{t("pages.generation.video.studio.title")}</h2>
-            </header>
-            <VideoModelPicker
-              model={model}
-              disabled={
-                Boolean(props.isLoading) ||
-                studio.isUploadingMedia ||
-                model.modelsListState.isLoading
-              }
-            />
-            <VideoModeTabs
-              dynamicForm={dynamicForm}
-              disabled={isFormBusy || studio.isUploadingMedia}
-            />
-            <VideoReferenceBoard key={model.currentModel} studio={studio} />
-            {studio.isPromptFieldVisible && (
-              <PromptTextarea
-                dynamicForm={dynamicForm}
-                disabled={isFormBusy}
-                label={t("pages.generation.video.studio.composerLabel")}
-                placeholder={promptPlaceholder}
+            <div className={styles.composerHeader}>
+              <header className={styles.heading}>
+                <img
+                  src="/android-chrome-512x512.png"
+                  width={36}
+                  height={36}
+                  alt=""
+                />
+                <h2>{t("pages.generation.video.studio.title")}</h2>
+              </header>
+              <VideoModelPicker
+                model={model}
+                disabled={
+                  Boolean(props.isLoading) ||
+                  studio.isUploadingMedia ||
+                  model.modelsListState.isLoading
+                }
               />
+              <VideoModeTabs
+                dynamicForm={dynamicForm}
+                disabled={isFormBusy || studio.isUploadingMedia}
+              />
+            </div>
+            {studio.isPromptFieldVisible && (
+              <div className={styles.promptCanvas}>
+                <PromptTextarea
+                  dynamicForm={dynamicForm}
+                  disabled={isFormBusy}
+                  label={t("pages.generation.video.studio.composerLabel")}
+                  placeholder={promptPlaceholder}
+                />
+              </div>
             )}
+            <VideoReferenceBoard key={model.currentModel} studio={studio} />
             <VideoStudioSettings studio={studio} />
           </div>
           <VideoStudioFooter
