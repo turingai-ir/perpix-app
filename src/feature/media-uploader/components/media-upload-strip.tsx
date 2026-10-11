@@ -38,15 +38,20 @@ export const MediaUploadStrip: FC<MediaUploadStripProps> = ({
     localItems,
     uploadedItems,
   });
-  const hasComposerItems =
-    presentation === "composer" && uploadedItems.length + localItems.length > 0;
+  const isCompact =
+    presentation === "composer" || presentation === "video-dock";
+  const hasCompactItems =
+    isCompact && uploadedItems.length + localItems.length > 0;
 
   return (
     <div
       className={cn(
         "relative min-w-0",
-        presentation === "composer" && !hasComposerItems ? "w-auto" : "w-full",
+        presentation === "composer" && !hasCompactItems ? "w-auto" : "w-full",
       )}
+      data-media-upload
+      data-media-upload-presentation={presentation}
+      data-media-type={previewType}
     >
       <MediaFilePickerDialog
         accept={accept}
@@ -57,19 +62,22 @@ export const MediaUploadStrip: FC<MediaUploadStripProps> = ({
         label={label}
         localItems={localItems}
         previewType={previewType}
+        presentation={presentation}
         selectedIds={selectedIds}
         maxItems={maxItems}
         onFileSelect={onFileSelect}
         onOpenChange={setFilePickerOpen}
         onUploadedFileSelect={onUploadedFileSelect}
       />
-      {hasComposerItems ? (
+      {hasCompactItems ? (
         <ComposerReferenceTray
           uploadedItems={uploadedItems}
           localItems={localItems}
           disabled={disabled}
           previewType={previewType}
           maxItems={maxItems}
+          presentation={presentation}
+          label={label}
           onDeleteClick={onDeleteClick}
           onLocalDeleteClick={onLocalDeleteClick}
           onAdd={openFilePicker}
@@ -90,6 +98,7 @@ export const MediaUploadStrip: FC<MediaUploadStripProps> = ({
                 label={label}
                 onClick={openFilePicker}
                 presentation={presentation}
+                previewType={previewType}
               />
             )}
 
@@ -115,7 +124,7 @@ export const MediaUploadStrip: FC<MediaUploadStripProps> = ({
           </div>
         </ScrollArea>
       )}
-      {presentation !== "composer" && (
+      {presentation === "default" && (
         <div
           aria-hidden="true"
           className="pointer-events-none absolute top-0 bottom-0 left-0 z-4 w-4 backdrop-blur-[2px]"

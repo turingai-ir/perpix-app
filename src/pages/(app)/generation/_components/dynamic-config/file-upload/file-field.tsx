@@ -8,6 +8,7 @@ import {
   hasReachedMediaMaxItems,
   hasUploadingLocalItem,
   MediaUploadStrip,
+  type MediaUploadPresentation,
   normalizeMediaIds,
   removeMediaId,
   toLocalMediaItems,
@@ -39,7 +40,7 @@ export const DynamicConfigFileField: FC<{
   onUploadingChange?: (isUploading: boolean) => void;
   maxItemsOverride?: number;
   property?: JsonSchemaProperty;
-  presentation?: "default" | "composer";
+  presentation?: MediaUploadPresentation;
   requestId?: string;
   pasteFromParentForm?: boolean;
 }> = ({
@@ -213,14 +214,14 @@ export const DynamicConfigFileField: FC<{
     <div
       ref={containerRef}
       className={
-        presentation === "composer"
+        presentation === "composer" || presentation === "video-dock"
           ? "flex min-w-0 flex-col"
           : "flex w-full min-w-0 flex-col gap-2 py-2"
       }
     >
       <span
         className={
-          presentation === "composer"
+          presentation === "composer" || presentation === "video-dock"
             ? "sr-only"
             : "text-muted-foreground text-sm font-normal"
         }
@@ -235,7 +236,7 @@ export const DynamicConfigFileField: FC<{
         onDeleteClick={handleDelete}
         onLocalDeleteClick={handleLocalDelete}
         onFileSelect={(file) =>
-          handleFileSelect(file, presentation !== "composer")
+          handleFileSelect(file, presentation === "default")
         }
         onUploadedFileSelect={handleUploadedFileSelect}
         showPlaceholder={!hasReachedMaxItems}
