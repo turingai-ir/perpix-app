@@ -1,10 +1,16 @@
 import { useCallback, useEffect, useState } from "react";
+import { Paperclip } from "lucide-react";
 
 import styles from "../composer.module.css";
 import { normalizeMediaIds } from "@/feature/media-uploader";
 import { useAppTranslate } from "@/hooks";
 import { DynamicConfigFileField } from "@/pages/(app)/generation/_components/dynamic-config";
-import { isListFileField } from "@/pages/(app)/generation/_components/dynamic-config/file-upload/media";
+import {
+  clearTopLevelMediaConflicts,
+  getAcceptList,
+  getPreviewType,
+  isListFileField,
+} from "@/pages/(app)/generation/_components/dynamic-config/file-upload/media";
 import type { useGenerationPromptBox } from "@/pages/(app)/generation/_hooks";
 import { formatLocalizedNumber } from "@/utils";
 
@@ -45,6 +51,7 @@ export function VideoReferenceBoard({
         const label = t(`common.dynamicConfig.fields.${name}`, {
           defaultValue: meta.title ?? name,
         });
+        const previewType = getPreviewType(getAcceptList(meta.property));
         const max = isListFileField(meta.property) ? meta.property.maxItems : 1;
         const count = formatLocalizedNumber({
           value: normalizeMediaIds(dynamicForm.watch(name)).length,
@@ -54,8 +61,16 @@ export function VideoReferenceBoard({
           dynamicForm.form.formState,
         ).error;
         return (
-          <div className={styles.referenceGroup} key={name}>
-            <h3 className={styles.referenceTitle}>{label}</h3>
+          <div
+            className={styles.referenceGroup}
+            key={name}
+            data-required={meta.required || undefined}
+            data-media-type={previewType}
+          >
+            <h3 className={styles.referenceTitle}>
+              <Paperclip size={16} aria-hidden="true" />
+              {label}
+            </h3>
             <div className={styles.referenceMeta}>
               <span>
                 {t(
@@ -73,17 +88,22 @@ export function VideoReferenceBoard({
                     })}
               </span>
             </div>
-            <DynamicConfigFileField
-              dynamicForm={dynamicForm}
-              fieldName={name}
-              property={meta.property}
-              label={label}
-              presentation="composer"
-              hint={meta.hint}
-              disabled={studio.isFormBusy}
-              requestId={`video_${studio.model.currentModel}`}
-              onUploadingChange={(value) => reportUpload(name, value)}
-            />
+            <div className={styles.referenceFiles}>
+              <DynamicConfigFileField
+                dynamicForm={dynamicForm}
+                fieldName={name}
+                property={meta.property}
+                label={label}
+                presentation="video-dock"
+                disabled={studio.isFormBusy}
+                requestId={`video_${studio.model.currentModel}`}
+                onUploadingChange={(value) => reportUpload(name, value)}
+                onValueChange={() =>
+                  clearTopLevelMediaConflicts(dynamicForm, name)
+                }
+              />
+            </div>
+            {meta.hint && <p className={styles.referenceHint}>{meta.hint}</p>}
             {error?.message && (
               <p role="alert" className={styles.fieldError}>
                 {String(error.message)}

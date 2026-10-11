@@ -39,6 +39,41 @@ test("resolves nullable JSON Schema types consistently", () => {
   expect(getPrimaryType({ type: "boolean" })).toBe("boolean");
 });
 
+test("accepts each mode's duration when mode schemas have different constraints", async () => {
+  const makeMode = (value: string, duration: number) => ({
+    value,
+    config_schema: {
+      type: "object" as const,
+      properties: {
+        duration: {
+          type: "integer" as const,
+          enum: [duration],
+          const: duration,
+          default: duration,
+        },
+      },
+      required: ["duration"],
+      additionalProperties: false,
+    },
+  });
+  const config = getModelDynamicConfig({
+    modes: {
+      text_to_video: makeMode("text_to_video", 5),
+      image_to_video: makeMode("image_to_video", 10),
+    },
+  });
+  const resolver = buildAjvResolver(config.configSchema!);
+
+  for (const [mode, duration] of [
+    ["text_to_video", 5],
+    ["image_to_video", 10],
+  ] as const) {
+    const result = await resolver({ mode, duration }, {}, {} as never);
+    expect(result.errors, `${mode} should accept ${duration}s`).toEqual({});
+    expect(result.values).toMatchObject({ mode, duration });
+  }
+});
+
 test("recompiles an updated schema without colliding on its stable id", async () => {
   const initialSchema: JsonConfigSchema = {
     $id: "stable-model-config",

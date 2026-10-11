@@ -1,4 +1,10 @@
-import { Check, LoaderCircle, LockKeyhole, Sparkles } from "lucide-react";
+import {
+  Check,
+  Clapperboard,
+  LoaderCircle,
+  LockKeyhole,
+  Sparkles,
+} from "lucide-react";
 
 import { useAppTranslate } from "@/hooks";
 import styles from "./generation-focus-state.module.css";
@@ -15,27 +21,35 @@ function getStepClassName(index: number, activeIndex: number) {
 
 export function GenerationFocusState({
   phase,
+  media = "image",
 }: {
   phase: GenerationFocusPhase;
+  media?: "image" | "video";
 }) {
   const { t } = useAppTranslate();
   const activeIndex = phases.indexOf(phase);
+  const translationKey = `pages.generation.${media}.focus`;
 
   return (
-    <section className={styles.shell} role="status" aria-live="polite">
+    <section
+      className={styles.shell}
+      data-media={media}
+      role="status"
+      aria-live="polite"
+    >
       <div className={styles.orb} aria-hidden="true">
         <span />
-        <Sparkles />
+        {media === "video" ? <Clapperboard /> : <Sparkles />}
       </div>
       <div className={styles.copy}>
-        <strong>{t(`pages.generation.image.focus.${phase}`)}</strong>
+        <strong>{t(`${translationKey}.${phase}`)}</strong>
         <span className={styles.hint}>
           <LockKeyhole aria-hidden="true" />
-          {t("pages.generation.image.focus.lockedHint")}
+          {t(`${translationKey}.lockedHint`)}
         </span>
         <ol
           className={styles.steps}
-          aria-label={t("pages.generation.image.focus.progressLabel")}
+          aria-label={t(`${translationKey}.progressLabel`)}
         >
           {phases.map((item, index) => {
             const isComplete = index < activeIndex;
@@ -51,7 +65,7 @@ export function GenerationFocusState({
                   {isActive ? <LoaderCircle /> : null}
                   {!isComplete && !isActive ? index + 1 : null}
                 </span>
-                {t(`pages.generation.image.focus.steps.${item}`)}
+                {t(`${translationKey}.steps.${item}`)}
               </li>
             );
           })}

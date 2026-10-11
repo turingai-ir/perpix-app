@@ -9,7 +9,7 @@ import { GenerationImageChats, GenerationImagePromptBox } from "./_components";
 import {
   GenerationFocusState,
   type GenerationFocusPhase,
-} from "./_components/generation-focus-state";
+} from "../_components/generation-focus-state";
 import { ImageComparison } from "./_components/image-comparison";
 import type { ImageComparisonItem } from "./_components/image-comparison.types";
 import { GeneratedMediaField, useGenerationPage } from "../_hooks";
