@@ -86,6 +86,50 @@ test("shows the animated brand in the gallery header", async ({ page }) => {
   await expect(brand).toHaveCSS("animation-name", "none");
 });
 
+for (const viewport of [
+  { width: 375, height: 812 },
+  { width: 812, height: 375 },
+  { width: 768, height: 1024 },
+  { width: 1440, height: 900 },
+]) {
+  test.describe(`media filters at ${viewport.width}x${viewport.height}`, () => {
+    test.use({ viewport, reducedMotion: "reduce" });
+    test("are equally sized and remain interactive", async ({ page }) => {
+      await page.evaluate(() => document.fonts.ready);
+      const filters = ["همه", "عکس", "ویدیو", "صدا"].map((name) =>
+        page.getByRole("button", { name, exact: true }),
+      );
+      await expect(filters[0]).toBeVisible();
+      const boxes = await Promise.all(
+        filters.map((filter) => filter.boundingBox()),
+      );
+      for (const box of boxes) {
+        expect(box).not.toBeNull();
+        expect(box!.height).toBeGreaterThanOrEqual(44);
+        expect(box!.width).toBeGreaterThanOrEqual(44);
+        expect(Math.abs(box!.width - boxes[0]!.width)).toBeLessThan(1);
+        expect(Math.abs(box!.y - boxes[0]!.y)).toBeLessThan(1);
+      }
+      expect(
+        await page.evaluate(
+          () => document.documentElement.scrollWidth <= innerWidth,
+        ),
+      ).toBe(true);
+      await filters[2].click();
+      await expect(filters[2]).toHaveAttribute("aria-pressed", "true");
+      await filters[1].click();
+      await expect(filters[1]).toHaveAttribute("aria-pressed", "true");
+      await expect(
+        page.getByRole("button", { name: "Aurora.png", exact: true }),
+      ).toBeVisible();
+      await page.screenshot({
+        path: test.info().outputPath("gallery-layout.png"),
+        fullPage: true,
+      });
+    });
+  });
+}
+
 test("searches loaded artwork and clears an empty result", async ({ page }) => {
   const search = page.getByRole("searchbox", {
     name: "جست‌وجو در فایل‌های بارگذاری‌شده",

@@ -137,8 +137,10 @@
 .intro {
   isolation: isolate;
   overflow: hidden;
+  min-height: 16rem;
+  justify-content: flex-start;
   gap: 12px;
-  padding-block: clamp(8px, 2vh, 24px);
+  padding: 7.5rem 1rem 1rem;
 }
 
 .intro > span,
@@ -235,7 +237,7 @@
 .neuralCore {
   position: absolute;
   z-index: 6;
-  top: 28%;
+  top: 3.75rem;
   left: 50%;
   display: grid;
   width: clamp(4.6rem, 21%, 6.4rem);
@@ -348,7 +350,7 @@
 @media (max-height: 760px) {
   .intro {
     gap: 8px;
-    padding-block: 6px;
+    padding-bottom: 6px;
   }
   .intro h1 {
     font-size: clamp(24px, 3vw, 36px);
@@ -382,6 +384,7 @@
 
   .intro {
     flex: 0 0 auto;
+    min-height: 0;
     height: clamp(13rem, 27svh, 14.5rem);
     justify-content: flex-start;
     gap: 5px;
@@ -428,7 +431,7 @@
   }
 
   .neuralCore {
-    top: 25%;
+    top: 2.75rem;
     width: 4rem;
   }
 
@@ -469,6 +472,26 @@
     border-radius: 1.125rem;
     padding: 0.5rem;
     background: rgb(255 255 255 / 2.5%);
+  }
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+  .intro {
+    flex: none;
+    min-height: 0;
+    height: auto;
+    padding: 4.5rem 0.75rem 0.5rem;
+  }
+
+  .neuralCore {
+    top: 2rem;
+    width: 3rem;
+  }
+
+  .composerDock {
+    position: relative;
+    padding-top: 0;
+    background: transparent;
   }
 }
 

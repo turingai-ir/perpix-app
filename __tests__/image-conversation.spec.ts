@@ -33,6 +33,62 @@ const labels = {
 
 const prompt = "A cinematic lighthouse above a stormy sea";
 
+for (const viewport of [
+  { width: 375, height: 812 },
+  { width: 812, height: 375 },
+  { width: 768, height: 1024 },
+  { width: 1440, height: 900 },
+]) {
+  test(`generation steps stay centered at ${viewport.width}x${viewport.height}`, async ({
+    page,
+    imageConversationApi,
+  }) => {
+    await page.setViewportSize(viewport);
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    imageConversationApi.setTaskMessages(
+      conversationMessages({ prompt, status: "IN_PROGRESS" }),
+    );
+    await page.goto(`/generation/image/${taskUuid}`);
+    const steps = page.getByRole("list", { name: labels.focusProgress });
+    await expect(steps).toBeVisible();
+    await expect(steps.locator('[aria-current="step"]')).toHaveCount(1);
+    await page.evaluate(() => document.fonts.ready);
+    const geometry = await steps.locator("li").evaluateAll((items) =>
+      items.map((item) => {
+        const box = item.getBoundingClientRect();
+        const marker = item.querySelector("span")!.getBoundingClientRect();
+        const icon = item.querySelector("svg")?.getBoundingClientRect();
+        return {
+          width: box.width,
+          centerError: Math.abs(
+            marker.x + marker.width / 2 - box.x - box.width / 2,
+          ),
+          markerY: marker.y,
+          iconError: icon
+            ? Math.abs(icon.y + icon.height / 2 - marker.y - marker.height / 2)
+            : 0,
+        };
+      }),
+    );
+    for (const item of geometry) {
+      expect(item.centerError).toBeLessThan(1);
+      expect(item.iconError).toBeLessThan(1);
+      expect(Math.abs(item.width - geometry[0].width)).toBeLessThan(1);
+      expect(Math.abs(item.markerY - geometry[0].markerY)).toBeLessThan(1);
+    }
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBe(true);
+    expect(imageConversationApi.generateRequests).toEqual([]);
+    await page.screenshot({
+      path: test.info().outputPath("generation-steps.png"),
+      fullPage: true,
+    });
+  });
+}
+
 async function openNewConversation(page: Page) {
   await page.goto("/generation/image", { waitUntil: "domcontentloaded" });
   await expect(
