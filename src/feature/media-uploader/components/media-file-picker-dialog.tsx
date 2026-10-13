@@ -190,14 +190,14 @@ export const MediaFilePickerDialog: FC<MediaFilePickerDialogProps> = ({
         showCloseButton={!isUploading}
         onPaste={handlePaste}
       >
-        <DialogHeader className="border-b px-4 pt-4 pb-3">
+        <DialogHeader className="shrink-0 border-b px-4 pt-4 pb-3">
           <DialogTitle>{label}</DialogTitle>
           <DialogDescription>
             {t("features.mediaUploader.dialog.description")}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="flex min-h-0 flex-1 flex-col gap-4 px-4">
+        <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto overscroll-contain px-4">
           <NewFileUploadCard
             accept={accept}
             disabled={

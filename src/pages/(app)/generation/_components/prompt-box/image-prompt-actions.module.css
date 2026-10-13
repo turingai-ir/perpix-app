@@ -54,6 +54,7 @@
 }
 
 .primaryField [data-slot="select-trigger"],
+.primaryField button[role="combobox"],
 .primaryField input,
 .modelField > button {
   width: 100%;
@@ -97,14 +98,15 @@
   border-radius: 0.75rem;
 }
 
-@media (max-width: 639px) {
+@media (max-width: 899px) {
   .actionBar {
     align-items: stretch;
     gap: 0.5rem;
   }
 
   .primarySettings {
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
     flex: none;
     width: 100%;
     flex-wrap: wrap;
@@ -113,6 +115,8 @@
   }
 
   .compactControls {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     width: 100%;
     justify-content: flex-start;
   }
@@ -128,6 +132,7 @@
   }
 
   .primaryField [data-slot="select-trigger"],
+  .primaryField button[role="combobox"],
   .primaryField input,
   .modelField > button,
   .primaryField [data-slot="scroll-area"] [class~="inline-flex"] {
@@ -137,7 +142,8 @@
   }
 
   .tools {
-    width: auto;
+    grid-column: 1 / -1;
+    width: 100%;
     flex-wrap: nowrap;
     justify-content: flex-start;
     gap: 0.5rem;
@@ -145,7 +151,7 @@
   }
 
   .tools > button:not([aria-label]) {
-    flex: 0 1 auto;
+    flex: 1;
     justify-content: center;
   }
 
