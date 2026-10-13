@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Check, ChevronDown, Loader2, LockKeyhole } from "lucide-react";
 import { ImageModelLogo } from "./model-logo";
 import { Button } from "@/components/ui/button";
@@ -74,6 +74,8 @@ function getModelStrength(
 export function ImageModelDiscovery({ disabled, model }: Props) {
   const { t } = useAppTranslate();
   const [open, setOpen] = useState(false);
+  const openedWithTouch = useRef(false);
+  const popoverRef = useRef<HTMLDivElement>(null);
   const models = model.modelsListState.data ?? [];
   const selected = models.find((item) => item.uuid === model.currentModel);
   const loading = model.modelsListState.isLoading;
@@ -87,6 +89,12 @@ export function ImageModelDiscovery({ disabled, model }: Props) {
           role="combobox"
           aria-expanded={open}
           aria-label={t("common.chooseModel")}
+          onPointerDown={(event) => {
+            openedWithTouch.current = event.pointerType !== "mouse";
+          }}
+          onKeyDown={() => {
+            openedWithTouch.current = false;
+          }}
           className="bg-muted/40 hover:bg-muted/60 h-11 w-full max-w-full justify-start gap-3 rounded-xl px-3 transition-colors"
         >
           {loading ? (
@@ -103,16 +111,25 @@ export function ImageModelDiscovery({ disabled, model }: Props) {
         </Button>
       </PopoverTrigger>
       <PopoverContent
+        ref={popoverRef}
+        tabIndex={-1}
         side="top"
         align="end"
         sideOffset={12}
-        className="border-border w-[min(460px,calc(100vw-2rem))] overflow-hidden rounded-2xl border p-1.5 shadow-2xl"
+        collisionPadding={16}
+        onOpenAutoFocus={(event) => {
+          if (!openedWithTouch.current) return;
+          // Keep focus in the popup without summoning a touch keyboard.
+          event.preventDefault();
+          popoverRef.current?.focus({ preventScroll: true });
+        }}
+        className="border-border max-h-(--radix-popover-content-available-height) w-[min(460px,calc(100vw-2rem))] overflow-hidden rounded-2xl border p-1.5 shadow-2xl"
       >
-        <Command>
+        <Command className="h-auto min-h-0">
           <CommandInput
             placeholder={t("pages.generation.image.studio.searchModels")}
           />
-          <CommandList className="max-h-[min(440px,calc(100dvh-12rem))]">
+          <CommandList className="max-h-[min(440px,calc(100dvh-12rem))] min-h-0 flex-1">
             <CommandEmpty>
               {t(
                 model.modelsListState.isError

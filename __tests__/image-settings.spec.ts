@@ -61,12 +61,21 @@ test("reference image switches workflow and removal restores text mode", async (
   await page.getByRole("button", { name: "افزودن عکس", exact: true }).click();
   const picker = page.getByRole("dialog", { name: "افزودن عکس" });
   await picker.getByRole("button", { name: /reference-test\.png/ }).click();
-  await picker.getByRole("button", { name: "بستن", exact: true }).click();
+  await expect(workflow).toHaveAttribute(
+    "data-generation-mode",
+    "text_to_image",
+  );
+  await picker
+    .getByRole("button", { name: "افزودن 1 عکس", exact: true })
+    .click();
+  await expect(picker).not.toBeVisible();
   await expect(workflow).toHaveAttribute(
     "data-generation-mode",
     "image_to_image",
   );
-  await page.getByRole("button", { name: "حذف فایل", exact: true }).click();
+  await page
+    .getByRole("button", { name: "حذف تصویر مرجع 1", exact: true })
+    .click();
   await expect(workflow).toHaveAttribute(
     "data-generation-mode",
     "text_to_image",

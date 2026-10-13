@@ -38,7 +38,6 @@ export function GenerationFocusState({
       aria-live="polite"
     >
       <div className={styles.orb} aria-hidden="true">
-        <span />
         {media === "video" ? <Clapperboard /> : <Sparkles />}
       </div>
       <div className={styles.copy}>
@@ -47,30 +46,32 @@ export function GenerationFocusState({
           <LockKeyhole aria-hidden="true" />
           {t(`${translationKey}.lockedHint`)}
         </span>
-        <ol
-          className={styles.steps}
-          aria-label={t(`${translationKey}.progressLabel`)}
-        >
-          {phases.map((item, index) => {
-            const isComplete = index < activeIndex;
-            const isActive = index === activeIndex;
-            return (
-              <li
-                key={item}
-                className={getStepClassName(index, activeIndex)}
-                aria-current={isActive ? "step" : undefined}
-              >
-                <span>
-                  {isComplete ? <Check /> : null}
-                  {isActive ? <LoaderCircle /> : null}
-                  {!isComplete && !isActive ? index + 1 : null}
-                </span>
-                {t(`${translationKey}.steps.${item}`)}
-              </li>
-            );
-          })}
-        </ol>
       </div>
+      <ol
+        className={styles.steps}
+        aria-label={t(`${translationKey}.progressLabel`)}
+      >
+        {phases.map((item, index) => {
+          const isComplete = index < activeIndex;
+          const isActive = index === activeIndex;
+          return (
+            <li
+              key={item}
+              className={getStepClassName(index, activeIndex)}
+              aria-current={isActive ? "step" : undefined}
+            >
+              <span className={styles.stepMarker} aria-hidden="true">
+                {isComplete ? <Check /> : null}
+                {isActive ? <LoaderCircle /> : null}
+                {!isComplete && !isActive ? index + 1 : null}
+              </span>
+              <span className={styles.stepLabel}>
+                {t(`${translationKey}.steps.${item}`)}
+              </span>
+            </li>
+          );
+        })}
+      </ol>
     </section>
   );
 }

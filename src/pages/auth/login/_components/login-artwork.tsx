@@ -1,17 +1,9 @@
-import { useState, type PointerEvent } from "react";
-import { Pause, Play } from "lucide-react";
-
-import { useAppTranslate } from "@/hooks";
-import { APP_I18_KEYS } from "@/services/i18";
+import type { PointerEvent } from "react";
 import styles from "../login.module.css";
 
 export default function LoginArtwork() {
-  const [paused, setPaused] = useState(false);
-  const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
-
   function moveLight(event: PointerEvent<HTMLDivElement>) {
     if (
-      paused ||
       event.pointerType !== "mouse" ||
       window.matchMedia("(prefers-reduced-motion: reduce)").matches
     )
@@ -29,47 +21,25 @@ export default function LoginArtwork() {
   }
 
   return (
-    <>
-      <div
-        className={styles.artwork}
-        aria-hidden="true"
-        data-paused={paused}
-        onPointerMove={moveLight}
-        onPointerLeave={resetLight}
-      >
-        <div className={styles.depth}>
-          <div className={styles.orbit} />
-          <div className={styles.energyRing} />
-          <img
-            className={styles.heroLogo}
-            src="/android-chrome-512x512.png"
-            alt=""
-            width="512"
-            height="512"
-          />
-        </div>
-        <span className={styles.artLabel}>PERPIX / CREATIVE SPACE</span>
+    <div
+      className={styles.artwork}
+      aria-hidden="true"
+      data-login-artwork
+      onPointerMove={moveLight}
+      onPointerLeave={resetLight}
+    >
+      <div className={styles.depth}>
+        <div className={styles.orbit} />
+        <div className={styles.energyRing} />
+        <img
+          className={styles.heroLogo}
+          src="/android-chrome-512x512.png"
+          alt=""
+          width="512"
+          height="512"
+        />
       </div>
-      <button
-        type="button"
-        className={styles.motionControl}
-        aria-pressed={paused}
-        onClick={() => setPaused(!paused)}
-        aria-label={t("pages.auth.login.visual.pauseMotion")}
-      >
-        {paused ? (
-          <Play size={14} aria-hidden="true" />
-        ) : (
-          <Pause size={14} aria-hidden="true" />
-        )}
-        <span>
-          {t(
-            paused
-              ? "pages.auth.login.visual.resumeMotion"
-              : "pages.auth.login.visual.pauseMotion",
-          )}
-        </span>
-      </button>
-    </>
+      <span className={styles.artLabel}>PERPIX / CREATIVE SPACE</span>
+    </div>
   );
 }

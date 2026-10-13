@@ -1,6 +1,22 @@
 import { expect, test as base } from "@playwright/test";
 
 const providerUuid = "9a6d5ea1-5276-4d7c-b445-d2e4dc2b4ee5";
+const referenceFiles = [
+  {
+    uuid: "11111111-1111-4111-8111-111111111111",
+    file_name: "reference-test.png",
+    file_size: 2048,
+    content_type: "image/png",
+    is_public: true,
+  },
+  {
+    uuid: "22222222-2222-4222-8222-222222222222",
+    file_name: "reference-second.png",
+    file_size: 2048,
+    content_type: "image/png",
+    is_public: true,
+  },
+];
 export const fullModelUuid = "a509b349-d43f-4065-9cf2-de444bf4aa2c";
 export const limitedModelUuid = "2d1fcf14-a655-47c5-af08-3fa450dc99cc";
 
@@ -128,15 +144,13 @@ export const test = base.extend<{ safeImageApi: void }>({
         ) {
           await route.fulfill({
             json: {
-              files: [
-                {
-                  file_uuid: "11111111-1111-4111-8111-111111111111",
-                  preview_url:
-                    "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'/>",
-                  download_url:
-                    "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'/>",
-                },
-              ],
+              files: referenceFiles.map((file) => ({
+                file_uuid: file.uuid,
+                preview_url:
+                  "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'/>",
+                download_url:
+                  "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'/>",
+              })),
             },
           });
           return;
@@ -181,15 +195,7 @@ export const test = base.extend<{ safeImageApi: void }>({
           },
           "/ai-task/list": { items: [], has_next: false },
           "/file-manager/user-files": {
-            files: [
-              {
-                uuid: "11111111-1111-4111-8111-111111111111",
-                file_name: "reference-test.png",
-                file_size: 2048,
-                content_type: "image/png",
-                is_public: true,
-              },
-            ],
+            files: referenceFiles,
             has_next: false,
           },
           "/ai-registry/models": models,

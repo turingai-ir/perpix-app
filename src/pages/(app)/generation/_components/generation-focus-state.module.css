@@ -1,218 +1,147 @@
 .shell {
-  --focus-accent: color-mix(in srgb, var(--primary) 78%, #8fdcff);
-  display: flex;
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr);
+  gap: 0.75rem;
   width: calc(100% - 1rem);
-  align-items: center;
-  gap: 0.875rem;
   margin: 0 auto 0.625rem;
-  padding: 0.75rem 0.875rem;
-  overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent);
+  padding: 0.875rem 1rem;
+  border: 1px solid color-mix(in srgb, var(--primary) 25%, var(--border));
   border-radius: 1.25rem;
-  background: linear-gradient(115deg, rgb(15 10 23 / 88%), rgb(7 11 18 / 78%));
-  box-shadow:
-    inset 0 1px rgb(255 255 255 / 7%),
-    0 1rem 3rem rgb(0 0 0 / 22%);
-  backdrop-filter: blur(20px) saturate(130%);
-  animation: focusEnter 280ms cubic-bezier(0.23, 1, 0.32, 1) both;
+  background: var(--card);
+  animation: reveal 280ms ease-out both;
 }
 
 .orb {
-  position: relative;
   display: grid;
-  width: 3rem;
-  height: 3rem;
-  flex: none;
+  width: 2.5rem;
+  height: 2.5rem;
   place-items: center;
-  border: 1px solid rgb(255 255 255 / 12%);
-  border-radius: 50%;
-  background: radial-gradient(
-    circle at 35% 28%,
-    #fff,
-    var(--focus-accent) 12%,
-    #5924a4 44%,
-    #090712 72%
-  );
-  box-shadow:
-    inset -0.35rem -0.45rem 0.9rem rgb(0 0 0 / 46%),
-    0 0 1.5rem color-mix(in srgb, var(--primary) 35%, transparent);
-  transform-style: preserve-3d;
-}
-
-.orb::before,
-.orb span {
-  position: absolute;
-  inset: -0.35rem;
-  border: 1px solid color-mix(in srgb, var(--focus-accent) 55%, transparent);
-  border-radius: 50%;
-  content: "";
-  transform: rotateX(64deg) rotateZ(12deg);
-  animation: focusOrbit 2.8s linear infinite;
-}
-
-.orb span {
-  inset: -0.18rem;
-  border-color: rgb(255 255 255 / 18%);
-  transform: rotateY(68deg) rotateZ(-18deg);
-  animation-direction: reverse;
-  animation-duration: 3.6s;
+  border-radius: 0.75rem;
+  color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 12%, var(--card));
 }
 
 .orb svg {
-  width: 1rem;
-  color: white;
-  filter: drop-shadow(0 0 0.45rem white);
+  display: block;
+  width: 1.25rem;
+  height: 1.25rem;
 }
 
 .copy {
   min-width: 0;
-  flex: 1;
 }
+
 .copy strong {
   display: block;
+  color: var(--foreground);
   font-size: 0.875rem;
+  line-height: 1.6;
 }
+
 .hint {
   display: flex;
-  align-items: center;
-  gap: 0.35rem;
-  margin-top: 0.2rem;
+  align-items: baseline;
+  gap: 0.375rem;
+  margin-top: 0.25rem;
   color: var(--muted-foreground);
   font-size: 0.75rem;
+  line-height: 1.8;
 }
+
 .hint svg {
-  width: 0.85rem;
   flex: none;
+  align-self: flex-start;
+  width: 0.875rem;
+  height: 0.875rem;
+  margin-top: 0.25rem;
 }
 
 .steps {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 0.65rem;
-  overflow-x: auto;
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0.375rem 0 0;
+  padding: 0;
+  list-style: none;
   color: var(--muted-foreground);
-  font-size: 0.68rem;
-  scrollbar-width: none;
+  font-size: 0.6875rem;
 }
 
 .steps li {
+  position: relative;
   display: flex;
-  min-width: max-content;
+  min-width: 0;
+  flex-direction: column;
   align-items: center;
-  gap: 0.3rem;
-  opacity: 0.48;
-}
-.steps li > span {
-  display: grid;
-  width: 1.1rem;
-  height: 1.1rem;
-  place-items: center;
-  border: 1px solid currentColor;
-  border-radius: 50%;
-  font-size: 0.58rem;
-}
-.steps svg {
-  width: 0.7rem;
-}
-.steps .complete {
-  color: #74e0b4;
-  opacity: 0.8;
-}
-.steps .active {
-  color: var(--focus-accent);
-  opacity: 1;
-}
-.steps .active svg {
-  animation: focusSpin 1s linear infinite;
+  gap: 0.375rem;
 }
 
-@keyframes focusEnter {
+.steps li:not(:last-child)::after {
+  position: absolute;
+  top: 1rem;
+  inset-inline-start: calc(50% + 1rem);
+  width: calc(100% - 2rem);
+  height: 1px;
+  background: var(--border);
+  content: "";
+}
+
+.stepMarker {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--card);
+  font-variant-numeric: tabular-nums;
+}
+
+.stepMarker svg {
+  display: block;
+  width: 1rem;
+  height: 1rem;
+}
+
+.stepLabel {
+  text-align: center;
+  text-wrap: balance;
+  line-height: 1.7;
+}
+
+.active,
+.complete {
+  color: var(--primary);
+}
+
+.active .stepMarker,
+.complete .stepMarker {
+  border-color: color-mix(in srgb, var(--primary) 40%, var(--border));
+  background: color-mix(in srgb, var(--primary) 10%, var(--card));
+}
+
+.active svg {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes reveal {
   from {
     opacity: 0;
-    transform: translateY(0.45rem) scale(0.985);
+    transform: translateY(4px);
   }
 }
 
-.shell[data-media="video"] {
-  align-items: flex-start;
-  border-color: var(--border);
-  border-radius: 12px;
-  background: var(--background);
-  box-shadow: 0 6px 20px rgb(0 0 0 / 8%);
-  backdrop-filter: none;
-  animation: none;
-}
-.shell[data-media="video"] .orb {
-  width: 40px;
-  height: 40px;
-  border: 0;
-  border-radius: 8px;
-  background: color-mix(in srgb, var(--primary) 10%, var(--background));
-  box-shadow: none;
-}
-.shell[data-media="video"] .orb::before,
-.shell[data-media="video"] .orb span {
-  display: none;
-}
-.shell[data-media="video"] .orb svg {
-  width: 20px;
-  color: var(--primary);
-  filter: none;
-}
-.shell[data-media="video"] .hint {
-  line-height: 1.8;
-}
-.shell[data-media="video"] .steps {
-  flex-wrap: wrap;
-  overflow: visible;
-  gap: 8px 14px;
-  font-size: 11px;
-}
-.shell[data-media="video"] .steps li {
-  opacity: 1;
-}
-.shell[data-media="video"] .complete {
-  color: var(--foreground);
-}
-.shell[data-media="video"] .active {
-  color: var(--primary);
-}
-.shell[data-media="video"] .steps .active svg {
-  animation: none;
-}
-@keyframes focusOrbit {
-  to {
-    transform: rotateX(64deg) rotateZ(372deg);
-  }
-}
-@keyframes focusSpin {
+@keyframes spin {
   to {
     transform: rotate(360deg);
   }
 }
 
-@media (max-width: 520px) {
-  .shell {
-    align-items: flex-start;
-  }
-  .orb {
-    width: 2.65rem;
-    height: 2.65rem;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .shell,
-  .orb::before,
-  .orb span,
-  .steps .active svg {
+  .active svg {
     animation: none;
-  }
-}
-
-@media (prefers-reduced-transparency: reduce) {
-  .shell {
-    background: #100c18;
-    backdrop-filter: none;
   }
 }

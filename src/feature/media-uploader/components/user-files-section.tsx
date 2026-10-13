@@ -2,7 +2,6 @@ import { AlertCircle, RefreshCw } from "lucide-react";
 import type { FC } from "react";
 
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAppTranslate } from "@/hooks";
 import { useInfiniteScroll } from "@/hooks/use-infinite-scroll";
@@ -48,7 +47,7 @@ export const UserFilesSection: FC<UserFilesSectionProps> = ({
   });
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-2">
+    <div className="flex shrink-0 flex-col gap-2">
       <div className="flex shrink-0 items-center justify-between gap-2">
         <span className="text-muted-foreground text-xs font-medium">
           {t("features.mediaUploader.userFiles")}
@@ -67,10 +66,7 @@ export const UserFilesSection: FC<UserFilesSectionProps> = ({
         </Button>
       </div>
 
-      <ScrollArea
-        className="min-h-0 flex-1 rounded-lg border"
-        viewportClassName="max-h-[360px]"
-      >
+      <div className="rounded-lg border">
         {isLoading ? (
           <UserFilesSkeleton />
         ) : isError ? (
@@ -106,7 +102,7 @@ export const UserFilesSection: FC<UserFilesSectionProps> = ({
             ) : null}
           </div>
         )}
-      </ScrollArea>
+      </div>
     </div>
   );
 };
