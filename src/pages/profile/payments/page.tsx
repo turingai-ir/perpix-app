@@ -1,12 +1,12 @@
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useDeferredValue, useState } from "react";
+import { Radio } from "lucide-react";
 import { useSearchParams } from "react-router";
 
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { usePayments, getPaymentViewStatus } from "@/feature/payment";
+import { PaymentDetailsDialog } from "@/features/payment";
 import { useAppTranslate } from "@/hooks";
-import { dayjs } from "@/lib/dayjs";
+import { FinanceHero } from "@/pages/profile/_components/finance-hero";
+import { FinanceToolbar } from "@/pages/profile/_components/finance-toolbar";
 import { PaginationFooter } from "@/pages/profile/_components/pagination-footer";
 import {
   ProfileListEmpty,
@@ -14,138 +14,145 @@ import {
   ProfileListLoading,
 } from "@/pages/profile/_components/profile-list-state";
 import { APP_I18_KEYS } from "@/services/i18";
-import { PaymentAmount, PaymentDetailsDialog } from "@/features/payment";
+import { formatLocalizedNumber } from "@/utils";
+
+import { PaymentRecords } from "./_components/payment-records";
+import { PaymentSummary } from "./_components/payment-summary";
+import "../_components/finance.css";
 
 const PAGE_LIMIT = 100;
+const paymentFilters = ["all", "succeeded", "pending", "failed"] as const;
 
 function ProfilePaymentsPage() {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const [searchParams, setSearchParams] = useSearchParams();
-  const offset = Number(searchParams.get("offset") ?? 0);
-  const safeOffset = Number.isSafeInteger(offset) && offset > 0 ? offset : 0;
-  const paymentsState = usePayments({ offset: safeOffset, limit: PAGE_LIMIT });
+  const [search, setSearch] = useState("");
+  const deferredSearch = useDeferredValue(search.trim().toLowerCase());
+  const requestedOffset = Number(searchParams.get("offset") ?? 0);
+  const offset =
+    Number.isSafeInteger(requestedOffset) && requestedOffset > 0
+      ? requestedOffset
+      : 0;
+  const requestedFilter = searchParams.get("status") ?? "all";
+  const activeFilter = paymentFilters.includes(
+    requestedFilter as (typeof paymentFilters)[number],
+  )
+    ? requestedFilter
+    : "all";
+  const paymentsState = usePayments({ offset, limit: PAGE_LIMIT });
   const payments = Array.from(paymentsState.data?.items ?? []);
   const [detailsId, setDetailsId] = useState<string | null>(null);
+  const visiblePayments = payments.filter(({ payment, target_type }) => {
+    const status = getPaymentViewStatus(payment);
+    const matchesStatus =
+      activeFilter === "all" ||
+      activeFilter === status ||
+      (activeFilter === "pending" && ["processing", "review"].includes(status));
+    const haystack =
+      `${payment.id} ${payment.execution_uuid} ${target_type}`.toLowerCase();
+    return matchesStatus && haystack.includes(deferredSearch);
+  });
 
-  const goToOffset = (nextOffset: number) => {
-    setSearchParams({ offset: String(Math.max(0, nextOffset)) });
+  const updatePage = (nextOffset: number) => {
+    const next = new URLSearchParams(searchParams);
+    next.set("offset", String(Math.max(0, nextOffset)));
+    setSearchParams(next);
+  };
+  const updateFilter = (value: string) => {
+    const next = new URLSearchParams(searchParams);
+    value === "all" ? next.delete("status") : next.set("status", value);
+    next.delete("offset");
+    setSearchParams(next);
   };
 
   return (
-    <Card className="min-h-full">
-      <CardHeader>
-        <CardTitle>{t("pages.profile.payments.title")}</CardTitle>
-      </CardHeader>
+    <div className="finance-page finance-page-payments">
+      <FinanceHero
+        kind="payments"
+        title={t("pages.profile.finance.paymentsTitle")}
+        description={t("pages.profile.finance.paymentsDescription")}
+        artLabel={t("pages.profile.finance.paymentArt")}
+      >
+        <span className="finance-hero-chip">
+          <Radio aria-hidden="true" />
+          <strong>
+            {t("pages.profile.finance.resultCount", {
+              value: formatLocalizedNumber({ value: payments.length }),
+            })}
+          </strong>
+        </span>
+      </FinanceHero>
+      <PaymentSummary payments={payments} />
+      <section
+        className="finance-archive"
+        aria-labelledby="payment-archive-title"
+      >
+        <div className="finance-archive-heading">
+          <div>
+            <h2 id="payment-archive-title">
+              {t("pages.profile.finance.paymentArchive")}
+            </h2>
+            <p>{t("pages.profile.finance.pageScope")}</p>
+          </div>
+        </div>
+        <FinanceToolbar
+          searchLabel={t("pages.profile.finance.search")}
+          searchPlaceholder={t("pages.profile.finance.searchPlaceholder")}
+          searchValue={search}
+          filtersLabel={t("pages.profile.finance.filters")}
+          filters={paymentFilters.map((value) => ({
+            value,
+            label:
+              value === "all"
+                ? t("pages.profile.finance.all")
+                : t(`pages.profile.payments.states.${value}`),
+          }))}
+          activeFilter={activeFilter}
+          resultLabel={t("pages.profile.finance.resultCount", {
+            value: formatLocalizedNumber({ value: visiblePayments.length }),
+          })}
+          clearLabel={t("pages.profile.finance.clearFilters")}
+          onSearchChange={setSearch}
+          onFilterChange={updateFilter}
+          onClear={() => {
+            setSearch("");
+            updateFilter("all");
+          }}
+        />
+        {paymentsState.isLoading ? <ProfileListLoading /> : null}
+        {paymentsState.isError ? (
+          <ProfileListError onRetry={() => void paymentsState.refetch()} />
+        ) : null}
+        {paymentsState.isSuccess && payments.length === 0 ? (
+          <ProfileListEmpty title={t("pages.profile.finance.emptyPayments")} />
+        ) : null}
+        {payments.length > 0 && visiblePayments.length === 0 ? (
+          <ProfileListEmpty title={t("pages.profile.finance.noResults")} />
+        ) : null}
+        {visiblePayments.length > 0 ? (
+          <PaymentRecords
+            payments={visiblePayments}
+            onOpenDetails={setDetailsId}
+          />
+        ) : null}
+        {payments.length > 0 ? (
+          <PaginationFooter
+            offset={offset}
+            itemCount={payments.length}
+            hasNext={paymentsState.data?.has_next ?? false}
+            isFetching={paymentsState.isFetching}
+            onPrevious={() => updatePage(offset - PAGE_LIMIT)}
+            onNext={() => updatePage(offset + PAGE_LIMIT)}
+          />
+        ) : null}
+      </section>
       {detailsId ? (
         <PaymentDetailsDialog
           intentUuid={detailsId}
           onClose={() => setDetailsId(null)}
         />
       ) : null}
-      <CardContent className="p-0">
-        {paymentsState.isLoading ? <ProfileListLoading /> : null}
-        {paymentsState.isError ? (
-          <ProfileListError onRetry={() => paymentsState.refetch()} />
-        ) : null}
-        {paymentsState.isSuccess && payments.length === 0 ? (
-          <ProfileListEmpty title={t("pages.profile.payments.empty")} />
-        ) : null}
-        {payments.length > 0 ? (
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-4xl text-sm">
-              <thead className="bg-muted/60 text-muted-foreground">
-                <tr className="[&>th]:px-4 [&>th]:py-3 [&>th]:text-right [&>th]:font-medium">
-                  <th>{t("pages.profile.payments.trackingCode")}</th>
-                  <th>{t("pages.profile.payments.paymentStatus")}</th>
-                  <th>{t("pages.profile.payments.fulfillmentStatus")}</th>
-                  <th>{t("pages.profile.payments.totalAmount")}</th>
-                  <th>{t("pages.profile.payments.type")}</th>
-                  <th>{t("pages.profile.payments.date")}</th>
-                  <th>{t("pages.profile.payments.details")}</th>
-                </tr>
-              </thead>
-              <tbody className="divide-border divide-y">
-                {payments.map(({ payment, target_type, created_at }) => {
-                  const status = getPaymentViewStatus(payment);
-                  return (
-                    <tr key={payment.id} className="[&>td]:px-4 [&>td]:py-3">
-                      <td
-                        dir="ltr"
-                        className="text-foreground font-mono text-xs"
-                      >
-                        {payment.id}
-                      </td>
-                      <td>
-                        <Badge
-                          variant={
-                            status === "failed"
-                              ? "destructive"
-                              : status === "succeeded"
-                                ? "default"
-                                : "secondary"
-                          }
-                        >
-                          {t(`pages.profile.payments.states.${status}`)}
-                        </Badge>
-                      </td>
-                      <td>
-                        <Badge
-                          variant={
-                            payment.fulfillment_status === "NEEDS_REVIEW"
-                              ? "destructive"
-                              : payment.fulfillment_status === "SUCCEEDED"
-                                ? "default"
-                                : "secondary"
-                          }
-                        >
-                          {t(
-                            `pages.profile.payments.fulfillment.${payment.fulfillment_status}`,
-                          )}
-                        </Badge>
-                      </td>
-                      <td className="font-semibold">
-                        <PaymentAmount
-                          amount={payment.amount}
-                          currency={payment.currency}
-                        />
-                      </td>
-                      <td>
-                        {t(`pages.profile.payments.targets.${target_type}`, {
-                          defaultValue: t(
-                            "pages.profile.payments.targets.other",
-                          ),
-                        })}
-                      </td>
-                      <td>
-                        {dayjs(created_at)
-                          .locale("fa")
-                          .format("YYYY/MM/DD HH:mm")}
-                      </td>
-                      <td>
-                        <Button
-                          variant="outline"
-                          onClick={() => setDetailsId(payment.id)}
-                        >
-                          {t("pages.profile.payments.details")}
-                        </Button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        ) : null}
-        <PaginationFooter
-          offset={safeOffset}
-          limit={PAGE_LIMIT}
-          hasNext={paymentsState.data?.has_next ?? false}
-          isFetching={paymentsState.isFetching}
-          onPrevious={() => goToOffset(safeOffset - PAGE_LIMIT)}
-          onNext={() => goToOffset(safeOffset + PAGE_LIMIT)}
-        />
-      </CardContent>
-    </Card>
+    </div>
   );
 }
 

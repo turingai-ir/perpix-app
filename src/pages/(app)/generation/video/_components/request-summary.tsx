@@ -25,7 +25,12 @@ export function VideoRequestSummary({
         <div className="flex max-w-72 flex-wrap justify-end gap-2">
           {referenceImages.map((fileId, index) => (
             <div key={fileId} className="size-20 overflow-hidden rounded-2xl">
-              <MediaPreviewItem fileId={fileId} index={index} type="image" />
+              <MediaPreviewItem
+                fileId={fileId}
+                fit="contain"
+                index={index}
+                type="image"
+              />
             </div>
           ))}
         </div>

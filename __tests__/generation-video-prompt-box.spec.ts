@@ -134,6 +134,54 @@ test("long video prompts collapse without hiding the failure or losing line brea
   await expect(page.getByRole("alert")).toBeInViewport();
 });
 
+test("mobile request summaries preserve reference framing and clamp long prompts", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  const prompt = `VIDEO EDIT / CHARACTER REPLACEMENT\n${"Keep the source composition and original timing.\n".repeat(65)}`;
+  await mockApi(page, [
+    {
+      ai_model_config: {
+        frame_images: ["reference-1"],
+        mode: "image_to_video",
+        prompt,
+      },
+      ai_model_uuid: MODEL_UUID,
+      role: "USER",
+      message: prompt,
+      uuid: "mobile-reference-message",
+      task_status: "SUCCESS",
+    },
+  ]);
+  await page.route("**/file-manager/files/presigned-urls", (route) =>
+    route.fulfill({
+      json: {
+        files: [
+          {
+            file_uuid: "reference-1",
+            preview_url: "http://localhost:5173/android-chrome-512x512.png",
+            download_url: "http://localhost:5173/android-chrome-512x512.png",
+            expire_at: new Date(Date.now() + 3_600_000).toISOString(),
+          },
+        ],
+      },
+    }),
+  );
+
+  await page.goto("/generation/video/task-1");
+  const summary = page.locator("[data-video-request-summary]").first();
+  await expect(summary.locator("img")).toHaveCSS("object-fit", "contain");
+  await expect(
+    summary.getByRole("button", { name: "نمایش متن کامل" }),
+  ).toHaveAttribute("aria-expanded", "false");
+  expect(
+    (await summary.locator("p").boundingBox())!.height,
+  ).toBeLessThanOrEqual(112);
+  expect(
+    await page.evaluate(() => document.documentElement.scrollWidth),
+  ).toBeLessThanOrEqual(375);
+});
+
 test("a create-only video model has no redundant group button and keeps reference controls readable", async ({
   page,
 }) => {
@@ -431,6 +479,8 @@ test("video studio stays usable on mobile with reduced motion", async ({
   expect(bounds!.x).toBeGreaterThanOrEqual(0);
   expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(376);
   expect(bounds!.y + bounds!.height).toBeLessThanOrEqual(813);
+  await expect(page.getByRole("dialog")).toHaveCSS("left", "0px");
+  await expect(page.getByRole("dialog")).toHaveCSS("transform", "none");
   await page.screenshot({ path: ".artifacts/video-studio-mobile-models.png" });
 });
 

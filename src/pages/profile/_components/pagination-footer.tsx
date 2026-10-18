@@ -1,11 +1,13 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { useAppTranslate } from "@/hooks";
+import { APP_I18_KEYS } from "@/services/i18";
 import { formatLocalizedNumber } from "@/utils";
 
 type PaginationFooterProps = {
   offset: number;
-  limit: number;
+  itemCount: number;
   hasNext: boolean;
   isFetching?: boolean;
   onPrevious: () => void;
@@ -14,17 +16,29 @@ type PaginationFooterProps = {
 
 export function PaginationFooter({
   offset,
-  limit,
+  itemCount,
   hasNext,
   isFetching,
   onPrevious,
   onNext,
 }: PaginationFooterProps) {
+  const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
+  const from = itemCount === 0 ? 0 : offset + 1;
+  const to = offset + itemCount;
+
   return (
-    <div className="border-border flex flex-col items-stretch justify-between gap-3 border-t px-4 py-3 sm:flex-row sm:items-center">
+    <nav
+      className="border-border flex flex-col items-stretch justify-between gap-3 border-t px-4 py-3 sm:flex-row sm:items-center"
+      aria-label={t("pages.profile.finance.range", {
+        from: formatLocalizedNumber({ value: from }),
+        to: formatLocalizedNumber({ value: to }),
+      })}
+    >
       <div className="text-muted-foreground text-sm">
-        {formatLocalizedNumber({ value: offset + 1 })} تا{" "}
-        {formatLocalizedNumber({ value: offset + limit })}
+        {t("pages.profile.finance.range", {
+          from: formatLocalizedNumber({ value: from }),
+          to: formatLocalizedNumber({ value: to }),
+        })}
       </div>
       <div className="flex items-center gap-2">
         <Button
@@ -33,8 +47,8 @@ export function PaginationFooter({
           disabled={offset === 0 || isFetching}
           onClick={onPrevious}
         >
-          <ChevronRight className="size-4" />
-          قبلی
+          <ChevronRight aria-hidden="true" className="size-4" />
+          {t("pages.profile.finance.previous")}
         </Button>
         <Button
           type="button"
@@ -42,10 +56,10 @@ export function PaginationFooter({
           disabled={!hasNext || isFetching}
           onClick={onNext}
         >
-          بعدی
-          <ChevronLeft className="size-4" />
+          {t("pages.profile.finance.next")}
+          <ChevronLeft aria-hidden="true" className="size-4" />
         </Button>
       </div>
-    </div>
+    </nav>
   );
 }
