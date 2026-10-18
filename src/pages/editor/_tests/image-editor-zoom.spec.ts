@@ -3,8 +3,8 @@ import { openAuthenticatedEditor } from "./image-editor-test-setup";
 import { testImageBase64 } from "./image-editor-test-image-fixtures";
 
 test.describe("Image editor zoom and pan", () => {
-  test.beforeEach(async ({ baseURL, context, page }) => {
-    await openAuthenticatedEditor(page, context, baseURL);
+  test.beforeEach(async ({ page }) => {
+    await openAuthenticatedEditor(page);
     const fileInput = page.getByLabel("انتخاب عکس از گالری یا دوربین");
     await expect(fileInput).toBeAttached();
     await fileInput.setInputFiles({

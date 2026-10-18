@@ -12,6 +12,7 @@ import { PwaRegistrationProvider } from "@/feature/pwa";
 import PricingFeature from "@/feature/pricing";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 
+import "./lib/private-data";
 import "./services/i18/i18";
 import "./styles/globals.css";
 import "./styles/tailwind.css";

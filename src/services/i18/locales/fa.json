@@ -84,7 +84,6 @@
     "hour": "ساعت",
     "image": "عکس",
     "minute": "دقیقه",
-
     "older": "قدیمی تر",
     "seconds": "ثانیه",
     "selectDuration": "انتخاب مدت زمان",
@@ -169,6 +168,100 @@
     }
   },
   "features": {
+    "auth": {
+      "validation": {
+        "phone": "شماره موبایل معتبر ایران وارد کنید.",
+        "otp": "کد تأیید باید ۶ رقم باشد.",
+        "passwordRequired": "رمز عبور را وارد کنید.",
+        "newPasswordLength": "رمز عبور باید بین ۸ تا ۱۲۸ کاراکتر باشد.",
+        "passwordMismatch": "رمز عبور با تکرار آن برابر نیست."
+      },
+      "failures": {
+        "invalidCredentials": "شماره یا رمز عبور معتبر نیست.",
+        "currentPasswordInvalid": "رمز عبور فعلی صحیح نیست.",
+        "challengeInvalid": "کد تأیید نامعتبر یا منقضی شده است. در صورت نیاز کد تازه درخواست کنید.",
+        "rateLimited": "تعداد درخواست‌ها زیاد است. {{seconds}} ثانیه بعد دوباره تلاش کنید.",
+        "rateLimitedUnknown": "تعداد درخواست‌ها زیاد است. کمی بعد دوباره تلاش کنید.",
+        "validation": "ورودی نامعتبر است.",
+        "forbidden": "شما دسترسی لازم را ندارید.",
+        "upgradeRequired": "برای این عملیات به اشتراک مناسب نیاز دارید.",
+        "conflict": "این درخواست قابل انجام نیست.",
+        "network": "ارتباط با سرور برقرار نشد. اتصال خود را بررسی کنید.",
+        "server": "خطای موقت رخ داد. دوباره تلاش کنید؛ نتیجهٔ عملیات قبلی نامعلوم است.",
+        "contract": "پاسخ نامعتبر از سرور دریافت شد.",
+        "aborted": "درخواست لغو شد."
+      },
+      "login": {
+        "title": "ورود",
+        "description": "به پر پیکسل ای آی خوش آمدید",
+        "phoneLabel": "شماره موبایل",
+        "phoneHint": "مثال: 09123456789",
+        "passwordLabel": "رمز عبور",
+        "submit": "ورود",
+        "forgotPassword": "فراموشی رمز عبور",
+        "createAccount": "ثبت‌نام"
+      },
+      "register": {
+        "title": "ثبت‌نام",
+        "description": "شمارهٔ موبایل خود را وارد کنید تا کد تأیید ارسال شود.",
+        "submit": "دریافت کد تأیید",
+        "haveAccount": "حساب دارید؟ وارد شوید"
+      },
+      "reset": {
+        "title": "بازیابی رمز عبور",
+        "description": "شمارهٔ موبایل خود را وارد کنید.",
+        "submit": "دریافت کد تأیید",
+        "backToLogin": "بازگشت به ورود"
+      },
+      "complete": {
+        "registrationTitle": "تأیید شماره و انتخاب رمز",
+        "resetTitle": "انتخاب رمز عبور جدید",
+        "description": "اگر این شماره واجد شرایط باشد، کد تأیید ارسال می‌شود.",
+        "otpLabel": "کد تأیید",
+        "passwordLabel": "رمز عبور",
+        "newPasswordLabel": "رمز عبور جدید",
+        "confirmLabel": "تکرار رمز عبور",
+        "passwordHint": "بین ۸ تا ۱۲۸ کاراکتر",
+        "submitRegistration": "ثبت‌نام",
+        "submitReset": "تغییر رمز عبور",
+        "resend": "ارسال مجدد کد",
+        "resendIn": "ارسال مجدد کد تا {{seconds}} ثانیه دیگر",
+        "expiresIn": "اعتبار کد: {{seconds}} ثانیه",
+        "expired": "کد منقضی شد.",
+        "requestNew": "درخواست کد تازه",
+        "back": "تغییر شماره"
+      },
+      "toasts": {
+        "loggedIn": "با موفقیت وارد شدید",
+        "registered": "ثبت‌نام با موفقیت انجام شد",
+        "resetDone": "رمز عبور تغییر کرد. با رمز جدید وارد شوید.",
+        "codeResent": "اگر این شماره واجد شرایط باشد، کد تأیید ارسال می‌شود.",
+        "signOutUnconfirmed": "خروج از حساب روی سرور تأیید نشد.",
+        "signOutRetry": "تلاش مجدد",
+        "signedOutEverywhere": "از همهٔ دستگاه‌ها خارج شدید",
+        "passwordChanged": "رمز عبور تغییر کرد. دوباره وارد شوید.",
+        "sessionEnded": "نشست شما پایان یافت. دوباره وارد شوید."
+      },
+      "changePassword": {
+        "menu": "تغییر رمز عبور",
+        "title": "تغییر رمز عبور",
+        "description": "با تغییر رمز، از همهٔ دستگاه‌ها خارج می‌شوید.",
+        "currentLabel": "رمز عبور فعلی",
+        "newLabel": "رمز عبور جدید",
+        "confirmLabel": "تکرار رمز عبور جدید",
+        "submit": "تغییر رمز عبور",
+        "cancel": "انصراف"
+      },
+      "logoutAll": {
+        "menu": "خروج از همهٔ دستگاه‌ها"
+      },
+      "bootstrap": {
+        "loading": "در حال بررسی نشست…",
+        "unavailableTitle": "اتصال برقرار نشد",
+        "unavailableDescription": "بررسی نشست انجام نشد. اتصال خود را بررسی و دوباره تلاش کنید.",
+        "retry": "تلاش مجدد"
+      }
+    },
     "mediaUploader": {
       "actions": {
         "close": "بستن",

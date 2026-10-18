@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { mockAuthenticatedSession } from "../../../../__tests__/support/auth-session";
 
 const intentUuid = "c0202000-0000-4000-8000-000000000005";
 const executionUuid = "c0202000-0000-4000-8000-000000000006";
@@ -30,13 +31,8 @@ function history(financialStatus: "PENDING" | "SUCCEEDED", taxAmount: string) {
 for (const taxAmount of ["2010", "0"]) {
   test(`payment history shows base, tax ${taxAmount} and total and refreshes on SSE`, async ({
     page,
-    context,
-    baseURL,
   }) => {
-    if (!baseURL) throw new Error("Playwright baseURL is required");
-    await context.addCookies([
-      { name: "access_token", value: "test-token", url: baseURL },
-    ]);
+    await mockAuthenticatedSession(page);
     await page.route("**/api/v1/user/get-info", (route) =>
       route.fulfill({
         json: { uuid: "user-1", name: "Test", email: "test@example.com" },

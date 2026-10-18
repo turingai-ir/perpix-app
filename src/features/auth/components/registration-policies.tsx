@@ -20,12 +20,12 @@ const perpixMainUrl = getPerpixMainUrl();
 const termsUrl = new URL("/terms/", perpixMainUrl).toString();
 const privacyUrl = new URL("/privacy/", perpixMainUrl).toString();
 
-const AuthLoginPageRegistrationPolicies: FC = () => {
+const RegistrationPolicies: FC = () => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
 
   return (
     <Muted className="text-center">
-      {t("pages.auth.login.registrationPolicies.description")} {" "}
+      {t("pages.auth.login.registrationPolicies.description")}{" "}
       <a
         className="text-primary underline"
         href={termsUrl}
@@ -50,4 +50,4 @@ const AuthLoginPageRegistrationPolicies: FC = () => {
   );
 };
 
-export default AuthLoginPageRegistrationPolicies;
+export default RegistrationPolicies;

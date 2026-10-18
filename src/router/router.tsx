@@ -5,11 +5,26 @@ import { APP_ROUTES_KEY } from "./routes";
 import { loadRouteModule } from "./dynamic-import-recovery";
 
 import RootLayout from "@/pages/(root)/layout";
-import { cookies } from "@/utils/cookies";
-import { APP_KEYS } from "@/utils";
+import { bootstrapSession } from "@/features/auth";
 import { ErrorFallbackPage } from "@/components/custom/error-boundary";
 import LoadingSection from "@/components/custom/loading-section";
 import { captureError } from "@/lib/observability";
+
+const requireSession = async () => {
+  if ((await bootstrapSession()) === "anonymous") {
+    throw redirect(APP_ROUTES_KEY.auth.login.path);
+  }
+
+  return null;
+};
+
+const redirectIfAuthenticated = async () => {
+  if ((await bootstrapSession()) === "authenticated") {
+    throw redirect(APP_ROUTES_KEY.app.path);
+  }
+
+  return null;
+};
 
 const lazyRoute = (
   importRouteModule: () => Promise<{ default: ComponentType }>,
@@ -29,14 +44,7 @@ export const router = createBrowserRouter([
       {
         path: APP_ROUTES_KEY.app.path,
         lazy: lazyRoute(() => import("@/pages/(app)/_layout")),
-        loader: () => {
-          const token = cookies().get(APP_KEYS.COOKIES.ACCESS_TOKEN);
-          if (!token) {
-            throw redirect(APP_ROUTES_KEY.auth.login.path);
-          }
-
-          return null;
-        },
+        loader: requireSession,
         children: [
           {
             index: true,
@@ -145,13 +153,7 @@ export const router = createBrowserRouter([
             lazy: lazyRoute(() => import("@/pages/editor/page")),
           },
         ],
-        loader: () => {
-          const token = cookies().get(APP_KEYS.COOKIES.ACCESS_TOKEN);
-          if (!token) {
-            throw redirect(APP_ROUTES_KEY.auth.login.path);
-          }
-          return null;
-        },
+        loader: requireSession,
         handle: {
           title: APP_ROUTES_KEY.editor.meta.title,
         },
@@ -159,6 +161,7 @@ export const router = createBrowserRouter([
       {
         path: APP_ROUTES_KEY.auth.login.path,
         lazy: lazyRoute(() => import("@/pages/auth/login/page")),
+        loader: redirectIfAuthenticated,
         handle: {
           title: APP_ROUTES_KEY.auth.login.meta.title,
         },

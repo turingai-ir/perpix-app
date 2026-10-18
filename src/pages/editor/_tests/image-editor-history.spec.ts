@@ -4,11 +4,9 @@ import { draggableTestImage } from "./image-editor-test-image-fixtures";
 
 test.describe("Image editor history", () => {
   test("restores an applied crop with undo and reapplies it with redo", async ({
-    baseURL,
-    context,
     page,
   }) => {
-    await openAuthenticatedEditor(page, context, baseURL);
+    await openAuthenticatedEditor(page);
     await page
       .getByLabel("انتخاب عکس از گالری یا دوربین")
       .setInputFiles(draggableTestImage);

@@ -3,8 +3,8 @@ import { openAuthenticatedEditor } from "./image-editor-test-setup";
 import { draggableTestImage } from "./image-editor-test-image-fixtures";
 
 test.describe("Image editor crop", () => {
-  test.beforeEach(async ({ baseURL, context, page }) => {
-    await openAuthenticatedEditor(page, context, baseURL);
+  test.beforeEach(async ({ page }) => {
+    await openAuthenticatedEditor(page);
     await page
       .getByLabel("انتخاب عکس از گالری یا دوربین")
       .setInputFiles(draggableTestImage);

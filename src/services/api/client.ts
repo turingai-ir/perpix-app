@@ -4,17 +4,20 @@ import { appEventBus } from "../../lib/event-bus";
 
 import type { paths } from "./api";
 
-import { cookies } from "@/utils/cookies";
+import { createAuthorizedFetch } from "@/features/auth/session";
 import { APP_KEYS, createCustomFetch } from "@/utils";
 
+const customFetch = createCustomFetch(globalThis.fetch, {
+  retryOnNetworkError: false,
+  maxRetries: 0,
+  maxRetryDelayMs: 0,
+  retryDelayMs: 0,
+});
+
 export const apiClient = createFetch<paths>({
-  fetch: createCustomFetch(globalThis.fetch, {
-    retryOnNetworkError: false,
-    maxRetries: 0,
-    maxRetryDelayMs: 0,
-    retryDelayMs: 0,
-  }),
+  fetch: createAuthorizedFetch(customFetch),
   baseUrl: APP_KEYS.API_BASE_URL,
+  credentials: "include",
 });
 
 const errorMiddleware: Middleware = {
@@ -24,16 +27,4 @@ const errorMiddleware: Middleware = {
   },
 };
 
-const tokenMiddleware: Middleware = {
-  onRequest: ({ request }) => {
-    const cookie = cookies();
-    const token = cookie.get(APP_KEYS.COOKIES.ACCESS_TOKEN);
-    if (token && typeof token === "string") {
-      request.headers.set("Authorization", `Bearer ${token}`);
-    }
-    return request;
-  },
-};
-
-apiClient.use(tokenMiddleware);
 apiClient.use(errorMiddleware);

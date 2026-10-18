@@ -1,10 +1,11 @@
-import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { useQueryClient } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useCallback } from "react";
+import type { EventSourceMessage } from "@microsoft/fetch-event-source";
 import { z } from "zod";
 
-import { APP_KEYS } from "@/utils";
-import { cookies } from "@/utils/cookies";
+import { useAuthorizedStream } from "@/features/auth";
+
+const PAYMENT_EVENTS_PATH = "/api/v1/payment-events";
 
 const paymentEvent = z.object({
   intent_uuid: z.uuid(),
@@ -22,59 +23,43 @@ const affectedPaths = new Set([
 
 export function PaymentEventsProvider() {
   const queryClient = useQueryClient();
-  const token = cookies().get(APP_KEYS.COOKIES.ACCESS_TOKEN);
-  const accessToken = typeof token === "string" ? token : undefined;
 
-  useEffect(() => {
-    if (!accessToken) return;
-    const controller = new AbortController();
-    let connected = false;
-    let retryDelay = 3000;
-    const refreshPaymentQueries = () => {
-      void queryClient.invalidateQueries({
-        predicate: ({ queryKey }) =>
-          queryKey.some(
-            (entry) => typeof entry === "string" && affectedPaths.has(entry),
-          ),
-      });
-    };
-
-    void fetchEventSource(`${APP_KEYS.API_BASE_URL}/api/v1/payment-events`, {
-      headers: { Authorization: `Bearer ${accessToken}` },
-      openWhenHidden: true,
-      signal: controller.signal,
-      onopen(response) {
-        if (!response.ok) throw new Error(`Payment events: ${response.status}`);
-        if (connected) refreshPaymentQueries();
-        connected = true;
-        return Promise.resolve();
-      },
-      onmessage(message) {
-        if (message.event !== "payment_changed") return;
-        let payload: unknown;
-        try {
-          payload = JSON.parse(message.data);
-        } catch {
-          return;
-        }
-        if (!paymentEvent.safeParse(payload).success) return;
-        retryDelay = 3000;
-        refreshPaymentQueries();
-      },
-      onclose() {
-        throw new Error("Payment event stream closed");
-      },
-      onerror() {
-        const delay = retryDelay;
-        retryDelay = Math.min(retryDelay * 2, 30000);
-        return delay;
-      },
-    }).catch(() => {
-      // The stream is optional; status pages continue polling while it is unavailable.
+  const refreshPaymentQueries = useCallback(() => {
+    void queryClient.invalidateQueries({
+      predicate: ({ queryKey }) =>
+        queryKey.some(
+          (entry) => typeof entry === "string" && affectedPaths.has(entry),
+        ),
     });
+  }, [queryClient]);
 
-    return () => controller.abort();
-  }, [accessToken, queryClient]);
+  const handleEvent = useCallback(
+    (message: EventSourceMessage) => {
+      if (message.event !== "payment_changed") return;
+      let payload: unknown;
+      try {
+        payload = JSON.parse(message.data);
+      } catch {
+        return;
+      }
+      if (paymentEvent.safeParse(payload).success) refreshPaymentQueries();
+    },
+    [refreshPaymentQueries],
+  );
+
+  // No replay or cursor exists, so every reconnect re-reads the snapshot.
+  const handleOpen = useCallback(
+    (isReconnect: boolean) => {
+      if (isReconnect) refreshPaymentQueries();
+    },
+    [refreshPaymentQueries],
+  );
+
+  useAuthorizedStream({
+    path: PAYMENT_EVENTS_PATH,
+    onEvent: handleEvent,
+    onOpen: handleOpen,
+  });
 
   return null;
 }

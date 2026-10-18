@@ -6,7 +6,9 @@ export async function openAuthenticatedEditor(
   baseURL: string | undefined,
 ): Promise<void> {
   if (!baseURL) throw new Error("Playwright baseURL is required");
+import type { Page } from "@playwright/test";
 
+export async function openAuthenticatedEditor(page: Page): Promise<void> {
   await page.route("**/user/get-info", async (route) => {
     await route.fulfill({
       contentType: "application/json",
@@ -32,9 +34,6 @@ export async function openAuthenticatedEditor(
       body: "",
     });
   });
-  await context.addCookies([
-    { name: "access_token", value: "test-token", url: baseURL },
-  ]);
   await page.goto("/editor");
   await expect(page.getByRole("button", { name: "بازگشت" })).toBeVisible();
 }

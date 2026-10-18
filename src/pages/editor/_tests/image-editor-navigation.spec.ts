@@ -2,8 +2,8 @@ import { expect, test } from "@playwright/test";
 import { openAuthenticatedEditor } from "./image-editor-test-setup";
 
 test.describe("Image editor navigation", () => {
-  test.beforeEach(async ({ baseURL, context, page }) => {
-    await openAuthenticatedEditor(page, context, baseURL);
+  test.beforeEach(async ({ page }) => {
+    await openAuthenticatedEditor(page);
   });
 
   test("returns home when the editor has no previous route", async ({
