@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { readFileSync } from "node:fs";
 
 const mockDashboardApi = async (page: Page) => {
   await page.route("**/*", (route) => {
@@ -273,30 +274,44 @@ for (const [index, entrance] of brandEntrances.entries()) {
 
       if (reducedMotion === "no-preference") {
         // A language change rerenders the actual component through its i18n hook.
-        await page.evaluate(
+        const language = await page.evaluate(
           async (value) => {
             Math.random = () => value;
             const modulePath = "/src/services/i18/i18.ts";
             const { default: i18n } = (await import(modulePath)) as {
               default: {
                 changeLanguage: (language: string) => Promise<unknown>;
+                language: string;
               };
             };
             await i18n.changeLanguage("en");
+            return i18n.language;
           },
           (((index + 1) % 3) + 0.5) / 3,
         );
-        await expect(page.locator("#creation-choice-title")).not.toHaveText(
+        expect(language).toBe("en");
+        // English currently falls back to Persian; the event still rerenders.
+        await expect(page.locator("#creation-choice-title")).toHaveText(
           "چی می‌خوای بسازی؟",
         );
-        await expect(brand).toHaveAttribute("data-brand-entrance", variant);
+        await expect(brand).toHaveAttribute(
+          "data-brand-entrance",
+          entrance.name,
+        );
         expect(
           await brand.evaluate(
-            (element) => element.getAnimations({ subtree: true }).length,
+            (element) =>
+              element
+                .getAnimations({ subtree: true })
+                .filter((animation) => animation.playState !== "finished")
+                .length,
           ),
         ).toBe(0);
         await actions.first().click();
         await expect(page).toHaveURL(/\/generation\/image$/);
+        // Lazy navigation updates the URL before the new route has committed.
+        await expect(brand).toHaveCount(0);
+        await expect(page.locator("[data-generation-composer]")).toBeVisible();
         await page.goBack();
         await expect(brand).toHaveAttribute(
           "data-brand-entrance",
@@ -549,8 +564,39 @@ test("keeps the image creation turn and composer in view", async ({ page }) => {
 
 test("turns video generation into an immersive persistent workspace", async ({
   page,
-}) => {
+}, testInfo) => {
   await mockDashboardApi(page);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  const videoConfig = JSON.parse(
+    readFileSync(
+      new URL(
+        "../../../../__tests__/fixtures/seedance-video-config.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ) as { canonical_ui_schema: unknown; modes: Record<string, unknown> };
+  const videoModel = {
+    uuid: "model-1",
+    model_owner: "BYTEDANCE",
+    name: "BYTEDANCE_SEEDANCE_2_POINT_5",
+    display_name: "Seedance dashboard fixture",
+    description: "Mocked dashboard video model",
+    icon_url: null,
+    tags: ["video"],
+    supported_inputs: ["TEXT", "IMAGE"],
+    supported_outputs: ["VIDEO"],
+    min_cost: 10000,
+    max_cost: 100000,
+    ...videoConfig,
+  };
+  await page.route("**/api/v1/ai-registry/models**", (route) => {
+    const { pathname } = new URL(route.request().url());
+    if (pathname.endsWith("/model-1")) {
+      return route.fulfill({ json: videoModel });
+    }
+    return route.fulfill({ json: [videoModel] });
+  });
   await page.route("**/api/v1/user/subscription/active", (route) =>
     route.fulfill({
       json: {
@@ -560,7 +606,7 @@ test("turns video generation into an immersive persistent workspace", async ({
           name: "pro",
           display_name: "حرفه‌ای",
           scopes: ["ai_task:write"],
-          allowed_models: ["flux-pro"],
+          allowed_models: ["BYTEDANCE_SEEDANCE_2_POINT_5"],
           is_active: true,
         },
       },
@@ -607,21 +653,41 @@ test("turns video generation into an immersive persistent workspace", async ({
   });
 
   await page.goto("http://localhost:5173/generation/video");
-  await expect(page.locator("[data-video-director-stage]")).toBeVisible();
+  await expect(page.locator('[data-video-cinema="idle"]')).toBeVisible();
   const composer = page.locator("[data-generation-composer]");
   await expect(composer).toBeInViewport();
 
   await page.locator("textarea").fill("حرکت آرام دوربین به سمت یک شهر در مه");
-  await page.getByRole("button", { name: "ساخت ویدیو" }).click();
+  await composer.getByRole("button", { name: "بسازش", exact: true }).click();
   await expect(page.locator('[data-message-role="user"]')).toBeVisible();
-  await expect(page.locator("[data-video-generation-portal]")).toBeVisible();
+  const generationPortal = page.locator("[data-video-generation-portal]");
+  await expect(generationPortal).toBeVisible();
+  await expect(page.locator('[data-video-cinema="rendering"]')).toBeVisible();
   await expect(composer).toBeInViewport();
 
-  await page.setViewportSize({ width: 390, height: 844 });
-  await expect(page.locator("[data-video-generation-portal]")).toBeInViewport();
-  const pageWidth = await page.evaluate(() => ({
-    client: document.documentElement.clientWidth,
-    scroll: document.documentElement.scrollWidth,
-  }));
-  expect(pageWidth.scroll).toBe(pageWidth.client);
+  // Resizing must target the persisted session after the optimistic turn remounts.
+  await expect(page).toHaveURL(/\/generation\/video\/video-generation-task$/);
+  await expect(page.locator("#video-assistant-message")).toBeVisible();
+
+  for (const viewport of [
+    { width: 375, height: 812 },
+    { width: 768, height: 1024 },
+    { width: 1440, height: 900 },
+  ]) {
+    await page.setViewportSize(viewport);
+    await composer.scrollIntoViewIfNeeded();
+    await expect(composer).toBeInViewport();
+    // The narrow layout places the composer before the scrollable timeline.
+    await generationPortal.scrollIntoViewIfNeeded();
+    await expect(generationPortal).toBeInViewport();
+    const pageWidth = await page.evaluate(() => ({
+      client: document.documentElement.clientWidth,
+      scroll: document.documentElement.scrollWidth,
+    }));
+    expect(pageWidth.scroll).toBe(pageWidth.client);
+    await page.screenshot({
+      path: testInfo.outputPath(`video-workspace-${viewport.width}.png`),
+      animations: "disabled",
+    });
+  }
 });

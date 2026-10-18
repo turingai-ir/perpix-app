@@ -4,15 +4,18 @@ import { ImageEditorMetadata } from "./image-editor-metadata";
 import { ImageEditorToolbar } from "./image-editor-toolbar";
 import { useImageEditorWorkspace } from "../_hooks/use-image-editor-workspace";
 import { useLoadedImage } from "../_hooks/use-loaded-image";
+import { EditorPageLoadError, EditorPageLoading } from "./editor-page-state";
 
 interface ImageEditorProps {
   documentId?: string;
+  onBack: () => void;
   src: string;
 }
 
-export function ImageEditor({ documentId, src }: ImageEditorProps) {
-  const image = useLoadedImage(src);
-  if (!image) return null;
+export function ImageEditor({ documentId, onBack, src }: ImageEditorProps) {
+  const { image, isError } = useLoadedImage(src);
+  if (isError) return <EditorPageLoadError onBack={onBack} />;
+  if (!image) return <EditorPageLoading />;
   return (
     <ImageEditorWorkspace key={src} documentId={documentId} image={image} />
   );

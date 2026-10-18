@@ -1,14 +1,15 @@
 import { expect, type Page, test } from "@playwright/test";
 
 const payment = {
-  payment_uuid: "payment-1",
+  id: "c0202000-0000-4000-8000-000000000001",
+  execution_uuid: "c0202000-0000-4000-8000-000000000002",
   payment_url: "http://localhost:5173/mock-gateway",
-  amount_usdmicro: 500_000,
-  amount_irr_without_tax: 1_176_750,
-  tax_percent: 10,
-  tax_amount_irr: 117_675,
-  total_amount_irr: 1_294_425,
-  wallet_uuid: "wallet-1",
+  currency: "IRR",
+  amount: "1294425",
+  status: "PENDING",
+  financial_status: "PENDING",
+  fulfillment_status: "NOT_READY",
+  requires_review: false,
 };
 
 test.describe("Wallet checkout", () => {
@@ -22,6 +23,11 @@ test.describe("Wallet checkout", () => {
   test("reviews the exact server price before navigating to the gateway", async ({
     page,
   }) => {
+    let gatewayVisits = 0;
+    await page.route("**/mock-gateway", (route) => {
+      gatewayVisits += 1;
+      return route.fulfill({ contentType: "text/html", body: "Mock gateway" });
+    });
     await page.goto("/");
     await page.getByRole("button", { name: "افزایش موجودی کیف پول" }).click();
     await page.getByRole("button", { name: "۵۰۰ توکن" }).click();
@@ -37,29 +43,27 @@ test.describe("Wallet checkout", () => {
       amount_usdmicro: 500_000,
     });
     await expect(
-      page.getByRole("heading", { name: "تأیید خرید" }),
+      page.getByRole("heading", { name: "تایید مبلغ پرداخت" }),
     ).toBeVisible();
     await expect(
-      page.getByText("۵۰۰ توکن به کیف پول شما اضافه می‌شود"),
+      page.getByText("۱۱۷٬۶۷۵ تومان", { exact: true }),
     ).toBeVisible();
     await expect(
-      page.getByText("۱٬۲۹۴٬۴۲۵ ریال", { exact: true }),
+      page.getByText("۱۱٬۷۶۷٫۵ تومان", { exact: true }),
     ).toBeVisible();
-    await expect(page.getByText(/انتقال خودکار/)).toHaveCount(0);
+    await expect(
+      page.getByText("۱۲۹٬۴۴۲٫۵ تومان", { exact: true }),
+    ).toBeVisible();
+    expect(gatewayVisits).toBe(0);
 
-    await page
-      .getByRole("button", { name: "ویرایش تعداد توکن" })
-      .click({ force: true });
+    await page.keyboard.press("Escape");
+    await page.getByRole("button", { name: "افزایش موجودی کیف پول" }).click();
     await expect(page.getByLabel("تعداد توکن")).toHaveValue("500");
-    await page.waitForTimeout(250);
 
-    await page
-      .getByRole("button", { name: "مشاهده مبلغ نهایی" })
-      .click({ force: true });
-    await page
-      .getByRole("button", { name: "پرداخت ۱٬۲۹۴٬۴۲۵ ریال" })
-      .click({ force: true });
+    await page.getByRole("button", { name: "مشاهده مبلغ نهایی" }).click();
+    await page.getByRole("button", { name: "ادامه پرداخت" }).click();
     await expect(page).toHaveURL(/\/mock-gateway$/);
+    expect(gatewayVisits).toBe(1);
   });
 
   test("opens a live mocked checkout preview", async ({ page }) => {
@@ -74,7 +78,7 @@ test.describe("Wallet checkout", () => {
     await page.getByRole("button", { name: "۵۰۰ توکن" }).click();
     await page.getByRole("button", { name: "مشاهده مبلغ نهایی" }).click();
     await expect(
-      page.getByRole("heading", { name: "تأیید خرید" }),
+      page.getByRole("heading", { name: "تایید مبلغ پرداخت" }),
     ).toBeVisible();
 
     // Keeps the real component visible in a headed browser for review.
@@ -125,71 +129,76 @@ test.describe("Wallet checkout", () => {
 });
 
 test.describe("Payment result", () => {
-  test("keeps pending payments out of the failure state and refreshes them", async ({
+  test("keeps pending payments out of the failure state and polls them", async ({
     page,
   }) => {
+    await page.clock.install();
     let paymentCompleted = false;
-    await page.route("**/api/v1/payment/payment-1", async (route) => {
-      await route.fulfill({
-        json: {
-          payment_uuid: "payment-1",
-          status: paymentCompleted ? "PAID" : "PENDING",
-        },
-      });
-    });
-    await page.route("**/api/v1/payment/list**", async (route) => {
-      await route.fulfill({
-        json: { items: [paymentListItem("PENDING")], has_next: false },
-      });
-    });
+    await page.route(
+      `**/api/v1/payment-executions/${payment.execution_uuid}`,
+      async (route) => {
+        await route.fulfill({
+          json: {
+            ...payment,
+            status: paymentCompleted ? "SUCCEEDED" : "PENDING",
+            financial_status: paymentCompleted ? "SUCCEEDED" : "PENDING",
+            fulfillment_status: paymentCompleted ? "SUCCEEDED" : "NOT_READY",
+          },
+        });
+      },
+    );
 
-    await page.goto("/payment/verify/payment-1");
+    await page.goto(`/payment/verify/${payment.execution_uuid}`);
     await expect(
-      page.getByRole("heading", { name: "در حال بررسی پرداخت" }),
+      page.getByRole("heading", { name: "در انتظار نتیجه پرداخت" }),
     ).toBeVisible();
     await expect(page.getByText("پرداخت ناموفق")).toHaveCount(0);
     paymentCompleted = true;
-    await page.getByRole("button", { name: "بررسی مجدد" }).click();
+    await page.clock.fastForward(3_000);
     await expect(
-      page.getByRole("heading", { name: "پرداخت موفق" }),
+      page.getByRole("heading", { name: "پرداخت تکمیل شد" }),
     ).toBeVisible();
   });
 
   test("shows a clear recovery action for a failed payment", async ({
     page,
   }) => {
-    await page.route("**/api/v1/payment/payment-1", async (route) => {
-      await route.fulfill({
-        json: { payment_uuid: "payment-1", status: "FAILED" },
-      });
-    });
-    await page.route("**/api/v1/payment/list**", async (route) => {
-      await route.fulfill({
-        json: { items: [paymentListItem("FAILED")], has_next: false },
-      });
-    });
+    await page.route(
+      `**/api/v1/payment-executions/${payment.execution_uuid}`,
+      async (route) => {
+        await route.fulfill({
+          json: { ...payment, status: "FAILED" },
+        });
+      },
+    );
+    await page.route(
+      `**/api/v1/payment-intents/${payment.id}/executions`,
+      async (route) => {
+        await route.fulfill({
+          status: 201,
+          json: payment,
+        });
+      },
+    );
+    await page.route("**/mock-gateway", (route) =>
+      route.fulfill({ contentType: "text/html", body: "Mock gateway" }),
+    );
 
-    await page.goto("/payment/verify/payment-1");
+    await page.goto(`/payment/verify/${payment.execution_uuid}`);
     await expect(
       page.getByRole("heading", { name: "پرداخت ناموفق" }),
     ).toBeVisible();
-    await expect(page.getByRole("link", { name: "تلاش مجدد" })).toHaveAttribute(
-      "href",
-      "/",
+    const retryRequest = page.waitForRequest(
+      (request) =>
+        request.method() === "POST" &&
+        new URL(request.url()).pathname ===
+          `/api/v1/payment-intents/${payment.id}/executions`,
     );
+    await page.getByRole("button", { name: "تلاش دوباره برای پرداخت" }).click();
+    expect((await retryRequest).headers()["idempotency-key"]).toBeUndefined();
+    await expect(page).toHaveURL(/\/mock-gateway$/);
   });
 });
-
-function paymentListItem(status: "PENDING" | "PAID" | "FAILED") {
-  return {
-    ...payment,
-    status,
-    target_type: "wallet",
-    target_uuid: "wallet-1",
-    created_at: "2026-09-20T12:00:00Z",
-    updated_at: "2026-09-20T12:00:00Z",
-  };
-}
 
 async function mockAppApi(page: Page) {
   await page.route("https://widget.ila.chat/**", (route) =>
@@ -208,6 +217,20 @@ async function mockAppApi(page: Page) {
     if (path === "/api/v1/wallet/wallet") {
       return route.fulfill({
         json: { wallet_uuid: "wallet-1", balance_usdmicro: 1_000_000 },
+      });
+    }
+    if (path === `/api/v1/payment-intents/${payment.id}/details`) {
+      return route.fulfill({
+        json: {
+          id: payment.id,
+          currency: payment.currency,
+          base_amount: "1176750",
+          tax_amount: "117675",
+          total_amount: payment.amount,
+          base_amount_usdmicro: "500000",
+          tax_amount_usdmicro: "50000",
+          total_amount_usdmicro: "550000",
+        },
       });
     }
     if (path === "/api/v1/user/subscription/active") {

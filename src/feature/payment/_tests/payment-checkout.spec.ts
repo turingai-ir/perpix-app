@@ -80,16 +80,24 @@ for (const delayedDetails of [false, true]) {
 
     await page.goto("/");
     await expect(page.getByText("۱", { exact: true })).toBeVisible();
-    await expect(page.getByText("توکن", { exact: true })).toBeVisible();
+    await expect(
+      page.getByLabel("حساب شما").getByText("توکن", { exact: true }),
+    ).toBeVisible();
     await page.getByRole("button", { name: "افزایش موجودی کیف پول" }).click();
     await page.getByRole("textbox", { name: "توکن" }).fill("10.0001");
-    await page.getByRole("button", { name: "پرداخت", exact: true }).click();
+    await page
+      .getByRole("button", { name: "مشاهده مبلغ نهایی", exact: true })
+      .click();
     expect(checkoutBody).toBeUndefined();
     await page.getByRole("textbox", { name: "توکن" }).fill("10.001");
-    await page.getByRole("button", { name: "پرداخت", exact: true }).click();
+    await page
+      .getByRole("button", { name: "مشاهده مبلغ نهایی", exact: true })
+      .click();
     expect(checkoutBody).toBeUndefined();
     await page.getByRole("textbox", { name: "توکن" }).fill("10");
-    await page.getByRole("button", { name: "پرداخت", exact: true }).click();
+    await page
+      .getByRole("button", { name: "مشاهده مبلغ نهایی", exact: true })
+      .click();
     await expect(
       page.getByRole("heading", { name: "تایید مبلغ پرداخت" }),
     ).toBeVisible();

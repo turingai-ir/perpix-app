@@ -38,11 +38,18 @@ export function useGenerationPage({
   const queryClient = useQueryClient();
   const { queryOptions } = useReactQueryApi();
   const chatId = params?.chatId ?? undefined;
+  const isSessionActiveRef = useRef(true);
   const submissionLockRef = useRef(false);
   const [optimisticTurn, setOptimisticTurn] =
     useState<OptimisticGenerationTurn>();
   const { aiGenerateState, aiTaskState } = useAiGenerate(chatId);
   const { mutateAsync } = aiGenerateState;
+  useEffect(() => {
+    isSessionActiveRef.current = true;
+    return () => {
+      isSessionActiveRef.current = false;
+    };
+  }, []);
   const queriedTaskData = aiTaskState.data as SchemaAiTaskResponse | undefined;
   const taskData =
     chatId && queriedTaskData?.uuid === chatId ? queriedTaskData : undefined;
@@ -165,7 +172,12 @@ export function useGenerationPage({
       return;
     }
 
-    const messageUuid = decodeURIComponent(location.hash.slice(1));
+    let messageUuid: string;
+    try {
+      messageUuid = decodeURIComponent(location.hash.slice(1));
+    } catch {
+      return;
+    }
     const messageElement = document.getElementById(messageUuid);
 
     messageElement?.scrollIntoView({
@@ -212,6 +224,13 @@ export function useGenerationPage({
             task_uuid: chatId ?? undefined,
           },
         });
+        // Navigation may update the URL before React disposes the old session.
+        if (
+          !isSessionActiveRef.current ||
+          window.location.pathname !== location.pathname
+        ) {
+          return;
+        }
         const responseTask = res as SchemaAiTaskResponse;
         const responseMessages = Array.isArray(responseTask.messages)
           ? responseTask.messages
@@ -255,6 +274,7 @@ export function useGenerationPage({
       chatId,
       hasPendingGeneration,
       historyPath,
+      location.pathname,
       displayedMessages,
       mutateAsync,
       navigate,
@@ -272,10 +292,14 @@ export function useGenerationPage({
         }),
       );
 
-      return handleForm(
-        buildRetryConfig(message.ai_model_config, model),
-        aiModelUuid,
-      );
+      try {
+        await handleForm(
+          buildRetryConfig(message.ai_model_config, model),
+          aiModelUuid,
+        );
+      } catch {
+        // handleForm already displays the request failure in the conversation.
+      }
     },
     [handleForm, queryClient, queryOptions],
   );

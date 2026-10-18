@@ -127,10 +127,7 @@ const GenerationImageSession = () => {
                   force: true,
                 });
               }}
-              onRegenerate={(message) => {
-                if (!message.ai_model_uuid) return;
-                void handleForm(message.ai_model_config, message.ai_model_uuid);
-              }}
+              onRegenerate={handleRetry}
             />
           </section>
 

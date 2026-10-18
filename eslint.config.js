@@ -15,6 +15,7 @@ export default tseslint.config(
   {
     ignores: [
       ".agents/**",
+      ".artifacts/**",
       "dist",
       "dev-dist",
       "build",
@@ -26,15 +27,24 @@ export default tseslint.config(
   },
   ...mantine,
   {
+    settings: {
+      react: {
+        version: "19.2",
+      },
+    },
+    languageOptions: {
+      parserOptions: {
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+  },
+  {
     files: ["**/*.{ts,tsx}"],
     languageOptions: {
       ecmaVersion: 2020,
       sourceType: "module",
       globals: globals.browser,
       parser: tseslint.parser,
-      parserOptions: {
-        tsconfigRootDir: import.meta.dirname,
-      },
     },
     plugins: {
       react,
