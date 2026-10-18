@@ -479,9 +479,7 @@ test("updates visible video prompt fields when the generation mode changes", asy
   ).toBeVisible();
   await expect(page.getByRole("heading", { name: "تصاویر فریم" })).toBeHidden();
   await expect(
-    page.getByPlaceholder(
-      "حرکت کاراکتر و نحوهٔ دنبال‌کردن ویدیوی مرجع را توصیف کن…",
-    ),
+    page.getByPlaceholder("بگو کاراکتر چطور حرکت ویدیوی مرجع رو دنبال کنه…"),
   ).toBeVisible();
 });
 
@@ -679,7 +677,9 @@ test("image studio fits a viewport with long sidebar history without generating"
     expect(submit!.y + submit!.height).toBeLessThanOrEqual(size.height);
   }
   await page.setViewportSize({ width: 1920, height: 900 });
-  await page.screenshot({ path: ".tmp-image-studio-long-history.png" });
+  await page.screenshot({
+    path: ".artifacts/release-readiness/image-studio-long-history.png",
+  });
   const sidebarScrolls = await page.locator("aside > div").evaluate((el) => {
     el.scrollTop = 100;
     return el.scrollTop > 0;
@@ -687,38 +687,50 @@ test("image studio fits a viewport with long sidebar history without generating"
   expect(sidebarScrolls).toBe(true);
 });
 
-test("image studio automatically animates briefly each minute without generating", async ({
+test("image studio neural preview animates and respects reduced motion without generating", async ({
   page,
 }) => {
   await mockNanoBananaApi(page);
-  await page.route("**/ai-task/generate", (route) => route.abort());
-  await page.clock.install();
-  await page.goto("/generation/image");
-  const logo = page.getByTestId("studio-logo");
-  await expect(logo).toHaveAttribute("data-active", "true");
-  const initialMotion = await logo.getAttribute("data-motion");
-  await page.clock.fastForward(5000);
-  await expect(logo).toHaveAttribute("data-active", "false");
-  expect(
-    await logo.evaluate((el) => el.getAnimations({ subtree: true }).length),
-  ).toBe(0);
-  await page.clock.fastForward(55_000);
-  await expect(logo).toHaveAttribute("data-active", "true");
-  expect(await logo.getAttribute("data-motion")).not.toBe(initialMotion);
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await expect(logo).toHaveAttribute("data-active", "false");
-  await page.clock.fastForward(60_000);
-  await expect(logo).toHaveAttribute("data-active", "false");
-  await page.evaluate(() => {
-    Object.defineProperty(document, "hidden", {
-      configurable: true,
-      value: true,
-    });
-    document.dispatchEvent(new Event("visibilitychange"));
+  let generateRequests = 0;
+  await page.route("**/ai-task/generate", (route) => {
+    generateRequests += 1;
+    return route.abort();
   });
   await page.emulateMedia({ reducedMotion: "no-preference" });
-  await page.clock.fastForward(60_000);
-  await expect(logo).toHaveAttribute("data-active", "false");
+  await page.goto("/generation/image");
+  const logo = page.getByTestId("studio-logo");
+  await expect(logo).toBeVisible();
+  await expect(logo.locator("svg line")).toHaveCount(15);
+  await expect
+    .poll(() =>
+      logo.evaluate(
+        (el) =>
+          el
+            .getAnimations({ subtree: true })
+            .filter((animation) => animation.playState === "running").length,
+      ),
+    )
+    .toBeGreaterThan(0);
+  await expect(logo.locator("img")).toBeVisible();
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect
+    .poll(() =>
+      logo.evaluate((el) => el.getAnimations({ subtree: true }).length),
+    )
+    .toBe(0);
+  await expect(logo.locator("img")).toBeVisible();
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await expect
+    .poll(() =>
+      logo.evaluate(
+        (el) =>
+          el
+            .getAnimations({ subtree: true })
+            .filter((animation) => animation.playState === "running").length,
+      ),
+    )
+    .toBeGreaterThan(0);
+  expect(generateRequests).toBe(0);
 });
 
 test("image studio searches models without generating", async ({ page }) => {
@@ -732,12 +744,13 @@ test("image studio searches models without generating", async ({ page }) => {
   await page.goto("/generation/image");
   const model = page.getByRole("combobox").filter({ hasText: /Nano Banana/ });
   await page.screenshot({
-    path: ".tmp-image-studio-loading.png",
+    path: ".artifacts/release-readiness/image-studio-loading.png",
     fullPage: true,
   });
   await expect(model).toBeVisible();
   const logo = page.getByTestId("studio-logo");
-  await expect(logo).toHaveAttribute("data-motion", /^(orbit|wave|float)$/);
+  await expect(logo).toBeVisible();
+  await expect(logo.locator("img")).toBeVisible();
   for (const size of [
     { width: 1920, height: 900 },
     { width: 1366, height: 660 },
@@ -756,14 +769,19 @@ test("image studio searches models without generating", async ({ page }) => {
   await expect(page.getByRole("option", { name: /Nano Banana/ })).toBeHidden();
   await search.fill("Nano");
   await page.getByRole("option", { name: /Nano Banana/ }).click();
-  await page.locator('textarea[name="prompt"]').fill("A cinematic portrait");
+  await page
+    .getByRole("textbox", { name: "توصیف تصویر", exact: true })
+    .fill("A cinematic portrait");
   await expect(page.getByRole("button", { name: /ساخت تصویر/ })).toBeEnabled();
   await page.screenshot({
-    path: ".tmp-image-studio-desktop.png",
+    path: ".artifacts/release-readiness/image-studio-desktop.png",
     fullPage: true,
   });
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.keyboard.press("Escape");
+  const sidebar = page.locator('[data-slot="sheet-content"]');
+  await expect(sidebar).toBeVisible();
+  await sidebar.getByRole("button", { name: "Close", exact: true }).click();
+  await expect(sidebar).toBeHidden();
   await expect(model).toBeVisible();
   expect(
     await page.evaluate(
@@ -771,7 +789,7 @@ test("image studio searches models without generating", async ({ page }) => {
     ),
   ).toBe(true);
   await page.screenshot({
-    path: ".tmp-image-studio-mobile.png",
+    path: ".artifacts/release-readiness/image-studio-mobile.png",
     fullPage: true,
   });
   expect(generateRequests).toBe(0);
@@ -796,6 +814,11 @@ test("image studio switches schema-specific simple settings without generating",
           additionalProperties: false,
           properties: {
             prompt: { type: "string" },
+            quality: {
+              type: "string",
+              enum: ["standard", "high"],
+              default: "standard",
+            },
             seed: { type: "integer", minimum: 0, default: 7 },
           },
         },
@@ -804,6 +827,7 @@ test("image studio switches schema-specific simple settings without generating",
     canonical_ui_schema: {
       elements: [
         ...original.canonical_ui_schema.elements.slice(0, 1),
+        { type: "Control", scope: "#/properties/quality", label: "Quality" },
         { type: "Control", scope: "#/properties/seed", label: "Seed" },
       ],
     },
@@ -829,29 +853,59 @@ test("image studio switches schema-specific simple settings without generating",
   await page.getByRole("option", { name: /Schema test model/ }).click();
   await expect(page.getByText("قاب تصویر", { exact: true })).toBeHidden();
   await page.getByRole("button", { name: /تنظیمات/ }).click();
-  await expect(page.getByText("کد تکرار نتیجه", { exact: true })).toBeVisible();
+  await expect(page.getByText("کیفیت تصویر", { exact: true })).toBeVisible();
+  await expect(page.getByText("کد تکرار نتیجه", { exact: true })).toBeHidden();
   expect(requests).toBe(0);
 });
 
-test("switches Nano Banana image modes using the canonical selector", async ({
+test("switches Nano Banana image modes when references are added and removed", async ({
   page,
 }) => {
   await mockNanoBananaApi(page);
+  await page.route("**/file-manager/user-files**", (route) =>
+    route.fulfill({
+      json: {
+        files: [
+          {
+            uuid: "reference-1",
+            file_name: "reference.png",
+            file_size: 1024,
+            content_type: "image/png",
+            is_public: false,
+          },
+        ],
+        has_next: false,
+      },
+    }),
+  );
+  await page.route("**/file-manager/files/presigned-urls", (route) =>
+    route.fulfill({
+      json: {
+        files: [
+          {
+            file_uuid: "reference-1",
+            preview_url: "http://localhost:5173/android-chrome-512x512.png",
+            download_url: "http://localhost:5173/android-chrome-512x512.png",
+            expire_at: new Date(Date.now() + 3_600_000).toISOString(),
+          },
+        ],
+      },
+    }),
+  );
   const generateRequest = waitForGenerateRequest(page);
 
   await page.goto("/generation/image");
-  const modeSelector = page.getByRole("combobox", { name: "حالت تولید" });
-  await expect(modeSelector).toHaveText("تبدیل متن به تصویر");
-  await expect(page.getByText("تصاویر مرجع")).toBeHidden();
-
-  await modeSelector.click();
-  await page.getByRole("option", { name: "تبدیل تصویر به تصویر" }).click();
-  await expect(page.getByText("تصاویر مرجع")).toBeVisible();
-
-  await modeSelector.click();
-  await page.getByRole("option", { name: "تبدیل متن به تصویر" }).click();
+  const references = page.locator("[data-generation-mode]");
+  await expect(references).toHaveAttribute("data-generation-mode", "text_to_image");
+  await references.getByRole("button", { name: "افزودن عکس", exact: true }).click();
+  const picker = page.getByRole("dialog", { name: "افزودن عکس" });
+  await picker.getByRole("button", { name: /reference\.png/ }).click();
+  await picker.getByRole("button", { name: /افزودن 1 عکس/ }).click();
+  await expect(references).toHaveAttribute("data-generation-mode", "image_to_image");
+  await references.getByRole("button", { name: "حذف تصویر مرجع 1" }).click();
+  await expect(references).toHaveAttribute("data-generation-mode", "text_to_image");
   await page
-    .getByPlaceholder(VIDEO_PROMPT_PLACEHOLDER)
+    .getByRole("textbox", { name: "توصیف تصویر", exact: true })
     .fill("A quiet mountain lake");
   await page.locator('button[type="submit"]').click();
 

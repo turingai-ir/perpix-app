@@ -9,6 +9,12 @@ test-results
 .env.*
 .vscode
 .agents
+.codex
+.aws
+.artifacts
+graphify-out
+coverage
+deploy/test.env
 pnpm-debug.log
 npm-debug.log
 yarn-error.log

@@ -1,5 +1,13 @@
-import { expect, type Page, test } from "@playwright/test";
+import { type Page } from "@playwright/test";
+import { loadEnv } from "vite";
+import { expect, test } from "./fixtures/image-settings";
 import { mockAuthenticatedSession } from "./support/auth-session";
+
+const telegramSupportUrl = loadEnv(
+  process.env.PERPIX_TEST_MODE ?? "development",
+  process.cwd(),
+  "VITE_APP_TELEGRAM_SUPPORT",
+).VITE_APP_TELEGRAM_SUPPORT;
 
 test.describe("App sidebar", () => {
   test.beforeEach(async ({ page }) => {
@@ -28,9 +36,7 @@ test.describe("App sidebar", () => {
     expect(editorBox!.y).toBeGreaterThan(galleryBox!.y);
   });
 
-  test("provides Telegram support while chat support is disabled", async ({
-    page,
-  }) => {
+  test("provides the configured Telegram support option", async ({ page }) => {
     await page.goto("/");
 
     await expect(
@@ -43,7 +49,7 @@ test.describe("App sidebar", () => {
     await expect(telegramSupportLink).toBeVisible();
     await expect(telegramSupportLink).toHaveAttribute(
       "href",
-      "https://t.me/perpix_support_test",
+      telegramSupportUrl,
     );
     await expect(telegramSupportLink).toHaveAttribute("target", "_blank");
   });
@@ -74,7 +80,9 @@ test.describe("App sidebar", () => {
   }) => {
     await page.goto("/");
 
-    const sidebar = page.locator("aside");
+    const sidebar = page.locator("aside").filter({
+      has: page.getByRole("link", { name: "گالری", exact: true }),
+    });
     const header = page.locator("header");
 
     await expect(sidebar).toBeVisible();
@@ -93,26 +101,24 @@ test.describe("App sidebar", () => {
     expect(sidebarShadow).not.toBe("none");
   });
 
-  test("makes the home shortcuts keyboard-accessible links", async ({
+  test("makes the home creation controls keyboard-accessible", async ({
     page,
   }) => {
     await page.goto("/");
 
-    const homeShortcuts = page.locator(".card-spotlight");
-
-    await expect(homeShortcuts).toHaveCount(3);
-    await expect(homeShortcuts.nth(0).getByRole("link")).toHaveAttribute(
-      "href",
-      "/generation/image",
-    );
-    await expect(homeShortcuts.nth(1).getByRole("link")).toHaveAttribute(
-      "href",
-      "/generation/video",
-    );
-    await expect(homeShortcuts.nth(2).getByRole("link")).toHaveAttribute(
-      "href",
-      "/profile",
-    );
+    const homeShortcuts = page.locator("[data-dashboard-primary-action]");
+    await expect(homeShortcuts).toHaveCount(2);
+    await homeShortcuts.first().focus();
+    await expect(homeShortcuts.first()).toBeFocused();
+    await page.keyboard.press("Tab");
+    await expect(homeShortcuts.last()).toBeFocused();
+    await expect(page.locator('a[href="/profile/settings"]')).toBeVisible();
+    await page.keyboard.press("Enter");
+    await expect(page).toHaveURL(/\/generation\/video$/);
+    await page.goBack();
+    await homeShortcuts.first().focus();
+    await page.keyboard.press("Enter");
+    await expect(page).toHaveURL(/\/generation\/image$/);
   });
 
   test("identifies the active destination and labels the sidebar control", async ({
@@ -186,6 +192,14 @@ async function mockApi(page: Page) {
   await page.route("**/*", async (route) => {
     const request = route.request();
     const url = new URL(request.url());
+
+    if (
+      request.method() === "GET" &&
+      url.pathname.startsWith("/api/v1/ai-registry/models")
+    ) {
+      await route.fallback();
+      return;
+    }
 
     if (
       request.method() === "GET" &&
