@@ -1,4 +1,5 @@
 import {
+  devices,
   expect,
   type Locator,
   type Page,
@@ -441,6 +442,26 @@ test("video studio stays usable on mobile with reduced motion", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 375, height: 812 });
+  await page.route(
+    (url) => url.pathname.endsWith("/ai-registry/models"),
+    (route) =>
+      route.fulfill({
+        json: [
+          getModelSummary(),
+          ...[
+            "WAN_VIDEO_3_0",
+            "GROK_IMAGINE_VIDEO",
+            "SEEDANCE_2_5",
+            "ALEPH_2_0",
+          ].map((name, index) => ({
+            ...getModelSummary(),
+            uuid: `mobile-model-${index}`,
+            name,
+            display_name: name,
+          })),
+        ],
+      }),
+  );
   await page.emulateMedia({ reducedMotion: "reduce" });
   await openVideoGenerationPage(page);
   await expect(page.locator('[data-video-cinema="idle"]')).toBeInViewport();
@@ -482,6 +503,78 @@ test("video studio stays usable on mobile with reduced motion", async ({
   await expect(page.getByRole("dialog")).toHaveCSS("left", "0px");
   await expect(page.getByRole("dialog")).toHaveCSS("transform", "none");
   await page.screenshot({ path: ".artifacts/video-studio-mobile-models.png" });
+  await page.setViewportSize({ width: 320, height: 568 });
+  const dialog = page.getByRole("dialog");
+  const listLayout = await dialog.evaluate((element) => {
+    const list = element.lastElementChild;
+    if (!list) return null;
+    const dialogBounds = element.getBoundingClientRect();
+    const listBounds = list.getBoundingClientRect();
+    return {
+      fits: listBounds.bottom <= dialogBounds.bottom - 18,
+      scrolls: list.scrollHeight > list.clientHeight,
+    };
+  });
+  expect(listLayout).toEqual({ fits: true, scrolls: true });
+  const lastModel = dialog.getByRole("button", { name: "ALEPH_2_0" });
+  await lastModel.scrollIntoViewIfNeeded();
+  expect(
+    await lastModel.evaluate((element) => {
+      const listBounds = element.parentElement!.getBoundingClientRect();
+      const modelBounds = element.getBoundingClientRect();
+      return (
+        modelBounds.top >= listBounds.top &&
+        modelBounds.bottom <= listBounds.bottom
+      );
+    }),
+  ).toBe(true);
+  await page.screenshot({
+    path: ".artifacts/video-model-picker-mobile-small.png",
+  });
+  for (const viewport of [
+    { width: 667, height: 375 },
+    { width: 768, height: 1024 },
+    { width: 1440, height: 900 },
+  ]) {
+    await page.setViewportSize(viewport);
+    expect(
+      await dialog.evaluate((element) => {
+        const list = element.lastElementChild;
+        if (!list) return false;
+        return (
+          list.getBoundingClientRect().bottom <=
+          element.getBoundingClientRect().bottom - 18
+        );
+      }),
+    ).toBe(true);
+    if (viewport.width === 768) {
+      await page.screenshot({
+        path: ".artifacts/video-model-picker-tablet.png",
+      });
+    }
+  }
+});
+
+test.describe("video model picker on iPhone", () => {
+  test.use({
+    viewport: devices["iPhone 13"].viewport,
+    deviceScaleFactor: devices["iPhone 13"].deviceScaleFactor,
+    isMobile: true,
+    hasTouch: true,
+    userAgent: devices["iPhone 13"].userAgent,
+  });
+
+  test("opens entirely within the mobile viewport", async ({ page }) => {
+    await openVideoGenerationPage(page);
+    await page.getByRole("button", { name: /Kling/ }).click();
+    const dialog = page.getByRole("dialog");
+    await expect(dialog).toBeVisible();
+    const bounds = await dialog.boundingBox();
+    expect(bounds).not.toBeNull();
+    expect(bounds!.x).toBeGreaterThanOrEqual(-1);
+    expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(391);
+    await page.screenshot({ path: ".artifacts/video-model-picker-iphone.png" });
+  });
 });
 
 test("updates visible video prompt fields when the generation mode changes", async ({
