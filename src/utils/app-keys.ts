@@ -16,9 +16,6 @@ export const APP_KEYS = {
     FILES_PREVIEW: "files-preview",
     EDITOR_SETTINGS: "editor-settings",
   },
-  COOKIES: {
-    ACCESS_TOKEN: "access_token",
-  },
   INDEXED_DB: {
     REACT_QUERY: "REACT_QUERY_OFFLINE_CACHE",
   },

@@ -33,7 +33,7 @@ export interface paths {
         readonly patch: operations["edit_user_info_api_v1_user_edit_info_patch"];
         readonly trace?: never;
     };
-    readonly "/api/v1/user/start": {
+    readonly "/api/v1/auth/login": {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -42,32 +42,32 @@ export interface paths {
         };
         readonly get?: never;
         readonly put?: never;
-        /** Start */
-        readonly post: operations["start_api_v1_user_start_post"];
+        /** Sign in with a phone number and password */
+        readonly post: operations["auth_login"];
         readonly delete?: never;
         readonly options?: never;
         readonly head?: never;
         readonly patch?: never;
         readonly trace?: never;
     };
-    readonly "/api/v1/user/login": {
+    readonly "/api/v1/auth/csrf": {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
             readonly path?: never;
             readonly cookie?: never;
         };
-        readonly get?: never;
+        /** Recover the refresh CSRF value after a page reload */
+        readonly get: operations["auth_csrf"];
         readonly put?: never;
-        /** Login */
-        readonly post: operations["login_api_v1_user_login_post"];
+        readonly post?: never;
         readonly delete?: never;
         readonly options?: never;
         readonly head?: never;
         readonly patch?: never;
         readonly trace?: never;
     };
-    readonly "/api/v1/user/reset-password": {
+    readonly "/api/v1/auth/refresh": {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -76,15 +76,18 @@ export interface paths {
         };
         readonly get?: never;
         readonly put?: never;
-        /** Reset Password */
-        readonly post: operations["reset_password_api_v1_user_reset_password_post"];
+        /**
+         * Refresh an existing session
+         * @description Use credentials: include and X-CSRF-TOKEN. Coordinate refresh across tabs. Retries share a fixed 10-second grace window; the session expires 30 days after login.
+         */
+        readonly post: operations["auth_refresh"];
         readonly delete?: never;
         readonly options?: never;
         readonly head?: never;
         readonly patch?: never;
         readonly trace?: never;
     };
-    readonly "/api/v1/user/resend-otp": {
+    readonly "/api/v1/auth/logout": {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -93,15 +96,18 @@ export interface paths {
         };
         readonly get?: never;
         readonly put?: never;
-        /** Resend Otp */
-        readonly post: operations["resend_otp_api_v1_user_resend_otp_post"];
+        /**
+         * Revoke this session
+         * @description Repeated logout with a valid refresh signature and CSRF returns 204.
+         */
+        readonly post: operations["auth_logout"];
         readonly delete?: never;
         readonly options?: never;
         readonly head?: never;
         readonly patch?: never;
         readonly trace?: never;
     };
-    readonly "/api/v1/user/set-password": {
+    readonly "/api/v1/auth/logout-all": {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -110,9 +116,165 @@ export interface paths {
         };
         readonly get?: never;
         readonly put?: never;
-        /** Set Password */
-        readonly post: operations["set_password_api_v1_user_set_password_post"];
+        /** Revoke all of your browser sessions */
+        readonly post: operations["auth_logout_all"];
         readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
+    readonly "/api/v1/auth/registration-challenges": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly get?: never;
+        readonly put?: never;
+        /**
+         * Request a registration code
+         * @description Returns the same challenge shape for new and existing accounts. No session is created.
+         */
+        readonly post: operations["auth_registration_challenge"];
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
+    readonly "/api/v1/auth/registrations": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly get?: never;
+        readonly put?: never;
+        /** Verify a registration code and create a session */
+        readonly post: operations["auth_register"];
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
+    readonly "/api/v1/auth/challenges/{challenge_id}/resend": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path: {
+                readonly challenge_id: string;
+            };
+            readonly cookie?: never;
+        };
+        readonly get?: never;
+        readonly put?: never;
+        /**
+         * Resend a registration or password reset code
+         * @description Requires an unexpired challenge. Replaces the code without resetting its attempt budget.
+         */
+        readonly post: operations["auth_challenge_resend"];
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
+    readonly "/api/v1/auth/password-reset-challenges": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly get?: never;
+        readonly put?: never;
+        /**
+         * Request a password reset code
+         * @description Returns the same challenge shape for eligible and unknown phone numbers.
+         */
+        readonly post: operations["auth_password_reset_challenge"];
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
+    readonly "/api/v1/auth/password-resets": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly get?: never;
+        readonly put?: never;
+        /**
+         * Reset a password with an OTP and revoke all sessions
+         * @description Does not sign in automatically. Registration codes cannot reset passwords.
+         */
+        readonly post: operations["auth_password_reset"];
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
+    readonly "/api/v1/auth/password-changes": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly get?: never;
+        readonly put?: never;
+        /**
+         * Change a password and revoke all sessions
+         * @description Requires the current password and a live access session. Sign in again after success.
+         */
+        readonly post: operations["auth_password_change"];
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
+    readonly "/api/v1/auth/api-tokens": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        /** List your machine credentials without raw tokens */
+        readonly get: operations["auth_list_api_tokens"];
+        readonly put?: never;
+        /** Create a machine credential; raw token is returned only once */
+        readonly post: operations["auth_create_api_token"];
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
+    readonly "/api/v1/auth/api-tokens/{token_uuid}": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path: {
+                readonly token_uuid: string;
+            };
+            readonly cookie?: never;
+        };
+        readonly get?: never;
+        readonly put?: never;
+        readonly post?: never;
+        /** Revoke your token; repeat revocation is idempotent */
+        readonly delete: operations["auth_revoke_api_token"];
         readonly options?: never;
         readonly head?: never;
         readonly patch?: never;
@@ -507,8 +669,11 @@ export interface paths {
             readonly path?: never;
             readonly cookie?: never;
         };
-        /** Stream Task Events */
-        readonly get: operations["stream_task_events_api_v1_ai_task_events_get"];
+        /**
+         * Stream Task Events
+         * @description Header-only Bearer access. Live notifications have no replay or Last-Event-ID support. Connect before fetching a snapshot with GET /ai-task/list or /ai-task/{task_uuid}; refetch on notifications. The connected comment follows broker subscription readiness. Heartbeat and session checks every 15 seconds. Access expiry or revocation sends auth_error (token_expired/token_revoked), then closes the stream.
+         */
+        readonly get: operations["ai_task_events"];
         readonly put?: never;
         readonly post?: never;
         readonly delete?: never;
@@ -629,11 +794,59 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AccessTokenResponse */
+        readonly AccessTokenResponse: {
+            /** Access Token */
+            readonly access_token: string;
+            /**
+             * Token Type
+             * @default bearer
+             * @constant
+             */
+            readonly token_type: "bearer";
+            /** Expires In */
+            readonly expires_in: number;
+        };
+        /** AiRegistryModelDetail */
+        readonly AiRegistryModelDetail: {
+            /**
+             * Uuid
+             * Format: uuid
+             */
+            readonly uuid: string;
+            readonly model_owner: components["schemas"]["AiRegistryModelOwnerEnum"];
+            /** Name */
+            readonly name: string;
+            /** Display Name */
+            readonly display_name: string | null;
+            /** Description */
+            readonly description: string | null;
+            /** Icon Url */
+            readonly icon_url: string | null;
+            /** Tags */
+            readonly tags: readonly string[];
+            /** Supported Inputs */
+            readonly supported_inputs: readonly components["schemas"]["AiRegistryModelSupportedTypesEnum"][];
+            /** Supported Outputs */
+            readonly supported_outputs: readonly components["schemas"]["AiRegistryModelSupportedTypesEnum"][];
+            /** Min Cost */
+            readonly min_cost?: number | null;
+            /** Max Cost */
+            readonly max_cost?: number | null;
+            /** Modes */
+            readonly modes: {
+                readonly [key: string]: unknown;
+            };
+            /** Canonical Ui Schema */
+            readonly canonical_ui_schema: {
+                readonly [key: string]: unknown;
+            };
+        };
         /**
          * AiRegistryModelOwnerEnum
          * @enum {string}
          */
-        readonly AiRegistryModelOwnerEnum: "OPEN_AI" | "GOOGLE" | "BLACK_FOREST_LABS" | "K_LING_AI" | "BRIA" | "BYTE_DANCE" | "IMAGINE_ART" | "LIGHT_TICKS" | "MID_JOURNEY" | "MINI_MAX" | "PIX_VERSE" | "PRUNA_AI" | "RUNWAY" | "SOURCE_FUL" | "VIDU" | "IDEOGRAM" | "X_AI";
+        readonly AiRegistryModelOwnerEnum: "ALIBABA" | "OPEN_AI" | "GOOGLE" | "BLACK_FOREST_LABS" | "K_LING_AI" | "BRIA" | "BYTE_DANCE" | "IMAGINE_ART" | "LIGHT_TICKS" | "MID_JOURNEY" | "MINI_MAX" | "PIX_VERSE" | "PRUNA_AI" | "RUNWAY" | "SOURCE_FUL" | "VIDU" | "IDEOGRAM" | "X_AI";
         /** AiRegistryModelSummary */
         readonly AiRegistryModelSummary: {
             /**
@@ -727,6 +940,37 @@ export interface components {
          * @enum {string}
          */
         readonly AiTaskTypeEnum: "TEXT" | "IMAGE" | "AUDIO" | "VIDEO";
+        /** ApiTokenListResponse */
+        readonly ApiTokenListResponse: {
+            /** Items */
+            readonly items: readonly components["schemas"]["ApiTokenResponse"][];
+            /** Has Next */
+            readonly has_next: boolean;
+        };
+        /** ApiTokenResponse */
+        readonly ApiTokenResponse: {
+            /**
+             * Uuid
+             * Format: uuid
+             */
+            readonly uuid: string;
+            /** Name */
+            readonly name: string;
+            /** Scopes */
+            readonly scopes: readonly components["schemas"]["MachineScope"][];
+            /**
+             * Created At
+             * Format: date-time
+             */
+            readonly created_at: string;
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            readonly expires_at: string;
+            /** Revoked At */
+            readonly revoked_at: string | null;
+        };
         /** Body_replace_file_api_v1_file_manager_files__file_uuid__put */
         readonly Body_replace_file_api_v1_file_manager_files__file_uuid__put: {
             /** File */
@@ -736,6 +980,83 @@ export interface components {
         readonly Body_simple_upload_api_v1_file_manager_simple_upload_post: {
             /** File */
             readonly file?: string | null;
+        };
+        /** ChallengeResponse */
+        readonly ChallengeResponse: {
+            /**
+             * Challenge Id
+             * Format: uuid
+             */
+            readonly challenge_id: string;
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            readonly expires_at: string;
+            /**
+             * Resend Available At
+             * Format: date-time
+             */
+            readonly resend_available_at: string;
+        };
+        /**
+         * CreateApiTokenRequest
+         * @example {
+         *       "expires_in_days": 30,
+         *       "name": "AI worker",
+         *       "scopes": [
+         *         "ai_task:read",
+         *         "ai_task:write"
+         *       ]
+         *     }
+         */
+        readonly CreateApiTokenRequest: {
+            /** Name */
+            readonly name: string;
+            /** Scopes */
+            readonly scopes: readonly components["schemas"]["MachineScope"][];
+            /**
+             * Expires In Days
+             * @default 30
+             */
+            readonly expires_in_days: number;
+        };
+        /** CreatedApiTokenResponse */
+        readonly CreatedApiTokenResponse: {
+            /**
+             * Uuid
+             * Format: uuid
+             */
+            readonly uuid: string;
+            /** Name */
+            readonly name: string;
+            /** Scopes */
+            readonly scopes: readonly components["schemas"]["MachineScope"][];
+            /**
+             * Created At
+             * Format: date-time
+             */
+            readonly created_at: string;
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            readonly expires_at: string;
+            /** Revoked At */
+            readonly revoked_at: string | null;
+            /** Token */
+            readonly token: string;
+            /**
+             * Token Type
+             * @default bearer
+             * @constant
+             */
+            readonly token_type: "bearer";
+        };
+        /** CsrfResponse */
+        readonly CsrfResponse: {
+            /** Csrf Token */
+            readonly csrf_token: string;
         };
         /** FileManagerMultipartCompleteRequest */
         readonly FileManagerMultipartCompleteRequest: {
@@ -958,6 +1279,84 @@ export interface components {
             /** Detail */
             readonly detail?: readonly components["schemas"]["ValidationError"][];
         };
+        /**
+         * LoginRequest
+         * @example {
+         *       "password": "example-password-only",
+         *       "phone_number": "+989123456789"
+         *     }
+         */
+        readonly LoginRequest: {
+            /**
+             * Phone Number
+             * @example +989123456789
+             */
+            readonly phone_number: string;
+            /**
+             * Password
+             * Format: password
+             */
+            readonly password: string;
+        };
+        /**
+         * MachineScope
+         * @enum {string}
+         */
+        readonly MachineScope: "ai_registry:read" | "ai_task:read" | "ai_task:write" | "file_manager:read" | "file_manager:write";
+        /**
+         * PasswordChangeRequest
+         * @example {
+         *       "current_password": "example-password-only",
+         *       "new_password": "new-example-password-only"
+         *     }
+         */
+        readonly PasswordChangeRequest: {
+            /**
+             * Current Password
+             * Format: password
+             */
+            readonly current_password: string;
+            /**
+             * New Password
+             * Format: password
+             */
+            readonly new_password: string;
+        };
+        /**
+         * PasswordResetChallengeRequest
+         * @example {
+         *       "phone_number": "+989123456789"
+         *     }
+         */
+        readonly PasswordResetChallengeRequest: {
+            /**
+             * Phone Number
+             * @example +989123456789
+             */
+            readonly phone_number: string;
+        };
+        /**
+         * PasswordResetRequest
+         * @example {
+         *       "challenge_id": "11111111-1111-4111-8111-111111111111",
+         *       "new_password": "new-example-password-only",
+         *       "otp_code": "123456"
+         *     }
+         */
+        readonly PasswordResetRequest: {
+            /**
+             * Challenge Id
+             * Format: uuid
+             */
+            readonly challenge_id: string;
+            /** Otp Code */
+            readonly otp_code: string;
+            /**
+             * New Password
+             * Format: password
+             */
+            readonly new_password: string;
+        };
         /** PaymentDetailsResponse */
         readonly PaymentDetailsResponse: {
             /**
@@ -1034,6 +1433,41 @@ export interface components {
             readonly payment_url: string | null;
             /** Requires Review */
             readonly requires_review: boolean;
+        };
+        /**
+         * RegistrationChallengeRequest
+         * @example {
+         *       "phone_number": "+989123456789"
+         *     }
+         */
+        readonly RegistrationChallengeRequest: {
+            /**
+             * Phone Number
+             * @example +989123456789
+             */
+            readonly phone_number: string;
+        };
+        /**
+         * RegistrationRequest
+         * @example {
+         *       "challenge_id": "11111111-1111-4111-8111-111111111111",
+         *       "otp_code": "123456",
+         *       "password": "example-password-only"
+         *     }
+         */
+        readonly RegistrationRequest: {
+            /**
+             * Challenge Id
+             * Format: uuid
+             */
+            readonly challenge_id: string;
+            /** Otp Code */
+            readonly otp_code: string;
+            /**
+             * Password
+             * Format: password
+             */
+            readonly password: string;
         };
         /** SubscriptionPlanListResponse */
         readonly SubscriptionPlanListResponse: {
@@ -1194,92 +1628,6 @@ export interface components {
              */
             readonly updated_at: string;
         };
-        /** UserLoginRequest */
-        readonly UserLoginRequest: {
-            /**
-             * Password
-             * @example qwerQWER1234!!!!
-             */
-            readonly password: string;
-        };
-        /** UserLoginResponse */
-        readonly UserLoginResponse: {
-            /** Token */
-            readonly token: string;
-            /** Phone Number */
-            readonly phone_number: string;
-            /** Email */
-            readonly email: string | null;
-            /** Name */
-            readonly name: string | null;
-            /**
-             * User Uuid
-             * Format: uuid
-             */
-            readonly user_uuid: string;
-        };
-        /** UserResendOtpResponse */
-        readonly UserResendOtpResponse: {
-            /** Is Verified */
-            readonly is_verified: boolean;
-            /**
-             * Next Otp At
-             * Format: date-time
-             */
-            readonly next_otp_at: string;
-        };
-        /** UserResetPasswordRequest */
-        readonly UserResetPasswordRequest: {
-            /**
-             * Phone Number
-             * @example 09123456789
-             */
-            readonly phone_number: string;
-        };
-        /** UserResetPasswordResponse */
-        readonly UserResetPasswordResponse: {
-            /** Token */
-            readonly token: string;
-            /** Is Verified */
-            readonly is_verified: boolean;
-            /**
-             * Next Otp At
-             * Format: date-time
-             */
-            readonly next_otp_at: string;
-        };
-        /** UserSetPasswordRequest */
-        readonly UserSetPasswordRequest: {
-            /**
-             * Password
-             * @example qwerQWER1234!!!!
-             */
-            readonly password: string;
-            /**
-             * Otp Code
-             * @example 123456
-             */
-            readonly otp_code: string;
-        };
-        /** UserStartRequest */
-        readonly UserStartRequest: {
-            /**
-             * Phone Number
-             * @example 09123456789
-             */
-            readonly phone_number: string;
-        };
-        /** UserStartResponse */
-        readonly UserStartResponse: {
-            /** Token */
-            readonly token: string;
-            /** Is Verified */
-            readonly is_verified: boolean;
-            /** Is Registering */
-            readonly is_registering: boolean;
-            /** Next Otp At */
-            readonly next_otp_at: string | null;
-        };
         /** UserSubscriptionResponse */
         readonly UserSubscriptionResponse: {
             /**
@@ -1352,74 +1700,6 @@ export interface components {
          * @enum {string}
          */
         readonly WalletTransactionTypeEnum: "DEPOSIT" | "WITHDRAW" | "REFUND";
-        /** AiRegistryModelDetail */
-        readonly perpix_core_api__modules__ai_registry__presentation__schemas__AiRegistryModelDetail: {
-            /**
-             * Uuid
-             * Format: uuid
-             */
-            readonly uuid: string;
-            readonly model_owner: components["schemas"]["AiRegistryModelOwnerEnum"];
-            /** Name */
-            readonly name: string;
-            /** Display Name */
-            readonly display_name: string | null;
-            /** Description */
-            readonly description: string | null;
-            /** Icon Url */
-            readonly icon_url: string | null;
-            /** Tags */
-            readonly tags: readonly string[];
-            /** Supported Inputs */
-            readonly supported_inputs: readonly components["schemas"]["AiRegistryModelSupportedTypesEnum"][];
-            /** Supported Outputs */
-            readonly supported_outputs: readonly components["schemas"]["AiRegistryModelSupportedTypesEnum"][];
-            /** Min Cost */
-            readonly min_cost?: number | null;
-            /** Max Cost */
-            readonly max_cost?: number | null;
-            /** Modes */
-            readonly modes: {
-                readonly [key: string]: unknown;
-            };
-            /** Canonical Ui Schema */
-            readonly canonical_ui_schema: {
-                readonly [key: string]: unknown;
-            };
-        };
-        /**
-         * ApplicationErrorCode
-         * @enum {integer}
-         */
-        readonly ApplicationErrorCode: 900 | 901 | 902 | 999 | 1000 | 1001 | 1002 | 1003 | 1004 | 1005 | 1100 | 1101 | 1102 | 1103 | 1104 | 1105 | 1106 | 1200 | 1201 | 1202 | 1203 | 1204 | 1205 | 1206 | 1300 | 1301 | 1302 | 1303 | 1304 | 1400 | 1401 | 1500 | 1501 | 1502 | 1503 | 1600 | 1601 | 1602 | 1603 | 1604 | 1605 | 1700 | 1701 | 1702 | 1800 | 1801 | 1802 | 1803 | 1804 | 1805 | 1806 | 1807;
-        /** ApplicationErrorResponse */
-        readonly ApplicationErrorResponse: {
-            /**
-             * Detail
-             * @description Translated error message or validation details.
-             */
-            readonly detail: unknown;
-            /** @description Stable application status code for frontend handling. */
-            readonly status_code: components["schemas"]["ApplicationErrorCode"];
-            /**
-             * Request Id
-             * @description Correlation id for tracing the request.
-             * @default null
-             */
-            readonly request_id: string | null;
-            /**
-             * Retry After
-             * @description Seconds until a rate-limited request can retry.
-             * @default null
-             */
-            readonly retry_after: number | null;
-            /**
-             * Required Scopes
-             * @description Subscription scopes required to perform the operation.
-             * @default null
-             */
-            readonly required_scopes: readonly string[] | null;
-        };
     };
     responses: never;
     parameters: never;
@@ -1427,6 +1707,8 @@ export interface components {
     headers: never;
     pathItems: never;
 }
+export type SchemaAccessTokenResponse = components['schemas']['AccessTokenResponse'];
+export type SchemaAiRegistryModelDetail = components['schemas']['AiRegistryModelDetail'];
 export type SchemaAiRegistryModelOwnerEnum = components['schemas']['AiRegistryModelOwnerEnum'];
 export type SchemaAiRegistryModelSummary = components['schemas']['AiRegistryModelSummary'];
 export type SchemaAiRegistryModelSupportedTypesEnum = components['schemas']['AiRegistryModelSupportedTypesEnum'];
@@ -1436,8 +1718,14 @@ export type SchemaAiTaskMessageStatusEnum = components['schemas']['AiTaskMessage
 export type SchemaAiTaskResponse = components['schemas']['AiTaskResponse'];
 export type SchemaAiTaskRuleEnum = components['schemas']['AiTaskRuleEnum'];
 export type SchemaAiTaskTypeEnum = components['schemas']['AiTaskTypeEnum'];
+export type SchemaApiTokenListResponse = components['schemas']['ApiTokenListResponse'];
+export type SchemaApiTokenResponse = components['schemas']['ApiTokenResponse'];
 export type SchemaBodyReplaceFileApiV1FileManagerFilesFileUuidPut = components['schemas']['Body_replace_file_api_v1_file_manager_files__file_uuid__put'];
 export type SchemaBodySimpleUploadApiV1FileManagerSimpleUploadPost = components['schemas']['Body_simple_upload_api_v1_file_manager_simple_upload_post'];
+export type SchemaChallengeResponse = components['schemas']['ChallengeResponse'];
+export type SchemaCreateApiTokenRequest = components['schemas']['CreateApiTokenRequest'];
+export type SchemaCreatedApiTokenResponse = components['schemas']['CreatedApiTokenResponse'];
+export type SchemaCsrfResponse = components['schemas']['CsrfResponse'];
 export type SchemaFileManagerMultipartCompleteRequest = components['schemas']['FileManagerMultipartCompleteRequest'];
 export type SchemaFileManagerMultipartCompletedPart = components['schemas']['FileManagerMultipartCompletedPart'];
 export type SchemaFileManagerMultipartInitiateRequest = components['schemas']['FileManagerMultipartInitiateRequest'];
@@ -1453,6 +1741,11 @@ export type SchemaGenerateTaskRequest = components['schemas']['GenerateTaskReque
 export type SchemaGetWalletResponse = components['schemas']['GetWalletResponse'];
 export type SchemaGetWalletTransactionsResponse = components['schemas']['GetWalletTransactionsResponse'];
 export type SchemaHttpValidationError = components['schemas']['HTTPValidationError'];
+export type SchemaLoginRequest = components['schemas']['LoginRequest'];
+export type SchemaMachineScope = components['schemas']['MachineScope'];
+export type SchemaPasswordChangeRequest = components['schemas']['PasswordChangeRequest'];
+export type SchemaPasswordResetChallengeRequest = components['schemas']['PasswordResetChallengeRequest'];
+export type SchemaPasswordResetRequest = components['schemas']['PasswordResetRequest'];
 export type SchemaPaymentDetailsResponse = components['schemas']['PaymentDetailsResponse'];
 export type SchemaPaymentExecutionStatus = components['schemas']['PaymentExecutionStatus'];
 export type SchemaPaymentFinancialStatus = components['schemas']['PaymentFinancialStatus'];
@@ -1460,6 +1753,8 @@ export type SchemaPaymentFulfillmentStatus = components['schemas']['PaymentFulfi
 export type SchemaPaymentHistoryItemResponse = components['schemas']['PaymentHistoryItemResponse'];
 export type SchemaPaymentListResponse = components['schemas']['PaymentListResponse'];
 export type SchemaPaymentResponse = components['schemas']['PaymentResponse'];
+export type SchemaRegistrationChallengeRequest = components['schemas']['RegistrationChallengeRequest'];
+export type SchemaRegistrationRequest = components['schemas']['RegistrationRequest'];
 export type SchemaSubscriptionPlanListResponse = components['schemas']['SubscriptionPlanListResponse'];
 export type SchemaSubscriptionPlanResponse = components['schemas']['SubscriptionPlanResponse'];
 export type SchemaSubscriptionPurchaseRequest = components['schemas']['SubscriptionPurchaseRequest'];
@@ -1468,22 +1763,11 @@ export type SchemaUserChargeWalletRequest = components['schemas']['UserChargeWal
 export type SchemaUserEditInfoRequest = components['schemas']['UserEditInfoRequest'];
 export type SchemaUserEditInfoResponse = components['schemas']['UserEditInfoResponse'];
 export type SchemaUserGetInfoResponse = components['schemas']['UserGetInfoResponse'];
-export type SchemaUserLoginRequest = components['schemas']['UserLoginRequest'];
-export type SchemaUserLoginResponse = components['schemas']['UserLoginResponse'];
-export type SchemaUserResendOtpResponse = components['schemas']['UserResendOtpResponse'];
-export type SchemaUserResetPasswordRequest = components['schemas']['UserResetPasswordRequest'];
-export type SchemaUserResetPasswordResponse = components['schemas']['UserResetPasswordResponse'];
-export type SchemaUserSetPasswordRequest = components['schemas']['UserSetPasswordRequest'];
-export type SchemaUserStartRequest = components['schemas']['UserStartRequest'];
-export type SchemaUserStartResponse = components['schemas']['UserStartResponse'];
 export type SchemaUserSubscriptionResponse = components['schemas']['UserSubscriptionResponse'];
 export type SchemaValidationError = components['schemas']['ValidationError'];
 export type SchemaWalletOperationSourceEnum = components['schemas']['WalletOperationSourceEnum'];
 export type SchemaWalletTransactionResponse = components['schemas']['WalletTransactionResponse'];
 export type SchemaWalletTransactionTypeEnum = components['schemas']['WalletTransactionTypeEnum'];
-export type SchemaPerpixCoreApiModulesAiRegistryPresentationSchemasAiRegistryModelDetail = components['schemas']['perpix_core_api__modules__ai_registry__presentation__schemas__AiRegistryModelDetail'];
-export type SchemaApplicationErrorCode = components['schemas']['ApplicationErrorCode'];
-export type SchemaApplicationErrorResponse = components['schemas']['ApplicationErrorResponse'];
 export type $defs = Record<string, never>;
 export interface operations {
     readonly get_info_api_v1_user_get_info_get: {
@@ -1502,15 +1786,6 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["UserGetInfoResponse"];
-                };
-            };
-            /** @description Application error */
-            readonly default: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -1546,18 +1821,9 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
-            /** @description Application error */
-            readonly default: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
-                };
-            };
         };
     };
-    readonly start_api_v1_user_start_post: {
+    readonly auth_login: {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -1566,18 +1832,26 @@ export interface operations {
         };
         readonly requestBody: {
             readonly content: {
-                readonly "application/json": components["schemas"]["UserStartRequest"];
+                readonly "application/json": components["schemas"]["LoginRequest"];
             };
         };
         readonly responses: {
-            /** @description Successful Response */
+            /** @description Access token; refresh token is set in a Secure HttpOnly cookie. */
             readonly 200: {
                 headers: {
+                    readonly "X-CSRF-TOKEN"?: string;
                     readonly [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": components["schemas"]["UserStartResponse"];
+                    readonly "application/json": components["schemas"]["AccessTokenResponse"];
                 };
+            };
+            /** @description Unauthorized */
+            readonly 401: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             readonly 422: {
@@ -1588,102 +1862,16 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
-            /** @description Application error */
-            readonly default: {
+            /** @description Rate limit exceeded */
+            readonly 429: {
                 headers: {
                     readonly [name: string]: unknown;
                 };
-                content: {
-                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
-                };
+                content?: never;
             };
         };
     };
-    readonly login_api_v1_user_login_post: {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
-        };
-        readonly requestBody: {
-            readonly content: {
-                readonly "application/json": components["schemas"]["UserLoginRequest"];
-            };
-        };
-        readonly responses: {
-            /** @description Successful Response */
-            readonly 200: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["UserLoginResponse"];
-                };
-            };
-            /** @description Validation Error */
-            readonly 422: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Application error */
-            readonly default: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
-                };
-            };
-        };
-    };
-    readonly reset_password_api_v1_user_reset_password_post: {
-        readonly parameters: {
-            readonly query?: never;
-            readonly header?: never;
-            readonly path?: never;
-            readonly cookie?: never;
-        };
-        readonly requestBody: {
-            readonly content: {
-                readonly "application/json": components["schemas"]["UserResetPasswordRequest"];
-            };
-        };
-        readonly responses: {
-            /** @description Successful Response */
-            readonly 200: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["UserResetPasswordResponse"];
-                };
-            };
-            /** @description Validation Error */
-            readonly 422: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Application error */
-            readonly default: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
-                };
-            };
-        };
-    };
-    readonly resend_otp_api_v1_user_resend_otp_post: {
+    readonly auth_csrf: {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -1698,21 +1886,131 @@ export interface operations {
                     readonly [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": components["schemas"]["UserResendOtpResponse"];
+                    readonly "application/json": components["schemas"]["CsrfResponse"];
                 };
             };
-            /** @description Application error */
-            readonly default: {
+            /** @description Unauthorized */
+            readonly 401: {
                 headers: {
                     readonly [name: string]: unknown;
                 };
-                content: {
-                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                content?: never;
+            };
+            /** @description Rate limit exceeded */
+            readonly 429: {
+                headers: {
+                    readonly [name: string]: unknown;
                 };
+                content?: never;
             };
         };
     };
-    readonly set_password_api_v1_user_set_password_post: {
+    readonly auth_refresh: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header: {
+                /** @description CSRF value from login/refresh response header or GET /auth/csrf. */
+                readonly "X-CSRF-TOKEN": string;
+            };
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description Access token; refresh token is set in a Secure HttpOnly cookie. */
+            readonly 200: {
+                headers: {
+                    readonly "X-CSRF-TOKEN"?: string;
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["AccessTokenResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            readonly 401: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Rate limit exceeded */
+            readonly 429: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    readonly auth_logout: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header: {
+                /** @description CSRF value from login/refresh response header or GET /auth/csrf. */
+                readonly "X-CSRF-TOKEN": string;
+            };
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 204: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            readonly 401: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Rate limit exceeded */
+            readonly 429: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    readonly auth_logout_all: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 204: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            readonly 401: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Rate limit exceeded */
+            readonly 429: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    readonly auth_registration_challenge: {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -1721,18 +2019,25 @@ export interface operations {
         };
         readonly requestBody: {
             readonly content: {
-                readonly "application/json": components["schemas"]["UserSetPasswordRequest"];
+                readonly "application/json": components["schemas"]["RegistrationChallengeRequest"];
             };
         };
         readonly responses: {
             /** @description Successful Response */
-            readonly 200: {
+            readonly 201: {
                 headers: {
                     readonly [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": components["schemas"]["UserLoginResponse"];
+                    readonly "application/json": components["schemas"]["ChallengeResponse"];
                 };
+            };
+            /** @description Unauthorized */
+            readonly 401: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             readonly 422: {
@@ -1743,13 +2048,412 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
-            /** @description Application error */
-            readonly default: {
+            /** @description Rate limit exceeded */
+            readonly 429: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    readonly auth_register: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody: {
+            readonly content: {
+                readonly "application/json": components["schemas"]["RegistrationRequest"];
+            };
+        };
+        readonly responses: {
+            /** @description Access token; refresh token is set in a Secure HttpOnly cookie. */
+            readonly 201: {
+                headers: {
+                    readonly "X-CSRF-TOKEN"?: string;
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["AccessTokenResponse"];
+                };
+            };
+            /** @description Invalid challenge or code */
+            readonly 400: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            readonly 401: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            readonly 422: {
                 headers: {
                     readonly [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Rate limit exceeded */
+            readonly 429: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    readonly auth_challenge_resend: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path: {
+                readonly challenge_id: string;
+            };
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ChallengeResponse"];
+                };
+            };
+            /** @description Invalid challenge or code */
+            readonly 400: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            readonly 401: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Rate limit exceeded */
+            readonly 429: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    readonly auth_password_reset_challenge: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody: {
+            readonly content: {
+                readonly "application/json": components["schemas"]["PasswordResetChallengeRequest"];
+            };
+        };
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 201: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ChallengeResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            readonly 401: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Rate limit exceeded */
+            readonly 429: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    readonly auth_password_reset: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody: {
+            readonly content: {
+                readonly "application/json": components["schemas"]["PasswordResetRequest"];
+            };
+        };
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 204: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid challenge or code */
+            readonly 400: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            readonly 401: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Rate limit exceeded */
+            readonly 429: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    readonly auth_password_change: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody: {
+            readonly content: {
+                readonly "application/json": components["schemas"]["PasswordChangeRequest"];
+            };
+        };
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 204: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            readonly 401: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Rate limit exceeded */
+            readonly 429: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    readonly auth_list_api_tokens: {
+        readonly parameters: {
+            readonly query?: {
+                readonly offset?: number;
+                readonly limit?: number;
+            };
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApiTokenListResponse"];
+                };
+            };
+            /** @description Live browser session required */
+            readonly 401: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Owned token not found */
+            readonly 404: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    readonly auth_create_api_token: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody: {
+            readonly content: {
+                readonly "application/json": components["schemas"]["CreateApiTokenRequest"];
+            };
+        };
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 201: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["CreatedApiTokenResponse"];
+                };
+            };
+            /** @description Live browser session required */
+            readonly 401: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Owned token not found */
+            readonly 404: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Maximum 20 active tokens */
+            readonly 409: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Current plan must grant every requested scope */
+            readonly 426: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    readonly auth_revoke_api_token: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path: {
+                readonly token_uuid: string;
+            };
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 204: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Live browser session required */
+            readonly 401: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Owned token not found */
+            readonly 404: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
@@ -1772,15 +2476,6 @@ export interface operations {
                     readonly "application/json": components["schemas"]["SubscriptionPlanListResponse"];
                 };
             };
-            /** @description Application error */
-            readonly default: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
-                };
-            };
         };
     };
     readonly get_active_subscription_api_v1_user_subscription_active_get: {
@@ -1799,15 +2494,6 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["UserSubscriptionResponse"];
-                };
-            };
-            /** @description Application error */
-            readonly default: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -1843,15 +2529,6 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
-            /** @description Application error */
-            readonly default: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
-                };
-            };
         };
     };
     readonly charge_wallet_api_v1_wallet_charge_post: {
@@ -1885,15 +2562,6 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
-            /** @description Application error */
-            readonly default: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
-                };
-            };
         };
     };
     readonly get_current_user_wallet_api_v1_wallet_wallet_get: {
@@ -1912,15 +2580,6 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["GetWalletResponse"];
-                };
-            };
-            /** @description Application error */
-            readonly default: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -1957,15 +2616,6 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
-            /** @description Application error */
-            readonly default: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
-                };
-            };
         };
     };
     readonly stream_payment_events_api_v1_payment_events_get: {
@@ -1983,15 +2633,6 @@ export interface operations {
                     readonly [name: string]: unknown;
                 };
                 content?: never;
-            };
-            /** @description Application error */
-            readonly default: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
-                };
             };
         };
     };
@@ -2023,15 +2664,6 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Application error */
-            readonly default: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -2074,15 +2706,6 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
-            /** @description Application error */
-            readonly default: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
-                };
-            };
         };
     };
     readonly get_payment_intent_api_v1_payment_intents__intent_uuid__get: {
@@ -2112,15 +2735,6 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Application error */
-            readonly default: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -2154,15 +2768,6 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
-            /** @description Application error */
-            readonly default: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
-                };
-            };
         };
     };
     readonly get_payment_execution_api_v1_payment_executions__execution_uuid__get: {
@@ -2194,15 +2799,6 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
-            /** @description Application error */
-            readonly default: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
-                };
-            };
         };
     };
     readonly payment_return_api_v1_payment_return__execution_uuid__get: {
@@ -2232,15 +2828,6 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
-            /** @description Application error */
-            readonly default: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
-                };
-            };
         };
     };
     readonly readiness_api_v1_readiness_get: {
@@ -2261,15 +2848,6 @@ export interface operations {
                     readonly "application/json": {
                         readonly [key: string]: string;
                     };
-                };
-            };
-            /** @description Application error */
-            readonly default: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -2303,15 +2881,6 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Application error */
-            readonly default: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -2348,15 +2917,6 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
-            /** @description Application error */
-            readonly default: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
-                };
-            };
         };
     };
     readonly get_file_presigned_urls_api_v1_file_manager_files_presigned_urls_post: {
@@ -2388,15 +2948,6 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Application error */
-            readonly default: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -2434,15 +2985,6 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
-            /** @description Application error */
-            readonly default: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
-                };
-            };
         };
     };
     readonly delete_file_api_v1_file_manager_files__file_uuid__delete: {
@@ -2472,15 +3014,6 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Application error */
-            readonly default: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -2516,15 +3049,6 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
-            /** @description Application error */
-            readonly default: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
-                };
-            };
         };
     };
     readonly presign_multipart_part_api_v1_file_manager_multipart_presign_part_post: {
@@ -2556,15 +3080,6 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Application error */
-            readonly default: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -2600,25 +3115,12 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
-            /** @description Application error */
-            readonly default: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
-                };
-            };
         };
     };
-    readonly stream_task_events_api_v1_ai_task_events_get: {
+    readonly ai_task_events: {
         readonly parameters: {
-            readonly query?: {
-                readonly token?: string | null;
-            };
-            readonly header?: {
-                readonly authorization?: string | null;
-            };
+            readonly query?: never;
+            readonly header?: never;
             readonly path?: never;
             readonly cookie?: never;
         };
@@ -2629,27 +3131,14 @@ export interface operations {
                 headers: {
                     readonly [name: string]: unknown;
                 };
-                content: {
-                    readonly "application/json": unknown;
-                };
+                content?: never;
             };
-            /** @description Validation Error */
-            readonly 422: {
+            /** @description Invalid or revoked access session */
+            readonly 401: {
                 headers: {
                     readonly [name: string]: unknown;
                 };
-                content: {
-                    readonly "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Application error */
-            readonly default: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
-                };
+                content?: never;
             };
         };
     };
@@ -2684,15 +3173,6 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
-            /** @description Application error */
-            readonly default: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
-                };
-            };
         };
     };
     readonly get_task_result_api_v1_ai_task_result__task_message_uuid__get: {
@@ -2722,15 +3202,6 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Application error */
-            readonly default: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -2766,15 +3237,6 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
-            /** @description Application error */
-            readonly default: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
-                };
-            };
         };
     };
     readonly get_task_api_v1_ai_task__task_uuid__get: {
@@ -2804,15 +3266,6 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Application error */
-            readonly default: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -2847,15 +3300,6 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
-            /** @description Application error */
-            readonly default: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
-                };
-            };
         };
     };
     readonly get_model_api_v1_ai_registry_models__ai_model_uuid__get: {
@@ -2875,7 +3319,7 @@ export interface operations {
                     readonly [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": components["schemas"]["perpix_core_api__modules__ai_registry__presentation__schemas__AiRegistryModelDetail"];
+                    readonly "application/json": components["schemas"]["AiRegistryModelDetail"];
                 };
             };
             /** @description Validation Error */
@@ -2885,15 +3329,6 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Application error */
-            readonly default: {
-                headers: {
-                    readonly [name: string]: unknown;
-                };
-                content: {
-                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -2907,21 +3342,22 @@ type ReadonlyArray<T> = [
 ] extends [
     unknown[]
 ] ? Readonly<Exclude<T, undefined>> : Readonly<Exclude<T, undefined>[]>;
-export const aiRegistryModelOwnerEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiRegistryModelOwnerEnum"]> = ["OPEN_AI", "GOOGLE", "BLACK_FOREST_LABS", "K_LING_AI", "BRIA", "BYTE_DANCE", "IMAGINE_ART", "LIGHT_TICKS", "MID_JOURNEY", "MINI_MAX", "PIX_VERSE", "PRUNA_AI", "RUNWAY", "SOURCE_FUL", "VIDU", "IDEOGRAM", "X_AI"];
+export const aiRegistryModelOwnerEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiRegistryModelOwnerEnum"]> = ["ALIBABA", "OPEN_AI", "GOOGLE", "BLACK_FOREST_LABS", "K_LING_AI", "BRIA", "BYTE_DANCE", "IMAGINE_ART", "LIGHT_TICKS", "MID_JOURNEY", "MINI_MAX", "PIX_VERSE", "PRUNA_AI", "RUNWAY", "SOURCE_FUL", "VIDU", "IDEOGRAM", "X_AI"];
 export const aiRegistryModelSupportedTypesEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiRegistryModelSupportedTypesEnum"]> = ["TEXT", "IMAGE", "AUDIO", "VIDEO"];
 export const aiTaskMessageStatusEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiTaskMessageStatusEnum"]> = ["PENDING", "IN_PROGRESS", "SUCCESS", "FAILED"];
 export const aiTaskRuleEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiTaskRuleEnum"]> = ["SYSTEM", "USER", "ASSISTANT", "TOOL", "FUNCTION", "INLINE"];
 export const aiTaskTypeEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiTaskTypeEnum"]> = ["TEXT", "IMAGE", "AUDIO", "VIDEO"];
+export const machineScopeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["MachineScope"]> = ["ai_registry:read", "ai_task:read", "ai_task:write", "file_manager:read", "file_manager:write"];
 export const paymentExecutionStatusValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaymentExecutionStatus"]> = ["PENDING", "SUCCEEDED", "FAILED", "EXPIRED"];
 export const paymentFinancialStatusValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaymentFinancialStatus"]> = ["PENDING", "SUCCEEDED", "CLOSED"];
 export const paymentFulfillmentStatusValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaymentFulfillmentStatus"]> = ["NOT_READY", "PENDING", "SUCCEEDED", "NEEDS_REVIEW"];
 export const supportedCurrencyValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["SupportedCurrency"]> = ["IRR"];
 export const walletOperationSourceEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["WalletOperationSourceEnum"]> = ["admin", "ai_gateway_request", "ai_task_message", "subscription"];
 export const walletTransactionTypeEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["WalletTransactionTypeEnum"]> = ["DEPOSIT", "WITHDRAW", "REFUND"];
-export const applicationErrorCodeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["ApplicationErrorCode"]> = [900, 901, 902, 999, 1000, 1001, 1002, 1003, 1004, 1005, 1100, 1101, 1102, 1103, 1104, 1105, 1106, 1200, 1201, 1202, 1203, 1204, 1205, 1206, 1300, 1301, 1302, 1303, 1304, 1400, 1401, 1500, 1501, 1502, 1503, 1600, 1601, 1602, 1603, 1604, 1605, 1700, 1701, 1702, 1800, 1801, 1802, 1803, 1804, 1805, 1806, 1807];
 
 
 export const AiRegistryModelOwnerEnumMap = {
+  "ALIBABA": "ALIBABA",
   "OPEN_AI": "OPEN_AI",
   "GOOGLE": "GOOGLE",
   "BLACK_FOREST_LABS": "BLACK_FOREST_LABS",
@@ -2981,6 +3417,16 @@ export const AiTaskTypeEnumMap = {
 export type AiTaskTypeEnumKey = keyof typeof AiTaskTypeEnumMap;
 export type AiTaskTypeEnumValue = (typeof AiTaskTypeEnumMap)[AiTaskTypeEnumKey];
 
+export const MachineScopeMap = {
+  "ai_registry:read": "ai_registry:read",
+  "ai_task:read": "ai_task:read",
+  "ai_task:write": "ai_task:write",
+  "file_manager:read": "file_manager:read",
+  "file_manager:write": "file_manager:write",
+} as const;
+export type MachineScopeKey = keyof typeof MachineScopeMap;
+export type MachineScopeValue = (typeof MachineScopeMap)[MachineScopeKey];
+
 export const PaymentExecutionStatusMap = {
   "PENDING": "PENDING",
   "SUCCEEDED": "SUCCEEDED",
@@ -3029,60 +3475,3 @@ export const WalletTransactionTypeEnumMap = {
 } as const;
 export type WalletTransactionTypeEnumKey = keyof typeof WalletTransactionTypeEnumMap;
 export type WalletTransactionTypeEnumValue = (typeof WalletTransactionTypeEnumMap)[WalletTransactionTypeEnumKey];
-
-export const ApplicationErrorCodeMap = {
-  900: 900,
-  901: 901,
-  902: 902,
-  999: 999,
-  1000: 1000,
-  1001: 1001,
-  1002: 1002,
-  1003: 1003,
-  1004: 1004,
-  1005: 1005,
-  1100: 1100,
-  1101: 1101,
-  1102: 1102,
-  1103: 1103,
-  1104: 1104,
-  1105: 1105,
-  1106: 1106,
-  1200: 1200,
-  1201: 1201,
-  1202: 1202,
-  1203: 1203,
-  1204: 1204,
-  1205: 1205,
-  1206: 1206,
-  1300: 1300,
-  1301: 1301,
-  1302: 1302,
-  1303: 1303,
-  1304: 1304,
-  1400: 1400,
-  1401: 1401,
-  1500: 1500,
-  1501: 1501,
-  1502: 1502,
-  1503: 1503,
-  1600: 1600,
-  1601: 1601,
-  1602: 1602,
-  1603: 1603,
-  1604: 1604,
-  1605: 1605,
-  1700: 1700,
-  1701: 1701,
-  1702: 1702,
-  1800: 1800,
-  1801: 1801,
-  1802: 1802,
-  1803: 1803,
-  1804: 1804,
-  1805: 1805,
-  1806: 1806,
-  1807: 1807,
-} as const;
-export type ApplicationErrorCodeKey = keyof typeof ApplicationErrorCodeMap;
-export type ApplicationErrorCodeValue = (typeof ApplicationErrorCodeMap)[ApplicationErrorCodeKey];

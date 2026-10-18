@@ -12,8 +12,6 @@ import {
   AiRegistryModelSupportedTypesEnumMap,
   type SchemaAiTaskResponse,
 } from "@/services/api";
-import { APP_KEYS } from "@/utils";
-import { cookies } from "@/utils/cookies";
 
 const getTaskUrl = (task: SchemaAiTaskResponse, messageUuid: string) => {
   if (task.task_type === AiRegistryModelSupportedTypesEnumMap.VIDEO) {
@@ -52,9 +50,6 @@ export function AiTaskEventsProvider() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { queryOptions } = useReactQueryApi();
-  const accessToken = cookies().get(APP_KEYS.COOKIES.ACCESS_TOKEN) as
-    | string
-    | undefined;
 
   const handleTaskMessage = useCallback(
     async (payload: AiTaskMessageEvent) => {
@@ -62,9 +57,13 @@ export function AiTaskEventsProvider() {
         return;
       }
 
-      const taskQueryOptions = queryOptions("get", "/api/v1/ai-task/{task_uuid}", {
-        params: { path: { task_uuid: payload.task_uuid } },
-      });
+      const taskQueryOptions = queryOptions(
+        "get",
+        "/api/v1/ai-task/{task_uuid}",
+        {
+          params: { path: { task_uuid: payload.task_uuid } },
+        },
+      );
       const taskResultQueryOptions = queryOptions(
         "get",
         "/api/v1/ai-task/result/{task_message_uuid}",
@@ -74,8 +73,16 @@ export function AiTaskEventsProvider() {
           },
         },
       );
-      const aiTasksListQueryKey = queryOptions("get", "/api/v1/ai-task/list", undefined).queryKey;
-      const walletQueryKey = queryOptions("get", "/api/v1/wallet/wallet", undefined).queryKey;
+      const aiTasksListQueryKey = queryOptions(
+        "get",
+        "/api/v1/ai-task/list",
+        undefined,
+      ).queryKey;
+      const walletQueryKey = queryOptions(
+        "get",
+        "/api/v1/wallet/wallet",
+        undefined,
+      ).queryKey;
 
       queryClient.removeQueries({
         queryKey: taskResultQueryOptions.queryKey,
@@ -109,9 +116,23 @@ export function AiTaskEventsProvider() {
     [navigate, queryClient, queryOptions],
   );
 
+  // Events are not replayed, so a reconnect re-reads the task list snapshot.
+  const handleConnected = useCallback(
+    (isReconnect: boolean) => {
+      if (!isReconnect) return;
+      const listKey = queryOptions(
+        "get",
+        "/api/v1/ai-task/list",
+        undefined,
+      ).queryKey;
+      void queryClient.invalidateQueries({ queryKey: listKey });
+    },
+    [queryClient, queryOptions],
+  );
+
   useAiTaskEvents({
-    accessToken,
     onTaskMessage: handleTaskMessage,
+    onConnected: handleConnected,
   });
 
   return null;

@@ -13,15 +13,8 @@
       "elements",
       "native-audio"
     ],
-    "supported_inputs": [
-      "TEXT",
-      "IMAGE",
-      "VIDEO",
-      "AUDIO"
-    ],
-    "supported_outputs": [
-      "VIDEO"
-    ],
+    "supported_inputs": ["TEXT", "IMAGE", "VIDEO", "AUDIO"],
+    "supported_outputs": ["VIDEO"],
     "is_active": true,
     "meta": {
       "uischema": {
@@ -68,9 +61,7 @@
                           {
                             "allOf": [
                               {
-                                "required": [
-                                  "mode"
-                                ]
+                                "required": ["mode"]
                               },
                               {
                                 "properties": {
@@ -85,9 +76,7 @@
                             "not": {
                               "allOf": [
                                 {
-                                  "required": [
-                                    "mode"
-                                  ]
+                                  "required": ["mode"]
                                 },
                                 {
                                   "properties": {
@@ -103,9 +92,7 @@
                             "not": {
                               "allOf": [
                                 {
-                                  "required": [
-                                    "mode"
-                                  ]
+                                  "required": ["mode"]
                                 },
                                 {
                                   "properties": {
@@ -123,9 +110,7 @@
                                 "anyOf": [
                                   {
                                     "not": {
-                                      "required": [
-                                        "multi_prompt"
-                                      ]
+                                      "required": ["multi_prompt"]
                                     }
                                   },
                                   {
@@ -161,9 +146,7 @@
                           {
                             "allOf": [
                               {
-                                "required": [
-                                  "mode"
-                                ]
+                                "required": ["mode"]
                               },
                               {
                                 "properties": {
@@ -178,9 +161,7 @@
                             "not": {
                               "allOf": [
                                 {
-                                  "required": [
-                                    "mode"
-                                  ]
+                                  "required": ["mode"]
                                 },
                                 {
                                   "properties": {
@@ -198,9 +179,7 @@
                                 "anyOf": [
                                   {
                                     "not": {
-                                      "required": [
-                                        "multi_prompt"
-                                      ]
+                                      "required": ["multi_prompt"]
                                     }
                                   },
                                   {
@@ -236,9 +215,7 @@
                           {
                             "allOf": [
                               {
-                                "required": [
-                                  "mode"
-                                ]
+                                "required": ["mode"]
                               },
                               {
                                 "properties": {
@@ -255,9 +232,7 @@
                                 "anyOf": [
                                   {
                                     "not": {
-                                      "required": [
-                                        "multi_prompt"
-                                      ]
+                                      "required": ["multi_prompt"]
                                     }
                                   },
                                   {
@@ -319,9 +294,7 @@
                           {
                             "allOf": [
                               {
-                                "required": [
-                                  "mode"
-                                ]
+                                "required": ["mode"]
                               },
                               {
                                 "properties": {
@@ -336,9 +309,7 @@
                             "not": {
                               "allOf": [
                                 {
-                                  "required": [
-                                    "mode"
-                                  ]
+                                  "required": ["mode"]
                                 },
                                 {
                                   "properties": {
@@ -354,9 +325,7 @@
                             "not": {
                               "allOf": [
                                 {
-                                  "required": [
-                                    "mode"
-                                  ]
+                                  "required": ["mode"]
                                 },
                                 {
                                   "properties": {
@@ -375,9 +344,7 @@
                           {
                             "allOf": [
                               {
-                                "required": [
-                                  "mode"
-                                ]
+                                "required": ["mode"]
                               },
                               {
                                 "properties": {
@@ -392,9 +359,7 @@
                             "not": {
                               "allOf": [
                                 {
-                                  "required": [
-                                    "mode"
-                                  ]
+                                  "required": ["mode"]
                                 },
                                 {
                                   "properties": {
@@ -413,9 +378,7 @@
                           {
                             "allOf": [
                               {
-                                "required": [
-                                  "mode"
-                                ]
+                                "required": ["mode"]
                               },
                               {
                                 "properties": {
@@ -491,9 +454,7 @@
                           {
                             "allOf": [
                               {
-                                "required": [
-                                  "mode"
-                                ]
+                                "required": ["mode"]
                               },
                               {
                                 "properties": {
@@ -508,9 +469,7 @@
                             "not": {
                               "allOf": [
                                 {
-                                  "required": [
-                                    "mode"
-                                  ]
+                                  "required": ["mode"]
                                 },
                                 {
                                   "properties": {
@@ -526,9 +485,7 @@
                             "not": {
                               "allOf": [
                                 {
-                                  "required": [
-                                    "mode"
-                                  ]
+                                  "required": ["mode"]
                                 },
                                 {
                                   "properties": {
@@ -546,9 +503,7 @@
                                 "anyOf": [
                                   {
                                     "not": {
-                                      "required": [
-                                        "prompt"
-                                      ]
+                                      "required": ["prompt"]
                                     }
                                   },
                                   {
@@ -584,9 +539,7 @@
                           {
                             "allOf": [
                               {
-                                "required": [
-                                  "mode"
-                                ]
+                                "required": ["mode"]
                               },
                               {
                                 "properties": {
@@ -601,9 +554,7 @@
                             "not": {
                               "allOf": [
                                 {
-                                  "required": [
-                                    "mode"
-                                  ]
+                                  "required": ["mode"]
                                 },
                                 {
                                   "properties": {
@@ -621,9 +572,7 @@
                                 "anyOf": [
                                   {
                                     "not": {
-                                      "required": [
-                                        "prompt"
-                                      ]
+                                      "required": ["prompt"]
                                     }
                                   },
                                   {
@@ -670,10 +619,7 @@
               "hint": "فقط برای تصویر به ویدیو. با یک تصویر، فریم اول تنظیم می‌شود؛ با دو تصویر، فریم اول و آخر مشخص می‌شوند.",
               "file": {
                 "type": "list",
-                "accept": [
-                  "image/png",
-                  "image/jpeg"
-                ]
+                "accept": ["image/png", "image/jpeg"]
               },
               "errors": {
                 "minItems": "حداقل ۱ تصویر فریم لازم است.",
@@ -690,9 +636,7 @@
                       {
                         "allOf": [
                           {
-                            "required": [
-                              "mode"
-                            ]
+                            "required": ["mode"]
                           },
                           {
                             "properties": {
@@ -707,9 +651,7 @@
                         "not": {
                           "allOf": [
                             {
-                              "required": [
-                                "mode"
-                              ]
+                              "required": ["mode"]
                             },
                             {
                               "properties": {
@@ -737,9 +679,7 @@
               "hint": "فقط در حالت motion control استفاده می‌شود و باید همراه تصویر مرجع و جهت‌گیری کاراکتر تنظیم شود.",
               "file": {
                 "type": "list",
-                "accept": [
-                  "video/mp4"
-                ]
+                "accept": ["video/mp4"]
               },
               "errors": {
                 "minItems": "حداقل ۱ ویدیوی مرجع لازم است.",
@@ -756,9 +696,7 @@
                       {
                         "allOf": [
                           {
-                            "required": [
-                              "mode"
-                            ]
+                            "required": ["mode"]
                           },
                           {
                             "properties": {
@@ -785,10 +723,7 @@
               "hint": "فقط ۱ تصویر مرجع قابل استفاده است. برای motion control همراه ویدیوی مرجع استفاده می‌شود.",
               "file": {
                 "type": "list",
-                "accept": [
-                  "image/png",
-                  "image/jpeg"
-                ]
+                "accept": ["image/png", "image/jpeg"]
               },
               "errors": {
                 "minItems": "حداقل ۱ تصویر مرجع لازم است.",
@@ -805,9 +740,7 @@
                       {
                         "allOf": [
                           {
-                            "required": [
-                              "mode"
-                            ]
+                            "required": ["mode"]
                           },
                           {
                             "properties": {
@@ -862,10 +795,7 @@
                       "hint": "برای elements.images یا elements.voices لازم است.",
                       "file": {
                         "type": "single",
-                        "accept": [
-                          "image/png",
-                          "image/jpeg"
-                        ]
+                        "accept": ["image/png", "image/jpeg"]
                       }
                     }
                   },
@@ -879,10 +809,7 @@
                       "hint": "تا ۳ تصویر، و فقط همراه frontal image.",
                       "file": {
                         "type": "list",
-                        "accept": [
-                          "image/png",
-                          "image/jpeg"
-                        ]
+                        "accept": ["image/png", "image/jpeg"]
                       },
                       "errors": {
                         "minItems": "حداقل ۱ تصویر عنصر لازم است.",
@@ -900,9 +827,7 @@
                       "hint": "فقط ۱ ویدیو و بدون ترکیب با تصویر یا صدا.",
                       "file": {
                         "type": "list",
-                        "accept": [
-                          "video/mp4"
-                        ]
+                        "accept": ["video/mp4"]
                       },
                       "errors": {
                         "minItems": "حداقل ۱ ویدیوی عنصر لازم است.",
@@ -920,10 +845,7 @@
                       "hint": "فقط ۱ صدا و فقط همراه frontal image.",
                       "file": {
                         "type": "list",
-                        "accept": [
-                          "audio/mpeg",
-                          "audio/wav"
-                        ]
+                        "accept": ["audio/mpeg", "audio/wav"]
                       },
                       "errors": {
                         "minItems": "حداقل ۱ صدای عنصر لازم است.",
@@ -967,9 +889,7 @@
                       {
                         "allOf": [
                           {
-                            "required": [
-                              "mode"
-                            ]
+                            "required": ["mode"]
                           },
                           {
                             "properties": {
@@ -984,9 +904,7 @@
                         "not": {
                           "allOf": [
                             {
-                              "required": [
-                                "mode"
-                              ]
+                              "required": ["mode"]
                             },
                             {
                               "properties": {
@@ -1026,9 +944,7 @@
                       {
                         "allOf": [
                           {
-                            "required": [
-                              "mode"
-                            ]
+                            "required": ["mode"]
                           },
                           {
                             "properties": {
@@ -1043,9 +959,7 @@
                         "not": {
                           "allOf": [
                             {
-                              "required": [
-                                "mode"
-                              ]
+                              "required": ["mode"]
                             },
                             {
                               "properties": {
@@ -1061,9 +975,7 @@
                         "not": {
                           "allOf": [
                             {
-                              "required": [
-                                "mode"
-                              ]
+                              "required": ["mode"]
                             },
                             {
                               "properties": {
@@ -1105,9 +1017,7 @@
                       {
                         "allOf": [
                           {
-                            "required": [
-                              "mode"
-                            ]
+                            "required": ["mode"]
                           },
                           {
                             "properties": {
@@ -1122,9 +1032,7 @@
                         "not": {
                           "allOf": [
                             {
-                              "required": [
-                                "mode"
-                              ]
+                              "required": ["mode"]
                             },
                             {
                               "properties": {
@@ -1140,9 +1048,7 @@
                         "not": {
                           "allOf": [
                             {
-                              "required": [
-                                "mode"
-                              ]
+                              "required": ["mode"]
                             },
                             {
                               "properties": {
@@ -1200,9 +1106,7 @@
                           {
                             "allOf": [
                               {
-                                "required": [
-                                  "mode"
-                                ]
+                                "required": ["mode"]
                               },
                               {
                                 "properties": {
@@ -1217,9 +1121,7 @@
                             "not": {
                               "allOf": [
                                 {
-                                  "required": [
-                                    "mode"
-                                  ]
+                                  "required": ["mode"]
                                 },
                                 {
                                   "properties": {
@@ -1235,9 +1137,7 @@
                             "not": {
                               "allOf": [
                                 {
-                                  "required": [
-                                    "mode"
-                                  ]
+                                  "required": ["mode"]
                                 },
                                 {
                                   "properties": {
@@ -1256,9 +1156,7 @@
                           {
                             "allOf": [
                               {
-                                "required": [
-                                  "mode"
-                                ]
+                                "required": ["mode"]
                               },
                               {
                                 "properties": {
@@ -1273,9 +1171,7 @@
                             "not": {
                               "allOf": [
                                 {
-                                  "required": [
-                                    "mode"
-                                  ]
+                                  "required": ["mode"]
                                 },
                                 {
                                   "properties": {
@@ -1316,9 +1212,7 @@
                           {
                             "allOf": [
                               {
-                                "required": [
-                                  "mode"
-                                ]
+                                "required": ["mode"]
                               },
                               {
                                 "properties": {
@@ -1333,9 +1227,7 @@
                             "not": {
                               "allOf": [
                                 {
-                                  "required": [
-                                    "mode"
-                                  ]
+                                  "required": ["mode"]
                                 },
                                 {
                                   "properties": {
@@ -1351,9 +1243,7 @@
                             "not": {
                               "allOf": [
                                 {
-                                  "required": [
-                                    "mode"
-                                  ]
+                                  "required": ["mode"]
                                 },
                                 {
                                   "properties": {
@@ -1372,9 +1262,7 @@
                           {
                             "allOf": [
                               {
-                                "required": [
-                                  "mode"
-                                ]
+                                "required": ["mode"]
                               },
                               {
                                 "properties": {
@@ -1389,9 +1277,7 @@
                             "not": {
                               "allOf": [
                                 {
-                                  "required": [
-                                    "mode"
-                                  ]
+                                  "required": ["mode"]
                                 },
                                 {
                                   "properties": {
@@ -1434,9 +1320,7 @@
                       {
                         "allOf": [
                           {
-                            "required": [
-                              "mode"
-                            ]
+                            "required": ["mode"]
                           },
                           {
                             "properties": {
@@ -1472,9 +1356,7 @@
                       {
                         "allOf": [
                           {
-                            "required": [
-                              "mode"
-                            ]
+                            "required": ["mode"]
                           },
                           {
                             "properties": {
@@ -1587,18 +1469,12 @@
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "$id": "KLINGAI_VIDEO_3_0_STANDARD",
         "type": "object",
-        "required": [
-          "mode"
-        ],
+        "required": ["mode"],
         "additionalProperties": false,
         "properties": {
           "mode": {
             "type": "string",
-            "enum": [
-              "text_to_video",
-              "image_to_video",
-              "motion_control"
-            ],
+            "enum": ["text_to_video", "image_to_video", "motion_control"],
             "default": "text_to_video"
           },
           "n": {
@@ -1624,10 +1500,7 @@
             "items": {
               "type": "object",
               "additionalProperties": false,
-              "required": [
-                "prompt",
-                "duration"
-              ],
+              "required": ["prompt", "duration"],
               "properties": {
                 "prompt": {
                   "type": "string",
@@ -1678,9 +1551,7 @@
             "items": {
               "type": "object",
               "additionalProperties": false,
-              "required": [
-                "id"
-              ],
+              "required": ["id"],
               "properties": {
                 "id": {
                   "type": "string",
@@ -1741,9 +1612,7 @@
               "allOf": [
                 {
                   "if": {
-                    "required": [
-                      "images"
-                    ],
+                    "required": ["images"],
                     "properties": {
                       "images": {
                         "type": "array",
@@ -1752,9 +1621,7 @@
                     }
                   },
                   "then": {
-                    "required": [
-                      "frontal_image"
-                    ],
+                    "required": ["frontal_image"],
                     "properties": {
                       "frontal_image": {
                         "type": "string",
@@ -1765,9 +1632,7 @@
                 },
                 {
                   "if": {
-                    "required": [
-                      "voices"
-                    ],
+                    "required": ["voices"],
                     "properties": {
                       "voices": {
                         "type": "array",
@@ -1776,9 +1641,7 @@
                     }
                   },
                   "then": {
-                    "required": [
-                      "frontal_image"
-                    ],
+                    "required": ["frontal_image"],
                     "properties": {
                       "frontal_image": {
                         "type": "string",
@@ -1789,9 +1652,7 @@
                 },
                 {
                   "if": {
-                    "required": [
-                      "videos"
-                    ],
+                    "required": ["videos"],
                     "properties": {
                       "videos": {
                         "type": "array",
@@ -1803,19 +1664,13 @@
                     "not": {
                       "anyOf": [
                         {
-                          "required": [
-                            "images"
-                          ]
+                          "required": ["images"]
                         },
                         {
-                          "required": [
-                            "voices"
-                          ]
+                          "required": ["voices"]
                         },
                         {
-                          "required": [
-                            "frontal_image"
-                          ]
+                          "required": ["frontal_image"]
                         }
                       ]
                     }
@@ -1826,18 +1681,12 @@
           },
           "resolution": {
             "type": "string",
-            "enum": [
-              "720p"
-            ],
+            "enum": ["720p"],
             "default": "720p"
           },
           "aspect_ratio": {
             "type": "string",
-            "enum": [
-              "16:9",
-              "9:16",
-              "1:1"
-            ],
+            "enum": ["16:9", "9:16", "1:1"],
             "default": "16:9"
           },
           "duration": {
@@ -1845,21 +1694,7 @@
             "minimum": 3,
             "maximum": 15,
             "default": 5,
-            "enum": [
-              3,
-              4,
-              5,
-              6,
-              7,
-              8,
-              9,
-              10,
-              11,
-              12,
-              13,
-              14,
-              15
-            ]
+            "enum": [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
           },
           "generate_audio": {
             "type": "boolean",
@@ -1867,10 +1702,7 @@
           },
           "character_orientation": {
             "type": "string",
-            "enum": [
-              "image",
-              "video"
-            ],
+            "enum": ["image", "video"],
             "default": "image"
           },
           "keep_original_sound": {
@@ -1878,18 +1710,12 @@
           },
           "output_type": {
             "type": "string",
-            "enum": [
-              "URL"
-            ],
+            "enum": ["URL"],
             "default": "URL"
           },
           "output_format": {
             "type": "string",
-            "enum": [
-              "MP4",
-              "WEBM",
-              "MOV"
-            ],
+            "enum": ["MP4", "WEBM", "MOV"],
             "default": "MP4"
           },
           "output_quality": {
@@ -1900,9 +1726,7 @@
           },
           "delivery_method": {
             "type": "string",
-            "enum": [
-              "async"
-            ],
+            "enum": ["async"],
             "default": "async"
           },
           "include_cost": {
@@ -1918,16 +1742,10 @@
                   "const": "text_to_video"
                 }
               },
-              "required": [
-                "mode"
-              ]
+              "required": ["mode"]
             },
             "then": {
-              "required": [
-                "resolution",
-                "aspect_ratio",
-                "duration"
-              ],
+              "required": ["resolution", "aspect_ratio", "duration"],
               "properties": {
                 "duration": {
                   "type": "integer",
@@ -1937,9 +1755,7 @@
               },
               "oneOf": [
                 {
-                  "required": [
-                    "prompt"
-                  ],
+                  "required": ["prompt"],
                   "properties": {
                     "prompt": {
                       "type": "string",
@@ -1947,15 +1763,11 @@
                     }
                   },
                   "not": {
-                    "required": [
-                      "multi_prompt"
-                    ]
+                    "required": ["multi_prompt"]
                   }
                 },
                 {
-                  "required": [
-                    "multi_prompt"
-                  ],
+                  "required": ["multi_prompt"],
                   "properties": {
                     "multi_prompt": {
                       "type": "array",
@@ -1963,43 +1775,29 @@
                     }
                   },
                   "not": {
-                    "required": [
-                      "prompt"
-                    ]
+                    "required": ["prompt"]
                   }
                 }
               ],
               "not": {
                 "anyOf": [
                   {
-                    "required": [
-                      "frame_images"
-                    ]
+                    "required": ["frame_images"]
                   },
                   {
-                    "required": [
-                      "reference_videos"
-                    ]
+                    "required": ["reference_videos"]
                   },
                   {
-                    "required": [
-                      "reference_images"
-                    ]
+                    "required": ["reference_images"]
                   },
                   {
-                    "required": [
-                      "elements"
-                    ]
+                    "required": ["elements"]
                   },
                   {
-                    "required": [
-                      "character_orientation"
-                    ]
+                    "required": ["character_orientation"]
                   },
                   {
-                    "required": [
-                      "keep_original_sound"
-                    ]
+                    "required": ["keep_original_sound"]
                   }
                 ]
               }
@@ -2012,15 +1810,10 @@
                   "const": "image_to_video"
                 }
               },
-              "required": [
-                "mode"
-              ]
+              "required": ["mode"]
             },
             "then": {
-              "required": [
-                "frame_images",
-                "duration"
-              ],
+              "required": ["frame_images", "duration"],
               "properties": {
                 "frame_images": {
                   "type": "array",
@@ -2035,9 +1828,7 @@
               },
               "oneOf": [
                 {
-                  "required": [
-                    "prompt"
-                  ],
+                  "required": ["prompt"],
                   "properties": {
                     "prompt": {
                       "type": "string",
@@ -2045,15 +1836,11 @@
                     }
                   },
                   "not": {
-                    "required": [
-                      "multi_prompt"
-                    ]
+                    "required": ["multi_prompt"]
                   }
                 },
                 {
-                  "required": [
-                    "multi_prompt"
-                  ],
+                  "required": ["multi_prompt"],
                   "properties": {
                     "multi_prompt": {
                       "type": "array",
@@ -2061,39 +1848,26 @@
                     }
                   },
                   "not": {
-                    "required": [
-                      "prompt"
-                    ]
+                    "required": ["prompt"]
                   }
                 }
               ],
               "not": {
                 "anyOf": [
                   {
-                    "required": [
-                      "resolution",
-                      "aspect_ratio"
-                    ]
+                    "required": ["resolution", "aspect_ratio"]
                   },
                   {
-                    "required": [
-                      "reference_videos"
-                    ]
+                    "required": ["reference_videos"]
                   },
                   {
-                    "required": [
-                      "reference_images"
-                    ]
+                    "required": ["reference_images"]
                   },
                   {
-                    "required": [
-                      "character_orientation"
-                    ]
+                    "required": ["character_orientation"]
                   },
                   {
-                    "required": [
-                      "keep_original_sound"
-                    ]
+                    "required": ["keep_original_sound"]
                   }
                 ]
               }
@@ -2106,9 +1880,7 @@
                   "const": "motion_control"
                 }
               },
-              "required": [
-                "mode"
-              ]
+              "required": ["mode"]
             },
             "then": {
               "required": [
@@ -2129,34 +1901,22 @@
                 },
                 "character_orientation": {
                   "type": "string",
-                  "enum": [
-                    "image",
-                    "video"
-                  ]
+                  "enum": ["image", "video"]
                 }
               },
               "not": {
                 "anyOf": [
                   {
-                    "required": [
-                      "resolution",
-                      "aspect_ratio"
-                    ]
+                    "required": ["resolution", "aspect_ratio"]
                   },
                   {
-                    "required": [
-                      "frame_images"
-                    ]
+                    "required": ["frame_images"]
                   },
                   {
-                    "required": [
-                      "elements"
-                    ]
+                    "required": ["elements"]
                   },
                   {
-                    "required": [
-                      "multi_prompt"
-                    ]
+                    "required": ["multi_prompt"]
                   }
                 ]
               }
@@ -2164,9 +1924,7 @@
           },
           {
             "if": {
-              "required": [
-                "elements"
-              ],
+              "required": ["elements"],
               "properties": {
                 "elements": {
                   "type": "array",
@@ -2175,9 +1933,7 @@
               }
             },
             "then": {
-              "required": [
-                "frame_images"
-              ],
+              "required": ["frame_images"],
               "properties": {
                 "mode": {
                   "const": "image_to_video"
@@ -2191,9 +1947,7 @@
           },
           {
             "if": {
-              "required": [
-                "reference_videos"
-              ],
+              "required": ["reference_videos"],
               "properties": {
                 "reference_videos": {
                   "type": "array",
@@ -2202,10 +1956,7 @@
               }
             },
             "then": {
-              "required": [
-                "reference_images",
-                "character_orientation"
-              ],
+              "required": ["reference_images", "character_orientation"],
               "properties": {
                 "mode": {
                   "const": "motion_control"
@@ -2217,18 +1968,13 @@
                 },
                 "character_orientation": {
                   "type": "string",
-                  "enum": [
-                    "image",
-                    "video"
-                  ]
+                  "enum": ["image", "video"]
                 }
               },
               "not": {
                 "anyOf": [
                   {
-                    "required": [
-                      "multi_prompt"
-                    ]
+                    "required": ["multi_prompt"]
                   }
                 ]
               }
@@ -2236,9 +1982,7 @@
           },
           {
             "if": {
-              "required": [
-                "reference_images"
-              ],
+              "required": ["reference_images"],
               "properties": {
                 "reference_images": {
                   "type": "array",
@@ -2247,10 +1991,7 @@
               }
             },
             "then": {
-              "required": [
-                "reference_videos",
-                "character_orientation"
-              ],
+              "required": ["reference_videos", "character_orientation"],
               "properties": {
                 "mode": {
                   "const": "motion_control"
@@ -2260,24 +2001,16 @@
           },
           {
             "if": {
-              "required": [
-                "character_orientation"
-              ],
+              "required": ["character_orientation"],
               "properties": {
                 "character_orientation": {
                   "type": "string",
-                  "enum": [
-                    "image",
-                    "video"
-                  ]
+                  "enum": ["image", "video"]
                 }
               }
             },
             "then": {
-              "required": [
-                "reference_videos",
-                "reference_images"
-              ],
+              "required": ["reference_videos", "reference_images"],
               "properties": {
                 "mode": {
                   "const": "motion_control"
@@ -2287,9 +2020,7 @@
           },
           {
             "if": {
-              "required": [
-                "keep_original_sound"
-              ],
+              "required": ["keep_original_sound"],
               "properties": {
                 "keep_original_sound": {
                   "type": "boolean"
@@ -2297,9 +2028,7 @@
               }
             },
             "then": {
-              "required": [
-                "reference_videos"
-              ],
+              "required": ["reference_videos"],
               "properties": {
                 "mode": {
                   "const": "motion_control"
@@ -2309,9 +2038,7 @@
           },
           {
             "if": {
-              "required": [
-                "multi_prompt"
-              ],
+              "required": ["multi_prompt"],
               "properties": {
                 "multi_prompt": {
                   "type": "array",
@@ -2320,20 +2047,14 @@
               }
             },
             "then": {
-              "required": [
-                "duration"
-              ],
+              "required": ["duration"],
               "not": {
                 "anyOf": [
                   {
-                    "required": [
-                      "prompt"
-                    ]
+                    "required": ["prompt"]
                   },
                   {
-                    "required": [
-                      "reference_videos"
-                    ]
+                    "required": ["reference_videos"]
                   }
                 ]
               }
@@ -2399,16 +2120,12 @@
           "duration": {
             "operation": "copy",
             "target": "duration",
-            "exclude_if_present": [
-              "reference_videos"
-            ]
+            "exclude_if_present": ["reference_videos"]
           },
           "generate_audio": {
             "operation": "copy",
             "target": "providerSettings.klingai.sound",
-            "exclude_if_present": [
-              "reference_videos"
-            ]
+            "exclude_if_present": ["reference_videos"]
           },
           "character_orientation": {
             "operation": "copy",
@@ -2452,11 +2169,7 @@
           }
         }
       },
-      "pricing_by": [
-        "mode",
-        "duration",
-        "generate_audio"
-      ],
+      "pricing_by": ["mode", "duration", "generate_audio"],
       "pricing_tiers": [
         {
           "mode": "text_to_video",

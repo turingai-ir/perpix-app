@@ -5,6 +5,7 @@ import type {
   JsonConfigMeta,
   JsonConfigSchema,
 } from "../src/hooks/use-dynamic-config-form";
+import { mockAuthenticatedSession } from "./support/auth-session";
 
 const MODEL_UUID = "2d1fcf14-a655-47c5-af08-3fa450dc99cc";
 const NANO_MODEL_UUID = "a509b349-d43f-4065-9cf2-de444bf4aa2c";
@@ -24,14 +25,8 @@ const klingVideoConfig = JSON.parse(
 const klingVideoConfigMeta = klingVideoConfig[0].meta;
 const klingVideoConfigSchema = klingVideoConfig[1].RUNWARE.config_schema;
 
-test.beforeEach(async ({ baseURL, context, page }) => {
-  await context.addCookies([
-    {
-      name: "access_token",
-      value: "test-token",
-      url: baseURL,
-    },
-  ]);
+test.beforeEach(async ({ page }) => {
+  await mockAuthenticatedSession(page);
 
   await page.addInitScript(() => {
     window.localStorage.clear();

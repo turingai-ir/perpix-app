@@ -1,5 +1,5 @@
 import { useEffect, useRef, type FC } from "react";
-import { Outlet, useLocation, useNavigate, useMatches } from "react-router";
+import { Outlet, useLocation, useMatches } from "react-router";
 import { toast } from "sonner";
 import { useSetAtom } from "jotai";
 
@@ -8,19 +8,37 @@ import {
   FetchNetworkError,
   FetchTimeoutError,
 } from "@/utils/custom-fetch/fetch-errors";
-import { APP_KEYS, HttpStatus } from "@/utils";
+import { HttpStatus } from "@/utils";
 import { useAppTranslate } from "@/hooks";
 import { appEventBus } from "@/lib/event-bus";
-import { cookies } from "@/utils/cookies";
-import { APP_ROUTES_KEY } from "@/router/routes";
+import {
+  AuthUnavailable,
+  useAuthStatus,
+  useSessionLifecycle,
+} from "@/features/auth";
 import { usePricingFeature } from "@/feature/pricing";
-import { clearPaymentSession, PaymentEventsProvider } from "@/feature/payment";
+import { PaymentEventsProvider } from "@/feature/payment";
 import appLayoutAtom from "@/pages/(app)/_layout/_state";
+
+const AUTH_ENDPOINT_PREFIX = "/api/v1/auth/";
+const AUTH_ENDPOINTS_WITH_OWN_ERRORS = "api-tokens";
+
+const isAuthEndpointError = (error: unknown) => {
+  if (!(error instanceof FetchHttpError)) return false;
+  const url =
+    typeof error.request === "string" ? error.request : error.request.url;
+  const { pathname } = new URL(url, window.location.origin);
+
+  return (
+    pathname.startsWith(AUTH_ENDPOINT_PREFIX) &&
+    !pathname.startsWith(AUTH_ENDPOINT_PREFIX + AUTH_ENDPOINTS_WITH_OWN_ERRORS)
+  );
+};
 
 const RootLayout: FC = () => {
   const { t } = useAppTranslate();
-  const navigate = useNavigate();
-  const cookie = cookies();
+  const authStatus = useAuthStatus();
+  useSessionLifecycle();
   const { openPricingFeature } = usePricingFeature();
   const location = useLocation();
   const setAppLayoutState = useSetAtom(appLayoutAtom);
@@ -36,14 +54,10 @@ const RootLayout: FC = () => {
         toast.error(t("common.fetchErrors.network"));
       }
 
-      // 401 error
-      if (
-        error instanceof FetchHttpError &&
-        error.response.status === HttpStatus.UNAUTHORIZED
-      ) {
-        clearPaymentSession();
-        cookie.remove(APP_KEYS.COOKIES.ACCESS_TOKEN);
-        navigate(APP_ROUTES_KEY.auth.login.path);
+      // Session recovery and sign-out on 401 live in the auth feature; the
+      // auth endpoints report their own errors inside their forms.
+      if (isAuthEndpointError(error)) {
+        return;
       }
 
       if (
@@ -161,7 +175,7 @@ const RootLayout: FC = () => {
     return () => {
       appEventBusListener();
     };
-  }, [cookie, navigate, openPricingFeature, t]);
+  }, [openPricingFeature, t]);
 
   useEffect(() => {
     if (previousPathnameRef.current === location.pathname) {
@@ -191,7 +205,7 @@ const RootLayout: FC = () => {
     <>
       <title>{pageTitle}</title>
       <PaymentEventsProvider />
-      <Outlet />
+      {authStatus === "unavailable" ? <AuthUnavailable /> : <Outlet />}
     </>
   );
 };

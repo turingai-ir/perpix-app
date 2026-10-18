@@ -3,8 +3,8 @@ import { openAuthenticatedEditor } from "./image-editor-test-setup";
 import { testImageBase64 } from "./image-editor-test-image-fixtures";
 
 test.describe("Image editor remote source", () => {
-  test.beforeEach(async ({ baseURL, context, page }) => {
-    await openAuthenticatedEditor(page, context, baseURL);
+  test.beforeEach(async ({ page }) => {
+    await openAuthenticatedEditor(page);
   });
 
   test("loads the workspace from a file UUID without an object URL", async ({

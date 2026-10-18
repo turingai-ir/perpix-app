@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { mockAuthenticatedSession } from "../../../../__tests__/support/auth-session";
 
 const walletUuid = "c0202000-0000-4000-8000-000000000002";
 const executionUuid = "c0202000-0000-4000-8000-000000000003";
@@ -7,13 +8,8 @@ const intentUuid = "c0202000-0000-4000-8000-000000000005";
 for (const delayedDetails of [false, true]) {
   test(`wallet checkout waits for details: ${delayedDetails}`, async ({
     page,
-    context,
-    baseURL,
   }) => {
-    if (!baseURL) throw new Error("Playwright baseURL is required");
-    await context.addCookies([
-      { name: "access_token", value: "test-token", url: baseURL },
-    ]);
+    await mockAuthenticatedSession(page);
     await page.route("**/api/v1/user/get-info", (route) =>
       route.fulfill({
         json: { uuid: "user-1", name: "Test", email: "test@example.com" },
@@ -131,14 +127,9 @@ for (const delayedDetails of [false, true]) {
 
 test("subscription checkout starts in the subscription service", async ({
   page,
-  context,
-  baseURL,
 }) => {
-  if (!baseURL) throw new Error("Playwright baseURL is required");
   const planUuid = "c0202000-0000-4000-8000-000000000004";
-  await context.addCookies([
-    { name: "access_token", value: "test-token", url: baseURL },
-  ]);
+  await mockAuthenticatedSession(page);
   await page.route("**/api/v1/user/get-info", (route) =>
     route.fulfill({
       json: { uuid: "user-1", name: "Test", email: "test@example.com" },

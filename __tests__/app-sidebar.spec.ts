@@ -1,11 +1,10 @@
 import { expect, type Page, test } from "@playwright/test";
+import { mockAuthenticatedSession } from "./support/auth-session";
 
 test.describe("App sidebar", () => {
-  test.beforeEach(async ({ baseURL, context, page }) => {
+  test.beforeEach(async ({ page }) => {
     await mockApi(page);
-    await context.addCookies([
-      { name: "access_token", value: "test-token", url: baseURL },
-    ]);
+    await mockAuthenticatedSession(page);
   });
 
   test("shows the experimental editor link under gallery", async ({ page }) => {

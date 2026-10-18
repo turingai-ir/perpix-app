@@ -7,8 +7,8 @@ import {
 } from "./image-editor-test-image-fixtures";
 
 test.describe("Image editor canvas", () => {
-  test.beforeEach(async ({ baseURL, context, page }) => {
-    await openAuthenticatedEditor(page, context, baseURL);
+  test.beforeEach(async ({ page }) => {
+    await openAuthenticatedEditor(page);
   });
 
   test("loads the image workspace after upload", async ({ page }) => {
