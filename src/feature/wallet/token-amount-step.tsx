@@ -71,8 +71,7 @@ export function TokenAmountStep(props: TokenAmountStepProps) {
             )}
           </span>{" "}
           <strong className="text-foreground tabular-nums">
-            {props.balance}{" "}
-            {t("common.token")}
+            {props.balance} {t("common.token")}
           </strong>
         </div>
         <FormField
@@ -87,14 +86,19 @@ export function TokenAmountStep(props: TokenAmountStepProps) {
               </FormLabel>
               <FormControl>
                 <NumericFormat
-                  {...field}
                   customInput={Input}
+                  disabled={field.disabled}
                   dir="ltr"
+                  getInputRef={field.ref}
                   inputMode="numeric"
+                  name={field.name}
+                  onBlur={field.onBlur}
                   thousandSeparator=","
                   autoComplete="off"
                   className="h-12 px-4 text-base! tabular-nums"
                   onValueChange={({ value }) => field.onChange(value)}
+                  value={field.value}
+                  valueIsNumericString
                 />
               </FormControl>
               <p className="text-muted-foreground text-xs">

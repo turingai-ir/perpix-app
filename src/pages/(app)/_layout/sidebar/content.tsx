@@ -10,7 +10,15 @@ import { useAppTranslate } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
 import { Separator } from "@/components/ui/separator";
 
-const AppLayoutSidebarContent: FC = () => {
+type AppLayoutSidebarContentProps = {
+  balanceUsdmicro: number;
+  onOpenWalletCharge: () => void;
+};
+
+const AppLayoutSidebarContent: FC<AppLayoutSidebarContentProps> = ({
+  balanceUsdmicro,
+  onOpenWalletCharge,
+}) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
 
   return (
@@ -23,7 +31,10 @@ const AppLayoutSidebarContent: FC = () => {
       >
         <AppLayoutSidebarNavigation />
         <Separator />
-        <AppLayoutSidebarWallet />
+        <AppLayoutSidebarWallet
+          balanceUsdmicro={balanceUsdmicro}
+          onOpenWalletCharge={onOpenWalletCharge}
+        />
         <AppLayoutSidebarHistory />
       </nav>
       <AppLayoutSidebarUserMenu />

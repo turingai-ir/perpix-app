@@ -86,6 +86,44 @@ test("shows the animated brand in the gallery header", async ({ page }) => {
   await expect(brand).toHaveCSS("animation-name", "none");
 });
 
+test("keeps the gallery brand inside its slot around the mobile breakpoint", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  const header = page.locator("header").filter({
+    has: page.locator("[data-brand-entrance]"),
+  });
+  const brand = header.locator("[data-brand-entrance]");
+
+  for (const { width, visible } of [
+    { width: 430, visible: false },
+    { width: 431, visible: true },
+    { width: 480, visible: true },
+  ]) {
+    await page.setViewportSize({ width, height: 812 });
+
+    if (!visible) {
+      await expect(brand).toBeHidden();
+      continue;
+    }
+
+    await expect(brand).toBeVisible();
+    const slot = brand.locator("..");
+    const slotBox = await slot.boundingBox();
+    const brandBox = await brand.boundingBox();
+    expect(slotBox).not.toBeNull();
+    expect(brandBox).not.toBeNull();
+    expect(brandBox!.x).toBeGreaterThanOrEqual(slotBox!.x - 0.5);
+    expect(brandBox!.y).toBeGreaterThanOrEqual(slotBox!.y - 0.5);
+    expect(brandBox!.x + brandBox!.width).toBeLessThanOrEqual(
+      slotBox!.x + slotBox!.width + 0.5,
+    );
+    expect(brandBox!.y + brandBox!.height).toBeLessThanOrEqual(
+      slotBox!.y + slotBox!.height + 0.5,
+    );
+  }
+});
+
 for (const viewport of [
   { width: 375, height: 812 },
   { width: 812, height: 375 },
