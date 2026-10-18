@@ -21,8 +21,13 @@ test.describe("Wallet checkout", () => {
   });
 
   test("reviews the exact server price before navigating to the gateway", async ({
+    browserName,
     page,
   }) => {
+    test.slow(
+      browserName === "webkit",
+      "WebKit needs longer to stabilize clicks",
+    );
     await page.setViewportSize({ width: 1440, height: 900 });
     let gatewayVisits = 0;
     await page.route("**/mock-gateway", (route) => {
@@ -72,8 +77,13 @@ test.describe("Wallet checkout", () => {
   });
 
   test("submits typed formatted amounts as raw micro-units", async ({
+    browserName,
     page,
   }) => {
+    test.slow(
+      browserName === "webkit",
+      "WebKit needs longer to stabilize clicks",
+    );
     await page.goto("/");
     await page.getByRole("button", { name: "افزایش موجودی کیف پول" }).click();
 

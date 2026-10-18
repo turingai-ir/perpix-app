@@ -179,6 +179,62 @@ test.describe("App sidebar", () => {
     expect(dimensions.scrollWidth).toBe(dimensions.clientWidth);
     expect(dimensions.overflowX).toBe("hidden");
   });
+
+  for (const viewport of [
+    { width: 375, height: 812 },
+    { width: 768, height: 1024 },
+    { width: 1440, height: 900 },
+  ]) {
+    test(`opens the profile from the sidebar at ${viewport.width}px`, async ({
+      page,
+    }) => {
+      await page.setViewportSize(viewport);
+      await page.goto("/");
+
+      if (viewport.width < 1024) {
+        await page.getByRole("button", { name: "باز کردن نوار کناری" }).click();
+      }
+
+      const sidebar =
+        viewport.width < 1024
+          ? page.locator('[data-slot="sheet-content"]')
+          : page.locator("aside");
+      await sidebar.locator('[data-slot="dropdown-menu-trigger"]').click();
+      await page.getByRole("menuitem", { name: "حساب کاربری" }).click();
+
+      await expect(page).toHaveURL(/\/profile\/settings$/);
+    });
+  }
+
+  test.describe("touch profile menu", () => {
+    test.use({
+      hasTouch: true,
+      isMobile: true,
+      viewport: { width: 375, height: 812 },
+    });
+
+    test("opens the profile with taps", async ({ page }) => {
+      await page.goto("/");
+      await page.getByRole("button", { name: "باز کردن نوار کناری" }).tap();
+
+      const profileButton = page.locator(
+        '[data-slot="sheet-content"] [data-slot="dropdown-menu-trigger"]',
+      );
+      await profileButton.tap();
+      const profileMenu = page.locator('[data-slot="dropdown-menu-content"]');
+      const sheet = page.locator('[data-slot="sheet-content"]');
+      const [menuLayer, sheetLayer] = await Promise.all([
+        profileMenu.evaluate((element) =>
+          Number(getComputedStyle(element).zIndex),
+        ),
+        sheet.evaluate((element) => Number(getComputedStyle(element).zIndex)),
+      ]);
+      expect(menuLayer).toBeGreaterThan(sheetLayer);
+      await page.getByRole("menuitem", { name: "حساب کاربری" }).tap();
+
+      await expect(page).toHaveURL(/\/profile\/settings$/);
+    });
+  });
 });
 
 async function mockApi(page: Page) {

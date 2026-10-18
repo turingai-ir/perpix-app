@@ -89,10 +89,15 @@ for (const taxAmount of ["2010", "0"]) {
     });
 
     await page.goto("/profile/payments");
-    await expect(page.getByText("پرداخت شده؛ در حال اعمال")).toBeVisible();
-    await expect(page.getByText("در حال اعمال", { exact: true })).toBeVisible();
-    const beforeReconnect = walletRequests;
     const table = page.getByRole("table");
+    await expect(table.getByText("پرداخت شده؛ در حال اعمال")).toBeVisible();
+    await expect(
+      table.getByText("در حال اعمال", { exact: true }),
+    ).toBeVisible();
+    await expect(page.locator(".finance-summary")).toContainText(
+      "۹٬۰۰۷٬۱۹۹٬۲۵۴٬۷۴۰٬۹۹۳ تومان",
+    );
+    const beforeReconnect = walletRequests;
     const cells = table
       .getByRole("row")
       .filter({ hasText: intentUuid })

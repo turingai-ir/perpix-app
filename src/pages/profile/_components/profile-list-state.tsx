@@ -3,7 +3,11 @@ import LoadingSection from "@/components/custom/loading-section";
 
 export function ProfileListLoading() {
   return (
-    <div className="flex min-h-72 items-center justify-center">
+    <div
+      className="flex min-h-72 items-center justify-center"
+      role="status"
+      aria-busy="true"
+    >
       <LoadingSection />
     </div>
   );
@@ -27,7 +31,10 @@ type ProfileListEmptyProps = {
 
 export function ProfileListEmpty({ title }: ProfileListEmptyProps) {
   return (
-    <div className="text-muted-foreground flex min-h-72 items-center justify-center text-sm">
+    <div
+      className="text-muted-foreground flex min-h-64 items-center justify-center px-6 text-center text-sm"
+      role="status"
+    >
       {title}
     </div>
   );

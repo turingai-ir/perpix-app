@@ -10,24 +10,21 @@ test.beforeEach(async ({ page }) => {
   await page.goto("/auth/login");
 });
 
-test("hero settles within five seconds without a redundant pause control", async ({
+test("hero keeps ambient motion running without a redundant pause control", async ({
   page,
 }) => {
   await expect(page.getByRole("button", { name: "توقف حرکت" })).toHaveCount(0);
   const artwork = page.locator("[data-login-artwork]");
   await expect(artwork).toBeVisible();
-  await expect
-    .poll(
-      () =>
-        artwork.evaluate(
-          (el) =>
-            el
-              .getAnimations({ subtree: true })
-              .filter((animation) => animation.playState === "running").length,
-        ),
-      { timeout: 6500 },
-    )
-    .toBe(0);
+  await page.waitForTimeout(5500);
+  expect(
+    await artwork.evaluate(
+      (el) =>
+        el
+          .getAnimations({ subtree: true })
+          .filter((animation) => animation.playState === "running").length,
+    ),
+  ).toBeGreaterThan(0);
 });
 
 test("hero responds to mouse movement and resets on exit", async ({ page }) => {

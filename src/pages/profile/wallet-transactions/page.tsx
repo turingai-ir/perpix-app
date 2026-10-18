@@ -1,136 +1,142 @@
-import { useMemo } from "react";
+import { useDeferredValue, useState } from "react";
 import { useSearchParams } from "react-router";
 
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  WalletTransactionTypeEnumMap,
-  type SchemaWalletTransactionResponse,
-} from "@/services/api";
-import { dayjs } from "@/lib/dayjs";
-import { formatTokenAmount } from "@/utils";
-import { useAppTranslate } from "@/hooks";
-import { APP_I18_KEYS } from "@/services/i18";
 import { useWalletTransactions } from "@/feature/wallet";
+import { useAppTranslate } from "@/hooks";
+import { FinanceToolbar } from "@/pages/profile/_components/finance-toolbar";
 import { PaginationFooter } from "@/pages/profile/_components/pagination-footer";
 import {
   ProfileListEmpty,
   ProfileListError,
   ProfileListLoading,
 } from "@/pages/profile/_components/profile-list-state";
+import {
+  WalletTransactionTypeEnumMap,
+  type SchemaWalletTransactionTypeEnum,
+} from "@/services/api";
+import { APP_I18_KEYS } from "@/services/i18";
+import { formatLocalizedNumber } from "@/utils";
 
-const PAGE_LIMIT = 100;
+import { WalletHero } from "./_components/wallet-hero";
+import { WalletRecords } from "./_components/wallet-records";
+import { WalletSummary } from "./_components/wallet-summary";
+import "../_components/finance.css";
 
-const transactionTypeLabels = {
-  [WalletTransactionTypeEnumMap.DEPOSIT]: "واریز",
-  [WalletTransactionTypeEnumMap.WITHDRAW]: "برداشت",
-  [WalletTransactionTypeEnumMap.REFUND]: "بازگشت",
-};
+const PAGE_LIMIT = 10;
+const transactionFilters = [
+  "all",
+  WalletTransactionTypeEnumMap.DEPOSIT,
+  WalletTransactionTypeEnumMap.WITHDRAW,
+  WalletTransactionTypeEnumMap.REFUND,
+] as const;
 
 function ProfileWalletTransactionsPage() {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const [searchParams, setSearchParams] = useSearchParams();
-  const offset = Number(searchParams.get("offset") ?? 0);
-  const safeOffset = Number.isFinite(offset) && offset > 0 ? offset : 0;
+  const [search, setSearch] = useState("");
+  const deferredSearch = useDeferredValue(search.trim().toLowerCase());
+  const requestedOffset = Number(searchParams.get("offset") ?? 0);
+  const offset =
+    Number.isSafeInteger(requestedOffset) && requestedOffset > 0
+      ? requestedOffset
+      : 0;
+  const requestedType = searchParams.get("type") ?? "all";
+  const activeFilter = transactionFilters.includes(
+    requestedType as (typeof transactionFilters)[number],
+  )
+    ? requestedType
+    : "all";
+  const type =
+    activeFilter === "all"
+      ? undefined
+      : (activeFilter as SchemaWalletTransactionTypeEnum);
   const transactionsState = useWalletTransactions({
-    offset: safeOffset,
+    type,
+    offset,
     limit: PAGE_LIMIT,
   });
-  const transactions = useMemo(
-    () =>
-      transactionsState.data
-        ? Array.from(
-            transactionsState.data
-              .transactions as ArrayLike<SchemaWalletTransactionResponse>,
-          )
-        : [],
-    [transactionsState.data],
+  const transactions = Array.from(transactionsState.data?.transactions ?? []);
+  const visibleTransactions = transactions.filter((transaction) =>
+    transaction.transaction_uuid.toLowerCase().includes(deferredSearch),
   );
 
-  const goToOffset = (nextOffset: number) => {
-    setSearchParams({ offset: String(Math.max(0, nextOffset)) });
+  const updatePage = (nextOffset: number) => {
+    const next = new URLSearchParams(searchParams);
+    next.set("offset", String(Math.max(0, nextOffset)));
+    setSearchParams(next);
+  };
+  const updateFilter = (value: string) => {
+    const next = new URLSearchParams(searchParams);
+    value === "all" ? next.delete("type") : next.set("type", value);
+    next.delete("offset");
+    setSearchParams(next);
   };
 
   return (
-    <Card className="min-h-full">
-      <CardHeader>
-        <CardTitle>تراکنش‌های کیف پول</CardTitle>
-      </CardHeader>
-      <CardContent className="p-0">
+    <div className="finance-page finance-page-wallet">
+      <WalletHero />
+      <WalletSummary transactions={transactions} />
+      <section
+        className="finance-archive"
+        aria-labelledby="wallet-archive-title"
+      >
+        <div className="finance-archive-heading">
+          <div>
+            <h2 id="wallet-archive-title">
+              {t("pages.profile.finance.walletArchive")}
+            </h2>
+            <p>{t("pages.profile.finance.pageScope")}</p>
+          </div>
+        </div>
+        <FinanceToolbar
+          searchLabel={t("pages.profile.finance.search")}
+          searchPlaceholder={t("pages.profile.finance.searchPlaceholder")}
+          searchValue={search}
+          filtersLabel={t("pages.profile.finance.filters")}
+          filters={transactionFilters.map((value) => ({
+            value,
+            label:
+              value === "all"
+                ? t("pages.profile.finance.all")
+                : t(`pages.profile.finance.${value}`),
+          }))}
+          activeFilter={activeFilter}
+          resultLabel={t("pages.profile.finance.resultCount", {
+            value: formatLocalizedNumber({ value: visibleTransactions.length }),
+          })}
+          clearLabel={t("pages.profile.finance.clearFilters")}
+          onSearchChange={setSearch}
+          onFilterChange={updateFilter}
+          onClear={() => {
+            setSearch("");
+            updateFilter("all");
+          }}
+        />
         {transactionsState.isLoading ? <ProfileListLoading /> : null}
         {transactionsState.isError ? (
-          <ProfileListError onRetry={() => transactionsState.refetch()} />
+          <ProfileListError onRetry={() => void transactionsState.refetch()} />
         ) : null}
         {transactionsState.isSuccess && transactions.length === 0 ? (
-          <ProfileListEmpty title="تراکنشی برای نمایش وجود ندارد" />
+          <ProfileListEmpty title={t("pages.profile.finance.emptyWallet")} />
+        ) : null}
+        {transactions.length > 0 && visibleTransactions.length === 0 ? (
+          <ProfileListEmpty title={t("pages.profile.finance.noResults")} />
+        ) : null}
+        {visibleTransactions.length > 0 ? (
+          <WalletRecords transactions={visibleTransactions} />
         ) : null}
         {transactions.length > 0 ? (
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-4xl text-sm">
-              <thead className="bg-muted/60 text-muted-foreground">
-                <tr className="[&>th]:px-4 [&>th]:py-3 [&>th]:text-right [&>th]:font-medium">
-                  <th>کد تراکنش</th>
-                  <th>نوع</th>
-                  <th>مبلغ</th>
-                  <th>موجودی قبل</th>
-                  <th>موجودی بعد</th>
-                  <th>تاریخ</th>
-                </tr>
-              </thead>
-              <tbody className="divide-border divide-y">
-                {transactions.map((transaction) => (
-                  <tr
-                    key={transaction.transaction_uuid}
-                    className="[&>td]:px-4 [&>td]:py-3"
-                  >
-                    <td dir="ltr" className="text-foreground font-mono text-xs">
-                      {transaction.transaction_uuid}
-                    </td>
-                    <td>
-                      <Badge
-                        variant={
-                          transaction.type ===
-                          WalletTransactionTypeEnumMap.WITHDRAW
-                            ? "destructive"
-                            : "secondary"
-                        }
-                      >
-                        {transactionTypeLabels[transaction.type]}
-                      </Badge>
-                    </td>
-                    <td className="font-medium">
-                      {formatTokenAmount(transaction.amount_usdmicro)}{" "}
-                      {t("common.token")}
-                    </td>
-                    <td>
-                      {formatTokenAmount(transaction.balance_before)}{" "}
-                      {t("common.token")}
-                    </td>
-                    <td>
-                      {formatTokenAmount(transaction.balance_after)}{" "}
-                      {t("common.token")}
-                    </td>
-                    <td>
-                      {dayjs(transaction.created_at)
-                        .calendar("jalali")
-                        .format("YYYY/MM/DD HH:mm")}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <PaginationFooter
+            offset={offset}
+            itemCount={transactions.length}
+            hasNext={transactionsState.data?.has_next ?? false}
+            isFetching={transactionsState.isFetching}
+            onPrevious={() => updatePage(offset - PAGE_LIMIT)}
+            onNext={() => updatePage(offset + PAGE_LIMIT)}
+          />
         ) : null}
-      </CardContent>
-      <PaginationFooter
-        offset={safeOffset}
-        limit={PAGE_LIMIT}
-        hasNext={transactionsState.data?.has_next ?? false}
-        isFetching={transactionsState.isFetching}
-        onPrevious={() => goToOffset(safeOffset - PAGE_LIMIT)}
-        onNext={() => goToOffset(safeOffset + PAGE_LIMIT)}
-      />
-    </Card>
+      </section>
+    </div>
   );
 }
 

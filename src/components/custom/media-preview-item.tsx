@@ -24,6 +24,7 @@ interface MediaPreviewItemProps {
   alt?: string;
   aspectRatio?: string;
   fileId: string;
+  fit?: "cover" | "contain";
   index?: number;
   type: MediaType;
 }
@@ -32,6 +33,7 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
   alt,
   aspectRatio = "1 / 1",
   fileId,
+  fit = "cover",
   index = 0,
   type,
 }) => {
@@ -90,7 +92,10 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
             >
               {type === "image" ? (
                 <img
-                  className="h-full w-full object-cover transition-transform group-hover:scale-[1.02]"
+                  className={cn(
+                    "h-full w-full transition-transform group-hover:scale-[1.02]",
+                    fit === "contain" ? "object-contain" : "object-cover",
+                  )}
                   src={mediaUrl}
                   alt={alt ?? `${mediaLabel} ${index + 1}`}
                 />
@@ -98,7 +103,10 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
                 <>
                   {}
                   <video
-                    className="h-full w-full object-cover transition-transform group-hover:scale-[1.02]"
+                    className={cn(
+                      "h-full w-full transition-transform group-hover:scale-[1.02]",
+                      fit === "contain" ? "object-contain" : "object-cover",
+                    )}
                     src={mediaUrl}
                     preload="metadata"
                     muted

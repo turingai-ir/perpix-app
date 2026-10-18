@@ -703,6 +703,8 @@
     top: auto;
     bottom: 0;
     inset-inline: 0;
+    left: 0 !important;
+    right: 0 !important;
     width: 100%;
     max-width: 100%;
     translate: none;

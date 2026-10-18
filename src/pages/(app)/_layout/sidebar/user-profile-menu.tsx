@@ -56,7 +56,7 @@ const AppLayoutSidebarUserProfileMenu: FC = () => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent
-          className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+          className="z-[70] w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
           side="top"
           align="end"
           sideOffset={4}
