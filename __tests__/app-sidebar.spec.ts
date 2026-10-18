@@ -15,6 +15,30 @@ test.describe("App sidebar", () => {
     await mockAuthenticatedSession(page);
   });
 
+  test("loads the pricing sheet when it is first opened", async ({ page }) => {
+    const pricingRequests: string[] = [];
+    page.on("request", (request) => {
+      if (request.url().includes("/feature/pricing/pricing.tsx")) {
+        pricingRequests.push(request.url());
+      }
+    });
+
+    await page.goto("/");
+    const upgradeButton = page.getByRole("button", { name: "خرید اشتراک" });
+    await expect(upgradeButton).toBeVisible();
+    expect(pricingRequests).toHaveLength(0);
+
+    await upgradeButton.click();
+    await expect(page.getByRole("dialog", { name: "بسته ها" })).toBeVisible();
+    expect(pricingRequests).toHaveLength(1);
+
+    await page.getByRole("button", { name: "Close" }).click();
+    await expect(page.getByRole("dialog", { name: "بسته ها" })).toBeHidden();
+    await upgradeButton.click();
+    await expect(page.getByRole("dialog", { name: "بسته ها" })).toBeVisible();
+    expect(pricingRequests).toHaveLength(1);
+  });
+
   test("shows the experimental editor link under gallery", async ({ page }) => {
     await page.goto("/");
 

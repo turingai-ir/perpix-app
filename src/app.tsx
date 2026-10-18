@@ -1,3 +1,5 @@
+import { Suspense, useEffect, useState } from "react";
+import { useAtomValue } from "jotai";
 import { RouterProvider } from "react-router";
 import { DirectionProvider } from "@radix-ui/react-direction";
 
@@ -9,7 +11,7 @@ import {
 import { router } from "@/router/router";
 import { Toaster } from "@/components/ui/sonner";
 import { PwaRegistrationProvider } from "@/feature/pwa";
-import PricingFeature from "@/feature/pricing";
+import { PricingFeature, pricingFeatureAtom } from "@/feature/pricing";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 
 import "./lib/private-data";
@@ -18,6 +20,13 @@ import "./styles/globals.css";
 import "./styles/tailwind.css";
 
 function App() {
+  const { open: pricingOpen } = useAtomValue(pricingFeatureAtom);
+  const [pricingWasOpened, setPricingWasOpened] = useState(false);
+
+  useEffect(() => {
+    if (pricingOpen) setPricingWasOpened(true);
+  }, [pricingOpen]);
+
   return (
     <>
       <DirectionProvider dir="rtl">
@@ -31,7 +40,9 @@ function App() {
           <Toaster duration={4000} richColors position="top-center" />
           <PwaRegistrationProvider />
           {/* <SupportChatProvider /> */}
-          <PricingFeature />
+          <Suspense fallback={null}>
+            {pricingWasOpened && <PricingFeature />}
+          </Suspense>
           <RouterProvider router={router} />
         </PersistQueryClientProvider>
       </DirectionProvider>
