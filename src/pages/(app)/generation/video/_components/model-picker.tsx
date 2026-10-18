@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { Check, ChevronDown, LockKeyhole, Search, X } from "lucide-react";
+import { Dialog as DialogPrimitive } from "radix-ui";
 
 import styles from "../composer.module.css";
 import {
   Dialog,
   DialogClose,
-  DialogContent,
   DialogDescription,
+  DialogOverlay,
+  DialogPortal,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
@@ -145,81 +147,87 @@ export function VideoModelPicker({
           <ChevronDown size={18} aria-hidden="true" />
         </button>
       </DialogTrigger>
-      <DialogContent className={styles.modelDialog} showCloseButton={false}>
-        <div className={styles.dialogHeading}>
-          <div>
-            <DialogTitle>{t("common.chooseModel")}</DialogTitle>
-            <DialogDescription>
-              {t("pages.generation.video.studio.modelHint")}
-            </DialogDescription>
+      <DialogPortal>
+        <DialogOverlay />
+        <DialogPrimitive.Content
+          data-slot="dialog-content"
+          className={styles.modelDialog}
+        >
+          <div className={styles.dialogHeading}>
+            <div>
+              <DialogTitle>{t("common.chooseModel")}</DialogTitle>
+              <DialogDescription>
+                {t("pages.generation.video.studio.modelHint")}
+              </DialogDescription>
+            </div>
+            <DialogClose
+              className={styles.closeButton}
+              aria-label={t("common.close")}
+            >
+              <X size={20} />
+            </DialogClose>
           </div>
-          <DialogClose
-            className={styles.closeButton}
-            aria-label={t("common.close")}
-          >
-            <X size={20} />
-          </DialogClose>
-        </div>
-        <label className={styles.search}>
-          <Search size={18} aria-hidden="true" />
-          <input
-            type="search"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            aria-label={t("pages.generation.video.studio.modelSearch")}
-            placeholder={t("pages.generation.video.studio.modelSearch")}
-          />
-        </label>
-        <div className={styles.modelList}>
-          {matches.map((item) => {
-            const modelName = item.display_name || item.name;
-            return (
-              <button
-                type="button"
-                key={item.uuid}
-                className={styles.modelOption}
-                aria-label={modelName}
-                aria-pressed={item.uuid === model.currentModel}
-                onClick={() => {
-                  model.setCurrentModel(item.uuid);
-                  setOpen(false);
-                  setQuery("");
-                }}
-              >
-                <ModelIcon
-                  key={`${modelName}-${item.icon_url ?? ""}`}
-                  url={item.icon_url}
-                  name={modelName}
-                />
-                <span className={styles.modelName}>
-                  <span className={styles.modelCardHeading}>
-                    <strong dir="auto">{modelName}</strong>
+          <label className={styles.search}>
+            <Search size={18} aria-hidden="true" />
+            <input
+              type="search"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              aria-label={t("pages.generation.video.studio.modelSearch")}
+              placeholder={t("pages.generation.video.studio.modelSearch")}
+            />
+          </label>
+          <div className={styles.modelList}>
+            {matches.map((item) => {
+              const modelName = item.display_name || item.name;
+              return (
+                <button
+                  type="button"
+                  key={item.uuid}
+                  className={styles.modelOption}
+                  aria-label={modelName}
+                  aria-pressed={item.uuid === model.currentModel}
+                  onClick={() => {
+                    model.setCurrentModel(item.uuid);
+                    setOpen(false);
+                    setQuery("");
+                  }}
+                >
+                  <ModelIcon
+                    key={`${modelName}-${item.icon_url ?? ""}`}
+                    url={item.icon_url}
+                    name={modelName}
+                  />
+                  <span className={styles.modelName}>
+                    <span className={styles.modelCardHeading}>
+                      <strong dir="auto">{modelName}</strong>
+                    </span>
+                    <span className={styles.modelDescription}>
+                      {getModelDescription(modelName, t)}
+                    </span>
+                    {!isModelAllowed(item, model.allowedModelNames) && (
+                      <small className={styles.locked}>
+                        <LockKeyhole size={12} />
+                        {t("common.upgradeRequired")}
+                      </small>
+                    )}
                   </span>
-                  <span className={styles.modelDescription}>
-                    {getModelDescription(modelName, t)}
-                  </span>
-                  {!isModelAllowed(item, model.allowedModelNames) && (
-                    <small className={styles.locked}>
-                      <LockKeyhole size={12} />
-                      {t("common.upgradeRequired")}
-                    </small>
+                  {item.uuid === model.currentModel && (
+                    <span className={styles.selectedMark}>
+                      <Check size={15} strokeWidth={2.4} aria-hidden="true" />
+                    </span>
                   )}
-                </span>
-                {item.uuid === model.currentModel && (
-                  <span className={styles.selectedMark}>
-                    <Check size={15} strokeWidth={2.4} aria-hidden="true" />
-                  </span>
-                )}
-              </button>
-            );
-          })}
-          {!matches.length && (
-            <p role="status" className={styles.empty}>
-              {t("pages.generation.video.studio.noSearchResults")}
-            </p>
-          )}
-        </div>
-      </DialogContent>
+                </button>
+              );
+            })}
+            {!matches.length && (
+              <p role="status" className={styles.empty}>
+                {t("pages.generation.video.studio.noSearchResults")}
+              </p>
+            )}
+          </div>
+        </DialogPrimitive.Content>
+      </DialogPortal>
     </Dialog>
   );
 }

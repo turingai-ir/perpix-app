@@ -537,6 +537,13 @@ test("video studio stays usable on mobile with reduced motion", async ({
     { width: 1440, height: 900 },
   ]) {
     await page.setViewportSize(viewport);
+    const horizontalEdges = await dialog.evaluate((element) => {
+      const bounds = element.getBoundingClientRect();
+      return { left: bounds.left, right: window.innerWidth - bounds.right };
+    });
+    expect(Math.abs(horizontalEdges.left - horizontalEdges.right)).toBeLessThan(
+      2,
+    );
     expect(
       await dialog.evaluate((element) => {
         const list = element.lastElementChild;
@@ -569,10 +576,24 @@ test.describe("video model picker on iPhone", () => {
     await page.getByRole("button", { name: /Kling/ }).click();
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
-    const bounds = await dialog.boundingBox();
-    expect(bounds).not.toBeNull();
-    expect(bounds!.x).toBeGreaterThanOrEqual(-1);
-    expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(391);
+    const placement = await dialog.evaluate((element) => {
+      const bounds = element.getBoundingClientRect();
+      const viewport = window.visualViewport;
+      return {
+        left: bounds.left,
+        right: bounds.right,
+        bottom: bounds.bottom,
+        viewportLeft: viewport?.offsetLeft ?? 0,
+        viewportRight:
+          (viewport?.offsetLeft ?? 0) + (viewport?.width ?? window.innerWidth),
+        viewportBottom:
+          (viewport?.offsetTop ?? 0) + (viewport?.height ?? window.innerHeight),
+      };
+    });
+    expect(placement.left).toBeGreaterThanOrEqual(placement.viewportLeft - 1);
+    expect(placement.right).toBeLessThanOrEqual(placement.viewportRight + 1);
+    expect(placement.bottom).toBeLessThanOrEqual(placement.viewportBottom + 1);
+    expect(placement.left).toBeLessThanOrEqual(1);
     await page.screenshot({ path: ".artifacts/video-model-picker-iphone.png" });
   });
 });
