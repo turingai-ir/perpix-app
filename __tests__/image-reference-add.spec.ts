@@ -195,9 +195,14 @@ test("a newly uploaded reference waits for confirmation and enables add", async 
 });
 
 test("keyboard paste accepts an image from the real browser clipboard", async ({
+  browserName,
   imageConversationApi,
   page,
 }) => {
+  test.skip(
+    browserName !== "chromium",
+    "Playwright WebKit does not support clipboard read/write permissions",
+  );
   imageConversationApi.setTaskMessages(
     conversationMessages({ prompt: "Real clipboard paste" }),
   );
@@ -284,9 +289,14 @@ test("paste button converts clipboard WebP into an uploadable image", async ({
 });
 
 test("pasting an image into the prompt adds a reference without opening the picker", async ({
+  browserName,
   imageConversationApi,
   page,
 }) => {
+  test.skip(
+    browserName !== "chromium",
+    "Playwright WebKit does not support clipboard read/write permissions",
+  );
   imageConversationApi.setTaskMessages(
     conversationMessages({ prompt: "Composer paste" }),
   );

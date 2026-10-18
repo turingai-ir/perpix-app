@@ -394,6 +394,56 @@ test("new chat clears the completed session without generating again", async ({
   expect(imageConversationApi.generateRequests).toHaveLength(1);
 });
 
+test("late generation acceptance preserves the user's new conversation", async ({
+  imageConversationApi,
+  page,
+}) => {
+  await openSuccessfulConversation(page, imageConversationApi.setTaskMessages);
+  await submitPrompt(page, "A second cinematic lighthouse scene");
+  await expect.poll(() => imageConversationApi.generateRequests.length).toBe(1);
+
+  const openSidebar = page.getByRole("button", {
+    name: "باز کردن نوار کناری",
+  });
+  if (await openSidebar.isVisible()) await openSidebar.click();
+  await page.getByRole("link", { name: "تولید عکس", exact: true }).click();
+  await expect(page).toHaveURL(/\/generation\/image$/);
+
+  await imageConversationApi.resolveGeneration([
+    ...conversationMessages({ prompt }),
+    ...conversationMessages({
+      prompt: "A second cinematic lighthouse scene",
+    }).map((message) => ({ ...message, uuid: `${message.uuid}-second` })),
+  ]);
+
+  await expect(page).toHaveURL(/\/generation\/image$/);
+  await expect(page.locator("[data-generation-intro]")).toBeVisible();
+  await expect(page.getByRole("textbox", { name: "توصیف تصویر" })).toHaveValue(
+    "",
+  );
+  expect(imageConversationApi.generateRequests).toHaveLength(1);
+});
+
+test("malformed conversation fragment leaves the result usable", async ({
+  imageConversationApi,
+  page,
+}) => {
+  const pageErrors: string[] = [];
+  page.on("pageerror", (error) => pageErrors.push(error.message));
+  imageConversationApi.setTaskMessages(conversationMessages({ prompt }));
+
+  await page.goto(`/generation/image/${taskUuid}#%`);
+
+  await expect(
+    page.locator("article").filter({ hasText: labels.result }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("textbox", { name: "توصیف تصویر" }),
+  ).toBeEnabled();
+  expect(pageErrors).toEqual([]);
+  expect(imageConversationApi.generateRequests).toEqual([]);
+});
+
 test("successful result exposes reference and edit-request actions", async ({
   imageConversationApi,
   page,
@@ -504,6 +554,49 @@ test("ambiguous network failure preserves configuration and advises checking his
   );
   await expect(page.getByRole("alert").getByRole("button")).toHaveCount(0);
   await page.waitForTimeout(250);
+  expect(imageConversationApi.generateRequests).toHaveLength(1);
+});
+
+test("regeneration network failure remains handled by the conversation", async ({
+  imageConversationApi,
+  page,
+}) => {
+  const pageErrors: string[] = [];
+  page.on("pageerror", (error) => pageErrors.push(error.message));
+  await openSuccessfulConversation(page, imageConversationApi.setTaskMessages);
+  await page.getByRole("button", { name: labels.regenerate }).click();
+  await page
+    .getByRole("dialog", { name: "این تصویر دوباره ساخته شود؟" })
+    .getByRole("button", { name: labels.confirmRegenerate })
+    .click();
+  await expect.poll(() => imageConversationApi.generateRequests.length).toBe(1);
+
+  await imageConversationApi.disconnectGeneration();
+
+  await expect(page.getByRole("alert")).toContainText(labels.ambiguousFailure);
+  expect(pageErrors).toEqual([]);
+  expect(imageConversationApi.generateRequests).toHaveLength(1);
+});
+
+test("failed message retry network failure remains handled by the conversation", async ({
+  imageConversationApi,
+  page,
+}) => {
+  const pageErrors: string[] = [];
+  page.on("pageerror", (error) => pageErrors.push(error.message));
+  imageConversationApi.setTaskMessages(
+    conversationMessages({ prompt, status: "FAILED" }),
+  );
+  await page.goto(`/generation/image/${taskUuid}`);
+  await page.getByRole("button", { name: "تلاش مجدد" }).click();
+  await expect.poll(() => imageConversationApi.generateRequests.length).toBe(1);
+
+  await imageConversationApi.disconnectGeneration();
+
+  await expect(
+    page.getByRole("alert").filter({ hasText: labels.ambiguousFailure }),
+  ).toBeVisible();
+  expect(pageErrors).toEqual([]);
   expect(imageConversationApi.generateRequests).toHaveLength(1);
 });
 

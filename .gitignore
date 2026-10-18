@@ -41,6 +41,7 @@ graphify-out
 
 # Local development tooling and generated artifacts
 /.artifacts/
+/deploy/test.env
 /.codex/skills/
 /.codex/higgsfield-video.png
 /.impeccable/

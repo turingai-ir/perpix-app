@@ -435,7 +435,7 @@
       "saveToGallerySuccess": "تصویر با موفقیت در گالری ذخیره شد",
       "saveToGalleryError": "خطا در ذخیره‌سازی تصویر در گالری",
       "loadingImage": "در حال دریافت تصویر...",
-      "loadError": "خطا در دریافت تصویر از سرور",
+      "loadError": "خطا در بارگذاری تصویر",
       "cropFree": "آزاد",
       "categories": {
         "manual": "تنظیمات دستی",
