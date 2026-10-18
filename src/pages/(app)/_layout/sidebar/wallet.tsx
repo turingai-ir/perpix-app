@@ -1,19 +1,20 @@
+import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Muted } from "@/components/ui/typography";
 import { useAppTranslate } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
 import { formatTokenAmount } from "@/utils";
-import { usePricingFeature, useActiveSubscription } from "@/feature/pricing";
-import { useWallet, WalletChargeFlow } from "@/feature/wallet";
 
-function AppLayoutSidebarWallet() {
+type AppLayoutSidebarWalletProps = {
+  balanceUsdmicro: number;
+  onOpenWalletCharge: () => void;
+};
+
+function AppLayoutSidebarWallet({
+  balanceUsdmicro,
+  onOpenWalletCharge,
+}: AppLayoutSidebarWalletProps) {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
-
-  const walletState = useWallet();
-  const activeSubscriptionState = useActiveSubscription();
-  const { openPricingFeature } = usePricingFeature();
-  const shouldBlockWalletCharge = activeSubscriptionState.data?.plan.is_default;
-  const balanceUsdmicro = walletState.data?.balance_usdmicro ?? 0;
 
   return (
     <Card className="text-sidebar-foreground overflow-hidden rounded-[1.35rem] border border-white/10 bg-white/[0.045] shadow-[inset_0_1px_rgb(255_255_255/0.09),0_12px_32px_rgb(0_0_0/0.1)] backdrop-blur-xl">
@@ -28,11 +29,13 @@ function AppLayoutSidebarWallet() {
             </div>
             <small>{t("common.token")}</small>
           </div>
-          <WalletChargeFlow
-            balanceUsdmicro={balanceUsdmicro}
-            requiresSubscription={shouldBlockWalletCharge === true}
-            onOpenPricing={() => openPricingFeature()}
-          />
+          <Button
+            className="h-auto p-0 transition-transform duration-150 active:scale-[0.97]"
+            variant="link"
+            onClick={onOpenWalletCharge}
+          >
+            {t("pages.app.layout.sidebar.balanceCard.chargeWallet.title")}
+          </Button>
         </div>
       </CardHeader>
     </Card>

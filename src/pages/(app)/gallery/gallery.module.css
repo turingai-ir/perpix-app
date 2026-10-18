@@ -156,6 +156,10 @@
   justify-self: center;
 }
 
+.brandSlot :global([data-brand-entrance]) {
+  max-width: 100%;
+}
+
 .orbit {
   position: absolute;
   z-index: 0;

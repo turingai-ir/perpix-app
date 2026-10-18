@@ -1,6 +1,5 @@
 import { useState } from "react";
 
-import { Button } from "@/components/ui/button";
 import { usePaymentRedirect } from "@/feature/payment";
 import { useAppTranslate } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
@@ -14,23 +13,26 @@ import { WalletChargeSurface } from "./wallet-charge-surface";
 
 type WalletChargeFlowProps = {
   balanceUsdmicro: number;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
   requiresSubscription: boolean;
   onOpenPricing: () => void;
 };
 
 export function WalletChargeFlow({
   balanceUsdmicro,
+  open,
+  onOpenChange,
   requiresSubscription,
   onOpenPricing,
 }: WalletChargeFlowProps) {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const chargeWalletState = useChargeWallet();
   const { openPaymentUrl } = usePaymentRedirect();
-  const [open, setOpen] = useState(false);
   const [amount, setAmount] = useState("");
 
   const handleOpenChange = (nextOpen: boolean) => {
-    setOpen(nextOpen);
+    onOpenChange(nextOpen);
     if (!nextOpen) {
       chargeWalletState.reset();
     }
@@ -83,14 +85,6 @@ export function WalletChargeFlow({
       open={open}
       onOpenChange={handleOpenChange}
       closeLabel={t("pages.app.layout.sidebar.balanceCard.chargeWallet.close")}
-      trigger={
-        <Button
-          className="h-auto p-0 transition-transform duration-150 active:scale-[0.97]"
-          variant="link"
-        >
-          {t("pages.app.layout.sidebar.balanceCard.chargeWallet.title")}
-        </Button>
-      }
     >
       <CheckoutStepMotion stepKey={stepKey}>{content}</CheckoutStepMotion>
     </WalletChargeSurface>

@@ -23,13 +23,18 @@ test.describe("Wallet checkout", () => {
   test("reviews the exact server price before navigating to the gateway", async ({
     page,
   }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
     let gatewayVisits = 0;
     await page.route("**/mock-gateway", (route) => {
       gatewayVisits += 1;
       return route.fulfill({ contentType: "text/html", body: "Mock gateway" });
     });
     await page.goto("/");
+    const desktopSidebar = page.locator("aside").filter({
+      has: page.locator('a[href="/gallery"]'),
+    });
     await page.getByRole("button", { name: "افزایش موجودی کیف پول" }).click();
+    await expect(desktopSidebar).toBeVisible();
     await page.getByRole("button", { name: "۵۰۰ توکن" }).click();
 
     const chargeRequest = page.waitForRequest(
@@ -64,6 +69,38 @@ test.describe("Wallet checkout", () => {
     await page.getByRole("button", { name: "ادامه پرداخت" }).click();
     await expect(page).toHaveURL(/\/mock-gateway$/);
     expect(gatewayVisits).toBe(1);
+  });
+
+  test("submits typed formatted amounts as raw micro-units", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    await page.getByRole("button", { name: "افزایش موجودی کیف پول" }).click();
+
+    const amountInput = page.getByLabel("تعداد توکن");
+    for (const [typedAmount, formattedAmount, amountUsdmicro] of [
+      ["1001", "1,001", 1_001_000],
+      ["5000", "5,000", 5_000_000],
+    ] as const) {
+      await amountInput.fill(typedAmount);
+      await expect(amountInput).toHaveValue(formattedAmount);
+
+      const chargeRequest = page.waitForRequest(
+        (request) =>
+          request.method() === "POST" &&
+          new URL(request.url()).pathname === "/api/v1/wallet/charge",
+      );
+      await page.getByRole("button", { name: "مشاهده مبلغ نهایی" }).click();
+      expect((await chargeRequest).postDataJSON()).toEqual({
+        amount_usdmicro: amountUsdmicro,
+      });
+
+      await expect(
+        page.getByRole("heading", { name: "تایید مبلغ پرداخت" }),
+      ).toBeVisible();
+      await page.keyboard.press("Escape");
+      await page.getByRole("button", { name: "افزایش موجودی کیف پول" }).click();
+    }
   });
 
   test("opens a live mocked checkout preview", async ({ page }) => {
@@ -106,12 +143,15 @@ test.describe("Wallet checkout", () => {
   });
 
   test("uses a touch-friendly bottom sheet on mobile", async ({ page }) => {
-    await page.setViewportSize({ width: 390, height: 844 });
+    await page.setViewportSize({ width: 375, height: 812 });
     await page.goto("/");
     await page.getByRole("button", { name: "باز کردن نوار کناری" }).click();
+    const sidebarSheet = page.locator('[data-slot="sheet-content"]');
+    await expect(sidebarSheet).toBeVisible();
     await page.getByRole("button", { name: "افزایش موجودی کیف پول" }).click();
 
     const drawer = page.locator('[data-slot="drawer-content"]');
+    await expect(sidebarSheet).toBeHidden();
     await expect(drawer).toBeVisible();
     await expect(page.getByLabel("تعداد توکن")).toBeVisible();
     await expect
@@ -119,12 +159,31 @@ test.describe("Wallet checkout", () => {
         const box = await drawer.boundingBox();
         return box ? box.y + box.height : 1_000;
       })
-      .toBeLessThanOrEqual(845);
+      .toBeLessThanOrEqual(813);
     const bounds = await drawer.boundingBox();
     expect(bounds).not.toBeNull();
-    expect(bounds!.width).toBeLessThanOrEqual(390);
-    expect(bounds!.y + bounds!.height).toBeLessThanOrEqual(845);
+    expect(bounds!.width).toBeLessThanOrEqual(375);
+    expect(bounds!.y + bounds!.height).toBeLessThanOrEqual(813);
     await expect(page.getByLabel("تعداد توکن")).toHaveCSS("font-size", "16px");
+    await page.getByRole("button", { name: "۱۰۰ توکن" }).click();
+    await expect(page.getByLabel("تعداد توکن")).toHaveValue("100");
+  });
+
+  test("closes the navigation before opening the wallet dialog on tablet", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 768, height: 1024 });
+    await page.goto("/");
+    await page.getByRole("button", { name: "باز کردن نوار کناری" }).click();
+    const sidebarSheet = page.locator('[data-slot="sheet-content"]');
+    await expect(sidebarSheet).toBeVisible();
+
+    await page.getByRole("button", { name: "افزایش موجودی کیف پول" }).click();
+
+    await expect(sidebarSheet).toBeHidden();
+    await expect(page.locator('[data-slot="dialog-content"]')).toBeVisible();
+    await page.getByRole("button", { name: "۵۰۰ توکن" }).click();
+    await expect(page.getByLabel("تعداد توکن")).toHaveValue("500");
   });
 });
 

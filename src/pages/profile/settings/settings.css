@@ -489,6 +489,73 @@
     bottom: 65px;
   }
 }
+@media (hover: none), (pointer: coarse) {
+  .settings-card-stage {
+    perspective: none;
+  }
+  .settings-card-tilt {
+    transform: none !important;
+    transform-style: flat;
+  }
+  .settings-card-rotor,
+  .settings-card-button[data-side="back"] .settings-card-rotor,
+  .settings-card-back {
+    transform: none;
+  }
+  .settings-card-rotor {
+    transform-style: flat;
+    transition: none;
+  }
+  .settings-card-front,
+  .settings-card-back {
+    backface-visibility: visible;
+    -webkit-backface-visibility: visible;
+    transition:
+      opacity 220ms ease,
+      visibility 220ms ease;
+  }
+  .settings-card-button[data-side="front"] .settings-card-back,
+  .settings-card-button[data-side="back"] .settings-card-front {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+@media (max-width: 400px) {
+  .settings-card-button {
+    height: 238px;
+  }
+  .settings-card-header,
+  .settings-card-footer {
+    right: 14px;
+    left: 14px;
+  }
+  .settings-card-header {
+    top: 14px;
+  }
+  .settings-card-footer {
+    bottom: 14px;
+  }
+  .settings-card-back-center {
+    top: 50px;
+    right: 14px;
+    left: 14px;
+  }
+  .settings-card-back-details {
+    right: 13px;
+    bottom: 12px;
+    left: 13px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.35rem 0.75rem;
+    align-items: start;
+  }
+  .settings-card-back-details > span:not(.settings-card-back-status) {
+    min-width: 0;
+  }
+  .settings-card-back-status {
+    grid-column: 1 / -1;
+    justify-self: center;
+  }
+}
 .settings-input-wrap {
   position: relative;
 }

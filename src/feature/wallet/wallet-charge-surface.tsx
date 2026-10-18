@@ -2,8 +2,8 @@ import type { ReactNode } from "react";
 import { X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Drawer, DrawerContent } from "@/components/ui/drawer";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 type WalletChargeSurfaceProps = {
@@ -11,7 +11,6 @@ type WalletChargeSurfaceProps = {
   closeLabel: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  trigger: ReactNode;
 };
 
 export function WalletChargeSurface({
@@ -19,16 +18,13 @@ export function WalletChargeSurface({
   closeLabel,
   open,
   onOpenChange,
-  trigger,
 }: WalletChargeSurfaceProps) {
   const mobile = useIsMobile();
   const Root = mobile ? Drawer : Dialog;
-  const Trigger = mobile ? DrawerTrigger : DialogTrigger;
   const Content = mobile ? DrawerContent : DialogContent;
 
   return (
     <Root open={open} onOpenChange={onOpenChange}>
-      <Trigger asChild>{trigger}</Trigger>
       <Content
         className="bg-popover max-h-[90dvh] overflow-hidden border-white/10 p-0 shadow-2xl sm:max-w-lg"
         {...(!mobile ? { showCloseButton: false } : {})}
