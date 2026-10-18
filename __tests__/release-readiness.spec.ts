@@ -101,8 +101,11 @@ for (const viewport of [
       { path: "/generation/image", ready: "[data-generation-intro]" },
       { path: "/generation/video", ready: "[data-video-cinema]" },
       { path: "/profile/settings", ready: "[data-testid=identity-card]" },
-      { path: "/profile/payments", ready: "[data-slot=card-title]" },
-      { path: "/profile/wallet-transactions", ready: "[data-slot=card-title]" },
+      { path: "/profile/payments", ready: ".finance-page-payments h1" },
+      {
+        path: "/profile/wallet-transactions",
+        ready: ".finance-page-wallet h1",
+      },
       { path: "/editor", ready: "input[type=file]" },
       { path: `/payment/verify/${paymentId}`, ready: "h1" },
       { path: "/design-preview", ready: "h1" },
@@ -164,6 +167,28 @@ for (const viewport of [
     });
   });
 }
+
+test.describe("mobile profile navigation", () => {
+  test.use({ hasTouch: true, isMobile: true });
+
+  for (const width of [320, 375]) {
+    test(`keeps every destination tappable at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 812 });
+      await mockReadOnlyRoutes(page);
+      await page.goto("/profile/settings");
+
+      const links = page.locator('header nav a[href^="/profile/"]');
+      await expect(links).toHaveCount(3);
+      for (const link of await links.all()) {
+        await expect(link).toBeInViewport({ ratio: 1 });
+        await link.tap();
+        await expect(page).toHaveURL(
+          new RegExp(`${await link.getAttribute("href")}$`),
+        );
+      }
+    });
+  }
+});
 
 test("gallery read failure remains visible and refresh recovers to empty state", async ({
   page,

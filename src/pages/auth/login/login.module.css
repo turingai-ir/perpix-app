@@ -93,7 +93,7 @@
     transparent 80%
   );
   filter: blur(36px);
-  animation: aurora 4.5s ease-in-out 1 alternate both;
+  animation: aurora 14s ease-in-out infinite alternate;
 }
 .artwork::after {
   background:
@@ -101,7 +101,7 @@
     radial-gradient(circle at 78% 20%, #8bcdff 0 2px, transparent 4px),
     radial-gradient(circle at 88% 65%, #bb99ff 0 1px, transparent 3px),
     radial-gradient(circle at 35% 85%, #71baff 0 1px, transparent 3px);
-  animation: stardust 4.5s ease-in-out 1 alternate both;
+  animation: stardust 12s ease-in-out infinite alternate;
 }
 .heroLogo {
   position: absolute;
@@ -114,7 +114,9 @@
   mix-blend-mode: screen;
   filter: drop-shadow(0 0 40px #6955db44);
   mask-image: radial-gradient(ellipse at 50% 44%, #000 28%, transparent 69%);
-  animation: logoReveal 1.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation:
+    logoReveal 1.8s cubic-bezier(0.22, 1, 0.36, 1) both,
+    logoFloat 8s 1.8s ease-in-out infinite;
 }
 .orbit {
   position: absolute;
@@ -139,7 +141,7 @@
   border: 1px solid transparent;
   border-top-color: #9d76ff99;
   border-right-color: #66baff44;
-  animation: orbitSweep 4.5s linear 1 both;
+  animation: orbitSweep 16s linear infinite;
 }
 .orbit::after {
   inset: 28px;
@@ -173,7 +175,7 @@
     transparent calc(100% - 2px),
     #000 calc(100% - 1px)
   );
-  animation: orbitSweep 4.5s linear 1 reverse both;
+  animation: orbitSweep 7s linear infinite reverse;
 }
 .energyRing::after {
   content: "";
@@ -186,7 +188,7 @@
     #a378ff77 3px,
     transparent 9px
   );
-  animation: orbitSweep 4.5s linear 1 reverse both;
+  animation: orbitSweep 7s linear infinite reverse;
 }
 .artLabel {
   position: absolute;
