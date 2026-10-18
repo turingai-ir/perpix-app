@@ -1,7 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback } from "react";
 import type { EventSourceMessage } from "@microsoft/fetch-event-source";
-import { z } from "zod";
+import * as z from "zod/mini";
 
 import { useAuthorizedStream } from "@/features/auth";
 
