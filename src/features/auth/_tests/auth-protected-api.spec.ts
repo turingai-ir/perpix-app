@@ -68,7 +68,9 @@ test("a 401 from a protected API refreshes once and retries the request once", a
 
   await page.goto("/");
 
-  await expect(page.locator("aside")).toBeVisible();
+  await expect(
+    page.getByRole("navigation", { name: "پیوندهای مالی" }),
+  ).toBeVisible();
   await expect
     .poll(() => log.profileAuthorizations.includes("Bearer token-2"))
     .toBe(true);
@@ -76,11 +78,38 @@ test("a 401 from a protected API refreshes once and retries the request once", a
   expect(log.refreshes).toBe(2);
 });
 
-test("a 403 never triggers a refresh", async ({ page }) => {
-  const log = await mockRotatingSession(page, { profileStatus: 403 });
+for (const status of [403, 426]) {
+  test(`a ${status} never triggers a refresh`, async ({ page }) => {
+    const log = await mockRotatingSession(page, { profileStatus: status });
+    await page.goto("/");
+    await expect
+      .poll(() => log.profileAuthorizations.length)
+      .toBeGreaterThan(0);
+    expect(log.refreshes).toBe(1);
+  });
+}
 
+test("concurrent protected requests share one refresh", async ({ page }) => {
+  const log = await mockRotatingSession(page);
   await page.goto("/");
-
-  await expect.poll(() => log.profileAuthorizations.length).toBeGreaterThan(0);
-  expect(log.refreshes).toBe(1);
+  await expect(
+    page.getByRole("navigation", { name: "پیوندهای مالی" }),
+  ).toBeVisible();
+  expect(log.refreshes).toBe(2);
+  await page.route("**/api/v1/wallet/wallet", (route) => {
+    if (route.request().headers().authorization === "Bearer token-2") {
+      return route.fulfill({ status: 401, json: errorBody() });
+    }
+    return route.fulfill({ json: { balance_usdmicro: 25 } });
+  });
+  const balances = await page.evaluate(async () => {
+    const modulePath = "/src/services/api/client.ts";
+    const { apiClient } = await import(modulePath);
+    const results = await Promise.all(
+      Array.from({ length: 4 }, () => apiClient.GET("/api/v1/wallet/wallet")),
+    );
+    return results.map((result) => result.data.balance_usdmicro);
+  });
+  expect(balances).toEqual([25, 25, 25, 25]);
+  expect(log.refreshes).toBe(3);
 });

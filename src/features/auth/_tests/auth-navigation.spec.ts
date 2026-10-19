@@ -17,7 +17,13 @@ for (const destination of [
     await mockAuthenticatedSession(page);
     await page.goto(`/auth/login?returnTo=${encodeURIComponent(destination)}`);
     await expect(page).toHaveURL("/");
-    await expect(page.locator("aside")).toBeVisible();
+    await expect(
+      page
+        .getByRole("complementary")
+        .filter({
+          has: page.getByRole("link", { name: "صفحه اصلی", exact: true }),
+        }),
+    ).toBeVisible();
   });
 }
 

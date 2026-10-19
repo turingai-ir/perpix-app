@@ -108,7 +108,9 @@ test("signing out in one tab signs the other tab out too", async ({
   await mockAppShellApis(otherTab);
   await page.goto("/");
   await otherTab.goto("/");
-  await expect(otherTab.locator("aside")).toBeVisible();
+  await expect(
+    otherTab.getByRole("navigation", { name: "پیوندهای مالی" }),
+  ).toBeVisible();
 
   await userMenu(page).click();
   await page.getByRole("menuitem", { name: "خروج", exact: true }).click();
@@ -152,7 +154,8 @@ test("changing the password reports a wrong current password without retrying", 
   );
   expect(changes).toBe(1);
   expect(refreshes).toBe(1);
-  await expect(page.locator("aside")).toBeVisible();
+  await expect(dialog).toBeVisible();
+  await expect(page).not.toHaveURL(/\/auth\/login$/);
 });
 
 test("a successful password change ends the session and asks to sign in again", async ({

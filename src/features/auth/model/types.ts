@@ -1,10 +1,7 @@
 import { z } from "zod";
 
 export type AuthStatus =
-  | "initializing"
-  | "authenticated"
-  | "anonymous"
-  | "unavailable";
+  "initializing" | "authenticated" | "anonymous" | "unavailable";
 
 export const challengeSchema = z.object({
   challenge_id: z.uuid(),
@@ -24,6 +21,7 @@ export const csrfResponseSchema = z.object({ csrf_token: z.string().min(1) });
 
 export interface IssuedSession {
   accessToken: string;
+  csrfToken: string;
   expiresInSeconds: number;
 }
 

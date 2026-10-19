@@ -36,7 +36,9 @@ test("signs in with a canonical E.164 phone converted from Persian digits", asyn
   await page.goto("/auth/login");
   await fillCredentials(page, "۰۹۱۲۳۴۵۶۷۸۹", "secret");
 
-  await expect(page.locator("aside")).toBeVisible();
+  await expect(
+    page.getByRole("navigation", { name: "پیوندهای مالی" }),
+  ).toBeVisible();
   expect(body).toEqual({ phone_number: "+989123456789", password: "secret" });
 });
 

@@ -64,12 +64,14 @@ async function readIssuedSession(response: Response): Promise<IssuedSession> {
   const access = await parse(response, accessResponseSchema);
   // A missing CSRF header means CORS/proxy misconfiguration: refresh would
   // be impossible later, so fail the sign-in now instead of silently.
-  if (!response.headers.get(CSRF_HEADER)) {
+  const csrfToken = response.headers.get(CSRF_HEADER);
+  if (!csrfToken) {
     throw new AuthRequestError({ kind: "contract" });
   }
 
   return {
     accessToken: access.access_token,
+    csrfToken,
     expiresInSeconds: access.expires_in,
   };
 }
@@ -79,10 +81,6 @@ const challenge = async (path: string, phoneNumber: string) =>
     await send(path, { body: { phone_number: phoneNumber } }),
     challengeSchema,
   );
-
-export const requestRegistrationChallenge = (
-  phoneNumber: string,
-): Promise<AuthChallenge> => challenge("/registration-challenges", phoneNumber);
 
 export const requestPasswordResetChallenge = (
   phoneNumber: string,

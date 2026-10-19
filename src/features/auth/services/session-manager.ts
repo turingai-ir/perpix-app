@@ -1,5 +1,4 @@
 import * as authHttp from "./auth-http";
-import { purgeLegacyAuthStorage } from "./legacy-storage";
 import { announceSessionEnded, listenForSessionEnded } from "./session-channel";
 import { sessionStore } from "./session-store";
 
@@ -98,7 +97,6 @@ export function refreshSession(): Promise<RefreshOutcome> {
 }
 
 async function runBootstrap(): Promise<void> {
-  purgeLegacyAuthStorage();
   stopListeningToTabs ??= listenForSessionEnded(() => {
     if (sessionStore.getStatus() === "authenticated") {
       endSession("remote", false);
