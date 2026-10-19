@@ -23,7 +23,18 @@ export default defineConfig({
   plugins: [react(), tailwindcss(), legacy({})],
   server: {
     watch: {
-      ignored: ["**/.pnpm-store/**", "**/node_modules/**"],
+      // Linux inotify limits are shared with editors and other dev servers.
+      usePolling: process.platform === "linux",
+      interval: 300,
+      ignored: [
+        "**/.pnpm-store/**",
+        "**/node_modules/**",
+        "**/.agents/**",
+        "**/.codex/**",
+        "**/dist/**",
+        "**/playwright-report/**",
+        "**/test-results/**",
+      ],
     },
   },
   build: {

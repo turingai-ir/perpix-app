@@ -1,14 +1,15 @@
 import { useState, type FC } from "react";
 
 import type { AuthChallenge, ChallengePurpose } from "../model/types";
+import { usePasswordResetChallengeMutation } from "../hooks/use-auth-mutations";
 
 import { ChallengeCompleteForm } from "./challenge-complete-form";
 import { ChallengeStartForm } from "./challenge-start-form";
 import { LoginForm } from "./login-form";
 
 type FlowView =
-  | { name: "login" }
-  | { name: "start"; purpose: ChallengePurpose }
+  | { name: "phone"; phone: string }
+  | { name: "login"; phone: string }
   | {
       name: "complete";
       purpose: ChallengePurpose;
@@ -17,33 +18,42 @@ type FlowView =
     };
 
 export const AuthFlow: FC = () => {
-  const [view, setView] = useState<FlowView>({ name: "login" });
-  const toLogin = () => setView({ name: "login" });
+  const [view, setView] = useState<FlowView>({ name: "phone", phone: "" });
+  const reset = usePasswordResetChallengeMutation();
 
   return (
-    <main className="grid h-dvh w-full place-items-center p-4">
-      {view.name === "login" ? (
-        <LoginForm
-          onForgotPassword={() =>
-            setView({ name: "start", purpose: "password-reset" })
-          }
-          onCreateAccount={() =>
-            setView({ name: "start", purpose: "registration" })
-          }
+    <main className="grid min-h-dvh w-full place-items-center p-4">
+      {view.name === "phone" ? (
+        <ChallengeStartForm
+          phone={view.phone}
+          onStart={(phone, result) => {
+            if (result.next_step === "password") {
+              setView({ name: "login", phone });
+            } else {
+              setView({
+                name: "complete",
+                purpose: "registration",
+                phone,
+                challenge: result,
+              });
+            }
+          }}
         />
       ) : null}
-      {view.name === "start" ? (
-        <ChallengeStartForm
-          purpose={view.purpose}
-          onBackToLogin={toLogin}
-          onChallenge={(phone, challenge) =>
+      {view.name === "login" ? (
+        <LoginForm
+          phone={view.phone}
+          isResetPending={reset.isPending}
+          onBack={() => setView({ name: "phone", phone: view.phone })}
+          onForgotPassword={async () => {
+            const challenge = await reset.mutateAsync(view.phone);
             setView({
               name: "complete",
-              purpose: view.purpose,
-              phone,
+              purpose: "password-reset",
+              phone: view.phone,
               challenge,
-            })
-          }
+            });
+          }}
         />
       ) : null}
       {view.name === "complete" ? (
@@ -52,8 +62,8 @@ export const AuthFlow: FC = () => {
           phone={view.phone}
           challenge={view.challenge}
           onChallenge={(challenge) => setView({ ...view, challenge })}
-          onPasswordReset={toLogin}
-          onBack={() => setView({ name: "start", purpose: view.purpose })}
+          onPasswordReset={() => setView({ name: "login", phone: view.phone })}
+          onBack={() => setView({ name: "phone", phone: view.phone })}
         />
       ) : null}
     </main>

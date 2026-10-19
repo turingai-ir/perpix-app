@@ -1,4 +1,4 @@
-import { useMemo, type FC } from "react";
+import { useEffect, useMemo, type FC } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router";
@@ -14,22 +14,25 @@ import { AuthCard } from "./auth-card";
 import { AuthField } from "./auth-field";
 import { FormAlert, SubmitButton } from "./form-feedback";
 
-import { Button } from "@/components/ui/button";
+import { LoginActions } from "./login-actions";
 import { Form } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 import { useAppTranslate } from "@/hooks";
 import { APP_ROUTES_KEY } from "@/router/routes";
 import { APP_I18_KEYS } from "@/services/i18";
 
 interface LoginFormProps {
-  onForgotPassword: () => void;
-  onCreateAccount: () => void;
+  phone: string;
+  onForgotPassword: () => Promise<void>;
+  onBack: () => void;
+  isResetPending: boolean;
 }
 
 export const LoginForm: FC<LoginFormProps> = ({
+  phone,
   onForgotPassword,
-  onCreateAccount,
+  onBack,
+  isResetPending,
 }) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const navigate = useNavigate();
@@ -41,8 +44,10 @@ export const LoginForm: FC<LoginFormProps> = ({
     z.output<typeof schema>
   >({
     resolver: zodResolver(schema),
-    defaultValues: { phone_number: "", password: "" },
+    defaultValues: { phone_number: phone, password: "" },
   });
+  const { setFocus } = form;
+  useEffect(() => setFocus("password"), [setFocus]);
   const feedback = useAuthFeedback(form);
   const login = useLoginMutation();
 
@@ -64,33 +69,24 @@ export const LoginForm: FC<LoginFormProps> = ({
       title={t("features.auth.login.title")}
       description={t("features.auth.login.description")}
       footer={
-        <>
-          <Button type="button" variant="link" onClick={onForgotPassword}>
-            {t("features.auth.login.forgotPassword")}
-          </Button>
-          <Button type="button" variant="link" onClick={onCreateAccount}>
-            {t("features.auth.login.createAccount")}
-          </Button>
-        </>
+        <LoginActions
+          onBack={onBack}
+          disabled={
+            login.isPending || isResetPending || feedback.lockedSeconds > 0
+          }
+          onForgotPassword={async () => {
+            feedback.clear();
+            try {
+              await onForgotPassword();
+            } catch (error) {
+              feedback.handleError(error);
+            }
+          }}
+        />
       }
     >
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <AuthField
-            name="phone_number"
-            label={t("features.auth.login.phoneLabel")}
-            hint={t("features.auth.login.phoneHint")}
-          >
-            {(field) => (
-              <Input
-                dir="ltr"
-                type="tel"
-                inputMode="tel"
-                autoComplete="username"
-                {...field}
-              />
-            )}
-          </AuthField>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <AuthField
             name="password"
             label={t("features.auth.login.passwordLabel")}
@@ -106,7 +102,7 @@ export const LoginForm: FC<LoginFormProps> = ({
           <FormAlert message={feedback.message} />
           <SubmitButton
             label={t("features.auth.login.submit")}
-            isPending={login.isPending}
+            isPending={login.isPending || isResetPending}
             lockedSeconds={feedback.lockedSeconds}
           />
         </form>

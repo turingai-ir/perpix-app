@@ -65,3 +65,10 @@ export const useSignOutEverywhereMutation = () =>
     ...AUTH_MUTATION_OPTIONS,
     mutationFn: sessionManager.signOutEverywhere,
   });
+
+export const useStartAuthMutation = () =>
+  useMutation({
+    ...AUTH_MUTATION_OPTIONS,
+    retry: false,
+    mutationFn: authHttp.startAuth,
+  });
