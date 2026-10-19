@@ -45,7 +45,9 @@ test("reload restores the session with csrf then refresh and keeps tokens out of
 
   await page.goto("/");
 
-  await expect(page.locator("aside")).toBeVisible();
+  await expect(
+    page.getByRole("navigation", { name: "پیوندهای مالی" }),
+  ).toBeVisible();
   expect(calls).toEqual(["csrf", "refresh:csrf-1"]);
   await expect
     .poll(() => profileAuthorization)
@@ -92,7 +94,9 @@ test("a failed session check offers a retry instead of showing the login form", 
 
   await page.getByRole("button", { name: "تلاش مجدد" }).click();
 
-  await expect(page.locator("aside")).toBeVisible();
+  await expect(
+    page.getByRole("navigation", { name: "پیوندهای مالی" }),
+  ).toBeVisible();
 });
 
 test("an expired refresh session ends in the login page", async ({ page }) => {
@@ -120,5 +124,7 @@ test("an authenticated visitor skips the login page", async ({ page }) => {
   await page.goto("/auth/login");
 
   await expect(page).not.toHaveURL(/\/auth\/login$/);
-  await expect(page.locator("aside")).toBeVisible();
+  await expect(
+    page.getByRole("navigation", { name: "پیوندهای مالی" }),
+  ).toBeVisible();
 });

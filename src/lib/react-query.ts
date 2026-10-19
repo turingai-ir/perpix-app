@@ -5,7 +5,7 @@ import type {
   Persister,
 } from "@tanstack/react-query-persist-client";
 import { get, set, del } from "idb-keyval";
-import { accessTokenCookieOptions, cookies } from "@/utils/cookies";
+import { sessionStore } from "@/features/auth/session";
 
 export const REACT_QUERY_CACHE_TIME = 1000 * 60 * 60 * 24 * 7;
 
@@ -46,53 +46,44 @@ export const queryClient = new QueryClient({
   },
 });
 
-const getAccessToken = (): string | undefined => {
-  const token: unknown = cookies().get(APP_KEYS.COOKIES.ACCESS_TOKEN);
-  return typeof token === "string" ? token : undefined;
-};
-
-let cacheSessionToken = getAccessToken();
-
-export const setAccessToken = (token: string) => {
-  if (token !== cacheSessionToken) queryClient.clear();
-  cookies().set(APP_KEYS.COOKIES.ACCESS_TOKEN, token, accessTokenCookieOptions);
-  cacheSessionToken = token;
-};
-
+// Persist only for this in-memory auth cycle. A reload must authenticate again
+// before any private data can be used; another user never restores this cache.
+const cacheInstance = crypto.randomUUID();
 type SessionPersistedClient = PersistedClient & { session: string };
-
-const getSessionFingerprint = async (token: string) => {
-  if (!globalThis.crypto?.subtle) return undefined;
-  const hash = await crypto.subtle.digest(
-    "SHA-256",
-    new TextEncoder().encode(token),
-  );
-  return Array.from(new Uint8Array(hash), (byte) =>
-    byte.toString(16).padStart(2, "0"),
-  ).join("");
-};
+const getCacheSession = () => `${cacheInstance}:${sessionStore.getCycle()}`;
+let storageWork: Promise<unknown> = Promise.resolve();
 
 export const indexedDBPersister: Persister = {
   persistClient: async (client) => {
-    const token = cacheSessionToken;
-    if (!token || token !== getAccessToken()) return;
-    const session = await getSessionFingerprint(token);
-    if (!session || token !== getAccessToken()) return;
-    await set(APP_KEYS.INDEXED_DB.REACT_QUERY, { ...client, session });
+    if (sessionStore.getStatus() !== "authenticated") return;
+    const session = getCacheSession();
+    storageWork = storageWork
+      .catch(() => undefined)
+      .then(async () => {
+        if (
+          sessionStore.getStatus() !== "authenticated" ||
+          session !== getCacheSession()
+        )
+          return;
+        await set(APP_KEYS.INDEXED_DB.REACT_QUERY, { ...client, session });
+      });
+    await storageWork;
   },
   restoreClient: async () => {
-    const token = getAccessToken();
-    if (!token || token !== cacheSessionToken) return undefined;
-    const [client, session] = await Promise.all([
-      get<SessionPersistedClient>(APP_KEYS.INDEXED_DB.REACT_QUERY),
-      getSessionFingerprint(token),
-    ]);
-    if (!session || token !== getAccessToken() || client?.session !== session) {
+    if (sessionStore.getStatus() !== "authenticated") return undefined;
+    const session = getCacheSession();
+    await storageWork.catch(() => undefined);
+    const client = await get<SessionPersistedClient>(
+      APP_KEYS.INDEXED_DB.REACT_QUERY,
+    );
+    if (session !== getCacheSession() || client?.session !== session)
       return undefined;
-    }
     return client;
   },
   removeClient: async () => {
-    await del(APP_KEYS.INDEXED_DB.REACT_QUERY);
+    storageWork = storageWork
+      .catch(() => undefined)
+      .then(() => del(APP_KEYS.INDEXED_DB.REACT_QUERY));
+    await storageWork;
   },
 };

@@ -58,7 +58,9 @@ test("registers with an OTP that keeps its leading zero and Persian digits", asy
   await completeForm(page, "۰۱۲۳۴۵");
   await page.getByRole("button", { name: "ثبت‌نام" }).click();
 
-  await expect(page.locator("aside")).toBeVisible();
+  await expect(
+    page.getByRole("navigation", { name: "پیوندهای مالی" }),
+  ).toBeVisible();
   expect(startBody).toEqual({ phone_number: "+989123456789" });
   expect(completeBody).toEqual({
     challenge_id: CHALLENGE_ID,
@@ -159,17 +161,14 @@ test("an expired challenge asks for a fresh code instead of resending", async ({
     });
   });
 
-  await page.route("**/api/v1/auth/registration-challenges", (route) => {
-    starts += 1;
-    return route.fulfill({ status: 201, json: challenge() });
-  });
   await startRegistration(page);
   await page.getByRole("button", { name: "درخواست کد تازه" }).click();
 
   await expect(
     page.getByRole("button", { name: "ارسال مجدد کد" }),
   ).toBeHidden();
-  expect(starts).toBe(2);
+  await expect.poll(() => starts).toBe(2);
+  await expect(page.getByText(/ارسال مجدد کد تا \d+ ثانیه دیگر/)).toBeVisible();
 });
 
 test("a rate-limited challenge request shows the server wait time", async ({
@@ -190,4 +189,45 @@ test("a rate-limited challenge request shows the server wait time", async ({
   await startRegistration(page);
 
   await expect(page.getByRole("alert")).toContainText("120 ثانیه");
+});
+
+test("resend respects the server rate-limit window", async ({ page }) => {
+  await page.route("**/api/v1/auth/start", (route) =>
+    route.fulfill({
+      json: { next_step: "registration", ...challenge({ resendInMs: -1 }) },
+    }),
+  );
+  await page.route("**/api/v1/auth/challenges/*/resend", (route) =>
+    route.fulfill({
+      status: 429,
+      json: { detail: "Too many", status_code: 901, retry_after: 30 },
+    }),
+  );
+  await startRegistration(page);
+  const resend = page.getByRole("button", {
+    name: "ارسال مجدد کد",
+    exact: true,
+  });
+  await resend.click();
+  await expect(page.getByRole("alert")).toContainText("30 ثانیه");
+  await expect(resend).toBeDisabled();
+});
+
+test("restarting registration returns to the phone form when a password is now required", async ({
+  page,
+}) => {
+  let starts = 0;
+  await page.route("**/api/v1/auth/start", (route) => {
+    starts += 1;
+    const result =
+      starts === 1
+        ? { next_step: "registration", ...challenge({ expiresInMs: -1000 }) }
+        : { next_step: "password" };
+    return route.fulfill({ json: result });
+  });
+  await startRegistration(page);
+  await page.getByRole("button", { name: "درخواست کد تازه" }).click();
+  await expect(page.getByLabel("شماره موبایل")).toHaveValue("+989123456789");
+  await expect(page.getByLabel("کد تأیید")).toBeHidden();
+  expect(starts).toBe(2);
 });

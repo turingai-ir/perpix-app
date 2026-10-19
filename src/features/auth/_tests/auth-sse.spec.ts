@@ -15,7 +15,11 @@ test("token_expired closes the stream, refreshes once and reconnects with the ne
     refreshes += 1;
 
     return route.fulfill({
-      headers: { "X-CSRF-TOKEN": "csrf", "Cache-Control": "no-store" },
+      headers: {
+        "X-CSRF-TOKEN": "csrf",
+        "Access-Control-Expose-Headers": "X-CSRF-TOKEN",
+        "Cache-Control": "no-store",
+      },
       json: {
         access_token: `token-${refreshes}`,
         token_type: "bearer",

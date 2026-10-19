@@ -120,6 +120,8 @@ export const ChallengeCompleteForm: FC<ChallengeCompleteFormProps> = ({
             challenge={challenge}
             onChallenge={onChallenge}
             onError={feedback.handleError}
+            lockedSeconds={feedback.lockedSeconds}
+            onBack={onBack}
           />
           {isRegistration ? <RegistrationPolicies /> : null}
           <FormAlert message={feedback.message} />

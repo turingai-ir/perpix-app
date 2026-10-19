@@ -11,6 +11,7 @@ export const accessResponse = {
 };
 
 export const sessionHeaders = {
+  "Access-Control-Expose-Headers": "X-CSRF-TOKEN",
   "X-CSRF-TOKEN": "test-csrf-token",
   "Cache-Control": "no-store",
 };

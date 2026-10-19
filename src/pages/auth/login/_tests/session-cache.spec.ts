@@ -1,15 +1,12 @@
+import { mockAuthenticatedSession } from "../../../../../__tests__/support/auth-session";
 import { expect, test } from "@playwright/test";
 
 for (const sameSession of [true, false]) {
   test(
     sameSession
-      ? "reload restores cached account data for the same session"
+      ? "reload revalidates the session before fetching account data again"
       : "reload never restores another session's cached account data",
-    async ({ page, context, baseURL }) => {
-      if (!baseURL) throw new Error("Playwright baseURL is required");
-      await context.addCookies([
-        { name: "access_token", value: "account-a", url: baseURL },
-      ]);
+    async ({ page }) => {
       await page.route("**/api/v1/**", (route) =>
         route.fulfill({ json: { items: [], has_next: false } }),
       );
@@ -39,6 +36,7 @@ for (const sameSession of [true, false]) {
       const responseReady = new Promise<void>((resolve) => {
         release = resolve;
       });
+      await mockAuthenticatedSession(page);
       await page.route("**/api/v1/user/get-info", async (route) => {
         if (reloading) {
           requested = true;
@@ -78,33 +76,24 @@ for (const sameSession of [true, false]) {
             }),
           )
           .toBe(true);
-        if (!sameSession) {
-          await context.addCookies([
-            { name: "access_token", value: "account-b", url: baseURL },
-          ]);
-        }
         reloading = true;
         await page.reload();
         await expect.poll(() => requested).toBe(true);
-        if (sameSession) {
-          await expect(name).toHaveValue("Account A");
-        } else {
-          expect(
-            await page.evaluate(async () => {
-              const modulePath = "/src/lib/react-query.ts";
-              const { queryClient } = await import(modulePath);
-              return queryClient
-                .getQueryCache()
-                .getAll()
-                .some((query: { state: { data: unknown } }) =>
-                  JSON.stringify(query.state.data)?.includes("Account A"),
-                );
-            }),
-          ).toBe(false);
-          await expect(
-            page.getByText("Account A", { exact: true }),
-          ).toHaveCount(0);
-        }
+        expect(
+          await page.evaluate(async () => {
+            const modulePath = "/src/lib/react-query.ts";
+            const { queryClient } = await import(modulePath);
+            return queryClient
+              .getQueryCache()
+              .getAll()
+              .some((query: { state: { data: unknown } }) =>
+                JSON.stringify(query.state.data)?.includes("Account A"),
+              );
+          }),
+        ).toBe(false);
+        await expect(page.getByText("Account A", { exact: true })).toHaveCount(
+          0,
+        );
         release();
         await expect(name).toHaveValue(sameSession ? "Account A" : "Account B");
       } finally {

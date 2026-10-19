@@ -9,7 +9,6 @@ import { HttpStatus } from "@/utils/custom-fetch/http-status";
 const AUTH_PREFIX = "/api/v1/auth/";
 const COOKIE_OR_PUBLIC_AUTH_PATHS = [
   "start",
-  "registration-challenges",
   "registrations",
   "login",
   "password-reset-challenges",
@@ -49,20 +48,25 @@ export function createAuthorizedFetch(
 
     const retryable = request.clone();
     const cycle = sessionStore.getCycle();
+    const assertCurrentCycle = () => {
+      if (cycle !== sessionStore.getCycle()) {
+        throw new DOMException("Auth session changed", "AbortError");
+      }
+    };
     const sentToken = await ensureAccessToken();
     request.signal.throwIfAborted();
-    if (cycle !== sessionStore.getCycle() && sentToken) {
-      throw new AuthRequestError({ kind: "aborted" });
-    }
     if (!sentToken) {
       throw sessionStore.getStatus() === "anonymous"
         ? new AuthRequestError({ kind: "invalid-credentials" }, 401)
         : new AuthRequestError({ kind: "network" });
     }
+    assertCurrentCycle();
     request.headers.set("Authorization", `Bearer ${sentToken}`);
 
     try {
-      return await innerFetch(request);
+      const response = await innerFetch(request);
+      assertCurrentCycle();
+      return response;
     } catch (error) {
       const isRecoverable =
         error instanceof FetchHttpError &&
@@ -75,7 +79,9 @@ export function createAuthorizedFetch(
       if (!token) throw error;
       retryable.headers.set("Authorization", `Bearer ${token}`);
 
-      return innerFetch(retryable);
+      const response = await innerFetch(retryable);
+      assertCurrentCycle();
+      return response;
     }
   };
 }

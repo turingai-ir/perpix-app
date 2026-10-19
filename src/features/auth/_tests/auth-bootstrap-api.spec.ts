@@ -140,7 +140,7 @@ test("changing accounts during bootstrap cancels the waiting private request", a
   } finally {
     releaseRefresh();
   }
-  expect(await pending).toEqual({ sent: 0, error: "AuthRequestError" });
+  expect(await pending).toEqual({ sent: 0, error: "AbortError" });
 });
 
 test("a public plan read remains available without a session", async ({
