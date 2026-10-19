@@ -168,6 +168,7 @@ export const router = createBrowserRouter([
       },
       {
         path: APP_ROUTES_KEY.payment.result.path,
+        loader: requireSession,
         lazy: lazyRoute(() => import("@/pages/payment/result/page")),
         handle: {
           title: APP_ROUTES_KEY.payment.result.meta.title,

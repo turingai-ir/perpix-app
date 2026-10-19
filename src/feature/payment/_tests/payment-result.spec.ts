@@ -1,5 +1,18 @@
 import { expect, test } from "@playwright/test";
 
+import {
+  mockAnonymousSession,
+  mockAuthenticatedSession,
+  TEST_ACCESS_TOKEN,
+} from "../../../../__tests__/support/auth-session";
+
+test.beforeEach(async ({ page }) => {
+  await mockAuthenticatedSession(page);
+  await page.route("**/api/v1/payment-events", (route) =>
+    route.fulfill({ contentType: "text/event-stream", body: "" }),
+  );
+});
+
 const paymentId = "c0202000-0000-4000-8000-000000000001";
 
 function paymentResponse(
@@ -127,4 +140,46 @@ test("reviewed failed attempt cannot be retried", async ({ page }) => {
   await expect(
     page.getByRole("button", { name: "تلاش دوباره برای پرداخت" }),
   ).toHaveCount(0);
+});
+
+test("gateway return and reload restore the session before requesting payment status", async ({
+  page,
+}) => {
+  const authorizations: (string | undefined)[] = [];
+  await page.route("**/api/v1/payment-executions/*", (route) => {
+    const authorization = route.request().headers().authorization;
+    authorizations.push(authorization);
+    return authorization === `Bearer ${TEST_ACCESS_TOKEN}`
+      ? route.fulfill({ json: paymentResponse("SUCCEEDED", "SUCCEEDED") })
+      : route.fulfill({ status: 401, json: { detail: "Unauthorized" } });
+  });
+
+  await page.goto(`/payment/verify/${paymentId}`);
+  await expect(
+    page.getByRole("heading", { name: "پرداخت تکمیل شد", exact: true }),
+  ).toBeVisible();
+  const beforeReload = authorizations.length;
+  await page.reload();
+  await expect(
+    page.getByRole("heading", { name: "پرداخت تکمیل شد", exact: true }),
+  ).toBeVisible();
+  await expect.poll(() => authorizations.length).toBeGreaterThan(beforeReload);
+  expect(
+    authorizations.every((value) => value === `Bearer ${TEST_ACCESS_TOKEN}`),
+  ).toBe(true);
+});
+
+test("a returned payment with no usable session requires login before requesting private payment details", async ({
+  page,
+}) => {
+  await mockAnonymousSession(page);
+  let requestedPayment = false;
+  await page.route("**/api/v1/payment-executions/*", (route) => {
+    requestedPayment = true;
+    return route.fulfill({ status: 401, json: { detail: "Unauthorized" } });
+  });
+
+  await page.goto(`/payment/verify/${paymentId}`);
+  await expect(page).toHaveURL(/\/auth\/login$/);
+  expect(requestedPayment).toBe(false);
 });

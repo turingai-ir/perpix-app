@@ -132,6 +132,7 @@ export function startSession(issued: IssuedSession) {
 }
 
 export async function ensureAccessToken(): Promise<string | null> {
+  if (sessionStore.getStatus() === "initializing") await bootstrapSession();
   if (sessionStore.getStatus() !== "authenticated") return null;
   const remaining = sessionStore.getExpiresAt() - Date.now();
   if (remaining > EARLY_REFRESH_MS / 2) return sessionStore.getAccessToken();
