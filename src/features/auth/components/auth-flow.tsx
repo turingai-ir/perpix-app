@@ -22,7 +22,7 @@ export const AuthFlow: FC = () => {
   const reset = usePasswordResetChallengeMutation();
 
   return (
-    <main className="grid min-h-dvh w-full place-items-center p-4">
+    <div className="flex w-full justify-center">
       {view.name === "phone" ? (
         <ChallengeStartForm
           phone={view.phone}
@@ -66,6 +66,6 @@ export const AuthFlow: FC = () => {
           onBack={() => setView({ name: "phone", phone: view.phone })}
         />
       ) : null}
-    </main>
+    </div>
   );
 };

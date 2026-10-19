@@ -13,12 +13,6 @@ export const useLoginMutation = () =>
       sessionManager.startSession(await authHttp.login(body)),
   });
 
-export const useRegistrationChallengeMutation = () =>
-  useMutation({
-    ...AUTH_MUTATION_OPTIONS,
-    mutationFn: authHttp.requestRegistrationChallenge,
-  });
-
 export const usePasswordResetChallengeMutation = () =>
   useMutation({
     ...AUTH_MUTATION_OPTIONS,

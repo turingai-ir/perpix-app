@@ -27,6 +27,11 @@ const emptyStream = (route: Route) =>
 
 /** Minimal API surface the authenticated app shell needs to render. */
 export async function mockAppShellApis(page: Page): Promise<void> {
+  await page.route("**/api/v1/**", (route) => {
+    if (new URL(route.request().url()).pathname.startsWith("/api/v1/auth/"))
+      return route.fallback();
+    return route.fulfill({ json: { items: [], has_next: false } });
+  });
   await page.route("**/api/v1/user/get-info", (route) =>
     route.fulfill({
       json: {
