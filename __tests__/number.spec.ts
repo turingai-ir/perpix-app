@@ -8,7 +8,7 @@ test("formats numbers when NumberFormat is callable but not constructible", asyn
   const formattedNumber = await page.evaluate(async () => {
     const nativeNumberFormat = Intl.NumberFormat;
     const callableNumberFormat = (
-      ...arguments_: Parameters<IntlConstructor["NumberFormat"]>
+      ...arguments_: Parameters<typeof Intl.NumberFormat>
     ) => nativeNumberFormat(...arguments_);
 
     Object.defineProperty(Intl, "NumberFormat", {
@@ -17,7 +17,8 @@ test("formats numbers when NumberFormat is callable but not constructible", asyn
     });
 
     try {
-      const { formatLocalizedNumber } = await import("/src/utils/number.ts");
+      const modulePath = "/src/utils/number.ts";
+      const { formatLocalizedNumber } = await import(modulePath);
       return formatLocalizedNumber({ value: 1_234 });
     } finally {
       Object.defineProperty(Intl, "NumberFormat", {

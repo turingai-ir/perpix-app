@@ -1,4 +1,5 @@
 import globals from "globals";
+import { version as reactVersion } from "react";
 import tseslint from "typescript-eslint";
 import react from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
@@ -45,7 +46,7 @@ export default tseslint.config(
     },
     settings: {
       react: {
-        version: "19.2",
+        version: reactVersion,
       },
     },
     rules: {

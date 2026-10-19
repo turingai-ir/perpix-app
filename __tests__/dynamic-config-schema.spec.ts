@@ -250,7 +250,7 @@ test("validates multi-mode schema using default resolution and aspect_ratio valu
 
 test("validates all 10 real backend model fixtures from perpix-core-api", async () => {
   const fixturesDir = new URL(
-    "../../perpix-core-api/tests/fixtures/",
+    "../../perpix-core-api/tests/fixtures/ai_gateway/model_configs/",
     import.meta.url,
   );
   const fixtureFiles = [

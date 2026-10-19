@@ -1,4 +1,4 @@
-import type { BrowserContext, Page } from "@playwright/test";
+import { expect, type BrowserContext, type Page } from "@playwright/test";
 
 export async function openAuthenticatedEditor(
   page: Page,
@@ -36,4 +36,5 @@ export async function openAuthenticatedEditor(
     { name: "access_token", value: "test-token", url: baseURL },
   ]);
   await page.goto("/editor");
+  await expect(page.getByRole("button", { name: "بازگشت" })).toBeVisible();
 }

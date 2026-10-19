@@ -143,7 +143,7 @@ async function readCheckerboardColors(
   y: number,
 ): Promise<{ hasDarkSquares: boolean; hasLightSquares: boolean }> {
   return canvas.evaluate(
-    (element, position) => {
+    (element: HTMLCanvasElement, position) => {
       const pixelScale = element.width / element.clientWidth;
       const pixels = element
         .getContext("2d")
@@ -172,7 +172,7 @@ async function readCenterGuideVisibility(
   centerY: number,
 ): Promise<{ hasHorizontalGuide: boolean; hasVerticalGuide: boolean }> {
   return canvas.evaluate(
-    (element, center) => {
+    (element: HTMLCanvasElement, center) => {
       const context = element.getContext("2d");
       const pixelScale = element.width / element.clientWidth;
       const getPixels = (x: number, y: number, width: number, height: number) =>

@@ -29,12 +29,14 @@ test.describe("App sidebar", () => {
     expect(editorBox!.y).toBeGreaterThan(galleryBox!.y);
   });
 
-  test("provides chat and Telegram support options", async ({ page }) => {
+  test("provides Telegram support while chat support is disabled", async ({
+    page,
+  }) => {
     await page.goto("/");
 
     await expect(
       page.getByRole("button", { name: "پشتیبانی چت" }),
-    ).toBeVisible();
+    ).toBeHidden();
 
     const telegramSupportLink = page.getByRole("link", {
       name: "پشتیبانی تلگرام",
@@ -133,9 +135,11 @@ test.describe("App sidebar", () => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/");
 
+    const sidebarSheet = page.locator('[data-slot="sheet-content"]');
+    await expect(sidebarSheet).toBeVisible();
+    await page.keyboard.press("Escape");
     await page.getByRole("button", { name: "باز کردن نوار کناری" }).click();
 
-    const sidebarSheet = page.locator('[data-slot="sheet-content"]');
     await expect(sidebarSheet).toBeVisible();
 
     const dimensions = await sidebarSheet.evaluate((element) => ({
@@ -165,7 +169,10 @@ async function mockApi(page: Page) {
     const request = route.request();
     const url = new URL(request.url());
 
-    if (request.method() === "GET" && url.pathname === "/user/get-info") {
+    if (
+      request.method() === "GET" &&
+      url.pathname === "/api/v1/user/get-info"
+    ) {
       await route.fulfill({
         contentType: "application/json",
         body: JSON.stringify({ uuid: "user-1", mobile: "09120000000" }),
@@ -173,7 +180,10 @@ async function mockApi(page: Page) {
       return;
     }
 
-    if (request.method() === "GET" && url.pathname === "/wallet/wallet") {
+    if (
+      request.method() === "GET" &&
+      url.pathname === "/api/v1/wallet/wallet"
+    ) {
       await route.fulfill({
         contentType: "application/json",
         body: JSON.stringify({
@@ -186,7 +196,7 @@ async function mockApi(page: Page) {
 
     if (
       request.method() === "GET" &&
-      url.pathname === "/user/subscription/active"
+      url.pathname === "/api/v1/user/subscription/active"
     ) {
       await route.fulfill({
         contentType: "application/json",
@@ -210,7 +220,7 @@ async function mockApi(page: Page) {
       return;
     }
 
-    if (request.method() === "GET" && url.pathname === "/ai-task/list") {
+    if (request.method() === "GET" && url.pathname === "/api/v1/ai-task/list") {
       await route.fulfill({
         contentType: "application/json",
         body: JSON.stringify({ items: [], has_next: false }),

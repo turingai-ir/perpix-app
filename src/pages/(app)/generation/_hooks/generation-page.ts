@@ -51,8 +51,7 @@ export function useGenerationPage({
   );
   const displayedMessages = useMemo(() => {
     const resultMessage = aiTaskResultState.data as
-      | SchemaAiTaskMessageResponse
-      | undefined;
+      SchemaAiTaskMessageResponse | undefined;
 
     if (!resultMessage?.uuid) {
       return aiTaskMessages;
@@ -84,16 +83,20 @@ export function useGenerationPage({
         .find((message) => message.role === AiTaskRuleEnumMap.ASSISTANT),
     [displayedMessages],
   );
-  const lastTaskMessage = useMemo(
-    () =>
-      [...displayedMessages]
-        .reverse()
-        .find(
-          (message) =>
-            Boolean(message.ai_model_uuid) && Boolean(message.ai_model_config),
-        ),
-    [displayedMessages],
-  );
+  const lastTaskMessage = useMemo(() => {
+    const configuredMessages = [...displayedMessages]
+      .reverse()
+      .filter(
+        (message) =>
+          Boolean(message.ai_model_uuid) && Boolean(message.ai_model_config),
+      );
+
+    return (
+      configuredMessages.find(
+        (message) => message.role === AiTaskRuleEnumMap.ASSISTANT,
+      ) ?? configuredMessages[0]
+    );
+  }, [displayedMessages]);
   const successfulMessageClearKey =
     taskData && lastDisplayedAssistantMessage?.task_status === "SUCCESS"
       ? `${taskData.uuid}:${lastDisplayedAssistantMessage.uuid}`

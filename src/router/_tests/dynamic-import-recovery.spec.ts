@@ -4,10 +4,10 @@ test("reloads once when a route module is missing after a deployment", async ({
   page,
 }) => {
   let layoutModuleRequests = 0;
-  const browserErrors: string[] = [];
-  page.on("console", (message) => {
-    if (message.type() === "error") {
-      browserErrors.push(message.text());
+  let failedModuleRequests = 0;
+  page.on("requestfailed", (request) => {
+    if (request.url().includes("auth/login/page")) {
+      failedModuleRequests += 1;
     }
   });
   await page.route("**/*", async (route) => {
@@ -29,5 +29,6 @@ test("reloads once when a route module is missing after a deployment", async ({
   await page.goto("/auth/login");
 
   await expect.poll(() => layoutModuleRequests).toBe(2);
-  expect(browserErrors).toContain("Failed to load resource: net::ERR_FAILED");
+  expect(failedModuleRequests).toBe(1);
+  await expect(page.getByRole("spinbutton")).toBeVisible();
 });

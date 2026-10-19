@@ -1,8 +1,9 @@
 import { createStore } from "jotai";
 import { atomWithStorage, createJSONStorage } from "jotai/utils";
-import type { SyncStorage } from "jotai/vanilla/utils/atomWithStorage";
 
 import { LocalStorageAdapter, type WebStorage } from "./web-storage";
+
+type SyncStorage<Value> = ReturnType<typeof createJSONStorage<Value>>;
 
 type AtomConfig<T = any> = {
   atom: ReturnType<typeof atomWithStorage<T>>;

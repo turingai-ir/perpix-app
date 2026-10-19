@@ -106,7 +106,7 @@ test("loads mode config from the model detail without the removed generation-con
     }
   });
   await page.route(
-    (url) => url.pathname === `/ai-registry/models/${MODEL_UUID}`,
+    (url) => url.pathname === `/api/v1/ai-registry/models/${MODEL_UUID}`,
     async (route) => {
       await route.fulfill({
         contentType: "application/json",
@@ -270,13 +270,16 @@ test("refetches model metadata after an unclassified application failure", async
     const url = new URL(request.url());
     if (
       request.method() === "GET" &&
-      url.pathname === `/ai-registry/models/${MODEL_UUID}`
+      url.pathname === `/api/v1/ai-registry/models/${MODEL_UUID}`
     ) {
       modelDetailRequestCount += 1;
       await route.fallback();
       return;
     }
-    if (request.method() !== "POST" || url.pathname !== "/ai-task/generate") {
+    if (
+      request.method() !== "POST" ||
+      url.pathname !== "/api/v1/ai-task/generate"
+    ) {
       await route.fallback();
       return;
     }
@@ -486,7 +489,7 @@ function waitForGenerateRequest(page: Page) {
     .waitForRequest(
       (request) =>
         request.method() === "POST" &&
-        new URL(request.url()).pathname === "/ai-task/generate",
+        new URL(request.url()).pathname === "/api/v1/ai-task/generate",
     )
     .then((request) => request.postDataJSON());
 }
@@ -525,7 +528,10 @@ async function mockApi(page: Page, taskMessages: unknown[] = []) {
     const request = route.request();
     const url = new URL(request.url());
 
-    if (request.method() === "GET" && url.pathname === "/user/get-info") {
+    if (
+      request.method() === "GET" &&
+      url.pathname === "/api/v1/user/get-info"
+    ) {
       await route.fulfill({
         contentType: "application/json",
         body: JSON.stringify({ uuid: "user-1", mobile: "09120000000" }),
@@ -535,7 +541,7 @@ async function mockApi(page: Page, taskMessages: unknown[] = []) {
 
     if (
       request.method() === "GET" &&
-      url.pathname === "/user/subscription/active"
+      url.pathname === "/api/v1/user/subscription/active"
     ) {
       await route.fulfill({
         contentType: "application/json",
@@ -560,7 +566,7 @@ async function mockApi(page: Page, taskMessages: unknown[] = []) {
 
     if (
       request.method() === "GET" &&
-      url.pathname === "/user/subscription/plans"
+      url.pathname === "/api/v1/user/subscription/plans"
     ) {
       await route.fulfill({
         contentType: "application/json",
@@ -569,7 +575,10 @@ async function mockApi(page: Page, taskMessages: unknown[] = []) {
       return;
     }
 
-    if (request.method() === "GET" && url.pathname === "/wallet/wallet") {
+    if (
+      request.method() === "GET" &&
+      url.pathname === "/api/v1/wallet/wallet"
+    ) {
       await route.fulfill({
         contentType: "application/json",
         body: JSON.stringify({
@@ -580,7 +589,7 @@ async function mockApi(page: Page, taskMessages: unknown[] = []) {
       return;
     }
 
-    if (request.method() === "GET" && url.pathname === "/ai-task/list") {
+    if (request.method() === "GET" && url.pathname === "/api/v1/ai-task/list") {
       await route.fulfill({
         contentType: "application/json",
         body: JSON.stringify({ items: [], has_next: false }),
@@ -588,7 +597,10 @@ async function mockApi(page: Page, taskMessages: unknown[] = []) {
       return;
     }
 
-    if (request.method() === "POST" && url.pathname === "/ai-task/generate") {
+    if (
+      request.method() === "POST" &&
+      url.pathname === "/api/v1/ai-task/generate"
+    ) {
       await route.fulfill({
         contentType: "application/json",
         body: JSON.stringify({
@@ -603,7 +615,10 @@ async function mockApi(page: Page, taskMessages: unknown[] = []) {
       return;
     }
 
-    if (request.method() === "GET" && url.pathname === "/ai-task/task-1") {
+    if (
+      request.method() === "GET" &&
+      url.pathname === "/api/v1/ai-task/task-1"
+    ) {
       await route.fulfill({
         contentType: "application/json",
         body: JSON.stringify({
@@ -618,7 +633,10 @@ async function mockApi(page: Page, taskMessages: unknown[] = []) {
       return;
     }
 
-    if (request.method() === "GET" && url.pathname === "/ai-registry/models") {
+    if (
+      request.method() === "GET" &&
+      url.pathname === "/api/v1/ai-registry/models"
+    ) {
       await route.fulfill({
         contentType: "application/json",
         body: JSON.stringify([getModelSummary()]),
@@ -628,7 +646,7 @@ async function mockApi(page: Page, taskMessages: unknown[] = []) {
 
     if (
       request.method() === "GET" &&
-      url.pathname === `/ai-registry/models/${MODEL_UUID}`
+      url.pathname === `/api/v1/ai-registry/models/${MODEL_UUID}`
     ) {
       await route.fulfill({
         contentType: "application/json",
@@ -670,10 +688,8 @@ function getModelDetail() {
     image_to_video: "عکس به ویدیو",
     motion_control: "کنترل حرکت",
   };
-  const elements =
-    "elements" in (klingVideoConfigMeta.uischema ?? {})
-      ? klingVideoConfigMeta.uischema.elements
-      : [];
+  const uiSchema = klingVideoConfigMeta.uischema;
+  const elements = uiSchema && "elements" in uiSchema ? uiSchema.elements : [];
 
   return {
     ...getModelSummary(),
@@ -726,7 +742,7 @@ async function mockNanoBananaApi(page: Page) {
     });
   });
   await page.route(
-    (url) => url.pathname === "/ai-registry/models",
+    (url) => url.pathname === "/api/v1/ai-registry/models",
     async (route) => {
       await route.fulfill({
         contentType: "application/json",
@@ -735,7 +751,7 @@ async function mockNanoBananaApi(page: Page) {
     },
   );
   await page.route(
-    (url) => url.pathname === `/ai-registry/models/${NANO_MODEL_UUID}`,
+    (url) => url.pathname === `/api/v1/ai-registry/models/${NANO_MODEL_UUID}`,
     async (route) => {
       await route.fulfill({
         contentType: "application/json",

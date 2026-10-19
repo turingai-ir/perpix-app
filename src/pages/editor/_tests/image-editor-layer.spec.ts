@@ -148,7 +148,7 @@ async function readPixelRed(
   y: number,
 ): Promise<number> {
   return canvas.evaluate(
-    (element, point) => {
+    (element: HTMLCanvasElement, point) => {
       const scale = element.width / element.clientWidth;
       return (
         element
