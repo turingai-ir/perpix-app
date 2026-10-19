@@ -1,7 +1,9 @@
 import { useMemo, type FC } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
+
+import { getPostLoginPath } from "../model/auth-navigation";
 import { toast } from "sonner";
 import type { z } from "zod";
 
@@ -24,7 +26,6 @@ import { ResendCodeControls } from "./resend-code-controls";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { useAppTranslate } from "@/hooks";
-import { APP_ROUTES_KEY } from "@/router/routes";
 import { APP_I18_KEYS } from "@/services/i18";
 
 interface ChallengeCompleteFormProps {
@@ -46,6 +47,7 @@ export const ChallengeCompleteForm: FC<ChallengeCompleteFormProps> = ({
 }) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const navigate = useNavigate();
+  const { search } = useLocation();
   const isRegistration = purpose === "registration";
   const messages = useAuthFormMessages();
   const schema = useMemo(
@@ -74,7 +76,7 @@ export const ChallengeCompleteForm: FC<ChallengeCompleteFormProps> = ({
       if (isRegistration) {
         await register.mutateAsync({ ...base, password: values.password });
         toast.success(t("features.auth.toasts.registered"));
-        void navigate(APP_ROUTES_KEY.app.path, { replace: true });
+        void navigate(getPostLoginPath(search), { replace: true });
       } else {
         await reset.mutateAsync({ ...base, new_password: values.password });
         toast.success(t("features.auth.toasts.resetDone"));

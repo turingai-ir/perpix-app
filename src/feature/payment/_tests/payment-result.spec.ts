@@ -1,6 +1,8 @@
 import { expect, test } from "@playwright/test";
 
 import {
+  accessResponse,
+  sessionHeaders,
   mockAnonymousSession,
   mockAuthenticatedSession,
   TEST_ACCESS_TOKEN,
@@ -180,6 +182,41 @@ test("a returned payment with no usable session requires login before requesting
   });
 
   await page.goto(`/payment/verify/${paymentId}`);
-  await expect(page).toHaveURL(/\/auth\/login$/);
+  await expect(page).toHaveURL(
+    `/auth/login?returnTo=${encodeURIComponent(`/payment/verify/${paymentId}`)}`,
+  );
   expect(requestedPayment).toBe(false);
+});
+
+test("an expired session returns to the same payment after login and reload", async ({
+  page,
+}) => {
+  let signedIn = false;
+  await page.route("**/api/v1/auth/csrf", (route) =>
+    signedIn
+      ? route.fulfill({ json: { csrf_token: "csrf" } })
+      : route.fulfill({ status: 401, json: { detail: "Unauthorized" } }),
+  );
+  await page.route("**/api/v1/auth/start", (route) =>
+    route.fulfill({ json: { next_step: "password" } }),
+  );
+  await page.route("**/api/v1/auth/login", (route) => {
+    signedIn = true;
+    return route.fulfill({ headers: sessionHeaders, json: accessResponse });
+  });
+  await page.route("**/api/v1/payment-executions/*", (route) =>
+    route.fulfill({ json: paymentResponse("SUCCEEDED", "SUCCEEDED") }),
+  );
+  const destination = `/payment/verify/${paymentId}?source=bank`;
+  await page.goto(destination);
+  await expect(page).toHaveURL(new RegExp("/auth/login\\?returnTo="));
+  await page.reload();
+  await page.getByLabel("شماره موبایل").fill("09123456789");
+  await page.getByRole("button", { name: "ادامه دادن" }).click();
+  await page.getByLabel("رمز عبور", { exact: true }).fill("secret");
+  await page.getByRole("button", { name: /^ورود/ }).click();
+  await expect(page).toHaveURL(destination);
+  await expect(
+    page.getByRole("heading", { name: "پرداخت تکمیل شد", exact: true }),
+  ).toBeVisible();
 });

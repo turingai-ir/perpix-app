@@ -1,11 +1,14 @@
 import { ensureAccessToken, recoverAccessToken } from "./session-manager";
 import { sessionStore } from "./session-store";
 
+import { AuthRequestError } from "../model/auth-failure";
+
 import { FetchHttpError } from "@/utils/custom-fetch/fetch-errors";
 import { HttpStatus } from "@/utils/custom-fetch/http-status";
 
 const AUTH_PREFIX = "/api/v1/auth/";
 const COOKIE_OR_PUBLIC_AUTH_PATHS = [
+  "start",
   "registration-challenges",
   "registrations",
   "login",
@@ -37,14 +40,26 @@ export function createAuthorizedFetch(
   return async (input: RequestInfo | URL, init?: RequestInit) => {
     const request = new Request(input, init);
     const { pathname } = new URL(request.url);
-    if (startsWithAny(pathname, COOKIE_OR_PUBLIC_AUTH_PATHS)) {
+    const publicPlans =
+      request.method === "GET" &&
+      pathname === "/api/v1/user/subscription/plans";
+    if (publicPlans || startsWithAny(pathname, COOKIE_OR_PUBLIC_AUTH_PATHS)) {
       return innerFetch(request);
     }
 
     const retryable = request.clone();
     const cycle = sessionStore.getCycle();
     const sentToken = await ensureAccessToken();
-    if (sentToken) request.headers.set("Authorization", `Bearer ${sentToken}`);
+    request.signal.throwIfAborted();
+    if (cycle !== sessionStore.getCycle() && sentToken) {
+      throw new AuthRequestError({ kind: "aborted" });
+    }
+    if (!sentToken) {
+      throw sessionStore.getStatus() === "anonymous"
+        ? new AuthRequestError({ kind: "invalid-credentials" }, 401)
+        : new AuthRequestError({ kind: "network" });
+    }
+    request.headers.set("Authorization", `Bearer ${sentToken}`);
 
     try {
       return await innerFetch(request);

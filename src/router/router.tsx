@@ -1,26 +1,36 @@
 import { useEffect, type ComponentType } from "react";
-import { createBrowserRouter, redirect, useRouteError } from "react-router";
+import {
+  createBrowserRouter,
+  redirect,
+  useRouteError,
+  type LoaderFunctionArgs,
+} from "react-router";
 
 import { APP_ROUTES_KEY } from "./routes";
 import { loadRouteModule } from "./dynamic-import-recovery";
 
 import RootLayout from "@/pages/(root)/layout";
-import { bootstrapSession } from "@/features/auth";
+import {
+  bootstrapSession,
+  getLoginPath,
+  getPostLoginPath,
+} from "@/features/auth";
 import { ErrorFallbackPage } from "@/components/custom/error-boundary";
 import LoadingSection from "@/components/custom/loading-section";
 import { captureError } from "@/lib/observability";
 
-const requireSession = async () => {
+const requireSession = async ({ request }: LoaderFunctionArgs) => {
   if ((await bootstrapSession()) === "anonymous") {
-    throw redirect(APP_ROUTES_KEY.auth.login.path);
+    const url = new URL(request.url);
+    throw redirect(getLoginPath(url.pathname + url.search + url.hash));
   }
 
   return null;
 };
 
-const redirectIfAuthenticated = async () => {
+const redirectIfAuthenticated = async ({ request }: LoaderFunctionArgs) => {
   if ((await bootstrapSession()) === "authenticated") {
-    throw redirect(APP_ROUTES_KEY.app.path);
+    throw redirect(getPostLoginPath(new URL(request.url).search));
   }
 
   return null;

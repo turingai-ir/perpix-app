@@ -1,7 +1,9 @@
 import { useEffect, useMemo, type FC } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
+
+import { getPostLoginPath } from "../model/auth-navigation";
 import { toast } from "sonner";
 import type { z } from "zod";
 
@@ -18,7 +20,6 @@ import { LoginActions } from "./login-actions";
 import { Form } from "@/components/ui/form";
 import { PasswordInput } from "@/components/ui/password-input";
 import { useAppTranslate } from "@/hooks";
-import { APP_ROUTES_KEY } from "@/router/routes";
 import { APP_I18_KEYS } from "@/services/i18";
 
 interface LoginFormProps {
@@ -36,6 +37,7 @@ export const LoginForm: FC<LoginFormProps> = ({
 }) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const navigate = useNavigate();
+  const { search } = useLocation();
   const messages = useAuthFormMessages();
   const schema = useMemo(() => createLoginSchema(messages), [messages]);
   const form = useForm<
@@ -61,7 +63,7 @@ export const LoginForm: FC<LoginFormProps> = ({
       return;
     }
     toast.success(t("features.auth.toasts.loggedIn"));
-    void navigate(APP_ROUTES_KEY.app.path, { replace: true });
+    void navigate(getPostLoginPath(search), { replace: true });
   };
 
   return (

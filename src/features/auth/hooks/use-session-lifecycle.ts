@@ -2,7 +2,11 @@ import { useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { toast } from "sonner";
 
-import { onSessionEnded } from "../services/session-manager";
+import {
+  onSessionEnded,
+  type SessionEndReason,
+} from "../services/session-manager";
+import { getLoginPath } from "../model/auth-navigation";
 
 import { useAuthStatus } from "./use-auth-status";
 
@@ -18,22 +22,28 @@ import { APP_I18_KEYS } from "@/services/i18";
 export function useSessionLifecycle() {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const navigate = useNavigate();
-  const { pathname } = useLocation();
+  const { pathname, search, hash } = useLocation();
   const status = useAuthStatus();
   const previousStatus = useRef(status);
+  const endedReason = useRef<SessionEndReason | null>(null);
   const isOnLogin = pathname === APP_ROUTES_KEY.auth.login.path;
 
   useEffect(() => {
     const wasAuthenticated = previousStatus.current === "authenticated";
     previousStatus.current = status;
     if (wasAuthenticated && status === "anonymous" && !isOnLogin) {
-      void navigate(APP_ROUTES_KEY.auth.login.path, { replace: true });
+      const destination =
+        endedReason.current === "expired"
+          ? getLoginPath(pathname + search + hash)
+          : APP_ROUTES_KEY.auth.login.path;
+      void navigate(destination, { replace: true });
     }
-  }, [status, isOnLogin, navigate]);
+  }, [status, isOnLogin, navigate, pathname, search, hash]);
 
   useEffect(
     () =>
       onSessionEnded((reason) => {
+        endedReason.current = reason;
         if (reason === "expired") {
           toast.info(t("features.auth.toasts.sessionEnded"));
         }

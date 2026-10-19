@@ -137,7 +137,7 @@ export async function ensureAccessToken(): Promise<string | null> {
   const remaining = sessionStore.getExpiresAt() - Date.now();
   if (remaining > EARLY_REFRESH_MS / 2) return sessionStore.getAccessToken();
   const outcome = await refreshSession();
-  if (outcome === "refreshed" || remaining > 0) {
+  if (outcome === "refreshed" || sessionStore.getExpiresAt() > Date.now()) {
     return sessionStore.getAccessToken();
   }
 

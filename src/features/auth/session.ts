@@ -11,3 +11,5 @@ export {
 } from "./services/session-manager";
 export { sessionStore } from "./services/session-store";
 export type { AuthStatus } from "./model/types";
+
+export { getLoginPath, getPostLoginPath } from "./model/auth-navigation";
