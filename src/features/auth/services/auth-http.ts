@@ -3,6 +3,7 @@ import type { z } from "zod";
 import { AuthRequestError, failureFromResponse } from "../model/auth-failure";
 import {
   accessResponseSchema,
+  authStartSchema,
   challengeSchema,
   csrfResponseSchema,
   type AuthChallenge,
@@ -134,3 +135,9 @@ export const changePassword = async (
 ) => {
   await send("/password-changes", { bearer, body });
 };
+
+export const startAuth = async (phoneNumber: string) =>
+  parse(
+    await send("/start", { body: { phone_number: phoneNumber } }),
+    authStartSchema,
+  );

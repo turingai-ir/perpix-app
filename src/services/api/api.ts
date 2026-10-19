@@ -243,6 +243,26 @@ export interface paths {
         readonly patch?: never;
         readonly trace?: never;
     };
+    readonly "/api/v1/auth/start": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly get?: never;
+        readonly put?: never;
+        /**
+         * Start sign-in or registration with a phone number
+         * @description Returns password for existing or unavailable accounts. Registerable numbers receive a registration challenge and an SMS is queued. This endpoint reveals account registration state. Repeated requests consume the shared phone/IP send budget and replace the registration code.
+         */
+        readonly post: operations["auth_start"];
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
     readonly "/api/v1/auth/api-tokens": {
         readonly parameters: {
             readonly query?: never;
@@ -971,6 +991,15 @@ export interface components {
             /** Revoked At */
             readonly revoked_at: string | null;
         };
+        /** AuthStartRequest */
+        readonly AuthStartRequest: {
+            /**
+             * Phone Number
+             * @example +989123456789
+             */
+            readonly phone_number: string;
+        };
+        readonly AuthStartResponse: components["schemas"]["PasswordStepResponse"] | components["schemas"]["RegistrationStepResponse"];
         /** Body_replace_file_api_v1_file_manager_files__file_uuid__put */
         readonly Body_replace_file_api_v1_file_manager_files__file_uuid__put: {
             /** File */
@@ -1357,6 +1386,14 @@ export interface components {
              */
             readonly new_password: string;
         };
+        /** PasswordStepResponse */
+        readonly PasswordStepResponse: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            readonly next_step: "password";
+        };
         /** PaymentDetailsResponse */
         readonly PaymentDetailsResponse: {
             /**
@@ -1468,6 +1505,29 @@ export interface components {
              * Format: password
              */
             readonly password: string;
+        };
+        /** RegistrationStepResponse */
+        readonly RegistrationStepResponse: {
+            /**
+             * Challenge Id
+             * Format: uuid
+             */
+            readonly challenge_id: string;
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            readonly expires_at: string;
+            /**
+             * Resend Available At
+             * Format: date-time
+             */
+            readonly resend_available_at: string;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            readonly next_step: "registration";
         };
         /** SubscriptionPlanListResponse */
         readonly SubscriptionPlanListResponse: {
@@ -1720,6 +1780,8 @@ export type SchemaAiTaskRuleEnum = components['schemas']['AiTaskRuleEnum'];
 export type SchemaAiTaskTypeEnum = components['schemas']['AiTaskTypeEnum'];
 export type SchemaApiTokenListResponse = components['schemas']['ApiTokenListResponse'];
 export type SchemaApiTokenResponse = components['schemas']['ApiTokenResponse'];
+export type SchemaAuthStartRequest = components['schemas']['AuthStartRequest'];
+export type SchemaAuthStartResponse = components['schemas']['AuthStartResponse'];
 export type SchemaBodyReplaceFileApiV1FileManagerFilesFileUuidPut = components['schemas']['Body_replace_file_api_v1_file_manager_files__file_uuid__put'];
 export type SchemaBodySimpleUploadApiV1FileManagerSimpleUploadPost = components['schemas']['Body_simple_upload_api_v1_file_manager_simple_upload_post'];
 export type SchemaChallengeResponse = components['schemas']['ChallengeResponse'];
@@ -1746,6 +1808,7 @@ export type SchemaMachineScope = components['schemas']['MachineScope'];
 export type SchemaPasswordChangeRequest = components['schemas']['PasswordChangeRequest'];
 export type SchemaPasswordResetChallengeRequest = components['schemas']['PasswordResetChallengeRequest'];
 export type SchemaPasswordResetRequest = components['schemas']['PasswordResetRequest'];
+export type SchemaPasswordStepResponse = components['schemas']['PasswordStepResponse'];
 export type SchemaPaymentDetailsResponse = components['schemas']['PaymentDetailsResponse'];
 export type SchemaPaymentExecutionStatus = components['schemas']['PaymentExecutionStatus'];
 export type SchemaPaymentFinancialStatus = components['schemas']['PaymentFinancialStatus'];
@@ -1755,6 +1818,7 @@ export type SchemaPaymentListResponse = components['schemas']['PaymentListRespon
 export type SchemaPaymentResponse = components['schemas']['PaymentResponse'];
 export type SchemaRegistrationChallengeRequest = components['schemas']['RegistrationChallengeRequest'];
 export type SchemaRegistrationRequest = components['schemas']['RegistrationRequest'];
+export type SchemaRegistrationStepResponse = components['schemas']['RegistrationStepResponse'];
 export type SchemaSubscriptionPlanListResponse = components['schemas']['SubscriptionPlanListResponse'];
 export type SchemaSubscriptionPlanResponse = components['schemas']['SubscriptionPlanResponse'];
 export type SchemaSubscriptionPurchaseRequest = components['schemas']['SubscriptionPurchaseRequest'];
@@ -2282,6 +2346,53 @@ export interface operations {
                     readonly [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Unauthorized */
+            readonly 401: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Rate limit exceeded */
+            readonly 429: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    readonly auth_start: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody: {
+            readonly content: {
+                readonly "application/json": components["schemas"]["AuthStartRequest"];
+            };
+        };
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["AuthStartResponse"];
+                };
             };
             /** @description Unauthorized */
             readonly 401: {
@@ -3348,9 +3459,11 @@ export const aiTaskMessageStatusEnumValues: ReadonlyArray<FlattenedDeepRequired<
 export const aiTaskRuleEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiTaskRuleEnum"]> = ["SYSTEM", "USER", "ASSISTANT", "TOOL", "FUNCTION", "INLINE"];
 export const aiTaskTypeEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiTaskTypeEnum"]> = ["TEXT", "IMAGE", "AUDIO", "VIDEO"];
 export const machineScopeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["MachineScope"]> = ["ai_registry:read", "ai_task:read", "ai_task:write", "file_manager:read", "file_manager:write"];
+export const passwordStepResponseNext_stepValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PasswordStepResponse"]["next_step"]> = ["password"];
 export const paymentExecutionStatusValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaymentExecutionStatus"]> = ["PENDING", "SUCCEEDED", "FAILED", "EXPIRED"];
 export const paymentFinancialStatusValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaymentFinancialStatus"]> = ["PENDING", "SUCCEEDED", "CLOSED"];
 export const paymentFulfillmentStatusValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaymentFulfillmentStatus"]> = ["NOT_READY", "PENDING", "SUCCEEDED", "NEEDS_REVIEW"];
+export const registrationStepResponseNext_stepValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["RegistrationStepResponse"]["next_step"]> = ["registration"];
 export const supportedCurrencyValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["SupportedCurrency"]> = ["IRR"];
 export const walletOperationSourceEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["WalletOperationSourceEnum"]> = ["admin", "ai_gateway_request", "ai_task_message", "subscription"];
 export const walletTransactionTypeEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["WalletTransactionTypeEnum"]> = ["DEPOSIT", "WITHDRAW", "REFUND"];

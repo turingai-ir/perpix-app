@@ -10,12 +10,16 @@ import { errorBody, mockAppShellApis } from "./support";
 
 async function fillCredentials(page: Page, phone: string, password: string) {
   await page.getByLabel("شماره موبایل").fill(phone);
+  await page.getByRole("button", { name: "ادامه دادن" }).click();
   await page.getByLabel("رمز عبور", { exact: true }).fill(password);
   await page.getByRole("button", { name: /^ورود/ }).click();
 }
 
 test.beforeEach(async ({ page }) => {
   await mockAnonymousSession(page);
+  await page.route("**/api/v1/auth/start", (route) =>
+    route.fulfill({ json: { next_step: "password" } }),
+  );
 });
 
 test("signs in with a canonical E.164 phone converted from Persian digits", async ({
@@ -89,7 +93,8 @@ test("validates the phone number before sending anything", async ({ page }) => {
   });
 
   await page.goto("/auth/login");
-  await fillCredentials(page, "12345", "secret");
+  await page.getByLabel("شماره موبایل").fill("12345");
+  await page.getByRole("button", { name: "ادامه دادن" }).click();
 
   await expect(
     page.getByText("شماره موبایل معتبر ایران وارد کنید."),

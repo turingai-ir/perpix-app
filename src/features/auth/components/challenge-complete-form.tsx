@@ -90,7 +90,11 @@ export const ChallengeCompleteForm: FC<ChallengeCompleteFormProps> = ({
       title={t(
         `features.auth.complete.${isRegistration ? "registrationTitle" : "resetTitle"}`,
       )}
-      description={t("features.auth.complete.description")}
+      description={t(
+        isRegistration
+          ? "features.auth.complete.registrationDescription"
+          : "features.auth.complete.description",
+      )}
       footer={
         <Button type="button" variant="link" onClick={onBack}>
           {t("features.auth.complete.back")}

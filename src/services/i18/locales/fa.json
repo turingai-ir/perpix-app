@@ -199,7 +199,8 @@
         "passwordLabel": "رمز عبور",
         "submit": "ورود",
         "forgotPassword": "فراموشی رمز عبور",
-        "createAccount": "ثبت‌نام"
+        "createAccount": "ثبت‌نام",
+        "changePhone": "تغییر شماره موبایل"
       },
       "register": {
         "title": "ثبت‌نام",
@@ -215,6 +216,7 @@
       },
       "complete": {
         "registrationTitle": "تأیید شماره و انتخاب رمز",
+        "registrationDescription": "کد تأیید برای شماره شما ارسال شد. کد و رمز عبور دلخواه خود را وارد کنید.",
         "resetTitle": "انتخاب رمز عبور جدید",
         "description": "اگر این شماره واجد شرایط باشد، کد تأیید ارسال می‌شود.",
         "otpLabel": "کد تأیید",

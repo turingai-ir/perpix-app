@@ -10,6 +10,9 @@ test("password reset returns to the login page without signing in", async ({
   let resetBody: unknown;
   let refreshRequests = 0;
   await mockAnonymousSession(page);
+  await page.route("**/api/v1/auth/start", (route) =>
+    route.fulfill({ json: { next_step: "password" } }),
+  );
   await page.route("**/api/v1/auth/refresh", (route) => {
     refreshRequests += 1;
 
@@ -25,9 +28,9 @@ test("password reset returns to the login page without signing in", async ({
   });
 
   await page.goto("/auth/login");
-  await page.getByRole("button", { name: "فراموشی رمز عبور" }).click();
   await page.getByLabel("شماره موبایل").fill("09123456789");
-  await page.getByRole("button", { name: "دریافت کد تأیید" }).click();
+  await page.getByRole("button", { name: "ادامه دادن" }).click();
+  await page.getByRole("button", { name: "فراموشی رمز عبور" }).click();
   await page.getByLabel("کد تأیید").fill("012345");
   await page.getByLabel("رمز عبور جدید").fill("NewStrongPass1");
   await page.getByLabel("تکرار رمز عبور").fill("NewStrongPass1");

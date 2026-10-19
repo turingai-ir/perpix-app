@@ -28,3 +28,9 @@ export interface IssuedSession {
 }
 
 export type ChallengePurpose = "registration" | "password-reset";
+
+export const authStartSchema = z.discriminatedUnion("next_step", [
+  z.object({ next_step: z.literal("password") }),
+  challengeSchema.extend({ next_step: z.literal("registration") }),
+]);
+export type AuthStart = z.infer<typeof authStartSchema>;

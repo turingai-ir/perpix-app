@@ -3,54 +3,45 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
 
-import type { AuthChallenge, ChallengePurpose } from "../model/types";
+import type { AuthStart } from "../model/types";
 import { createPhoneSchema } from "../model/schemas";
 import { useAuthFeedback } from "../hooks/use-auth-feedback";
 import { useAuthFormMessages } from "../hooks/use-auth-form-messages";
-import {
-  usePasswordResetChallengeMutation,
-  useRegistrationChallengeMutation,
-} from "../hooks/use-auth-mutations";
+import { useStartAuthMutation } from "../hooks/use-auth-mutations";
 
 import { AuthCard } from "./auth-card";
 import { AuthField } from "./auth-field";
 import { FormAlert, SubmitButton } from "./form-feedback";
 
-import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useAppTranslate } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
 
 interface ChallengeStartFormProps {
-  purpose: ChallengePurpose;
-  onChallenge: (phone: string, challenge: AuthChallenge) => void;
-  onBackToLogin: () => void;
+  phone: string;
+  onStart: (phone: string, result: AuthStart) => void;
 }
 
 export const ChallengeStartForm: FC<ChallengeStartFormProps> = ({
-  purpose,
-  onChallenge,
-  onBackToLogin,
+  phone,
+  onStart,
 }) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
-  const copy = purpose === "registration" ? "register" : "reset";
   const messages = useAuthFormMessages();
   const schema = useMemo(() => createPhoneSchema(messages), [messages]);
   const form = useForm<
     z.input<typeof schema>,
     unknown,
     z.output<typeof schema>
-  >({ resolver: zodResolver(schema), defaultValues: { phone_number: "" } });
+  >({ resolver: zodResolver(schema), defaultValues: { phone_number: phone } });
   const feedback = useAuthFeedback(form);
-  const registration = useRegistrationChallengeMutation();
-  const reset = usePasswordResetChallengeMutation();
-  const mutation = purpose === "registration" ? registration : reset;
+  const mutation = useStartAuthMutation();
 
   const onSubmit = async ({ phone_number }: z.output<typeof schema>) => {
     feedback.clear();
     try {
-      onChallenge(phone_number, await mutation.mutateAsync(phone_number));
+      onStart(phone_number, await mutation.mutateAsync(phone_number));
     } catch (error) {
       feedback.handleError(error);
     }
@@ -58,28 +49,29 @@ export const ChallengeStartForm: FC<ChallengeStartFormProps> = ({
 
   return (
     <AuthCard
-      title={t(`features.auth.${copy}.title`)}
-      description={t(`features.auth.${copy}.description`)}
-      footer={
-        <Button type="button" variant="link" onClick={onBackToLogin}>
-          {t("features.auth.reset.backToLogin")}
-        </Button>
-      }
+      title={t("pages.auth.login.title")}
+      description={t("pages.auth.login.description")}
     >
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <AuthField
             name="phone_number"
             label={t("features.auth.login.phoneLabel")}
             hint={t("features.auth.login.phoneHint")}
           >
             {(field) => (
-              <Input dir="ltr" type="tel" inputMode="tel" {...field} />
+              <Input
+                dir="ltr"
+                type="tel"
+                inputMode="tel"
+                autoComplete="username"
+                {...field}
+              />
             )}
           </AuthField>
           <FormAlert message={feedback.message} />
           <SubmitButton
-            label={t(`features.auth.${copy}.submit`)}
+            label={t("pages.auth.login.startForm.submit")}
             isPending={mutation.isPending}
             lockedSeconds={feedback.lockedSeconds}
           />

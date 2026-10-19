@@ -10,9 +10,8 @@ import { challenge, CHALLENGE_ID, mockAppShellApis } from "./support";
 
 async function startRegistration(page: Page) {
   await page.goto("/auth/login");
-  await page.getByRole("button", { name: "ثبت‌نام" }).click();
   await page.getByLabel("شماره موبایل").fill("09123456789");
-  await page.getByRole("button", { name: "دریافت کد تأیید" }).click();
+  await page.getByRole("button", { name: "ادامه دادن" }).click();
 }
 
 async function completeForm(page: Page, otp: string, password = "StrongPass1") {
@@ -31,10 +30,13 @@ test("registers with an OTP that keeps its leading zero and Persian digits", asy
   let startBody: unknown;
   let completeBody: unknown;
   await mockAppShellApis(page);
-  await page.route("**/api/v1/auth/registration-challenges", (route) => {
+  await page.route("**/api/v1/auth/start", (route) => {
     startBody = route.request().postDataJSON();
 
-    return route.fulfill({ status: 201, json: challenge() });
+    return route.fulfill({
+      status: 200,
+      json: { next_step: "registration", ...challenge() },
+    });
   });
   await page.route("**/api/v1/auth/registrations", (route) => {
     completeBody = route.request().postDataJSON();
@@ -68,8 +70,11 @@ test("registers with an OTP that keeps its leading zero and Persian digits", asy
 test("a wrong or expired code keeps the form and explains how to continue", async ({
   page,
 }) => {
-  await page.route("**/api/v1/auth/registration-challenges", (route) =>
-    route.fulfill({ status: 201, json: challenge() }),
+  await page.route("**/api/v1/auth/start", (route) =>
+    route.fulfill({
+      status: 200,
+      json: { next_step: "registration", ...challenge() },
+    }),
   );
   await page.route("**/api/v1/auth/registrations", (route) =>
     route.fulfill({
@@ -90,8 +95,11 @@ test("a wrong or expired code keeps the form and explains how to continue", asyn
 
 test("rejects mismatching passwords locally", async ({ page }) => {
   let registrations = 0;
-  await page.route("**/api/v1/auth/registration-challenges", (route) =>
-    route.fulfill({ status: 201, json: challenge() }),
+  await page.route("**/api/v1/auth/start", (route) =>
+    route.fulfill({
+      status: 200,
+      json: { next_step: "registration", ...challenge() },
+    }),
   );
   await page.route("**/api/v1/auth/registrations", (route) => {
     registrations += 1;
@@ -116,8 +124,11 @@ test("resend replaces the challenge once the cooldown has passed", async ({
 }) => {
   const resendId = "22222222-2222-4222-8222-222222222222";
   let resendPath = "";
-  await page.route("**/api/v1/auth/registration-challenges", (route) =>
-    route.fulfill({ status: 201, json: challenge({ resendInMs: -1000 }) }),
+  await page.route("**/api/v1/auth/start", (route) =>
+    route.fulfill({
+      status: 200,
+      json: { next_step: "registration", ...challenge({ resendInMs: -1000 }) },
+    }),
   );
   await page.route("**/api/v1/auth/challenges/*/resend", (route) => {
     resendPath = new URL(route.request().url()).pathname;
@@ -136,15 +147,22 @@ test("an expired challenge asks for a fresh code instead of resending", async ({
   page,
 }) => {
   let starts = 0;
-  await page.route("**/api/v1/auth/registration-challenges", (route) => {
+  await page.route("**/api/v1/auth/start", (route) => {
     starts += 1;
 
     return route.fulfill({
       status: 201,
-      json: starts === 1 ? challenge({ expiresInMs: -1000 }) : challenge(),
+      json: {
+        next_step: "registration",
+        ...(starts === 1 ? challenge({ expiresInMs: -1000 }) : challenge()),
+      },
     });
   });
 
+  await page.route("**/api/v1/auth/registration-challenges", (route) => {
+    starts += 1;
+    return route.fulfill({ status: 201, json: challenge() });
+  });
   await startRegistration(page);
   await page.getByRole("button", { name: "درخواست کد تازه" }).click();
 
@@ -157,7 +175,7 @@ test("an expired challenge asks for a fresh code instead of resending", async ({
 test("a rate-limited challenge request shows the server wait time", async ({
   page,
 }) => {
-  await page.route("**/api/v1/auth/registration-challenges", (route) =>
+  await page.route("**/api/v1/auth/start", (route) =>
     route.fulfill({
       status: 429,
       json: {
