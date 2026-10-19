@@ -6,7 +6,6 @@ import {
   Download,
   KeyRound,
   LogOut,
-  LogOutIcon,
 } from "lucide-react";
 
 import AppLayoutSidebarUserAvatar from "./user-avatar";
@@ -88,13 +87,6 @@ const AppLayoutSidebarUserProfileMenu: FC = () => {
             <DropdownMenuItem onSelect={() => setIsChangePasswordOpen(true)}>
               <KeyRound />
               {t("features.auth.changePassword.menu")}
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              disabled={signOutActions.isPending}
-              onSelect={() => void signOutActions.signOutEverywhere()}
-            >
-              <LogOutIcon />
-              {t("features.auth.logoutAll.menu")}
             </DropdownMenuItem>
             <DropdownMenuItem
               disabled={signOutActions.isPending}

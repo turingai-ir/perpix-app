@@ -70,27 +70,19 @@ test("a sign-out the server could not confirm is reported with a retry", async (
   await expect(page.getByRole("button", { name: "تلاش مجدد" })).toBeVisible();
 });
 
-test("sign out everywhere uses the Bearer session", async ({ page }) => {
-  let authorization: string | undefined;
-  await mockAppShellApis(page);
-  await page.route("**/api/v1/auth/csrf", (route) =>
-    route.fulfill({ json: { csrf_token: "csrf-1" } }),
-  );
-  await page.route("**/api/v1/auth/refresh", (route) =>
-    route.fulfill({ headers: sessionHeaders, json: accessResponse }),
-  );
-  await page.route("**/api/v1/auth/logout-all", (route) => {
-    authorization = route.request().headers().authorization;
-
-    return route.fulfill({ status: 204 });
-  });
+test("the user menu only offers signing out of the current device", async ({
+  page,
+}) => {
+  await mockSessionThatEndsOnLogout(page);
   await page.goto("/");
 
   await userMenu(page).click();
-  await page.getByRole("menuitem", { name: "خروج از همهٔ دستگاه‌ها" }).click();
-
-  await expect(page).toHaveURL(/\/auth\/login$/);
-  expect(authorization).toBe(`Bearer ${accessResponse.access_token}`);
+  await expect(
+    page.getByRole("menuitem", { name: "خروج", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("menuitem", { name: "خروج از همهٔ دستگاه‌ها" }),
+  ).toHaveCount(0);
 });
 
 test("signing out in one tab signs the other tab out too", async ({
