@@ -58,6 +58,7 @@ test("registers with an OTP that keeps its leading zero and Persian digits", asy
   await completeForm(page, "۰۱۲۳۴۵");
   await page.getByRole("button", { name: "ثبت‌نام" }).click();
 
+  await expect(page.locator("[data-auth-celebration]")).toBeVisible();
   await expect(
     page.getByRole("navigation", { name: "پیوندهای مالی" }),
   ).toBeVisible();
@@ -89,6 +90,7 @@ test("a wrong or expired code keeps the form and explains how to continue", asyn
   await completeForm(page, "000000");
   await page.getByRole("button", { name: "ثبت‌نام" }).click();
 
+  await expect(page.locator("[data-auth-reaction='code']")).toBeVisible();
   await expect(page.getByRole("alert")).toContainText(
     "کد تأیید نامعتبر یا منقضی شده است",
   );

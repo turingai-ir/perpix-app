@@ -1,16 +1,25 @@
 import type { PropsWithChildren } from "react";
-import { Aperture, Film, Sparkles } from "lucide-react";
+import { Aperture, Film } from "lucide-react";
 
 import { useAppTranslate } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
 import styles from "../login.module.css";
 import LoginArtwork from "./login-artwork";
+import AuthCelebration from "./auth-celebration";
 
-export default function LoginShell({ children }: PropsWithChildren) {
+interface LoginShellProps extends PropsWithChildren {
+  celebrating?: boolean;
+}
+
+export default function LoginShell({
+  children,
+  celebrating = false,
+}: LoginShellProps) {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
 
   return (
     <main className={styles.page}>
+      {celebrating ? <AuthCelebration /> : null}
       <header className={styles.header}>
         <div className={styles.brand}>
           <img
@@ -29,10 +38,6 @@ export default function LoginShell({ children }: PropsWithChildren) {
         <section className={styles.hero} aria-labelledby="login-hero-title">
           <LoginArtwork />
           <div className={styles.heroCopy}>
-            <span className={styles.eyebrow}>
-              <Sparkles size={14} aria-hidden="true" />
-              {t("pages.auth.login.visual.eyebrow")}
-            </span>
             <h1 id="login-hero-title">
               {t("pages.auth.login.visual.title")}
               <br />
@@ -55,11 +60,20 @@ export default function LoginShell({ children }: PropsWithChildren) {
           className={styles.formSection}
           aria-label={t("pages.auth.login.title")}
         >
-          <div className={styles.formMark} aria-hidden="true">
-            <Sparkles size={22} />
+          <div className={styles.formMasthead}>
+            <span className={styles.liveSignal} aria-hidden="true" />
+            <span>{t("pages.auth.login.visual.entryLabel")}</span>
+            <span className={styles.formMastheadIndex} aria-hidden="true">
+              P/01
+            </span>
           </div>
           <div className={styles.forms}>{children}</div>
-          <p className={styles.formNote}>{t("pages.auth.login.visual.note")}</p>
+          <div className={styles.formEndnote}>
+            <span aria-hidden="true">✳</span>
+            <p className={styles.formNote}>
+              {t("pages.auth.login.visual.note")}
+            </p>
+          </div>
         </section>
       </div>
       <footer className={styles.footer}>
