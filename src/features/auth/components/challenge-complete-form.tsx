@@ -1,4 +1,4 @@
-import { useMemo, type FC } from "react";
+import { useMemo, useState, type FC } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLocation, useNavigate } from "react-router";
@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import type { z } from "zod";
 
 import type { AuthChallenge, ChallengePurpose } from "../model/types";
+import { failureOf } from "../model/auth-failure";
 import { createCompleteChallengeSchema } from "../model/schemas";
 import { useAuthFeedback } from "../hooks/use-auth-feedback";
 import { useAuthFormMessages } from "../hooks/use-auth-form-messages";
@@ -35,6 +36,7 @@ interface ChallengeCompleteFormProps {
   onChallenge: (challenge: AuthChallenge) => void;
   onPasswordReset: () => void;
   onBack: () => void;
+  onAuthenticated: () => Promise<void>;
 }
 
 export const ChallengeCompleteForm: FC<ChallengeCompleteFormProps> = ({
@@ -44,6 +46,7 @@ export const ChallengeCompleteForm: FC<ChallengeCompleteFormProps> = ({
   onChallenge,
   onPasswordReset,
   onBack,
+  onAuthenticated,
 }) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const navigate = useNavigate();
@@ -65,6 +68,8 @@ export const ChallengeCompleteForm: FC<ChallengeCompleteFormProps> = ({
   const feedback = useAuthFeedback(form);
   const register = useCompleteRegistrationMutation();
   const reset = useCompletePasswordResetMutation();
+  const [reactionId, setReactionId] = useState(0);
+  const [isEntering, setIsEntering] = useState(false);
 
   const onSubmit = async (values: z.output<typeof schema>) => {
     feedback.clear();
@@ -75,7 +80,8 @@ export const ChallengeCompleteForm: FC<ChallengeCompleteFormProps> = ({
     try {
       if (isRegistration) {
         await register.mutateAsync({ ...base, password: values.password });
-        toast.success(t("features.auth.toasts.registered"));
+        setIsEntering(true);
+        await onAuthenticated();
         void navigate(getPostLoginPath(search), { replace: true });
       } else {
         await reset.mutateAsync({ ...base, new_password: values.password });
@@ -84,6 +90,9 @@ export const ChallengeCompleteForm: FC<ChallengeCompleteFormProps> = ({
       }
     } catch (error) {
       feedback.handleError(error);
+      if (failureOf(error).kind === "challenge-invalid") {
+        setReactionId((id) => id + 1);
+      }
     }
   };
 
@@ -97,6 +106,15 @@ export const ChallengeCompleteForm: FC<ChallengeCompleteFormProps> = ({
           ? "features.auth.complete.registrationDescription"
           : "features.auth.complete.description",
       )}
+      reaction={
+        reactionId
+          ? {
+              id: reactionId,
+              kind: "code",
+              message: t("features.auth.complete.wrongCodeReaction"),
+            }
+          : undefined
+      }
       footer={
         <Button type="button" variant="link" onClick={onBack}>
           {t("features.auth.complete.back")}
@@ -129,7 +147,7 @@ export const ChallengeCompleteForm: FC<ChallengeCompleteFormProps> = ({
             label={t(
               `features.auth.complete.${isRegistration ? "submitRegistration" : "submitReset"}`,
             )}
-            isPending={register.isPending || reset.isPending}
+            isPending={register.isPending || reset.isPending || isEntering}
             lockedSeconds={feedback.lockedSeconds}
           />
         </form>

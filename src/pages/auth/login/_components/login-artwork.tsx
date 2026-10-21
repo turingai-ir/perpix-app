@@ -33,13 +33,13 @@ export default function LoginArtwork() {
         <div className={styles.energyRing} />
         <img
           className={styles.heroLogo}
+          data-hero-logo
           src="/android-chrome-512x512.png"
           alt=""
           width="512"
           height="512"
         />
       </div>
-      <span className={styles.artLabel}>PERPIX / CREATIVE SPACE</span>
     </div>
   );
 }

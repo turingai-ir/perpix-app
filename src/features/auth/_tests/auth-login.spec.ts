@@ -36,6 +36,13 @@ test("signs in with a canonical E.164 phone converted from Persian digits", asyn
   await page.goto("/auth/login");
   await fillCredentials(page, "۰۹۱۲۳۴۵۶۷۸۹", "secret");
 
+  await expect(page.locator("[data-auth-celebration]")).toBeVisible();
+  await expect(page.locator("[data-auth-celebration]")).toContainText(
+    "در باز شد",
+  );
+  await page.waitForTimeout(4000);
+  await expect(page).toHaveURL(/\/auth\/login$/);
+  await expect(page.locator("[data-auth-celebration]")).toBeVisible();
   await expect(
     page.getByRole("navigation", { name: "پیوندهای مالی" }),
   ).toBeVisible();
@@ -52,6 +59,7 @@ test("shows one generic message for any rejected credentials", async ({
   await page.goto("/auth/login");
   await fillCredentials(page, "09123456789", "wrong");
 
+  await expect(page.locator("[data-auth-reaction='password']")).toBeVisible();
   await expect(page.getByRole("alert")).toHaveText(
     "شماره یا رمز عبور معتبر نیست.",
   );
