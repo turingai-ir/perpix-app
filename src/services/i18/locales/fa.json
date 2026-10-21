@@ -211,10 +211,11 @@
       },
       "login": {
         "title": "ورود",
-        "description": "به پر پیکسل ای آی خوش آمدید",
+        "description": "رمز عبورت را وارد کن تا برگردیم سراغ ایده‌هایت.",
         "phoneLabel": "شماره موبایل",
         "phoneHint": "مثال: 09123456789",
         "passwordLabel": "رمز عبور",
+        "wrongPasswordReaction": "اوپس! رمزت یه جای کارش می‌لنگه ⚡",
         "submit": "ورود",
         "forgotPassword": "فراموشی رمز عبور",
         "createAccount": "ثبت‌نام",
@@ -233,11 +234,12 @@
         "backToLogin": "بازگشت به ورود"
       },
       "complete": {
-        "registrationTitle": "تأیید شماره و انتخاب رمز",
-        "registrationDescription": "کد تأیید برای شماره شما ارسال شد. کد و رمز عبور دلخواه خود را وارد کنید.",
-        "resetTitle": "انتخاب رمز عبور جدید",
+        "registrationTitle": "یه قدم تا شروع!",
+        "registrationDescription": "کد ارسال‌شده را وارد کن و برای حساب تازه‌ات رمز بساز.",
+        "resetTitle": "رمز تازه، شروع تازه",
         "description": "اگر این شماره واجد شرایط باشد، کد تأیید ارسال می‌شود.",
         "otpLabel": "کد تأیید",
+        "wrongCodeReaction": "این کد به در نخورد! یه بار دیگه بزن ✨",
         "passwordLabel": "رمز عبور",
         "newPasswordLabel": "رمز عبور جدید",
         "confirmLabel": "تکرار رمز عبور",
@@ -645,7 +647,7 @@
     },
     "auth": {
       "login": {
-        "description": "به استودیوی خلاقیت خودت خوش آمدی",
+        "description": "شماره‌ات را وارد کن؛ اگر حساب داری وارد می‌شوی، اگر نه ثبت‌نامت را شروع می‌کنیم.",
         "visual": {
           "pauseMotion": "توقف حرکت",
           "resumeMotion": "ادامه حرکت",
@@ -658,6 +660,17 @@
           "image": "خلق تصویر",
           "video": "ساخت ویدیو",
           "note": "ایده‌ی بعدی‌ات اینجا جان می‌گیرد.",
+          "welcomeMoment": "در باز شد! بفرما تو، ایده‌هات منتظرن ✨",
+          "entryLabel": "درگاه ورود به استودیو",
+          "progressLabel": "مراحل ورود",
+          "stepPhone": "شماره موبایل",
+          "stepAccess": "ورود",
+          "stepRegister": "ساخت حساب",
+          "stepReset": "بازیابی رمز",
+          "loadingEyebrow": "ورود تأیید شد",
+          "loadingStart": "در باز شد؛ یه لحظه صحنه رو آماده کنیم...",
+          "loadingMiddle": "ایده‌هات دارن نور می‌گیرن ✦",
+          "loadingReady": "بفرما داخل؛ نوبت خلق کردنه!",
           "footer": "فضایی برای ایده‌های تو"
         },
         "enterPasswordForm": {
@@ -704,7 +717,7 @@
           "submit": "ادامه دادن"
         },
         "successSendOtp": "کد تایید با موفقیت برای شما ارسال گردید",
-        "title": "ورود"
+        "title": "از همین‌جا شروع کن"
       }
     },
     "generation": {

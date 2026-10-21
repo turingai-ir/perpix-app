@@ -28,6 +28,10 @@ for (const [width, height] of [
     await expect(page.getByRole("alert")).toContainText(
       "کد تأیید نامعتبر یا منقضی شده است",
     );
+    await expect(page.locator("[data-auth-reaction='code']")).toHaveCSS(
+      "opacity",
+      "0",
+    );
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,
@@ -38,6 +42,7 @@ for (const [width, height] of [
     await page.screenshot({
       path: testInfo.outputPath("registration-error.png"),
       fullPage: true,
+      animations: "disabled",
     });
     await back.click();
     await expect(page.getByLabel("شماره موبایل")).toHaveValue("+989123456789");
