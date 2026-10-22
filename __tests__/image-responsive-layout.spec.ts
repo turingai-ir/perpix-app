@@ -19,13 +19,26 @@ for (const viewport of viewports) {
     ).toBeVisible();
     await page.evaluate(() => document.fonts.ready);
     const intro = page.locator("[data-generation-intro]");
-    const logo = await intro
-      .locator('[data-testid="studio-logo"] img')
-      .boundingBox();
+    const stage = page.getByTestId("studio-logo");
+    const logo = await stage.locator("img").boundingBox();
     const badge = await intro.locator(":scope > span").boundingBox();
     expect(logo).not.toBeNull();
     expect(badge).not.toBeNull();
     expect(logo!.y + logo!.height).toBeLessThanOrEqual(badge!.y);
+    expect(
+      await stage.evaluate((element) => {
+        const pageElement = element.parentElement?.parentElement;
+        const pageBounds = pageElement?.getBoundingClientRect();
+        const stageBounds = element.getBoundingClientRect();
+        return (
+          pageBounds !== undefined &&
+          Math.abs(stageBounds.left - pageBounds.left) < 1 &&
+          Math.abs(stageBounds.top - pageBounds.top) < 1 &&
+          Math.abs(stageBounds.width - pageBounds.width) < 1 &&
+          Math.abs(stageBounds.height - pageBounds.height) < 1
+        );
+      }),
+    ).toBe(true);
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,

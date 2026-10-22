@@ -100,7 +100,11 @@ export function ImageModelDiscovery({ disabled, model }: Props) {
           {loading ? (
             <Loader2 className="size-5 animate-spin" />
           ) : (
-            <ImageModelLogo name={selected?.name ?? ""} />
+            <ImageModelLogo
+              name={selected?.name ?? ""}
+              displayName={selected?.display_name}
+              iconUrl={selected?.icon_url}
+            />
           )}
           <span dir="ltr" className="min-w-0 flex-1 truncate text-start">
             {selected?.display_name ??
@@ -157,7 +161,11 @@ export function ImageModelDiscovery({ disabled, model }: Props) {
                   className="data-[selected=true]:border-primary/30 data-[selected=true]:bg-primary/5 my-1 cursor-pointer gap-3 rounded-xl border border-transparent p-3"
                 >
                   <span className="bg-muted flex size-11 shrink-0 items-center justify-center rounded-xl">
-                    <ImageModelLogo name={item.name} />
+                    <ImageModelLogo
+                      name={item.name}
+                      displayName={item.display_name}
+                      iconUrl={item.icon_url}
+                    />
                   </span>
                   <span className="min-w-0 flex-1 text-start">
                     <span dir="ltr" className="block text-start font-semibold">
