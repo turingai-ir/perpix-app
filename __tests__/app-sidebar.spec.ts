@@ -29,13 +29,13 @@ test.describe("App sidebar", () => {
     expect(pricingRequests).toHaveLength(0);
 
     await upgradeButton.click();
-    await expect(page.getByRole("dialog", { name: "بسته ها" })).toBeVisible();
+    await expect(page.getByRole("dialog", { name: "بسته‌ها" })).toBeVisible();
     expect(pricingRequests).toHaveLength(1);
 
     await page.getByRole("button", { name: "Close" }).click();
-    await expect(page.getByRole("dialog", { name: "بسته ها" })).toBeHidden();
+    await expect(page.getByRole("dialog", { name: "بسته‌ها" })).toBeHidden();
     await upgradeButton.click();
-    await expect(page.getByRole("dialog", { name: "بسته ها" })).toBeVisible();
+    await expect(page.getByRole("dialog", { name: "بسته‌ها" })).toBeVisible();
     expect(pricingRequests).toHaveLength(1);
   });
 
@@ -83,14 +83,14 @@ test.describe("App sidebar", () => {
   }) => {
     await page.goto("/");
 
-    await page.getByRole("button", { name: "افزایش موجودی کیف پول" }).click();
+    await page.getByRole("button", { name: "شارژ کیف پول" }).click();
 
     await expect(
-      page.getByText("برای ادامه، ابتدا اشتراک را خریداری کنید"),
+      page.getByText("اول اشتراکت رو بخر"),
     ).toBeVisible();
     await expect(
       page.getByText(
-        "شما برای شارژ کیف پول باید ابتدا اشتراک خود را خریداری کنید.",
+        "برای شارژ کیف پول، اول باید اشتراک بخری.",
       ),
     ).toBeVisible();
     await expect(
@@ -151,7 +151,7 @@ test.describe("App sidebar", () => {
     await page.goto("/generation/image");
 
     await expect(
-      page.locator("aside").getByRole("link", { name: "تولید عکس" }),
+      page.locator("aside").getByRole("link", { name: "ساخت عکس" }),
     ).toHaveAttribute("aria-current", "page");
     await expect(
       page.getByRole("button", { name: "بستن نوار کناری" }),
@@ -224,9 +224,21 @@ test.describe("App sidebar", () => {
           ? page.locator('[data-slot="sheet-content"]')
           : page.locator("aside");
       await sidebar.locator('[data-slot="dropdown-menu-trigger"]').click();
-      await page.getByRole("menuitem", { name: "حساب کاربری" }).click();
+      await page.getByRole("menuitem", { name: "مدیریت حساب" }).click();
 
       await expect(page).toHaveURL(/\/profile\/settings$/);
+      const profileNav = page.getByRole("navigation", {
+        name: "بخش‌های پروفایل",
+      });
+      await expect(
+        profileNav.getByRole("link", { name: "کیف پول" }),
+      ).toBeVisible();
+      await expect(profileNav.locator('[aria-current="page"]')).toHaveText(
+        "تنظیمات حساب",
+      );
+      expect(
+        await profileNav.evaluate((nav) => nav.scrollWidth <= nav.clientWidth),
+      ).toBe(true);
     });
   }
 
@@ -254,7 +266,7 @@ test.describe("App sidebar", () => {
         sheet.evaluate((element) => Number(getComputedStyle(element).zIndex)),
       ]);
       expect(menuLayer).toBeGreaterThan(sheetLayer);
-      await page.getByRole("menuitem", { name: "حساب کاربری" }).tap();
+      await page.getByRole("menuitem", { name: "مدیریت حساب" }).tap();
 
       await expect(page).toHaveURL(/\/profile\/settings$/);
     });

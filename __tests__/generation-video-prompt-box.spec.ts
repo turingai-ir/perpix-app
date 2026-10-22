@@ -62,7 +62,7 @@ test("video studio opens without generating and keeps the model controls ready",
   });
   await openVideoGenerationPage(page);
   await expect(
-    page.getByRole("heading", { name: "توی ذهنت پخش می‌شه؟ بسازش." }),
+    page.getByRole("heading", { name: "از ایده‌ات ویدیو بساز" }),
   ).toBeVisible();
   await expect(page.getByPlaceholder(VIDEO_PROMPT_PLACEHOLDER)).toHaveValue("");
   await expect(page.getByRole("slider", { name: "مدت زمان" })).toHaveAttribute(
@@ -1189,7 +1189,7 @@ test("connects canonical validation paths to form fields without leaking provide
   await page.getByPlaceholder(VIDEO_PROMPT_PLACEHOLDER).fill("A valid prompt");
   await page.locator('button[type="submit"]').click();
 
-  await expect(page.getByText("مقدار این فیلد معتبر نیست")).toBeVisible();
+  await expect(page.getByText("این مقدار درست نیست")).toBeVisible();
   await expect(page.getByText(/providerPayload\.promptText/)).toBeHidden();
 });
 

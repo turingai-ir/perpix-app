@@ -73,7 +73,7 @@ test("shows account data and saves editable profile fields", async ({
 
   await page.goto("/profile/settings");
   await expect(
-    page.getByRole("heading", { name: "حساب شما، به سبک شما." }),
+    page.getByRole("heading", { name: "اینجا حساب خودته" }),
   ).toBeVisible();
   const identityCard = page.getByTestId("identity-card");
   await expect(identityCard).toHaveAttribute("data-side", "front");
@@ -108,17 +108,17 @@ test("shows account data and saves editable profile fields", async ({
   await expect(page.getByLabel("شماره تلفن همراه")).toBeDisabled();
 
   await page.getByLabel("نام کامل").fill("نام جدید");
-  await page.getByRole("button", { name: "ویرایش اطلاعات" }).click();
+  await page.getByRole("button", { name: "ذخیرهٔ تغییرات" }).click();
   await expect
     .poll(() => savedBody)
     .toEqual({ name: "نام جدید", email: "user@example.com" });
   await expect(
-    page.getByText("اطلاعات کاربری با موفقیت بروزرسانی گردید"),
+    page.getByText("اطلاعات حسابت به‌روز شد."),
   ).toBeVisible();
   await page.setViewportSize({ width: 390, height: 844 });
   await page.reload();
   await expect(
-    page.getByRole("heading", { name: "حساب شما، به سبک شما." }),
+    page.getByRole("heading", { name: "اینجا حساب خودته" }),
   ).toBeVisible();
   await expect
     .poll(() =>
