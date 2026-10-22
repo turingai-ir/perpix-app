@@ -397,6 +397,111 @@ test("keeps primary dashboard actions usable on mobile", async ({ page }) => {
   });
 });
 
+test("keeps the sidebar navigation usable across screen sizes", async ({
+  page,
+}, testInfo) => {
+  await mockDashboardApi(page);
+
+  for (const viewport of [
+    { name: "desktop", width: 1440, height: 900 },
+    { name: "tablet", width: 768, height: 1024 },
+    { name: "mobile", width: 375, height: 812 },
+  ]) {
+    await page.setViewportSize(viewport);
+    await page.goto("/");
+
+    const toggle = page.locator("header button[aria-expanded]");
+    if ((await toggle.getAttribute("aria-expanded")) === "false") {
+      await toggle.click();
+    }
+
+    const navigation = page
+      .locator("nav")
+      .filter({ has: page.locator('a[href="/generation/image"]') })
+      .first();
+    await expect(navigation).toBeVisible();
+    const links = navigation.locator("ul > li > a");
+    await expect(links).toHaveCount(5);
+    for (const link of await links.all()) {
+      expect((await link.boundingBox())?.height).toBeGreaterThanOrEqual(44);
+    }
+
+    const sidebarWidth = await navigation.evaluate((element) => ({
+      client: element.clientWidth,
+      scroll: element.scrollWidth,
+    }));
+    expect(sidebarWidth.scroll).toBe(sidebarWidth.client);
+    await page.screenshot({
+      path: testInfo.outputPath(`sidebar-${viewport.name}.png`),
+      animations: "disabled",
+    });
+  }
+});
+
+test("keeps the account menu visible and keyboard accessible across screen sizes", async ({
+  page,
+}, testInfo) => {
+  await mockDashboardApi(page);
+
+  for (const viewport of [
+    { name: "desktop", width: 1440, height: 900 },
+    { name: "tablet", width: 768, height: 1024 },
+    { name: "mobile", width: 375, height: 812 },
+  ]) {
+    await page.setViewportSize(viewport);
+    await page.goto("/");
+
+    const toggle = page.locator("header button[aria-expanded]");
+    if ((await toggle.getAttribute("aria-expanded")) === "false") {
+      await toggle.click();
+    }
+
+    const trigger = page
+      .locator('[data-slot="dropdown-menu-trigger"]')
+      .filter({ has: page.locator('[data-slot="avatar"]') });
+    await trigger.click();
+
+    const menu = page.locator('[data-slot="dropdown-menu-content"]');
+    await expect(menu).toBeVisible();
+    const items = menu.locator('[data-slot="dropdown-menu-item"]');
+    expect(await items.count()).toBeGreaterThanOrEqual(2);
+    for (const item of await items.all()) {
+      expect((await item.boundingBox())?.height).toBeGreaterThanOrEqual(44);
+    }
+
+    const box = await menu.boundingBox();
+    expect(box).not.toBeNull();
+    if (box) {
+      expect(box.x).toBeGreaterThanOrEqual(0);
+      expect(box.x + box.width).toBeLessThanOrEqual(viewport.width);
+      expect(box.y).toBeGreaterThanOrEqual(0);
+      expect(box.y + box.height).toBeLessThanOrEqual(viewport.height);
+    }
+    await page.screenshot({
+      path: testInfo.outputPath(`account-menu-${viewport.name}.png`),
+      animations: "disabled",
+    });
+
+    await page.keyboard.press("ArrowDown");
+    await expect(
+      menu.locator('[data-slot="dropdown-menu-item"][data-highlighted]'),
+    ).toHaveCount(1);
+    await page.keyboard.press("Escape");
+    await expect(menu).toBeHidden();
+    await expect(trigger).toBeFocused();
+  }
+
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page
+    .locator('[data-slot="dropdown-menu-trigger"]')
+    .filter({ has: page.locator('[data-slot="avatar"]') })
+    .click();
+  await expect(page.locator('[data-slot="dropdown-menu-content"]')).toHaveCSS(
+    "animation-name",
+    "none",
+  );
+});
+
 test("centers the neon slogan in the header across screen sizes", async ({
   page,
 }) => {
@@ -429,8 +534,7 @@ test("centers the neon slogan in the header across screen sizes", async ({
 
     expect(
       Math.abs(
-        sloganBox.x + sloganBox.width / 2 -
-          (headerBox.x + headerBox.width / 2),
+        sloganBox.x + sloganBox.width / 2 - (headerBox.x + headerBox.width / 2),
       ),
     ).toBeLessThan(2);
     expect(sloganBox.x + sloganBox.width).toBeLessThan(menuBox.x);
@@ -441,9 +545,10 @@ test("centers the neon slogan in the header across screen sizes", async ({
   }
 
   await page.emulateMedia({ reducedMotion: "reduce" });
-  const animationName = await slogan.locator("span").nth(1).evaluate((element) =>
-    getComputedStyle(element, "::after").animationName,
-  );
+  const animationName = await slogan
+    .locator("span")
+    .nth(1)
+    .evaluate((element) => getComputedStyle(element, "::after").animationName);
   expect(animationName).toBe("none");
 });
 
