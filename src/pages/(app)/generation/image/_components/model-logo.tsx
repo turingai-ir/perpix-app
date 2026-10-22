@@ -1,26 +1,46 @@
 import { useState } from "react";
 import { Sparkles } from "lucide-react";
-import { SiGoogle, SiOpenai } from "react-icons/si";
+import { getModelLogo } from "@/pages/(app)/generation/_utils/model-logo";
 
-// OpenAI/Google: Simple Icons. Other provider marks are official site favicons.
-export function ImageModelLogo({ name }: { name: string }) {
-  const [failedSource, setFailedSource] = useState<string>();
-  if (name.startsWith("OPENAI_") || name.startsWith("OPEN_AI"))
-    return <SiOpenai className="size-5 shrink-0" aria-hidden="true" />;
-  if (name.startsWith("GOOGLE_"))
-    return <SiGoogle className="size-5 shrink-0" aria-hidden="true" />;
-  let source: string | undefined;
-  if (name.startsWith("BLACK_FOREST_LABS"))
-    source = "/images/model-logos/bfl.svg";
-  if (name.startsWith("IDEOGRAM")) source = "/images/model-logos/ideogram.ico";
-  if (!source || failedSource === source)
+export function ImageModelLogo({
+  name,
+  displayName,
+  iconUrl,
+}: {
+  name: string;
+  displayName?: string | null;
+  iconUrl?: string | null;
+}) {
+  const [failedSources, setFailedSources] = useState<string[]>([]);
+  const logo = getModelLogo(name, displayName);
+  const source = [logo?.src, iconUrl].find(
+    (candidate): candidate is string =>
+      !!candidate && !failedSources.includes(candidate),
+  );
+  const isLocalLogo = source === logo?.src;
+  let imageClassName = "size-6 shrink-0 rounded object-contain";
+  if (isLocalLogo && logo?.id === "runway") {
+    imageClassName += " bg-black p-0.5";
+  } else if (
+    isLocalLogo &&
+    ["xai", "alibaba", "bytedance", "kuaishou"].includes(logo?.id ?? "")
+  ) {
+    imageClassName += " bg-white p-0.5";
+  }
+
+  if (!source)
     return <Sparkles className="size-5 shrink-0" aria-hidden="true" />;
+
   return (
     <img
       src={source}
       alt=""
-      className="size-6 shrink-0 rounded object-contain"
-      onError={() => setFailedSource(source)}
+      className={imageClassName}
+      onError={() =>
+        setFailedSources((previous) =>
+          previous.includes(source) ? previous : [...previous, source],
+        )
+      }
     />
   );
 }
