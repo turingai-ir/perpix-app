@@ -12,7 +12,9 @@ import {
 
 import { APP_KEYS } from "@/utils";
 
-const AUTH_BASE_URL = `${APP_KEYS.API_BASE_URL}/api/v1/auth`;
+const AUTH_BASE_URL = import.meta.env.DEV
+  ? "/api/v1/auth"
+  : `${APP_KEYS.API_BASE_URL}/api/v1/auth`;
 const CSRF_HEADER = "X-CSRF-TOKEN";
 
 interface SendOptions {
