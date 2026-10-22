@@ -1,4 +1,4 @@
-.cinema {
+﻿.cinema {
   position: relative;
   display: flex;
   min-height: 270px;
@@ -109,286 +109,25 @@
   animation-play-state: paused;
 }
 
-/* An idle storyboard: one imagined shot, with its neighboring moments in depth. */
 .cinema[data-video-cinema="idle"] {
   width: 100%;
   height: clamp(360px, 57vh, 570px);
   min-height: 0;
   background: transparent;
 }
-.idleScene {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  isolation: isolate;
-  perspective: 950px;
-}
-.sceneAura {
-  position: absolute;
-  inset: 4% 0 8%;
-  border-radius: 50%;
-  background: radial-gradient(ellipse at 50% 46%, rgb(127 46 189 / 20%), transparent 56%),
-    radial-gradient(ellipse at 33% 67%, rgb(31 145 172 / 13%), transparent 38%);
-  filter: blur(24px);
-}
-.orbit {
-  position: absolute;
-  inset: 7% 8% 20%;
-  border: 1px solid rgb(172 106 229 / 12%);
-  border-radius: 50%;
-  transform: rotate(-12deg) scaleY(.62);
-  box-shadow: 0 0 0 32px rgb(134 79 191 / 3%), 0 0 0 66px rgb(134 79 191 / 2%);
-}
-.orbit::before,
-.orbit::after {
-  position: absolute;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #c879ff;
-  box-shadow: 0 0 16px 5px rgb(205 104 255 / 32%);
-  content: "";
-}
-.orbit::before { inset: 24% auto auto 4%; }
-.orbit::after { inset: auto 9% 12% auto; background: #78e5ef; }
-.sideFrame {
-  position: absolute;
-  top: 23%;
-  width: 31%;
-  aspect-ratio: 4 / 3;
-  overflow: hidden;
-  border: 1px solid rgb(196 118 255 / 26%);
-  border-radius: 12px;
-  background: radial-gradient(circle at 66% 32%, rgb(198 96 216 / 60%), transparent 23%),
-    linear-gradient(150deg, #24203e, #0a0c18 70%);
-  box-shadow: 0 22px 50px rgb(0 0 0 / 40%), inset 0 1px rgb(255 255 255 / 12%);
-  animation: sideDrift 7s var(--ease-in-out, ease-in-out) infinite alternate;
-}
-.sideFrame::after {
-  position: absolute;
-  inset: 54% -20% -30%;
-  border: 1px solid rgb(126 192 219 / 32%);
-  border-radius: 50%;
-  transform: rotate(-22deg);
-  box-shadow: 0 0 0 24px rgb(126 192 219 / 6%), 0 0 0 48px rgb(126 192 219 / 3%);
-  content: "";
-}
-.sideFrame i {
-  position: absolute;
-  top: 22%;
-  left: 22%;
-  width: 42%;
-  height: 58%;
-  background: linear-gradient(140deg, rgb(238 154 255 / 76%), rgb(78 40 140 / 50%) 50%, transparent 50%);
-  clip-path: polygon(50% 0, 100% 100%, 0 82%);
-}
-.sideFrameBefore {
-  left: 5%;
-  transform: rotateY(28deg) rotate(-9deg) translateY(8px);
-}
-.sideFrameAfter {
-  right: 5%;
-  background: radial-gradient(circle at 39% 27%, rgb(75 211 221 / 54%), transparent 24%),
-    linear-gradient(210deg, #192c41, #0a0c18 72%);
-  transform: rotateY(-28deg) rotate(9deg) translateY(8px);
-  animation-delay: -3.5s;
-}
-.sideFrameAfter i {
-  background: linear-gradient(140deg, rgb(170 244 241 / 75%), rgb(48 96 144 / 45%) 50%, transparent 50%);
-  transform: rotate(35deg);
-}
-.storyFrame {
-  position: absolute;
+.motionToggle {
   z-index: 2;
-  top: 15%;
-  left: 50%;
-  width: min(68%, 660px);
-  aspect-ratio: 16 / 9;
-  overflow: hidden;
-  border: 1px solid rgb(208 162 255 / 56%);
-  border-radius: 16px;
-  background: radial-gradient(ellipse at 49% 21%, #42356e 0%, #1d1a3b 31%, transparent 60%),
-    linear-gradient(140deg, #191528, #080d1a 70%);
-  box-shadow: 0 34px 95px rgb(0 0 0 / 55%), 0 0 65px rgb(131 63 195 / 14%), inset 0 1px rgb(255 255 255 / 23%);
-  transform: translateX(-50%);
-  animation: frameFloat 7s var(--ease-in-out, ease-in-out) infinite alternate;
+  pointer-events: auto;
 }
-.storyFrame::before {
-  position: absolute;
-  z-index: 5;
-  inset: 10px;
-  border: 1px solid rgb(235 218 255 / 15%);
-  border-radius: 9px;
-  content: "";
-  pointer-events: none;
-}
-.sceneGrid {
-  position: absolute;
-  inset: 0;
-  background-image: linear-gradient(rgb(243 211 255 / 5%) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(243 211 255 / 5%) 1px, transparent 1px);
-  background-size: 13% 20%;
-  mask-image: linear-gradient(#000, transparent 82%);
-}
-.sceneSun {
-  position: absolute;
-  top: 11%;
-  left: 41%;
-  width: 27%;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: radial-gradient(circle at 38% 33%, #ffe5d7, #e89cce 27%, #944ddd 60%, transparent 74%);
-  box-shadow: 0 0 54px 16px rgb(200 92 208 / 25%);
-  animation: sunPulse 7s var(--ease-in-out, ease-in-out) infinite alternate;
-}
-.scenePortal {
-  position: absolute;
-  top: 16%;
-  left: 30%;
-  width: 42%;
-  height: 74%;
-  border: 2px solid rgb(255 188 235 / 72%);
-  border-radius: 50% 50% 10% 10% / 58% 58% 8% 8%;
-  transform: rotate(-10deg);
-  box-shadow: 0 0 19px rgb(222 117 252 / 54%), inset 0 0 22px rgb(208 106 244 / 27%),
-    0 0 0 17px rgb(174 91 225 / 7%), 0 0 0 36px rgb(174 91 225 / 4%);
-}
-.sceneFacet {
-  position: absolute;
-  z-index: 2;
-  top: 17%;
-  left: 43%;
-  width: 31%;
-  height: 74%;
-  background: linear-gradient(113deg, rgb(218 150 238 / 95%) 0%, rgb(117 83 190 / 88%) 36%, #3b397d 37%, #192644 74%, #70a4bb 100%);
-  clip-path: polygon(39% 0, 90% 22%, 100% 72%, 45% 100%, 0 69%, 10% 22%);
-  filter: drop-shadow(0 0 22px rgb(185 100 255 / 34%));
-  transform: rotate(13deg);
-  animation: facetSway 7s var(--ease-in-out, ease-in-out) infinite alternate;
-}
-.sceneShard {
-  position: absolute;
-  z-index: 3;
-  top: 22%;
-  left: 29%;
-  width: 25%;
-  height: 56%;
-  background: linear-gradient(140deg, rgb(241 165 231 / 80%), rgb(83 154 195 / 58%) 55%, rgb(25 43 77 / 75%));
-  clip-path: polygon(83% 0, 100% 100%, 0 75%);
-  transform: rotate(-14deg);
-  animation: shardSway 7s var(--ease-in-out, ease-in-out) infinite alternate;
-}
-.sceneRay {
-  position: absolute;
-  z-index: 4;
-  top: -20%;
-  left: 35%;
-  width: 17%;
-  height: 140%;
-  background: linear-gradient(90deg, transparent, rgb(174 241 250 / 33%), transparent);
-  filter: blur(12px);
-  transform: rotate(25deg) translateX(-130%);
-  animation: lightSweep 8s var(--ease-in-out, ease-in-out) infinite;
-}
-.sceneFloor {
-  position: absolute;
-  z-index: 3;
-  inset: 64% -10% -25%;
-  border-top: 1px solid rgb(188 200 252 / 44%);
-  background: repeating-linear-gradient(90deg, transparent 0 13%, rgb(150 129 226 / 20%) 13.2% 13.4%),
-    linear-gradient(rgb(130 109 211 / 23%), transparent 73%);
-  transform: perspective(180px) rotateX(44deg);
-  box-shadow: 0 -9px 25px rgb(177 127 237 / 26%);
-}
-.sceneLabel,
-.frameIndex {
-  position: absolute;
-  z-index: 6;
-  bottom: 22px;
-  color: rgb(240 228 255 / 84%);
-  font-size: 11px;
-  letter-spacing: .02em;
-}
-.sceneLabel {
-  right: 24px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.recordDot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #df7afa;
-  box-shadow: 0 0 12px 3px rgb(222 122 250 / 50%);
-}
-.frameIndex { left: 24px; font-variant-numeric: tabular-nums; }
-.storyRail {
-  position: absolute;
-  z-index: 4;
-  bottom: 9%;
-  left: 50%;
-  display: flex;
-  width: min(54%, 490px);
-  height: 23px;
-  gap: 5px;
-  transform: translateX(-50%);
-}
-.storyRail i {
-  position: relative;
-  flex: 1;
-  border: 1px solid rgb(188 111 241 / 26%);
-  border-radius: 3px;
-  background: linear-gradient(135deg, rgb(142 80 173 / 29%), rgb(49 42 78 / 35%));
-  animation: railGlow 7s var(--ease-in-out, ease-in-out) infinite;
-  animation-delay: calc(var(--frame) * .25s);
-}
-.storyRail i:nth-child(1) { --frame: 0; }
-.storyRail i:nth-child(2) { --frame: 1; }
-.storyRail i:nth-child(3) { --frame: 2; }
-.storyRail i:nth-child(4) { --frame: 3; }
-.storyRail i:nth-child(5) { --frame: 4; }
-.storyRail i:nth-child(6) { --frame: 5; }
-.storyRail i:nth-child(7) { --frame: 6; }
-.storyRail i::after {
-  position: absolute;
-  inset: 4px;
-  border: 1px solid rgb(255 232 255 / 10%);
-  content: "";
-}
-.cinema[data-paused="true"] .idleScene * { animation-play-state: paused; }
-@keyframes frameFloat {
-  to { transform: translate(-50%, -10px) rotate(-1deg); }
-}
-@keyframes sideDrift {
-  to { translate: 0 -12px; opacity: .72; }
-}
-@keyframes sunPulse {
-  to { transform: scale(1.07); opacity: .82; }
-}
-@keyframes facetSway {
-  to { transform: rotate(9deg) translateY(-7px); }
-}
-@keyframes shardSway {
-  to { transform: rotate(-10deg) translateY(6px); }
-}
-@keyframes lightSweep {
-  0%, 18% { transform: rotate(25deg) translateX(-130%); opacity: 0; }
-  45% { opacity: 1; }
-  70%, 100% { transform: rotate(25deg) translateX(450%); opacity: 0; }
-}
-@keyframes railGlow {
-  0%, 12%, 45%, 100% { border-color: rgb(188 111 241 / 26%); background: rgb(142 80 173 / 25%); }
-  22%, 33% { border-color: rgb(215 157 255 / 75%); background: rgb(152 76 205 / 65%); }
+.cinema[data-paused="true"] *,
+.cinema[data-paused="true"] *::before,
+.cinema[data-paused="true"] *::after {
+  animation-play-state: paused !important;
 }
 @media (max-width: 600px) {
-  .cinema[data-video-cinema="idle"] { height: 290px; }
-  .storyFrame { top: 17%; width: 78%; border-radius: 10px; }
-  .sideFrame { top: 27%; width: 37%; }
-  .storyRail { bottom: 13%; width: 68%; height: 16px; gap: 3px; }
-  .sceneLabel, .frameIndex { bottom: 14px; font-size: 9px; }
-  .sceneLabel { right: 16px; }
-  .frameIndex { left: 16px; }
+  .cinema[data-video-cinema="idle"] {
+    height: 290px;
+  }
 }
 @keyframes frameScan {
   0%,
@@ -401,9 +140,10 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .scan { animation: none; opacity: 0; }
-  .idleScene *, .idleScene *::before, .idleScene *::after { animation: none !important; }
-  .sceneRay { opacity: 0; }
+  .scan {
+    animation: none;
+    opacity: 0;
+  }
   .motionToggle {
     display: none;
   }

@@ -78,25 +78,69 @@ test("video studio opens without generating and keeps the model controls ready",
   });
 });
 
-test("idle cinema shows an animated storyboard without generating a video", async ({
+test("idle cinema animates a prism without a motion toggle", async ({
   page,
 }) => {
-  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.setViewportSize({ width: 1440, height: 900 });
   await openVideoGenerationPage(page);
   const cinema = page.locator('[data-video-cinema="idle"]');
   await expect(cinema).toBeVisible();
   await expect(cinema.getByText("قاب ویدیوی تو")).toBeVisible();
   await expect(cinema.getByRole("button")).toHaveCount(0);
+  await expect(cinema).toHaveAttribute("data-paused", "false");
+  await expect(cinema.locator("[data-video-motion]").first()).toHaveCSS(
+    "animation-play-state",
+    "running",
+  );
+  await cinema.evaluate((node) => {
+    for (const animation of node.getAnimations({ subtree: true })) {
+      animation.pause();
+      animation.currentTime = 0;
+    }
+  });
+  const filmFrame = cinema.locator("[data-video-motion]").first();
+  const initialTransform = await filmFrame.evaluate(
+    (node) => getComputedStyle(node).transform,
+  );
+  await page.screenshot({ path: ".artifacts/video-cinema-desktop.png" });
+  await cinema.evaluate((node) => {
+    for (const animation of node.getAnimations({ subtree: true })) {
+      animation.currentTime = 6000;
+    }
+  });
+  expect(
+    await filmFrame.evaluate((node) => getComputedStyle(node).transform),
+  ).not.toBe(initialTransform);
+  await page.screenshot({ path: ".artifacts/video-cinema-expanded.png" });
   await page.emulateMedia({ reducedMotion: "reduce" });
   await expect(cinema.locator("[data-video-preview-frame]")).toHaveCSS(
     "animation-name",
     "none",
   );
+  await expect(cinema.locator("[data-video-motion]").first()).toHaveCSS(
+    "animation-name",
+    "none",
+  );
   await page.setViewportSize({ width: 768, height: 1024 });
+  const sidebar = page.locator('[data-slot="sheet-content"]');
+  await expect(sidebar).toBeVisible();
+  await sidebar.getByRole("button", { name: "Close", exact: true }).click();
+  await expect(sidebar).toBeHidden();
   await expect(cinema.locator("[data-video-preview-frame]")).toBeInViewport();
   expect(
-    await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    ),
   ).toBe(true);
+  await page.screenshot({ path: ".artifacts/video-cinema-tablet.png" });
+  await page.setViewportSize({ width: 375, height: 812 });
+  await expect(cinema.locator("[data-video-preview-frame]")).toBeInViewport();
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    ),
+  ).toBe(true);
+  await page.screenshot({ path: ".artifacts/video-cinema-mobile.png" });
   await expect(page.getByPlaceholder(VIDEO_PROMPT_PLACEHOLDER)).toHaveValue("");
 });
 
@@ -1237,6 +1281,7 @@ test("prevents another generation while the chat has a pending request", async (
       uuid: "pending-message-1",
     },
   ]);
+  await mockAuthenticatedSession(page);
 
   await page.goto("/generation/video/task-1");
 

@@ -33,7 +33,7 @@ import type {
   SchemaAiRegistryModelSummary,
 } from "@/services/api";
 
-const DEFAULT_PAGE_SIZE = 50;
+export const AI_TASKS_PAGE_SIZE = 5;
 
 const getAiTasksListQueryKey = (
   queryOptions: ReturnType<typeof useReactQueryApi>["queryOptions"],
@@ -355,7 +355,7 @@ export const useAiTasksList = (
       params: {
         query: {
           offset: 0,
-          limit: DEFAULT_PAGE_SIZE,
+          limit: AI_TASKS_PAGE_SIZE,
           task_type,
         },
       },
@@ -366,7 +366,7 @@ export const useAiTasksList = (
       pageParamName: "offset",
       getNextPageParam: (lastPage, _pages, lastPageParam) =>
         lastPage.has_next
-          ? Number(lastPageParam ?? 0) + DEFAULT_PAGE_SIZE
+          ? Number(lastPageParam ?? 0) + AI_TASKS_PAGE_SIZE
           : undefined,
     },
   );
