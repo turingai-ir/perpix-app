@@ -1,12 +1,6 @@
-import { useState, type FC } from "react";
+import type { FC } from "react";
 import { useNavigate } from "react-router";
-import {
-  BadgeCheck,
-  ChevronsUpDown,
-  Download,
-  KeyRound,
-  LogOut,
-} from "lucide-react";
+import { BadgeCheck, ChevronsUpDown, Download, LogOut } from "lucide-react";
 
 import AppLayoutSidebarUserAvatar from "./user-avatar";
 
@@ -22,7 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useActiveSubscription } from "@/feature/pricing";
-import { ChangePasswordDialog, useSignOutActions } from "@/features/auth";
+import { useSignOutActions } from "@/features/auth";
 import { usePwaInstall } from "@/feature/pwa";
 import { useAppTranslate } from "@/hooks";
 import { APP_ROUTES_KEY } from "@/router/routes";
@@ -32,7 +26,6 @@ const AppLayoutSidebarUserProfileMenu: FC = () => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const navigate = useNavigate();
   const signOutActions = useSignOutActions();
-  const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
   const pwaInstall = usePwaInstall();
   const activeSubscriptionState = useActiveSubscription();
   const planName =
@@ -40,73 +33,63 @@ const AppLayoutSidebarUserProfileMenu: FC = () => {
     t("features.pricing.plans.free.title");
 
   return (
-    <>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild className="mt-auto">
-          <Button
-            variant="ghost"
-            size="lg"
-            className="min-h-13 rounded-2xl border border-white/10 bg-white/[0.045] shadow-[inset_0_1px_rgb(255_255_255/0.08)] backdrop-blur-xl hover:bg-white/[0.08]"
-          >
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild className="mt-auto">
+        <Button
+          variant="ghost"
+          size="lg"
+          className="min-h-13 rounded-2xl border border-white/10 bg-white/[0.045] shadow-[inset_0_1px_rgb(255_255_255/0.08)] backdrop-blur-xl hover:bg-white/[0.08]"
+        >
+          <AppLayoutSidebarUserAvatar />
+          <div className="flex flex-1 text-right text-sm leading-tight">
+            <Badge>{planName}</Badge>
+          </div>
+          <ChevronsUpDown className="mr-auto size-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        className="z-[70] w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+        side="top"
+        align="end"
+        sideOffset={4}
+      >
+        <DropdownMenuLabel className="p-0 font-normal">
+          <div className="flex items-center gap-2 px-1 py-1.5 text-right text-sm">
             <AppLayoutSidebarUserAvatar />
             <div className="flex flex-1 text-right text-sm leading-tight">
               <Badge>{planName}</Badge>
             </div>
-            <ChevronsUpDown className="mr-auto size-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent
-          className="z-[70] w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-          side="top"
-          align="end"
-          sideOffset={4}
-        >
-          <DropdownMenuLabel className="p-0 font-normal">
-            <div className="flex items-center gap-2 px-1 py-1.5 text-right text-sm">
-              <AppLayoutSidebarUserAvatar />
-              <div className="flex flex-1 text-right text-sm leading-tight">
-                <Badge>{planName}</Badge>
-              </div>
-            </div>
-          </DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuGroup>
+          </div>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuItem
+            onClick={() => navigate(APP_ROUTES_KEY.profile.root.path)}
+          >
+            <BadgeCheck />
+            {t("pages.app.layout.sidebar.user.account")}
+          </DropdownMenuItem>
+          {pwaInstall.canInstall ? (
             <DropdownMenuItem
-              onClick={() => navigate(APP_ROUTES_KEY.profile.root.path)}
+              onSelect={(event) => {
+                event.preventDefault();
+                void pwaInstall.requestInstall();
+              }}
             >
-              <BadgeCheck />
-              {t("pages.app.layout.sidebar.user.account")}
+              <Download />
+              {t("features.pwaInstall.action")}
             </DropdownMenuItem>
-            {pwaInstall.canInstall ? (
-              <DropdownMenuItem
-                onSelect={(event) => {
-                  event.preventDefault();
-                  void pwaInstall.requestInstall();
-                }}
-              >
-                <Download />
-                {t("features.pwaInstall.action")}
-              </DropdownMenuItem>
-            ) : null}
-            <DropdownMenuItem onSelect={() => setIsChangePasswordOpen(true)}>
-              <KeyRound />
-              {t("features.auth.changePassword.menu")}
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              disabled={signOutActions.isPending}
-              onSelect={() => void signOutActions.signOut()}
-            >
-              <LogOut />
-              {t("pages.app.layout.sidebar.user.logout")}
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-        </DropdownMenuContent>
-      </DropdownMenu>
-      <ChangePasswordDialog
-        open={isChangePasswordOpen}
-        onOpenChange={setIsChangePasswordOpen}
-      />
-    </>
+          ) : null}
+          <DropdownMenuItem
+            disabled={signOutActions.isPending}
+            onSelect={() => void signOutActions.signOut()}
+          >
+            <LogOut />
+            {t("pages.app.layout.sidebar.user.logout")}
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 

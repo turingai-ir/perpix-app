@@ -30,6 +30,7 @@ import { APP_I18_KEYS } from "@/services/i18";
 
 import { AccountGlance } from "./_components/account-glance";
 import { IdentityHero } from "./_components/identity-hero";
+import { PasswordSecurity } from "./_components/password-security";
 import "./settings.css";
 
 const ProfileSettingsPage: FC = () => {
@@ -251,6 +252,9 @@ const ProfileSettingsPage: FC = () => {
           </Form>
         </section>
         <AccountGlance />
+      </div>
+      <div className="mt-6">
+        <PasswordSecurity />
       </div>
     </div>
   );
