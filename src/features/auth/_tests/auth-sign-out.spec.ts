@@ -65,9 +65,9 @@ test("a sign-out the server could not confirm is reported with a retry", async (
 
   await expect(page).toHaveURL(/\/auth\/login$/);
   await expect(
-    page.getByText("خروج از حساب روی سرور تأیید نشد."),
+    page.getByText("خروج از حساب تأیید نشد. دوباره امتحان کن."),
   ).toBeVisible();
-  await expect(page.getByRole("button", { name: "تلاش مجدد" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "دوباره امتحان کن" })).toBeVisible();
 });
 
 test("the user menu only offers signing out of the current device", async ({
@@ -150,7 +150,7 @@ test("changing the password reports a wrong current password without retrying", 
   await dialog.getByRole("button", { name: "تغییر رمز عبور" }).click();
 
   await expect(dialog.getByRole("alert")).toHaveText(
-    "رمز عبور فعلی صحیح نیست.",
+    "رمز عبور فعلیت درست نیست.",
   );
   expect(changes).toBe(1);
   expect(refreshes).toBe(1);
@@ -190,6 +190,6 @@ test("a successful password change ends the session and asks to sign in again", 
 
   await expect(page).toHaveURL(/\/auth\/login$/);
   await expect(
-    page.getByText("رمز عبور تغییر کرد. دوباره وارد شوید."),
+    page.getByText("رمزت عوض شد. دوباره وارد شو."),
   ).toBeVisible();
 });

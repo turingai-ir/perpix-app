@@ -41,11 +41,11 @@ test("paid payment awaiting fulfillment shows processing", async ({ page }) => {
   await page.goto(`/payment/verify/${paymentId}`);
   await expect(
     page.getByRole("heading", {
-      name: "پرداخت انجام شد؛ در حال تکمیل درخواست",
+      name: "پرداخت تأیید شد؛ داریم درخواستت رو تکمیل می‌کنیم",
     }),
   ).toBeVisible();
   await expect(
-    page.getByText("درخواست شما هنوز تکمیل نشده است."),
+    page.getByText("درخواستت هنوز کامل نشده."),
   ).toBeVisible();
 });
 
@@ -57,10 +57,10 @@ test("payment under review does not claim the request was completed", async ({
   );
   await page.goto(`/payment/verify/${paymentId}`);
   await expect(
-    page.getByRole("heading", { name: "پرداخت نیاز به بررسی دارد" }),
+    page.getByRole("heading", { name: "پرداختت نیاز به بررسی داره" }),
   ).toBeVisible();
   await expect(
-    page.getByText("درخواست شما هنوز تکمیل نشده است."),
+    page.getByText("درخواستت هنوز کامل نشده."),
   ).toBeVisible();
 });
 
@@ -72,7 +72,7 @@ test("unverified return stays pending instead of showing failure", async ({
   );
   await page.goto(`/payment/verify/${paymentId}`);
   await expect(
-    page.getByRole("heading", { name: "در انتظار نتیجه پرداخت" }),
+    page.getByRole("heading", { name: "منتظر نتیجهٔ پرداختیم" }),
   ).toBeVisible();
 });
 
@@ -107,7 +107,7 @@ test("failed open payment retries without a client UUID", async ({ page }) => {
     },
   );
   await page.goto(`/payment/verify/${paymentId}`);
-  await page.getByRole("button", { name: "تلاش دوباره برای پرداخت" }).click();
+  await page.getByRole("button", { name: "دوباره پرداخت کن" }).click();
   await expect(page).toHaveURL(`/payment/verify/${newExecutionUuid}`);
   expect(retryKey).toBeUndefined();
 });
@@ -122,7 +122,7 @@ test("fulfilled payment uses a service-independent success message", async ({
   await expect(
     page.getByRole("heading", { name: "پرداخت تکمیل شد", exact: true }),
   ).toBeVisible();
-  await expect(page.getByText("درخواست شما با موفقیت تکمیل شد.")).toBeVisible();
+  await expect(page.getByText("درخواستت تکمیل شد.")).toBeVisible();
 });
 
 test("reviewed failed attempt cannot be retried", async ({ page }) => {
@@ -137,10 +137,10 @@ test("reviewed failed attempt cannot be retried", async ({ page }) => {
   );
   await page.goto(`/payment/verify/${paymentId}`);
   await expect(
-    page.getByRole("heading", { name: "پرداخت نیاز به بررسی دارد" }),
+    page.getByRole("heading", { name: "پرداختت نیاز به بررسی داره" }),
   ).toBeVisible();
   await expect(
-    page.getByRole("button", { name: "تلاش دوباره برای پرداخت" }),
+    page.getByRole("button", { name: "دوباره پرداخت کن" }),
   ).toHaveCount(0);
 });
 

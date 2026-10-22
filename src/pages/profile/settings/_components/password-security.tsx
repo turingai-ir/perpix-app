@@ -33,7 +33,7 @@ export function PasswordSecurity() {
           strokeWidth={0.6}
         />
       </div>
-      <div className="min-w-0 p-6 sm:p-8">
+      <div className="settings-security-form min-w-0 p-6 sm:p-8">
         <ChangePasswordForm />
       </div>
     </section>
