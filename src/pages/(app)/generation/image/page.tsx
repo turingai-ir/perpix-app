@@ -77,6 +77,7 @@ const GenerationImageSession = () => {
     <div
       className={`${styles.page} ${!shouldShowIntro ? styles.conversation : ""} relative flex w-full min-w-0 flex-col`}
     >
+      {shouldShowIntro ? <StudioLogo /> : null}
       {!shouldShowIntro ? <NeuralNetworkBackground /> : null}
       {isTaskLoading ? (
         <div className="flex min-h-64 w-full items-center justify-center">
@@ -139,7 +140,6 @@ const GenerationImageSession = () => {
                 data-generation-intro
                 className={`${styles.intro} relative flex w-full flex-1 flex-col items-center justify-center text-center`}
               >
-                <StudioLogo />
                 <span className="border-primary/20 bg-primary/5 text-primary inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold">
                   <Sparkles className="size-3.5" aria-hidden="true" />
                   {t("pages.generation.image.studio.eyebrow")}
@@ -155,7 +155,7 @@ const GenerationImageSession = () => {
 
             <div
               data-generation-composer
-              className={`${styles.composerDock} from-background via-background/95 sticky bottom-0 z-20 w-full bg-gradient-to-t to-transparent pt-4 pb-2 sm:pt-6`}
+              className={`${styles.composerDock} sticky bottom-0 z-20 w-full pt-4 pb-2 sm:pt-6 ${shouldShowIntro ? "" : "from-background via-background/95 bg-gradient-to-t to-transparent"}`}
             >
               <ImageComparison
                 disabled={isBusy}

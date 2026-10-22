@@ -43,14 +43,13 @@ const seedanceVideoConfig = JSON.parse(
 };
 
 test.beforeEach(async ({ page }) => {
-  await mockAuthenticatedSession(page);
-
   await page.addInitScript(() => {
     window.localStorage.clear();
     window.indexedDB.deleteDatabase("REACT_QUERY_OFFLINE_CACHE");
   });
 
   await mockApi(page);
+  await mockAuthenticatedSession(page);
 });
 
 test("video studio opens without generating and keeps the model controls ready", async ({
@@ -79,7 +78,7 @@ test("video studio opens without generating and keeps the model controls ready",
   });
 });
 
-test("idle cinema is a static composition preview without generating a video", async ({
+test("idle cinema shows an animated storyboard without generating a video", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
@@ -93,6 +92,11 @@ test("idle cinema is a static composition preview without generating a video", a
     "animation-name",
     "none",
   );
+  await page.setViewportSize({ width: 768, height: 1024 });
+  await expect(cinema.locator("[data-video-preview-frame]")).toBeInViewport();
+  expect(
+    await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+  ).toBe(true);
   await expect(page.getByPlaceholder(VIDEO_PROMPT_PLACEHOLDER)).toHaveValue("");
 });
 

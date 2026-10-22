@@ -1,4 +1,5 @@
 import { expect, test as base } from "@playwright/test";
+import { mockAuthenticatedSession } from "../support/auth-session";
 
 const providerUuid = "9a6d5ea1-5276-4d7c-b445-d2e4dc2b4ee5";
 const referenceFiles = [
@@ -120,9 +121,6 @@ export const test = base.extend<{ safeImageApi: void }>({
       const mutations: string[] = [];
       const generationRequests: string[] = [];
       const models = [imageModel(false), imageModel(true)];
-      await context.addCookies([
-        { name: "access_token", value: "test-token", url: baseURL },
-      ]);
       await context.addInitScript(() => {
         localStorage.clear();
         indexedDB.deleteDatabase("REACT_QUERY_OFFLINE_CACHE");
@@ -221,6 +219,7 @@ export const test = base.extend<{ safeImageApi: void }>({
         }
         await route.abort("blockedbyclient");
       });
+      await mockAuthenticatedSession(context);
       try {
         await runFixture();
       } finally {

@@ -4,6 +4,7 @@ import { useInView } from "motion/react";
 
 import { useAppTranslate } from "@/hooks";
 import styles from "./brand-cinema.module.css";
+import { VideoIdleScene } from "./video-idle-scene";
 
 export function VideoBrandCinema({
   rendering = false,
@@ -40,19 +41,25 @@ export function VideoBrandCinema({
         } as CSSProperties
       }
     >
-      <div className={styles.heroFrame} data-video-preview-frame>
-        <div className={styles.guides} aria-hidden="true" />
-        <span className={styles.scan} aria-hidden="true" />
-        <Clapperboard className={styles.mark} aria-hidden="true" />
-        <span className={styles.frameLabel}>
-          {t("pages.generation.video.studio.framePlaceholder")}
-        </span>
-      </div>
-      <div className={styles.timeline} aria-hidden="true">
-        {Array.from({ length: 7 }, (_, frame) => (
-          <i key={frame} />
-        ))}
-      </div>
+      {rendering ? (
+        <>
+          <div className={styles.heroFrame} data-video-preview-frame>
+            <div className={styles.guides} aria-hidden="true" />
+            <span className={styles.scan} aria-hidden="true" />
+            <Clapperboard className={styles.mark} aria-hidden="true" />
+            <span className={styles.frameLabel}>
+              {t("pages.generation.video.studio.framePlaceholder")}
+            </span>
+          </div>
+          <div className={styles.timeline} aria-hidden="true">
+            {Array.from({ length: 7 }, (_, frame) => (
+              <i key={frame} />
+            ))}
+          </div>
+        </>
+      ) : (
+        <VideoIdleScene />
+      )}
       {rendering && (
         <button
           type="button"

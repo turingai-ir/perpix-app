@@ -15,6 +15,7 @@ import {
 import { useAppTranslate } from "@/hooks";
 import type { useGenerationPromptBox } from "@/pages/(app)/generation/_hooks";
 import { isModelAllowed } from "@/pages/(app)/generation/_utils/model-access";
+import { getModelLogo } from "@/pages/(app)/generation/_utils/model-logo";
 
 function getModelMark(name: string) {
   const normalizedName = name.toLocaleLowerCase();
@@ -26,29 +27,17 @@ function getModelMark(name: string) {
   return name.trim().charAt(0).toLocaleUpperCase() || "P";
 }
 
-type LocalModelLogo = {
-  id: string;
-  src: string;
-};
-
-const modelLogos = [
-  ["grok", { id: "xai", src: "/images/model-logos/xai.svg" }],
-  ["wan", { id: "alibaba", src: "/images/model-logos/alibaba-cloud.svg" }],
-  ["seedance", { id: "bytedance", src: "/images/model-logos/bytedance.svg" }],
-  ["kling", { id: "kuaishou", src: "/images/model-logos/kuaishou.svg" }],
-  ["aleph", { id: "runway", src: "/images/model-logos/runway.svg" }],
-] as const satisfies ReadonlyArray<readonly [string, LocalModelLogo]>;
-
-function getLocalModelLogo(name: string) {
-  const normalizedName = name.toLocaleLowerCase();
-  return modelLogos.find(([modelName]) =>
-    normalizedName.includes(modelName),
-  )?.[1];
-}
-
-function ModelIcon({ url, name }: { url?: string | null; name: string }) {
+function ModelIcon({
+  url,
+  name,
+  modelId,
+}: {
+  url?: string | null;
+  name: string;
+  modelId?: string;
+}) {
   const [failedSources, setFailedSources] = useState<string[]>([]);
-  const localLogo = getLocalModelLogo(name);
+  const localLogo = getModelLogo(modelId ?? name, name);
   const source = [localLogo?.src, url].find(
     (candidate): candidate is string =>
       candidate != null && !failedSources.includes(candidate),
@@ -57,7 +46,7 @@ function ModelIcon({ url, name }: { url?: string | null; name: string }) {
   return (
     <span
       className={styles.modelIcon}
-      data-model-logo={localLogo?.id}
+      data-model-logo={source === localLogo?.src ? localLogo?.id : undefined}
       data-model-mark={getModelMark(name)}
     >
       {source ? (
@@ -139,6 +128,7 @@ export function VideoModelPicker({
             key={`${name}-${current?.icon_url ?? ""}`}
             url={current?.icon_url}
             name={name}
+            modelId={current?.name}
           />
           <span className={styles.modelName}>
             <small>{t("pages.generation.video.studio.model")}</small>
@@ -197,6 +187,7 @@ export function VideoModelPicker({
                     key={`${modelName}-${item.icon_url ?? ""}`}
                     url={item.icon_url}
                     name={modelName}
+                    modelId={item.name}
                   />
                   <span className={styles.modelName}>
                     <span className={styles.modelCardHeading}>
