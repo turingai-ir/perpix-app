@@ -57,7 +57,7 @@ const AppLayoutSidebarUserProfileMenu: FC = () => {
           <div className={styles.profileDropdownIdentity}>
             <AppLayoutSidebarUserAvatar />
             <div className={styles.profileText}>
-              <span>{t("pages.app.layout.sidebar.user.account")}</span>
+              <span>{t("pages.app.layout.sidebar.user.membership")}</span>
               <small className={styles.profilePlan}>{planName}</small>
             </div>
           </div>
@@ -70,7 +70,7 @@ const AppLayoutSidebarUserProfileMenu: FC = () => {
             <span className={styles.profileMenuIcon}>
               <AccountIcon aria-hidden="true" />
             </span>
-            <span>{t("pages.app.layout.sidebar.user.account")}</span>
+            <span>{t("pages.app.layout.sidebar.user.manageAccount")}</span>
           </DropdownMenuItem>
           {pwaInstall.canInstall ? (
             <DropdownMenuItem

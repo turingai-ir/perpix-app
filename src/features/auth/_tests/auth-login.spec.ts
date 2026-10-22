@@ -61,7 +61,7 @@ test("shows one generic message for any rejected credentials", async ({
 
   await expect(page.locator("[data-auth-reaction='password']")).toBeVisible();
   await expect(page.getByRole("alert")).toHaveText(
-    "شماره یا رمز عبور معتبر نیست.",
+    "شماره موبایل یا رمز عبور درست نیست.",
   );
   await expect(page).toHaveURL(/\/auth\/login$/);
 });
@@ -90,7 +90,7 @@ test("reports a connection problem when the request cannot be sent", async ({
   await fillCredentials(page, "09123456789", "secret");
 
   await expect(page.getByRole("alert")).toContainText(
-    "ارتباط با سرور برقرار نشد",
+    "اتصال برقرار نشد",
   );
 });
 

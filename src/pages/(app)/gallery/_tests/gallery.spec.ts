@@ -180,7 +180,7 @@ test("searches loaded artwork and clears an empty result", async ({ page }) => {
     page.getByRole("button", { name: "Desert.png", exact: true }),
   ).toHaveCount(0);
   await search.fill("missing");
-  await expect(page.getByText("اثری با این نام پیدا نشد")).toBeVisible();
+  await expect(page.getByText("چیزی با این اسم پیدا نشد")).toBeVisible();
   await page.getByRole("button", { name: "پاک کردن جست‌وجو" }).click();
   await expect(
     page.getByRole("button", { name: "Desert.png", exact: true }),

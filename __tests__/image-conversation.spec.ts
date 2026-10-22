@@ -13,17 +13,17 @@ const labels = {
   addToCompare: "افزودن به مقایسه",
   closePromptEditor: "انصراف و بستن ویرایشگر پرامپت",
   confirmRegenerate: "تأیید و ساخت",
-  compareMinimum: "برای مقایسه، یک تصویر دیگر انتخاب کن.",
+  compareMinimum: "برای مقایسه، یه عکس دیگه هم انتخاب کن.",
   editRequest: "ویرایش درخواست",
   focusLocked:
-    "برای حفظ تمرکز، بعد از آماده‌شدن نتیجه می‌توانی درخواست بعدی را بسازی.",
+    "بعد از آماده‌شدن این عکس، می‌تونی درخواست بعدی رو ثبت کنی.",
   focusProgress: "مراحل ساخت تصویر",
   focusSubmitting: "درخواستت در حال ثبت است",
   ambiguousFailure:
-    "وضعیت این درخواست قطعی نیست. برای جلوگیری از مصرف دوباره اعتبار، تاریخچه را بررسی کن و سپس از فرم پایین صفحه استفاده کن.",
+    "معلوم نیست این درخواست ثبت شده یا نه. قبل از تلاش دوباره، تاریخچه رو چک کن تا اعتبارت دوباره مصرف نشه؛ بعد از فرم پایین صفحه استفاده کن.",
   incompatibleReference:
-    "این تصویر برای پیام بعدی آماده است. یک مدل سازگار انتخاب کن یا اگر ظرفیت مراجع پر است، یکی از تصاویر فعلی را حذف کن. این کار تولید را آغاز نمی‌کند.",
-  pending: "دروازه‌ی موزه باز شد…",
+    "این عکس برای پیام بعدی آماده‌ست. یه مدل سازگار انتخاب کن؛ اگه جا برای مرجع تازه نداری، یکی از عکس‌های فعلی رو حذف کن. هنوز چیزی ساخته نمی‌شه.",
+  pending: "داریم عکست رو می‌سازیم…",
   referenceImages: "تصاویر مرجع",
   selectedForCompare: "انتخاب‌شده برای مقایسه",
   regenerate: "ساخت دوباره",
@@ -381,7 +381,7 @@ test("new chat clears the completed session without generating again", async ({
     name: "باز کردن نوار کناری",
   });
   if (await openSidebar.isVisible()) await openSidebar.click();
-  await page.locator("aside").getByRole("link", { name: "تولید عکس" }).click();
+  await page.locator("aside").getByRole("link", { name: "ساخت عکس" }).click();
 
   await expect(page).toHaveURL(/\/generation\/image$/);
   await expect(page.locator("[data-generation-intro]")).toBeVisible();
@@ -406,7 +406,7 @@ test("late generation acceptance preserves the user's new conversation", async (
     name: "باز کردن نوار کناری",
   });
   if (await openSidebar.isVisible()) await openSidebar.click();
-  await page.getByRole("link", { name: "تولید عکس", exact: true }).click();
+  await page.getByRole("link", { name: "ساخت عکس", exact: true }).click();
   await expect(page).toHaveURL(/\/generation\/image$/);
 
   await imageConversationApi.resolveGeneration([
@@ -588,7 +588,7 @@ test("failed message retry network failure remains handled by the conversation",
     conversationMessages({ prompt, status: "FAILED" }),
   );
   await page.goto(`/generation/image/${taskUuid}`);
-  await page.getByRole("button", { name: "تلاش مجدد" }).click();
+  await page.getByRole("button", { name: "دوباره امتحان کن" }).click();
   await expect.poll(() => imageConversationApi.generateRequests.length).toBe(1);
 
   await imageConversationApi.disconnectGeneration();

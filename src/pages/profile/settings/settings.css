@@ -1,8 +1,26 @@
 .settings-panel {
-  background: var(--card);
-  border: 1px solid var(--border);
+  background:
+    radial-gradient(
+      ellipse at 95% -20%,
+      color-mix(in srgb, var(--primary) 24%, transparent),
+      transparent 58%
+    ),
+    radial-gradient(
+      ellipse at -15% 110%,
+      rgba(72, 165, 211, 0.13),
+      transparent 55%
+    ),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--card) 82%, transparent),
+      color-mix(in srgb, var(--card) 66%, transparent)
+    );
+  border: 1px solid color-mix(in srgb, var(--primary) 24%, var(--border));
   border-radius: 1.5rem;
-  box-shadow: 0 18px 55px -45px rgba(36, 22, 68, 0.45);
+  box-shadow:
+    inset 0 1px rgba(255, 255, 255, 0.12),
+    0 24px 55px -38px rgba(36, 22, 68, 0.65);
+  backdrop-filter: blur(24px) saturate(140%);
 }
 .settings-security-panel {
   display: grid;
@@ -10,7 +28,37 @@
 }
 .settings-security-intro {
   color: white;
-  background: linear-gradient(145deg, #22113e 0%, #302052 58%, #193344 100%);
+  background:
+    radial-gradient(
+      ellipse at 100% 0,
+      rgba(205, 126, 245, 0.22),
+      transparent 58%
+    ),
+    linear-gradient(145deg, rgba(34, 17, 62, 0.93), rgba(25, 51, 68, 0.82));
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.12);
+}
+.settings-security-form {
+  border-inline-start: 1px solid
+    color-mix(in srgb, var(--primary) 16%, transparent);
+  background:
+    radial-gradient(ellipse at 5% 5%, rgba(166, 78, 220, 0.2), transparent 58%),
+    radial-gradient(
+      ellipse at 90% 110%,
+      rgba(65, 173, 210, 0.13),
+      transparent 58%
+    ),
+    linear-gradient(
+      145deg,
+      color-mix(in srgb, var(--card) 72%, transparent),
+      color-mix(in srgb, var(--card) 55%, transparent)
+    );
+}
+.settings-security-form [data-slot="input"] {
+  height: 2.9rem;
+  border-color: color-mix(in srgb, var(--primary) 15%, var(--border));
+  border-radius: 0.8rem;
+  background: color-mix(in srgb, var(--muted) 38%, transparent);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.06);
 }
 .settings-security-mark {
   position: relative;
@@ -22,6 +70,7 @@
   border: 1px solid rgba(255, 255, 255, 0.24);
   border-radius: 1rem;
   background: rgba(255, 255, 255, 0.09);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.17);
 }
 .settings-security-watermark {
   color: rgba(255, 255, 255, 0.08);
@@ -30,6 +79,10 @@
 @media (max-width: 767px) {
   .settings-security-panel {
     grid-template-columns: minmax(0, 1fr);
+  }
+  .settings-security-form {
+    border-inline-start: 0;
+    border-top: 1px solid color-mix(in srgb, var(--primary) 16%, transparent);
   }
 }
 .settings-eyebrow {
@@ -46,8 +99,10 @@
   height: 2.75rem;
   place-items: center;
   border-radius: 0.9rem;
+  border: 1px solid color-mix(in srgb, var(--primary) 20%, transparent);
   color: var(--primary);
-  background: color-mix(in oklab, var(--primary) 10%, var(--card));
+  background: color-mix(in srgb, var(--primary) 13%, transparent);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.1);
 }
 .settings-hero {
   color: white;
@@ -598,11 +653,13 @@
   transform: translateY(-50%);
   pointer-events: none;
 }
-.settings-input {
+.settings-page .settings-input {
   height: 2.9rem;
   padding-right: 2.4rem;
   border-radius: 0.8rem;
-  background: color-mix(in oklab, var(--muted) 55%, var(--card));
+  border-color: color-mix(in srgb, var(--primary) 15%, var(--border));
+  background: color-mix(in srgb, var(--muted) 38%, transparent);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.06);
 }
 .settings-input-ltr {
   padding-right: 0.85rem;
@@ -618,9 +675,14 @@
   gap: 0.9rem;
   min-height: 5.4rem;
   padding: 1rem;
-  border: 1px solid var(--border);
+  border: 1px solid color-mix(in srgb, var(--primary) 13%, var(--border));
   border-radius: 1rem;
-  background: color-mix(in oklab, var(--muted) 43%, var(--card));
+  background: linear-gradient(
+    120deg,
+    color-mix(in srgb, var(--primary) 11%, transparent),
+    color-mix(in srgb, var(--card) 30%, transparent)
+  );
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.07);
 }
 .settings-stat-icon {
   display: grid;
@@ -663,7 +725,7 @@
 }
 .settings-quick-link:hover {
   color: var(--primary);
-  background: color-mix(in oklab, var(--primary) 8%, var(--card));
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
 }
 .settings-quick-link:focus-visible {
   outline: 2px solid var(--primary);

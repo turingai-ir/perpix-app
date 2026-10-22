@@ -138,7 +138,7 @@ test("a failed session check offers a retry instead of showing the login form", 
     page.getByRole("heading", { name: "از همین‌جا شروع کن" }),
   ).toBeHidden();
 
-  await page.getByRole("button", { name: "تلاش مجدد" }).click();
+  await page.getByRole("button", { name: "دوباره امتحان کن" }).click();
 
   await expect(
     page.getByRole("navigation", { name: "پیوندهای مالی" }),

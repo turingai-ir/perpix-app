@@ -92,7 +92,7 @@ test("a wrong or expired code keeps the form and explains how to continue", asyn
 
   await expect(page.locator("[data-auth-reaction='code']")).toBeVisible();
   await expect(page.getByRole("alert")).toContainText(
-    "کد تأیید نامعتبر یا منقضی شده است",
+    "کد تأیید درست نیست یا مهلتش تموم شده",
   );
   await expect(page.getByLabel("تکرار رمز عبور")).toHaveValue("StrongPass1");
 });

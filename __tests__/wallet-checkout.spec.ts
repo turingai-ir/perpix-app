@@ -38,7 +38,7 @@ test.describe("Wallet checkout", () => {
     const desktopSidebar = page.locator("aside").filter({
       has: page.locator('a[href="/gallery"]'),
     });
-    await page.getByRole("button", { name: "افزایش موجودی کیف پول" }).click();
+    await page.getByRole("button", { name: "شارژ کیف پول" }).click();
     await expect(desktopSidebar).toBeVisible();
     await page.getByRole("button", { name: "۵۰۰ توکن" }).click();
 
@@ -47,13 +47,13 @@ test.describe("Wallet checkout", () => {
         request.method() === "POST" &&
         new URL(request.url()).pathname === "/api/v1/wallet/charge",
     );
-    await page.getByRole("button", { name: "مشاهده مبلغ نهایی" }).click();
+    await page.getByRole("button", { name: "دیدن مبلغ نهایی" }).click();
 
     expect((await chargeRequest).postDataJSON()).toEqual({
       amount_usdmicro: 500_000,
     });
     await expect(
-      page.getByRole("heading", { name: "تایید مبلغ پرداخت" }),
+      page.getByRole("heading", { name: "تأیید مبلغ پرداخت" }),
     ).toBeVisible();
     await expect(
       page.getByText("۱۱۷٬۶۷۵ تومان", { exact: true }),
@@ -67,11 +67,11 @@ test.describe("Wallet checkout", () => {
     expect(gatewayVisits).toBe(0);
 
     await page.keyboard.press("Escape");
-    await page.getByRole("button", { name: "افزایش موجودی کیف پول" }).click();
+    await page.getByRole("button", { name: "شارژ کیف پول" }).click();
     await expect(page.getByLabel("تعداد توکن")).toHaveValue("500");
 
-    await page.getByRole("button", { name: "مشاهده مبلغ نهایی" }).click();
-    await page.getByRole("button", { name: "ادامه پرداخت" }).click();
+    await page.getByRole("button", { name: "دیدن مبلغ نهایی" }).click();
+    await page.getByRole("button", { name: "ادامهٔ پرداخت" }).click();
     await expect(page).toHaveURL(/\/mock-gateway$/);
     expect(gatewayVisits).toBe(1);
   });
@@ -85,7 +85,7 @@ test.describe("Wallet checkout", () => {
       "WebKit needs longer to stabilize clicks",
     );
     await page.goto("/");
-    await page.getByRole("button", { name: "افزایش موجودی کیف پول" }).click();
+    await page.getByRole("button", { name: "شارژ کیف پول" }).click();
 
     const amountInput = page.getByLabel("تعداد توکن");
     for (const [typedAmount, formattedAmount, amountUsdmicro] of [
@@ -100,16 +100,16 @@ test.describe("Wallet checkout", () => {
           request.method() === "POST" &&
           new URL(request.url()).pathname === "/api/v1/wallet/charge",
       );
-      await page.getByRole("button", { name: "مشاهده مبلغ نهایی" }).click();
+      await page.getByRole("button", { name: "دیدن مبلغ نهایی" }).click();
       expect((await chargeRequest).postDataJSON()).toEqual({
         amount_usdmicro: amountUsdmicro,
       });
 
       await expect(
-        page.getByRole("heading", { name: "تایید مبلغ پرداخت" }),
+        page.getByRole("heading", { name: "تأیید مبلغ پرداخت" }),
       ).toBeVisible();
       await page.keyboard.press("Escape");
-      await page.getByRole("button", { name: "افزایش موجودی کیف پول" }).click();
+      await page.getByRole("button", { name: "شارژ کیف پول" }).click();
     }
   });
 
@@ -121,11 +121,11 @@ test.describe("Wallet checkout", () => {
     test.setTimeout(100_000);
 
     await page.goto("/");
-    await page.getByRole("button", { name: "افزایش موجودی کیف پول" }).click();
+    await page.getByRole("button", { name: "شارژ کیف پول" }).click();
     await page.getByRole("button", { name: "۵۰۰ توکن" }).click();
-    await page.getByRole("button", { name: "مشاهده مبلغ نهایی" }).click();
+    await page.getByRole("button", { name: "دیدن مبلغ نهایی" }).click();
     await expect(
-      page.getByRole("heading", { name: "تایید مبلغ پرداخت" }),
+      page.getByRole("heading", { name: "تأیید مبلغ پرداخت" }),
     ).toBeVisible();
 
     // Keeps the real component visible in a headed browser for review.
@@ -142,9 +142,9 @@ test.describe("Wallet checkout", () => {
       });
     });
     await page.goto("/");
-    await page.getByRole("button", { name: "افزایش موجودی کیف پول" }).click();
+    await page.getByRole("button", { name: "شارژ کیف پول" }).click();
     await page.getByLabel("تعداد توکن").fill("100");
-    await page.getByRole("button", { name: "مشاهده مبلغ نهایی" }).click();
+    await page.getByRole("button", { name: "دیدن مبلغ نهایی" }).click();
 
     await expect(page.getByRole("alert")).toContainText(
       "مبلغ نهایی دریافت نشد",
@@ -158,7 +158,7 @@ test.describe("Wallet checkout", () => {
     await page.getByRole("button", { name: "باز کردن نوار کناری" }).click();
     const sidebarSheet = page.locator('[data-slot="sheet-content"]');
     await expect(sidebarSheet).toBeVisible();
-    await page.getByRole("button", { name: "افزایش موجودی کیف پول" }).click();
+    await page.getByRole("button", { name: "شارژ کیف پول" }).click();
 
     const drawer = page.locator('[data-slot="drawer-content"]');
     await expect(sidebarSheet).toBeHidden();
@@ -188,7 +188,7 @@ test.describe("Wallet checkout", () => {
     const sidebarSheet = page.locator('[data-slot="sheet-content"]');
     await expect(sidebarSheet).toBeVisible();
 
-    await page.getByRole("button", { name: "افزایش موجودی کیف پول" }).click();
+    await page.getByRole("button", { name: "شارژ کیف پول" }).click();
 
     await expect(sidebarSheet).toBeHidden();
     await expect(page.locator('[data-slot="dialog-content"]')).toBeVisible();

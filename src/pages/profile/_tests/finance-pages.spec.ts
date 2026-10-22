@@ -105,7 +105,7 @@ test("payments prioritize status and remain usable on mobile", async ({
 
   await page.goto("/profile/payments");
   await expect(
-    page.getByRole("heading", { name: "پرداخت‌ها، روشن و دقیق." }),
+    page.getByRole("heading", { name: "همهٔ پرداخت‌هات یه‌جا" }),
   ).toBeVisible();
   await expect(page.getByText("مجموع پرداخت موفق")).toBeVisible();
   await expect(
@@ -115,7 +115,7 @@ test("payments prioritize status and remain usable on mobile", async ({
     .getByRole("searchbox", { name: "جست‌وجوی شناسه در این صفحه" })
     .fill("missing");
   await expect(
-    page.getByText("نتیجه‌ای با این فیلترها پیدا نشد."),
+    page.getByText("چیزی با این فیلترها پیدا نشد. فیلترها رو پاک کن."),
   ).toBeVisible();
   expect(
     await page.evaluate(
@@ -140,10 +140,10 @@ test("wallet type filter is sent to the backend", async ({
 
   await page.goto("/profile/wallet-transactions");
   await expect(
-    page.getByRole("heading", { name: "اعتبار شما، جریان خلاقیت." }),
+    page.getByRole("heading", { name: "حواست به اعتبارت باشه" }),
   ).toBeVisible();
   await expect(
-    page.getByLabel("اعتبار شما، جریان خلاقیت.").getByText("۲۴۵ توکن"),
+    page.getByLabel("حواست به اعتبارت باشه").getByText("۲۴۵ توکن"),
   ).toBeVisible();
   await page.getByRole("button", { name: "برداشت" }).click();
   await expect.poll(() => requestedTypes.at(-1)).toBe("WITHDRAW");

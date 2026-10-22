@@ -26,7 +26,7 @@ for (const [width, height] of [
     await page.getByLabel("تکرار رمز عبور").fill("StrongPass1");
     await page.getByRole("button", { name: "ثبت‌نام", exact: true }).click();
     await expect(page.getByRole("alert")).toContainText(
-      "کد تأیید نامعتبر یا منقضی شده است",
+      "کد تأیید درست نیست یا مهلتش تموم شده",
     );
     await expect(page.locator("[data-auth-reaction='code']")).toHaveCSS(
       "opacity",

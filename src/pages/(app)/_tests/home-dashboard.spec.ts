@@ -338,7 +338,7 @@ test("shows a personal studio dashboard backed by current APIs", async ({
   await expect(page.locator("#dashboard-creative-prompt")).toHaveCount(0);
   await expect(page.getByText("۲۴۸", { exact: true })).toBeVisible();
   await expect(
-    page.getByLabel("حساب شما").getByText("حرفه‌ای", { exact: true }),
+    page.getByLabel("حساب تو").getByText("حرفه‌ای", { exact: true }),
   ).toBeVisible();
   await expect(
     page.getByRole("heading", { name: "کارهای اخیر" }),
@@ -563,7 +563,7 @@ test("explains both creation choices without asking for a prompt", async ({
   await expect(page.locator("#dashboard-creative-prompt")).toHaveCount(0);
   await expect(
     page
-      .getByText("با ورود به ابزار، چیزی ساخته نمی‌شود و اعتباری مصرف نمی‌شود")
+      .getByText("فقط با ورود به ابزار، چیزی ساخته نمی‌شه و اعتباری مصرف نمی‌کنی")
       .first(),
   ).toBeVisible();
 });
@@ -688,7 +688,7 @@ test("keeps the image creation turn and composer in view", async ({ page }) => {
     assistantMessage.boundingBox(),
   ]);
   expect(userBox?.x).toBeGreaterThan(assistantBox?.x ?? 0);
-  const unbornMuseum = page.getByLabel("موزه تصاویر متولدنشده");
+  const unbornMuseum = page.getByLabel("در حال ساخت عکس");
   await expect(unbornMuseum).toBeInViewport();
   await expect(unbornMuseum.getByText("شهر", { exact: true })).toBeVisible();
 

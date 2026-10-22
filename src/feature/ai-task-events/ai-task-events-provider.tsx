@@ -7,6 +7,7 @@ import { useAiTaskEvents } from "./use-ai-task-events";
 import type { AiTaskMessageEvent } from "./types";
 
 import { useReactQueryApi } from "@/hooks/app";
+import { useAppTranslate } from "@/hooks";
 import { APP_ROUTES_KEY } from "@/router/routes";
 import {
   AiRegistryModelSupportedTypesEnumMap,
@@ -48,6 +49,7 @@ const hasProcessedEvent = (payload: AiTaskMessageEvent) => {
 
 export function AiTaskEventsProvider() {
   const navigate = useNavigate();
+  const { t } = useAppTranslate();
   const queryClient = useQueryClient();
   const { queryOptions } = useReactQueryApi();
 
@@ -101,19 +103,21 @@ export function AiTaskEventsProvider() {
       const isSuccess = payload.task_status === "SUCCESS";
 
       toast[isSuccess ? "success" : "error"](
-        isSuccess ? "تسک آماده شد" : "تسک ناموفق بود",
+        isSuccess
+          ? t("common.taskNotification.success")
+          : t("common.taskNotification.failed"),
         {
           description: isSuccess
-            ? "نتیجه‌ی تولید آماده‌ی مشاهده است."
-            : "برای دیدن جزئیات و تلاش دوباره وارد تسک شو.",
+            ? t("common.taskNotification.successDescription")
+            : t("common.taskNotification.failedDescription"),
           action: {
-            label: "مشاهده",
+            label: t("common.taskNotification.view"),
             onClick: () => navigate(taskUrl),
           },
         },
       );
     },
-    [navigate, queryClient, queryOptions],
+    [navigate, queryClient, queryOptions, t],
   );
 
   // Events are not replayed, so a reconnect re-reads the task list snapshot.
