@@ -504,6 +504,10 @@
     },
     "app": {
       "layout": {
+        "slogan": {
+          "brand": "پرپیکس",
+          "promise": "می‌تونه!"
+        },
         "chooseModel": {
           "empty": "یافت نشد",
           "searchBoxPlaceholder": "نام مدل"

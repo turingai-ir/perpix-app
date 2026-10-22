@@ -1,0 +1,180 @@
+.header {
+  isolation: isolate;
+  overflow: hidden;
+  border-bottom: 1px solid rgb(182 79 244 / 24%);
+  background-color: #05050d;
+  background-image:
+    radial-gradient(
+      ellipse 36% 120% at 50% 118%,
+      rgb(167 39 214 / 22%),
+      transparent 74%
+    ),
+    radial-gradient(
+      ellipse 22% 95% at 65% 0%,
+      rgb(0 174 255 / 10%),
+      transparent 85%
+    ),
+    linear-gradient(
+      90deg,
+      transparent,
+      rgb(15 11 28 / 65%) 25%,
+      rgb(15 11 28 / 65%) 75%,
+      transparent
+    );
+  box-shadow: inset 0 -1px 0 rgb(54 202 255 / 11%);
+}
+
+.header::before {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(rgb(167 70 222 / 11%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(68 186 243 / 9%) 1px, transparent 1px);
+  background-size: 16px 16px;
+  content: "";
+  mask-image: linear-gradient(
+    90deg,
+    transparent 8%,
+    #000 30% 70%,
+    transparent 92%
+  );
+  pointer-events: none;
+}
+
+.header::after {
+  position: absolute;
+  right: 21%;
+  bottom: 0;
+  left: 21%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #b835ed 35%,
+    #34b9f3 65%,
+    transparent
+  );
+  box-shadow: 0 0 10px rgb(174 49 235 / 55%);
+  content: "";
+  pointer-events: none;
+}
+
+.slogan {
+  position: absolute;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  width: max-content;
+  max-width: calc(100% - 8rem);
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: clamp(1.05rem, 1.7vw, 1.55rem);
+  font-weight: 900;
+  line-height: 1.5;
+  pointer-events: none;
+  user-select: none;
+}
+
+.word {
+  position: relative;
+  display: inline-block;
+}
+
+.word::after {
+  /* A clipped copy of each word creates a brief electric streak without moving the text. */
+  position: absolute;
+  inset: 0;
+  color: #fff;
+  content: attr(data-text);
+  opacity: 0;
+  clip-path: inset(32% 0 48% 0);
+  text-shadow:
+    0 0 8px #fff,
+    0 0 16px #49ccff;
+  animation: electric-flash 8s steps(1, end) infinite;
+  animation-play-state: paused;
+  pointer-events: none;
+}
+
+.slogan[data-motion="running"] .word::after {
+  animation-play-state: running;
+}
+
+.brand {
+  color: #e78bff;
+  text-shadow:
+    0 0 6px rgb(206 73 251 / 75%),
+    0 0 19px rgb(172 38 231 / 48%);
+}
+
+.promise {
+  color: #89dcff;
+  text-shadow:
+    0 0 6px rgb(64 194 255 / 85%),
+    0 0 19px rgb(28 156 233 / 52%);
+}
+
+.promise::after {
+  animation-delay: 0.2s;
+}
+
+.pixel {
+  width: 4px;
+  height: 4px;
+  flex: none;
+  background: #cf58ff;
+  box-shadow:
+    0 0 7px #d946ef,
+    5px 5px 0 rgb(49 184 247 / 60%);
+}
+
+.pixel:last-child {
+  background: #47c8ff;
+  box-shadow:
+    0 0 7px #38bdf8,
+    -5px -5px 0 rgb(201 66 238 / 60%);
+}
+
+@keyframes electric-flash {
+  0%,
+  2%,
+  5%,
+  9%,
+  12%,
+  100% {
+    opacity: 0;
+  }
+  3%,
+  7%,
+  10% {
+    opacity: 0.95;
+    clip-path: inset(31% 0 49% 0);
+  }
+  4%,
+  8%,
+  11% {
+    opacity: 0.5;
+    clip-path: inset(58% 0 25% 0);
+  }
+}
+
+@media (max-width: 480px) {
+  .slogan {
+    gap: 0.24rem;
+    font-size: 1rem;
+  }
+
+  .pixel {
+    width: 3px;
+    height: 3px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .word::after {
+    animation: none;
+  }
+}

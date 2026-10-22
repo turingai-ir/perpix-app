@@ -5,6 +5,8 @@ import { Menu } from "lucide-react";
 
 import AppLayoutSidebar from "./sidebar";
 import appLayoutAtom from "./_state";
+import HeaderSlogan from "./header-slogan";
+import styles from "./header-slogan.module.css";
 
 import { Button } from "@/components/ui/button";
 import LoadingSection from "@/components/custom/loading-section";
@@ -115,7 +117,7 @@ const AppLayout: FC = () => {
           className="relative flex h-full max-h-full min-h-0 w-full min-w-0 flex-col overflow-hidden"
           viewportClassName="[&>div]:!grid [&>div]:!min-h-full [&>div]:!grid-rows-[auto_1fr]"
         >
-          <header className="bg-background/72 supports-[backdrop-filter]:bg-background/58 sticky top-0 z-10 flex min-h-14 w-full min-w-0 items-center border-b border-white/6 px-3 backdrop-blur-xl sm:px-5">
+          <header className={`${styles.header} sticky top-0 z-10 flex min-h-[68px] w-full min-w-0 items-center px-3 sm:px-5`}>
             <Button
               variant="ghost"
               size="sm"
@@ -143,6 +145,7 @@ const AppLayout: FC = () => {
                 className="bg-primary/80 size-1.5 rounded-full shadow-[0_0_10px_currentColor] transition-transform duration-200 group-aria-expanded:scale-125 motion-reduce:transition-none"
               />
             </Button>
+            <HeaderSlogan />
           </header>
           <section className="relative flex w-full min-w-0 overflow-x-hidden">
             <Outlet />

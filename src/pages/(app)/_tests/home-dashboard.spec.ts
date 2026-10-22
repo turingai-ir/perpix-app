@@ -1,5 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import { readFileSync } from "node:fs";
+import { mockAuthenticatedSession } from "../../../../__tests__/support/auth-session";
 
 const mockDashboardApi = async (page: Page) => {
   await page.route("**/*", (route) => {
@@ -14,13 +15,7 @@ const mockDashboardApi = async (page: Page) => {
     }
     return route.abort();
   });
-  await page.context().addCookies([
-    {
-      name: "access_token",
-      value: "dashboard-test-token",
-      url: "http://localhost:5173",
-    },
-  ]);
+  await mockAuthenticatedSession(page);
   await page.route("**/api/v1/user/get-info", (route) =>
     route.fulfill({
       json: {
@@ -400,6 +395,56 @@ test("keeps primary dashboard actions usable on mobile", async ({ page }) => {
     path: test.info().outputPath("mobile.png"),
     animations: "disabled",
   });
+});
+
+test("centers the neon slogan in the header across screen sizes", async ({
+  page,
+}) => {
+  await mockDashboardApi(page);
+  await page.goto("/");
+
+  const header = page.locator("header");
+  const slogan = page.locator("[data-header-slogan]");
+  const menu = header.locator("button");
+  await expect(slogan).toHaveAttribute("aria-label", "پرپیکس می‌تونه!");
+  if ((await menu.getAttribute("aria-expanded")) === "true") {
+    await menu.click();
+  }
+
+  for (const viewport of [
+    { name: "mobile", width: 375, height: 812 },
+    { name: "tablet", width: 768, height: 1024 },
+    { name: "desktop", width: 1440, height: 900 },
+  ]) {
+    await page.setViewportSize(viewport);
+    const headerBox = await header.boundingBox();
+    const sloganBox = await slogan.boundingBox();
+    const menuBox = await menu.boundingBox();
+    expect(headerBox).not.toBeNull();
+    expect(sloganBox).not.toBeNull();
+    expect(menuBox).not.toBeNull();
+    if (!headerBox || !sloganBox || !menuBox) {
+      continue;
+    }
+
+    expect(
+      Math.abs(
+        sloganBox.x + sloganBox.width / 2 -
+          (headerBox.x + headerBox.width / 2),
+      ),
+    ).toBeLessThan(2);
+    expect(sloganBox.x + sloganBox.width).toBeLessThan(menuBox.x);
+    await header.screenshot({
+      path: test.info().outputPath(`${viewport.name}-header.png`),
+      animations: "disabled",
+    });
+  }
+
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  const animationName = await slogan.locator("span").nth(1).evaluate((element) =>
+    getComputedStyle(element, "::after").animationName,
+  );
+  expect(animationName).toBe("none");
 });
 
 test("explains both creation choices without asking for a prompt", async ({

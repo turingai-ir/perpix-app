@@ -4,6 +4,34 @@
   border-radius: 1.5rem;
   box-shadow: 0 18px 55px -45px rgba(36, 22, 68, 0.45);
 }
+.settings-security-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
+}
+.settings-security-intro {
+  color: white;
+  background: linear-gradient(145deg, #22113e 0%, #302052 58%, #193344 100%);
+}
+.settings-security-mark {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 3.5rem;
+  height: 3.5rem;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.09);
+}
+.settings-security-watermark {
+  color: rgba(255, 255, 255, 0.08);
+  transform: rotate(-24deg);
+}
+@media (max-width: 767px) {
+  .settings-security-panel {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
 .settings-eyebrow {
   color: var(--primary);
   font-size: 0.68rem;
