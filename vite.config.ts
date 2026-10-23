@@ -54,6 +54,20 @@ export default defineConfig(({ mode }) => ({
   },
   build: {
     sourcemap: true,
+    rolldownOptions: {
+      output: {
+        codeSplitting: {
+          groups: [
+            {
+              // Cache the React runtime separately and keep legacy entries within budget.
+              name: "react-vendor",
+              test: /node_modules[\\/]react(?:-dom|-router)?[\\/]/,
+              priority: 20,
+            },
+          ],
+        },
+      },
+    },
   },
   resolve: {
     alias: {

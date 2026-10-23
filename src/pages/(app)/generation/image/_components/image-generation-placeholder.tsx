@@ -1,8 +1,9 @@
-import type { CSSProperties } from "react";
+import { useRef, type CSSProperties } from "react";
 import { Sparkles } from "lucide-react";
 
 import styles from "./image-generation-placeholder.module.css";
 import { useAppTranslate } from "@/hooks";
+import { useAnimationVisibility } from "@/hooks/use-animation-visibility";
 
 const frames = Array.from({ length: 8 });
 const particles = Array.from({ length: 16 });
@@ -30,6 +31,8 @@ export function ImageGenerationPlaceholder({
   prompt: string;
 }) {
   const { t } = useAppTranslate();
+  const rootRef = useRef<HTMLDivElement>(null);
+  const active = useAnimationVisibility(rootRef);
   const [width, height] = aspectRatio.split(":").map(Number);
   const validRatio = width > 0 && height > 0 ? width / height : 1;
   const promptWords = getPromptWords(prompt);
@@ -41,11 +44,13 @@ export function ImageGenerationPlaceholder({
 
   return (
     <div
+      ref={rootRef}
       className={styles.root}
       role="status"
       aria-live="polite"
       aria-label={t("pages.generation.image.generationLoading.museumLabel")}
       data-unborn-museum
+      data-paused={!active}
       style={visualStyle}
     >
       <div className={styles.statusLine}>

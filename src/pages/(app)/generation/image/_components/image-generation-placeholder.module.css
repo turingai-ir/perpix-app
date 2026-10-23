@@ -414,6 +414,12 @@
   }
 }
 
+.root[data-paused="true"] *,
+.root[data-paused="true"] *::before,
+.root[data-paused="true"] *::after {
+  animation-play-state: paused !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .museum,
   .vanishingLight,

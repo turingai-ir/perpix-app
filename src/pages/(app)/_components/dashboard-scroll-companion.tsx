@@ -29,12 +29,23 @@ export function DashboardScrollCompanion() {
     };
 
     const resizeObserver = new ResizeObserver(updatePosition);
-    resizeObserver.observe(viewport);
-    resizeObserver.observe(rail);
-    viewport.addEventListener("scroll", updatePosition, { passive: true });
-    updatePosition();
+    // Match the CSS breakpoint so the hidden mobile companion does no scroll work.
+    const desktop = window.matchMedia("(min-width: 640px)");
+    const updateSubscriptions = () => {
+      cancelAnimationFrame(frame);
+      resizeObserver.disconnect();
+      viewport.removeEventListener("scroll", updatePosition);
+      if (!desktop.matches) return;
+      resizeObserver.observe(viewport);
+      resizeObserver.observe(rail);
+      viewport.addEventListener("scroll", updatePosition, { passive: true });
+      updatePosition();
+    };
+    desktop.addEventListener("change", updateSubscriptions);
+    updateSubscriptions();
 
     return () => {
+      desktop.removeEventListener("change", updateSubscriptions);
       cancelAnimationFrame(frame);
       resizeObserver.disconnect();
       viewport.removeEventListener("scroll", updatePosition);

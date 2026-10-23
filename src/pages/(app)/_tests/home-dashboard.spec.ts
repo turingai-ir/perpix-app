@@ -369,6 +369,36 @@ test("shows a personal studio dashboard backed by current APIs", async ({
   });
 });
 
+test("hidden mobile companion skips scroll work and reconnects on desktop", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await mockDashboardApi(page);
+  await page.goto("/");
+  const companion = page.locator("[data-dashboard-scroll-companion]");
+  await expect(companion).toBeAttached();
+  await page
+    .locator('[data-slot="scroll-area-viewport"]')
+    .evaluate((element) => {
+      element.scrollTop = element.scrollHeight;
+      element.dispatchEvent(new Event("scroll"));
+    });
+  await page.waitForTimeout(100);
+  await expect(companion).not.toHaveAttribute("style");
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await expect(companion).toHaveAttribute("style", /--scroll-progress:/);
+  await page.setViewportSize({ width: 375, height: 812 });
+  const position = await companion.getAttribute("style");
+  await page
+    .locator('[data-slot="scroll-area-viewport"]')
+    .evaluate((element) => {
+      element.scrollTop = 0;
+      element.dispatchEvent(new Event("scroll"));
+    });
+  await page.waitForTimeout(100);
+  expect(await companion.getAttribute("style")).toBe(position);
+});
+
 test("keeps primary dashboard actions usable on mobile", async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 812 });
   await mockDashboardApi(page);
@@ -563,7 +593,9 @@ test("explains both creation choices without asking for a prompt", async ({
   await expect(page.locator("#dashboard-creative-prompt")).toHaveCount(0);
   await expect(
     page
-      .getByText("فقط با ورود به ابزار، چیزی ساخته نمی‌شه و اعتباری مصرف نمی‌کنی")
+      .getByText(
+        "فقط با ورود به ابزار، چیزی ساخته نمی‌شه و اعتباری مصرف نمی‌کنی",
+      )
       .first(),
   ).toBeVisible();
 });
