@@ -44,9 +44,7 @@ test("paid payment awaiting fulfillment shows processing", async ({ page }) => {
       name: "پرداخت تأیید شد؛ داریم درخواستت رو تکمیل می‌کنیم",
     }),
   ).toBeVisible();
-  await expect(
-    page.getByText("درخواستت هنوز کامل نشده."),
-  ).toBeVisible();
+  await expect(page.getByText("درخواستت هنوز کامل نشده.")).toBeVisible();
 });
 
 test("payment under review does not claim the request was completed", async ({
@@ -59,9 +57,7 @@ test("payment under review does not claim the request was completed", async ({
   await expect(
     page.getByRole("heading", { name: "پرداختت نیاز به بررسی داره" }),
   ).toBeVisible();
-  await expect(
-    page.getByText("درخواستت هنوز کامل نشده."),
-  ).toBeVisible();
+  await expect(page.getByText("درخواستت هنوز کامل نشده.")).toBeVisible();
 });
 
 test("unverified return stays pending instead of showing failure", async ({
@@ -110,6 +106,33 @@ test("failed open payment retries without a client UUID", async ({ page }) => {
   await page.getByRole("button", { name: "دوباره پرداخت کن" }).click();
   await expect(page).toHaveURL(`/payment/verify/${newExecutionUuid}`);
   expect(retryKey).toBeUndefined();
+});
+
+test("retry never executes an API-supplied script URL", async ({ page }) => {
+  const nextExecutionUuid = "c0202000-0000-4000-8000-000000000009";
+  await page.route("**/api/v1/payment-executions/*", (route) =>
+    route.fulfill({
+      json: { ...paymentResponse("PENDING", "NOT_READY"), status: "FAILED" },
+    }),
+  );
+  await page.route(
+    `**/api/v1/payment-intents/${paymentId}/executions`,
+    (route) =>
+      route.fulfill({
+        status: 201,
+        json: {
+          ...paymentResponse("PENDING", "NOT_READY"),
+          execution_uuid: nextExecutionUuid,
+          payment_url: "java" + "script:window.__paymentProbe=true",
+        },
+      }),
+  );
+  await page.goto(`/payment/verify/${paymentId}`);
+  await page.getByRole("button", { name: "دوباره پرداخت کن" }).click();
+  await expect(page).toHaveURL(`/payment/verify/${nextExecutionUuid}`);
+  expect(
+    await page.evaluate(() => Reflect.get(window, "__paymentProbe")),
+  ).toBeUndefined();
 });
 
 test("fulfilled payment uses a service-independent success message", async ({

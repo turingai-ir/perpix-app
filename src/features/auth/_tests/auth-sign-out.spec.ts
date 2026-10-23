@@ -50,13 +50,15 @@ test("signing out sends the CSRF header, clears the session and survives reload"
 test("a sign-out the server could not confirm is reported with a retry", async ({
   page,
 }) => {
+  let refreshes = 0;
   await mockAppShellApis(page);
   await page.route("**/api/v1/auth/csrf", (route) =>
     route.fulfill({ json: { csrf_token: "csrf-1" } }),
   );
-  await page.route("**/api/v1/auth/refresh", (route) =>
-    route.fulfill({ headers: sessionHeaders, json: accessResponse }),
-  );
+  await page.route("**/api/v1/auth/refresh", (route) => {
+    refreshes += 1;
+    return route.fulfill({ headers: sessionHeaders, json: accessResponse });
+  });
   await page.route("**/api/v1/auth/logout", (route) => route.abort());
   await page.goto("/");
 
@@ -67,7 +69,29 @@ test("a sign-out the server could not confirm is reported with a retry", async (
   await expect(
     page.getByText("خروج از حساب تأیید نشد. دوباره امتحان کن."),
   ).toBeVisible();
-  await expect(page.getByRole("button", { name: "دوباره امتحان کن" })).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "دوباره امتحان کن" }),
+  ).toBeVisible();
+  const beforeReload = refreshes;
+  await page.goto("/");
+  await expect(page).toHaveURL(/\/auth\/login/);
+  expect(refreshes).toBe(beforeReload);
+
+  await page.route("**/api/v1/auth/start", (route) =>
+    route.fulfill({ json: { next_step: "password" } }),
+  );
+  await page.route("**/api/v1/auth/login", (route) =>
+    route.fulfill({ headers: sessionHeaders, json: accessResponse }),
+  );
+  await page.getByLabel("شماره موبایل").fill("09123456789");
+  await page.getByRole("button", { name: "ادامه دادن" }).click();
+  await page.getByLabel("رمز عبور", { exact: true }).fill("secret");
+  await page.getByRole("button", { name: /^ورود/ }).click();
+  await expect
+    .poll(() =>
+      page.evaluate(() => localStorage.getItem("perpix:local-sign-out")),
+    )
+    .toBeNull();
 });
 
 test("the user menu only offers signing out of the current device", async ({
@@ -108,9 +132,7 @@ test("signing out in one tab signs the other tab out too", async ({
   await mockAppShellApis(otherTab);
   await page.goto("/");
   await otherTab.goto("/");
-  await expect(
-    otherTab.getByRole("navigation", { name: "پیوندهای مالی" }),
-  ).toBeVisible();
+  await expect(userMenu(otherTab)).toBeVisible();
 
   await userMenu(page).click();
   await page.getByRole("menuitem", { name: "خروج", exact: true }).click();
@@ -189,7 +211,5 @@ test("a successful password change ends the session and asks to sign in again", 
   await dialog.getByRole("button", { name: "تغییر رمز عبور" }).click();
 
   await expect(page).toHaveURL(/\/auth\/login$/);
-  await expect(
-    page.getByText("رمزت عوض شد. دوباره وارد شو."),
-  ).toBeVisible();
+  await expect(page.getByText("رمزت عوض شد. دوباره وارد شو.")).toBeVisible();
 });
