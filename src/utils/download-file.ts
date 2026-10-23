@@ -1,3 +1,5 @@
+import { isSafeExternalUrl } from "./safe-external-url";
+
 const mimeExtensionMap: Record<string, string> = {
   "image/jpeg": "jpg",
   "image/png": "png",
@@ -42,6 +44,7 @@ export const revokeDownloadUrl = (url: string) => {
 };
 
 export const downloadFile = (url: string) => {
+  if (!isSafeExternalUrl(url)) return;
   const link = document.createElement("a");
   link.href = url;
   link.rel = "noopener";

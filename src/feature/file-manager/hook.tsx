@@ -84,7 +84,10 @@ export const useFileManager = (
     pendingUploadsGroupedAtom,
   );
 
-  const simpleUpload = useMutation("post", "/api/v1/file-manager/simple-upload");
+  const simpleUpload = useMutation(
+    "post",
+    "/api/v1/file-manager/simple-upload",
+  );
   const initiateMultipartUpload = useMutation(
     "post",
     "/api/v1/file-manager/multipart/initiate",
@@ -299,6 +302,7 @@ export const useFilePreview = (
 
       return filePreviewUrls;
     },
+    refetchOnMount: "always",
   });
 
   return { getFilePreviewState };
@@ -308,6 +312,7 @@ export type FilePreviewUrls = FilePreviewUrlsResponse;
 
 type FilePreviewUrlsResponse = {
   download_url: string;
+  expire_at?: string | null;
   preview_url: string;
 };
 
@@ -348,6 +353,7 @@ const fetchFilePreviewUrls = async (fileUuids: readonly string[]) => {
           file_uuid: string;
           preview_url: string;
           download_url: string;
+          expire_at?: string | null;
         }[];
       };
     }),
@@ -358,6 +364,7 @@ const fetchFilePreviewUrls = async (fileUuids: readonly string[]) => {
       currentResponse.files?.forEach((file) => {
         previewUrlsByFileUuid[file.file_uuid] = {
           download_url: file.download_url,
+          expire_at: file.expire_at,
           preview_url: file.preview_url,
         };
       });

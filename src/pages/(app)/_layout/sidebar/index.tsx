@@ -1,12 +1,15 @@
 import { useImmerAtom } from "jotai-immer";
-import { type CSSProperties, type FC } from "react";
+import { useState, type CSSProperties, type FC } from "react";
 
 import appLayoutAtom from "../_state";
 
 import AppLayoutSidebarContent from "./content";
+import styles from "./sidebar.module.css";
 
 import { cn } from "@/lib/utils";
 import { useViewportBreakpoint } from "@/hooks";
+import { useActiveSubscription, usePricingFeature } from "@/feature/pricing";
+import { useWallet, WalletChargeFlow } from "@/feature/wallet";
 import {
   Sheet,
   SheetContent,
@@ -17,13 +20,44 @@ import {
 const AppLayoutSidebar: FC<{ sidebarWidth: string }> = ({ sidebarWidth }) => {
   const [appLayoutState, setAppLayoutState] = useImmerAtom(appLayoutAtom);
   const breakpoints = useViewportBreakpoint();
+  const walletState = useWallet();
+  const activeSubscriptionState = useActiveSubscription();
+  const { openPricingFeature } = usePricingFeature();
+  const [isWalletChargeOpen, setIsWalletChargeOpen] = useState(false);
+  const balanceUsdmicro = walletState.data?.balance_usdmicro ?? 0;
+  const sidebarContent = (
+    <AppLayoutSidebarContent
+      balanceUsdmicro={balanceUsdmicro}
+      onOpenWalletCharge={() => {
+        if (!breakpoints.lg) {
+          setAppLayoutState((draft) => {
+            draft.isSidebarOpen = false;
+          });
+        }
+        setIsWalletChargeOpen(true);
+      }}
+    />
+  );
+
+  const walletChargeFlow = (
+    <WalletChargeFlow
+      balanceUsdmicro={balanceUsdmicro}
+      open={isWalletChargeOpen}
+      onOpenChange={setIsWalletChargeOpen}
+      requiresSubscription={
+        activeSubscriptionState.data?.plan.is_default === true
+      }
+      onOpenPricing={openPricingFeature}
+    />
+  );
 
   if (breakpoints.lg) {
     return (
       <>
         <aside
           className={cn(
-            "border-sidebar-border bg-sidebar text-sidebar-foreground flex h-full w-(--sidebar-width) flex-col border-e shadow-[var(--sidebar-shadow)] transition-[transform,opacity] duration-300 ease-in-out",
+            styles.shell,
+            "text-sidebar-foreground flex h-full min-h-0 w-(--sidebar-width) flex-col border-e transition-[transform,opacity] duration-300 ease-in-out motion-reduce:transition-none",
             appLayoutState.isSidebarOpen
               ? "translate-x-0 opacity-100"
               : "translate-x-full opacity-0",
@@ -34,35 +68,39 @@ const AppLayoutSidebar: FC<{ sidebarWidth: string }> = ({ sidebarWidth }) => {
             } as React.CSSProperties
           }
         >
-          <AppLayoutSidebarContent />
+          {sidebarContent}
         </aside>
+        {walletChargeFlow}
       </>
     );
   }
   return (
-    <Sheet
-      open={appLayoutState.isSidebarOpen}
-      onOpenChange={(open) =>
-        setAppLayoutState((draft) => {
-          draft.isSidebarOpen = open;
-        })
-      }
-    >
-      <SheetContent
-        dir="rtl"
-        className="bg-sidebar h-dvh max-h-dvh w-[min(var(--sidebar-width),100dvw)] max-w-full min-w-0 overflow-x-hidden p-0"
-        style={
-          {
-            "--sidebar-width": sidebarWidth,
-          } as CSSProperties
+    <>
+      <Sheet
+        open={appLayoutState.isSidebarOpen}
+        onOpenChange={(open) =>
+          setAppLayoutState((draft) => {
+            draft.isSidebarOpen = open;
+          })
         }
       >
-        <SheetHeader>
-          <SheetTitle />
-        </SheetHeader>
-        <AppLayoutSidebarContent />
-      </SheetContent>
-    </Sheet>
+        <SheetContent
+          dir="rtl"
+          className={`${styles.mobileShell} h-dvh max-h-dvh w-[min(var(--sidebar-width),100dvw)] max-w-full min-w-0 overflow-x-hidden p-0`}
+          style={
+            {
+              "--sidebar-width": sidebarWidth,
+            } as CSSProperties
+          }
+        >
+          <SheetHeader>
+            <SheetTitle />
+          </SheetHeader>
+          {sidebarContent}
+        </SheetContent>
+      </Sheet>
+      {walletChargeFlow}
+    </>
   );
 };
 

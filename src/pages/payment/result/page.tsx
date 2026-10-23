@@ -1,5 +1,4 @@
 import { Link, useParams } from "react-router";
-import { Check, Clock3, CircleAlert } from "lucide-react";
 
 import LoadingSection from "@/components/custom/loading-section";
 import ErrorSection from "@/components/custom/error-section";
@@ -9,10 +8,12 @@ import {
   usePaymentStatus,
   useRetryPayment,
 } from "@/feature/payment";
+import { PaymentAmount } from "@/features/payment";
 import { useAppTranslate } from "@/hooks";
 import { APP_ROUTES_KEY } from "@/router/routes";
 import { APP_I18_KEYS } from "@/services/i18";
-import { PaymentAmount } from "@/features/payment";
+import { isSafeExternalUrl } from "@/utils/safe-external-url";
+import { PaymentReceipt } from "./payment-receipt";
 
 function PaymentResultPage() {
   const { paymentUuid } = useParams<{ paymentUuid: string }>();
@@ -52,76 +53,65 @@ function PaymentResultPage() {
       {
         onSuccess: (result) =>
           window.location.assign(
-            result.payment_url ?? `/payment/verify/${result.execution_uuid}`,
+            result.payment_url && isSafeExternalUrl(result.payment_url)
+              ? result.payment_url
+              : `/payment/verify/${result.execution_uuid}`,
           ),
       },
     );
   };
 
-  const Icon =
-    status === "succeeded"
-      ? Check
-      : status === "failed" || status === "review"
-        ? CircleAlert
-        : Clock3;
-  const tone =
-    status === "succeeded"
-      ? "text-green-600"
-      : status === "failed" || status === "review"
-        ? "text-red-600"
-        : "text-amber-600";
+  let accent: "success" | "pending" | "failed" = "pending";
+  if (status === "succeeded") accent = "success";
+  if (status === "failed" || status === "review") accent = "failed";
 
   return (
-    <main className="bg-background flex min-h-dvh items-center justify-center px-4 py-8">
-      <div className="w-full max-w-lg space-y-8 text-center" aria-live="polite">
-        <Icon className={`mx-auto size-14 ${tone}`} aria-hidden="true" />
-        <div className="space-y-3">
-          <h1 className="text-foreground text-3xl font-bold">
-            {t(`pages.payment.result.states.${status}.title`)}
-          </h1>
-          <p className="text-muted-foreground">
-            {t(`pages.payment.result.states.${status}.description`)}
-          </p>
+    <PaymentReceipt
+      accent={accent}
+      title={t(`pages.payment.result.states.${status}.title`)}
+      description={
+        <>
+          {t(`pages.payment.result.states.${status}.description`)}
           {payment.financial_status === "SUCCEEDED" &&
           payment.fulfillment_status !== "SUCCEEDED" ? (
-            <p className="text-muted-foreground">
+            <span className="mt-2 block">
               {t("pages.payment.result.fulfillmentPending")}
-            </p>
+            </span>
           ) : null}
-        </div>
-        <div className="bg-card space-y-4 rounded-xl border p-6 text-right">
-          <div className="flex flex-wrap justify-between gap-2">
-            <span>{t("pages.payment.result.trackingCode")}</span>
-            <span dir="ltr" className="font-mono text-xs">
-              {payment.execution_uuid}
-            </span>
-          </div>
-          <div className="flex justify-between gap-2">
-            <span>{t("pages.payment.result.amount")}</span>
-            <span>
-              <PaymentAmount
-                amount={payment.amount}
-                currency={payment.currency}
-              />
-            </span>
-          </div>
-        </div>
-        {canRetry ? (
-          <Button
-            disabled={retryState.isPending}
-            onClick={retryPayment}
-            className="w-full"
-          >
-            {t("pages.payment.result.retry")}
+        </>
+      }
+      rows={[
+        {
+          label: t("pages.payment.result.amount"),
+          value: (
+            <PaymentAmount
+              amount={payment.amount}
+              currency={payment.currency}
+            />
+          ),
+        },
+      ]}
+      trackingCode={payment.execution_uuid}
+      trackingLabel={t("pages.payment.result.trackingCode")}
+      actions={
+        <>
+          {canRetry ? (
+            <Button
+              disabled={retryState.isPending}
+              onClick={retryPayment}
+              className="h-11 w-full"
+            >
+              {t("pages.payment.result.retry")}
+            </Button>
+          ) : null}
+          <Button asChild variant="outline" className="h-11 w-full">
+            <Link to={APP_ROUTES_KEY.app.path}>
+              {t("pages.payment.result.return")}
+            </Link>
           </Button>
-        ) : null}
-        <Button asChild variant="outline" className="w-full">
-          <Link to={APP_ROUTES_KEY.app.path}>
-            {t("pages.payment.result.return")}
-          </Link>
-        </Button>
-      </div>
-    </main>
+        </>
+      }
+    />
   );
 }
 

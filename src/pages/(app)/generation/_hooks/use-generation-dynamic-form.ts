@@ -5,9 +5,12 @@ import type { GenerationPromptBoxProps } from "@/pages/(app)/generation/_compone
 import { useModel } from "@/pages/(app)/generation/_hooks/model";
 import { getModelDynamicConfig } from "@/pages/(app)/generation/_utils/model-dynamic-config";
 
+const PRESERVED_MODEL_SWITCH_FIELDS = ["prompt", "reference_images"] as const;
+
 type Input = Pick<
   GenerationPromptBoxProps,
   | "configDefaultsResolver"
+  | "initialPrompt"
   | "lastMessageConfig"
   | "lastMessageModelUuid"
   | "lastMessageStatus"
@@ -16,6 +19,7 @@ type Input = Pick<
 
 export function useGenerationDynamicForm({
   configDefaultsResolver,
+  initialPrompt,
   lastMessageConfig,
   lastMessageModelUuid,
   lastMessageStatus,
@@ -27,20 +31,27 @@ export function useGenerationDynamicForm({
     [model.modelState.data],
   );
   const configDefaults = useMemo(() => {
-    const lastMessageDefaults = resolveLastMessageDefaults({
-      configDefaultsResolver,
-      lastMessageConfig,
-      lastMessageStatus,
-    });
+    const lastMessageDefaults =
+      !lastMessageModelUuid || lastMessageModelUuid === model.currentModel
+        ? resolveLastMessageDefaults({
+            configDefaultsResolver,
+            lastMessageConfig,
+            lastMessageStatus,
+          })
+        : undefined;
 
     return {
       ...(modelDynamicConfig.configDefaults ?? {}),
       ...(lastMessageDefaults ?? {}),
+      ...(initialPrompt ? { prompt: initialPrompt } : {}),
     };
   }, [
     configDefaultsResolver,
+    initialPrompt,
     lastMessageConfig,
     lastMessageStatus,
+    lastMessageModelUuid,
+    model.currentModel,
     modelDynamicConfig.configDefaults,
   ]);
   const dynamicForm = useDynamicConfigForm({
@@ -48,7 +59,8 @@ export function useGenerationDynamicForm({
     configDefaults,
     configMeta: modelDynamicConfig.configMeta,
     configSchema: modelDynamicConfig.configSchema,
-    schemaKey: `${model.currentModel}:${modelDynamicConfig.configSchema?.$id ?? ""}`,
+    schemaKey: `${model.modelState.data?.uuid ?? "loading"}:${modelDynamicConfig.configSchema?.$id ?? ""}`,
+    preserveFieldsOnSchemaChange: PRESERVED_MODEL_SWITCH_FIELDS,
   });
 
   return { dynamicForm, model };

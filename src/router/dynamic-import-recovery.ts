@@ -5,6 +5,8 @@ type DefaultRouteModule = { default: ComponentType };
 const reloadStorageKey = "perpix:dynamic-import-reload";
 const dynamicImportFailurePattern =
   /Failed to fetch|Importing a module script failed/i;
+let pendingRouteImports = 0;
+let routeImportFailed = false;
 
 function shouldReloadForDynamicImportFailure(error: unknown): boolean {
   if (!(error instanceof Error)) {
@@ -31,15 +33,29 @@ function reloadOnce(): boolean {
 export async function loadRouteModule(
   importRouteModule: () => Promise<DefaultRouteModule>,
 ): Promise<DefaultRouteModule> {
+  if (pendingRouteImports === 0) {
+    routeImportFailed = false;
+  }
+  pendingRouteImports += 1;
+
   try {
-    const routeModule = await importRouteModule();
-    window.sessionStorage.removeItem(reloadStorageKey);
-    return routeModule;
+    return await importRouteModule();
   } catch (error) {
+    routeImportFailed = true;
     if (shouldReloadForDynamicImportFailure(error) && reloadOnce()) {
       return new Promise<never>(() => undefined);
     }
 
     throw error;
+  } finally {
+    pendingRouteImports -= 1;
+    // Nested routes load together; a successful layout must not erase a child's failure.
+    if (pendingRouteImports === 0 && !routeImportFailed) {
+      try {
+        window.sessionStorage.removeItem(reloadStorageKey);
+      } catch {
+        // Storage restrictions must not prevent a successfully loaded route.
+      }
+    }
   }
 }

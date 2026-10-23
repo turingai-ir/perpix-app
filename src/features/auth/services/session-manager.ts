@@ -1,5 +1,4 @@
 import * as authHttp from "./auth-http";
-import { purgeLegacyAuthStorage } from "./legacy-storage";
 import { announceSessionEnded, listenForSessionEnded } from "./session-channel";
 import { sessionStore } from "./session-store";
 
@@ -17,6 +16,7 @@ export type SessionEndReason =
   | "replaced";
 
 const REFRESH_LOCK_NAME = "perpix-auth-refresh";
+const LOCAL_SIGN_OUT_KEY = "perpix:local-sign-out";
 const EARLY_REFRESH_MS = 60_000;
 const MIN_REFRESH_DELAY_MS = 5_000;
 
@@ -26,6 +26,17 @@ let proactiveTimer: ReturnType<typeof setTimeout> | undefined;
 let stopListeningToTabs: (() => void) | undefined;
 
 const endListeners = new Set<(reason: SessionEndReason) => void>();
+
+// Persist only the user's sign-out intent, never a credential or token.
+function localSignOut(value?: boolean): boolean {
+  try {
+    if (value === true) localStorage.setItem(LOCAL_SIGN_OUT_KEY, "1");
+    if (value === false) localStorage.removeItem(LOCAL_SIGN_OUT_KEY);
+    return localStorage.getItem(LOCAL_SIGN_OUT_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
 
 /** Subscribes to sign-outs so the app can wipe private client data. */
 export function onSessionEnded(listener: (reason: SessionEndReason) => void) {
@@ -57,6 +68,13 @@ function adoptSession(issued: IssuedSession, startsNewCycle: boolean) {
 }
 
 function endSession(reason: SessionEndReason, announce: boolean) {
+  if (
+    reason === "signed-out" ||
+    reason === "remote" ||
+    reason === "credentials-changed"
+  ) {
+    localSignOut(true);
+  }
   clearTimeout(proactiveTimer);
   sessionStore.clear();
   endListeners.forEach((listener) => listener(reason));
@@ -69,6 +87,7 @@ async function exchangeRefreshCookie(): Promise<IssuedSession> {
 }
 
 async function runRefresh(): Promise<RefreshOutcome> {
+  if (localSignOut()) return "unauthenticated";
   const cycle = sessionStore.getCycle();
   try {
     const issued = await withBrowserLock(exchangeRefreshCookie);
@@ -98,12 +117,15 @@ export function refreshSession(): Promise<RefreshOutcome> {
 }
 
 async function runBootstrap(): Promise<void> {
-  purgeLegacyAuthStorage();
   stopListeningToTabs ??= listenForSessionEnded(() => {
     if (sessionStore.getStatus() === "authenticated") {
       endSession("remote", false);
     }
   });
+  if (localSignOut()) {
+    sessionStore.clear();
+    return;
+  }
   const outcome = await refreshSession();
   if (outcome === "unavailable") sessionStore.setStatus("unavailable");
 }
@@ -127,6 +149,7 @@ export function retryBootstrap(): Promise<AuthStatus> {
 }
 
 export function startSession(issued: IssuedSession) {
+  localSignOut(false);
   endListeners.forEach((listener) => listener("replaced"));
   adoptSession(issued, true);
 }
@@ -182,6 +205,7 @@ async function withBearer<T>(
 }
 
 export async function signOut(): Promise<SignOutConfirmation> {
+  localSignOut(true);
   clearTimeout(proactiveTimer);
   let confirmation: SignOutConfirmation = "confirmed";
   try {

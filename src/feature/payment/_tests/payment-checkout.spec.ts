@@ -80,26 +80,34 @@ for (const delayedDetails of [false, true]) {
 
     await page.goto("/");
     await expect(page.getByText("۱", { exact: true })).toBeVisible();
-    await expect(page.getByText("توکن", { exact: true })).toBeVisible();
-    await page.getByRole("button", { name: "افزایش موجودی کیف پول" }).click();
+    await expect(
+      page.getByLabel("حساب تو").getByText("توکن", { exact: true }),
+    ).toBeVisible();
+    await page.getByRole("button", { name: "شارژ کیف پول" }).click();
     await page.getByRole("textbox", { name: "توکن" }).fill("10.0001");
-    await page.getByRole("button", { name: "پرداخت", exact: true }).click();
+    await page
+      .getByRole("button", { name: "دیدن مبلغ نهایی", exact: true })
+      .click();
     expect(checkoutBody).toBeUndefined();
     await page.getByRole("textbox", { name: "توکن" }).fill("10.001");
-    await page.getByRole("button", { name: "پرداخت", exact: true }).click();
+    await page
+      .getByRole("button", { name: "دیدن مبلغ نهایی", exact: true })
+      .click();
     expect(checkoutBody).toBeUndefined();
     await page.getByRole("textbox", { name: "توکن" }).fill("10");
-    await page.getByRole("button", { name: "پرداخت", exact: true }).click();
+    await page
+      .getByRole("button", { name: "دیدن مبلغ نهایی", exact: true })
+      .click();
     await expect(
-      page.getByRole("heading", { name: "تایید مبلغ پرداخت" }),
+      page.getByRole("heading", { name: "تأیید مبلغ پرداخت" }),
     ).toBeVisible();
     const confirmation = page.getByRole("dialog").filter({
-      has: page.getByRole("heading", { name: "تایید مبلغ پرداخت" }),
+      has: page.getByRole("heading", { name: "تأیید مبلغ پرداخت" }),
     });
     if (delayedDetails) {
       await page.clock.fastForward(11_000);
       await expect(
-        confirmation.getByRole("button", { name: "ادامه پرداخت" }),
+        confirmation.getByRole("button", { name: "ادامهٔ پرداخت" }),
       ).toHaveCount(0);
       await expect(page).not.toHaveURL("https://pay.example/checkout");
       releaseDetails();
@@ -120,7 +128,7 @@ for (const delayedDetails of [false, true]) {
     await page.route("https://pay.example/checkout", (route) =>
       route.fulfill({ contentType: "text/html", body: "Gateway" }),
     );
-    await confirmation.getByRole("button", { name: "ادامه پرداخت" }).click();
+    await confirmation.getByRole("button", { name: "ادامهٔ پرداخت" }).click();
     await expect(page).toHaveURL("https://pay.example/checkout");
   });
 }
@@ -233,7 +241,7 @@ test("subscription checkout starts in the subscription service", async ({
   });
 
   await page.goto("/");
-  await page.getByRole("button", { name: "افزایش موجودی کیف پول" }).click();
+  await page.getByRole("button", { name: "شارژ کیف پول" }).click();
   await page.getByRole("button", { name: "خرید اشتراک" }).click();
   const unavailablePlan = page
     .getByRole("heading", { name: "Unavailable" })
@@ -251,10 +259,10 @@ test("subscription checkout starts in the subscription service", async ({
     .getByRole("button", { name: "خرید", exact: true })
     .click();
   await expect(
-    page.getByRole("heading", { name: "تایید مبلغ پرداخت" }),
+    page.getByRole("heading", { name: "تأیید مبلغ پرداخت" }),
   ).toBeVisible();
   const confirmation = page.getByRole("dialog").filter({
-    has: page.getByRole("heading", { name: "تایید مبلغ پرداخت" }),
+    has: page.getByRole("heading", { name: "تأیید مبلغ پرداخت" }),
   });
   await expect(
     confirmation.getByText("مبلغ پایه", { exact: true }),
@@ -270,6 +278,6 @@ test("subscription checkout starts in the subscription service", async ({
   await page.route("https://pay.example/checkout", (route) =>
     route.fulfill({ contentType: "text/html", body: "Gateway" }),
   );
-  await confirmation.getByRole("button", { name: "ادامه پرداخت" }).click();
+  await confirmation.getByRole("button", { name: "ادامهٔ پرداخت" }).click();
   await expect(page).toHaveURL("https://pay.example/checkout");
 });

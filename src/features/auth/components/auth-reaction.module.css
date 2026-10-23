@@ -1,0 +1,87 @@
+.stage {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  max-width: 100%;
+}
+.brandMark {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  margin-bottom: 30px;
+}
+.brandMark img {
+  width: 40px;
+  height: 40px;
+  padding: 7px;
+  border: 1px solid #a774c265;
+  border-radius: 13px;
+  background: #311e44;
+  object-fit: contain;
+}
+.brandMark span {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, #c98deb7a, transparent);
+}
+.scene {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  overflow: hidden;
+  border-radius: 24px;
+  pointer-events: none;
+}
+.flash {
+  position: absolute;
+  inset: 0;
+  background: #c37cff;
+  opacity: 0;
+}
+.left,
+.right {
+  position: absolute;
+  inset-block: 0;
+  width: 50%;
+  background: linear-gradient(145deg, #2c154b, #080d1c 80%);
+  box-shadow: 0 0 32px #b658ff99;
+}
+.left {
+  inset-inline-start: 0;
+  clip-path: polygon(0 0, 100% 0, 89% 30%, 100% 58%, 90% 100%, 0 100%);
+}
+.right {
+  inset-inline-end: 0;
+  clip-path: polygon(10% 0, 100% 0, 100% 100%, 0 100%, 10% 64%, 0 30%);
+}
+.bolt {
+  position: absolute;
+  inset-inline-start: calc(50% - 44px);
+  top: 12%;
+  width: 88px;
+  height: 150px;
+  color: #d9b4ff;
+  filter: drop-shadow(0 0 13px #b158ff);
+}
+.caption {
+  position: absolute;
+  inset-inline: 14px;
+  bottom: 18%;
+  margin: auto;
+  width: fit-content;
+  max-width: calc(100% - 28px);
+  padding: 10px 18px;
+  border: 1px solid #a466d8;
+  border-radius: 999px;
+  background: #120a22;
+  color: white;
+  text-align: center;
+  font-weight: 700;
+  box-shadow: 0 8px 32px #a752ff70;
+}
+@media (prefers-reduced-motion: reduce) {
+  .scene {
+    display: none;
+  }
+}

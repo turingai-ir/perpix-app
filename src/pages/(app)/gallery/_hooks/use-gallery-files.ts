@@ -24,7 +24,7 @@ export const useGalleryFiles = () => {
   const fileUuids = useMemo(() => files.map((file) => file.uuid), [files]);
   const { getFilesPreviewsState } = useFilesPreviews(
     fileUuids,
-    !userFilesState.isError,
+    files.length > 0,
   );
 
   const fetchMoreFiles = () => {

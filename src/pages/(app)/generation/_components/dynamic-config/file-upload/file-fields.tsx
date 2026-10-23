@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState, type FC } from "react";
 
 import { useAppTranslate } from "@/hooks";
+import type { MediaUploadPresentation } from "@/feature/media-uploader";
 
 import { DynamicConfigFileField } from "./file-field";
 import { clearTopLevelMediaConflicts } from "./media";
@@ -11,12 +12,14 @@ export const DynamicConfigFileFields: FC<{
   dynamicForm: DynamicConfigForm;
   excludedFields?: ReadonlySet<string>;
   onUploadingChange?: (isUploading: boolean) => void;
+  presentation?: MediaUploadPresentation;
   requestId?: string;
 }> = ({
   disabled,
   dynamicForm,
   excludedFields,
   onUploadingChange,
+  presentation = "default",
   requestId = "dynamic_config",
 }) => {
   const { t } = useAppTranslate();
@@ -68,6 +71,7 @@ export const DynamicConfigFileFields: FC<{
             })}
             property={property}
             disabled={disabled}
+            presentation={presentation}
             requestId={requestId}
             onUploadingChange={(isUploading) =>
               handleFieldUploadingChange(fieldName, isUploading)

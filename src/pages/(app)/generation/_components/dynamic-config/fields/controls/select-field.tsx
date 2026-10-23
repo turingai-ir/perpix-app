@@ -6,6 +6,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import {
   Select,
@@ -63,6 +64,8 @@ export const DynamicConfigSelectField: FC<{
         >
           <FormControl>
             <SelectTrigger
+              ref={field.ref}
+              onBlur={field.onBlur}
               className={classes.control}
               aria-invalid={fieldState.invalid}
             >
@@ -83,6 +86,7 @@ export const DynamicConfigSelectField: FC<{
         {hint ? (
           <FormDescription className={classes.hint}>{hint}</FormDescription>
         ) : null}
+        <FormMessage />
       </FormItem>
     )}
   />

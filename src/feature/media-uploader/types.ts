@@ -1,6 +1,7 @@
 import type { FileManagerUploadStatus } from "@/feature/file-manager";
 
 export type MediaPreviewType = "audio" | "image" | "video";
+export type MediaUploadPresentation = "default" | "composer" | "video-dock";
 
 export interface UploadedMediaItem {
   id: string;
@@ -19,6 +20,8 @@ export interface MediaUploadStripProps {
   accept?: string;
   disabled?: boolean;
   previewType?: MediaPreviewType;
+  presentation?: MediaUploadPresentation;
+  maxItems?: number;
   onFileSelect?: (file: File) => void | Promise<string | void>;
   onUploadedFileSelect?: (id: string) => void;
   onDeleteClick?: (id: string) => void;

@@ -1,0 +1,96 @@
+import { CircleCheck, CircleDashed, CircleX, Image, Video } from "lucide-react";
+import { Link } from "react-router";
+import styles from "../dashboard.module.css";
+
+import { Skeleton } from "@/components/ui/skeleton";
+import { useAppTranslate } from "@/hooks";
+import { dayjs } from "@/lib/dayjs";
+import { APP_ROUTES_KEY } from "@/router/routes";
+import type { SchemaAiTaskResponse } from "@/services/api";
+import { APP_I18_KEYS } from "@/services/i18";
+
+interface DashboardActivityProps {
+  isLoading: boolean;
+  tasks: SchemaAiTaskResponse[];
+}
+
+const statusStyles = {
+  FAILED: { Icon: CircleX, className: "text-red-400" },
+  IN_PROGRESS: { Icon: CircleDashed, className: "animate-spin text-blue-400" },
+  PENDING: { Icon: CircleDashed, className: "text-amber-400" },
+  SUCCESS: { Icon: CircleCheck, className: "text-emerald-400" },
+};
+
+const getStatusTranslationKey = (status: keyof typeof statusStyles) => {
+  if (status === "SUCCESS") return "completed";
+  if (status === "FAILED") return "failed";
+  return "inProgress";
+};
+
+export function DashboardActivity({
+  isLoading,
+  tasks,
+}: DashboardActivityProps) {
+  const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
+  if (isLoading) return <Skeleton className="h-80 w-full rounded-2xl" />;
+
+  return (
+    <section aria-labelledby="activity-heading" className={styles.glassPanel}>
+      <div className={styles.sectionHeader}>
+        <div>
+          <p className={styles.sectionEyebrowBlue}>
+            {t("pages.root.dashboard.activity.eyebrow")}
+          </p>
+          <h2 id="activity-heading" className={styles.sectionTitle}>
+            {t("pages.root.dashboard.activity.title")}
+          </h2>
+        </div>
+      </div>
+      <div className={styles.dataList}>
+        {tasks.length ? (
+          tasks.map((task) => {
+            const lastMessage = task.messages[task.messages.length - 1];
+            const status: keyof typeof statusStyles =
+              lastMessage?.task_status ?? "PENDING";
+            const { Icon, className } = statusStyles[status];
+            const isVideo = task.task_type === "VIDEO";
+            const MediaIcon = isVideo ? Video : Image;
+            const path = `${isVideo ? APP_ROUTES_KEY.generation.video.path : APP_ROUTES_KEY.generation.image.path}/${task.uuid}`;
+            return (
+              <Link
+                key={task.uuid}
+                to={path}
+                className={`group ${styles.dataRow}`}
+              >
+                <span className={styles.dataIcon}>
+                  <MediaIcon className="h-4 w-4 text-zinc-300" />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block text-sm font-medium text-white">
+                    {isVideo
+                      ? t("pages.root.dashboard.activity.video")
+                      : t("pages.root.dashboard.activity.image")}
+                  </span>
+                  <span className="mt-0.5 block text-xs text-zinc-500">
+                    {dayjs(task.created_at)
+                      .calendar("jalali")
+                      .locale("fa")
+                      .format("YYYY/MM/DD · HH:mm")}
+                  </span>
+                </span>
+                <span className="flex items-center gap-1.5 text-xs text-zinc-400">
+                  <Icon className={`h-4 w-4 ${className}`} />
+                  {t(`common.taskStatus.${getStatusTranslationKey(status)}`)}
+                </span>
+              </Link>
+            );
+          })
+        ) : (
+          <p className={styles.emptyState}>
+            {t("pages.root.dashboard.activity.empty")}
+          </p>
+        )}
+      </div>
+    </section>
+  );
+}
