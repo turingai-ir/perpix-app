@@ -12,13 +12,18 @@ import { PaymentAmount } from "@/features/payment";
 import { useAppTranslate } from "@/hooks";
 import { APP_ROUTES_KEY } from "@/router/routes";
 import { APP_I18_KEYS } from "@/services/i18";
+import { isSafeExternalUrl } from "@/utils/safe-external-url";
 import { PaymentReceipt } from "./payment-receipt";
 
 function PaymentResultPage() {
   const { paymentUuid } = useParams<{ paymentUuid: string }>();
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
-  const { data: payment, refetch, isLoading, isError } =
-    usePaymentStatus(paymentUuid);
+  const {
+    data: payment,
+    refetch,
+    isLoading,
+    isError,
+  } = usePaymentStatus(paymentUuid);
   const retryState = useRetryPayment();
   const status = payment ? getPaymentViewStatus(payment) : "pending";
 
@@ -48,7 +53,9 @@ function PaymentResultPage() {
       {
         onSuccess: (result) =>
           window.location.assign(
-            result.payment_url ?? `/payment/verify/${result.execution_uuid}`,
+            result.payment_url && isSafeExternalUrl(result.payment_url)
+              ? result.payment_url
+              : `/payment/verify/${result.execution_uuid}`,
           ),
       },
     );
@@ -77,7 +84,10 @@ function PaymentResultPage() {
         {
           label: t("pages.payment.result.amount"),
           value: (
-            <PaymentAmount amount={payment.amount} currency={payment.currency} />
+            <PaymentAmount
+              amount={payment.amount}
+              currency={payment.currency}
+            />
           ),
         },
       ]}

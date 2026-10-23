@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { join } from "node:path";
+import { mockAuthenticatedSession } from "../../../../../__tests__/support/auth-session";
 
 test.afterEach(async ({ page }, info) => {
   if (process.env.GALLERY_SCREENSHOTS) {
@@ -205,6 +206,37 @@ test("navigates the viewer, zooms and restores focus", async ({ page }) => {
   await page.keyboard.press("Escape");
   await expect(viewer).toHaveCount(0);
   await expect(opener).toBeFocused();
+});
+
+test("rejects a script URL returned for a gallery download", async ({
+  page,
+}) => {
+  await mockAuthenticatedSession(page);
+  await page.addInitScript(() => {
+    HTMLAnchorElement.prototype.click = function () {
+      Reflect.set(window, "__downloadLink", this.href);
+    };
+  });
+  await page.route("**/api/v1/file-manager/files/presigned-urls", (route) =>
+    route.fulfill({
+      json: {
+        files: [0, 1, 2].map((index) => ({
+          file_uuid: `file-${index}`,
+          preview_url: "data:image/png;base64,iVBORw0KGgo=",
+          download_url: "java" + "script:window.__downloadProbe=true",
+        })),
+      },
+    }),
+  );
+  await page.reload();
+  await page.getByRole("button", { name: "Aurora.png", exact: true }).click();
+  await page
+    .getByRole("dialog")
+    .getByRole("button", { name: "دانلود" })
+    .click();
+  expect(
+    await page.evaluate(() => Reflect.get(window, "__downloadLink")),
+  ).toBeUndefined();
 });
 
 test("has usable mobile controls and no horizontal overflow", async ({
