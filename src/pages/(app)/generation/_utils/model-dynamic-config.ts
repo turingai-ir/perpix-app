@@ -108,9 +108,12 @@ function buildCombinedModeSchema(
   const allFieldNames = Object.keys(modeProperties);
 
   return {
-    $id: modes
-      .map(({ config_schema, value }) => config_schema.$id ?? value)
-      .join(":"),
+    // Mode names may contain underscores, so they must not become URI schemes.
+    $id: `urn:perpix:dynamic-config:${encodeURIComponent(
+      modes
+        .map(({ config_schema, value }) => config_schema.$id ?? value)
+        .join(":"),
+    )}`,
     type: "object",
     additionalProperties: false,
     required: ["mode"],

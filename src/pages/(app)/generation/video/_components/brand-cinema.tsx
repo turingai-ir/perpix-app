@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useRef, useState, type CSSProperties } from "react";
 import { Clapperboard, Pause, Play } from "lucide-react";
-import { useInView } from "motion/react";
+import { useAnimationVisibility } from "@/hooks/use-animation-visibility";
 
 import { useAppTranslate } from "@/hooks";
 import styles from "./brand-cinema.module.css";
@@ -15,26 +15,17 @@ export function VideoBrandCinema({
 }) {
   const { t } = useAppTranslate();
   const stageRef = useRef<HTMLDivElement>(null);
-  const inView = useInView(stageRef);
+  const active = useAnimationVisibility(stageRef);
   const [paused, setPaused] = useState(false);
-  const [visible, setVisible] = useState(true);
   const [width, height] = aspectRatio.split(":").map(Number);
   const validRatio = Number.isFinite(width / height) && width > 0 && height > 0;
-
-  useEffect(() => {
-    const updateVisibility = () => setVisible(!document.hidden);
-    updateVisibility();
-    document.addEventListener("visibilitychange", updateVisibility);
-    return () =>
-      document.removeEventListener("visibilitychange", updateVisibility);
-  }, []);
 
   return (
     <div
       ref={stageRef}
       className={styles.cinema}
       data-video-cinema={rendering ? "rendering" : "idle"}
-      data-paused={paused || !visible || !inView}
+      data-paused={paused || !active}
       style={
         {
           "--frame-ratio": validRatio ? `${width} / ${height}` : "16 / 9",

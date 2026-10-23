@@ -1,4 +1,5 @@
 import { expect, test as base, type Route } from "@playwright/test";
+import { mockAuthenticatedSession } from "../support/auth-session";
 
 export const compatibleModelUuid = "a509b349-d43f-4065-9cf2-de444bf4aa2c";
 export const incompatibleModelUuid = "2d1fcf14-a655-47c5-af08-3fa450dc99cc";
@@ -204,9 +205,6 @@ export const test = base.extend<{ imageConversationApi: ImageConversationApi }>(
       const pendingGenerations: PendingGeneration[] = [];
       let task = makeTask([]);
 
-      await context.addCookies([
-        { name: "access_token", value: "test-token", url: baseURL },
-      ]);
       await context.addInitScript(() => {
         localStorage.clear();
         indexedDB.deleteDatabase("REACT_QUERY_OFFLINE_CACHE");
@@ -302,6 +300,7 @@ export const test = base.extend<{ imageConversationApi: ImageConversationApi }>(
         }
         await route.abort("blockedbyclient");
       });
+      await mockAuthenticatedSession(context);
 
       const nextPendingGeneration = () => {
         const pending = pendingGenerations.shift();
