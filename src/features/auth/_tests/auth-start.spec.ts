@@ -69,9 +69,7 @@ test("a connection failure keeps the phone form and never retries automatically"
   await page.goto("/auth/login");
   await page.getByLabel("شماره موبایل").fill("09123456789");
   await page.getByRole("button", { name: "ادامه دادن" }).click();
-  await expect(page.getByRole("alert")).toContainText(
-    "ارتباط با سرور برقرار نشد",
-  );
+  await expect(page.getByRole("alert")).toContainText("اتصال برقرار نشد");
   await expect(page.getByLabel("شماره موبایل")).toHaveValue("09123456789");
   expect(starts).toBe(1);
 });
@@ -86,7 +84,7 @@ test("an incomplete registration response does not open the code form", async ({
   await page.getByLabel("شماره موبایل").fill("09123456789");
   await page.getByRole("button", { name: "ادامه دادن" }).click();
   await expect(page.getByRole("alert")).toHaveText(
-    "پاسخ نامعتبر از سرور دریافت شد.",
+    "پاسخ سرور درست نبود. کمی بعد دوباره امتحان کن.",
   );
   await expect(page.getByLabel("کد تأیید")).toBeHidden();
 });
