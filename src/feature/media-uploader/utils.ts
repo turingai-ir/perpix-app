@@ -35,9 +35,11 @@ export function toUploadedMediaItems(
 }
 
 export function toLocalMediaItems(
-  uploads: Iterable<{ file: File; status: FileManagerUploadStatus }>,
+  uploads: Iterable<LocalMediaItem>,
 ): LocalMediaItem[] {
   return Array.from(uploads).map((upload) => ({
+    id: upload.id,
+    errorKey: upload.errorKey,
     file: upload.file,
     status: upload.status,
   }));
@@ -55,7 +57,12 @@ export function hasReachedMediaMaxItems(
   maxItems: number | undefined,
 ) {
   return (
-    maxItems !== undefined && selectedIds.length + localItems.length >= maxItems
+    maxItems !== undefined &&
+    selectedIds.length +
+      localItems.filter(
+        (item) => item.status === FileManagerUploadStatus.UPLOADING,
+      ).length >=
+      maxItems
   );
 }
 
@@ -77,9 +84,12 @@ export function removeMediaId(currentIds: readonly string[], mediaId: string) {
 export function getUserFilesWithUuid(
   files: readonly UserFileItem[] | undefined,
 ): UserFileWithUuid[] {
-  return (files ?? []).filter(
-    (file): file is UserFileWithUuid => typeof file.uuid === "string",
-  );
+  const seen = new Set<string>();
+  return (files ?? []).filter((file): file is UserFileWithUuid => {
+    if (!file.uuid || seen.has(file.uuid)) return false;
+    seen.add(file.uuid);
+    return true;
+  });
 }
 
 export function formatFileSize(size: number) {

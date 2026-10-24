@@ -15,16 +15,8 @@ import { getGalleryFilters } from "./_utils/gallery";
 
 const GalleryPage: FC = () => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
-  const {
-    activeFilter,
-    files,
-    filesPreviewUrls,
-    isFilesPreviewError,
-    isFilesPreviewLoading,
-    loadMoreRef,
-    setActiveFilter,
-    userFilesState,
-  } = useGalleryFiles();
+  const { activeFilter, files, loadMoreRef, setActiveFilter, userFilesState } =
+    useGalleryFiles();
   const filters = getGalleryFilters(t);
 
   return (
@@ -64,9 +56,14 @@ const GalleryPage: FC = () => {
         ))}
       </div>
 
+      {files.length > 0 && userFilesState.isError ? (
+        <p role="status" className="text-muted-foreground text-sm">
+          {t("features.fileManager.details.refreshFailed")}
+        </p>
+      ) : null}
       {userFilesState.isPending && files.length === 0 ? (
         <GallerySkeleton />
-      ) : userFilesState.isError ? (
+      ) : userFilesState.isError && files.length === 0 ? (
         <GalleryState
           icon={<AlertCircle className="h-8 w-8" />}
           title={t("pages.gallery.error.title")}
@@ -82,14 +79,7 @@ const GalleryPage: FC = () => {
         <div className="flex flex-col gap-4">
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
             {files.map((file, index) => (
-              <GalleryFileCard
-                key={file.uuid}
-                file={file}
-                index={index}
-                isPreviewError={isFilesPreviewError}
-                isPreviewLoading={isFilesPreviewLoading}
-                previewUrls={filesPreviewUrls[file.uuid]}
-              />
+              <GalleryFileCard key={file.uuid} file={file} index={index} />
             ))}
           </div>
 

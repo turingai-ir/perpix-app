@@ -5,19 +5,10 @@ if (!API_BASE_URL) {
 }
 
 export const APP_KEYS = {
-  DB: {
-    NAME: "per-pix-ai-app",
-    STORAGES: {
-      GLOBAL_STATE: "global-state",
-    },
-  },
   LOCAL_STORAGE: {
     GLOBAL_JOTAI_ATOM: "global-state",
     FILES_PREVIEW: "files-preview",
     EDITOR_SETTINGS: "editor-settings",
-  },
-  INDEXED_DB: {
-    REACT_QUERY: "REACT_QUERY_OFFLINE_CACHE",
   },
   API_BASE_URL,
 } as const;

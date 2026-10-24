@@ -652,7 +652,7 @@ async function mockApi(page: Page, taskMessages: unknown[] = []) {
       return;
     }
 
-    await route.continue();
+    await route.fallback();
   });
 }
 

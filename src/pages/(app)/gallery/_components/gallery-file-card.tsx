@@ -14,15 +14,13 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  type FilePreviewUrls,
-  useDeleteUserFile,
-} from "@/feature/file-manager";
+import { useDeleteUserFile } from "@/feature/file-manager";
 import { formatFileSize } from "@/feature/media-uploader/utils";
 import { useAppTranslate } from "@/hooks";
 import { cn } from "@/lib/utils";
 import { APP_I18_KEYS } from "@/services/i18";
 import { downloadFile } from "@/utils";
+import { FileDetails, useVisibleFilePreview } from "@/features/file-manager";
 
 import { GalleryFallback } from "./gallery-fallback";
 import { GalleryPreview } from "./gallery-preview";
@@ -33,23 +31,20 @@ import type { GalleryFile } from "../_utils/types";
 interface GalleryFileCardProps {
   file: GalleryFile;
   index: number;
-  isPreviewError: boolean;
-  isPreviewLoading: boolean;
-  previewUrls: FilePreviewUrls | undefined;
 }
 
-export const GalleryFileCard: FC<GalleryFileCardProps> = ({
-  file,
-  index,
-  isPreviewError,
-  isPreviewLoading,
-  previewUrls,
-}) => {
+export const GalleryFileCard: FC<GalleryFileCardProps> = ({ file, index }) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const [isDownloading, setIsDownloading] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const { deleteFileState } = useDeleteUserFile();
   const navigate = useNavigate();
+  const { ref, visible, getFilePreviewState } = useVisibleFilePreview(
+    file.uuid,
+  );
+  const previewUrls = getFilePreviewState.data;
+  const isPreviewError = getFilePreviewState.isError;
+  const isPreviewLoading = getFilePreviewState.isPending;
   const previewUrl = previewUrls?.preview_url;
   const downloadUrl = previewUrls?.download_url;
   const fileName = file.file_name || t("common.emptyTitle");
@@ -76,17 +71,28 @@ export const GalleryFileCard: FC<GalleryFileCardProps> = ({
       await deleteFileState.mutateAsync(file.uuid);
       setIsDeleteDialogOpen(false);
       toast.success(t("pages.gallery.delete.success"));
-    } catch {
-      toast.error(t("pages.gallery.delete.error"));
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : t("pages.gallery.delete.error"),
+      );
     }
   };
 
   return (
     <>
       <Dialog>
-        <div className="bg-background group flex min-w-0 flex-col overflow-hidden rounded-lg border">
+        <div
+          ref={ref}
+          className="bg-background group flex min-w-0 flex-col overflow-hidden rounded-lg border"
+          style={{
+            contentVisibility: "auto",
+            containIntrinsicSize: "auto 260px",
+          }}
+        >
           <div className="bg-muted relative aspect-square w-full overflow-hidden">
-            {!isPreviewError && previewUrl ? (
+            {previewUrl ? (
               <DialogTrigger asChild>
                 <button
                   type="button"
@@ -95,7 +101,7 @@ export const GalleryFileCard: FC<GalleryFileCardProps> = ({
                 >
                   <GalleryPreview
                     mediaType={mediaType}
-                    previewUrl={previewUrl}
+                    previewUrl={visible ? previewUrl : ""}
                     fileName={fileName}
                   />
                 </button>
@@ -106,7 +112,7 @@ export const GalleryFileCard: FC<GalleryFileCardProps> = ({
               <Skeleton className="h-full w-full rounded-none" />
             ) : null}
 
-            {isPreviewError || (!isPreviewLoading && !previewUrl) ? (
+            {!previewUrl && (isPreviewError || !isPreviewLoading) ? (
               <GalleryFallback mediaType={mediaType} />
             ) : null}
           </div>
@@ -118,6 +124,7 @@ export const GalleryFileCard: FC<GalleryFileCardProps> = ({
                 {mediaLabel}
                 {fileSize ? ` · ${fileSize}` : ""}
               </div>
+              <FileDetails file={file} />
             </div>
             <Button
               asChild
@@ -199,7 +206,7 @@ export const GalleryFileCard: FC<GalleryFileCardProps> = ({
                 type="button"
                 variant="secondary"
                 size="lg"
-                className="h-11 px-5 text-base gap-2"
+                className="h-11 gap-2 px-5 text-base"
                 onClick={() => navigate(`/editor/${file.uuid}`)}
               >
                 <ImageIcon className="h-4 w-4 text-emerald-500" />

@@ -33,7 +33,8 @@ interface MediaPreviewItemProps {
 interface LocalMediaPreviewItemProps {
   disabled: boolean;
   item: LocalMediaItem;
-  onDeleteClick?: (fileName: string) => void;
+  onDeleteClick?: (id: string) => void;
+  onRetry?: (file: File) => void | Promise<string | void>;
   previewType: MediaPreviewType;
 }
 
@@ -67,7 +68,7 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
       {!isError && previewUrl && previewType === "image" ? (
         <img
           src={previewUrl}
-          alt="Uploaded item"
+          alt={t("common.uploaded")}
           className="h-full w-full object-cover transition-transform group-hover:scale-105"
         />
       ) : null}
@@ -102,6 +103,7 @@ export const LocalMediaPreviewItem: FC<LocalMediaPreviewItemProps> = ({
   item,
   previewType,
   onDeleteClick,
+  onRetry,
 }) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const imageUrlRef = useRef<string | null>(null);
@@ -112,7 +114,7 @@ export const LocalMediaPreviewItem: FC<LocalMediaPreviewItemProps> = ({
   const handleDeleteClick = () => {
     if (!onDeleteClick) return;
 
-    onDeleteClick(item.file.name);
+    onDeleteClick(item.id);
   };
 
   const revokeImageUrl = useCallback(() => {
@@ -167,9 +169,23 @@ export const LocalMediaPreviewItem: FC<LocalMediaPreviewItemProps> = ({
       {isError && (
         <div className="bg-background/85 absolute inset-0 z-10 flex flex-col items-center justify-center gap-1 p-2 text-center backdrop-blur-[1px]">
           <AlertCircle className="text-destructive h-5 w-5" />
-          <span className="text-destructive text-[10px] whitespace-normal">
+          <span
+            className="text-destructive text-xs whitespace-normal"
+            title={t(item.errorKey ?? "common.error")}
+          >
             {t("common.error")}
           </span>
+          {onRetry &&
+            !disabled &&
+            item.errorKey !== "features.fileManager.errors.unknownUpload" && (
+              <button
+                type="button"
+                className="underline"
+                onClick={() => void onRetry(item.file)}
+              >
+                {t("features.fileManager.details.retry")}
+              </button>
+            )}
         </div>
       )}
 
