@@ -1,6 +1,7 @@
-import { useMemo, type FC } from "react";
+import { useEffect, useMemo, useRef, type FC } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useSearchParams } from "react-router";
 import type { z } from "zod";
 
 import type { AuthStart } from "../model/types";
@@ -30,13 +31,37 @@ export const ChallengeStartForm: FC<ChallengeStartFormProps> = ({
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const messages = useAuthFormMessages();
   const schema = useMemo(() => createPhoneSchema(messages), [messages]);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const linkedPhone = searchParams.get("phone");
+  const formElement = useRef<HTMLFormElement>(null);
+  const hasAutoSubmitted = useRef(false);
   const form = useForm<
     z.input<typeof schema>,
     unknown,
     z.output<typeof schema>
-  >({ resolver: zodResolver(schema), defaultValues: { phone_number: phone } });
+  >({
+    resolver: zodResolver(schema),
+    defaultValues: { phone_number: linkedPhone ?? phone },
+  });
   const feedback = useAuthFeedback(form);
   const mutation = useStartAuthMutation();
+  const { setValue } = form;
+
+  useEffect(() => {
+    if (hasAutoSubmitted.current || linkedPhone === null) return;
+    if (!schema.safeParse({ phone_number: linkedPhone }).success) return;
+    hasAutoSubmitted.current = true;
+    setValue("phone_number", linkedPhone);
+    setSearchParams(
+      (current) => {
+        const next = new URLSearchParams(current);
+        next.delete("phone");
+        return next;
+      },
+      { replace: true },
+    );
+    formElement.current?.requestSubmit();
+  }, [linkedPhone, schema, setSearchParams, setValue]);
 
   const onSubmit = async ({ phone_number }: z.output<typeof schema>) => {
     feedback.clear();
@@ -53,7 +78,11 @@ export const ChallengeStartForm: FC<ChallengeStartFormProps> = ({
       description={t("pages.auth.login.description")}
     >
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form
+          ref={formElement}
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-8"
+        >
           <AuthField
             name="phone_number"
             label={t("features.auth.login.phoneLabel")}
