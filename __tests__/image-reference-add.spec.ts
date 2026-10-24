@@ -20,11 +20,13 @@ test("references remain visible and can be added or removed", async ({
             uuid: "gallery-reference-1",
             file_name: "reference-one.png",
             file_size: 1024,
+            content_type: "image/png",
           },
           {
             uuid: "gallery-reference-2",
             file_name: "reference-two.png",
             file_size: 1024,
+            content_type: "image/png",
           },
         ],
         has_next: false,

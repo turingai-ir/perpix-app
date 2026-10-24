@@ -80,6 +80,7 @@ export const MediaUploadStrip: FC<MediaUploadStripProps> = ({
           label={label}
           onDeleteClick={onDeleteClick}
           onLocalDeleteClick={onLocalDeleteClick}
+          onFileSelect={onFileSelect}
           onAdd={openFilePicker}
         />
       ) : (

@@ -103,7 +103,7 @@ export function useMediaFilePicker({
     hasMoreFiles: getUserFilesState.hasNextPage,
     isFetchingFiles: getUserFilesState.isFetching,
     isFetchingMoreFiles: getUserFilesState.isFetchingNextPage,
-    isFilesError: getUserFilesState.isError && !userFiles.length,
+    isFilesError: getUserFilesState.isError,
     isLoadingFiles,
     refetchFiles: getUserFilesState.refetch,
     selectedIdsSet,

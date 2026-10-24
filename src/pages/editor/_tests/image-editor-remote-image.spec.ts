@@ -84,7 +84,7 @@ test.describe("Image editor remote source", () => {
     });
 
     await page.goto("/editor/test-uuid");
-    await expect(page.getByText("در حال دریافت تصویر...")).toBeVisible();
+    await expect(page.getByText("داریم عکس رو میاریم...")).toBeVisible();
     await expect(page.getByRole("heading")).toBeHidden();
     await expect(
       page.getByRole("application", { name: "ویرایش تصویر" }),

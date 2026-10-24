@@ -33,8 +33,12 @@ export function GalleryActions({
       await deleteFileState.mutateAsync(file.uuid);
       setOpen(false);
       toast.success(t("pages.gallery.delete.success"));
-    } catch {
-      toast.error(t("pages.gallery.delete.error"));
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : t("pages.gallery.delete.error"),
+      );
     }
   }
   return (

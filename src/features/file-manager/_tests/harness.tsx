@@ -2,7 +2,6 @@ import { createRoot } from "react-dom/client";
 import { useState } from "react";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/lib/react-query";
-import { MediaUploadStrip } from "@/feature/media-uploader";
 import {
   useFileManager,
   useFilesPreviews,
@@ -11,15 +10,17 @@ import {
   useReplaceUserFile,
   useInfiniteUserFiles,
 } from "@/feature/file-manager";
+import { MediaUploadStrip } from "@/feature/media-uploader";
 
 function Harness() {
-  const { requestUpload, pendingUploads } = useFileManager("test", {
-    allowedFileTypes: ["audio/*"],
-  });
   const [result, setResult] = useState("");
   const [count, setCount] = useState(20);
-  const ids = Array.from({ length: count }, (_, i) => `file-${i}`);
-  const { getFilesPreviewsState } = useFilesPreviews(ids);
+  const { requestUpload } = useFileManager("integration", {
+    allowedFileTypes: ["audio/*"],
+  });
+  const { getFilesPreviewsState } = useFilesPreviews(
+    Array.from({ length: count }, (_, i) => `file-${i}`),
+  );
   const single = useFilePreview("file-0").getFilePreviewState;
   const { deleteFileState } = useDeleteUserFile();
   const { replaceFileState } = useReplaceUserFile();
@@ -43,21 +44,24 @@ function Harness() {
           }}
         />
       </label>
-      <output aria-label="Upload result">{result}</output>
-      <output aria-label="Pending">{pendingUploads.size}</output>
-      <button type="button" onClick={() => setCount(40)}>
-        More files
-      </button>
-      <button type="button" onClick={() => setCount(1000)}>
-        Many files
-      </button>
+      <output aria-label="Result">{result}</output>
+      <output aria-label="Single URL">{single.data?.preview_url}</output>
+      <output aria-label="Files">
+        {files.data?.pages
+          .flatMap((page) => page.files)
+          .map((file) => file.uuid)
+          .join(",")}
+      </output>
+      <output aria-label="Action error">
+        {deleteFileState.error?.message ?? replaceFileState.error?.message}
+      </output>
       <button
         type="button"
         onClick={() => {
           void deleteFileState.mutateAsync("file-0").catch(() => {});
         }}
       >
-        Delete file
+        Delete
       </button>
       <button
         type="button"
@@ -70,51 +74,52 @@ function Harness() {
             .catch(() => {});
         }}
       >
-        Replace file
+        Replace
       </button>
-      <output aria-label="Files">
-        {files.data?.pages
-          .flatMap((page) => page.files)
-          .map((file) => file.uuid)
-          .join(",")}
-      </output>
-      <output aria-label="Mutation error">
-        {deleteFileState.error?.message ?? replaceFileState.error?.message}
-      </output>
-      <output aria-label="Single preview">{single.data?.preview_url}</output>
-      <output aria-label="Single preview error">
-        {String(single.isError)}
-      </output>
       <output aria-label="Previews">
         {Object.keys(getFilesPreviewsState.data ?? {}).length}
       </output>
+      <button type="button" onClick={() => setCount(40)}>
+        More
+      </button>
+      <button type="button" onClick={() => setCount(1000)}>
+        Many
+      </button>
     </>
   );
 }
-
 export function mount() {
   queryClient.clear();
-  const node = document.createElement("div");
-  document.body.replaceChildren(node);
-  createRoot(node).render(
+  const host = document.createElement("div");
+  document.body.replaceChildren(host);
+  createRoot(host).render(
     <QueryClientProvider client={queryClient}>
       <Harness />
     </QueryClientProvider>,
   );
 }
 
-export function mountPicker() {
-  queryClient.clear();
-  const node = document.createElement("div");
-  document.body.replaceChildren(node);
-  createRoot(node).render(
+function Picker() {
+  const [selected, setSelected] = useState<string[]>([]);
+  return (
     <QueryClientProvider client={queryClient}>
       <MediaUploadStrip
+        accept="image/*"
+        maxItems={2}
         label="Choose file"
-        accept="image/*,video/*,audio/*"
-        uploadedItems={[]}
+        uploadedItems={selected.map((id) => ({ id }))}
         localItems={[]}
+        onUploadedFileSelect={(id) =>
+          setSelected((current) => [...current, id])
+        }
       />
-    </QueryClientProvider>,
+      <output aria-label="Selection">{selected.join(",")}</output>
+    </QueryClientProvider>
   );
+}
+export function mountPicker() {
+  queryClient.clear();
+  const host = document.createElement("div");
+  document.body.replaceChildren(host);
+  createRoot(host).render(<Picker />);
 }

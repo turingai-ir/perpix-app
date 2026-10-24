@@ -4,6 +4,7 @@ import type { FC } from "react";
 import { useAppTranslate } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
 import { formatLocalizedNumber } from "@/utils";
+import { FileManagerUploadStatus } from "@/feature/file-manager";
 
 import { LocalMediaPreviewItem, MediaPreviewItem } from "./media-strip-items";
 import type { MediaUploadStripProps } from "../types";
@@ -19,6 +20,7 @@ type Props = Pick<
   | "maxItems"
   | "onDeleteClick"
   | "onLocalDeleteClick"
+  | "onFileSelect"
 > & {
   onAdd: () => void;
 };
@@ -33,10 +35,15 @@ export const ComposerReferenceTray: FC<Props> = ({
   maxItems,
   onDeleteClick,
   onLocalDeleteClick,
+  onFileSelect,
   onAdd,
 }) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
-  const count = uploadedItems.length + localItems.length;
+  const count =
+    uploadedItems.length +
+    localItems.filter(
+      (item) => item.status === FileManagerUploadStatus.UPLOADING,
+    ).length;
   const isFull = maxItems !== undefined && count >= maxItems;
   const isVideoDock = presentation === "video-dock";
 
@@ -87,13 +94,14 @@ export const ComposerReferenceTray: FC<Props> = ({
         data-media-preview-list={isVideoDock || undefined}
       >
         {localItems.map((item) => (
-          <div role="listitem" key={item.file.name}>
+          <div role="listitem" key={item.id ?? item.file.name}>
             <LocalMediaPreviewItem
               item={item}
               disabled={disabled}
               previewType={previewType}
               presentation={presentation}
               onDeleteClick={onLocalDeleteClick}
+              onRetry={onFileSelect}
             />
           </div>
         ))}

@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { APP_I18_KEYS } from "@/services/i18";
 
 import { UserFileCard } from "./user-file-card";
+import type { MediaPreviewType } from "../types";
 import type { UserFileWithUuid } from "../utils";
 
 interface UserFilesSectionProps {
@@ -17,6 +18,7 @@ interface UserFilesSectionProps {
   isFetchingMore: boolean;
   isLoading: boolean;
   hasMore: boolean;
+  previewType: MediaPreviewType;
   selectedIdsSet: ReadonlySet<string>;
   toggleableIdsSet?: ReadonlySet<string>;
   userFiles: readonly UserFileWithUuid[];
@@ -31,6 +33,7 @@ export const UserFilesSection: FC<UserFilesSectionProps> = ({
   isFetchingMore,
   isLoading,
   hasMore,
+  previewType,
   selectedIdsSet,
   toggleableIdsSet,
   userFiles,
@@ -60,9 +63,7 @@ export const UserFilesSection: FC<UserFilesSectionProps> = ({
           onClick={onRefresh}
         >
           <RefreshCw className={cn(isFetching && "animate-spin")} />
-          <span className="sr-only">
-            {t("features.fileManager.details.refresh")}
-          </span>
+          <span className="sr-only">Refresh</span>
         </Button>
       </div>
 
@@ -87,6 +88,7 @@ export const UserFilesSection: FC<UserFilesSectionProps> = ({
                   file={file}
                   isSelected={selectedIdsSet.has(file.uuid)}
                   isSelectionRemovable={toggleableIdsSet?.has(file.uuid)}
+                  previewType={previewType}
                   onSelect={onSelect}
                 />
               ))}

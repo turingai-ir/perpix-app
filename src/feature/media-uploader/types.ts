@@ -8,7 +8,7 @@ export interface UploadedMediaItem {
 }
 
 export interface LocalMediaItem {
-  id: string;
+  id?: string;
   errorKey?: string;
   file: File;
   status: FileManagerUploadStatus;
