@@ -9,7 +9,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import type { FileManagerAllowedContentType } from "@/feature/file-manager";
+import {
+  FileManagerUploadStatus,
+  type FileManagerAllowedContentType,
+} from "@/feature/file-manager";
 import { getClipboardImage, toClipboardImageFile } from "../clipboard-image";
 import { useAppTranslate } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
@@ -23,6 +26,7 @@ import type {
   MediaUploadPresentation,
 } from "../types";
 import { useMediaFilePicker } from "../use-media-file-picker";
+import { canUseFileForGeneration } from "@/features/file-manager";
 
 interface MediaFilePickerDialogProps {
   accept: string;
@@ -89,9 +93,12 @@ export const MediaFilePickerDialog: FC<MediaFilePickerDialogProps> = ({
             ),
     onUploadedFileSelect,
   });
+  const uploadingCount = localItems.filter(
+    (item) => item.status === FileManagerUploadStatus.UPLOADING,
+  ).length;
   const remainingSlots = Math.max(
     0,
-    (maxItems ?? Infinity) - selectedIds.length - localItems.length,
+    (maxItems ?? Infinity) - selectedIds.length - uploadingCount,
   );
   const stagedIds = draftIds
     .filter((id) => !existingSelectedIdsSet.has(id))
@@ -158,6 +165,9 @@ export const MediaFilePickerDialog: FC<MediaFilePickerDialogProps> = ({
       return;
     }
     if (existingSelectedIdsSet.has(id)) return;
+    const file = userFiles.find((item) => item.uuid === id);
+    if (!draftIds.includes(id) && file && !canUseFileForGeneration(file))
+      return;
     setDraftIds((current) => {
       if (current.includes(id))
         return current.filter((draftId) => draftId !== id);
@@ -172,7 +182,10 @@ export const MediaFilePickerDialog: FC<MediaFilePickerDialogProps> = ({
   };
 
   const handleConfirm = () => {
-    stagedIds.forEach((id) => onUploadedFileSelect?.(id));
+    stagedIds.forEach((id) => {
+      const file = userFiles.find((item) => item.uuid === id);
+      if (!file || canUseFileForGeneration(file)) onUploadedFileSelect?.(id);
+    });
     handleOpenChange(false);
   };
 
@@ -217,12 +230,12 @@ export const MediaFilePickerDialog: FC<MediaFilePickerDialogProps> = ({
               <div className="flex flex-wrap gap-2">
                 {localItems.map((item) => (
                   <LocalUploadStatusItem
-                    key={item.id}
+                    key={item.id ?? item.file.name}
                     item={item}
                     onRetry={
-                      !isUploading && !disabled
+                      !disabled && !isUploading
                         ? (file) => {
-                            void onFileSelect?.(file);
+                            void uploadFile(file);
                           }
                         : undefined
                     }
@@ -238,6 +251,7 @@ export const MediaFilePickerDialog: FC<MediaFilePickerDialogProps> = ({
             isFetchingMore={isFetchingMoreFiles}
             isLoading={isLoadingFiles}
             hasMore={hasMoreFiles}
+            previewType={previewType}
             selectedIdsSet={selectedIdsSet}
             toggleableIdsSet={new Set(stagedIds)}
             userFiles={userFiles}
@@ -251,8 +265,7 @@ export const MediaFilePickerDialog: FC<MediaFilePickerDialogProps> = ({
           {maxItems !== undefined && (
             <span className="text-muted-foreground text-xs" aria-live="polite">
               {t("features.mediaUploader.composer.count", {
-                count:
-                  selectedIds.length + localItems.length + stagedIds.length,
+                count: selectedIds.length + uploadingCount + stagedIds.length,
                 max: maxItems,
               })}
             </span>

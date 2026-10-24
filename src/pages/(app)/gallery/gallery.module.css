@@ -511,6 +511,14 @@
   min-width: 0;
 }
 
+.fileFacts {
+  padding: 0 0.7rem 0.75rem;
+}
+
+.compact .fileFacts {
+  display: none;
+}
+
 .cardTitle {
   overflow: hidden;
   color: color-mix(in srgb, var(--foreground) 92%, transparent);

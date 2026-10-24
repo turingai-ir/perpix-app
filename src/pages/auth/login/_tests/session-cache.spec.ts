@@ -63,19 +63,12 @@ for (const sameSession of [true, false]) {
           exact: true,
         });
         await expect(name).toHaveValue("Account A");
-        await expect
-          .poll(() =>
-            page.evaluate(async () => {
-              const modulePath = "/src/lib/react-query.ts";
-              const { indexedDBPersister } = await import(modulePath);
-              return (
-                JSON.stringify(
-                  await indexedDBPersister.restoreClient(),
-                )?.includes("Account A") ?? false
-              );
-            }),
-          )
-          .toBe(true);
+        expect(
+          await page.evaluate(async () => {
+            const path = "/src/features/app-runtime/_tests/browser-store.ts";
+            return (await import(/* @vite-ignore */ path)).readOldCache();
+          }),
+        ).toBe("");
         reloading = true;
         await page.reload();
         await expect.poll(() => requested).toBe(true);

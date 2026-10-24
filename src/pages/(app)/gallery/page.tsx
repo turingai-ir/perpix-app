@@ -14,15 +14,8 @@ import styles from "./gallery.module.css";
 
 export default function GalleryPage() {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
-  const {
-    activeFilter,
-    files,
-    filesPreviewUrls,
-    isFilesPreviewLoading,
-    setActiveFilter,
-    userFilesState,
-    loadMoreRef,
-  } = useGalleryFiles();
+  const { activeFilter, files, setActiveFilter, userFilesState, loadMoreRef } =
+    useGalleryFiles();
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("original");
   const [compact, setCompact] = useState(false);
@@ -102,8 +95,6 @@ export default function GalleryPage() {
             file={file}
             index={index}
             compact={compact}
-            isPreviewLoading={isFilesPreviewLoading}
-            previewUrls={filesPreviewUrls[file.uuid]}
             onOpen={(element) => {
               setTrigger(element);
               setSelected(file.uuid);
@@ -139,7 +130,6 @@ export default function GalleryPage() {
         <GalleryViewer
           files={visible}
           selected={selected}
-          previews={filesPreviewUrls}
           onSelect={setSelected}
           onClose={() => setSelected(null)}
           trigger={trigger}

@@ -1,23 +1,20 @@
 import type { SchemaFileManagerMultipartCompleteRequest } from "@/services/api/api";
-
-// Only explicit retries in this tab can reuse an unfinished completion.
-// There is no persistence, mount recovery, or replay on reconnection.
 const completions = new Map<
   string,
   SchemaFileManagerMultipartCompleteRequest
 >();
-export const fileUploadKey = (scope: string, file: File) =>
+export const uploadKey = (scope: string, file: File) =>
   `${scope}:${file.name}:${file.size}:${file.lastModified}`;
 export const getCompletion = (key: string) => completions.get(key);
-export const saveCompletion = (
+export function saveCompletion(
   key: string,
   body: SchemaFileManagerMultipartCompleteRequest,
-) => {
+) {
   completions.set(key, body);
-};
-export const removeCompletion = (key: string) => {
+}
+export function forgetCompletion(key: string) {
   completions.delete(key);
-};
-export const clearUploadSession = () => {
+}
+export function clearUploadSession() {
   completions.clear();
-};
+}

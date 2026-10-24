@@ -6,10 +6,10 @@ import {
 } from "../../../../../__tests__/support/auth-session";
 import { expect, test } from "@playwright/test";
 
-for (const removalFails of [false, true]) {
+for (const storageUnavailable of [false, true]) {
   test(
-    removalFails
-      ? "an expired session still redirects when persisted cache deletion fails"
+    storageUnavailable
+      ? "an expired session still redirects when browser storage is unavailable"
       : "an expired session clears cached account data before another login",
     async ({ page }) => {
       await page.route("**/api/v1/**", (route) =>
@@ -72,13 +72,10 @@ for (const removalFails of [false, true]) {
       });
       const persistedAccountA = () =>
         page.evaluate(async () => {
-          const modulePath = "/src/lib/react-query.ts";
-          const { indexedDBPersister } = await import(modulePath);
-          return (
-            JSON.stringify(await indexedDBPersister.restoreClient())?.includes(
-              "Account A",
-            ) ?? false
-          );
+          const path = "/src/features/app-runtime/_tests/browser-store.ts";
+          return (await import(/* @vite-ignore */ path))
+            .readOldCache()
+            .then((value: string) => value.includes("Account A"));
         });
       const cachedAccountA = () =>
         page.evaluate(async () => {
@@ -97,16 +94,11 @@ for (const removalFails of [false, true]) {
         await expect(
           page.getByRole("textbox", { name: "نام کامل", exact: true }),
         ).toHaveValue("Account A", { timeout: 15000 });
-        await expect.poll(persistedAccountA).toBe(true);
-        if (removalFails) {
-          await page.evaluate(async () => {
-            const modulePath = "/src/lib/react-query.ts";
-            const { indexedDBPersister } = await import(modulePath);
-            indexedDBPersister.removeClient = async () => {
-              throw new DOMException(
-                "Simulated cache deletion failure",
-                "UnknownError",
-              );
+        await expect.poll(persistedAccountA).toBe(false);
+        if (storageUnavailable) {
+          await page.evaluate(() => {
+            indexedDB.open = () => {
+              throw new DOMException("Storage unavailable", "UnknownError");
             };
           });
         }
@@ -130,7 +122,7 @@ for (const removalFails of [false, true]) {
           /\/auth\/login\?returnTo=%2Fprofile%2Fsettings$/,
         );
         await expect.soft.poll(cachedAccountA).toBe(false);
-        if (!removalFails)
+        if (!storageUnavailable)
           await expect.soft.poll(persistedAccountA).toBe(false);
 
         await page.route("**/api/v1/wallet/wallet", (route) =>
@@ -168,12 +160,14 @@ for (const removalFails of [false, true]) {
         await page
           .getByRole("button", { name: "ورود", exact: true })
           .press("Enter");
-        await expect(page).toHaveURL(/\/profile\/settings$/);
-        await expect.poll(() => accountBRequested).toBe(true);
+        await expect
+          .poll(() => accountBRequested, { timeout: 15000 })
+          .toBe(true);
         await expect(page.getByText("Account A", { exact: true })).toHaveCount(
           0,
         );
         releaseAccountB();
+        await expect(page).toHaveURL(/\/profile\/settings$/);
         await expect(
           page.getByRole("textbox", { name: "نام کامل", exact: true }),
         ).toHaveValue("Account B");

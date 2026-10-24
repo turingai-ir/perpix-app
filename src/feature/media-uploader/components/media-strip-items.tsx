@@ -42,7 +42,7 @@ interface MediaPreviewItemProps {
 interface LocalMediaPreviewItemProps {
   disabled: boolean;
   item: LocalMediaItem;
-  onDeleteClick?: (id: string) => void;
+  onDeleteClick?: (fileName: string) => void;
   onRetry?: (file: File) => void | Promise<string | void>;
   previewType: MediaPreviewType;
   presentation?: MediaUploadPresentation;
@@ -190,7 +190,7 @@ export const LocalMediaPreviewItem: FC<LocalMediaPreviewItemProps> = ({
   const handleDeleteClick = () => {
     if (!onDeleteClick) return;
 
-    onDeleteClick(item.id);
+    onDeleteClick(item.id ?? item.file.name);
   };
 
   const revokeImageUrl = useCallback(() => {
@@ -253,22 +253,22 @@ export const LocalMediaPreviewItem: FC<LocalMediaPreviewItemProps> = ({
         <div className="bg-background/85 absolute inset-0 z-10 flex flex-col items-center justify-center gap-1 p-2 text-center backdrop-blur-[1px]">
           <AlertCircle className="text-destructive h-5 w-5" />
           <span
-            className="text-destructive text-xs whitespace-normal"
+            className="text-destructive text-[10px] whitespace-normal"
             title={t(item.errorKey ?? "common.error")}
           >
             {t("common.error")}
           </span>
           {onRetry &&
-            !disabled &&
-            item.errorKey !== "features.fileManager.errors.unknownUpload" && (
-              <button
-                type="button"
-                className="underline"
-                onClick={() => void onRetry(item.file)}
-              >
-                {t("features.fileManager.details.retry")}
-              </button>
-            )}
+          !disabled &&
+          item.errorKey !== "features.fileManager.errors.unknownUpload" ? (
+            <button
+              type="button"
+              className="text-xs underline"
+              onClick={() => void onRetry(item.file)}
+            >
+              {t("features.fileManager.facts.retry")}
+            </button>
+          ) : null}
         </div>
       )}
 

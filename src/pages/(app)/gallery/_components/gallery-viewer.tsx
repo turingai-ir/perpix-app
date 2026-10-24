@@ -27,7 +27,7 @@ import {
   DialogDescription,
   DialogTitle,
 } from "@/components/ui/dialog";
-import type { FilePreviewUrls } from "@/feature/file-manager";
+import { useFilePreview } from "@/feature/file-manager";
 import { useAppTranslate } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
 import { downloadFile } from "@/utils";
@@ -39,7 +39,6 @@ import styles from "../gallery.module.css";
 interface Props {
   files: GalleryFile[];
   selected: string;
-  previews: Record<string, FilePreviewUrls>;
   onSelect: (uuid: string) => void;
   onClose: () => void;
   trigger: HTMLButtonElement | null;
@@ -47,7 +46,6 @@ interface Props {
 export function GalleryViewer({
   files,
   selected,
-  previews,
   onSelect,
   onClose,
   trigger,
@@ -66,12 +64,13 @@ export function GalleryViewer({
       }
     | undefined
   >(undefined);
+  const { getFilePreviewState } = useFilePreview(selected);
   const index = files.findIndex((file) => file.uuid === selected);
   const file = files[index];
   if (!file) return null;
   const name = file.file_name || t("common.emptyTitle");
   const mediaType = getGalleryMediaType(file.content_type);
-  const urls = previews[selected];
+  const urls = getFilePreviewState.data;
   function move(delta: number) {
     const next = files[index + delta];
     if (next) {

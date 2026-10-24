@@ -44,16 +44,16 @@ export const LocalUploadStatusItem: FC<{
             : t("common.uploaded")}
       </span>
       {isError &&
-        onRetry &&
-        item.errorKey !== "features.fileManager.errors.unknownUpload" && (
-          <button
-            type="button"
-            className="shrink-0 text-xs underline"
-            onClick={() => onRetry(item.file)}
-          >
-            {t("features.fileManager.details.retry")}
-          </button>
-        )}
+      onRetry &&
+      item.errorKey !== "features.fileManager.errors.unknownUpload" ? (
+        <button
+          type="button"
+          className="shrink-0 text-xs underline"
+          onClick={() => onRetry(item.file)}
+        >
+          {t("features.fileManager.facts.retry")}
+        </button>
+      ) : null}
     </div>
   );
 };

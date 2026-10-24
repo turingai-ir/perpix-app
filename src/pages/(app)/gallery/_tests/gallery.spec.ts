@@ -68,6 +68,7 @@ test.beforeEach(async ({ page }) => {
       },
     }),
   );
+  await mockAuthenticatedSession(page);
   await page.goto("/gallery");
 });
 

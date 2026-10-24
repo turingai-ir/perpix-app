@@ -1,6 +1,6 @@
 import { Expand } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { FilePreviewUrls } from "@/feature/file-manager";
+import { FileFacts, useVisibleFilePreview } from "@/features/file-manager";
 import { useAppTranslate } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
 import { GalleryPreview } from "./gallery-preview";
@@ -14,23 +14,18 @@ interface Props {
   file: GalleryFile;
   index: number;
   compact: boolean;
-  isPreviewLoading: boolean;
-  previewUrls?: FilePreviewUrls;
   onOpen: (trigger: HTMLButtonElement) => void;
 }
-export function GalleryFileCard({
-  file,
-  index,
-  compact,
-  isPreviewLoading,
-  previewUrls,
-  onOpen,
-}: Props) {
+export function GalleryFileCard({ file, index, compact, onOpen }: Props) {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
+  const { ref, getFilePreviewState } = useVisibleFilePreview(file.uuid);
+  const previewUrls = getFilePreviewState.data;
+  const isPreviewLoading = getFilePreviewState.isPending;
   const name = file.file_name || t("common.emptyTitle");
   const mediaType = getGalleryMediaType(file.content_type);
   return (
     <article
+      ref={ref}
       className={`${styles.card} group`}
       style={{ animationDelay: `${Math.min(index, 7) * 35}ms` }}
     >
@@ -71,6 +66,9 @@ export function GalleryFileCard({
           </span>
         </div>
         <GalleryActions file={file} downloadUrl={previewUrls?.download_url} />
+      </div>
+      <div className={styles.fileFacts}>
+        <FileFacts file={file} />
       </div>
     </article>
   );
