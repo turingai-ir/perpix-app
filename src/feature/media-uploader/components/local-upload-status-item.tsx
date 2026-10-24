@@ -8,9 +8,10 @@ import { APP_I18_KEYS } from "@/services/i18";
 
 import type { LocalMediaItem } from "../types";
 
-export const LocalUploadStatusItem: FC<{ item: LocalMediaItem }> = ({
-  item,
-}) => {
+export const LocalUploadStatusItem: FC<{
+  item: LocalMediaItem;
+  onRetry?: (file: File) => void;
+}> = ({ item, onRetry }) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const isUploading = item.status === FileManagerUploadStatus.UPLOADING;
   const isError = item.status === FileManagerUploadStatus.FAILED;
@@ -18,7 +19,7 @@ export const LocalUploadStatusItem: FC<{ item: LocalMediaItem }> = ({
   return (
     <div
       className={cn(
-        "flex max-w-56 min-w-0 items-center gap-2 rounded-lg border px-2 py-1.5",
+        "flex w-72 max-w-full min-w-0 flex-wrap items-center gap-2 rounded-lg border px-2 py-1.5",
         isError && "border-destructive/30 bg-destructive/5",
       )}
     >
@@ -29,19 +30,30 @@ export const LocalUploadStatusItem: FC<{ item: LocalMediaItem }> = ({
       ) : (
         <Check className="text-primary h-4 w-4 shrink-0" />
       )}
-      <span className="min-w-0 truncate text-xs">{item.file.name}</span>
+      <span className="min-w-0 flex-1 truncate text-xs">{item.file.name}</span>
       <span
         className={cn(
-          "text-muted-foreground shrink-0 text-[10px]",
-          isError && "text-destructive",
+          "text-muted-foreground text-xs",
+          isError && "text-destructive order-last basis-full wrap-break-word",
         )}
       >
         {isUploading
           ? t("common.uploading")
           : isError
-            ? t("common.error")
+            ? t(item.errorKey ?? "common.error")
             : t("common.uploaded")}
       </span>
+      {isError &&
+        onRetry &&
+        item.errorKey !== "features.fileManager.errors.unknownUpload" && (
+          <button
+            type="button"
+            className="shrink-0 text-xs underline"
+            onClick={() => onRetry(item.file)}
+          >
+            {t("features.fileManager.details.retry")}
+          </button>
+        )}
     </div>
   );
 };

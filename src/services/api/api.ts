@@ -569,7 +569,10 @@ export interface paths {
         };
         readonly get?: never;
         readonly put?: never;
-        /** Simple Upload */
+        /**
+         * Simple Upload
+         * @description Private upload up to 5 MiB. With managed media validation enabled: 413 size, 415 unsupported/mismatched format, 422 invalid media, 503 temporary unavailability. Request body is limited to 5 MiB plus 64 KiB multipart overhead. Each POST creates a new upload; no automatic POST retry or idempotency guarantee.
+         */
         readonly post: operations["simple_upload_api_v1_file_manager_simple_upload_post"];
         readonly delete?: never;
         readonly options?: never;
@@ -621,10 +624,16 @@ export interface paths {
             readonly cookie?: never;
         };
         readonly get?: never;
-        /** Replace File */
+        /**
+         * Replace File
+         * @description Replace file bytes while retaining its UUID and MIME. Managed replacement validates up to 100 MiB before storage and atomically updates object identity and media facts using CAS. Missing/foreign/expired files return 404; legacy/public managed targets or concurrent changes return 409. Invalid media returns 413/415/422, temporary failures 503. Unknown outcomes are retained for reconciliation; do not blindly retry writes.
+         */
         readonly put: operations["replace_file_api_v1_file_manager_files__file_uuid__put"];
         readonly post?: never;
-        /** Delete File */
+        /**
+         * Delete File
+         * @description Delete an active owned file. Managed files are logically retired in a transaction committed before success; held bytes remain until claimed cleanup. Missing, expired, deleted or foreign files return 404. Legacy files retain their existing deletion behavior. A failed or unknown commit returns an error; inspect current state before retrying.
+         */
         readonly delete: operations["delete_file_api_v1_file_manager_files__file_uuid__delete"];
         readonly options?: never;
         readonly head?: never;
@@ -640,7 +649,10 @@ export interface paths {
         };
         readonly get?: never;
         readonly put?: never;
-        /** Initiate Multipart Upload */
+        /**
+         * Initiate Multipart Upload
+         * @description Managed uploads accept an optional UUID Idempotency-Key scoped to the current owner. Reuse the key and identical payload to recover an uncertain initiation. Without a key, every POST creates a new upload. Returned object_name is opaque and must be reused unchanged.
+         */
         readonly post: operations["initiate_multipart_upload_api_v1_file_manager_multipart_initiate_post"];
         readonly delete?: never;
         readonly options?: never;
@@ -674,7 +686,10 @@ export interface paths {
         };
         readonly get?: never;
         readonly put?: never;
-        /** Complete Multipart Upload */
+        /**
+         * Complete Multipart Upload
+         * @description Managed completion binds all fields and canonical parts to the initiated operation, probes the exact completed object and atomically attaches media facts. Retry the same payload after temporary failure; Complete is never reissued. Legacy uploads require the legacy route configuration.
+         */
         readonly post: operations["complete_multipart_upload_api_v1_file_manager_multipart_complete_post"];
         readonly delete?: never;
         readonly options?: never;
@@ -991,6 +1006,36 @@ export interface components {
             /** Revoked At */
             readonly revoked_at: string | null;
         };
+        /**
+         * ApplicationErrorCode
+         * @enum {integer}
+         */
+        readonly ApplicationErrorCode: 900 | 901 | 902 | 999 | 1000 | 1100 | 1103 | 1104 | 1106 | 1107 | 1108 | 1200 | 1201 | 1202 | 1203 | 1204 | 1205 | 1206 | 1300 | 1301 | 1302 | 1303 | 1304 | 1305 | 1306 | 1307 | 1308 | 1400 | 1401 | 1500 | 1501 | 1502 | 1503 | 1600 | 1601 | 1602 | 1603 | 1604 | 1605 | 1700 | 1701 | 1702 | 1800 | 1801 | 1802 | 1803 | 1804 | 1805 | 1806 | 1807;
+        /** ApplicationErrorResponse */
+        readonly ApplicationErrorResponse: {
+            /**
+             * Detail
+             * @description Translated error message or validation details.
+             */
+            readonly detail: unknown;
+            /** @description Stable application status code for frontend handling. */
+            readonly status_code: components["schemas"]["ApplicationErrorCode"];
+            /**
+             * Request Id
+             * @description Correlation id for tracing the request.
+             */
+            readonly request_id?: string | null;
+            /**
+             * Retry After
+             * @description Seconds until a rate-limited request can retry.
+             */
+            readonly retry_after?: number | null;
+            /**
+             * Required Scopes
+             * @description Subscription scopes required to perform the operation.
+             */
+            readonly required_scopes?: readonly string[] | null;
+        };
         /** AuthStartRequest */
         readonly AuthStartRequest: {
             /**
@@ -1086,6 +1131,20 @@ export interface components {
         readonly CsrfResponse: {
             /** Csrf Token */
             readonly csrf_token: string;
+        };
+        /** FileManagerMediaMetadataResponse */
+        readonly FileManagerMediaMetadataResponse: {
+            /**
+             * Kind
+             * @enum {string}
+             */
+            readonly kind: "image" | "video" | "audio";
+            /** Width */
+            readonly width?: number | null;
+            /** Height */
+            readonly height?: number | null;
+            /** Duration Seconds */
+            readonly duration_seconds?: number | null;
         };
         /** FileManagerMultipartCompleteRequest */
         readonly FileManagerMultipartCompleteRequest: {
@@ -1207,6 +1266,7 @@ export interface components {
             readonly file_size: number;
             /** Content Type */
             readonly content_type: string;
+            readonly media_metadata?: components["schemas"]["FileManagerMediaMetadataResponse"] | null;
             /**
              * Is Public
              * @default true
@@ -1780,6 +1840,8 @@ export type SchemaAiTaskRuleEnum = components['schemas']['AiTaskRuleEnum'];
 export type SchemaAiTaskTypeEnum = components['schemas']['AiTaskTypeEnum'];
 export type SchemaApiTokenListResponse = components['schemas']['ApiTokenListResponse'];
 export type SchemaApiTokenResponse = components['schemas']['ApiTokenResponse'];
+export type SchemaApplicationErrorCode = components['schemas']['ApplicationErrorCode'];
+export type SchemaApplicationErrorResponse = components['schemas']['ApplicationErrorResponse'];
 export type SchemaAuthStartRequest = components['schemas']['AuthStartRequest'];
 export type SchemaAuthStartResponse = components['schemas']['AuthStartResponse'];
 export type SchemaBodyReplaceFileApiV1FileManagerFilesFileUuidPut = components['schemas']['Body_replace_file_api_v1_file_manager_files__file_uuid__put'];
@@ -1788,6 +1850,7 @@ export type SchemaChallengeResponse = components['schemas']['ChallengeResponse']
 export type SchemaCreateApiTokenRequest = components['schemas']['CreateApiTokenRequest'];
 export type SchemaCreatedApiTokenResponse = components['schemas']['CreatedApiTokenResponse'];
 export type SchemaCsrfResponse = components['schemas']['CsrfResponse'];
+export type SchemaFileManagerMediaMetadataResponse = components['schemas']['FileManagerMediaMetadataResponse'];
 export type SchemaFileManagerMultipartCompleteRequest = components['schemas']['FileManagerMultipartCompleteRequest'];
 export type SchemaFileManagerMultipartCompletedPart = components['schemas']['FileManagerMultipartCompletedPart'];
 export type SchemaFileManagerMultipartInitiateRequest = components['schemas']['FileManagerMultipartInitiateRequest'];
@@ -2985,13 +3048,40 @@ export interface operations {
                     readonly "application/json": components["schemas"]["FileManagerUploadFileResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description Content Too Large */
+            readonly 413: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+            /** @description Unsupported Media Type */
+            readonly 415: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Content */
             readonly 422: {
                 headers: {
                     readonly [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+            /** @description Service Unavailable */
+            readonly 503: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -3087,13 +3177,67 @@ export interface operations {
                     readonly "application/json": components["schemas"]["FileManagerUploadFileResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description Bad Request */
+            readonly 400: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            readonly 404: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+            /** @description Conflict */
+            readonly 409: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+            /** @description Content Too Large */
+            readonly 413: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+            /** @description Unsupported Media Type */
+            readonly 415: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Content */
             readonly 422: {
                 headers: {
                     readonly [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+            /** @description Service Unavailable */
+            readonly 503: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -3118,6 +3262,24 @@ export interface operations {
                     readonly "application/json": components["schemas"]["FileManagerUploadFileResponse"];
                 };
             };
+            /** @description Not Found */
+            readonly 404: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+            /** @description Conflict */
+            readonly 409: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
             /** @description Validation Error */
             readonly 422: {
                 headers: {
@@ -3127,12 +3289,23 @@ export interface operations {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
+            /** @description Internal Server Error */
+            readonly 500: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
         };
     };
     readonly initiate_multipart_upload_api_v1_file_manager_multipart_initiate_post: {
         readonly parameters: {
             readonly query?: never;
-            readonly header?: never;
+            readonly header?: {
+                readonly "Idempotency-Key"?: string | null;
+            };
             readonly path?: never;
             readonly cookie?: never;
         };
@@ -3151,13 +3324,49 @@ export interface operations {
                     readonly "application/json": components["schemas"]["FileManagerMultipartInitiateResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description Conflict */
+            readonly 409: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+            /** @description Content Too Large */
+            readonly 413: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+            /** @description Unsupported Media Type */
+            readonly 415: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Content */
             readonly 422: {
                 headers: {
                     readonly [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+            /** @description Service Unavailable */
+            readonly 503: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -3184,13 +3393,49 @@ export interface operations {
                     readonly "application/json": components["schemas"]["FileManagerMultipartPresignPartResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description Conflict */
+            readonly 409: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+            /** @description Content Too Large */
+            readonly 413: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+            /** @description Unsupported Media Type */
+            readonly 415: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Content */
             readonly 422: {
                 headers: {
                     readonly [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+            /** @description Service Unavailable */
+            readonly 503: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -3217,13 +3462,49 @@ export interface operations {
                     readonly "application/json": components["schemas"]["FileManagerUploadFileResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description Conflict */
+            readonly 409: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+            /** @description Content Too Large */
+            readonly 413: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+            /** @description Unsupported Media Type */
+            readonly 415: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Content */
             readonly 422: {
                 headers: {
                     readonly [name: string]: unknown;
                 };
                 content: {
-                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+            /** @description Service Unavailable */
+            readonly 503: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -3458,6 +3739,8 @@ export const aiRegistryModelSupportedTypesEnumValues: ReadonlyArray<FlattenedDee
 export const aiTaskMessageStatusEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiTaskMessageStatusEnum"]> = ["PENDING", "IN_PROGRESS", "SUCCESS", "FAILED"];
 export const aiTaskRuleEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiTaskRuleEnum"]> = ["SYSTEM", "USER", "ASSISTANT", "TOOL", "FUNCTION", "INLINE"];
 export const aiTaskTypeEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiTaskTypeEnum"]> = ["TEXT", "IMAGE", "AUDIO", "VIDEO"];
+export const applicationErrorCodeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["ApplicationErrorCode"]> = [900, 901, 902, 999, 1000, 1100, 1103, 1104, 1106, 1107, 1108, 1200, 1201, 1202, 1203, 1204, 1205, 1206, 1300, 1301, 1302, 1303, 1304, 1305, 1306, 1307, 1308, 1400, 1401, 1500, 1501, 1502, 1503, 1600, 1601, 1602, 1603, 1604, 1605, 1700, 1701, 1702, 1800, 1801, 1802, 1803, 1804, 1805, 1806, 1807];
+export const fileManagerMediaMetadataResponseKindValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["FileManagerMediaMetadataResponse"]["kind"]> = ["image", "video", "audio"];
 export const machineScopeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["MachineScope"]> = ["ai_registry:read", "ai_task:read", "ai_task:write", "file_manager:read", "file_manager:write"];
 export const passwordStepResponseNext_stepValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PasswordStepResponse"]["next_step"]> = ["password"];
 export const paymentExecutionStatusValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaymentExecutionStatus"]> = ["PENDING", "SUCCEEDED", "FAILED", "EXPIRED"];
@@ -3529,6 +3812,61 @@ export const AiTaskTypeEnumMap = {
 } as const;
 export type AiTaskTypeEnumKey = keyof typeof AiTaskTypeEnumMap;
 export type AiTaskTypeEnumValue = (typeof AiTaskTypeEnumMap)[AiTaskTypeEnumKey];
+
+export const ApplicationErrorCodeMap = {
+  900: 900,
+  901: 901,
+  902: 902,
+  999: 999,
+  1000: 1000,
+  1100: 1100,
+  1103: 1103,
+  1104: 1104,
+  1106: 1106,
+  1107: 1107,
+  1108: 1108,
+  1200: 1200,
+  1201: 1201,
+  1202: 1202,
+  1203: 1203,
+  1204: 1204,
+  1205: 1205,
+  1206: 1206,
+  1300: 1300,
+  1301: 1301,
+  1302: 1302,
+  1303: 1303,
+  1304: 1304,
+  1305: 1305,
+  1306: 1306,
+  1307: 1307,
+  1308: 1308,
+  1400: 1400,
+  1401: 1401,
+  1500: 1500,
+  1501: 1501,
+  1502: 1502,
+  1503: 1503,
+  1600: 1600,
+  1601: 1601,
+  1602: 1602,
+  1603: 1603,
+  1604: 1604,
+  1605: 1605,
+  1700: 1700,
+  1701: 1701,
+  1702: 1702,
+  1800: 1800,
+  1801: 1801,
+  1802: 1802,
+  1803: 1803,
+  1804: 1804,
+  1805: 1805,
+  1806: 1806,
+  1807: 1807,
+} as const;
+export type ApplicationErrorCodeKey = keyof typeof ApplicationErrorCodeMap;
+export type ApplicationErrorCodeValue = (typeof ApplicationErrorCodeMap)[ApplicationErrorCodeKey];
 
 export const MachineScopeMap = {
   "ai_registry:read": "ai_registry:read",

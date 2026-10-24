@@ -45,7 +45,6 @@ export const MediaUploadStrip: FC<MediaUploadStripProps> = ({
         isUploading={isUploading}
         label={label}
         localItems={localItems}
-        previewType={previewType}
         selectedIds={selectedIds}
         onFileSelect={onFileSelect}
         onOpenChange={setFilePickerOpen}
@@ -67,11 +66,12 @@ export const MediaUploadStrip: FC<MediaUploadStripProps> = ({
 
           {localItems.map((item) => (
             <LocalMediaPreviewItem
-              key={item.file.name}
+              key={item.id}
               item={item}
               disabled={disabled}
               previewType={previewType}
               onDeleteClick={onLocalDeleteClick}
+              onRetry={onFileSelect}
             />
           ))}
 

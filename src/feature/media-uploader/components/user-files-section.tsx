@@ -4,26 +4,20 @@ import type { FC } from "react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { FilePreviewUrls } from "@/feature/file-manager";
 import { useAppTranslate } from "@/hooks";
 import { useInfiniteScroll } from "@/hooks/use-infinite-scroll";
 import { cn } from "@/lib/utils";
 import { APP_I18_KEYS } from "@/services/i18";
 
 import { UserFileCard } from "./user-file-card";
-import type { MediaPreviewType } from "../types";
 import type { UserFileWithUuid } from "../utils";
 
 interface UserFilesSectionProps {
   isError: boolean;
   isFetching: boolean;
   isFetchingMore: boolean;
-  isPreviewError: boolean;
-  isPreviewLoading: boolean;
   isLoading: boolean;
   hasMore: boolean;
-  previewUrlsByFileUuid: Readonly<Record<string, FilePreviewUrls>>;
-  previewType: MediaPreviewType;
   selectedIdsSet: ReadonlySet<string>;
   userFiles: readonly UserFileWithUuid[];
   onFetchMore: () => void;
@@ -35,12 +29,8 @@ export const UserFilesSection: FC<UserFilesSectionProps> = ({
   isError,
   isFetching,
   isFetchingMore,
-  isPreviewError,
-  isPreviewLoading,
   isLoading,
   hasMore,
-  previewUrlsByFileUuid,
-  previewType,
   selectedIdsSet,
   userFiles,
   onFetchMore,
@@ -69,7 +59,9 @@ export const UserFilesSection: FC<UserFilesSectionProps> = ({
           onClick={onRefresh}
         >
           <RefreshCw className={cn(isFetching && "animate-spin")} />
-          <span className="sr-only">Refresh</span>
+          <span className="sr-only">
+            {t("features.fileManager.details.refresh")}
+          </span>
         </Button>
       </div>
 
@@ -96,10 +88,6 @@ export const UserFilesSection: FC<UserFilesSectionProps> = ({
                   key={file.uuid}
                   file={file}
                   isSelected={selectedIdsSet.has(file.uuid)}
-                  isPreviewError={isPreviewError}
-                  isPreviewLoading={isPreviewLoading}
-                  previewUrls={previewUrlsByFileUuid[file.uuid]}
-                  previewType={previewType}
                   onSelect={onSelect}
                 />
               ))}

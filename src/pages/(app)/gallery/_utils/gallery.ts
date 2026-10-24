@@ -9,9 +9,15 @@ import type {
 
 export const galleryContentTypes: GalleryContentTypes = {
   all: FILE_MANAGER_ALLOWED_CONTENT_TYPES,
-  image: ["image/jpeg", "image/png"],
-  video: ["video/mp4"],
-  audio: ["audio/mp3", "audio/mpeg", "audio/wav", "audio/wave", "audio/x-wav"],
+  image: FILE_MANAGER_ALLOWED_CONTENT_TYPES.filter((type) =>
+    type.startsWith("image/"),
+  ),
+  video: FILE_MANAGER_ALLOWED_CONTENT_TYPES.filter((type) =>
+    type.startsWith("video/"),
+  ),
+  audio: FILE_MANAGER_ALLOWED_CONTENT_TYPES.filter((type) =>
+    type.startsWith("audio/"),
+  ),
 };
 
 export function getGalleryFilters(

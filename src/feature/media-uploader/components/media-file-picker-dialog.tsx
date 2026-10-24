@@ -15,7 +15,7 @@ import { APP_I18_KEYS } from "@/services/i18";
 import { LocalUploadStatusItem } from "./local-upload-status-item";
 import { NewFileUploadCard } from "./new-file-upload-card";
 import { UserFilesSection } from "./user-files-section";
-import type { LocalMediaItem, MediaPreviewType } from "../types";
+import type { LocalMediaItem } from "../types";
 import { useMediaFilePicker } from "../use-media-file-picker";
 
 interface MediaFilePickerDialogProps {
@@ -26,7 +26,6 @@ interface MediaFilePickerDialogProps {
   isUploading: boolean;
   label?: string;
   localItems: LocalMediaItem[];
-  previewType: MediaPreviewType;
   selectedIds: string[];
   onFileSelect?: (file: File) => void | Promise<string | void>;
   onOpenChange: (isOpen: boolean) => void;
@@ -41,7 +40,6 @@ export const MediaFilePickerDialog: FC<MediaFilePickerDialogProps> = ({
   isUploading,
   label,
   localItems,
-  previewType,
   selectedIds,
   onFileSelect,
   onOpenChange,
@@ -56,10 +54,7 @@ export const MediaFilePickerDialog: FC<MediaFilePickerDialogProps> = ({
     isFetchingFiles,
     isFetchingMoreFiles,
     isFilesError,
-    isFilesPreviewError,
-    isFilesPreviewLoading,
     isLoadingFiles,
-    previewUrlsByFileUuid,
     refetchFiles,
     selectedIdsSet,
     selectUploadedFile,
@@ -103,7 +98,17 @@ export const MediaFilePickerDialog: FC<MediaFilePickerDialogProps> = ({
               </span>
               <div className="flex flex-wrap gap-2">
                 {localItems.map((item) => (
-                  <LocalUploadStatusItem key={item.file.name} item={item} />
+                  <LocalUploadStatusItem
+                    key={item.id}
+                    item={item}
+                    onRetry={
+                      !isUploading && !disabled
+                        ? (file) => {
+                            void onFileSelect?.(file);
+                          }
+                        : undefined
+                    }
+                  />
                 ))}
               </div>
             </div>
@@ -113,12 +118,8 @@ export const MediaFilePickerDialog: FC<MediaFilePickerDialogProps> = ({
             isError={isFilesError}
             isFetching={isFetchingFiles}
             isFetchingMore={isFetchingMoreFiles}
-            isPreviewError={isFilesPreviewError}
-            isPreviewLoading={isFilesPreviewLoading}
             isLoading={isLoadingFiles}
             hasMore={hasMoreFiles}
-            previewUrlsByFileUuid={previewUrlsByFileUuid}
-            previewType={previewType}
             selectedIdsSet={selectedIdsSet}
             userFiles={userFiles}
             onFetchMore={fetchMoreFiles}

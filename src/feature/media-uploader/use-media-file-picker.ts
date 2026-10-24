@@ -2,13 +2,12 @@ import { useMemo, type ChangeEventHandler } from "react";
 
 import {
   type FileManagerAllowedContentType,
-  type UserFileItem,
-  useFilesPreviews,
   useInfiniteUserFiles,
   userFilesPageLimit,
 } from "@/feature/file-manager";
 
 import { getUserFilesWithUuid } from "./utils";
+import { canUseFileForGeneration } from "@/features/file-manager";
 
 interface UseMediaFilePickerOptions {
   acceptedContentTypes: readonly FileManagerAllowedContentType[];
@@ -34,9 +33,7 @@ export function useMediaFilePicker({
     enabled: isOpen,
     limit: userFilesPageLimit,
   });
-  const userFilesResponse = getUserFilesState.data as
-    | { pages?: readonly { files?: readonly UserFileItem[] }[] }
-    | undefined;
+  const userFilesResponse = getUserFilesState.data;
   const selectedIdsSet = useMemo(() => new Set(selectedIds), [selectedIds]);
   const userFiles = useMemo(
     () =>
@@ -44,14 +41,6 @@ export function useMediaFilePicker({
         userFilesResponse?.pages?.flatMap((page) => page.files ?? []),
       ),
     [userFilesResponse?.pages],
-  );
-  const userFileUuids = useMemo(
-    () => userFiles.map((file) => file.uuid),
-    [userFiles],
-  );
-  const { getFilesPreviewsState } = useFilesPreviews(
-    userFileUuids,
-    isOpen && !getUserFilesState.isError,
   );
   const isLoadingFiles = getUserFilesState.isPending && !userFilesResponse;
 
@@ -86,7 +75,14 @@ export function useMediaFilePicker({
   };
 
   const selectUploadedFile = (fileId: string) => {
-    if (disabled || selectedIdsSet.has(fileId)) return;
+    const file = userFiles.find((item) => item.uuid === fileId);
+    if (
+      disabled ||
+      selectedIdsSet.has(fileId) ||
+      !file ||
+      !canUseFileForGeneration(file)
+    )
+      return;
 
     onUploadedFileSelect?.(fileId);
   };
@@ -97,11 +93,8 @@ export function useMediaFilePicker({
     hasMoreFiles: getUserFilesState.hasNextPage,
     isFetchingFiles: getUserFilesState.isFetching,
     isFetchingMoreFiles: getUserFilesState.isFetchingNextPage,
-    isFilesError: getUserFilesState.isError,
-    isFilesPreviewError: getFilesPreviewsState.isError,
-    isFilesPreviewLoading: getFilesPreviewsState.isPending,
+    isFilesError: getUserFilesState.isError && !userFiles.length,
     isLoadingFiles,
-    previewUrlsByFileUuid: getFilesPreviewsState.data ?? {},
     refetchFiles: getUserFilesState.refetch,
     selectedIdsSet,
     selectUploadedFile,
