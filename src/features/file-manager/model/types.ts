@@ -4,9 +4,9 @@ import type { SchemaFileManagerUploadFileResponse } from "@/services/api/api";
 export type UserFileItem = SchemaFileManagerUploadFileResponse;
 export const previewSchema = z.object({
   file_uuid: z.string().min(1),
-  preview_url: z.string().url(),
-  download_url: z.string().url(),
-  expire_at: z.string().datetime({ offset: true }).optional(),
+  preview_url: z.url(),
+  download_url: z.url(),
+  expire_at: z.iso.datetime({ offset: true }).optional(),
 });
 export const previewsSchema = z.object({ files: z.array(previewSchema) });
 export type FilePreviewUrls = z.infer<typeof previewSchema>;

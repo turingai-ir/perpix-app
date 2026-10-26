@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo } from "react";
 import { useLocation, useNavigate, useParams } from "react-router";
+import { useQueryClient } from "@tanstack/react-query";
 
 import {
   GeneratedMediaField,
@@ -8,6 +9,9 @@ import {
   isAiTaskMessageTerminal,
 } from "./model";
 import { useScrollToLatestMessage } from "./scroll-to-latest-message";
+
+import { useReactQueryApi } from "@/hooks/app";
+import { buildRetryConfig } from "@/pages/(app)/generation/_utils/retry-config";
 
 import {
   AiTaskRuleEnumMap,
@@ -30,6 +34,8 @@ export function useGenerationPage({
   const params = useParams();
   const location = useLocation();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { queryOptions } = useReactQueryApi();
   const chatId = params?.chatId ?? undefined;
   const { aiGenerateState, aiTaskState } = useAiGenerate(chatId);
   const { mutateAsync } = aiGenerateState;
@@ -156,12 +162,22 @@ export function useGenerationPage({
     ],
   );
   const handleRetry = useCallback(
-    (message: SchemaAiTaskMessageResponse) => {
-      if (!message.ai_model_uuid) return;
+    async (message: SchemaAiTaskMessageResponse) => {
+      const aiModelUuid = message.ai_model_uuid;
+      if (!aiModelUuid) return;
 
-      return handleForm(message.ai_model_config, message.ai_model_uuid);
+      const model = await queryClient.query(
+        queryOptions("get", "/api/v1/ai-registry/models/{ai_model_uuid}", {
+          params: { path: { ai_model_uuid: aiModelUuid } },
+        }),
+      );
+
+      return handleForm(
+        buildRetryConfig(message.ai_model_config, model),
+        aiModelUuid,
+      );
     },
-    [handleForm],
+    [handleForm, queryClient, queryOptions],
   );
 
   return {

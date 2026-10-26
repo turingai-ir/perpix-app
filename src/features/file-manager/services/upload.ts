@@ -95,9 +95,7 @@ async function uploadPart(
     },
   );
   if (!response.ok) throw httpError(response.status);
-  const { presigned_url } = z
-    .object({ presigned_url: z.string().url() })
-    .parse(data);
+  const { presigned_url } = z.object({ presigned_url: z.url() }).parse(data);
   const start = (part - 1) * operation.chunk_size;
   const result = await fetch(presigned_url, {
     method: "PUT",

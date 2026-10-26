@@ -28,7 +28,7 @@ export async function exerciseDisconnectedRequests() {
   let mutations = 0;
   try {
     const query = queryClient
-      .fetchQuery({
+      .query({
         queryKey: ["disconnected-request"],
         retry: false,
         queryFn: () => {

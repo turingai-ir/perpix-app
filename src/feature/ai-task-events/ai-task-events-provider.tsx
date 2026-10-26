@@ -90,7 +90,7 @@ export function AiTaskEventsProvider() {
       void queryClient.invalidateQueries({ queryKey: aiTasksListQueryKey });
       void queryClient.refetchQueries({ queryKey: walletQueryKey });
 
-      const task = await queryClient.fetchQuery(taskQueryOptions);
+      const task = await queryClient.query(taskQueryOptions);
 
       if (!task) return;
 
