@@ -175,6 +175,31 @@ test("permanent validation failure is localized and selecting the same name can 
   await expect(page.getByLabel("Upload result")).toHaveText("recovered-file");
 });
 
+test("a slow upload that hits the server body timeout asks the user to retry on a better connection", async ({
+  page,
+}) => {
+  let requests = 0;
+  await page.route("**/file-manager/simple-upload", (route) => {
+    requests++;
+    return route.fulfill(
+      requests === 1
+        ? { status: 408, json: { status_code: 1309 } }
+        : { json: { uuid: "recovered-file" } },
+    );
+  });
+  const file = {
+    name: "sound.mp3",
+    mimeType: "audio/mpeg",
+    buffer: Buffer.alloc(100),
+  };
+  await page.getByLabel("Upload", { exact: true }).setInputFiles(file);
+  await expect(page.getByLabel("Upload result")).toContainText("کند");
+  expect(requests).toBe(1);
+  await page.getByLabel("Upload", { exact: true }).setInputFiles([]);
+  await page.getByLabel("Upload", { exact: true }).setInputFiles(file);
+  await expect(page.getByLabel("Upload result")).toHaveText("recovered-file");
+});
+
 test("offline upload fails promptly without a paused mutation or request", async ({
   page,
   context,
