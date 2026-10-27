@@ -2,6 +2,7 @@ import type Konva from "konva";
 import type { AlignmentGuide } from "../_model/image-alignment";
 import type { CropArea, CropDisplayOrigin } from "../_model/crop-area";
 import type { CropRatioId } from "../_model/crop-ratios";
+import type { EditorEdits } from "../_model/editor-edits";
 
 export interface DisplaySize {
   height: number;
@@ -14,6 +15,7 @@ export interface ImageEditorWorkspaceViewModel {
   cardPosition: CropDisplayOrigin;
   displayedCrop: CropArea;
   draftCrop: CropArea;
+  edits: EditorEdits;
   fixedCropRatio: boolean;
   imagePosition: CropDisplayOrigin;
   imageSize: DisplaySize | null;
@@ -36,4 +38,6 @@ export interface ImageEditorWorkspaceViewModel {
   selectCropRatio: (ratio: CropRatioId) => void;
   selectImage: () => void;
   undo: () => void;
+  previewEdits: (edits: EditorEdits) => void;
+  commitEdits: (edits?: EditorEdits) => void;
 }

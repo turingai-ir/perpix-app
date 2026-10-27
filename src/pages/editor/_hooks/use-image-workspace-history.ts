@@ -1,4 +1,5 @@
 import { useEditorHistory } from "@/features/editor";
+import { DEFAULT_EDITOR_EDITS, type EditorEdits } from "../_model/editor-edits";
 import {
   normalizePosition,
   type CropArea,
@@ -10,6 +11,7 @@ const ZERO_POSITION: CropDisplayOrigin = { x: 0, y: 0 };
 interface ImageWorkspaceSnapshot {
   appliedCrop: CropArea;
   normalizedImagePosition: CropDisplayOrigin;
+  edits: EditorEdits;
 }
 
 export function useImageWorkspaceHistory(
@@ -25,6 +27,7 @@ export function useImageWorkspaceHistory(
         y: 0,
       },
       normalizedImagePosition: ZERO_POSITION,
+      edits: DEFAULT_EDITOR_EDITS,
     },
     documentId,
   );
@@ -46,5 +49,8 @@ export function useImageWorkspaceHistory(
   const applyCrop = (nextCrop: CropArea) => {
     history.commit({ ...history.current, appliedCrop: nextCrop });
   };
-  return { ...history, applyCrop, finishImageDrag };
+  const updateEdits = (edits: EditorEdits) => {
+    history.commit({ ...history.current, edits });
+  };
+  return { ...history, applyCrop, finishImageDrag, updateEdits };
 }
