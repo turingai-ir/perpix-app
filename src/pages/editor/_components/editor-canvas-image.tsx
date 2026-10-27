@@ -8,7 +8,7 @@ export type CanvasDragMoveHandler = NonNullable<
 interface EditorCanvasImageProps {
   appliedCrop: CropArea;
   cardPosition: { x: number; y: number };
-  image: HTMLImageElement;
+  image: HTMLImageElement | HTMLCanvasElement;
   imagePosition: { x: number; y: number };
   imageSize: { height: number; width: number };
   isCropping: boolean;
@@ -22,6 +22,16 @@ interface EditorCanvasImageProps {
 }
 
 export function EditorCanvasImage(props: EditorCanvasImageProps) {
+  const sourceAspect = props.appliedCrop.width / props.appliedCrop.height;
+  const cardAspect = props.imageSize.width / props.imageSize.height;
+  const displayWidth =
+    sourceAspect > cardAspect
+      ? props.imageSize.width
+      : props.imageSize.height * sourceAspect;
+  const displayHeight =
+    sourceAspect > cardAspect
+      ? props.imageSize.width / sourceAspect
+      : props.imageSize.height;
   const dragBounds = (position: { x: number; y: number }) => ({
     x: Math.max(
       0,
@@ -42,8 +52,10 @@ export function EditorCanvasImage(props: EditorCanvasImageProps) {
     <KonvaImage
       image={props.image}
       crop={props.appliedCrop}
-      width={props.imageSize.width}
-      height={props.imageSize.height}
+      x={(props.imageSize.width - displayWidth) / 2}
+      y={(props.imageSize.height - displayHeight) / 2}
+      width={displayWidth}
+      height={displayHeight}
     />
   );
 
