@@ -136,7 +136,11 @@ function buildCombinedModeSchema(
         then: {
           properties: mode.config_schema.properties,
           required: mode.config_schema.required,
-          allOf: modeSchema.allOf,
+          allOf:
+            modeSchema.not === undefined
+              ? modeSchema.allOf
+              : [...(mode.config_schema.allOf ?? []), { not: modeSchema.not }],
+          anyOf: modeSchema.anyOf,
           oneOf: modeSchema.oneOf,
           not: inactiveFieldNames.length
             ? {
