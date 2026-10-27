@@ -30,14 +30,8 @@ export function VideoStudioSettings({
     const type = dynamicForm.getFieldMeta(name)?.inputType;
     return name !== "duration" && type !== "file" && type !== "file-list";
   });
-  const required = advanced.filter(
-    (name) => dynamicForm.getFieldMeta(name)?.required,
-  );
-  const optional = advanced.filter(
-    (name) => !dynamicForm.getFieldMeta(name)?.required,
-  );
   const advancedRef = useRef<HTMLDetailsElement>(null);
-  const hasHiddenError = optional.some(
+  const hasHiddenError = advanced.some(
     (name) =>
       dynamicForm.form.getFieldState(name, dynamicForm.form.formState).invalid,
   );
@@ -85,15 +79,14 @@ export function VideoStudioSettings({
               QUICK_FIELD_ORDER.indexOf(second),
           )
           .map(renderField)}
-        {required.map(renderField)}
       </div>
-      {optional.length > 0 && (
+      {advanced.length > 0 && (
         <details ref={advancedRef} className={styles.advanced}>
           <summary>
             <SlidersHorizontal size={16} aria-hidden="true" />
             {t("pages.generation.video.studio.advanced")}
           </summary>
-          <div className={styles.advancedBody}>{optional.map(renderField)}</div>
+          <div className={styles.advancedBody}>{advanced.map(renderField)}</div>
         </details>
       )}
     </div>

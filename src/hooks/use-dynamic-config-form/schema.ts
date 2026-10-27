@@ -237,15 +237,26 @@ function getSchemaHiddenFields(
 ) {
   const hiddenFields = new Set<string>();
 
-  for (const rule of configSchema.allOf ?? []) {
-    if (!isRecord(rule) || !conditionMatches(rule.if, values)) continue;
+  const visit = (schema: unknown, conditional = false) => {
+    if (!isRecord(schema)) return;
 
-    if (isRecord(rule.then) && "not" in rule.then) {
-      for (const fieldName of collectNotRequiredFields(rule.then.not)) {
+    if (conditional && "not" in schema) {
+      for (const fieldName of collectNotRequiredFields(schema.not)) {
         hiddenFields.add(fieldName);
       }
     }
-  }
+
+    for (const rule of Array.isArray(schema.allOf) ? schema.allOf : []) {
+      if (!isRecord(rule)) continue;
+      if (isRecord(rule.if)) {
+        visit(conditionMatches(rule.if, values) ? rule.then : rule.else, true);
+      } else {
+        visit(rule);
+      }
+    }
+  };
+
+  visit(configSchema);
 
   return hiddenFields;
 }
@@ -763,7 +774,10 @@ export function sanitizeConfigValues(
       getPrimaryType(prop) === "array" &&
       Array.isArray(value) &&
       value.length === 0 &&
-      (prop.minItems ?? 0) > 0
+      (getConditionalProperty(configSchema, key, valuesWithConditionalConsts)
+        ?.minItems ??
+        prop.minItems ??
+        0) > 0
     ) {
       continue;
     }

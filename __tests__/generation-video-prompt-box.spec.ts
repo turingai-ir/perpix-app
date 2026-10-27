@@ -695,6 +695,57 @@ test("updates visible video prompt fields when the generation mode changes", asy
   ).toBeVisible();
 });
 
+for (const viewport of [
+  { width: 375, height: 812 },
+  { width: 768, height: 1024 },
+  { width: 1440, height: 900 },
+]) {
+  test(`keeps defaulted required refinements optional at ${viewport.width}px`, async ({
+    page,
+  }) => {
+    await page.setViewportSize(viewport);
+    const model = getModelDetail();
+    const schema = {
+      ...klingVideoConfigSchema,
+      required: ["mode", "output_format"],
+    };
+    await page.route(
+      (url) => url.pathname === `/api/v1/ai-registry/models/${MODEL_UUID}`,
+      (route) =>
+        route.fulfill({
+          json: {
+            ...model,
+            modes: Object.fromEntries(
+              Object.entries(model.modes).map(([mode, config]) => [
+                mode,
+                { ...config, config_schema: schema },
+              ]),
+            ),
+          },
+        }),
+    );
+    const generateRequest = waitForGenerateRequest(page);
+
+    await openVideoGenerationPage(page);
+    const refinements = page.locator("details").filter({
+      hasText: "ریزکاری‌های بیشتر",
+    });
+    await expect(refinements.getByText("فرمت خروجی")).toHaveCount(1);
+    await expect(refinements.getByText("فرمت خروجی")).toBeHidden();
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= window.innerWidth,
+      ),
+    ).toBe(true);
+
+    await page.getByPlaceholder(VIDEO_PROMPT_PLACEHOLDER).fill("A quiet forest");
+    await page.locator('button[type="submit"]').click();
+    await expect(generateRequest).resolves.toMatchObject({
+      ai_model_config: { output_format: "MP4", prompt: "A quiet forest" },
+    });
+  });
+}
+
 test("shows the generation rules from the prompt box help button", async ({
   page,
 }) => {
