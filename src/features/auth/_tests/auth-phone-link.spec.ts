@@ -64,9 +64,7 @@ test("a failed automatic submission keeps the number and only retries manually",
     return route.abort();
   });
   await page.goto("/auth/login?phone=09038276860");
-  await expect(page.getByRole("alert")).toContainText(
-    "ارتباط با سرور برقرار نشد",
-  );
+  await expect(page.getByRole("alert")).toContainText("اتصال برقرار نشد");
   await expect(page.getByLabel("شماره موبایل")).toHaveValue("09038276860");
   await expect(page.getByRole("button", { name: "ادامه دادن" })).toBeEnabled();
   expect(starts).toBe(1);
