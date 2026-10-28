@@ -5,7 +5,6 @@ import { NumericFormat } from "react-number-format";
 import z from "zod";
 
 import { Button } from "@/components/ui/button";
-import { DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -18,6 +17,10 @@ import { Input } from "@/components/ui/input";
 import { useAppTranslate } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
 import { formatLocalizedNumber } from "@/utils";
+import {
+  WalletChargeDescription,
+  WalletChargeTitle,
+} from "./wallet-charge-surface";
 
 const PRESET_AMOUNTS = [100, 500, 1_000, 5_000] as const;
 
@@ -55,14 +58,14 @@ export function TokenAmountStep(props: TokenAmountStepProps) {
           <div className="bg-primary/12 text-primary mb-4 flex size-11 items-center justify-center rounded-2xl">
             <WalletCards aria-hidden="true" className="size-5" />
           </div>
-          <DialogTitle className="text-xl font-semibold">
+          <WalletChargeTitle className="text-xl font-semibold">
             {t("pages.app.layout.sidebar.balanceCard.chargeWallet.title")}
-          </DialogTitle>
-          <DialogDescription className="mt-2 leading-6">
+          </WalletChargeTitle>
+          <WalletChargeDescription className="mt-2 leading-6">
             {t(
               "pages.app.layout.sidebar.balanceCard.chargeWallet.amountDescription",
             )}
-          </DialogDescription>
+          </WalletChargeDescription>
         </header>
         <div className="bg-muted/30 rounded-2xl border px-4 py-3 text-sm">
           <span className="text-muted-foreground">
