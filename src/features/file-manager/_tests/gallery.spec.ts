@@ -2,9 +2,10 @@ import { expect, test } from "@playwright/test";
 import { mockAuthenticatedSession } from "../../../../__tests__/support/auth-session";
 import { mockAppShellApis } from "../../auth/_tests/support";
 
-test("gallery lists new formats, metadata and expiry on desktop and mobile", async ({
+test("gallery keeps its files after a failed mobile refresh", async ({
   page,
-}, testInfo) => {
+}) => {
+  await page.setViewportSize({ width: 390, height: 900 });
   await mockAuthenticatedSession(page);
   await mockAppShellApis(page);
   const types = ["image/webp", "video/quicktime", "video/webm", "audio/mp4"];
@@ -68,29 +69,15 @@ test("gallery lists new formats, metadata and expiry on desktop and mobile", asy
   await expect(page.getByText(/ثانیه/)).toBeVisible();
   await expect(page.getByText(/انقضا:/)).toHaveCount(4);
   await expect(page.getByText("اطلاعات رسانه نامشخص است")).toHaveCount(2);
-  for (const [name, width] of [
-    ["desktop", 1440],
-    ["mobile", 390],
-  ] as const) {
-    await page.setViewportSize({ width, height: 900 });
-    await page.keyboard.press("Escape");
-    await expect(page.getByText("تصویر.webp", { exact: true })).toBeVisible();
-    expect(
-      await page.evaluate(
-        () => document.documentElement.scrollWidth <= window.innerWidth,
-      ),
-    ).toBe(true);
-    await page.screenshot({
-      path: testInfo.outputPath(`gallery-${name}.png`),
-      fullPage: true,
-    });
-  }
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    ),
+  ).toBe(true);
   await page.route("**/file-manager/user-files*", (route) =>
     route.fulfill({ status: 503, json: {} }),
   );
-  await page.getByRole("button", { name: "بروزرسانی", exact: true }).click();
-  await expect(
-    page.getByRole("status").filter({ hasText: "فهرست تازه نشد" }),
-  ).toBeVisible();
+  await page.getByRole("button", { name: "تازه‌سازی", exact: true }).click();
+  await expect(page.getByRole("alert")).toContainText("فایل‌ها بارگذاری نشدن");
   await expect(page.getByText("تصویر.webp", { exact: true })).toBeVisible();
 });

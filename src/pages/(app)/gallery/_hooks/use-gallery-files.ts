@@ -20,7 +20,6 @@ export const useGalleryFiles = () => {
     () => getGalleryFiles(userFilesState.data?.pages),
     [userFilesState.data?.pages],
   );
-
   const fetchMoreFiles = () => {
     if (
       userFilesState.hasNextPage &&

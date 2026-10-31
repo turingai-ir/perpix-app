@@ -39,6 +39,41 @@ test("resolves nullable JSON Schema types consistently", () => {
   expect(getPrimaryType({ type: "boolean" })).toBe("boolean");
 });
 
+test("accepts each mode's duration when mode schemas have different constraints", async () => {
+  const makeMode = (value: string, duration: number) => ({
+    value,
+    config_schema: {
+      type: "object" as const,
+      properties: {
+        duration: {
+          type: "integer" as const,
+          enum: [duration],
+          const: duration,
+          default: duration,
+        },
+      },
+      required: ["duration"],
+      additionalProperties: false,
+    },
+  });
+  const config = getModelDynamicConfig({
+    modes: {
+      text_to_video: makeMode("text_to_video", 5),
+      image_to_video: makeMode("image_to_video", 10),
+    },
+  });
+  const resolver = buildAjvResolver(config.configSchema!);
+
+  for (const [mode, duration] of [
+    ["text_to_video", 5],
+    ["image_to_video", 10],
+  ] as const) {
+    const result = await resolver({ mode, duration }, {}, {} as never);
+    expect(result.errors, `${mode} should accept ${duration}s`).toEqual({});
+    expect(result.values).toMatchObject({ mode, duration });
+  }
+});
+
 test("recompiles an updated schema without colliding on its stable id", async () => {
   const initialSchema: JsonConfigSchema = {
     $id: "stable-model-config",
@@ -385,4 +420,193 @@ test("Seedance keeps duration constraints and pricing-only visibility within the
     expect(meta.inputType).toBe(mode === "video_edit" ? "hidden" : "select");
     expect(meta.property.const).toBe(mode === "video_edit" ? 30 : undefined);
   }
+});
+
+test("Seedance image-to-video does not require an optional reference audio", async () => {
+  const model: unknown = JSON.parse(
+    readFileSync(
+      new URL("./fixtures/seedance-video-config.json", import.meta.url),
+      "utf8",
+    ),
+  );
+  const { configSchema, configMeta } = getModelDynamicConfig(model);
+  if (!configSchema) throw new Error("Expected Seedance schema");
+  const resolver = buildAjvResolver(configSchema, undefined, { configMeta });
+  const imageValues = {
+    ...buildDefaultValues(configSchema, { mode: "image_to_video" }),
+    mode: "image_to_video",
+    frame_images: ["frame-id"],
+  };
+
+  const withoutAudio = await resolver(imageValues, {}, {} as never);
+  expect(withoutAudio.errors).toEqual({});
+  expect(withoutAudio.values.reference_audios).toBeUndefined();
+
+  const withAudio = await resolver(
+    { ...imageValues, reference_audios: ["audio-id"] },
+    {},
+    {} as never,
+  );
+  expect(withAudio.errors).toEqual({});
+  expect(withAudio.values.reference_audios).toEqual(["audio-id"]);
+
+  const audioDrivenWithoutAudio = await resolver(
+    { ...imageValues, mode: "audio_driven_video", frame_images: undefined },
+    {},
+    {} as never,
+  );
+  expect(audioDrivenWithoutAudio.errors.reference_audios).toBeDefined();
+});
+
+test("Seedance reference-to-video requires a reference but not incompatible defaults", async () => {
+  const model: unknown = JSON.parse(
+    readFileSync(
+      new URL("./fixtures/seedance-video-config.json", import.meta.url),
+      "utf8",
+    ),
+  );
+  const { configSchema, configMeta } = getModelDynamicConfig(model);
+  if (!configSchema) throw new Error("Expected Seedance schema");
+  const resolver = buildAjvResolver(configSchema, undefined, { configMeta });
+  const defaults = {
+    ...buildDefaultValues(configSchema, { mode: "reference_to_video" }),
+    mode: "reference_to_video",
+  };
+
+  const noReference = await resolver(defaults, {}, {} as never);
+  expect(noReference.errors.root).toBeDefined();
+
+  for (const reference of [
+    { reference_images: ["image-id"] },
+    { reference_videos: ["video-id"] },
+    { input_video: "video-id" },
+  ]) {
+    const result = await resolver({ ...defaults, ...reference }, {}, {} as never);
+    expect(result.errors, JSON.stringify(reference)).toEqual({});
+    expect(result.values).toMatchObject(reference);
+    if ("input_video" in reference) {
+      expect(result.values.aspect_ratio).toBeUndefined();
+    }
+  }
+});
+
+test("wrapped Kling modes retain their conditional validation and defaults", async () => {
+  const modes = Object.fromEntries(
+    ["text_to_video", "image_to_video", "motion_control"].map((mode) => [
+      mode,
+      { value: mode, config_schema: videoConfigSchema },
+    ]),
+  );
+  const { configSchema, configMeta } = getModelDynamicConfig({ modes });
+  if (!configSchema) throw new Error("Expected Kling schema");
+  const resolver = buildAjvResolver(configSchema, undefined, { configMeta });
+  const defaults = buildDefaultValues(configSchema);
+
+  for (const [mode, inputs] of [
+    ["text_to_video", { prompt: "A flying bird" }],
+    [
+      "image_to_video",
+      { prompt: "Animate this image", frame_images: ["image-id"] },
+    ],
+    [
+      "motion_control",
+      { reference_videos: ["video-id"], reference_images: ["image-id"] },
+    ],
+  ] as const) {
+    const result = await resolver(
+      { ...defaults, mode, ...inputs },
+      {},
+      {} as never,
+    );
+    expect(result.errors, mode).toEqual({});
+    expect(result.values).toMatchObject({ mode, ...inputs });
+    if (mode === "motion_control") {
+      expect(result.values.character_orientation).toBe("image");
+      expect(result.values.resolution).toBeUndefined();
+      expect(result.values.aspect_ratio).toBeUndefined();
+    }
+  }
+});
+
+test("Seedance modes accept only their real required media without extra references", async () => {
+  const model: unknown = JSON.parse(
+    readFileSync(
+      new URL("./fixtures/seedance-video-config.json", import.meta.url),
+      "utf8",
+    ),
+  );
+  const { configSchema, configMeta } = getModelDynamicConfig(model);
+  if (!configSchema) throw new Error("Expected Seedance schema");
+  const resolver = buildAjvResolver(configSchema, undefined, { configMeta });
+
+  for (const { mode, requiredInput } of [
+    { mode: "text_to_video", requiredInput: { prompt: "A flying bird" } },
+    { mode: "image_to_video", requiredInput: { frame_images: ["image-id"] } },
+    { mode: "video_edit", requiredInput: { input_video: "video-id" } },
+    {
+      mode: "reference_to_video",
+      requiredInput: { reference_images: ["image-id"] },
+    },
+    { mode: "video_extend", requiredInput: { input_video: "video-id" } },
+    {
+      mode: "audio_driven_video",
+      requiredInput: { reference_audios: ["audio-id"] },
+    },
+  ]) {
+    const defaults = { ...buildDefaultValues(configSchema, { mode }), mode };
+    const invalid = await resolver(defaults, {}, {} as never);
+    expect(Object.keys(invalid.errors).length, mode).toBeGreaterThan(0);
+
+    const valid = await resolver(
+      { ...defaults, ...requiredInput },
+      {},
+      {} as never,
+    );
+    expect(valid.errors, mode).toEqual({});
+    expect(valid.values).toMatchObject({ mode, ...requiredInput });
+  }
+});
+
+test("mode-level exclusions remain effective without hiding valid optional inputs", async () => {
+  const { configSchema } = getModelDynamicConfig({
+    modes: {
+      text_to_video: {
+        value: "text_to_video",
+        config_schema: {
+          type: "object",
+          additionalProperties: false,
+          properties: {
+            prompt: { type: "string" },
+            reference_images: {
+              type: "array",
+              items: { type: "string" },
+              minItems: 1,
+            },
+          },
+          required: ["prompt"],
+          not: { required: ["prompt", "reference_images"] },
+        },
+      },
+    },
+  });
+  if (!configSchema) throw new Error("Expected schema with exclusion");
+  const resolver = buildAjvResolver(configSchema);
+
+  const withoutReference = await resolver(
+    { mode: "text_to_video", prompt: "A flying bird" },
+    {},
+    {} as never,
+  );
+  expect(withoutReference.errors).toEqual({});
+
+  const withForbiddenReference = await resolver(
+    {
+      mode: "text_to_video",
+      prompt: "A flying bird",
+      reference_images: ["image-id"],
+    },
+    {},
+    {} as never,
+  );
+  expect(withForbiddenReference.errors.root).toBeDefined();
 });

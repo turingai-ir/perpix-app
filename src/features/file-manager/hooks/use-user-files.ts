@@ -1,7 +1,7 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { fetchUserFiles } from "../services/files";
-import type { FileManagerAllowedContentType } from "../model/content-types";
-import { userFilesKey } from "../model/types";
+import { loadUserFiles } from "../services/user-files";
+import { userFilesKey } from "../model/contracts";
+import { canRetryFileRequest } from "../model/file-error";
 
 export const userFilesPageLimit = 20;
 export function useInfiniteUserFiles({
@@ -9,7 +9,7 @@ export function useInfiniteUserFiles({
   enabled = true,
   limit = userFilesPageLimit,
 }: {
-  contentTypes: readonly FileManagerAllowedContentType[];
+  contentTypes: readonly string[];
   enabled?: boolean;
   limit?: number;
 }) {
@@ -17,12 +17,13 @@ export function useInfiniteUserFiles({
   const getUserFilesState = useInfiniteQuery({
     queryKey: [...userFilesKey, { contentTypes: types, limit }],
     queryFn: ({ pageParam, signal }) =>
-      fetchUserFiles(types, pageParam, limit, signal),
+      loadUserFiles(types, pageParam, limit, signal),
     initialPageParam: 0,
     enabled: enabled && types.length > 0,
-    getNextPageParam: (last, _pages, offset) =>
-      last.has_next ? offset + limit : undefined,
     staleTime: 30_000,
+    getNextPageParam: (page, _pages, offset) =>
+      page.has_next ? offset + limit : undefined,
+    retry: (count, error) => count < 1 && canRetryFileRequest(error),
   });
   return { getUserFilesState };
 }

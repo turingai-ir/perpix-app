@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
+import type { GenerationComposerIntent } from "../../_types/conversation";
 
 import type { DynamicConfigForm } from "@/pages/(app)/generation/_components/dynamic-config";
+import type { useModel } from "@/pages/(app)/generation/_hooks/model";
 import type {
   AiRegistryModelSupportedTypesEnumValue,
   SchemaAiTaskMessageResponse,
@@ -21,6 +23,17 @@ export interface GenerationPromptBoxProps {
   advancedExcludedFieldNames: ReadonlySet<string>;
   configDefaultsResolver?: ConfigDefaultsResolver;
   extraContent?: (props: PromptBoxExtraContentProps) => ReactNode;
+  modelSelectionContent?: (props: {
+    disabled: boolean;
+    dynamicForm: DynamicConfigForm;
+    model: ReturnType<typeof useModel>;
+  }) => ReactNode;
+  primaryActionLabel?: string;
+  advancedSettingsLabel?: string;
+  composerLabel?: string;
+  modelLabel?: string;
+  composerIntent?: GenerationComposerIntent;
+  initialPrompt?: string;
   isLoading?: boolean;
   lastMessageConfig?: SchemaAiTaskMessageResponse["ai_model_config"];
   lastMessageModelUuid?: SchemaAiTaskMessageResponse["ai_model_uuid"];
@@ -29,8 +42,10 @@ export interface GenerationPromptBoxProps {
     data: Readonly<Record<string, unknown>>,
     aiModelUuid: string,
   ) => Promise<void> | void;
+  onComposerIntentApplied?: (intentId: string) => void;
   successfulMessageClearKey?: string;
   promptBoxFieldNames: ReadonlySet<string>;
   promptPlaceholderKey: string;
+  showModeSection?: boolean;
   supportedOutputs: AiRegistryModelSupportedTypesEnumValue[];
 }

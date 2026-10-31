@@ -1,13 +1,13 @@
-import { useEffect, useMemo, type FC } from "react";
+import { useEffect, useMemo, useState, type FC } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLocation, useNavigate } from "react-router";
 
 import { getPostLoginPath } from "../model/auth-navigation";
-import { toast } from "sonner";
 import type { z } from "zod";
 
 import { createLoginSchema } from "../model/schemas";
+import { failureOf } from "../model/auth-failure";
 import { useAuthFeedback } from "../hooks/use-auth-feedback";
 import { useAuthFormMessages } from "../hooks/use-auth-form-messages";
 import { useLoginMutation } from "../hooks/use-auth-mutations";
@@ -27,6 +27,7 @@ interface LoginFormProps {
   onForgotPassword: () => Promise<void>;
   onBack: () => void;
   isResetPending: boolean;
+  onAuthenticated: () => Promise<void>;
 }
 
 export const LoginForm: FC<LoginFormProps> = ({
@@ -34,6 +35,7 @@ export const LoginForm: FC<LoginFormProps> = ({
   onForgotPassword,
   onBack,
   isResetPending,
+  onAuthenticated,
 }) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const navigate = useNavigate();
@@ -52,6 +54,8 @@ export const LoginForm: FC<LoginFormProps> = ({
   useEffect(() => setFocus("password"), [setFocus]);
   const feedback = useAuthFeedback(form);
   const login = useLoginMutation();
+  const [reactionId, setReactionId] = useState(0);
+  const [isEntering, setIsEntering] = useState(false);
 
   const onSubmit = async (values: z.output<typeof schema>) => {
     feedback.clear();
@@ -59,10 +63,14 @@ export const LoginForm: FC<LoginFormProps> = ({
       await login.mutateAsync(values);
     } catch (error) {
       feedback.handleError(error);
+      if (failureOf(error).kind === "invalid-credentials") {
+        setReactionId((id) => id + 1);
+      }
 
       return;
     }
-    toast.success(t("features.auth.toasts.loggedIn"));
+    setIsEntering(true);
+    await onAuthenticated();
     void navigate(getPostLoginPath(search), { replace: true });
   };
 
@@ -70,11 +78,23 @@ export const LoginForm: FC<LoginFormProps> = ({
     <AuthCard
       title={t("features.auth.login.title")}
       description={t("features.auth.login.description")}
+      reaction={
+        reactionId
+          ? {
+              id: reactionId,
+              kind: "password",
+              message: t("features.auth.login.wrongPasswordReaction"),
+            }
+          : undefined
+      }
       footer={
         <LoginActions
           onBack={onBack}
           disabled={
-            login.isPending || isResetPending || feedback.lockedSeconds > 0
+            login.isPending ||
+            isResetPending ||
+            isEntering ||
+            feedback.lockedSeconds > 0
           }
           onForgotPassword={async () => {
             feedback.clear();
@@ -104,7 +124,7 @@ export const LoginForm: FC<LoginFormProps> = ({
           <FormAlert message={feedback.message} />
           <SubmitButton
             label={t("features.auth.login.submit")}
-            isPending={login.isPending || isResetPending}
+            isPending={login.isPending || isResetPending || isEntering}
             lockedSeconds={feedback.lockedSeconds}
           />
         </form>

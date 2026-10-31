@@ -4,16 +4,20 @@ import { getPromptConfigFieldNames } from "@/pages/(app)/generation/_components/
 import type { GenerationPromptBoxProps } from "@/pages/(app)/generation/_components/prompt-box/types";
 import { useGenerationDynamicForm } from "@/pages/(app)/generation/_hooks/use-generation-dynamic-form";
 import { useGenerationFormSubmit } from "@/pages/(app)/generation/_hooks/use-generation-form-submit";
+import { useGenerationComposerIntent } from "./use-generation-composer-intent";
 
 type Input = Pick<
   GenerationPromptBoxProps,
   | "advancedExcludedFieldNames"
+  | "composerIntent"
   | "configDefaultsResolver"
+  | "initialPrompt"
   | "isLoading"
   | "lastMessageConfig"
   | "lastMessageModelUuid"
   | "lastMessageStatus"
   | "onSubmit"
+  | "onComposerIntentApplied"
   | "promptBoxFieldNames"
   | "successfulMessageClearKey"
   | "supportedOutputs"
@@ -45,6 +49,12 @@ export function useGenerationPromptBox(input: Input) {
     dynamicForm,
     excludedFields: input.advancedExcludedFieldNames,
   });
+  const composerIntent = useGenerationComposerIntent({
+    dynamicForm,
+    intent: input.composerIntent,
+    model,
+    onApplied: input.onComposerIntentApplied,
+  });
 
   useEffect(() => {
     if (!input.successfulMessageClearKey) return;
@@ -65,6 +75,7 @@ export function useGenerationPromptBox(input: Input) {
 
   return {
     advancedFieldNames,
+    composerIntentBlocked: composerIntent.isBlocked,
     dynamicForm,
     ...submitState,
     isUploadingMedia,

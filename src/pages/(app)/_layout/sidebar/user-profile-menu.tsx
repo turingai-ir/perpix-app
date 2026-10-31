@@ -1,16 +1,11 @@
-import { useState, type FC } from "react";
+import type { FC } from "react";
 import { useNavigate } from "react-router";
-import {
-  BadgeCheck,
-  ChevronsUpDown,
-  Download,
-  KeyRound,
-  LogOut,
-} from "lucide-react";
+import { ChevronsUpDown, Download, LogOut } from "lucide-react";
 
+import { AccountIcon } from "./menu-icons";
 import AppLayoutSidebarUserAvatar from "./user-avatar";
+import styles from "./sidebar.module.css";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -18,11 +13,10 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useActiveSubscription } from "@/feature/pricing";
-import { ChangePasswordDialog, useSignOutActions } from "@/features/auth";
+import { useSignOutActions } from "@/features/auth";
 import { usePwaInstall } from "@/feature/pwa";
 import { useAppTranslate } from "@/hooks";
 import { APP_ROUTES_KEY } from "@/router/routes";
@@ -32,7 +26,6 @@ const AppLayoutSidebarUserProfileMenu: FC = () => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const navigate = useNavigate();
   const signOutActions = useSignOutActions();
-  const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
   const pwaInstall = usePwaInstall();
   const activeSubscriptionState = useActiveSubscription();
   const planName =
@@ -40,69 +33,72 @@ const AppLayoutSidebarUserProfileMenu: FC = () => {
     t("features.pricing.plans.free.title");
 
   return (
-    <>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild className="mt-auto">
-          <Button variant="ghost" size="lg">
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild className="mt-auto">
+        <Button variant="ghost" size="lg" className={styles.profileTrigger}>
+          <AppLayoutSidebarUserAvatar />
+          <div className={styles.profileText}>
+            <span>{t("pages.app.layout.sidebar.user.account")}</span>
+            <small>{planName}</small>
+          </div>
+          <ChevronsUpDown
+            className={styles.profileChevron}
+            aria-hidden="true"
+          />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        className={`${styles.profileDropdown} z-[70] w-(--radix-dropdown-menu-trigger-width) min-w-56`}
+        side="top"
+        align="end"
+        sideOffset={8}
+      >
+        <DropdownMenuLabel className={styles.profileDropdownHeader}>
+          <div className={styles.profileDropdownIdentity}>
             <AppLayoutSidebarUserAvatar />
-            <div className="flex flex-1 text-right text-sm leading-tight">
-              <Badge>{planName}</Badge>
+            <div className={styles.profileText}>
+              <span>{t("pages.app.layout.sidebar.user.membership")}</span>
+              <small className={styles.profilePlan}>{planName}</small>
             </div>
-            <ChevronsUpDown className="mr-auto size-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent
-          className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-          side="top"
-          align="end"
-          sideOffset={4}
-        >
-          <DropdownMenuLabel className="p-0 font-normal">
-            <div className="flex items-center gap-2 px-1 py-1.5 text-right text-sm">
-              <AppLayoutSidebarUserAvatar />
-              <div className="flex flex-1 text-right text-sm leading-tight">
-                <Badge>{planName}</Badge>
-              </div>
-            </div>
-          </DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuGroup>
+          </div>
+        </DropdownMenuLabel>
+        <DropdownMenuGroup className={styles.profileDropdownItems}>
+          <DropdownMenuItem
+            className={styles.profileMenuItem}
+            onClick={() => navigate(APP_ROUTES_KEY.profile.root.path)}
+          >
+            <span className={styles.profileMenuIcon}>
+              <AccountIcon aria-hidden="true" />
+            </span>
+            <span>{t("pages.app.layout.sidebar.user.manageAccount")}</span>
+          </DropdownMenuItem>
+          {pwaInstall.canInstall ? (
             <DropdownMenuItem
-              onClick={() => navigate(APP_ROUTES_KEY.profile.root.path)}
+              className={`${styles.profileMenuItem} ${styles.profileMenuItemInstall}`}
+              onSelect={(event) => {
+                event.preventDefault();
+                void pwaInstall.requestInstall();
+              }}
             >
-              <BadgeCheck />
-              {t("pages.app.layout.sidebar.user.account")}
+              <span className={styles.profileMenuIcon}>
+                <Download aria-hidden="true" />
+              </span>
+              <span>{t("features.pwaInstall.action")}</span>
             </DropdownMenuItem>
-            {pwaInstall.canInstall ? (
-              <DropdownMenuItem
-                onSelect={(event) => {
-                  event.preventDefault();
-                  void pwaInstall.requestInstall();
-                }}
-              >
-                <Download />
-                {t("features.pwaInstall.action")}
-              </DropdownMenuItem>
-            ) : null}
-            <DropdownMenuItem onSelect={() => setIsChangePasswordOpen(true)}>
-              <KeyRound />
-              {t("features.auth.changePassword.menu")}
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              disabled={signOutActions.isPending}
-              onSelect={() => void signOutActions.signOut()}
-            >
-              <LogOut />
-              {t("pages.app.layout.sidebar.user.logout")}
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-        </DropdownMenuContent>
-      </DropdownMenu>
-      <ChangePasswordDialog
-        open={isChangePasswordOpen}
-        onOpenChange={setIsChangePasswordOpen}
-      />
-    </>
+          ) : null}
+          <DropdownMenuItem
+            className={`${styles.profileMenuItem} ${styles.profileMenuItemExit}`}
+            disabled={signOutActions.isPending}
+            onSelect={() => void signOutActions.signOut()}
+          >
+            <span className={styles.profileMenuIcon}>
+              <LogOut aria-hidden="true" />
+            </span>
+            <span>{t("pages.app.layout.sidebar.user.logout")}</span>
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 

@@ -166,6 +166,38 @@ function conditionMatches(
   return visibilityAjv.validate(condition, values) as boolean;
 }
 
+export function getRequiredConfigFields(
+  schema: unknown,
+  values: Record<string, unknown>,
+): Set<string> {
+  const required = new Set<string>();
+  if (!isRecord(schema)) return required;
+  for (const name of Array.isArray(schema.required) ? schema.required : []) {
+    if (typeof name === "string") required.add(name);
+  }
+  const branches = Array.isArray(schema.allOf) ? [...schema.allOf] : [];
+  if (isRecord(schema.if)) {
+    branches.push(
+      conditionMatches(schema.if, values) ? schema.then : schema.else,
+    );
+  }
+  for (const branch of branches) {
+    for (const name of getRequiredConfigFields(branch, values))
+      required.add(name);
+  }
+  // Alternatives do not make every input mandatory: only their common requirements do.
+  for (const alternatives of [schema.oneOf, schema.anyOf]) {
+    if (!Array.isArray(alternatives) || !alternatives.length) continue;
+    const sets = alternatives.map((branch) =>
+      getRequiredConfigFields(branch, values),
+    );
+    for (const name of sets[0]) {
+      if (sets.every((fields) => fields.has(name))) required.add(name);
+    }
+  }
+  return required;
+}
+
 function collectNotRequiredFields(schema: unknown): string[] {
   if (!isRecord(schema)) return [];
 
@@ -205,15 +237,26 @@ function getSchemaHiddenFields(
 ) {
   const hiddenFields = new Set<string>();
 
-  for (const rule of configSchema.allOf ?? []) {
-    if (!isRecord(rule) || !conditionMatches(rule.if, values)) continue;
+  const visit = (schema: unknown, conditional = false) => {
+    if (!isRecord(schema)) return;
 
-    if (isRecord(rule.then) && "not" in rule.then) {
-      for (const fieldName of collectNotRequiredFields(rule.then.not)) {
+    if (conditional && "not" in schema) {
+      for (const fieldName of collectNotRequiredFields(schema.not)) {
         hiddenFields.add(fieldName);
       }
     }
-  }
+
+    for (const rule of Array.isArray(schema.allOf) ? schema.allOf : []) {
+      if (!isRecord(rule)) continue;
+      if (isRecord(rule.if)) {
+        visit(conditionMatches(rule.if, values) ? rule.then : rule.else, true);
+      } else {
+        visit(rule);
+      }
+    }
+  };
+
+  visit(configSchema);
 
   return hiddenFields;
 }
@@ -731,7 +774,10 @@ export function sanitizeConfigValues(
       getPrimaryType(prop) === "array" &&
       Array.isArray(value) &&
       value.length === 0 &&
-      (prop.minItems ?? 0) > 0
+      (getConditionalProperty(configSchema, key, valuesWithConditionalConsts)
+        ?.minItems ??
+        prop.minItems ??
+        0) > 0
     ) {
       continue;
     }
@@ -892,7 +938,10 @@ export function buildFieldMeta(params: {
   return {
     name,
     property: resolvedProperty,
-    required: isRequired(name, requiredFields),
+    required:
+      values && configSchema
+        ? getRequiredConfigFields(configSchema, values).has(name)
+        : isRequired(name, requiredFields),
     defaultValue: defaultValues[name],
     inputType,
     options: resolvedProperty.enum,
