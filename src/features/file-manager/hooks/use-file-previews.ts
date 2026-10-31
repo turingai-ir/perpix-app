@@ -3,7 +3,7 @@ import { useQueries, useQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useState } from "react";
 import { loadPreview } from "../services/preview-queue";
 import { previewKey, type FilePreviewUrls } from "../model/contracts";
-import { canRetryFileRequest } from "../model/file-error";
+import { canRetryFileRequest, isMissingFilePreview } from "../model/file-error";
 
 function options(id: string, enabled: boolean) {
   return {
@@ -66,13 +66,16 @@ export function useFilesPreviews(ids: readonly string[], enabled = true) {
     queries: unique.map((id) => options(id, enabled)),
   });
   const data: Record<string, FilePreviewUrls> = {};
+  const missingFileIds: string[] = [];
   results.forEach((result, i) => {
+    if (isMissingFilePreview(result.error)) missingFileIds.push(unique[i]);
     if (result.data && available(result.data, result.error))
       data[unique[i]] = result.data;
   });
   return {
     getFilesPreviewsState: {
       data,
+      missingFileIds,
       isPending: results.some((result) => result.isPending),
       isError: results.some((result) => result.isError),
       refetch: () => Promise.all(results.map((result) => result.refetch())),

@@ -65,14 +65,14 @@ export const UserFileCard: FC<UserFileCardProps> = ({
             decoding="async"
             src={previewUrl}
             alt={fileName}
-            className="h-full w-full object-cover transition-transform group-hover:scale-105"
+            className="h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-200 motion-safe:[@media(hover:hover)_and_(pointer:fine)]:group-hover:scale-105"
           />
         ) : null}
 
         {!isPreviewError && previewUrl && previewType === "video" ? (
           <video
             src={previewUrl}
-            className="h-full w-full object-cover transition-transform group-hover:scale-105"
+            className="h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-200 motion-safe:[@media(hover:hover)_and_(pointer:fine)]:group-hover:scale-105"
             preload="metadata"
             muted
           />
@@ -85,18 +85,22 @@ export const UserFileCard: FC<UserFileCardProps> = ({
         ) : null}
 
         {isPreviewLoading && !previewUrl && (
-          <Skeleton className="h-full w-full rounded-none" />
+          <Skeleton className="h-full w-full rounded-none motion-reduce:animate-none" />
         )}
 
         {(isPreviewError || (!isPreviewLoading && !previewUrl)) && (
           <UserFileFallback previewType={previewType} />
         )}
 
-        {isSelected && (
-          <span className="bg-primary text-primary-foreground absolute top-2 right-2 flex h-6 w-6 items-center justify-center rounded-full">
-            <Check className="h-4 w-4" />
-          </span>
-        )}
+        <span
+          aria-hidden="true"
+          className={cn(
+            "bg-primary text-primary-foreground pointer-events-none absolute top-2 right-2 flex h-6 w-6 items-center justify-center rounded-full motion-safe:transition-opacity motion-safe:duration-150",
+            isSelected ? "opacity-100" : "opacity-0",
+          )}
+        >
+          <Check className="h-4 w-4" />
+        </span>
       </div>
       <div className="flex min-w-0 flex-col gap-0.5 p-2">
         <span className="truncate text-xs font-medium">{fileName}</span>

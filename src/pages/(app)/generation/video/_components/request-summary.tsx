@@ -30,6 +30,7 @@ export function VideoRequestSummary({
                 fit="contain"
                 index={index}
                 type="image"
+                compact
               />
             </div>
           ))}

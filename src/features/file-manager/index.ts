@@ -23,3 +23,4 @@ export {
 } from "./hooks/use-user-files";
 
 export { FILE_MANAGER_ALLOWED_CONTENT_TYPES } from "./model/contracts";
+export { isMissingFilePreview } from "./model/file-error";

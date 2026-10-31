@@ -328,6 +328,7 @@ test("populated video references retain large previews and a labeled add control
       task_status: "SUCCESS",
     },
   ]);
+  await mockAuthenticatedSession(page);
   await page.route("**/file-manager/files/presigned-urls", (route) =>
     route.fulfill({
       json: {
@@ -738,7 +739,9 @@ for (const viewport of [
       ),
     ).toBe(true);
 
-    await page.getByPlaceholder(VIDEO_PROMPT_PLACEHOLDER).fill("A quiet forest");
+    await page
+      .getByPlaceholder(VIDEO_PROMPT_PLACEHOLDER)
+      .fill("A quiet forest");
     await page.locator('button[type="submit"]').click();
     await expect(generateRequest).resolves.toMatchObject({
       ai_model_config: { output_format: "MP4", prompt: "A quiet forest" },
@@ -1159,14 +1162,25 @@ test("switches Nano Banana image modes when references are added and removed", a
 
   await page.goto("/generation/image");
   const references = page.locator("[data-generation-mode]");
-  await expect(references).toHaveAttribute("data-generation-mode", "text_to_image");
-  await references.getByRole("button", { name: "افزودن عکس", exact: true }).click();
+  await expect(references).toHaveAttribute(
+    "data-generation-mode",
+    "text_to_image",
+  );
+  await references
+    .getByRole("button", { name: "افزودن عکس", exact: true })
+    .click();
   const picker = page.getByRole("dialog", { name: "افزودن عکس" });
   await picker.getByRole("button", { name: /reference\.png/ }).click();
   await picker.getByRole("button", { name: /افزودن 1 عکس/ }).click();
-  await expect(references).toHaveAttribute("data-generation-mode", "image_to_image");
+  await expect(references).toHaveAttribute(
+    "data-generation-mode",
+    "image_to_image",
+  );
   await references.getByRole("button", { name: "حذف تصویر مرجع 1" }).click();
-  await expect(references).toHaveAttribute("data-generation-mode", "text_to_image");
+  await expect(references).toHaveAttribute(
+    "data-generation-mode",
+    "text_to_image",
+  );
   await page
     .getByRole("textbox", { name: "توصیف تصویر", exact: true })
     .fill("A quiet mountain lake");
@@ -1289,6 +1303,7 @@ test("shows the generation failure reason and retries it in the same chat", asyn
   const retryRequest = waitForGenerateRequest(page);
 
   await mockApi(page, [failedMessage]);
+  await mockAuthenticatedSession(page);
   await page.goto("/generation/video/task-1");
 
   await expect(

@@ -50,6 +50,9 @@ export function ImageResultCard({
 }) {
   const { t } = useAppTranslate();
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [missingIds, setMissingIds] = useState<ReadonlySet<string>>(
+    () => new Set(),
+  );
   const source = requestMessage ?? message;
   const ratio = String(source.ai_model_config?.aspect_ratio ?? "1:1");
   const parsedRatio = parseAspectRatio(ratio);
@@ -62,6 +65,15 @@ export function ImageResultCard({
     prompt,
     resolution,
   });
+  const updateMissing = (fileId: string, missing: boolean) => {
+    setMissingIds((current) => {
+      if (current.has(fileId) === missing) return current;
+      const next = new Set(current);
+      if (missing) next.add(fileId);
+      else next.delete(fileId);
+      return next;
+    });
+  };
   return (
     <article className={`${styles.reveal} ${styles.stage}`}>
       <header className={styles.header}>
@@ -99,6 +111,14 @@ export function ImageResultCard({
               type="image"
               aspectRatio={parsedRatio.css}
               alt={prompt || t("common.image")}
+              showRetentionInfo
+              onMissingChange={(missing) => updateMissing(fileId, missing)}
+              onMissingAction={
+                images.length === 1 && onEditRequest
+                  ? () => onEditRequest(source)
+                  : undefined
+              }
+              missingActionLabel={t("pages.generation.image.chat.editRequest")}
             />
             {onToggleComparison && images.length > 1 ? (
               <Button
@@ -108,6 +128,7 @@ export function ImageResultCard({
                 aria-pressed={comparedImageIds?.has(fileId) ?? false}
                 disabled={
                   disabled ||
+                  (missingIds.has(fileId) && !comparedImageIds?.has(fileId)) ||
                   (comparisonLimitReached && !comparedImageIds?.has(fileId))
                 }
                 className={styles.compareAction}
@@ -130,7 +151,7 @@ export function ImageResultCard({
                 type="button"
                 size="sm"
                 variant="secondary"
-                disabled={disabled}
+                disabled={disabled || missingIds.has(fileId)}
                 className={styles.imageAction}
                 onClick={() => onUseAsReference(fileId)}
               >
@@ -146,7 +167,7 @@ export function ImageResultCard({
           <Button
             type="button"
             variant="default"
-            disabled={disabled}
+            disabled={disabled || missingIds.has(images[0])}
             className={styles.primaryAction}
             onClick={() => onUseAsReference(images[0])}
           >
@@ -161,6 +182,8 @@ export function ImageResultCard({
             aria-pressed={comparedImageIds?.has(images[0]) ?? false}
             disabled={
               disabled ||
+              (missingIds.has(images[0]) &&
+                !comparedImageIds?.has(images[0])) ||
               (comparisonLimitReached && !comparedImageIds?.has(images[0]))
             }
             className={styles.secondaryAction}
@@ -178,18 +201,19 @@ export function ImageResultCard({
             )}
           </Button>
         ) : null}
-        {onEditRequest && (
-          <Button
-            type="button"
-            variant="ghost"
-            disabled={disabled}
-            className={styles.secondaryAction}
-            onClick={() => onEditRequest(source)}
-          >
-            <PencilLine aria-hidden="true" />
-            {t("pages.generation.image.chat.editRequest")}
-          </Button>
-        )}
+        {onEditRequest &&
+          !(images.length === 1 && missingIds.has(images[0])) && (
+            <Button
+              type="button"
+              variant="ghost"
+              disabled={disabled}
+              className={styles.secondaryAction}
+              onClick={() => onEditRequest(source)}
+            >
+              <PencilLine aria-hidden="true" />
+              {t("pages.generation.image.chat.editRequest")}
+            </Button>
+          )}
         {onRegenerate && (
           <Button
             type="button"

@@ -19,19 +19,33 @@ export const LocalUploadStatusItem: FC<{
   return (
     <div
       className={cn(
-        "flex w-72 max-w-full min-w-0 flex-wrap items-center gap-2 rounded-lg border px-2 py-1.5",
+        "flex w-72 max-w-full min-w-0 flex-wrap items-center gap-2 rounded-lg border px-3 py-2 motion-safe:transition-colors motion-safe:duration-150",
         isError && "border-destructive/30 bg-destructive/5",
       )}
     >
       {isUploading ? (
-        <LoaderCircle className="text-muted-foreground h-4 w-4 shrink-0 animate-spin" />
+        <LoaderCircle
+          aria-hidden="true"
+          className="text-muted-foreground h-4 w-4 shrink-0 motion-safe:animate-spin"
+        />
       ) : isError ? (
-        <AlertCircle className="text-destructive h-4 w-4 shrink-0" />
+        <AlertCircle
+          aria-hidden="true"
+          className="text-destructive h-4 w-4 shrink-0"
+        />
       ) : (
-        <Check className="text-primary h-4 w-4 shrink-0" />
+        <Check aria-hidden="true" className="text-primary h-4 w-4 shrink-0" />
       )}
-      <span className="min-w-0 flex-1 truncate text-xs">{item.file.name}</span>
       <span
+        className="min-w-0 flex-1 truncate text-xs"
+        dir="auto"
+        title={item.file.name}
+      >
+        {item.file.name}
+      </span>
+      <span
+        role="status"
+        aria-live="polite"
         className={cn(
           "text-muted-foreground text-xs",
           isError && "text-destructive order-last basis-full wrap-break-word",
@@ -48,7 +62,7 @@ export const LocalUploadStatusItem: FC<{
       item.errorKey !== "features.fileManager.errors.unknownUpload" ? (
         <button
           type="button"
-          className="shrink-0 text-xs underline"
+          className="focus-visible:ring-ring flex min-h-11 shrink-0 items-center rounded-md px-2 text-xs underline underline-offset-2 outline-none focus-visible:ring-2"
           onClick={() => onRetry(item.file)}
         >
           {t("features.fileManager.facts.retry")}

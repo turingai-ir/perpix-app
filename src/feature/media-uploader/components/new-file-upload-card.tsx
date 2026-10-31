@@ -64,7 +64,10 @@ export const NewFileUploadCard: FC<NewFileUploadCardProps> = ({
         <Button asChild disabled={disabled || isUploading} size="sm">
           <label htmlFor={inputId} className="cursor-pointer">
             {isUploading ? (
-              <LoaderCircle className="animate-spin" />
+              <LoaderCircle
+                aria-hidden="true"
+                className="motion-safe:animate-spin"
+              />
             ) : (
               <Upload />
             )}
