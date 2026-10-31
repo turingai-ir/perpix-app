@@ -1,4 +1,4 @@
-import { Download, RefreshCw, X } from "lucide-react";
+import { Download, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -10,6 +10,8 @@ import {
 import { useAppTranslate } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
 import styles from "./video-output.module.css";
+import { MediaUnavailableState } from "./media-unavailable-state";
+import { cn } from "@/lib/utils";
 
 interface Props {
   label: string;
@@ -17,6 +19,7 @@ interface Props {
   downloadUrl?: string;
   onDownload: () => void;
   hasMediaError: boolean;
+  isMissing: boolean;
   isRefreshing: boolean;
   mediaKey: string;
   onMediaError: () => void;
@@ -29,6 +32,7 @@ export function VideoOutputDialog({
   downloadUrl,
   onDownload,
   hasMediaError,
+  isMissing,
   isRefreshing,
   mediaKey,
   onMediaError,
@@ -57,7 +61,12 @@ export function VideoOutputDialog({
       <DialogDescription className="sr-only">
         {t("pages.generation.video.output.preview")}
       </DialogDescription>
-      <div className={styles.screen}>
+      <div
+        className={cn(
+          styles.screen,
+          (!previewUrl || hasMediaError) && styles.unavailableScreen,
+        )}
+      >
         {previewUrl && !hasMediaError ? (
           // Generated video responses do not provide caption tracks.
           // eslint-disable-next-line jsx-a11y/media-has-caption
@@ -71,37 +80,32 @@ export function VideoOutputDialog({
             preload="metadata"
           />
         ) : (
-          <div className="flex flex-col items-center gap-3 p-4">
-            <p role="status" className={styles.error}>
-              {t("pages.generation.video.output.loadError")}
-            </p>
-            <Button
-              type="button"
-              variant="outline"
-              className="min-h-11 gap-2"
-              disabled={isRefreshing}
-              onClick={onRetry}
-            >
-              <RefreshCw aria-hidden="true" />
-              {t("pages.generation.video.output.retry")}
-            </Button>
-          </div>
+          <MediaUnavailableState
+            kind={isMissing ? "missing" : "temporary"}
+            showRetentionInfo
+            actionTo="/generation/video"
+            actionLabel={t("pages.generation.mediaUnavailable.newVideo")}
+            onRetry={onRetry}
+            isRefreshing={isRefreshing}
+          />
         )}
       </div>
-      <div className={styles.footer}>
-        <p className={styles.hint}>
-          {t("pages.generation.video.output.screeningHint")}
-        </p>
-        <Button
-          type="button"
-          className="min-h-11 shrink-0 gap-2 self-center"
-          disabled={!downloadUrl}
-          onClick={onDownload}
-        >
-          <Download aria-hidden="true" />
-          {t("common.download")}
-        </Button>
-      </div>
+      {!isMissing && (
+        <div className={styles.footer}>
+          <p className={styles.hint}>
+            {t("pages.generation.video.output.screeningHint")}
+          </p>
+          <Button
+            type="button"
+            className="min-h-11 shrink-0 gap-2 self-center"
+            disabled={!downloadUrl}
+            onClick={onDownload}
+          >
+            <Download aria-hidden="true" />
+            {t("common.download")}
+          </Button>
+        </div>
+      )}
     </DialogContent>
   );
 }

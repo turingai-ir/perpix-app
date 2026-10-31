@@ -21,13 +21,18 @@ for (const viewport of [
         "audio/mp4",
       ];
       const names = ["تصویر.webp", "ویدیو.mov", "فیلم.webm", "صدا.m4a"];
+      let releaseFiles: () => void = () => {};
+      const filesReady = new Promise<void>((resolve) => {
+        releaseFiles = resolve;
+      });
       const facts = [
         { kind: "image", width: 1200, height: 800, duration_seconds: null },
         { kind: "video", width: 1920, height: 1080, duration_seconds: 12.5 },
         null,
         null,
       ];
-      await page.route("**/file-manager/user-files*", (route) => {
+      await page.route("**/file-manager/user-files*", async (route) => {
+        await filesReady;
         const accepted = new URL(route.request().url()).searchParams.getAll(
           "content_types",
         );
@@ -69,6 +74,15 @@ for (const viewport of [
         }),
       );
       await page.goto("/gallery");
+      const placeholders = page.locator('[data-slot="gallery-skeleton-card"]');
+      await expect(
+        page.getByRole("status", { name: "در حال دریافت فایل‌ها" }),
+      ).toHaveAttribute("aria-busy", "true");
+      await expect(placeholders).toHaveCount(12);
+      await expect(
+        placeholders.first().locator('[data-slot="skeleton"]'),
+      ).toHaveCount(4);
+      releaseFiles();
       await expect(
         page.getByRole("searchbox", {
           name: "جست‌وجو در فایل‌های بارگذاری‌شده",

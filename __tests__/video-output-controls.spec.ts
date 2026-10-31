@@ -1,4 +1,5 @@
 import { chromium, expect, test, type Page } from "@playwright/test";
+import { mockAuthenticatedSession } from "./support/auth-session";
 
 const previewName = /پیش‌نمایش ویدیو|pages\.generation\.video\.output\.preview/;
 const retryName = /تلاش دوباره|pages\.generation\.video\.output\.retry/;
@@ -68,6 +69,7 @@ async function openResult(
   expired = false,
   unavailable = false,
   mediaUnavailable = () => false,
+  missingFile = false,
 ) {
   await page.context().addCookies([
     {
@@ -100,6 +102,17 @@ async function openResult(
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
         messages: [
+          ...(missingFile
+            ? [
+                {
+                  uuid: "video-prompt",
+                  role: "USER",
+                  task_status: "SUCCESS",
+                  message: "A sunset over the sea",
+                  ai_model_config: { prompt: "A sunset over the sea" },
+                },
+              ]
+            : []),
           {
             uuid: "video-result",
             role: "ASSISTANT",
@@ -111,6 +124,7 @@ async function openResult(
       };
     }
     if (path === "/file-manager/files/presigned-urls") {
+      if (missingFile) return route.fulfill({ status: 404, json: {} });
       if (unavailable)
         return route.fulfill({ status: 503, json: { detail: "Unavailable" } });
       body = {
@@ -118,7 +132,7 @@ async function openResult(
           {
             file_uuid: "video-file",
             preview_url: "http://localhost:5173/test-preview.webm",
-            download_url: "http://localhost:5173/test-download.webm",
+            download_url: "https://storage.test/test-download.webm",
             expire_at: new Date(
               Date.now() + (expired ? -60_000 : 3_600_000),
             ).toISOString(),
@@ -175,8 +189,70 @@ async function openResult(
     }
     return route.abort("blockedbyclient");
   });
+  await mockAuthenticatedSession(page);
   await page.goto("/generation/video/video-output-test");
 }
+
+for (const viewport of [
+  { width: 375, height: 812 },
+  { width: 812, height: 375 },
+  { width: 768, height: 1024 },
+  { width: 1440, height: 900 },
+]) {
+  test(`missing generated video has a permanent state at ${viewport.width}px`, async ({
+    page,
+  }) => {
+    await page.setViewportSize(viewport);
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await openResult(page, false, false, () => false, true);
+    const output = page.getByRole("group", { name: "ویدیو 1", exact: true });
+    await expect(output.getByRole("status")).toContainText(
+      "این فایل دیگه در دسترس نیست",
+    );
+    await expect(output.getByRole("button", { name: retryName })).toHaveCount(
+      0,
+    );
+    await expect(output.getByRole("button", { name: "دانلود" })).toHaveCount(0);
+    await expect(page.getByText("A sunset over the sea")).toBeVisible();
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBe(true);
+    const newRequest = page.getByRole("link", { name: "ساخت ویدیوی تازه" });
+    await expect(newRequest).toBeVisible();
+    expect((await newRequest.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+    if (viewport.width === 375) {
+      await newRequest.click();
+      await expect(page).toHaveURL(/\/generation\/video$/);
+    }
+  });
+}
+
+test("a missing file replaces previously cached video actions", async ({
+  page,
+}) => {
+  await openResult(page);
+  const output = page.getByRole("group", { name: "ویدیو 1", exact: true });
+  await expect(output.getByRole("button", { name: "دانلود" })).toBeEnabled();
+  await page.route("**/file-manager/files/presigned-urls", (route) =>
+    route.fulfill({ status: 404, json: {} }),
+  );
+  await page.evaluate(async () => {
+    const path = "/src/lib/react-query.ts";
+    const { queryClient } = await import(/* @vite-ignore */ path);
+    await queryClient.invalidateQueries({
+      queryKey: ["file-manager", "preview", "video-file"],
+    });
+  });
+  await expect(output.getByRole("status")).toContainText(
+    "این فایل دیگه در دسترس نیست",
+  );
+  await expect(output.getByRole("button", { name: "دانلود" })).toHaveCount(0);
+  await expect(output.getByRole("button", { name: previewName })).toHaveCount(
+    0,
+  );
+});
 
 for (const viewport of [
   { width: 1440, height: 900 },
@@ -205,7 +281,7 @@ for (const viewport of [
         description:
           "Windows WebKit cannot decode this synthetic MediaRecorder fixture. Native portrait metadata is verified in Chromium; WebKit verifies the unsupported-media recovery UI.",
       });
-      await expect(output.getByRole("status")).toBeVisible();
+      await expect(output.getByRole("alert")).toBeVisible();
       await expect(
         output.getByRole("button", { name: retryName }),
       ).toBeEnabled();
@@ -241,7 +317,7 @@ for (const viewport of [
       });
     }
     const videoBounds = await (
-      unsupportedFixture ? output.getByRole("status") : video
+      unsupportedFixture ? output.getByRole("alert") : video
     ).boundingBox();
     const actionBounds = await preview.boundingBox();
     expect(videoBounds!.height).toBeLessThanOrEqual(viewport.height * 0.55 + 1);
@@ -273,7 +349,7 @@ for (const viewport of [
     const dialog = page.getByRole("dialog", { name: "ویدیو 1", exact: true });
     await expect(dialog).toBeVisible();
     if (unsupportedFixture) {
-      await expect(dialog.getByRole("status")).toBeVisible();
+      await expect(dialog.getByRole("alert")).toBeVisible();
       await expect(
         dialog.getByRole("button", { name: retryName }),
       ).toBeEnabled();
@@ -385,7 +461,7 @@ for (const refreshedUrl of [
     await openResult(page, false, false, () => failMedia);
     const output = page.getByRole("group", { name: "ویدیو 1", exact: true });
     const retry = output.getByRole("button", { name: retryName });
-    await expect(output.getByRole("status")).toBeVisible();
+    await expect(output.getByRole("alert")).toBeVisible();
     await expect(retry).toBeEnabled();
     await expect(
       output.getByRole("button", { name: "دانلود", exact: true }),
@@ -426,7 +502,7 @@ for (const refreshedUrl of [
             .evaluate((video: HTMLVideoElement) => video.videoHeight),
         )
         .toBe(640);
-      await expect(output.getByRole("status")).toBeHidden();
+      await expect(output.getByRole("alert")).toBeHidden();
       await expect(retry).toBeHidden();
     } else {
       await expect(retry).toBeEnabled();
@@ -459,7 +535,7 @@ test("dialog media failure keeps download available and retries playback", async
   failMedia = true;
   await output.getByRole("button", { name: previewName }).click();
   const dialog = page.getByRole("dialog", { name: "ویدیو 1", exact: true });
-  await expect(dialog.getByRole("status")).toBeVisible();
+  await expect(dialog.getByRole("alert")).toBeVisible();
   await expect(
     dialog.getByRole("button", { name: "دانلود", exact: true }),
   ).toBeEnabled();
@@ -474,9 +550,9 @@ test("dialog media failure keeps download available and retries playback", async
         .evaluate((video: HTMLVideoElement) => video.videoHeight),
     )
     .toBe(640);
-  await expect(dialog.getByRole("status")).toBeHidden();
+  await expect(dialog.getByRole("alert")).toBeHidden();
   await page.keyboard.press("Escape");
-  await expect(output.getByRole("status")).toBeHidden();
+  await expect(output.getByRole("alert")).toBeHidden();
 });
 
 test("file preview failures leave disabled controls and an explicit recovery action", async ({
@@ -493,5 +569,5 @@ test("file preview failures leave disabled controls and an explicit recovery act
   await expect(output.getByRole("button", { name: retryName })).toBeVisible({
     timeout: 20_000,
   });
-  await expect(output.getByRole("status")).toBeVisible();
+  await expect(output.getByRole("alert")).toBeVisible();
 });

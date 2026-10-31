@@ -428,6 +428,10 @@
     transform 180ms var(--gallery-ease-out);
 }
 
+.skeletonCard {
+  animation: none;
+}
+
 .preview {
   position: relative;
   display: block;

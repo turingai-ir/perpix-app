@@ -59,6 +59,9 @@ export function canRetryFileRequest(error: unknown) {
     typed.key.endsWith(".network")
   );
 }
+export function isMissingFilePreview(error: unknown) {
+  return error instanceof FileError && error.status === 404;
+}
 export function requireConnection() {
   if (!navigator.onLine)
     throw new FileError("features.fileManager.errors.offline");

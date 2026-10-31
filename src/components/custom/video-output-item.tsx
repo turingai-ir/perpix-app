@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { Check, Clapperboard, Download, Expand, RefreshCw } from "lucide-react";
+import { Check, Clapperboard, Download, Expand } from "lucide-react";
 
 import { useVideoOutput } from "./use-video-output";
 import { VideoOutputDialog } from "./video-output-dialog";
@@ -8,8 +8,10 @@ import styles from "./video-output.module.css";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
+import { MediaUnavailableState } from "./media-unavailable-state";
 import { useAppTranslate } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
+import { cn } from "@/lib/utils";
 
 interface Props {
   fileId: string;
@@ -22,6 +24,7 @@ export function VideoOutputItem({ fileId, index = 0 }: Props) {
     download,
     downloadUrl,
     hasMediaError,
+    isMissing,
     isLoading,
     isRefreshing,
     mediaKey,
@@ -51,7 +54,12 @@ export function VideoOutputItem({ fileId, index = 0 }: Props) {
             </span>
           ) : null}
         </div>
-        <div className={styles.screen}>
+        <div
+          className={cn(
+            styles.screen,
+            (!previewUrl || hasMediaError) && styles.unavailableScreen,
+          )}
+        >
           {previewUrl && !hasMediaError ? (
             // Generated videos do not include a captions track in the file contract.
             // eslint-disable-next-line jsx-a11y/media-has-caption
@@ -67,55 +75,50 @@ export function VideoOutputItem({ fileId, index = 0 }: Props) {
             />
           ) : null}
           {isLoading ? (
-            <Skeleton className="h-48 max-h-[55dvh] w-full" />
+            <Skeleton className="h-48 max-h-[55dvh] w-full motion-reduce:animate-none" />
           ) : null}
           {!isLoading && (!previewUrl || hasMediaError) ? (
-            <p role="status" className={styles.error}>
-              {t("pages.generation.video.output.loadError")}
-            </p>
+            <MediaUnavailableState
+              kind={isMissing ? "missing" : "temporary"}
+              showRetentionInfo
+              actionTo="/generation/video"
+              actionLabel={t("pages.generation.mediaUnavailable.newVideo")}
+              onRetry={retry}
+              isRefreshing={isRefreshing}
+            />
           ) : null}
         </div>
-        <div className={styles.footer}>
-          {previewUrl && !hasMediaError ? (
-            <p className={styles.hint}>
-              {t("pages.generation.video.output.hint")}
-            </p>
-          ) : null}
-          <div className={styles.actions}>
-            <Button
-              type="button"
-              className="min-h-11 gap-2"
-              disabled={!downloadUrl}
-              onClick={download}
-            >
-              <Download aria-hidden="true" />
-              {t("common.download")}
-            </Button>
-            <DialogTrigger asChild>
-              <Button
-                type="button"
-                variant="secondary"
-                className="min-h-11 gap-2"
-                disabled={!previewUrl}
-              >
-                <Expand aria-hidden="true" />
-                {t("pages.generation.video.output.preview")}
-              </Button>
-            </DialogTrigger>
-            {!isLoading && (!previewUrl || hasMediaError) ? (
-              <Button
-                type="button"
-                variant="outline"
-                className="min-h-11 gap-2"
-                disabled={isRefreshing}
-                onClick={retry}
-              >
-                <RefreshCw aria-hidden="true" />
-                {t("pages.generation.video.output.retry")}
-              </Button>
+        {!isMissing && (
+          <div className={styles.footer}>
+            {previewUrl && !hasMediaError ? (
+              <p className={styles.hint}>
+                {t("pages.generation.video.output.hint")}
+              </p>
             ) : null}
+            <div className={styles.actions}>
+              <Button
+                type="button"
+                className="min-h-11 gap-2"
+                disabled={!downloadUrl}
+                onClick={download}
+              >
+                <Download aria-hidden="true" />
+                {t("common.download")}
+              </Button>
+              <DialogTrigger asChild>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  className="min-h-11 gap-2"
+                  disabled={!previewUrl}
+                >
+                  <Expand aria-hidden="true" />
+                  {t("pages.generation.video.output.preview")}
+                </Button>
+              </DialogTrigger>
+            </div>
           </div>
-        </div>
+        )}
       </div>
       <VideoOutputDialog
         label={label}
@@ -123,6 +126,7 @@ export function VideoOutputItem({ fileId, index = 0 }: Props) {
         downloadUrl={downloadUrl}
         onDownload={download}
         hasMediaError={hasMediaError}
+        isMissing={isMissing}
         isRefreshing={isRefreshing}
         mediaKey={mediaKey}
         onMediaError={onMediaError}

@@ -1,5 +1,5 @@
-import { useState, type FC, type MouseEvent } from "react";
-import { AlertCircle, Download, Image as ImageIcon, Video } from "lucide-react";
+import { useEffect, useState, type FC, type MouseEvent } from "react";
+import { Download, Image as ImageIcon, Video } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
 
@@ -15,8 +15,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useAppTranslate } from "@/hooks";
 import { cn } from "@/lib/utils";
 import { APP_I18_KEYS } from "@/services/i18";
-import { useFilePreview } from "@/feature/file-manager";
+import { isMissingFilePreview, useFilePreview } from "@/features/file-manager";
 import { downloadFile } from "@/utils";
+import { MediaUnavailableState } from "./media-unavailable-state";
 
 type MediaType = "image" | "video";
 
@@ -27,6 +28,11 @@ interface MediaPreviewItemProps {
   fit?: "cover" | "contain";
   index?: number;
   type: MediaType;
+  compact?: boolean;
+  showRetentionInfo?: boolean;
+  onMissingChange?: (missing: boolean) => void;
+  onMissingAction?: () => void;
+  missingActionLabel?: string;
 }
 
 export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
@@ -36,9 +42,15 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
   fit = "cover",
   index = 0,
   type,
+  compact = false,
+  showRetentionInfo = false,
+  onMissingChange,
+  onMissingAction,
+  missingActionLabel,
 }) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [failedUrl, setFailedUrl] = useState<string>();
   const [mountedAt] = useState(Date.now);
   const { getFilePreviewState } = useFilePreview(fileId);
   const navigate = useNavigate();
@@ -50,7 +62,9 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
   const isPreviewLoading =
     getFilePreviewState.isPending ||
     (isExpired && getFilePreviewState.isFetching);
-  const isError = getFilePreviewState.isError;
+  const isMissing =
+    getFilePreviewState.isError &&
+    isMissingFilePreview(getFilePreviewState.error);
   const mediaUrl = isExpired
     ? undefined
     : getFilePreviewState.data?.preview_url;
@@ -58,6 +72,15 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
     ? undefined
     : getFilePreviewState.data?.download_url;
   const mediaLabel = type === "image" ? t("common.image") : t("common.video");
+  const isMediaError = !!mediaUrl && failedUrl === mediaUrl;
+  const isError = getFilePreviewState.isError || isMediaError;
+
+  useEffect(() => onMissingChange?.(isMissing), [isMissing, onMissingChange]);
+
+  const retryPreview = async () => {
+    const result = await getFilePreviewState.refetch();
+    if (result.isSuccess) setFailedUrl(undefined);
+  };
 
   const handleDownload = async (event: MouseEvent<HTMLAnchorElement>) => {
     if (!downloadUrl || isDownloading) return;
@@ -79,7 +102,7 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
       <div
         className={cn(
           "bg-background flex w-full items-center justify-center overflow-hidden rounded-lg border",
-          isError && "border-destructive/50 bg-destructive/5",
+          isError && !isMissing && "border-destructive/50 bg-destructive/5",
         )}
         style={{ aspectRatio }}
       >
@@ -93,23 +116,25 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
               {type === "image" ? (
                 <img
                   className={cn(
-                    "h-full w-full transition-transform group-hover:scale-[1.02]",
+                    "h-full w-full motion-safe:transition-transform motion-safe:[@media(hover:hover)_and_(pointer:fine)]:group-hover:scale-[1.02]",
                     fit === "contain" ? "object-contain" : "object-cover",
                   )}
                   src={mediaUrl}
                   alt={alt ?? `${mediaLabel} ${index + 1}`}
+                  onError={() => setFailedUrl(mediaUrl)}
                 />
               ) : (
                 <>
                   {}
                   <video
                     className={cn(
-                      "h-full w-full transition-transform group-hover:scale-[1.02]",
+                      "h-full w-full motion-safe:transition-transform motion-safe:[@media(hover:hover)_and_(pointer:fine)]:group-hover:scale-[1.02]",
                       fit === "contain" ? "object-contain" : "object-cover",
                     )}
                     src={mediaUrl}
                     preload="metadata"
                     muted
+                    onError={() => setFailedUrl(mediaUrl)}
                   />
                   <span className="absolute inset-0 flex items-center justify-center bg-black/10 text-white">
                     <Video className="h-8 w-8 drop-shadow" />
@@ -121,9 +146,14 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
         ) : null}
 
         {isError && (
-          <ErrorPreview
-            label={t("common.error")}
-            className="text-destructive"
+          <MediaUnavailableState
+            kind={isMissing ? "missing" : "temporary"}
+            compact={compact}
+            showRetentionInfo={showRetentionInfo}
+            onAction={onMissingAction}
+            actionLabel={missingActionLabel}
+            onRetry={() => void retryPreview()}
+            isRefreshing={getFilePreviewState.isFetching}
           />
         )}
 
@@ -132,7 +162,7 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
         )}
 
         {isPreviewLoading && !mediaUrl && (
-          <Skeleton className="h-full w-full animate-pulse overflow-hidden rounded-lg" />
+          <Skeleton className="h-full w-full overflow-hidden rounded-lg motion-reduce:animate-none" />
         )}
       </div>
 
@@ -144,11 +174,21 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
         <DialogDescription className="sr-only">{mediaLabel}</DialogDescription>
 
         <div className="flex min-h-0 w-full flex-1 items-center justify-center">
-          {type === "image" ? (
+          {isError ? (
+            <MediaUnavailableState
+              kind={isMissing ? "missing" : "temporary"}
+              showRetentionInfo={showRetentionInfo}
+              onAction={onMissingAction}
+              actionLabel={missingActionLabel}
+              onRetry={() => void retryPreview()}
+              isRefreshing={getFilePreviewState.isFetching}
+            />
+          ) : type === "image" ? (
             <img
               className="max-h-full max-w-full rounded-lg object-contain"
               src={mediaUrl}
               alt={alt ?? `${mediaLabel} ${index + 1}`}
+              onError={() => setFailedUrl(mediaUrl)}
             />
           ) : (
             // eslint-disable-next-line jsx-a11y/media-has-caption
@@ -157,44 +197,47 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
               src={mediaUrl}
               controls
               autoPlay
+              onError={() => setFailedUrl(mediaUrl)}
             />
           )}
         </div>
 
-        <div className="flex w-full shrink-0 items-center justify-center gap-3 pb-2">
-          {type === "image" && (
+        {!isError && (
+          <div className="flex w-full shrink-0 items-center justify-center gap-3 pb-2">
+            {type === "image" && (
+              <Button
+                type="button"
+                variant="secondary"
+                size="lg"
+                className="h-11 gap-2 px-5 text-base"
+                onClick={() => navigate(`/editor/${fileId}`)}
+              >
+                <ImageIcon className="h-4 w-4 text-emerald-500" />
+                <span>{t("pages.editor.edit")}</span>
+              </Button>
+            )}
             <Button
-              type="button"
+              asChild
               variant="secondary"
               size="lg"
-              className="h-11 gap-2 px-5 text-base"
-              onClick={() => navigate(`/editor/${fileId}`)}
+              className="h-11 px-5 text-base"
             >
-              <ImageIcon className="h-4 w-4 text-emerald-500" />
-              <span>{t("pages.editor.edit")}</span>
+              <a
+                href={downloadUrl ?? "#"}
+                download
+                aria-disabled={!downloadUrl || isDownloading}
+                className={cn(
+                  (!downloadUrl || isDownloading) &&
+                    "pointer-events-none opacity-50",
+                )}
+                onClick={handleDownload}
+              >
+                <Download />
+                {t("common.download")}
+              </a>
             </Button>
-          )}
-          <Button
-            asChild
-            variant="secondary"
-            size="lg"
-            className="h-11 px-5 text-base"
-          >
-            <a
-              href={downloadUrl ?? "#"}
-              download
-              aria-disabled={!downloadUrl || isDownloading}
-              className={cn(
-                (!downloadUrl || isDownloading) &&
-                  "pointer-events-none opacity-50",
-              )}
-              onClick={handleDownload}
-            >
-              <Download />
-              {t("common.download")}
-            </a>
-          </Button>
-        </div>
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );
@@ -209,18 +252,3 @@ const EmptyMediaPreview: FC<{ type: MediaType }> = ({ type }) => {
     </div>
   );
 };
-
-const ErrorPreview: FC<{ label: string; className?: string }> = ({
-  label,
-  className,
-}) => (
-  <div
-    className={cn(
-      "flex h-full w-full flex-col items-center justify-center gap-1 p-2 text-center",
-      className,
-    )}
-  >
-    <AlertCircle className="h-5 w-5" />
-    <span className="text-[10px] whitespace-normal">{label}</span>
-  </div>
-);

@@ -16,7 +16,12 @@ export function ImageRequestSummary({
         <div className="grid max-w-56 grid-cols-2 gap-2">
           {referenceImages.slice(0, 4).map((fileId, index) => (
             <div key={fileId} className="size-24 overflow-hidden rounded-2xl">
-              <MediaPreviewItem fileId={fileId} index={index} type="image" />
+              <MediaPreviewItem
+                fileId={fileId}
+                index={index}
+                type="image"
+                compact
+              />
             </div>
           ))}
         </div>

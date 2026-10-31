@@ -35,6 +35,7 @@ export function GalleryHeader({
           <Button
             variant="outline"
             className={styles.refreshButton}
+            aria-label={t("pages.gallery.actions.refresh")}
             disabled={refreshing}
             onClick={onRefresh}
           >

@@ -239,6 +239,145 @@ test("staged picker selection preserves toggling and excludes near-expiry files"
   await expect(page.getByLabel("Selection")).toHaveText("expires-120");
 });
 
+for (const viewport of [
+  { width: 375, height: 812 },
+  { width: 768, height: 1024 },
+  { width: 1440, height: 900 },
+]) {
+  test(`file picker keeps its layout and existing files during refresh at ${viewport.width}px`, async ({
+    page,
+  }) => {
+    await page.setViewportSize(viewport);
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    let releaseFirst: () => void = () => {};
+    const first = new Promise<void>((resolve) => {
+      releaseFirst = resolve;
+    });
+    let released = false;
+    let failRefresh = false;
+    await page.route("**/file-manager/user-files*", async (route) => {
+      if (!released) await first;
+      return route.fulfill(
+        failRefresh
+          ? { status: 409, json: {} }
+          : {
+              json: {
+                files: [
+                  {
+                    uuid: "ready-image",
+                    file_name: "reference.webp",
+                    file_size: 1024,
+                    content_type: "image/webp",
+                    is_public: false,
+                  },
+                ],
+                has_next: false,
+              },
+            },
+      );
+    });
+    await page.evaluate(async () => {
+      const path = "/src/features/file-manager/_tests/harness.tsx";
+      (await import(/* @vite-ignore */ path)).mountPicker();
+    });
+    await page.getByRole("button", { name: "Choose file" }).click();
+    const dialog = page.getByRole("dialog");
+    const loading = dialog.getByRole("status", {
+      name: "در حال دریافت فایل‌ها",
+    });
+    await expect(
+      dialog.locator('[data-slot="picker-skeleton-card"]'),
+    ).toHaveCount(8);
+    await expect(loading).toHaveAttribute("aria-busy", "true");
+    await expect(
+      loading.locator(
+        '[data-slot="picker-skeleton-card"]:first-child [data-slot="skeleton"]',
+      ),
+    ).toHaveCount(4);
+    await expect(loading.locator('[data-slot="skeleton"]').first()).toHaveCSS(
+      "animation-name",
+      "none",
+    );
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    await expect(
+      loading.locator('[data-slot="skeleton"]').first(),
+    ).not.toHaveCSS("animation-name", "none");
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    const placeholderWidth = await loading
+      .locator('[data-slot="picker-skeleton-card"]')
+      .first()
+      .evaluate((element) => element.getBoundingClientRect().width);
+    released = true;
+    releaseFirst();
+    const file = dialog.getByRole("button", { name: /reference.webp/ });
+    await expect(file).toBeVisible();
+    expect(
+      Math.abs(
+        placeholderWidth -
+          (await file.evaluate(
+            (element) => element.getBoundingClientRect().width,
+          )),
+      ),
+    ).toBeLessThan(2);
+    failRefresh = true;
+    await dialog.getByRole("button", { name: "تازه‌کردن فهرست" }).click();
+    await expect(dialog.getByRole("alert")).toContainText("فهرست تازه نشد");
+    await expect(
+      dialog.getByRole("button", { name: /reference.webp/ }),
+    ).toBeVisible();
+    failRefresh = false;
+    await dialog.getByRole("button", { name: "تازه‌کردن فهرست" }).click();
+    await expect(dialog.getByRole("alert")).toHaveCount(0);
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBe(true);
+    await dialog.getByRole("button", { name: "بستن" }).click();
+    await expect(dialog).toBeHidden();
+  });
+}
+
+test("file picker recovers from an initial load error", async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  let fail = true;
+  await page.route("**/file-manager/user-files*", (route) =>
+    route.fulfill(
+      fail
+        ? { status: 409, json: {} }
+        : {
+            json: {
+              files: [
+                {
+                  uuid: "recovered-image",
+                  file_name: "recovered.webp",
+                  file_size: 1024,
+                  content_type: "image/webp",
+                  is_public: false,
+                },
+              ],
+              has_next: false,
+            },
+          },
+    ),
+  );
+  await page.evaluate(async () => {
+    const path = "/src/features/file-manager/_tests/harness.tsx";
+    (await import(/* @vite-ignore */ path)).mountPicker();
+  });
+  await page.getByRole("button", { name: "Choose file" }).click();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog.getByRole("alert")).toContainText(
+    "فایل‌ها بارگذاری نشدن",
+  );
+  fail = false;
+  await dialog.getByRole("button", { name: "تازه‌کردن فهرست" }).click();
+  await expect(
+    dialog.getByRole("button", { name: /recovered.webp/ }),
+  ).toBeVisible();
+  await expect(dialog.getByRole("alert")).toHaveCount(0);
+});
+
 test("unfinished uploads are not replayed on reconnection or reload", async ({
   page,
   baseURL,
@@ -265,13 +404,11 @@ test("unfinished uploads are not replayed on reconnection or reload", async ({
     completed++;
     return route.fulfill({ status: 503, json: {} });
   });
-  await page
-    .getByLabel("Upload", { exact: true })
-    .setInputFiles({
-      name: "sound.mp3",
-      mimeType: "audio/mpeg",
-      buffer: Buffer.alloc(6 * 1024 * 1024),
-    });
+  await page.getByLabel("Upload", { exact: true }).setInputFiles({
+    name: "sound.mp3",
+    mimeType: "audio/mpeg",
+    buffer: Buffer.alloc(6 * 1024 * 1024),
+  });
   await expect(page.getByLabel("Result")).toContainText("موقتاً");
   expect(completed).toBe(3);
   await page.clock.install();
@@ -298,13 +435,11 @@ test("a disconnected upload reports its error without queueing a write", async (
     if (request.url().endsWith("/simple-upload")) requests++;
   });
   await context.setOffline(true);
-  await page
-    .getByLabel("Upload", { exact: true })
-    .setInputFiles({
-      name: "sound.mp3",
-      mimeType: "audio/mpeg",
-      buffer: Buffer.alloc(100),
-    });
+  await page.getByLabel("Upload", { exact: true }).setInputFiles({
+    name: "sound.mp3",
+    mimeType: "audio/mpeg",
+    buffer: Buffer.alloc(100),
+  });
   await expect(page.getByLabel("Result")).toContainText("متصل نیستید");
   expect(requests).toBe(0);
 });

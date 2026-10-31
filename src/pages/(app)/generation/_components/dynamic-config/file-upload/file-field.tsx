@@ -2,6 +2,7 @@ import { useEffect, useEffectEvent, useMemo, useRef, type FC } from "react";
 import { toast } from "sonner";
 
 import { useFileManager } from "@/feature/file-manager";
+import { useFilesPreviews } from "@/features/file-manager";
 import {
   appendMediaId,
   getClipboardImage,
@@ -73,6 +74,7 @@ export const DynamicConfigFileField: FC<{
   );
 
   const selectedFileIds = normalizeMediaIds(dynamicForm.watch(fieldName));
+  const { getFilesPreviewsState: previews } = useFilesPreviews(selectedFileIds);
   const localItems = toLocalMediaItems(pendingUploads.values());
   const isUploading = hasUploadingLocalItem(localItems);
   const hasReachedMaxItems = hasReachedMediaMaxItems(
@@ -82,8 +84,8 @@ export const DynamicConfigFileField: FC<{
   );
 
   useEffect(() => {
-    onUploadingChange?.(isUploading);
-  }, [isUploading, onUploadingChange]);
+    onUploadingChange?.(isUploading || previews.isPending);
+  }, [isUploading, previews.isPending, onUploadingChange]);
 
   const setFileValue = (value: string | string[] | undefined) => {
     dynamicForm.setValue(fieldName, value, {
@@ -92,6 +94,23 @@ export const DynamicConfigFileField: FC<{
     });
     onValueChange?.(value);
   };
+
+  const discardMissingFiles = useEffectEvent(
+    (missingIds: readonly string[]) => {
+      const current = normalizeMediaIds(dynamicForm.getValues(fieldName));
+      const remaining = current.filter((id) => !missingIds.includes(id));
+      if (remaining.length === current.length) return;
+
+      setFileValue(isList ? remaining : remaining[0]);
+      toast.info(t("features.mediaUploader.missingReferencesRemoved"));
+    },
+  );
+
+  useEffect(() => {
+    if (previews.missingFileIds.length) {
+      discardMissingFiles(previews.missingFileIds);
+    }
+  }, [previews.missingFileIds]);
 
   const handleDelete = (fileId: string) => {
     if (disabled) return;

@@ -4,6 +4,7 @@ import {
   compatibleModelUuid,
   conversationMessages,
   expect,
+  generatedImageUuid,
   incompatibleModelUuid,
   taskUuid,
   test,
@@ -15,8 +16,7 @@ const labels = {
   confirmRegenerate: "تأیید و ساخت",
   compareMinimum: "برای مقایسه، یه عکس دیگه هم انتخاب کن.",
   editRequest: "ویرایش درخواست",
-  focusLocked:
-    "بعد از آماده‌شدن این عکس، می‌تونی درخواست بعدی رو ثبت کنی.",
+  focusLocked: "بعد از آماده‌شدن این عکس، می‌تونی درخواست بعدی رو ثبت کنی.",
   focusProgress: "مراحل ساخت تصویر",
   focusSubmitting: "درخواستت در حال ثبت است",
   ambiguousFailure:
@@ -125,6 +125,114 @@ async function openSuccessfulConversation(
     page.locator("article").filter({ hasText: labels.result }),
   ).toBeVisible();
 }
+
+for (const viewport of [
+  { width: 375, height: 812 },
+  { width: 812, height: 375 },
+  { width: 768, height: 1024 },
+  { width: 1440, height: 900 },
+]) {
+  test(`missing generated image preserves the conversation at ${viewport.width}px`, async ({
+    imageConversationApi,
+    page,
+  }) => {
+    await page.setViewportSize(viewport);
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    imageConversationApi.setTaskMessages(conversationMessages({ prompt }));
+    await page.route("**/file-manager/files/presigned-urls", (route) =>
+      route.fulfill({ json: { files: [] } }),
+    );
+    await page.goto(`/generation/image/${taskUuid}`);
+
+    const result = page.locator("article").filter({ hasText: labels.result });
+    const unavailable = result.getByRole("status");
+    await expect(unavailable).toContainText("این فایل دیگه در دسترس نیست");
+    expect(
+      await unavailable.evaluate(
+        (element) => element.scrollHeight <= element.clientHeight + 1,
+      ),
+    ).toBe(true);
+    await expect(
+      result.getByRole("button", { name: labels.useAsReference }),
+    ).toBeDisabled();
+    await expect(
+      result.getByRole("button", { name: labels.addToCompare }),
+    ).toBeDisabled();
+    await expect(
+      result.getByRole("button", { name: "تلاش دوباره" }),
+    ).toHaveCount(0);
+    await expect(page.getByText(prompt)).toBeVisible();
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBe(true);
+    const editRequest = result.getByRole("button", {
+      name: labels.editRequest,
+    });
+    expect((await editRequest.boundingBox())!.height).toBeGreaterThanOrEqual(
+      44,
+    );
+    await editRequest.click();
+    await expect(
+      page.getByRole("textbox", { name: "توصیف تصویر" }),
+    ).toHaveValue(prompt);
+    expect(imageConversationApi.generateRequests).toEqual([]);
+  });
+}
+
+test("temporary image preview failure offers retry without claiming the file expired", async ({
+  imageConversationApi,
+  page,
+}) => {
+  imageConversationApi.setTaskMessages(conversationMessages({ prompt }));
+  let interrupted = true;
+  await page.route("**/file-manager/files/presigned-urls", (route) =>
+    interrupted ? route.fulfill({ status: 503, json: {} }) : route.fallback(),
+  );
+  await page.goto(`/generation/image/${taskUuid}`);
+  const result = page.locator("article").filter({ hasText: labels.result });
+  await expect(result.getByRole("alert")).toContainText("پیش‌نمایش");
+  await expect(result.getByText("این فایل دیگه در دسترس نیست")).toHaveCount(0);
+  interrupted = false;
+  await result.getByRole("button", { name: "تلاش دوباره" }).click();
+  await expect(result.getByRole("button", { name: "عکس" })).toBeVisible();
+});
+
+test("a broken image URL refreshes its link instead of claiming seven-day expiry", async ({
+  imageConversationApi,
+  page,
+}) => {
+  imageConversationApi.setTaskMessages(conversationMessages({ prompt }));
+  let previewRequests = 0;
+  await page.route("**/file-manager/files/presigned-urls", (route) => {
+    const previewUrl = previewRequests++
+      ? "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='90'/%3E"
+      : "http://localhost:5173/test-expired-image.svg";
+    return route.fulfill({
+      json: {
+        files: [
+          {
+            file_uuid: generatedImageUuid,
+            preview_url: previewUrl,
+            download_url: "data:text/plain,mocked-image",
+          },
+        ],
+      },
+    });
+  });
+  await page.route("**/test-expired-image.svg", (route) =>
+    route.fulfill({ status: 404, body: "Stale link" }),
+  );
+  await page.goto(`/generation/image/${taskUuid}`);
+  const result = page.locator("article").filter({ hasText: labels.result });
+  await expect(result.getByRole("alert")).toContainText("پیش‌نمایش");
+  await expect(result.getByText("این فایل دیگه در دسترس نیست")).toHaveCount(0);
+  await result.getByRole("button", { name: "تلاش دوباره" }).click();
+  await expect(result.getByRole("alert")).toHaveCount(0);
+  await expect(result.getByRole("button", { name: "عکس" })).toBeVisible();
+  expect(previewRequests).toBe(2);
+});
 
 test("expanded prompt editor can be dismissed without applying or generating", async ({
   imageConversationApi,
@@ -476,6 +584,193 @@ test("completed images can enter local comparison without generating", async ({
   ).toHaveAttribute("aria-pressed", "true");
   await expect(page.getByText(labels.compareMinimum)).toBeVisible();
   expect(imageConversationApi.generateRequests).toEqual([]);
+});
+
+for (const viewport of [
+  { width: 375, height: 812 },
+  { width: 768, height: 1024 },
+  { width: 1440, height: 900 },
+]) {
+  test(`editing an old request excludes missing references at ${viewport.width}px`, async ({
+    imageConversationApi,
+    page,
+  }) => {
+    await page.setViewportSize(viewport);
+    const missingReference = "33333333-3333-4333-8333-333333333333";
+    const previewedIds: string[] = [];
+    const uploadRequests: string[] = [];
+    page.on("request", (request) => {
+      if (
+        request.method() === "POST" &&
+        /file-manager\/.*(?:upload|multipart)/.test(request.url())
+      ) {
+        uploadRequests.push(new URL(request.url()).pathname);
+      }
+    });
+    await page.route("**/file-manager/files/presigned-urls", (route) => {
+      const body = route.request().postDataJSON() as { file_uuids: string[] };
+      previewedIds.push(...body.file_uuids);
+      return route.fulfill(
+        viewport.width === 1440
+          ? { status: 404, json: {} }
+          : { json: { files: [] } },
+      );
+    });
+    const messages = conversationMessages({ prompt }).map((message) => ({
+      ...message,
+      ai_model_config: {
+        ...message.ai_model_config,
+        mode: "image_to_image",
+        reference_images: [missingReference],
+      },
+    }));
+    imageConversationApi.setTaskMessages(messages);
+    await page.goto(`/generation/image/${taskUuid}`);
+    const result = page.locator("article").filter({ hasText: labels.result });
+    await result.getByRole("button", { name: labels.editRequest }).click();
+    await expect(
+      page.getByRole("textbox", { name: "توصیف تصویر" }),
+    ).toHaveValue(prompt);
+    await expect.poll(() => previewedIds.includes(missingReference)).toBe(true);
+    const removeReference = page.getByRole("button", {
+      name: "حذف تصویر مرجع 1",
+    });
+    await expect(removeReference).toHaveCount(0);
+    await expect(page.locator("[data-generation-mode]")).toHaveAttribute(
+      "data-generation-mode",
+      "text_to_image",
+    );
+    expect(uploadRequests).toEqual([]);
+    expect(imageConversationApi.generateRequests).toEqual([]);
+    await submitPrompt(page);
+    await expect
+      .poll(() => imageConversationApi.generateRequests.length)
+      .toBe(1);
+    const config = imageConversationApi.generateRequests[0]
+      .ai_model_config as Record<string, unknown>;
+    expect(config.reference_images ?? []).toEqual([]);
+    expect(config.mode).toBe("text_to_image");
+  });
+}
+
+for (const referenceStatus of ["missing", "temporary"] as const) {
+  test(`editing an old request preserves healthy references during a ${referenceStatus} preview failure`, async ({
+    imageConversationApi,
+    page,
+  }) => {
+    const missingReference = "33333333-3333-4333-8333-333333333333";
+    const healthyReference = "44444444-4444-4444-8444-444444444444";
+    await page.route("**/file-manager/files/presigned-urls", (route) => {
+      const body = route.request().postDataJSON() as { file_uuids: string[] };
+      if (
+        referenceStatus === "temporary" &&
+        body.file_uuids.includes(missingReference)
+      ) {
+        return route.fulfill({ status: 503, json: {} });
+      }
+      return route.fulfill({
+        json: {
+          files: body.file_uuids
+            .filter((id) => id !== missingReference)
+            .map((id) => ({
+              file_uuid: id,
+              preview_url:
+                "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='90'/%3E",
+              download_url: "https://storage.test/reference.webp",
+            })),
+        },
+      });
+    });
+    imageConversationApi.setTaskMessages(
+      conversationMessages({ prompt }).map((message) => ({
+        ...message,
+        ai_model_config: {
+          ...message.ai_model_config,
+          mode: "image_to_image",
+          reference_images: [missingReference, healthyReference],
+        },
+      })),
+    );
+    await page.goto(`/generation/image/${taskUuid}`);
+    const result = page.locator("article").filter({ hasText: labels.result });
+    await result.getByRole("button", { name: labels.editRequest }).click();
+    const references = page.getByRole("list", { name: labels.referenceImages });
+    await expect(references.getByRole("listitem")).toHaveCount(
+      referenceStatus === "missing" ? 1 : 2,
+    );
+    await expect(
+      page.getByRole("textbox", { name: "توصیف تصویر" }),
+    ).toHaveValue(prompt);
+    await expect(page.locator("[data-generation-mode]")).toHaveAttribute(
+      "data-generation-mode",
+      "image_to_image",
+    );
+    expect(imageConversationApi.generateRequests).toEqual([]);
+    if (referenceStatus === "missing") {
+      await expect(
+        references.getByRole("button", { name: "نمایش تصویر مرجع 1" }),
+      ).toBeVisible();
+      await submitPrompt(page);
+      await expect
+        .poll(() => imageConversationApi.generateRequests.length)
+        .toBe(1);
+      const config = imageConversationApi.generateRequests[0]
+        .ai_model_config as Record<string, unknown>;
+      expect(config.reference_images).toEqual([healthyReference]);
+    } else {
+      await expect(
+        references.getByText("خطا", { exact: true }).first(),
+      ).toBeVisible();
+      await expect(
+        page.getByText("فایل‌های مرجعی که دیگه در دسترس نبودن", {
+          exact: false,
+        }),
+      ).toHaveCount(0);
+    }
+  });
+}
+
+test("restored references are checked before the composer can submit", async ({
+  imageConversationApi,
+  page,
+}) => {
+  const oldReference = "33333333-3333-4333-8333-333333333333";
+  let finishCheck: () => void = () => {};
+  const check = new Promise<void>((resolve) => {
+    finishCheck = resolve;
+  });
+  await page.route("**/file-manager/files/presigned-urls", async (route) => {
+    const body = route.request().postDataJSON() as { file_uuids: string[] };
+    if (body.file_uuids.includes(oldReference)) await check;
+    return route.fulfill({ json: { files: [] } });
+  });
+  imageConversationApi.setTaskMessages(
+    conversationMessages({ prompt }).map((message) => ({
+      ...message,
+      ai_model_config: {
+        ...message.ai_model_config,
+        mode: "image_to_image",
+        reference_images: [oldReference],
+      },
+    })),
+  );
+  await page.goto(`/generation/image/${taskUuid}`);
+  await page
+    .locator("article")
+    .filter({ hasText: labels.result })
+    .getByRole("button", { name: labels.editRequest })
+    .click();
+  const create = page.getByRole("button", { name: "ساخت تصویر" });
+  await expect(page.getByRole("textbox", { name: "توصیف تصویر" })).toHaveValue(
+    prompt,
+  );
+  await expect(create).toBeDisabled();
+  expect(imageConversationApi.generateRequests).toEqual([]);
+  finishCheck();
+  await expect(
+    page.getByRole("button", { name: "حذف تصویر مرجع 1" }),
+  ).toHaveCount(0);
+  await expect(create).toBeEnabled();
 });
 
 test("edit request restores its snapshot without generating", async ({
