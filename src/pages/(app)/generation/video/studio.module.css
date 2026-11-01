@@ -10,7 +10,7 @@
   width: 100%;
   min-width: 0;
   padding: 10px clamp(12px, 2vw, 32px) 0;
-  background: #050506;
+  background: var(--background);
   color: var(--foreground);
   overscroll-behavior-y: contain;
   -webkit-tap-highlight-color: transparent;
@@ -55,14 +55,14 @@
   place-items: center;
   border: 1px solid color-mix(in srgb, var(--primary) 40%, transparent);
   border-radius: 18px;
-  background: radial-gradient(circle at 25% 15%, rgb(200 150 255 / 30%), rgb(45 23 72 / 80%) 65%, rgb(10 9 18 / 90%));
+  background: radial-gradient(circle at 25% 15%, var(--image-accent-soft), transparent 65%), var(--glass-surface-strong);
   box-shadow: 0 16px 45px color-mix(in srgb, var(--primary) 18%, transparent), inset 0 1px rgb(255 255 255 / 18%);
 }
 .introEmblem > svg {
   z-index: 1;
   width: 24px;
   height: 24px;
-  color: #f8efff;
+  color: var(--primary);
 }
 .introHalo {
   position: absolute;
@@ -110,9 +110,9 @@
   overflow: hidden;
   pointer-events: none;
   background:
-    radial-gradient(ellipse at 72% 18%, rgb(107 45 186 / 24%), transparent 38%),
-    radial-gradient(ellipse at 16% 72%, rgb(0 139 194 / 18%), transparent 36%),
-    linear-gradient(180deg, #020204, #000 72%);
+    radial-gradient(ellipse at 72% 18%, var(--ambient-brand), transparent 38%),
+    radial-gradient(ellipse at 16% 72%, var(--ambient-media), transparent 36%),
+    var(--background);
   transition: opacity 280ms var(--ease-out);
 }
 
@@ -126,8 +126,8 @@
   inset: -30%;
   opacity: 0.62;
   background:
-    radial-gradient(circle at 34% 46%, rgb(143 72 255 / 24%), transparent 18%),
-    radial-gradient(circle at 62% 58%, rgb(36 191 255 / 17%), transparent 16%);
+    radial-gradient(circle at 34% 46%, var(--ambient-brand), transparent 18%),
+    radial-gradient(circle at 62% 58%, var(--ambient-media), transparent 16%);
   filter: blur(44px);
   transform: translate3d(-4%, -2%, 0) rotate(-8deg) scale(1.06);
   animation: auroraDrift 14s var(--ease-in-out) infinite alternate;

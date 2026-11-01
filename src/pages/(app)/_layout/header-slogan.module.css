@@ -1,17 +1,17 @@
 .header {
   isolation: isolate;
   overflow: hidden;
-  border-bottom: 1px solid rgb(182 79 244 / 24%);
-  background-color: #05050d;
+  border-bottom: 1px solid var(--glass-border);
+  background-color: var(--background);
   background-image:
     radial-gradient(
       ellipse 36% 120% at 50% 118%,
-      rgb(167 39 214 / 22%),
+      var(--ambient-brand),
       transparent 74%
     ),
     radial-gradient(
       ellipse 22% 95% at 65% 0%,
-      rgb(0 174 255 / 10%),
+      var(--ambient-media),
       transparent 85%
     ),
     linear-gradient(
@@ -51,8 +51,8 @@
   background: linear-gradient(
     90deg,
     transparent,
-    #b835ed 35%,
-    #34b9f3 65%,
+    var(--image-accent) 35%,
+    var(--video-accent) 65%,
     transparent
   );
   box-shadow: 0 0 10px rgb(174 49 235 / 55%);
@@ -104,14 +104,14 @@
 }
 
 .brand {
-  color: #e78bff;
+  color: var(--image-accent);
   text-shadow:
     0 0 6px rgb(206 73 251 / 75%),
     0 0 19px rgb(172 38 231 / 48%);
 }
 
 .promise {
-  color: #89dcff;
+  color: var(--video-accent);
   text-shadow:
     0 0 6px rgb(64 194 255 / 85%),
     0 0 19px rgb(28 156 233 / 52%);

@@ -1,13 +1,13 @@
 .composer {
-  border: 1px solid rgb(255 255 255 / 12%);
+  border: 1px solid var(--glass-border);
   border-radius: 26px;
   background:
-    radial-gradient(circle at 88% -22%, rgb(123 77 196 / 19%), transparent 35%),
-    #111115;
+    radial-gradient(circle at 88% -22%, var(--ambient-brand), transparent 35%),
+    var(--glass-surface-strong);
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 9%),
-    0 28px 70px rgb(0 0 0 / 34%);
-  color: #f6f4fb;
+    inset 0 1px 0 var(--glass-highlight),
+    var(--glass-shadow);
+  color: var(--foreground);
   overflow: clip;
 }
 .composer form {
@@ -41,7 +41,7 @@
 }
 .heading span {
   font-size: 11px;
-  color: #b7a8ce;
+  color: var(--muted-foreground);
   letter-spacing: 0.02em;
 }
 .heading h2 {
@@ -67,7 +67,7 @@
   gap: 12px;
 }
 .modeLabel {
-  color: #d8d1e3;
+  color: var(--foreground);
   font-size: 12px;
   font-weight: 650;
 }
@@ -84,10 +84,10 @@
   min-height: 62px;
   min-width: 0;
   padding: 10px 16px;
-  border: 1px solid rgb(255 255 255 / 9%);
+  border: 1px solid var(--glass-border);
   border-radius: 16px;
-  background: #1b1a20;
-  color: #c8bfce;
+  background: var(--muted);
+  color: var(--muted-foreground);
   font-size: 14px;
   font-weight: 650;
   line-height: 1.55;
@@ -98,13 +98,13 @@
     transform 120ms var(--ease-out);
 }
 .modeTab[aria-pressed="true"] {
-  border-color: rgb(188 143 255 / 65%);
+  border-color: var(--primary);
   background: linear-gradient(
     145deg,
-    rgb(145 94 226 / 25%),
-    rgb(145 94 226 / 9%)
+    color-mix(in srgb, var(--primary) 20%, transparent),
+    color-mix(in srgb, var(--primary) 8%, transparent)
   );
-  color: #fff;
+  color: var(--foreground);
   box-shadow:
     inset 0 1px 0 rgb(255 255 255 / 13%),
     0 0 0 1px rgb(145 94 226 / 12%);
@@ -122,7 +122,7 @@
   flex-wrap: wrap;
   gap: 10px;
   min-height: 40px;
-  color: #a9a0b5;
+  color: var(--muted-foreground);
 }
 .modeChoiceLabel {
   font-size: 12px;
@@ -138,7 +138,7 @@
   border: 1px solid rgb(255 255 255 / 10%);
   border-radius: 999px;
   background: rgb(255 255 255 / 4%);
-  color: #c7c0d1;
+  color: var(--muted-foreground);
   font-size: 12px;
   transition:
     color 160ms ease,
@@ -146,13 +146,13 @@
     border-color 160ms ease;
 }
 .modeOption[aria-checked="true"] {
-  border-color: rgb(185 142 255 / 45%);
-  background: rgb(160 104 245 / 18%);
-  color: #f7efff;
+  border-color: var(--primary);
+  background: var(--accent);
+  color: var(--accent-foreground);
 }
 .composer :is(button, input, textarea, summary):focus-visible,
 .modelDialog :is(button, input):focus-visible {
-  outline: 2px solid color-mix(in srgb, var(--primary) 74%, white);
+  outline: 2px solid var(--ring);
   outline-offset: 3px;
 }
 .settings {
@@ -167,9 +167,9 @@
 .configGrid > * {
   min-width: 0;
   padding: 15px 16px;
-  border: 1px solid rgb(255 255 255 / 9%);
+  border: 1px solid var(--glass-border);
   border-radius: 16px;
-  background: #1b1a20;
+  background: var(--muted);
 }
 .configGrid button {
   min-height: 44px;
@@ -185,14 +185,14 @@
   gap: 10px;
 }
 .durationHeading label {
-  color: #d8d1e3;
+  color: var(--foreground);
   font-size: 12px;
 }
 .durationSelected {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: #e4caff;
+  color: var(--primary);
   font-size: 16px;
   font-weight: 750;
   font-variant-numeric: tabular-nums;
@@ -212,26 +212,26 @@
   border-radius: 999px;
   background: linear-gradient(
     to left,
-    #b77aff var(--range-progress),
-    #44404c var(--range-progress)
+    var(--primary) var(--range-progress),
+    var(--input) var(--range-progress)
   );
 }
 .durationRange::-moz-range-track {
   height: 6px;
   border-radius: 999px;
-  background: #44404c;
+  background: var(--input);
 }
 .durationRange::-moz-range-progress {
   height: 6px;
   border-radius: 999px;
-  background: #b77aff;
+  background: var(--primary);
 }
 .durationRange::-webkit-slider-thumb {
   width: 20px;
   height: 20px;
   margin-top: -7px;
   appearance: none;
-  border: 4px solid #b77aff;
+  border: 4px solid var(--primary);
   border-radius: 50%;
   background: white;
   box-shadow: 0 2px 10px rgb(0 0 0 / 40%);
@@ -239,7 +239,7 @@
 .durationRange::-moz-range-thumb {
   width: 13px;
   height: 13px;
-  border: 4px solid #b77aff;
+  border: 4px solid var(--primary);
   border-radius: 50%;
   background: white;
   box-shadow: 0 2px 10px rgb(0 0 0 / 40%);
