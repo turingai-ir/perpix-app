@@ -1,6 +1,9 @@
 import { expect, test, type Page } from "@playwright/test";
 import { readFileSync } from "node:fs";
-import { mockAuthenticatedSession } from "../../../../__tests__/support/auth-session";
+import {
+  mockAnonymousSession,
+  mockAuthenticatedSession,
+} from "../../../../__tests__/support/auth-session";
 
 const mockDashboardApi = async (page: Page) => {
   await page.route("**/*", (route) => {
@@ -315,6 +318,138 @@ for (const [index, entrance] of brandEntrances.entries()) {
       }
     });
   }
+}
+
+test("keeps brand color roles legible in both themes", async ({ page }) => {
+  await mockDashboardApi(page);
+  await page.goto("/");
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+
+  const results = await page.evaluate(() => {
+    const root = document.documentElement;
+    const originalClass = root.className;
+    const canvas = document.createElement("canvas");
+    canvas.width = 1;
+    canvas.height = 1;
+    const context = canvas.getContext("2d")!;
+    const results: { theme: string; pair: string; ratio: number }[] = [];
+    const luminance = (rgb: number[]) =>
+      rgb.reduce((sum, value, index) => {
+        const channel = value / 255;
+        const linear =
+          channel <= 0.04045
+            ? channel / 12.92
+            : ((channel + 0.055) / 1.055) ** 2.4;
+        return sum + linear * [0.2126, 0.7152, 0.0722][index];
+      }, 0);
+
+    try {
+      for (const theme of ["light", "dark"]) {
+        root.classList.toggle("dark", theme === "dark");
+        const styles = getComputedStyle(root);
+        const color = (token: string) =>
+          styles.getPropertyValue(`--${token}`).trim();
+        if (!color("glass-surface") || !color("brand-gradient")) {
+          throw new Error(
+            `Missing shared brand/glass tokens in ${theme} theme`,
+          );
+        }
+        const paint = (...tokens: string[]) => {
+          context.clearRect(0, 0, 1, 1);
+          for (const token of tokens) {
+            context.fillStyle = token.startsWith("#") ? token : color(token);
+            context.fillRect(0, 0, 1, 1);
+          }
+          return luminance(
+            [...context.getImageData(0, 0, 1, 1).data].slice(0, 3),
+          );
+        };
+        for (const [foreground, background] of [
+          ["foreground", "background"],
+          ["card-foreground", "card"],
+          ["popover-foreground", "popover"],
+          ["muted-foreground", "muted"],
+          ["primary-foreground", "primary"],
+          ["secondary-foreground", "secondary"],
+          ["accent-foreground", "accent"],
+          ["destructive-foreground", "destructive"],
+          ["sidebar-foreground", "sidebar"],
+          ["foreground", "glass-surface"],
+          ["muted-foreground", "glass-surface"],
+          ["foreground", "glass-surface-strong"],
+          ["image-accent", "card"],
+          ["video-accent", "card"],
+        ]) {
+          const back = paint("background", background);
+          const front = paint("background", background, foreground);
+          results.push({
+            theme,
+            pair: `${foreground}/${background}`,
+            ratio:
+              (Math.max(front, back) + 0.05) / (Math.min(front, back) + 0.05),
+          });
+        }
+        for (const backdrop of ["#000", "#fff"]) {
+          const back = paint(backdrop, "glass-surface");
+          const front = paint(backdrop, "glass-surface", "muted-foreground");
+          results.push({
+            theme,
+            pair: `muted-foreground/glass-surface over ${backdrop}`,
+            ratio:
+              (Math.max(front, back) + 0.05) / (Math.min(front, back) + 0.05),
+          });
+        }
+      }
+    } finally {
+      root.className = originalClass;
+    }
+    return results;
+  });
+
+  for (const { theme, pair, ratio } of results) {
+    expect(ratio, `${theme}: ${pair}`).toBeGreaterThanOrEqual(4.5);
+  }
+  await test.info().attach("brand-contrast", {
+    body: JSON.stringify(results, null, 2),
+    contentType: "application/json",
+  });
+});
+
+for (const surface of [
+  { name: "profile", path: "/profile/settings", heading: "اینجا حساب خودته" },
+  { name: "login", path: "/auth/login", heading: "از همین‌جا شروع کن" },
+]) {
+  test(`keeps branded ${surface.name} surfaces usable across screen sizes`, async ({
+    page,
+  }) => {
+    await mockDashboardApi(page);
+    if (surface.name === "login") {
+      await mockAnonymousSession(page);
+    }
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    for (const viewport of [
+      { width: 375, height: 812 },
+      { width: 768, height: 1024 },
+      { width: 1440, height: 900 },
+    ]) {
+      await page.setViewportSize(viewport);
+      await page.goto(surface.path);
+      await expect(
+        page.getByRole("heading", { name: surface.heading }),
+      ).toBeVisible();
+      await page.evaluate(() => document.fonts.ready);
+      expect(
+        await page.evaluate(
+          () => document.documentElement.scrollWidth <= innerWidth,
+        ),
+      ).toBe(true);
+      await page.screenshot({
+        path: test.info().outputPath(`${surface.name}-${viewport.width}.png`),
+        animations: "disabled",
+        fullPage: true,
+      });
+    }
+  });
 }
 
 test("shows a personal studio dashboard backed by current APIs", async ({

@@ -20,15 +20,11 @@
   background:
     radial-gradient(
       ellipse at 22% 18%,
-      color-mix(in srgb, var(--primary) 8%, transparent),
+      var(--ambient-brand),
       transparent 28rem
     ),
-    radial-gradient(ellipse at 82% 54%, rgb(0 153 255 / 5%), transparent 32rem),
-    linear-gradient(
-      180deg,
-      #000 0%,
-      color-mix(in srgb, #000 97%, var(--primary)) 100%
-    );
+    radial-gradient(ellipse at 82% 54%, var(--ambient-media), transparent 32rem),
+    var(--background);
 }
 
 .page::after {
@@ -37,13 +33,13 @@
     linear-gradient(
       28deg,
       transparent 49.7%,
-      rgb(177 94 255 / 8%) 50%,
+      var(--ambient-brand) 50%,
       transparent 50.3%
     ),
     linear-gradient(
       -32deg,
       transparent 49.7%,
-      rgb(48 184 255 / 6%) 50%,
+      var(--ambient-media) 50%,
       transparent 50.3%
     );
   background-position:
@@ -70,7 +66,7 @@
       color-mix(in srgb, var(--primary) 4%, transparent),
       transparent 30rem
     ),
-    #000;
+    var(--background);
 }
 
 .conversation::after {
@@ -85,9 +81,9 @@
   min-height: 100%;
   overflow: hidden;
   background:
-    radial-gradient(ellipse at 72% 20%, rgb(41 20 76 / 38%), transparent 44%),
-    radial-gradient(ellipse at 16% 68%, rgb(4 67 91 / 30%), transparent 42%),
-    #000;
+    radial-gradient(ellipse at 72% 20%, var(--ambient-brand), transparent 44%),
+    radial-gradient(ellipse at 16% 68%, var(--ambient-media), transparent 42%),
+    var(--background);
   pointer-events: none;
 }
 
@@ -210,7 +206,7 @@
 
 .neuralLinks line {
   vector-effect: non-scaling-stroke;
-  stroke: color-mix(in srgb, var(--primary) 64%, #65e8ff);
+  stroke: color-mix(in srgb, var(--primary) 64%, var(--video-accent));
   stroke-width: 0.75;
   stroke-dasharray: 1 9;
   stroke-linecap: round;

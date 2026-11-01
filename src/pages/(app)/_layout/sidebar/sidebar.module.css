@@ -6,24 +6,19 @@
 .mobileShell {
   isolation: isolate;
   overflow: hidden;
-  border-color: rgb(184 156 242 / 18%);
+  border-color: var(--glass-border);
   background:
-    radial-gradient(ellipse at 90% -8%, rgb(178 74 232 / 23%), transparent 42%),
+    radial-gradient(ellipse at 90% -8%, var(--ambient-brand), transparent 42%),
     radial-gradient(
       ellipse at -30% 54%,
-      rgb(20 147 211 / 11%),
+      var(--ambient-media),
       transparent 48%
     ),
-    linear-gradient(
-      165deg,
-      rgb(20 19 35 / 93%),
-      rgb(8 16 25 / 95%) 64%,
-      rgb(11 13 24 / 96%)
-    );
+    color-mix(in srgb, var(--sidebar) 94%, transparent);
   box-shadow:
-    inset -1px 0 rgb(255 255 255 / 12%),
-    inset 0 1px rgb(255 255 255 / 11%),
-    0 24px 80px rgb(0 0 0 / 34%);
+    inset -1px 0 var(--glass-highlight),
+    inset 0 1px var(--glass-highlight),
+    var(--glass-shadow);
   backdrop-filter: blur(30px) saturate(145%);
 }
 
@@ -73,8 +68,8 @@
 }
 
 .navigationLink {
-  --item-glow: rgb(196 139 244 / 15%);
-  --item-accent: #bca5dc;
+  --item-glow: color-mix(in srgb, var(--primary) 15%, transparent);
+  --item-accent: var(--primary);
   position: relative;
   display: flex;
   width: 100%;
@@ -86,7 +81,7 @@
   border: 1px solid rgb(207 187 255 / 9%);
   border-radius: 1.05rem;
   padding: 0.44rem 0.55rem;
-  color: #c7c6d3;
+  color: var(--muted-foreground);
   background: linear-gradient(
     110deg,
     rgb(255 255 255 / 6%),
@@ -122,20 +117,20 @@
 }
 
 .imageLink {
-  --item-accent: #e983f4;
-  --item-glow: rgb(201 75 225 / 17%);
+  --item-accent: var(--image-accent);
+  --item-glow: var(--image-accent-soft);
 }
 .videoLink {
-  --item-accent: #73d7fc;
-  --item-glow: rgb(42 172 225 / 17%);
+  --item-accent: var(--video-accent);
+  --item-glow: var(--video-accent-soft);
 }
 .neutralLink {
-  --item-accent: #c7a2f6;
+  --item-accent: var(--primary);
 }
 
 .navigationLinkActive {
   border-color: color-mix(in srgb, var(--item-accent) 32%, transparent);
-  color: #fff;
+  color: var(--foreground);
   background: linear-gradient(
     110deg,
     var(--item-glow),

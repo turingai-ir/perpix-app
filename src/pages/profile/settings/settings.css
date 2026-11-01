@@ -7,19 +7,19 @@
     ),
     radial-gradient(
       ellipse at -15% 110%,
-      rgba(72, 165, 211, 0.13),
+      var(--ambient-media),
       transparent 55%
     ),
     linear-gradient(
       135deg,
-      color-mix(in srgb, var(--card) 82%, transparent),
-      color-mix(in srgb, var(--card) 66%, transparent)
+      var(--glass-surface-strong),
+      var(--glass-surface)
     );
-  border: 1px solid color-mix(in srgb, var(--primary) 24%, var(--border));
+  border: 1px solid var(--glass-border);
   border-radius: 1.5rem;
   box-shadow:
-    inset 0 1px rgba(255, 255, 255, 0.12),
-    0 24px 55px -38px rgba(36, 22, 68, 0.65);
+    inset 0 1px var(--glass-highlight),
+    var(--glass-shadow);
   backdrop-filter: blur(24px) saturate(140%);
 }
 .settings-security-panel {
@@ -41,10 +41,10 @@
   border-inline-start: 1px solid
     color-mix(in srgb, var(--primary) 16%, transparent);
   background:
-    radial-gradient(ellipse at 5% 5%, rgba(166, 78, 220, 0.2), transparent 58%),
+    radial-gradient(ellipse at 5% 5%, var(--ambient-brand), transparent 58%),
     radial-gradient(
       ellipse at 90% 110%,
-      rgba(65, 173, 210, 0.13),
+      var(--ambient-media),
       transparent 58%
     ),
     linear-gradient(
