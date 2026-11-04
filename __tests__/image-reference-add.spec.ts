@@ -123,7 +123,9 @@ test("an image can be pasted into the reference picker", async ({
     });
   });
   await dialog.getByRole("button", { name: "چسباندن" }).click();
-  await expect(dialog.locator('[aria-live="polite"]')).toHaveText(/2.*4/);
+  await expect(
+    dialog.locator('[aria-live="polite"]:not([role="status"])'),
+  ).toHaveText(/2.*4/);
 
   await dialog.evaluate(async (element) => {
     const canvas = document.createElement("canvas");
@@ -140,7 +142,9 @@ test("an image can be pasted into the reference picker", async ({
       new ClipboardEvent("paste", { bubbles: true, clipboardData: data }),
     );
   });
-  await expect(dialog.locator('[aria-live="polite"]')).toHaveText(/3.*4/);
+  await expect(
+    dialog.locator('[aria-live="polite"]:not([role="status"])'),
+  ).toHaveText(/3.*4/);
   await expect.poll(() => uploadedCount).toBe(2);
   expect(imageConversationApi.generateRequests).toHaveLength(0);
 });
@@ -239,7 +243,9 @@ test("keyboard paste accepts an image from the real browser clipboard", async ({
   });
 
   await page.keyboard.press("ControlOrMeta+V");
-  await expect(dialog.locator('[aria-live="polite"]')).toHaveText(/2.*4/);
+  await expect(
+    dialog.locator('[aria-live="polite"]:not([role="status"])'),
+  ).toHaveText(/2.*4/);
   await expect.poll(() => uploadedCount).toBe(1);
 });
 
@@ -286,7 +292,9 @@ test("paste button converts clipboard WebP into an uploadable image", async ({
   });
 
   await dialog.getByRole("button", { name: "چسباندن" }).click();
-  await expect(dialog.locator('[aria-live="polite"]')).toHaveText(/2.*4/);
+  await expect(
+    dialog.locator('[aria-live="polite"]:not([role="status"])'),
+  ).toHaveText(/2.*4/);
   expect(uploadedBody).toContain("Content-Type: image/png");
 });
 

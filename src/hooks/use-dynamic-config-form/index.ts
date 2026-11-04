@@ -119,7 +119,10 @@ export function useDynamicConfigForm({
   const form = useForm<DynamicConfigValues>({
     resolver,
     defaultValues,
-    mode: "onBlur",
+    // Validating on blur shows errors as focus moves to a nearby control, which
+    // shifts the layout mid-click and swallows the click (e.g. adding a reference).
+    mode: "onSubmit",
+    reValidateMode: "onChange",
     ...formOptions,
   });
   const currentValues = useWatch({ control: form.control });
