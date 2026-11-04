@@ -2,6 +2,7 @@ import { useDeferredValue, useState } from "react";
 import { Radio } from "lucide-react";
 import { useSearchParams } from "react-router";
 
+import { Button } from "@/components/ui/button";
 import { usePayments, getPaymentViewStatus } from "@/feature/payment";
 import { PaymentDetailsDialog } from "@/features/payment";
 import { useAppTranslate } from "@/hooks";
@@ -124,7 +125,27 @@ function ProfilePaymentsPage() {
           <ProfileListError onRetry={() => void paymentsState.refetch()} />
         ) : null}
         {paymentsState.isSuccess && payments.length === 0 ? (
-          <ProfileListEmpty title={t("pages.profile.finance.emptyPayments")} />
+          <>
+            <ProfileListEmpty
+              title={t(
+                offset > 0
+                  ? "pages.profile.finance.zeroRecords"
+                  : "pages.profile.finance.emptyPayments",
+              )}
+            />
+            {offset > 0 ? (
+              <div className="flex justify-center px-4 pb-6">
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={paymentsState.isFetching}
+                  onClick={() => updatePage(0)}
+                >
+                  {t("pages.profile.finance.firstPage")}
+                </Button>
+              </div>
+            ) : null}
+          </>
         ) : null}
         {payments.length > 0 && visiblePayments.length === 0 ? (
           <ProfileListEmpty title={t("pages.profile.finance.noResults")} />

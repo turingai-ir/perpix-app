@@ -1,4 +1,5 @@
 import { expect, test, type BrowserContext, type Page } from "@playwright/test";
+import { mockAuthenticatedSession } from "../../../../__tests__/support/auth-session";
 
 const paymentId = "c0202000-0000-4000-8000-000000000005";
 const walletId = "d0202000-0000-4000-8000-000000000005";
@@ -8,9 +9,38 @@ async function authenticate(context: BrowserContext, baseURL?: string) {
   await context.addCookies([
     { name: "access_token", value: "test-token", url: baseURL },
   ]);
+  await mockAuthenticatedSession(context);
 }
 
 async function mockAccount(page: Page) {
+  // A fulfilled finite SSE body reconnects and legitimately invalidates the
+  // ledger. Keep this pagination fixture open until cancelled, like the server.
+  await page.addInitScript(() => {
+    const nativeFetch = window.fetch.bind(window);
+    window.fetch = (input, init) => {
+      const url = new URL(input instanceof Request ? input.url : String(input), location.href);
+      if (url.pathname !== "/api/v1/payment-events") return nativeFetch(input, init);
+      let signal = init?.signal;
+      if (signal === undefined && input instanceof Request) signal = input.signal;
+      let cleanup = () => {};
+      const body = new ReadableStream<Uint8Array>({
+        start(controller) {
+          const abort = () => {
+            cleanup();
+            controller.error(signal?.reason);
+          };
+          cleanup = () => signal?.removeEventListener("abort", abort);
+          if (signal?.aborted) { abort(); return; }
+          controller.enqueue(new TextEncoder().encode(": fixture-heartbeat\n\n"));
+          signal?.addEventListener("abort", abort, { once: true });
+        },
+        cancel() { cleanup(); },
+      });
+      return Promise.resolve(new Response(body, {
+        headers: { "content-type": "text/event-stream" },
+      }));
+    };
+  });
   await page.route("**/api/v1/user/get-info", (route) =>
     route.fulfill({
       json: {
@@ -36,12 +66,6 @@ async function mockAccount(page: Page) {
   );
   await page.route("**/api/v1/user/subscription/active", (route) =>
     route.fulfill({ json: { plan: { is_default: false } } }),
-  );
-  await page.route("**/api/v1/payment-events", (route) =>
-    route.fulfill({
-      contentType: "text/event-stream",
-      body: "retry: 600000\n\n",
-    }),
   );
 }
 
@@ -88,6 +112,97 @@ function walletHistory(type = "DEPOSIT") {
     created_at: "2026-01-01T00:00:00Z",
     updated_at: "2026-10-18T11:00:00Z",
   };
+}
+
+for (const kind of ["payments", "wallet-transactions"] as const) {
+  test(`${kind} recovers an empty later page without clearing its filter`, async ({
+    page,
+    context,
+    baseURL,
+  }) => {
+    await authenticate(context, baseURL);
+    await mockAccount(page);
+    await page.setViewportSize({ width: 375, height: 812 });
+    const isPayments = kind === "payments";
+    const filterKey = isPayments ? "status" : "type";
+    const filterValue = isPayments ? "succeeded" : "WITHDRAW";
+    const requests: number[] = [];
+    await page.route(
+      isPayments
+        ? "**/api/v1/payment-intents?*"
+        : "**/api/v1/wallet/transactions**",
+      (route) => {
+        const params = new URL(route.request().url()).searchParams;
+        const offset = Number(params.get("offset"));
+        requests.push(offset);
+        if (isPayments) {
+          return route.fulfill({
+            json: { ...paymentHistory(), items: [], has_next: false },
+          });
+        }
+        expect(params.get("type")).toBe(filterValue);
+        return route.fulfill({
+          json: {
+            ...walletHistory(filterValue),
+            transactions: [],
+            has_next: false,
+          },
+        });
+      },
+    );
+
+    await page.goto(`/profile/${kind}?offset=999&${filterKey}=${filterValue}`);
+    const firstPage = page.getByRole("button", { name: "صفحهٔ اول" });
+    await expect(firstPage).toBeVisible();
+    expect(new URL(page.url()).searchParams.get("offset")).toBe("999");
+    expect(requests).toEqual([999]);
+    await firstPage.click();
+    await expect(firstPage).toBeHidden();
+    await expect(page).toHaveURL(/offset=0/);
+    expect(new URL(page.url()).searchParams.get(filterKey)).toBe(filterValue);
+    await expect.poll(() => requests).toEqual([999, 0]);
+    await expect(
+      page.getByRole("button", {
+        name: isPayments ? "پرداخت و تحویل کامل" : "برداشت",
+        exact: true,
+      }),
+    ).toHaveAttribute("aria-pressed", "true");
+  });
+
+  test(`${kind} resets a later offset when the filter changes`, async ({
+    page,
+    context,
+    baseURL,
+  }) => {
+    await authenticate(context, baseURL);
+    await mockAccount(page);
+    const isPayments = kind === "payments";
+    const requests: number[] = [];
+    await page.route(
+      isPayments
+        ? "**/api/v1/payment-intents?*"
+        : "**/api/v1/wallet/transactions**",
+      (route) => {
+        requests.push(
+          Number(new URL(route.request().url()).searchParams.get("offset")),
+        );
+        return route.fulfill({
+          json: isPayments
+            ? { items: [], has_next: false }
+            : { ...walletHistory(), transactions: [], has_next: false },
+        });
+      },
+    );
+    await page.goto(`/profile/${kind}?offset=100`);
+    await expect(page.getByRole("button", { name: "صفحهٔ اول" })).toBeVisible();
+    await page.getByRole("button", {
+      name: isPayments ? "پرداخت و تحویل کامل" : "برداشت",
+      exact: true,
+    }).click();
+    await expect(page).not.toHaveURL(/offset=/);
+    await expect.poll(() => requests.at(-1)).toBe(0);
+    await expect(page.getByRole("button", { name: "صفحهٔ اول" })).toBeHidden();
+  });
 }
 
 test("payments prioritize status and remain usable on mobile", async ({

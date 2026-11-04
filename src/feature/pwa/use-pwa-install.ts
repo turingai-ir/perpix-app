@@ -1,4 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
+
+import { useAppTranslate } from "@/hooks";
 
 type BeforeInstallPromptOutcome = "accepted" | "dismissed";
 
@@ -27,9 +30,11 @@ const isIosDevice = () => {
 };
 
 export function usePwaInstall() {
+  const { t } = useAppTranslate();
   const [installPrompt, setInstallPrompt] =
     useState<BeforeInstallPromptEvent | null>(null);
   const [isIosGuideOpen, setIsIosGuideOpen] = useState(false);
+  const [isInstallPending, setIsInstallPending] = useState(false);
   const [isInstalled, setIsInstalled] = useState(() =>
     isStandaloneDisplayMode(),
   );
@@ -65,6 +70,8 @@ export function usePwaInstall() {
   );
 
   const requestInstall = useCallback(async () => {
+    if (isInstalled || isInstallPending) return;
+
     if (isIos) {
       setIsIosGuideOpen(true);
       return;
@@ -74,16 +81,24 @@ export function usePwaInstall() {
       return;
     }
 
-    await installPrompt.prompt();
-    const choice = await installPrompt.userChoice;
-
-    if (choice.outcome !== "dismissed") {
-      setInstallPrompt(null);
+    setIsInstallPending(true);
+    try {
+      await installPrompt.prompt();
+      await installPrompt.userChoice;
+    } catch {
+      toast.error(t("features.pwaInstall.error"));
+    } finally {
+      // A native offer is one-shot, even when dismissed. Keep any newer offer.
+      setInstallPrompt((current) =>
+        current === installPrompt ? null : current,
+      );
+      setIsInstallPending(false);
     }
-  }, [installPrompt, isIos]);
+  }, [installPrompt, isIos, isInstalled, isInstallPending, t]);
 
   return {
     canInstall,
+    isInstallPending,
     isIosGuideOpen,
     requestInstall,
     setIsIosGuideOpen,

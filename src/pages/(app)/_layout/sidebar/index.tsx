@@ -1,5 +1,5 @@
 import { useImmerAtom } from "jotai-immer";
-import { useState, type CSSProperties, type FC } from "react";
+import { useState, type CSSProperties, type FC, type RefObject } from "react";
 
 import appLayoutAtom from "../_state";
 
@@ -7,7 +7,8 @@ import AppLayoutSidebarContent from "./content";
 import styles from "./sidebar.module.css";
 
 import { cn } from "@/lib/utils";
-import { useViewportBreakpoint } from "@/hooks";
+import { useAppTranslate, useViewportBreakpoint } from "@/hooks";
+import { APP_I18_KEYS } from "@/services/i18";
 import { useActiveSubscription, usePricingFeature } from "@/feature/pricing";
 import { useWallet, WalletChargeFlow } from "@/feature/wallet";
 import {
@@ -17,7 +18,11 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 
-const AppLayoutSidebar: FC<{ sidebarWidth: string }> = ({ sidebarWidth }) => {
+const AppLayoutSidebar: FC<{
+  sidebarWidth: string;
+  sidebarRef: RefObject<HTMLElement | null>;
+}> = ({ sidebarWidth, sidebarRef }) => {
+  const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const [appLayoutState, setAppLayoutState] = useImmerAtom(appLayoutAtom);
   const breakpoints = useViewportBreakpoint();
   const walletState = useWallet();
@@ -55,6 +60,9 @@ const AppLayoutSidebar: FC<{ sidebarWidth: string }> = ({ sidebarWidth }) => {
     return (
       <>
         <aside
+          ref={sidebarRef}
+          inert={!appLayoutState.isSidebarOpen}
+          aria-hidden={!appLayoutState.isSidebarOpen}
           className={cn(
             styles.shell,
             "text-sidebar-foreground flex h-full min-h-0 w-(--sidebar-width) flex-col border-e transition-[transform,opacity] duration-300 ease-in-out motion-reduce:transition-none",
@@ -94,7 +102,9 @@ const AppLayoutSidebar: FC<{ sidebarWidth: string }> = ({ sidebarWidth }) => {
           }
         >
           <SheetHeader>
-            <SheetTitle />
+            <SheetTitle className="sr-only">
+              {t("pages.app.layout.sidebar.toggle.menu")}
+            </SheetTitle>
           </SheetHeader>
           {sidebarContent}
         </SheetContent>

@@ -47,6 +47,16 @@ export const GenerationImageChats: FC<Props> = ({
   onToggleComparison,
 }) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
+  const imageIndexOffsets = new Map<string, number>();
+  let imageCount = 0;
+  for (const message of messages) {
+    imageIndexOffsets.set(message.uuid, imageCount);
+    if (message.role === "ASSISTANT" && message.task_status !== "FAILED") {
+      imageCount += normalizeImageIds(
+        message.ai_model_config?.images_generated,
+      ).length;
+    }
+  }
 
   return (
     <div className="flex w-full flex-col gap-5 sm:gap-6">
@@ -78,6 +88,7 @@ export const GenerationImageChats: FC<Props> = ({
           >
             <ImageResultCard
               images={generatedMedia}
+              imageIndexOffset={imageIndexOffsets.get(message.uuid) ?? 0}
               message={message}
               requestMessage={requestMessage}
               onUseAsReference={onUseAsReference}

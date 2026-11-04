@@ -1,3 +1,5 @@
+export type GenerationHistoryErrorKind = "notFound" | "forbidden" | "temporary";
+
 export interface GenerationSubmissionSnapshot {
   config: Readonly<Record<string, unknown>>;
   modelUuid: string;

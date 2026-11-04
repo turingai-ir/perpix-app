@@ -472,7 +472,8 @@
   pointer-events: none;
 }
 
-.openAffordance {
+.openAffordance,
+.videoAffordance {
   position: absolute;
   z-index: 2;
   inset-inline-end: 0.75rem;
@@ -497,7 +498,13 @@
   pointer-events: none;
 }
 
-.openAffordance svg {
+.videoAffordance {
+  opacity: 1;
+  transform: none;
+}
+
+.openAffordance svg,
+.videoAffordance svg {
   width: 1rem;
 }
 
@@ -1052,6 +1059,7 @@
   .card,
   .previewImage,
   .openAffordance,
+  .videoAffordance,
   .viewerImage,
   .createButton,
   .refreshButton,
@@ -1076,6 +1084,7 @@
   .viewerFooter,
   .deleteDialog,
   .openAffordance,
+  .videoAffordance,
   .refreshButton {
     background: var(--card);
     backdrop-filter: none;
@@ -1105,7 +1114,8 @@
 
   .viewerHeader,
   .viewerFooter,
-  .openAffordance {
+  .openAffordance,
+  .videoAffordance {
     background: rgb(20 21 28 / 96%);
   }
 }

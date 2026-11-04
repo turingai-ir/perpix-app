@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { chromium, expect, test, type Page } from "@playwright/test";
 import { join } from "node:path";
 import { mockAuthenticatedSession } from "../../../../../__tests__/support/auth-session";
 
@@ -331,7 +331,7 @@ test("cancels deletion without making a delete request", async ({ page }) => {
   expect(deletes).toBe(0);
 });
 
-test("keeps media requests out of the grid", async ({ page }) => {
+async function mockVideoGallery(page: Page, previewUrl: string) {
   await page.route("**/api/v1/file-manager/user-files**", (route) =>
     route.fulfill({
       json: {
@@ -347,9 +347,195 @@ test("keeps media requests out of the grid", async ({ page }) => {
       },
     }),
   );
+  await page.route("**/api/v1/file-manager/files/presigned-urls", (route) =>
+    route.fulfill({
+      json: {
+        files: [
+          {
+            file_uuid: "file-0",
+            preview_url: previewUrl,
+            download_url: previewUrl,
+          },
+        ],
+      },
+    }),
+  );
   await page.reload();
-  await expect(
-    page.getByRole("button", { name: "Film.mp4", exact: true }),
-  ).toBeVisible();
-  await expect(page.locator("video,audio")).toHaveCount(0);
+}
+
+test.describe("video thumbnails", () => {
+  const previewUrl = "http://localhost:5173/gallery-thumbnail.webm";
+  let videoBytes: Buffer;
+
+  test.beforeAll(async () => {
+    // Record in Chromium because Windows WebKit cannot capture a canvas.
+    const browser = await chromium.launch();
+    try {
+      const recorderPage = await browser.newPage();
+      const bytes = await recorderPage.evaluate(async () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = 160;
+        canvas.height = 90;
+        const context = canvas.getContext("2d")!;
+        const stream = canvas.captureStream(10);
+        const recorder = new MediaRecorder(stream, {
+          mimeType: "video/webm;codecs=vp8",
+        });
+        const chunks: Blob[] = [];
+        const recording = new Promise<Blob>((resolve) => {
+          recorder.ondataavailable = (event) => chunks.push(event.data);
+          recorder.onstop = () => resolve(new Blob(chunks));
+        });
+        recorder.start();
+        const timer = setInterval(() => {
+          context.fillStyle = "#2a7896";
+          context.fillRect(0, 0, 160, 90);
+        }, 50);
+        await new Promise((resolve) => setTimeout(resolve, 600));
+        clearInterval(timer);
+        recorder.stop();
+        const blob = await recording;
+        stream.getTracks().forEach((track) => track.stop());
+        return Array.from(new Uint8Array(await blob.arrayBuffer()));
+      });
+      videoBytes = Buffer.from(bytes);
+    } finally {
+      await browser.close();
+    }
+  });
+
+  test.beforeEach(async ({ page }) => {
+    await page.route(previewUrl, (route) => {
+      const range = route
+        .request()
+        .headers()
+        .range?.match(/bytes=(\d+)-(\d*)/);
+      const start = range ? Number(range[1]) : 0;
+      const end = range?.[2]
+        ? Math.min(Number(range[2]), videoBytes.length - 1)
+        : videoBytes.length - 1;
+      return route.fulfill({
+        status: range ? 206 : 200,
+        contentType: "video/webm",
+        headers: {
+          "Accept-Ranges": "bytes",
+          ...(range
+            ? { "Content-Range": `bytes ${start}-${end}/${videoBytes.length}` }
+            : {}),
+        },
+        body: videoBytes.subarray(start, end + 1),
+      });
+    });
+  });
+
+  for (const viewport of [
+    { width: 375, height: 812 },
+    { width: 768, height: 1024 },
+    { width: 1440, height: 900 },
+  ]) {
+    test(`shows an opening frame or unsupported-media fallback at ${viewport.width}`, async ({
+      page,
+      browserName,
+    }, testInfo) => {
+      await page.setViewportSize(viewport);
+      await page.emulateMedia({ reducedMotion: "reduce" });
+      await mockVideoGallery(page, previewUrl);
+      const opener = page.getByRole("button", {
+        name: "Film.mp4",
+        exact: true,
+      });
+      if (browserName === "webkit" && process.platform === "win32") {
+        testInfo.annotations.push({
+          type: "media-limitation",
+          description:
+            "Windows WebKit cannot decode the synthetic MediaRecorder fixture; verifies fallback instead of decoded frames.",
+        });
+        await expect(opener.locator(".lucide-file-video")).toBeVisible();
+        await expect(opener.locator("video")).toHaveCount(0);
+        expect(
+          await page.evaluate(
+            () => document.documentElement.scrollWidth <= innerWidth,
+          ),
+        ).toBe(true);
+        await page.screenshot({
+          path: testInfo.outputPath("video-fallback.png"),
+          fullPage: true,
+        });
+        return;
+      }
+      const video = opener.locator("video");
+      await expect(video).toBeVisible();
+      await expect(video).toHaveCSS("opacity", "1");
+      await expect
+        .poll(() =>
+          video.evaluate((media: HTMLVideoElement) => ({
+            ready: media.readyState >= 2,
+            paused: media.paused,
+            muted: media.muted,
+            controls: media.controls,
+            autoplay: media.autoplay,
+            openingFrame: media.currentTime > 0 && media.currentTime <= 0.15,
+          })),
+        )
+        .toEqual({
+          ready: true,
+          paused: true,
+          muted: true,
+          controls: false,
+          autoplay: false,
+          openingFrame: true,
+        });
+      const pixel = await video.evaluate((media: HTMLVideoElement) => {
+        const canvas = document.createElement("canvas");
+        canvas.width = 1;
+        canvas.height = 1;
+        const context = canvas.getContext("2d")!;
+        context.drawImage(media, 0, 0, 1, 1);
+        return Array.from(context.getImageData(0, 0, 1, 1).data);
+      });
+      expect(pixel[1]).toBeGreaterThan(100);
+      expect(pixel[2]).toBeGreaterThan(130);
+      expect(pixel[3]).toBe(255);
+      await expect(opener.locator(".lucide-play")).toBeVisible();
+      expect(
+        await page.evaluate(
+          () => document.documentElement.scrollWidth <= innerWidth,
+        ),
+      ).toBe(true);
+      await page.screenshot({
+        path: test.info().outputPath("video-thumbnail.png"),
+        fullPage: true,
+      });
+      await page.getByRole("button", { name: "نمای فشرده" }).click();
+      await expect(video).toHaveCSS("object-fit", "cover");
+      const article = opener.locator("..");
+      await article.evaluate((element: HTMLElement) => {
+        element.style.marginTop = "2000px";
+      });
+      await expect(video).toHaveCount(0);
+      await article.evaluate((element: HTMLElement) => {
+        element.style.marginTop = "";
+      });
+      await expect(video).toHaveCSS("opacity", "1");
+      await opener.click();
+      await expect(page.getByRole("dialog").locator("video")).toHaveJSProperty(
+        "controls",
+        true,
+      );
+      await page.keyboard.press("Escape");
+      await expect(opener).toBeFocused();
+      await expect(video).toHaveJSProperty("paused", true);
+    });
+  }
+
+  test("falls back when video decoding fails", async ({ page }) => {
+    await page.route(previewUrl, (route) => route.fulfill({ status: 404 }));
+    await mockVideoGallery(page, previewUrl);
+    const opener = page.getByRole("button", { name: "Film.mp4", exact: true });
+    await expect(opener).toBeVisible();
+    await expect(opener.locator("video")).toHaveCount(0);
+    await expect(opener.locator(".lucide-file-video")).toBeVisible();
+    await opener.click();
+    await expect(page.getByRole("dialog")).toBeVisible();
+  });
 });

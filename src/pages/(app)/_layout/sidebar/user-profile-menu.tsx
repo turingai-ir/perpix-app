@@ -1,4 +1,4 @@
-import type { FC } from "react";
+import type { FC, RefObject } from "react";
 import { useNavigate } from "react-router";
 import { ChevronsUpDown, Download, LogOut } from "lucide-react";
 
@@ -17,16 +17,28 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useActiveSubscription } from "@/feature/pricing";
 import { useSignOutActions } from "@/features/auth";
-import { usePwaInstall } from "@/feature/pwa";
 import { useAppTranslate } from "@/hooks";
 import { APP_ROUTES_KEY } from "@/router/routes";
 import { APP_I18_KEYS } from "@/services/i18";
 
-const AppLayoutSidebarUserProfileMenu: FC = () => {
+type UserProfileMenuProps = {
+  canInstall: boolean;
+  isInstallPending: boolean;
+  isIosGuideOpen: boolean;
+  requestInstall: () => Promise<void>;
+  triggerRef: RefObject<HTMLButtonElement | null>;
+};
+
+const AppLayoutSidebarUserProfileMenu: FC<UserProfileMenuProps> = ({
+  canInstall,
+  isInstallPending,
+  isIosGuideOpen,
+  requestInstall,
+  triggerRef,
+}) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const navigate = useNavigate();
   const signOutActions = useSignOutActions();
-  const pwaInstall = usePwaInstall();
   const activeSubscriptionState = useActiveSubscription();
   const planName =
     activeSubscriptionState.data?.plan.display_name ??
@@ -35,7 +47,12 @@ const AppLayoutSidebarUserProfileMenu: FC = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild className="mt-auto">
-        <Button variant="ghost" size="lg" className={styles.profileTrigger}>
+        <Button
+          ref={triggerRef}
+          variant="ghost"
+          size="lg"
+          className={styles.profileTrigger}
+        >
           <AppLayoutSidebarUserAvatar />
           <div className={styles.profileText}>
             <span>{t("pages.app.layout.sidebar.user.account")}</span>
@@ -52,6 +69,10 @@ const AppLayoutSidebarUserProfileMenu: FC = () => {
         side="top"
         align="end"
         sideOffset={8}
+        onCloseAutoFocus={(event) => {
+          // Let the guide take focus instead of the closing dropdown.
+          if (isIosGuideOpen) event.preventDefault();
+        }}
       >
         <DropdownMenuLabel className={styles.profileDropdownHeader}>
           <div className={styles.profileDropdownIdentity}>
@@ -72,13 +93,11 @@ const AppLayoutSidebarUserProfileMenu: FC = () => {
             </span>
             <span>{t("pages.app.layout.sidebar.user.manageAccount")}</span>
           </DropdownMenuItem>
-          {pwaInstall.canInstall ? (
+          {canInstall ? (
             <DropdownMenuItem
               className={`${styles.profileMenuItem} ${styles.profileMenuItemInstall}`}
-              onSelect={(event) => {
-                event.preventDefault();
-                void pwaInstall.requestInstall();
-              }}
+              disabled={isInstallPending}
+              onSelect={() => void requestInstall()}
             >
               <span className={styles.profileMenuIcon}>
                 <Download aria-hidden="true" />

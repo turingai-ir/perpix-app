@@ -27,6 +27,7 @@ function parseAspectRatio(value: unknown) {
 
 export function ImageResultCard({
   images,
+  imageIndexOffset = 0,
   message,
   requestMessage,
   onUseAsReference,
@@ -38,6 +39,7 @@ export function ImageResultCard({
   disabled,
 }: {
   images: string[];
+  imageIndexOffset?: number;
   message: SchemaAiTaskMessageResponse;
   requestMessage?: SchemaAiTaskMessageResponse;
   onUseAsReference?: (fileId: string) => void;
@@ -107,7 +109,7 @@ export function ImageResultCard({
           >
             <MediaPreviewItem
               fileId={fileId}
-              index={index}
+              index={imageIndexOffset + index}
               type="image"
               aspectRatio={parsedRatio.css}
               alt={prompt || t("common.image")}

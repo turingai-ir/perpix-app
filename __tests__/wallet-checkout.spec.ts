@@ -1,9 +1,10 @@
 import { expect, type Page, test } from "@playwright/test";
+import { mockAuthenticatedSession } from "./support/auth-session";
 
 const payment = {
   id: "c0202000-0000-4000-8000-000000000001",
   execution_uuid: "c0202000-0000-4000-8000-000000000002",
-  payment_url: "http://localhost:5173/mock-gateway",
+  payment_url: "https://gateway.invalid/mock-gateway",
   currency: "IRR",
   amount: "1294425",
   status: "PENDING",
@@ -12,13 +13,24 @@ const payment = {
   requires_review: false,
 };
 
-test.describe("Wallet checkout", () => {
-  test.beforeEach(async ({ baseURL, context, page }) => {
+test.beforeEach(async ({ context, page }) => {
+    await context.routeWebSocket("**/*", (socket) => socket.close());
+    await context.route("**/*", (route) => {
+      const request = route.request();
+      const url = new URL(request.url());
+      if (
+        url.origin === "http://localhost:5173" &&
+        request.method() === "GET" &&
+        !url.pathname.startsWith("/api/") &&
+        !["fetch", "xhr"].includes(request.resourceType())
+      ) return route.continue();
+      return route.abort("blockedbyclient");
+    });
+    await mockAuthenticatedSession(context);
     await mockAppApi(page);
-    await context.addCookies([
-      { name: "access_token", value: "test-token", url: baseURL },
-    ]);
-  });
+});
+
+test.describe("Wallet checkout", () => {
 
   test("reviews the exact server price before navigating to the gateway", async ({
     browserName,
@@ -108,7 +120,9 @@ test.describe("Wallet checkout", () => {
       await expect(
         page.getByRole("heading", { name: "تأیید مبلغ پرداخت" }),
       ).toBeVisible();
-      await page.keyboard.press("Escape");
+      // Escape has separate coverage; this scenario verifies unit conversion.
+      await page.getByRole("dialog").getByRole("button", { name: "Close", exact: true }).click();
+      await expect(page.getByRole("heading", { name: "تأیید مبلغ پرداخت" })).toBeHidden();
       await page.getByRole("button", { name: "شارژ کیف پول" }).click();
     }
   });
@@ -201,7 +215,6 @@ test.describe("Payment result", () => {
   test("keeps pending payments out of the failure state and polls them", async ({
     page,
   }) => {
-    await page.clock.install();
     let paymentCompleted = false;
     await page.route(
       `**/api/v1/payment-executions/${payment.execution_uuid}`,
@@ -219,11 +232,10 @@ test.describe("Payment result", () => {
 
     await page.goto(`/payment/verify/${payment.execution_uuid}`);
     await expect(
-      page.getByRole("heading", { name: "در انتظار نتیجه پرداخت" }),
+      page.getByRole("heading", { name: "منتظر نتیجهٔ پرداختیم" }),
     ).toBeVisible();
     await expect(page.getByText("پرداخت ناموفق")).toHaveCount(0);
     paymentCompleted = true;
-    await page.clock.fastForward(3_000);
     await expect(
       page.getByRole("heading", { name: "پرداخت تکمیل شد" }),
     ).toBeVisible();
@@ -263,7 +275,7 @@ test.describe("Payment result", () => {
         new URL(request.url()).pathname ===
           `/api/v1/payment-intents/${payment.id}/executions`,
     );
-    await page.getByRole("button", { name: "تلاش دوباره برای پرداخت" }).click();
+    await page.getByRole("button", { name: "دوباره پرداخت کن", exact: true }).click();
     expect((await retryRequest).headers()["idempotency-key"]).toBeUndefined();
     await expect(page).toHaveURL(/\/mock-gateway$/);
   });
@@ -279,6 +291,7 @@ async function mockAppApi(page: Page) {
   await page.route("**/*", async (route) => {
     const request = route.request();
     const path = new URL(request.url()).pathname;
+    if (path.startsWith("/api/v1/auth/")) return route.fallback();
     if (request.method() !== "GET") return route.fallback();
     if (path === "/api/v1/user/get-info") {
       return route.fulfill({ json: { uuid: "user-1", mobile: "09120000000" } });
@@ -330,7 +343,7 @@ function activeSubscription() {
       name: "pro",
       display_name: "Pro",
       description: null,
-      scopes: [],
+    scopes: ["subscription:read", "wallet:read", "wallet:write"],
       allowed_models: [],
       price_usdmicro: 0,
       duration_days: 30,

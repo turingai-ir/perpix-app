@@ -3,6 +3,7 @@ import { useLocation, useParams } from "react-router";
 
 import { GenerationVideoChats, GenerationVideoPromptBox } from "./_components";
 import { VideoBrandCinema } from "./_components/brand-cinema";
+import { GenerationHistoryError } from "../_components/generation-history-error";
 import styles from "./studio.module.css";
 import {
   GenerationFocusState,
@@ -34,6 +35,9 @@ function GenerationVideoSession() {
     displayedMessages,
     handleForm,
     handleRetry,
+    historyError,
+    isRetryingHistory,
+    retryHistory,
     isBusy,
     isTaskLoading,
     lastAssistantMessage,
@@ -60,7 +64,15 @@ function GenerationVideoSession() {
         </div>
       ) : null}
 
-      <Activity mode={isTaskLoading ? "hidden" : "visible"}>
+      {historyError && (
+        <GenerationHistoryError
+          kind={historyError}
+          isRetrying={isRetryingHistory}
+          newConversationPath={APP_ROUTES_KEY.generation.video.path}
+          onRetry={retryHistory}
+        />
+      )}
+      <Activity mode={isTaskLoading || historyError ? "hidden" : "visible"}>
         <div className={styles.content}>
           <section
             aria-label={t("pages.generation.video.studio.timelineLabel")}

@@ -30,6 +30,7 @@ export function useGenerationPromptBox(input: Input) {
   const lastSuccessfulMessageClearKeyRef = useRef<string | undefined>(
     undefined,
   );
+  const lastSubmissionRef = useRef<{ prompt: string } | undefined>(undefined);
   const [isUploadingMedia, setIsUploadingMedia] = useState(false);
   const { dynamicForm, model } = useGenerationDynamicForm(input);
   const submitState = useGenerationFormSubmit({
@@ -37,7 +38,21 @@ export function useGenerationPromptBox(input: Input) {
     isLoading: input.isLoading,
     isUploadingMedia,
     model,
-    onSubmit: input.onSubmit,
+    onSubmit: async (data, modelUuid) => {
+      const previous = lastSubmissionRef.current;
+      const submission = { prompt: String(data.prompt ?? "") };
+      lastSubmissionRef.current = submission;
+      let submitted = false;
+      try {
+        const result = await input.onSubmit(data, modelUuid);
+        submitted = result !== false;
+        return result;
+      } finally {
+        if (!submitted && lastSubmissionRef.current === submission) {
+          lastSubmissionRef.current = previous;
+        }
+      }
+    },
     validationErrorTitle: input.validationErrorTitle,
     validationFieldErrorMessage: input.validationFieldErrorMessage,
   });
@@ -66,6 +81,11 @@ export function useGenerationPromptBox(input: Input) {
     }
 
     lastSuccessfulMessageClearKeyRef.current = input.successfulMessageClearKey;
+    const hasUnsubmittedPrompt =
+      dynamicForm.form.getFieldState("prompt").isDirty &&
+      dynamicForm.getValues("prompt") !== lastSubmissionRef.current?.prompt;
+    if (hasUnsubmittedPrompt) return;
+
     dynamicForm.setValue("prompt", "", {
       shouldDirty: false,
       shouldTouch: false,

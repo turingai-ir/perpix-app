@@ -1,4 +1,4 @@
-import { Expand } from "lucide-react";
+import { Expand, Play } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FileFacts, useVisibleFilePreview } from "@/features/file-manager";
 import { useAppTranslate } from "@/hooks";
@@ -18,7 +18,9 @@ interface Props {
 }
 export function GalleryFileCard({ file, index, compact, onOpen }: Props) {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
-  const { ref, getFilePreviewState } = useVisibleFilePreview(file.uuid);
+  const { ref, visible, getFilePreviewState } = useVisibleFilePreview(
+    file.uuid,
+  );
   const previewUrls = getFilePreviewState.data;
   const isPreviewLoading = getFilePreviewState.isPending;
   const name = file.file_name || t("common.emptyTitle");
@@ -35,7 +37,7 @@ export function GalleryFileCard({ file, index, compact, onOpen }: Props) {
         onClick={(event) => onOpen(event.currentTarget)}
         className={`${styles.preview} focus-visible:ring-ring block w-full cursor-zoom-in outline-none focus-visible:ring-2 focus-visible:ring-inset`}
       >
-        {previewUrls?.preview_url && (
+        {previewUrls?.preview_url && (mediaType !== "video" || visible) && (
           <GalleryPreview
             key={previewUrls.preview_url}
             mediaType={mediaType}
@@ -51,8 +53,15 @@ export function GalleryFileCard({ file, index, compact, onOpen }: Props) {
         {!previewUrls?.preview_url && !isPreviewLoading && (
           <GalleryFallback mediaType={mediaType} />
         )}
-        <span aria-hidden="true" className={styles.openAffordance}>
-          <Expand />
+        <span
+          aria-hidden="true"
+          className={
+            mediaType === "video"
+              ? styles.videoAffordance
+              : styles.openAffordance
+          }
+        >
+          {mediaType === "video" ? <Play /> : <Expand />}
         </span>
         <span aria-hidden="true" className={styles.previewSheen} />
       </button>
