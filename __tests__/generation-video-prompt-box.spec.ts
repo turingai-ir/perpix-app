@@ -168,6 +168,7 @@ test("long video prompts collapse without hiding the failure or losing line brea
       task_status: "FAILED",
     },
   ]);
+  await mockAuthenticatedSession(page);
   await page.goto("/generation/video/task-1");
   const summary = page.locator("[data-video-request-summary]").first();
   const expand = summary.getByRole("button", { name: "نمایش متن کامل" });
@@ -216,6 +217,7 @@ test("mobile request summaries preserve reference framing and clamp long prompts
       },
     }),
   );
+  await mockAuthenticatedSession(page);
 
   await page.goto("/generation/video/task-1");
   const summary = page.locator("[data-video-request-summary]").first();
@@ -1328,8 +1330,14 @@ test("shows the generation failure reason and retries it in the same chat", asyn
 
 test("prevents another generation while the chat has a pending request", async ({
   page,
-}) => {
-  await mockApi(page, [
+}, testInfo) => {
+  let generationRequests = 0;
+  page.on("request", (request) => {
+    if (request.method() === "POST" && new URL(request.url()).pathname === "/api/v1/ai-task/generate") {
+      generationRequests += 1;
+    }
+  });
+  const pendingMessages = [
     {
       ai_model_config: {
         mode: "text_to_video",
@@ -1346,7 +1354,11 @@ test("prevents another generation while the chat has a pending request", async (
       role: "ASSISTANT",
       uuid: "pending-message-1",
     },
-  ]);
+  ];
+  await mockApi(page, pendingMessages);
+  await page.route("**/api/v1/ai-task/result/pending-message-1", (route) =>
+    route.fulfill({ json: pendingMessages[0] }),
+  );
   await mockAuthenticatedSession(page);
 
   await page.goto("/generation/video/task-1");
@@ -1360,12 +1372,12 @@ test("prevents another generation while the chat has a pending request", async (
   await expect(page.locator('button[type="submit"]')).toBeDisabled();
   await expect(page.locator('button[type="submit"]')).toBeInViewport();
   await expect(
-    page.getByText("ایده‌ات رفته پشت دوربین", { exact: true }),
+    page.getByText("ویدیوت توی راهه", { exact: true }),
   ).toBeVisible();
   const portal = page.locator("[data-video-generation-portal]");
   const portalBounds = await portal.boundingBox();
   const titleBounds = await portal
-    .getByText("این برداشت، توی راهه.")
+    .getByText("ویدیوت توی راهه", { exact: true })
     .boundingBox();
   const frameBounds = await portal
     .locator("[data-video-preview-frame]")
@@ -1391,18 +1403,21 @@ test("prevents another generation while the chat has a pending request", async (
     "animation-name",
     "none",
   );
-  await portal.screenshot({ path: ".artifacts/video-studio-rendering.png" });
+  await portal.screenshot({ path: testInfo.outputPath("video-studio-rendering.png") });
   await page.evaluate(() => {
     document.querySelectorAll<HTMLElement>("*").forEach((element) => {
       if (element.scrollTop) element.scrollTop = 0;
     });
   });
   await page.screenshot({
-    path: ".impeccable/review/video-pending-desktop.png",
+    path: testInfo.outputPath("video-pending-desktop.png"),
     fullPage: true,
   });
   await page.setViewportSize({ width: 375, height: 812 });
-  await page.getByRole("button", { name: "Close", exact: true }).click();
+  const navigation = page.getByRole("dialog", { name: "منو", exact: true });
+  if (await navigation.isVisible()) {
+    await navigation.getByRole("button", { name: "Close", exact: true }).click();
+  }
   await expect(portal).toBeVisible();
   expect(
     await page.evaluate(
@@ -1410,7 +1425,7 @@ test("prevents another generation while the chat has a pending request", async (
     ),
   ).toBe(true);
   await portal.screenshot({
-    path: ".artifacts/video-studio-rendering-mobile.png",
+    path: testInfo.outputPath("video-studio-rendering-mobile.png"),
   });
   await page.evaluate(() => {
     document.querySelectorAll<HTMLElement>("*").forEach((element) => {
@@ -1418,9 +1433,11 @@ test("prevents another generation while the chat has a pending request", async (
     });
   });
   await page.screenshot({
-    path: ".impeccable/review/video-pending-mobile.png",
+    path: testInfo.outputPath("video-pending-mobile.png"),
     fullPage: true,
   });
+  await expect(page.locator('button[type="submit"]')).toBeDisabled();
+  expect(generationRequests).toBe(0);
 });
 
 test("does not restore the prompt after a successful generation", async ({
@@ -1440,6 +1457,7 @@ test("does not restore the prompt after a successful generation", async ({
       uuid: "successful-message-1",
     },
   ]);
+  await mockAuthenticatedSession(page);
 
   await page.goto("/generation/video/task-1");
 
@@ -1475,6 +1493,7 @@ test("uses the last assistant message when a user message follows it", async ({
       uuid: "user-message-1",
     },
   ]);
+  await mockAuthenticatedSession(page);
 
   await page.goto("/generation/video/task-1");
 

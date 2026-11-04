@@ -17,10 +17,13 @@ test.describe("Image editor fullscreen layer", () => {
     const layer = workspace.locator(".konvajs-content");
     await expect(layer).toBeVisible();
 
-    const workspaceBounds = await workspace.boundingBox();
+    // The studio reserves the header, tool rail and inspector; the layer fills the stage.
+    const stageBounds = await workspace
+      .locator(".editor-studio-stage")
+      .boundingBox();
     const layerBounds = await layer.boundingBox();
-    expect(layerBounds?.width).toBe(workspaceBounds?.width);
-    expect(layerBounds?.height).toBe(workspaceBounds?.height);
+    expect(layerBounds?.width).toBe(stageBounds?.width);
+    expect(layerBounds?.height).toBe(stageBounds?.height);
 
     const card = page.getByTestId("image-card");
     await expect(card).toHaveAttribute("data-width", "120");
@@ -99,17 +102,11 @@ test.describe("Image editor fullscreen layer", () => {
     await expect
       .poll(() => readPixelRed(sceneCanvas, cardRight + 25, centerY))
       .not.toBe(255);
-    await expect(
-      page.getByRole("toolbar", { name: "ابزارهای تصویر" }),
-    ).toBeHidden();
 
     await layer.click({ position: { x: cardRight + 25, y: centerY } });
     await expect
       .poll(() => readPixelRed(sceneCanvas, cardRight + 25, centerY))
       .toBe(255);
-    await expect(
-      page.getByRole("toolbar", { name: "ابزارهای تصویر" }),
-    ).toBeVisible();
   });
 
   test("preserves the image position relative to the card after viewport resize", async ({

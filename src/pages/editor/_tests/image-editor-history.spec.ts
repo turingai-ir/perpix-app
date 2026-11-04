@@ -16,7 +16,7 @@ test.describe("Image editor history", () => {
     await page.getByRole("button", { name: "برش تصویر" }).click();
     await page
       .getByRole("toolbar", { name: "نسبت برش" })
-      .getByRole("button", { name: "1:1" })
+      .getByRole("button", { name: "1:1", exact: true })
       .click();
     await page.getByRole("button", { name: "اعمال برش" }).click();
 

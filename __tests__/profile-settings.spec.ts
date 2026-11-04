@@ -1,9 +1,9 @@
-import { expect, test, type BrowserContext, type Page } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
-async function mockProfileData(page: Page, context: BrowserContext) {
-  await context.addCookies([
-    { name: "access_token", value: "test-token", url: "http://localhost:5173" },
-  ]);
+import { mockAuthenticatedSession } from "./support/auth-session";
+
+async function mockProfileData(page: Page) {
+  await mockAuthenticatedSession(page);
   await page.route("**/api/v1/user/get-info", async (route) => {
     await route.fulfill({
       json: {
@@ -56,9 +56,8 @@ async function mockProfileData(page: Page, context: BrowserContext) {
 
 test("shows account data and saves editable profile fields", async ({
   page,
-  context,
 }) => {
-  await mockProfileData(page, context);
+  await mockProfileData(page);
   let savedBody: unknown;
   await page.route("**/api/v1/user/edit-info", async (route) => {
     savedBody = route.request().postDataJSON();
@@ -135,10 +134,9 @@ test.describe("identity card on touch viewports", () => {
   for (const width of [320, 375]) {
     test(`keeps the back content contained at ${width}px`, async ({
       page,
-      context,
     }) => {
       await page.setViewportSize({ width, height: 812 });
-      await mockProfileData(page, context);
+      await mockProfileData(page);
       await page.goto("/profile/settings");
 
       const identityCard = page.getByTestId("identity-card");

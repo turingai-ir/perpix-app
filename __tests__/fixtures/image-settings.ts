@@ -1,5 +1,6 @@
 import { expect, test as base } from "@playwright/test";
 import { mockAuthenticatedSession } from "../support/auth-session";
+import type { SchemaUserGetInfoResponse } from "../../src/services/api";
 
 const providerUuid = "9a6d5ea1-5276-4d7c-b445-d2e4dc2b4ee5";
 const referenceFiles = [
@@ -174,12 +175,23 @@ export const test = base.extend<{ safeImageApi: void }>({
           return;
         }
         const responses: Record<string, unknown> = {
-          "/user/get-info": { uuid: "user-1", mobile: "09120000000" },
+          "/user/get-info": {
+            phone_number: "+989123456789",
+            name: null,
+            email: null,
+            is_verified: true,
+            is_active: true,
+            scopes: [],
+            default_wallet_uuid: null,
+            created_at: "2026-10-18T00:00:00Z",
+            updated_at: "2026-10-18T00:00:00Z",
+          } satisfies SchemaUserGetInfoResponse,
           "/user/subscription/active": {
             uuid: "subscription-1",
             plan: {
               uuid: "plan-1",
               name: "pro",
+              is_default: false,
               display_name: "Pro",
               scopes: ["ai_task:write"],
               allowed_models: models.map((model) => model.name),

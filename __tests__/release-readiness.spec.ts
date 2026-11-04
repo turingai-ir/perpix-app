@@ -1,6 +1,7 @@
 import { type Page } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import { expect, test } from "./fixtures/image-settings";
+import { mockAnonymousSession } from "./support/auth-session";
 
 const videoConfig = JSON.parse(
   readFileSync(
@@ -63,6 +64,9 @@ async function mockReadOnlyRoutes(page: Page) {
       body: "retry: 600000\n\n",
     }),
   );
+  await page.route("**/api/v1/ai-task/list?**", (route) =>
+    route.fulfill({ json: { items: [], has_next: false } }),
+  );
   await page.route("**/api/v1/payment-executions/*", (route) =>
     route.fulfill({
       json: {
@@ -87,14 +91,20 @@ for (const viewport of [
 ]) {
   test(`reachable routes remain usable in RTL at ${viewport.width}x${viewport.height}`, async ({
     page,
-    context,
   }) => {
     test.setTimeout(90000);
     await page.setViewportSize(viewport);
     await page.emulateMedia({ reducedMotion: "reduce" });
     await mockReadOnlyRoutes(page);
     const pageErrors: string[] = [];
-    page.on("pageerror", (error) => pageErrors.push(error.message));
+    page.on("pageerror", (error) => {
+      // WebKit reports mocked GETs cancelled by the next navigation this way.
+      const cancelledByNavigation =
+        /\/api\/v1\/.* due to access control checks/.test(error.message);
+      if (!cancelledByNavigation) {
+        pageErrors.push(error.message);
+      }
+    });
     const routes = [
       { path: "/", ready: "[data-dashboard-primary-action]" },
       { path: "/gallery", ready: "h1" },
@@ -150,11 +160,13 @@ for (const viewport of [
         fullPage: true,
       });
     }
-    await context.clearCookies();
+    await mockAnonymousSession(page);
     await page.goto("/generation/image");
-    await expect(page).toHaveURL(/\/auth\/login$/);
+    await expect(page).toHaveURL(
+      /\/auth\/login\?returnTo=%2Fgeneration%2Fimage$/,
+    );
     await expect(
-      page.getByRole("spinbutton", { name: "شماره تلفن" }),
+      page.getByRole("textbox", { name: "شماره موبایل" }),
     ).toBeVisible();
     expect(
       await page.evaluate(
@@ -205,12 +217,12 @@ test("gallery read failure remains visible and refresh recovers to empty state",
   await page.goto("/gallery");
   const error = page
     .getByRole("alert")
-    .filter({ hasText: "دریافت فایل‌ها با خطا مواجه شد" });
+    .filter({ hasText: "فایل‌ها بارگذاری نشدن" });
   await expect(error).toBeVisible();
   fail = false;
   await error.getByRole("button").click();
   await expect(
-    page.getByText("هنوز فایلی ندارید", { exact: true }),
+    page.getByText("هنوز فایلی نداری", { exact: true }),
   ).toBeVisible();
   await expect(error).toBeHidden();
 });
