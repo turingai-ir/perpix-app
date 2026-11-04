@@ -25,6 +25,7 @@ const messages: Record<number, string> = {
   401: "unauthorized",
   403: "forbidden",
   404: "missing",
+  408: "slowUpload",
   409: "conflict",
   413: "tooLarge",
   415: "unsupported",
