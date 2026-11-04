@@ -46,3 +46,6 @@ graphify-out
 /.codex/higgsfield-video.png
 /.impeccable/
 /.agents/skills/ui-ux-pro-max/
+
+# Claude Code skills link (created by scripts/setup-ai-tools)
+/.claude/skills
