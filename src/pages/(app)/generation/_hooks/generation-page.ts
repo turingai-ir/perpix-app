@@ -9,10 +9,14 @@ import {
   isAiTaskMessageTerminal,
 } from "./model";
 import { useScrollToLatestMessage } from "./scroll-to-latest-message";
-import type { OptimisticGenerationTurn } from "../_types/conversation";
+import type {
+  GenerationHistoryErrorKind,
+  OptimisticGenerationTurn,
+} from "../_types/conversation";
 
 import { useReactQueryApi } from "@/hooks/app";
 import { buildRetryConfig } from "@/pages/(app)/generation/_utils/retry-config";
+import { FetchHttpError } from "@/utils/custom-fetch/fetch-errors";
 
 import {
   AiTaskRuleEnumMap,
@@ -115,6 +119,29 @@ export function useGenerationPage({
       ? `${taskData.uuid}:${lastDisplayedAssistantMessage.uuid}`
       : undefined;
   const isTaskLoading = aiTaskState.isLoading;
+  const isHistoryUnavailableNow = useCallback(() => {
+    if (!chatId) return false;
+    const options = queryOptions("get", "/api/v1/ai-task/{task_uuid}", {
+      params: { path: { task_uuid: chatId } },
+    });
+    const current = queryClient.getQueryState<SchemaAiTaskResponse>(
+      options.queryKey,
+    );
+    return current?.status !== "success" || current.data?.uuid !== chatId;
+  }, [chatId, queryClient, queryOptions]);
+  let historyError: GenerationHistoryErrorKind | undefined;
+  if (
+    chatId &&
+    (aiTaskState.isError || (aiTaskState.isSuccess && !taskData))
+  ) {
+    historyError = "temporary";
+    const status =
+      aiTaskState.error instanceof FetchHttpError
+        ? aiTaskState.error.response.status
+        : undefined;
+    if (status === 403) historyError = "forbidden";
+    if (status === 404) historyError = "notFound";
+  }
   const isGenerating = aiGenerateState.isPending;
   const hasPendingGeneration = displayedMessages.some(
     (message) =>
@@ -168,7 +195,12 @@ export function useGenerationPage({
   });
 
   useEffect(() => {
-    if (!location.hash || isTaskLoading || !displayedMessages.length) {
+    if (
+      historyError ||
+      !location.hash ||
+      isTaskLoading ||
+      !displayedMessages.length
+    ) {
       return;
     }
 
@@ -181,14 +213,25 @@ export function useGenerationPage({
     const messageElement = document.getElementById(messageUuid);
 
     messageElement?.scrollIntoView({
-      behavior: "smooth",
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "instant"
+        : "smooth",
       block: "center",
     });
-  }, [displayedMessages.length, isTaskLoading, location.hash]);
+  }, [displayedMessages.length, historyError, isTaskLoading, location.hash]);
 
   const handleForm = useCallback(
-    async (data: Readonly<Record<string, unknown>>, aiModelUuid: string) => {
-      if (submissionLockRef.current || hasPendingGeneration) return;
+    async (
+      data: Readonly<Record<string, unknown>>,
+      aiModelUuid: string,
+    ): Promise<void | false> => {
+      if (
+        submissionLockRef.current ||
+        hasPendingGeneration ||
+        isHistoryUnavailableNow()
+      ) {
+        return false;
+      }
       submissionLockRef.current = true;
       const existingMessageIds = new Set(
         displayedMessages.map((message) => message.uuid),
@@ -273,6 +316,7 @@ export function useGenerationPage({
     [
       chatId,
       hasPendingGeneration,
+      isHistoryUnavailableNow,
       historyPath,
       location.pathname,
       displayedMessages,
@@ -283,14 +327,21 @@ export function useGenerationPage({
   );
   const handleRetry = useCallback(
     async (message: SchemaAiTaskMessageResponse) => {
+      if (isHistoryUnavailableNow()) return;
       const aiModelUuid = message.ai_model_uuid;
       if (!aiModelUuid) return;
 
-      const model = await queryClient.query(
-        queryOptions("get", "/api/v1/ai-registry/models/{ai_model_uuid}", {
-          params: { path: { ai_model_uuid: aiModelUuid } },
-        }),
-      );
+      let model: unknown;
+      try {
+        model = await queryClient.fetchQuery(
+          queryOptions("get", "/api/v1/ai-registry/models/{ai_model_uuid}", {
+            params: { path: { ai_model_uuid: aiModelUuid } },
+          }),
+        );
+      } catch (error) {
+        if (isHistoryUnavailableNow()) return;
+        throw error;
+      }
 
       try {
         await handleForm(
@@ -301,13 +352,18 @@ export function useGenerationPage({
         // handleForm already displays the request failure in the conversation.
       }
     },
-    [handleForm, queryClient, queryOptions],
+    [handleForm, isHistoryUnavailableNow, queryClient, queryOptions],
   );
 
   return {
     displayedMessages,
     handleForm,
     handleRetry,
+    historyError,
+    isRetryingHistory: aiTaskState.isFetching,
+    retryHistory: () => {
+      void aiTaskState.refetch();
+    },
     isBusy,
     isTaskLoading,
     lastAssistantMessage: lastDisplayedAssistantMessage,

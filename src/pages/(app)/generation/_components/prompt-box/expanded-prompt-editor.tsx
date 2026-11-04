@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { type ComponentProps, useEffect, useRef, useState } from "react";
 import { Maximize2, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -12,15 +12,18 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useAppTranslate } from "@/hooks";
+import { cn } from "@/lib/utils";
 
 export function ExpandedPromptEditor({
+  className,
   disabled,
   onChange,
   placeholder,
+  ref,
   textareaLabel,
   value,
-}: {
-  disabled?: boolean;
+  ...textareaProps
+}: Omit<ComponentProps<"textarea">, "onChange" | "value"> & {
   onChange: (value: string) => void;
   placeholder: string;
   textareaLabel: string;
@@ -42,14 +45,22 @@ export function ExpandedPromptEditor({
     <>
       <div className="relative min-w-0 flex-1 pe-11">
         <textarea
-          ref={textareaRef}
+          {...textareaProps}
+          ref={(node) => {
+            textareaRef.current = node;
+            if (typeof ref === "function") return ref(node);
+            if (ref) ref.current = node;
+          }}
           value={value}
-          rows={2}
-          wrap="soft"
+          rows={textareaProps.rows ?? 2}
+          wrap={textareaProps.wrap ?? "soft"}
           disabled={disabled}
-          aria-label={textareaLabel}
+          aria-label={textareaProps["aria-label"] ?? textareaLabel}
           onChange={(event) => onChange(event.target.value)}
-          className="placeholder:text-muted-foreground block min-h-14 w-full resize-none overflow-hidden border-none bg-transparent px-1 py-2 text-base leading-7 wrap-anywhere outline-none disabled:cursor-not-allowed disabled:opacity-50"
+          className={cn(
+            "placeholder:text-muted-foreground block min-h-14 w-full resize-none overflow-hidden border-none bg-transparent px-1 py-2 text-base leading-7 wrap-anywhere outline-none disabled:cursor-not-allowed disabled:opacity-50",
+            className,
+          )}
           placeholder={placeholder}
         />
         <Button

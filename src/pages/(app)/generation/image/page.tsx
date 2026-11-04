@@ -11,6 +11,7 @@ import {
   type GenerationFocusPhase,
 } from "../_components/generation-focus-state";
 import { ImageComparison } from "./_components/image-comparison";
+import { GenerationHistoryError } from "../_components/generation-history-error";
 import type { ImageComparisonItem } from "./_components/image-comparison.types";
 import { GeneratedMediaField, useGenerationPage } from "../_hooks";
 import { getGenerationDraftPrompt } from "../_state/generation-draft";
@@ -45,6 +46,9 @@ const GenerationImageSession = () => {
     displayedMessages,
     handleForm,
     handleRetry,
+    historyError,
+    isRetryingHistory,
+    retryHistory,
     isBusy,
     isTaskLoading,
     lastAssistantMessage,
@@ -85,7 +89,15 @@ const GenerationImageSession = () => {
         </div>
       ) : null}
 
-      <Activity mode={isTaskLoading ? "hidden" : "visible"}>
+      {historyError && (
+        <GenerationHistoryError
+          kind={historyError}
+          isRetrying={isRetryingHistory}
+          newConversationPath={APP_ROUTES_KEY.generation.image.path}
+          onRetry={retryHistory}
+        />
+      )}
+      <Activity mode={isTaskLoading || historyError ? "hidden" : "visible"}>
         <>
           <section
             aria-label={t("pages.generation.image.chat.timelineLabel")}

@@ -25,6 +25,7 @@ import { APP_I18_KEYS } from "@/services/i18";
 const AppLayout: FC = () => {
   const [appLayoutState, setAppLayoutState] = useImmerAtom(appLayoutAtom);
   const scrollAreaMyRef = useRef<HTMLDivElement>(null);
+  const sidebarRef = useRef<HTMLElement>(null);
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const userState = useUser();
   const sidebarToggleLabel = appLayoutState.isSidebarOpen
@@ -51,7 +52,9 @@ const AppLayout: FC = () => {
     if (distanceFromEnd > 160) return;
     areaElement.scrollTo({
       top: areaElement.scrollHeight,
-      behavior: "smooth",
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "instant"
+        : "smooth",
     });
   });
 
@@ -65,7 +68,9 @@ const AppLayout: FC = () => {
           );
           viewport?.scrollTo({
             top: viewport.scrollHeight,
-            behavior: "smooth",
+            behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+              ? "instant"
+              : "smooth",
           });
           return;
         }
@@ -78,18 +83,18 @@ const AppLayout: FC = () => {
     };
   }, []);
 
-  if (userState.isLoading || !userState.data) {
-    return (
-      <div className="mx-auto flex h-dvh w-full items-center justify-center py-4">
-        <LoadingSection />
-      </div>
-    );
-  }
-
   if (userState.isError) {
     return (
       <div className="mx-auto flex h-dvh w-full items-center justify-center py-4">
         <ErrorSection onRetry={() => userState.refetch()} />
+      </div>
+    );
+  }
+
+  if (userState.isLoading || !userState.data) {
+    return (
+      <div className="mx-auto flex h-dvh w-full items-center justify-center py-4">
+        <LoadingSection />
       </div>
     );
   }
@@ -107,7 +112,10 @@ const AppLayout: FC = () => {
             : "0px",
         }}
       >
-        <AppLayoutSidebar sidebarWidth={APP_LAYOUT_SIDEBAR_WIDTH} />
+        <AppLayoutSidebar
+          sidebarWidth={APP_LAYOUT_SIDEBAR_WIDTH}
+          sidebarRef={sidebarRef}
+        />
         <ScrollArea
           ref={(r) => {
             if (r) {
@@ -125,7 +133,14 @@ const AppLayout: FC = () => {
               aria-label={sidebarToggleLabel}
               title={sidebarToggleLabel}
               className="group text-foreground focus-visible:ring-primary/75 focus-visible:ring-offset-background relative min-h-11 gap-2.5 overflow-hidden rounded-full border border-white/10 bg-white/5 px-2.5 shadow-[inset_0_1px_0_rgb(255_255_255_/_12%),0_8px_24px_rgb(0_0_0_/_16%)] transition-[background,border-color,box-shadow,transform] duration-200 ease-out hover:border-white/18 hover:bg-white/9 hover:shadow-[inset_0_1px_0_rgb(255_255_255_/_18%),0_10px_28px_rgb(0_0_0_/_22%)] focus-visible:ring-2 focus-visible:ring-offset-2 active:scale-[0.97] active:bg-white/12 motion-reduce:transition-none"
-              onClick={() => {
+              onClick={(event) => {
+                if (
+                  appLayoutState.isSidebarOpen &&
+                  sidebarRef.current?.contains(document.activeElement)
+                ) {
+                  // Restore focus before inert blurs the sidebar's active element.
+                  event.currentTarget.focus({ preventScroll: true });
+                }
                 setAppLayoutState((draft) => {
                   draft.isSidebarOpen = !draft.isSidebarOpen;
                 });

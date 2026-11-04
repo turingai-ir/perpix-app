@@ -40,7 +40,7 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
   aspectRatio = "1 / 1",
   fileId,
   fit = "cover",
-  index = 0,
+  index,
   type,
   compact = false,
   showRetentionInfo = false,
@@ -72,6 +72,17 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
     ? undefined
     : getFilePreviewState.data?.download_url;
   const mediaLabel = type === "image" ? t("common.image") : t("common.video");
+  const conciseDescription = alt?.trim();
+  const previewLabel =
+    index === undefined && conciseDescription && conciseDescription.length <= 80
+      ? t("common.mediaPreview.described", {
+          mediaType: mediaLabel,
+          description: conciseDescription,
+        })
+      : t("common.mediaPreview.indexed", {
+          mediaType: mediaLabel,
+          index: (index ?? 0) + 1,
+        });
   const isMediaError = !!mediaUrl && failedUrl === mediaUrl;
   const isError = getFilePreviewState.isError || isMediaError;
 
@@ -111,7 +122,7 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
             <button
               type="button"
               className="group focus-visible:ring-ring/50 relative h-full w-full cursor-zoom-in overflow-hidden text-start outline-none focus-visible:ring-3"
-              aria-label={mediaLabel}
+              aria-label={previewLabel}
             >
               {type === "image" ? (
                 <img
@@ -120,7 +131,7 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
                     fit === "contain" ? "object-contain" : "object-cover",
                   )}
                   src={mediaUrl}
-                  alt={alt ?? `${mediaLabel} ${index + 1}`}
+                  alt={alt ?? `${mediaLabel} ${(index ?? 0) + 1}`}
                   onError={() => setFailedUrl(mediaUrl)}
                 />
               ) : (
@@ -187,7 +198,7 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
             <img
               className="max-h-full max-w-full rounded-lg object-contain"
               src={mediaUrl}
-              alt={alt ?? `${mediaLabel} ${index + 1}`}
+              alt={alt ?? `${mediaLabel} ${(index ?? 0) + 1}`}
               onError={() => setFailedUrl(mediaUrl)}
             />
           ) : (

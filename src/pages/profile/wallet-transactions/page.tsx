@@ -1,6 +1,7 @@
 import { useDeferredValue, useState } from "react";
 import { useSearchParams } from "react-router";
 
+import { Button } from "@/components/ui/button";
 import { useWalletTransactions } from "@/feature/wallet";
 import { useAppTranslate } from "@/hooks";
 import { FinanceToolbar } from "@/pages/profile/_components/finance-toolbar";
@@ -117,7 +118,27 @@ function ProfileWalletTransactionsPage() {
           <ProfileListError onRetry={() => void transactionsState.refetch()} />
         ) : null}
         {transactionsState.isSuccess && transactions.length === 0 ? (
-          <ProfileListEmpty title={t("pages.profile.finance.emptyWallet")} />
+          <>
+            <ProfileListEmpty
+              title={t(
+                offset > 0
+                  ? "pages.profile.finance.zeroRecords"
+                  : "pages.profile.finance.emptyWallet",
+              )}
+            />
+            {offset > 0 ? (
+              <div className="flex justify-center px-4 pb-6">
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={transactionsState.isFetching}
+                  onClick={() => updatePage(0)}
+                >
+                  {t("pages.profile.finance.firstPage")}
+                </Button>
+              </div>
+            ) : null}
+          </>
         ) : null}
         {transactions.length > 0 && visibleTransactions.length === 0 ? (
           <ProfileListEmpty title={t("pages.profile.finance.noResults")} />

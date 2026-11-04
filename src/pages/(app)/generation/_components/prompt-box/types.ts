@@ -38,10 +38,11 @@ export interface GenerationPromptBoxProps {
   lastMessageConfig?: SchemaAiTaskMessageResponse["ai_model_config"];
   lastMessageModelUuid?: SchemaAiTaskMessageResponse["ai_model_uuid"];
   lastMessageStatus?: SchemaAiTaskMessageResponse["task_status"];
+  /** Return false when a guard prevents submission, so the draft stays unsent. */
   onSubmit: (
     data: Readonly<Record<string, unknown>>,
     aiModelUuid: string,
-  ) => Promise<void> | void;
+  ) => Promise<void | false> | void | false;
   onComposerIntentApplied?: (intentId: string) => void;
   successfulMessageClearKey?: string;
   promptBoxFieldNames: ReadonlySet<string>;

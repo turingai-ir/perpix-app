@@ -2,6 +2,7 @@ import { type Page } from "@playwright/test";
 import { loadEnv } from "vite";
 import { expect, test } from "./fixtures/image-settings";
 import { mockAuthenticatedSession } from "./support/auth-session";
+import { mockAppShellApis } from "../src/features/auth/_tests/support";
 
 const telegramSupportUrl = loadEnv(
   process.env.PERPIX_TEST_MODE ?? "development",
@@ -15,7 +16,161 @@ test.describe("App sidebar", () => {
     await mockAuthenticatedSession(page);
   });
 
+  test("recovers from an initial user read failure through localized retry", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    let shouldFail = true;
+    let userRequests = 0;
+    let releaseUserRead: () => void = () => undefined;
+    const userReadGate = new Promise<void>((resolve) => {
+      releaseUserRead = resolve;
+    });
+    await page.route("**/api/v1/user/get-info", async (route) => {
+      userRequests += 1;
+      if (shouldFail) {
+        await route.fulfill({ status: 503, json: {} });
+        return;
+      }
+      await userReadGate;
+      await route.fulfill({
+        json: {
+          email: null,
+          phone_number: "+989123456789",
+          name: null,
+          is_verified: true,
+          scopes: [],
+          default_wallet_uuid: null,
+          is_active: true,
+          created_at: "2026-10-18T00:00:00Z",
+          updated_at: "2026-10-18T00:00:00Z",
+        },
+      });
+    });
+
+    try {
+      await page.goto("/");
+      const errorMessage = page.getByText("مشکلی پیش اومد. دوباره امتحان کن.");
+      const retryButton = page.getByRole("button", {
+        name: "دوباره امتحان کن",
+        exact: true,
+      });
+      await expect(errorMessage).toBeVisible();
+      await expect(retryButton).toBeVisible();
+      await expect(page.locator("[data-dashboard-primary-action]")).toHaveCount(0);
+      const failedRequests = userRequests;
+
+      shouldFail = false;
+      await retryButton.click();
+      await expect(errorMessage).toBeHidden();
+      await expect(page.locator(".animate-spin")).toBeVisible();
+      await expect(page.locator("[data-dashboard-primary-action]")).toHaveCount(0);
+
+      releaseUserRead();
+      await expect(page.locator("[data-dashboard-primary-action]")).toHaveCount(2);
+      await expect(
+        page.getByRole("link", { name: "گالری", exact: true }),
+      ).toBeVisible();
+      await expect(retryButton).toBeHidden();
+      expect(userRequests).toBeGreaterThan(failedRequests);
+    } finally {
+      releaseUserRead();
+    }
+  });
+
+  test("excludes the collapsed desktop sidebar from keyboard and accessibility navigation and reopens it", async ({
+    page,
+    browserName,
+  }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/");
+    const sidebar = page.locator("aside").filter({ has: page.locator('a[href="/gallery"]') });
+    const closeButton = page.getByRole("button", { name: "بستن نوار کناری" });
+    await closeButton.focus();
+    await page.keyboard.press("Enter");
+
+    const openButton = page.getByRole("button", { name: "باز کردن نوار کناری" });
+    await expect(openButton).toHaveAttribute("aria-expanded", "false");
+    await expect(openButton).toBeFocused();
+    await expect(sidebar).toHaveAttribute("inert", "");
+    await expect(sidebar).toHaveAttribute("aria-hidden", "true");
+    await expect(page.getByRole("complementary").filter({ has: page.locator('a[href="/gallery"]') })).toHaveCount(0);
+    await expect(
+      page.getByRole("link", { name: "گالری", exact: true }),
+    ).toHaveCount(0);
+    await page.keyboard.press("Shift+Tab");
+    expect(
+      await sidebar.evaluate((element) =>
+        element.contains(document.activeElement),
+      ),
+    ).toBe(false);
+    await openButton.focus();
+    await page.keyboard.press("Tab");
+    expect(
+      await sidebar.evaluate((element) =>
+        element.contains(document.activeElement),
+      ),
+    ).toBe(false);
+    const hiddenGallery = sidebar.getByRole("link", {
+      name: "گالری",
+      exact: true,
+      includeHidden: true,
+    });
+    await hiddenGallery.focus();
+    await expect(hiddenGallery).not.toBeFocused();
+
+    await openButton.focus();
+    await page.keyboard.press("Enter");
+    await expect(closeButton).toHaveAttribute("aria-expanded", "true");
+    await expect(sidebar).not.toHaveAttribute("inert");
+    await expect(sidebar).toHaveAttribute("aria-hidden", "false");
+    await expect(page.getByRole("complementary").filter({ has: page.locator('a[href="/gallery"]') })).toBeVisible();
+    const galleryLink = page.getByRole("link", { name: "گالری", exact: true });
+    await expect(galleryLink).toBeVisible();
+    await galleryLink.focus();
+    await expect(galleryLink).toBeFocused();
+    const editorLink = page.getByRole("link", { name: /ویرایشگر تصویر\s+آزمایشی/ });
+    if (browserName === "webkit") {
+      // Safari's link traversal depends on the OS keyboard-access preference.
+      // Verify native focusability and declared DOM order without an OS shortcut.
+      expect(await editorLink.evaluate((link) => link.tabIndex)).toBeGreaterThanOrEqual(0);
+      const order = await sidebar.locator("a").evaluateAll((links) => links.map((link) => link.getAttribute("href")));
+      expect(order.indexOf("/editor")).toBe(order.indexOf("/gallery") + 1);
+      await editorLink.focus();
+    } else {
+      await page.keyboard.press("Tab");
+    }
+    await expect(editorLink).toBeFocused();
+  });
+
+  test("returns focus to the desktop toggle when collapsing with focus inside", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/");
+    const galleryLink = page.getByRole("link", { name: "گالری", exact: true });
+    await galleryLink.focus();
+    await expect(galleryLink).toBeFocused();
+
+    // Dispatch without moving focus, as a programmatic collapse would do.
+    await page
+      .getByRole("button", { name: "بستن نوار کناری" })
+      .dispatchEvent("click");
+
+    const openButton = page.getByRole("button", { name: "باز کردن نوار کناری" });
+    await expect(openButton).toBeFocused();
+    await expect(openButton).toHaveAttribute("aria-expanded", "false");
+    await expect(page.locator("aside").filter({ has: page.locator('a[href="/gallery"]') })).toHaveAttribute("inert", "");
+    await expect(page.getByRole("complementary").filter({ has: page.locator('a[href="/gallery"]') })).toHaveCount(0);
+    await page.keyboard.press("Enter");
+    await galleryLink.focus();
+    await expect(galleryLink).toBeFocused();
+  });
+
   test("loads the pricing sheet when it is first opened", async ({ page }) => {
+    await page.route("**/api/v1/user/subscription/active", (route) => route.fulfill({
+      json: { uuid: "free-subscription", plan: { uuid: "free-plan", name: "free", display_name: "Free", is_default: true, scopes: [], allowed_models: [], meta: {} } },
+    }));
     const pricingRequests: string[] = [];
     page.on("request", (request) => {
       if (request.url().includes("/feature/pricing/pricing.tsx")) {
@@ -29,13 +184,13 @@ test.describe("App sidebar", () => {
     expect(pricingRequests).toHaveLength(0);
 
     await upgradeButton.click();
-    await expect(page.getByRole("dialog", { name: "بسته‌ها" })).toBeVisible();
+    await expect(page.getByRole("dialog", { name: "بسته‌ها", exact: true })).toBeVisible();
     expect(pricingRequests).toHaveLength(1);
 
     await page.getByRole("button", { name: "Close" }).click();
-    await expect(page.getByRole("dialog", { name: "بسته‌ها" })).toBeHidden();
+    await expect(page.getByRole("dialog", { name: "بسته‌ها", exact: true })).toBeHidden();
     await upgradeButton.click();
-    await expect(page.getByRole("dialog", { name: "بسته‌ها" })).toBeVisible();
+    await expect(page.getByRole("dialog", { name: "بسته‌ها", exact: true })).toBeVisible();
     expect(pricingRequests).toHaveLength(1);
   });
 
@@ -165,6 +320,7 @@ test.describe("App sidebar", () => {
     await page.goto("/");
 
     const sidebarSheet = page.locator('[data-slot="sheet-content"]');
+    await page.getByRole("button", { name: "باز کردن نوار کناری" }).click();
     await expect(sidebarSheet).toBeVisible();
     await page.keyboard.press("Escape");
     await page.getByRole("button", { name: "باز کردن نوار کناری" }).click();
@@ -212,6 +368,7 @@ test.describe("App sidebar", () => {
     test(`opens the profile from the sidebar at ${viewport.width}px`, async ({
       page,
     }) => {
+      await mockAppShellApis(page);
       await page.setViewportSize(viewport);
       await page.goto("/");
 
@@ -231,7 +388,7 @@ test.describe("App sidebar", () => {
         name: "بخش‌های پروفایل",
       });
       await expect(
-        profileNav.getByRole("link", { name: "کیف پول" }),
+        profileNav.locator('a[href="/profile/wallet-transactions"]'),
       ).toBeVisible();
       await expect(profileNav.locator('[aria-current="page"]')).toHaveText(
         "تنظیمات حساب",

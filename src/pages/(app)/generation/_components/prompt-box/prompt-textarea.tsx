@@ -35,6 +35,9 @@ export const PromptTextarea: FC<{
             {label && <FormLabel className="sr-only">{label}</FormLabel>}
             <FormControl>
               <ExpandedPromptEditor
+                name={field.name}
+                ref={field.ref}
+                onBlur={field.onBlur}
                 value={String(field.value ?? "")}
                 onChange={field.onChange}
                 disabled={disabled}

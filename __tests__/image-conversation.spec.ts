@@ -196,7 +196,7 @@ test("temporary image preview failure offers retry without claiming the file exp
   await expect(result.getByText("این فایل دیگه در دسترس نیست")).toHaveCount(0);
   interrupted = false;
   await result.getByRole("button", { name: "تلاش دوباره" }).click();
-  await expect(result.getByRole("button", { name: "عکس" })).toBeVisible();
+  await expect(result.getByRole("button", { name: "دیدن عکس 1", exact: true })).toBeVisible();
 });
 
 test("a broken image URL refreshes its link instead of claiming seven-day expiry", async ({
@@ -230,7 +230,7 @@ test("a broken image URL refreshes its link instead of claiming seven-day expiry
   await expect(result.getByText("این فایل دیگه در دسترس نیست")).toHaveCount(0);
   await result.getByRole("button", { name: "تلاش دوباره" }).click();
   await expect(result.getByRole("alert")).toHaveCount(0);
-  await expect(result.getByRole("button", { name: "عکس" })).toBeVisible();
+  await expect(result.getByRole("button", { name: "دیدن عکس 1", exact: true })).toBeVisible();
   expect(previewRequests).toBe(2);
 });
 
@@ -458,7 +458,7 @@ test("successful server result replaces optimistic messages without duplicates",
     page.locator("article").filter({ hasText: labels.result }),
   ).toHaveCount(1);
   const generatedImage = page.getByRole("button", {
-    name: "عکس",
+    name: "دیدن عکس 1",
     exact: true,
   });
   await expect(generatedImage).toHaveCount(1);

@@ -6,6 +6,7 @@ import { ImageReferenceInput } from "./image-reference-input";
 import { useAppTranslate } from "@/hooks";
 
 import { GenerationPromptBox } from "@/pages/(app)/generation/_components/prompt-box";
+import type { GenerationPromptBoxProps } from "@/pages/(app)/generation/_components/prompt-box/types";
 import type { GenerationComposerIntent } from "@/pages/(app)/generation/_types/conversation";
 import {
   AiRegistryModelSupportedTypesEnumMap,
@@ -14,10 +15,7 @@ import {
 
 interface Props {
   initialPrompt?: string;
-  onSubmit: (
-    data: Readonly<Record<string, unknown>>,
-    aiModelUuid: string,
-  ) => Promise<void> | void;
+  onSubmit: GenerationPromptBoxProps["onSubmit"];
   isLoading?: boolean;
   lastMessageConfig?: SchemaAiTaskMessageResponse["ai_model_config"];
   lastMessageModelUuid?: SchemaAiTaskMessageResponse["ai_model_uuid"];
