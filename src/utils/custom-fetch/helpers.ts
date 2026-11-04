@@ -1,7 +1,23 @@
 import { HttpStatus } from "./http-status";
 
-export function fakeDelay(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+export function fakeDelay(ms: number, signal?: AbortSignal) {
+  return new Promise<void>((resolve, reject) => {
+    if (signal?.aborted) {
+      reject(signal.reason);
+      return;
+    }
+    const cleanup = () => signal?.removeEventListener("abort", onAbort);
+    const timer = setTimeout(() => {
+      cleanup();
+      resolve();
+    }, ms);
+    const onAbort = () => {
+      clearTimeout(timer);
+      cleanup();
+      reject(signal?.reason);
+    };
+    signal?.addEventListener("abort", onAbort, { once: true });
+  });
 }
 
 export function isRetryableStatus(status: number): boolean {
@@ -59,39 +75,42 @@ export function isErrorAbortError(error: unknown): boolean {
   );
 }
 
-export function creatTimeOutAbortController(
+export function createTimeoutScope(
   timeoutMs: number,
   onTimeout?: () => void,
-): AbortController {
+) {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => {
-    if (onTimeout) {
-      onTimeout();
+    try {
+      onTimeout?.();
+    } finally {
+      controller.abort();
     }
-    controller.abort();
   }, timeoutMs);
 
-  controller.signal.addEventListener("abort", () => {
+  const dispose = () => {
     clearTimeout(timeoutId);
-  });
+    controller.signal.removeEventListener("abort", dispose);
+  };
+  controller.signal.addEventListener("abort", dispose, { once: true });
 
-  return controller;
+  return { controller, dispose };
 }
 
 export function combineAbortSignals(signals: AbortSignal[]): AbortSignal {
+  if (signals.length === 1) return signals[0];
+  if (typeof AbortSignal.any === "function") return AbortSignal.any(signals);
+  const aborted = signals.find((signal) => signal.aborted);
+  if (aborted) return aborted;
   const controller = new AbortController();
 
   const onAbort = () => {
     if (!controller.signal.aborted) {
-      controller.abort();
+      controller.abort(signals.find((signal) => signal.aborted)?.reason);
     }
   };
 
   for (const signal of signals) {
-    if (signal.aborted) {
-      controller.abort();
-      break;
-    }
     signal.addEventListener("abort", onAbort, { once: true });
   }
 

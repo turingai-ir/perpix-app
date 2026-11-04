@@ -59,9 +59,9 @@ test("registers with an OTP that keeps its leading zero and Persian digits", asy
   await page.getByRole("button", { name: "ثبت‌نام" }).click();
 
   await expect(page.locator("[data-auth-celebration]")).toBeVisible();
-  await expect(
-    page.getByRole("navigation", { name: "پیوندهای مالی" }),
-  ).toBeVisible();
+  await expect(page.getByRole("region", { name: "حساب تو" })).toBeVisible({
+    timeout: 15_000,
+  });
   expect(startBody).toEqual({ phone_number: "+989123456789" });
   expect(completeBody).toEqual({
     challenge_id: CHALLENGE_ID,
@@ -117,9 +117,7 @@ test("rejects mismatching passwords locally", async ({ page }) => {
   await page.getByLabel("تکرار رمز عبور").fill("Different1");
   await page.getByRole("button", { name: "ثبت‌نام" }).click();
 
-  await expect(
-    page.getByText("رمز عبور با تکرار آن برابر نیست."),
-  ).toBeVisible();
+  await expect(page.getByText("رمزها یکی نیستن. دوباره چک کن.")).toBeVisible();
   expect(registrations).toBe(0);
 });
 
@@ -143,7 +141,9 @@ test("resend replaces the challenge once the cooldown has passed", async ({
   await startRegistration(page);
   await page.getByRole("button", { name: "ارسال مجدد کد" }).click();
 
-  await expect(page.getByText(/ارسال مجدد کد تا \d+ ثانیه دیگر/)).toBeVisible();
+  await expect(
+    page.getByText(/\d+ ثانیه دیگه می‌تونی کد تازه بگیری/),
+  ).toBeVisible();
   expect(resendPath).toBe(`/api/v1/auth/challenges/${CHALLENGE_ID}/resend`);
 });
 
@@ -170,7 +170,9 @@ test("an expired challenge asks for a fresh code instead of resending", async ({
     page.getByRole("button", { name: "ارسال مجدد کد" }),
   ).toBeHidden();
   await expect.poll(() => starts).toBe(2);
-  await expect(page.getByText(/ارسال مجدد کد تا \d+ ثانیه دیگر/)).toBeVisible();
+  await expect(
+    page.getByText(/\d+ ثانیه دیگه می‌تونی کد تازه بگیری/),
+  ).toBeVisible();
 });
 
 test("a rate-limited challenge request shows the server wait time", async ({

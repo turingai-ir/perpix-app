@@ -22,6 +22,7 @@ interface SendOptions {
   body?: unknown;
   csrfToken?: string;
   bearer?: string;
+  signal?: AbortSignal;
 }
 
 async function send(path: string, options: SendOptions = {}) {
@@ -39,6 +40,7 @@ async function send(path: string, options: SendOptions = {}) {
       headers,
       credentials: "include",
       cache: "no-store",
+      signal: options.signal,
       body:
         options.body === undefined ? undefined : JSON.stringify(options.body),
     });
@@ -114,15 +116,19 @@ export const completePasswordReset = async (body: {
 export const login = async (body: { phone_number: string; password: string }) =>
   readIssuedSession(await send("/login", { body }));
 
-export const fetchCsrfToken = async () =>
-  (await parse(await send("/csrf", { method: "GET" }), csrfResponseSchema))
-    .csrf_token;
+export const fetchCsrfToken = async (signal?: AbortSignal) =>
+  (
+    await parse(
+      await send("/csrf", { method: "GET", signal }),
+      csrfResponseSchema,
+    )
+  ).csrf_token;
 
-export const refreshTokens = async (csrfToken: string) =>
-  readIssuedSession(await send("/refresh", { csrfToken }));
+export const refreshTokens = async (csrfToken: string, signal?: AbortSignal) =>
+  readIssuedSession(await send("/refresh", { csrfToken, signal }));
 
-export const logout = async (csrfToken: string) => {
-  await send("/logout", { csrfToken });
+export const logout = async (csrfToken: string, signal?: AbortSignal) => {
+  await send("/logout", { csrfToken, signal });
 };
 
 export const logoutAll = async (bearer: string) => {

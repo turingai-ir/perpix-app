@@ -49,7 +49,7 @@ for (const viewport of [
     await page.evaluate(() => document.fonts.ready);
     await expect(page.locator("[data-login-artwork]")).toBeVisible();
     await expect(
-      page.getByRole("spinbutton", { name: "شماره تلفن" }),
+      page.getByRole("textbox", { name: "شماره موبایل" }),
     ).toBeVisible();
     expect(
       await page.evaluate(

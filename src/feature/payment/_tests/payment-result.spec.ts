@@ -238,7 +238,8 @@ test("an expired session returns to the same payment after login and reload", as
   await page.getByRole("button", { name: "ادامه دادن" }).click();
   await page.getByLabel("رمز عبور", { exact: true }).fill("secret");
   await page.getByRole("button", { name: /^ورود/ }).click();
-  await expect(page).toHaveURL(destination);
+  // Login shows a 5s success animation before redirecting.
+  await expect(page).toHaveURL(destination, { timeout: 15_000 });
   await expect(
     page.getByRole("heading", { name: "پرداخت تکمیل شد", exact: true }),
   ).toBeVisible();

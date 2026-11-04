@@ -38,14 +38,14 @@ test("signs in with a canonical E.164 phone converted from Persian digits", asyn
 
   await expect(page.locator("[data-auth-celebration]")).toBeVisible();
   await expect(page.locator("[data-auth-celebration]")).toContainText(
-    "در باز شد",
+    "ورود تأیید شد",
   );
   await page.waitForTimeout(4000);
   await expect(page).toHaveURL(/\/auth\/login$/);
   await expect(page.locator("[data-auth-celebration]")).toBeVisible();
-  await expect(
-    page.getByRole("navigation", { name: "پیوندهای مالی" }),
-  ).toBeVisible();
+  await expect(page.getByRole("region", { name: "حساب تو" })).toBeVisible({
+    timeout: 15_000,
+  });
   expect(body).toEqual({ phone_number: "+989123456789", password: "secret" });
 });
 
@@ -107,7 +107,7 @@ test("validates the phone number before sending anything", async ({ page }) => {
   await page.getByRole("button", { name: "ادامه دادن" }).click();
 
   await expect(
-    page.getByText("شماره موبایل معتبر ایران وارد کنید."),
+    page.getByText("یه شماره موبایل معتبر ایران وارد کن."),
   ).toBeVisible();
   expect(loginRequests).toBe(0);
 });
