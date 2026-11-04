@@ -49,3 +49,5 @@ graphify-out
 
 # Claude Code skills link (created by scripts/setup-ai-tools)
 /.claude/skills
+# Personal Claude Code settings (team settings live in .claude/settings.json)
+/.claude/settings.local.json

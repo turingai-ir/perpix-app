@@ -1,5 +1,7 @@
 # Links Claude Code skills to the shared skills folder (.agents/skills).
 # Run once per clone:  powershell -ExecutionPolicy Bypass -File scripts/setup-ai-tools.ps1
+# The graphify hooks in .claude/settings.json are no-ops when the graphify CLI is
+# not installed, so graphify is optional; install it only if you want graph queries.
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
 $source = Join-Path $root '.agents\skills'
