@@ -322,3 +322,17 @@
     scrollbar-color: var(--border) var(--background);
   }
 }
+
+/*
+ * Shared primitives (dialog, sheet, drawer, popover, select, dropdown, tooltip)
+ * use tw-animate enter/exit animations through variant classes such as
+ * `data-open:animate-in`. Honour reduced motion for all of them in one place.
+ * Unlayered so it wins over the layered utilities; Radix unmounts immediately
+ * when the exit animation is `none`.
+ */
+@media (prefers-reduced-motion: reduce) {
+  [class*="animate-in"],
+  [class*="animate-out"] {
+    animation: none;
+  }
+}
