@@ -46,6 +46,9 @@ function Harness() {
       </label>
       <output aria-label="Result">{result}</output>
       <output aria-label="Single URL">{single.data?.preview_url}</output>
+      <output aria-label="Single preview error">
+        {String(single.isError)}
+      </output>
       <output aria-label="Files">
         {files.data?.pages
           .flatMap((page) => page.files)
