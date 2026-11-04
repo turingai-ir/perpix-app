@@ -5,6 +5,7 @@ import { failureOf, type AuthFailure } from "../model/auth-failure";
 
 import { useAppTranslate, useSecondsCountDown } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
+import { isErrorAbortError } from "@/utils/custom-fetch/helpers";
 
 export type FailureContext = "default" | "change-password";
 
@@ -53,6 +54,7 @@ export function useAuthFeedback<Values extends FieldValues>(
 
   const handleError = useCallback(
     (error: unknown) => {
+      if (isErrorAbortError(error)) return;
       const failure = failureOf(error);
       const text = messageFor(failure, context, t as Translate);
       if (failure.kind === "rate-limited" && failure.retryAfterSeconds) {

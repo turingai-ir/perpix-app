@@ -17,9 +17,11 @@ test("loads a route when session storage is unavailable", async ({ page }) => {
   });
 
   await page.goto("/auth/login");
-  await expect(page.getByRole("spinbutton")).toBeVisible({
-    timeout: 15_000,
-  });
+  await expect(page.getByRole("textbox", { name: "شماره موبایل" })).toBeVisible(
+    {
+      timeout: 15_000,
+    },
+  );
 });
 
 test("reloads once when a route module is missing after a deployment", async ({
@@ -52,7 +54,9 @@ test("reloads once when a route module is missing after a deployment", async ({
 
   await expect.poll(() => layoutModuleRequests).toBe(2);
   expect(failedModuleRequests).toBe(1);
-  await expect(page.getByRole("spinbutton")).toBeVisible();
+  await expect(
+    page.getByRole("textbox", { name: "شماره موبایل" }),
+  ).toBeVisible();
   expect(
     await page.evaluate(() =>
       sessionStorage.getItem("perpix:dynamic-import-reload"),
@@ -64,7 +68,6 @@ test("stops reloading when a nested route stays unavailable", async ({
   page,
 }) => {
   let childModuleRequests = 0;
-  await mockAuthenticatedSession(page);
   await page.addInitScript(() => {
     sessionStorage.removeItem("perpix:test-layout-ready");
   });
@@ -97,10 +100,11 @@ test("stops reloading when a nested route stays unavailable", async ({
     return route.continue();
   });
 
+  await mockAuthenticatedSession(page);
   await page.goto("/gallery", { waitUntil: "commit" });
 
   await expect(
-    page.getByText("متاسفانه خطایی رخ داده است لطفا صفحه را رفرش کنید"),
+    page.getByText("صفحه درست باز نشد. یه بار تازه‌سازی کن."),
   ).toBeVisible({ timeout: 10_000 });
   expect(childModuleRequests).toBe(2);
   expect(

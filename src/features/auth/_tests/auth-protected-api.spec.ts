@@ -68,9 +68,6 @@ test("a 401 from a protected API refreshes once and retries the request once", a
 
   await page.goto("/");
 
-  await expect(
-    page.getByRole("navigation", { name: "پیوندهای مالی" }),
-  ).toBeVisible();
   await expect
     .poll(() => log.profileAuthorizations.includes("Bearer token-2"))
     .toBe(true);
@@ -92,9 +89,9 @@ for (const status of [403, 426]) {
 test("concurrent protected requests share one refresh", async ({ page }) => {
   const log = await mockRotatingSession(page);
   await page.goto("/");
-  await expect(
-    page.getByRole("navigation", { name: "پیوندهای مالی" }),
-  ).toBeVisible();
+  await expect
+    .poll(() => log.profileAuthorizations.includes("Bearer token-2"))
+    .toBe(true);
   expect(log.refreshes).toBe(2);
   await page.route("**/api/v1/wallet/wallet", (route) => {
     if (route.request().headers().authorization === "Bearer token-2") {

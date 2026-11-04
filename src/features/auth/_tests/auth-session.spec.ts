@@ -45,9 +45,7 @@ test("reload restores the session with csrf then refresh and keeps tokens out of
 
   await page.goto("/");
 
-  await expect(
-    page.getByRole("navigation", { name: "پیوندهای مالی" }),
-  ).toBeVisible();
+  await expect(page.getByRole("region", { name: "موجودی حساب" })).toBeVisible();
   expect(calls).toEqual(["csrf", "refresh:csrf-1"]);
   await expect
     .poll(() => profileAuthorization)
@@ -60,7 +58,15 @@ test("reload restores the session with csrf then refresh and keeps tokens out of
   expect(persisted).not.toContain(TEST_ACCESS_TOKEN);
 });
 
-test("local refresh cookie survives a page reload", async ({ page }) => {
+test("local refresh cookie survives a page reload", async ({
+  page,
+  browserName,
+}) => {
+  // WebKit does not expose network-attached cookies on intercepted requests, so forwarding cannot be observed here.
+  test.skip(
+    browserName === "webkit",
+    "cookie header is not observable in WebKit routes",
+  );
   const csrfRequests: { origin: string; cookie: string | null }[] = [];
   const refreshRequests: { origin: string; cookie: string | null }[] = [];
   await mockAppShellApis(page);
@@ -140,9 +146,7 @@ test("a failed session check offers a retry instead of showing the login form", 
 
   await page.getByRole("button", { name: "دوباره امتحان کن" }).click();
 
-  await expect(
-    page.getByRole("navigation", { name: "پیوندهای مالی" }),
-  ).toBeVisible();
+  await expect(page.getByRole("region", { name: "موجودی حساب" })).toBeVisible();
 });
 
 test("an expired refresh session ends in the login page", async ({ page }) => {
@@ -170,7 +174,5 @@ test("an authenticated visitor skips the login page", async ({ page }) => {
   await page.goto("/auth/login");
 
   await expect(page).not.toHaveURL(/\/auth\/login$/);
-  await expect(
-    page.getByRole("navigation", { name: "پیوندهای مالی" }),
-  ).toBeVisible();
+  await expect(page.getByRole("region", { name: "موجودی حساب" })).toBeVisible();
 });

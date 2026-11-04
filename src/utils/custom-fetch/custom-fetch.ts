@@ -5,7 +5,7 @@ import {
 } from "./fetch-errors";
 import {
   combineAbortSignals,
-  creatTimeOutAbortController,
+  createTimeoutScope,
   fakeDelay,
   isErrorAbortError,
   isNetworkError,
@@ -78,7 +78,10 @@ export function createCustomFetch(
   options?: CustomFetchOptions,
 ) {
   return async (input: RequestInfo, init?: RequestInit): Promise<Response> => {
-    const userSignal = init?.signal;
+    let userSignal = init?.signal;
+    if (userSignal === undefined && input instanceof Request) {
+      userSignal = input.signal;
+    }
     let lastError: unknown = null;
     let retriesLeft: number = options?.maxRetries ?? 0;
     let currentDelay: number = options?.retryDelayMs ?? 1000;
@@ -87,8 +90,8 @@ export function createCustomFetch(
     const timeoutMs = options?.timeoutMs;
 
     let timeoutTriggered = false;
-    const timeoutAbortController = timeoutMs
-      ? creatTimeOutAbortController(timeoutMs, () => {
+    const timeoutScope = timeoutMs
+      ? createTimeoutScope(timeoutMs, () => {
           timeoutTriggered = true;
           options?.onTimeout?.();
         })
@@ -96,73 +99,52 @@ export function createCustomFetch(
 
     const onRetryAttempt = options?.onRetryAttempt;
     const onFinalError = options?.onFinalError;
+    const combinedSignal = combineAbortSignals(
+      [userSignal, timeoutScope?.controller.signal].filter(
+        (signal): signal is AbortSignal => Boolean(signal),
+      ),
+    );
 
-    while (retriesLeft >= 0) {
-      const attempt = (options?.maxRetries ?? 0) - retriesLeft + 1;
-      const attemptController = new AbortController();
-      const signals = [
-        attemptController.signal,
-        userSignal,
-        timeoutAbortController?.signal,
-      ].filter(Boolean) as AbortSignal[];
-      const combinedSignal = combineAbortSignals(signals);
-
-      const request = {
-        input,
-        init: {
-          ...init,
-          signal: combinedSignal,
-        },
-      };
-
-      try {
-        const response = await originalFetch(request.input, request.init);
-
-        if (response.ok) {
-          return response;
+    try {
+      while (retriesLeft >= 0) {
+        const attempt = (options?.maxRetries ?? 0) - retriesLeft + 1;
+        combinedSignal.throwIfAborted();
+        const request = { input, init: { ...init, signal: combinedSignal } };
+        try {
+          const response = await originalFetch(request.input, request.init);
+          if (response.ok) return response;
+          lastError = response;
+          if (!isRetryableStatus(response.status) || retriesLeft === 0) break;
+        } catch (error) {
+          lastError = error;
+          if (combinedSignal.aborted || isErrorAbortError(error)) throw error;
+          if (!isNetworkError(error)) break;
+          if (!retryOnNetworkError || retriesLeft === 0) {
+            lastError = new FetchNetworkError(error, input);
+            break;
+          }
         }
-
-        lastError = response;
-
-        if (!isRetryableStatus(response.status) || retriesLeft === 0) {
-          break;
-        }
-      } catch (error) {
-        lastError = error;
-
-        if (isErrorAbortError(error)) {
-          lastError = timeoutTriggered
-            ? new FetchTimeoutError(lastError, request.input)
-            : error;
-          break;
-        }
-
-        if (!isNetworkError(error)) {
-          break;
-        }
-
-        if (!retryOnNetworkError || retriesLeft === 0) {
-          lastError = new FetchNetworkError(lastError, request.input);
-          break;
-        }
+        await fakeDelay(currentDelay, combinedSignal);
+        currentDelay = Math.min(currentDelay * 2, maxRetryDelay);
+        retriesLeft--;
+        onRetryAttempt?.({ attempt, error: lastError, nextDelayMs: currentDelay });
       }
-
-      await fakeDelay(currentDelay);
-      currentDelay = Math.min(currentDelay * 2, maxRetryDelay);
-      retriesLeft--;
-
-      onRetryAttempt?.({
-        attempt,
-        error: lastError,
-        nextDelayMs: currentDelay,
-      });
+      throw lastError;
+    } catch (error) {
+      if (
+        !timeoutTriggered &&
+        (combinedSignal.aborted || isErrorAbortError(error))
+      ) {
+        throw combinedSignal.aborted ? combinedSignal.reason : error;
+      }
+      let failure = error;
+      if (timeoutTriggered) failure = new FetchTimeoutError(error, input);
+      else if (error instanceof Response) failure = new FetchHttpError(error, input);
+      onFinalError?.(failure);
+      throw failure;
+    } finally {
+      // Do not abort here: callers may still be consuming the response body.
+      timeoutScope?.dispose();
     }
-
-    if (lastError instanceof Response) {
-      lastError = new FetchHttpError(lastError, input);
-    }
-
-    onFinalError?.(lastError);
-    throw lastError;
   };
 }
