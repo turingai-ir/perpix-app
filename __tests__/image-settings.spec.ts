@@ -6,7 +6,7 @@ const title = "تنظیمات تصویر";
 const professional = /کنترل‌های حرفه‌ای/;
 const guidanceLabel = "میزان پایبندی به توضیحات";
 const stepsLabel = "میزان پردازش جزئیات";
-const negativeLabel = "چه چیزهایی در تصویر نباشد؟";
+const negativeLabel = "چه چیزهایی توی عکس نباشه؟";
 const promptText = "A quiet mountain lake at sunrise";
 
 async function openSettings(page: Page) {
@@ -90,7 +90,7 @@ test("model, ratio and resolution menus expose concise complete choices", async 
     .filter({ hasText: "Nano Banana" });
   await modelPicker.click();
   await expect(
-    page.getByText("تولید سریع و اقتصادی برای استفاده روزمره", {
+    page.getByText("برای ساخت عکس‌های روزمره با هزینهٔ کمتر", {
       exact: true,
     }),
   ).toBeVisible();
