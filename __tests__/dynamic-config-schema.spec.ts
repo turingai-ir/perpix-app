@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
+import { resolve, sep } from "node:path";
+import { pathToFileURL } from "node:url";
 
 import {
   buildAjvResolver,
@@ -284,10 +286,13 @@ test("validates multi-mode schema using default resolution and aspect_ratio valu
 });
 
 test("validates all 10 real backend model fixtures from perpix-core-api", async () => {
-  const fixturesDir = new URL(
-    "../../perpix-core-api/tests/fixtures/ai_gateway/model_configs/",
-    import.meta.url,
-  );
+  const fixturePack = process.env.PERPIX_BACKEND_FIXTURES_DIR;
+  if (!fixturePack) {
+    throw new Error(
+      "Backend contract fixture pack required: set PERPIX_BACKEND_FIXTURES_DIR to a versioned local artifact. See docs/qa/backend-contract-questions.md. No sibling repository is assumed.",
+    );
+  }
+  const fixturesDir = pathToFileURL(resolve(fixturePack) + sep);
   const fixtureFiles = [
     "BLACK_FOREST_LABS_FLUX_1_1_PRO_ULTRA.json",
     "BYTEDANCE_SEEDANCE_2_0.json",
@@ -300,6 +305,13 @@ test("validates all 10 real backend model fixtures from perpix-core-api", async 
     "OPENAI_IMAGE_2.json",
     "RUNWAY_ALEPH_2_0.json",
   ];
+  const missing = fixtureFiles.filter(
+    (name) => !existsSync(new URL(name, fixturesDir)),
+  );
+  expect(
+    missing,
+    "Incomplete backend fixture pack; do not replace contracts with empty mocks",
+  ).toEqual([]);
 
   for (const fileName of fixtureFiles) {
     const filePath = new URL(fileName, fixturesDir);

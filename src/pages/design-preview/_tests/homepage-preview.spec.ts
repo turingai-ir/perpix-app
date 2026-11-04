@@ -7,7 +7,7 @@ test.describe("PerPix homepage design preview", () => {
     await expect(
       page.getByRole("heading", {
         level: 1,
-        name: "ایده‌ات را به یک اثر ماندگار تبدیل کن",
+        name: "ایده‌ات رو به عکس یا ویدیو تبدیل کن",
       }),
     ).toBeVisible();
     await expect(page.getByAltText("نشان پرپیکس")).toBeVisible();

@@ -1,9 +1,11 @@
 import { expect, test } from "@playwright/test";
 
-test("saving profile information keeps the saved fields during refetch", async ({ page, context, baseURL }) => {
-  if (!baseURL) throw new Error("Playwright baseURL is required");
-  await context.addCookies([{ name: "access_token", value: "test-token", url: baseURL }]);
+import { mockAuthenticatedSession } from "../../../../../__tests__/support/auth-session";
+
+test("saving profile information keeps the saved fields during refetch", async ({ page }) => {
   await page.route("**/api/v1/**", (route) => route.fulfill({ json: { items: [], has_next: false } }));
+  // Registered after the catch-all so session bootstrap is not swallowed by it.
+  await mockAuthenticatedSession(page);
   await page.route("**/api/v1/wallet/wallet", (route) => route.fulfill({
     json: { wallet_uuid: "wallet-1", balance_usdmicro: 1000, is_active: true },
   }));
@@ -39,11 +41,11 @@ test("saving profile information keeps the saved fields during refetch", async (
     await expect(name).toHaveValue(original.name, { timeout: 15000 });
     await name.fill(saved.name);
     await email.fill(saved.email);
-    await page.getByRole("button", { name: "ویرایش اطلاعات", exact: true }).click();
+    await page.getByRole("button", { name: "ذخیرهٔ تغییرات", exact: true }).click();
     await expect.poll(() => refetchRequested).toBe(true);
     await expect(name).toHaveValue(saved.name);
     await expect(email).toHaveValue(saved.email);
-    await expect(page.getByRole("button", { name: "ویرایش اطلاعات", exact: true })).toBeDisabled();
+    await expect(page.getByRole("button", { name: "ذخیرهٔ تغییرات", exact: true })).toBeDisabled();
     releaseRefetch();
     await expect(name).toHaveValue(saved.name);
   } finally {

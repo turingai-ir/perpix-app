@@ -687,22 +687,29 @@ test("centers the neon slogan in the header across screen sizes", async ({
     { name: "desktop", width: 1440, height: 900 },
   ]) {
     await page.setViewportSize(viewport);
-    const headerBox = await header.boundingBox();
-    const sloganBox = await slogan.boundingBox();
-    const menuBox = await menu.boundingBox();
-    expect(headerBox).not.toBeNull();
-    expect(sloganBox).not.toBeNull();
-    expect(menuBox).not.toBeNull();
-    if (!headerBox || !sloganBox || !menuBox) {
-      continue;
-    }
-
-    expect(
-      Math.abs(
-        sloganBox.x + sloganBox.width / 2 - (headerBox.x + headerBox.width / 2),
-      ),
-    ).toBeLessThan(2);
-    expect(sloganBox.x + sloganBox.width).toBeLessThan(menuBox.x);
+    // The header re-lays out a frame after a programmatic resize; retry until it settles.
+    await expect
+      .poll(
+        async () => {
+          const [headerBox, sloganBox, menuBox] = await Promise.all([
+            header.boundingBox(),
+            slogan.boundingBox(),
+            menu.boundingBox(),
+          ]);
+          if (!headerBox || !sloganBox || !menuBox) return null;
+          return {
+            centered:
+              Math.abs(
+                sloganBox.x +
+                  sloganBox.width / 2 -
+                  (headerBox.x + headerBox.width / 2),
+              ) < 2,
+            clearOfMenu: sloganBox.x + sloganBox.width < menuBox.x,
+          };
+        },
+        { message: `slogan layout at ${viewport.name}` },
+      )
+      .toEqual({ centered: true, clearOfMenu: true });
     await header.screenshot({
       path: test.info().outputPath(`${viewport.name}-header.png`),
       animations: "disabled",

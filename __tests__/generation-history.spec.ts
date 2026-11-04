@@ -92,7 +92,7 @@ test("history retains loaded projects after a pagination error and retries in pl
   const items = page.locator("[data-sidebar-history-item]");
   await expect(items).toHaveCount(5);
   await page.getByRole("button", { name: /نمایش.*پروژهٔ دیگر/ }).click();
-  const retry = page.getByRole("button", { name: "تلاش دوباره" });
+  const retry = page.getByRole("button", { name: "دوباره امتحان کن" });
   await expect(retry).toBeVisible();
   await expect(items).toHaveCount(5);
   failNext = false;
