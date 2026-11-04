@@ -6,6 +6,7 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig, loadEnv } from "vite";
 import legacy from "@vitejs/plugin-legacy";
+import { frontendQaGuard } from "./scripts/frontend-qa-guard.ts";
 
 const srcPath = fileURLToPath(new URL("./src", import.meta.url));
 const packageJson = JSON.parse(
@@ -18,22 +19,25 @@ const appRelease = `${packageJson.name}@${packageJson.version}`;
 const devAppOrigin = "http://localhost:5173";
 
 export default defineConfig(({ mode }) => {
-  const authApiTarget = loadEnv(
+  const frontendQa = process.env.PERPIX_FRONTEND_QA === "1";
+  const authApiTarget = frontendQa ? "http://127.0.0.1:9" : loadEnv(
     mode,
     process.cwd(),
     "VITE_",
   ).VITE_PERPIX_API_URL;
 
   return {
+    envDir: frontendQa ? false : undefined,
+    cacheDir: frontendQa ? path.resolve(process.cwd(), ".qa-cache/vite") : undefined,
     define: {
       __APP_RELEASE__: JSON.stringify(appRelease),
     },
-    plugins: [react(), tailwindcss(), legacy({})],
+    plugins: [react(), tailwindcss(), legacy({}), ...(frontendQa ? [frontendQaGuard()] : [])],
     server: {
       host: "localhost",
       port: 5173,
       strictPort: true,
-      proxy: {
+      proxy: frontendQa ? undefined : {
         "/api/v1/auth": {
           target: authApiTarget,
           changeOrigin: true,
@@ -64,7 +68,7 @@ export default defineConfig(({ mode }) => {
       },
       watch: {
         // Linux inotify limits are shared with editors and other dev servers.
-        usePolling: process.platform === "linux",
+        usePolling: frontendQa || process.platform === "linux",
         interval: 300,
         ignored: [
           "**/.pnpm-store/**",
@@ -74,6 +78,10 @@ export default defineConfig(({ mode }) => {
           "**/dist/**",
           "**/playwright-report/**",
           "**/test-results/**",
+          "**/.artifacts/**",
+          "**/.qa-home/**",
+          "**/.qa-cache/**",
+          "**/node_modules.aborted-*/**",
         ],
       },
     },
