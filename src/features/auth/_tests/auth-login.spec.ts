@@ -36,7 +36,16 @@ test("signs in with a canonical E.164 phone converted from Persian digits", asyn
   await page.goto("/auth/login");
   await fillCredentials(page, "۰۹۱۲۳۴۵۶۷۸۹", "secret");
 
-  await expect(page.locator("aside")).toBeVisible();
+  await expect(page.locator("[data-auth-celebration]")).toBeVisible();
+  await expect(page.locator("[data-auth-celebration]")).toContainText(
+    "ورود تأیید شد",
+  );
+  await page.waitForTimeout(4000);
+  await expect(page).toHaveURL(/\/auth\/login$/);
+  await expect(page.locator("[data-auth-celebration]")).toBeVisible();
+  await expect(page.getByRole("region", { name: "حساب تو" })).toBeVisible({
+    timeout: 15_000,
+  });
   expect(body).toEqual({ phone_number: "+989123456789", password: "secret" });
 });
 
@@ -50,8 +59,9 @@ test("shows one generic message for any rejected credentials", async ({
   await page.goto("/auth/login");
   await fillCredentials(page, "09123456789", "wrong");
 
+  await expect(page.locator("[data-auth-reaction='password']")).toBeVisible();
   await expect(page.getByRole("alert")).toHaveText(
-    "شماره یا رمز عبور معتبر نیست.",
+    "شماره موبایل یا رمز عبور درست نیست.",
   );
   await expect(page).toHaveURL(/\/auth\/login$/);
 });
@@ -80,7 +90,7 @@ test("reports a connection problem when the request cannot be sent", async ({
   await fillCredentials(page, "09123456789", "secret");
 
   await expect(page.getByRole("alert")).toContainText(
-    "ارتباط با سرور برقرار نشد",
+    "اتصال برقرار نشد",
   );
 });
 
@@ -97,7 +107,7 @@ test("validates the phone number before sending anything", async ({ page }) => {
   await page.getByRole("button", { name: "ادامه دادن" }).click();
 
   await expect(
-    page.getByText("شماره موبایل معتبر ایران وارد کنید."),
+    page.getByText("یه شماره موبایل معتبر ایران وارد کن."),
   ).toBeVisible();
   expect(loginRequests).toBe(0);
 });

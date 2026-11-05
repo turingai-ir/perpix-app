@@ -1,4 +1,3 @@
-import React from "react";
 import { useNavigate, useParams } from "react-router";
 import { ImageEditor } from "./_components/image-editor";
 import { EditorUploaderEmpty } from "./_components/editor-uploader-empty";
@@ -21,18 +20,23 @@ export default function EditorPage() {
   const editorImageUrl =
     getFilePreviewState.data?.download_url ??
     getFilePreviewState.data?.preview_url;
-  const { imageSource, remoteImageLoading, setLocalImageFile } =
-    useEditorImageSource(editorImageUrl);
+  const {
+    imageSource,
+    remoteImageLoading,
+    setLocalImageFile,
+    clearImageSource,
+  } = useEditorImageSource(editorImageUrl);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (!file.type.startsWith("image/")) {
-        toast.error(t("pages.editor.uploaderError"));
-        return;
-      }
-      setLocalImageFile(file);
+  const handleFileSelect = (file: File) => {
+    if (
+      !["image/png", "image/jpeg", "image/webp", "image/svg+xml"].includes(
+        file.type,
+      )
+    ) {
+      toast.error(t("pages.editor.uploaderError"));
+      return;
     }
+    setLocalImageFile(file);
   };
 
   if (fileUuid && (getFilePreviewState.isPending || remoteImageLoading)) {
@@ -47,10 +51,17 @@ export default function EditorPage() {
     <div className="bg-background flex h-dvh w-full flex-col">
       {imageSource ? (
         <div className="relative h-full w-full flex-1">
-          <ImageEditor documentId={fileUuid} src={imageSource} />
+          <ImageEditor
+            documentId={fileUuid}
+            src={imageSource}
+            onBack={() => {
+              clearImageSource();
+              navigate("/editor");
+            }}
+          />
         </div>
       ) : (
-        <EditorUploaderEmpty onFileChange={handleFileChange} />
+        <EditorUploaderEmpty onFileSelect={handleFileSelect} />
       )}
     </div>
   );

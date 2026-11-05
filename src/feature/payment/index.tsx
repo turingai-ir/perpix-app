@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { PaymentConfirmationDialog } from "@/features/payment";
 import type { SchemaPaymentResponse } from "@/services/api";
+import { isSafeExternalUrl } from "@/utils/safe-external-url";
 
 export * from "./api";
 export * from "./checkout-session";
@@ -14,6 +15,7 @@ const paymentRedirectListeners = new Set<PaymentRedirectListener>();
 function emitPaymentRedirect(payment: SchemaPaymentResponse) {
   if (
     !payment.payment_url ||
+    !isSafeExternalUrl(payment.payment_url) ||
     payment.requires_review ||
     payment.status !== "PENDING" ||
     payment.financial_status !== "PENDING"

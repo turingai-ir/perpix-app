@@ -6,6 +6,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import {
   Select,
@@ -53,16 +54,22 @@ export const DynamicConfigSelectField: FC<{
           name={field.name}
           value={
             resolveFieldValue(field.value, property.default) == null
-              ? ""
+              ? null
               : String(resolveFieldValue(field.value, property.default))
           }
+          items={options.map((option) => ({
+            value: String(option),
+            label: optionLabels?.[String(option)] ?? String(option),
+          }))}
           onValueChange={(value) =>
-            field.onChange(coerceSelectValue(value, options))
+            field.onChange(coerceSelectValue(value ?? "", options))
           }
           disabled={disabled}
         >
           <FormControl>
             <SelectTrigger
+              ref={field.ref}
+              onBlur={field.onBlur}
               className={classes.control}
               aria-invalid={fieldState.invalid}
             >
@@ -83,6 +90,7 @@ export const DynamicConfigSelectField: FC<{
         {hint ? (
           <FormDescription className={classes.hint}>{hint}</FormDescription>
         ) : null}
+        <FormMessage />
       </FormItem>
     )}
   />

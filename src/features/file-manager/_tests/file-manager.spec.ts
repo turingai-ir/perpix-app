@@ -68,7 +68,13 @@ test("retries only complete after 503, preserving the token and parts", async ({
   );
   await page.route("**/storage/part", (route) => {
     parts++;
-    return route.fulfill({ headers: { ETag: '"part-etag"' }, body: "" });
+    return route.fulfill({
+      headers: {
+        ETag: '"part-etag"',
+        "Access-Control-Expose-Headers": "ETag",
+      },
+      body: "",
+    });
   });
   await page.route("**/file-manager/multipart/complete", (route) => {
     completeBodies.push(route.request().postDataJSON());
@@ -91,7 +97,9 @@ test("retries only complete after 503, preserving the token and parts", async ({
     mimeType: "audio/mpeg",
     buffer: Buffer.alloc(6 * 1024 * 1024),
   });
-  await expect(page.getByLabel("Upload result")).toHaveText("uploaded-file");
+  await expect(page.getByLabel("Result", { exact: true })).toHaveText(
+    "uploaded-file",
+  );
   expect(completeBodies).toHaveLength(2);
   expect(completeBodies[0]).toEqual(completeBodies[1]);
   expect(parts).toBe(1);
@@ -104,7 +112,7 @@ test("adding a page reuses existing preview URLs", async ({ page }) => {
     if (request.url().endsWith("/files/presigned-urls"))
       requested.push(...request.postDataJSON().file_uuids);
   });
-  await page.getByRole("button", { name: "More files" }).click();
+  await page.getByRole("button", { name: "More", exact: true }).click();
   await expect(page.getByLabel("Previews")).toHaveText("40");
   expect(requested).toHaveLength(20);
   expect(requested).not.toContain("file-0");
@@ -129,7 +137,7 @@ test("one expired file does not hide healthy previews", async ({ page }) => {
     );
   });
   await expect(page.getByLabel("Previews")).toHaveText("20");
-  await page.getByRole("button", { name: "More files" }).click();
+  await page.getByRole("button", { name: "More", exact: true }).click();
   await expect(page.getByLabel("Previews")).toHaveText("39");
 });
 
@@ -146,7 +154,9 @@ test("simple upload with an unknown outcome is never retried automatically", asy
     mimeType: "audio/mpeg",
     buffer: Buffer.alloc(100),
   });
-  await expect(page.getByLabel("Upload result")).toContainText("فهرست");
+  await expect(page.getByLabel("Result", { exact: true })).toContainText(
+    "فهرست",
+  );
   expect(requests).toBe(1);
 });
 
@@ -168,11 +178,15 @@ test("permanent validation failure is localized and selecting the same name can 
     buffer: Buffer.alloc(100),
   };
   await page.getByLabel("Upload", { exact: true }).setInputFiles(file);
-  await expect(page.getByLabel("Upload result")).toContainText("فرمت");
+  await expect(page.getByLabel("Result", { exact: true })).toContainText(
+    "فرمت",
+  );
   expect(requests).toBe(1);
   await page.getByLabel("Upload", { exact: true }).setInputFiles([]);
   await page.getByLabel("Upload", { exact: true }).setInputFiles(file);
-  await expect(page.getByLabel("Upload result")).toHaveText("recovered-file");
+  await expect(page.getByLabel("Result", { exact: true })).toHaveText(
+    "recovered-file",
+  );
 });
 
 test("a slow upload that hits the server body timeout asks the user to retry on a better connection", async ({
@@ -193,11 +207,13 @@ test("a slow upload that hits the server body timeout asks the user to retry on 
     buffer: Buffer.alloc(100),
   };
   await page.getByLabel("Upload", { exact: true }).setInputFiles(file);
-  await expect(page.getByLabel("Upload result")).toContainText("کند");
+  await expect(page.getByLabel("Result", { exact: true })).toContainText("کند");
   expect(requests).toBe(1);
   await page.getByLabel("Upload", { exact: true }).setInputFiles([]);
   await page.getByLabel("Upload", { exact: true }).setInputFiles(file);
-  await expect(page.getByLabel("Upload result")).toHaveText("recovered-file");
+  await expect(page.getByLabel("Result", { exact: true })).toHaveText(
+    "recovered-file",
+  );
 });
 
 test("offline upload fails promptly without a paused mutation or request", async ({
@@ -214,7 +230,9 @@ test("offline upload fails promptly without a paused mutation or request", async
     mimeType: "audio/mpeg",
     buffer: Buffer.alloc(100),
   });
-  await expect(page.getByLabel("Upload result")).toContainText("متصل نیستید");
+  await expect(page.getByLabel("Result", { exact: true })).toContainText(
+    "متصل نیستید",
+  );
   expect(requests).toBe(0);
 });
 
@@ -228,17 +246,17 @@ test("a failed optimistic delete restores the file", async ({ page }) => {
     await gate;
     await route.fulfill({ status: 503, json: {} });
   });
-  await page.getByRole("button", { name: "Delete file" }).click();
+  await page.getByRole("button", { name: "Delete", exact: true }).click();
   await expect(page.getByLabel("Files", { exact: true })).toHaveText("");
   release();
-  await expect(page.getByLabel("Mutation error")).toContainText("موقتاً");
+  await expect(page.getByLabel("Action error")).toContainText("موقتاً");
   await expect(page.getByLabel("Files", { exact: true })).toHaveText("file-0");
 });
 
 test("replace refreshes the existing UUID preview", async ({ page }) => {
-  await expect(
-    page.getByLabel("Single preview", { exact: true }),
-  ).toContainText("storage.test/file-0");
+  await expect(page.getByLabel("Single URL")).toContainText(
+    "storage.test/file-0",
+  );
   await page.route("**/file-manager/files/presigned-urls", (route) =>
     route.fulfill({
       json: {
@@ -257,8 +275,8 @@ test("replace refreshes the existing UUID preview", async ({ page }) => {
   await page.route("**/file-manager/files/file-0", (route) =>
     route.fulfill({ json: { uuid: "file-0" } }),
   );
-  await page.getByRole("button", { name: "Replace file" }).click();
-  await expect(page.getByLabel("Single preview", { exact: true })).toHaveText(
+  await page.getByRole("button", { name: "Replace", exact: true }).click();
+  await expect(page.getByLabel("Single URL")).toHaveText(
     "https://new.test/file-0",
   );
 });
@@ -289,7 +307,7 @@ test("a thousand previews use bounded batches and concurrency", async ({
     });
     active--;
   });
-  await page.getByRole("button", { name: "Many files" }).click();
+  await page.getByRole("button", { name: "Many", exact: true }).click();
   await expect(page.getByLabel("Previews")).toHaveText("1000", {
     timeout: 15_000,
   });
@@ -326,7 +344,13 @@ test("unfinished complete is not replayed on reconnection or reload", async ({
   );
   await page.route("**/storage/recovery", (route) => {
     parts++;
-    return route.fulfill({ headers: { ETag: "saved-etag" }, body: "" });
+    return route.fulfill({
+      headers: {
+        ETag: "saved-etag",
+        "Access-Control-Expose-Headers": "ETag",
+      },
+      body: "",
+    });
   });
   await page.route("**/file-manager/multipart/complete", (route) => {
     completed++;
@@ -337,7 +361,9 @@ test("unfinished complete is not replayed on reconnection or reload", async ({
     mimeType: "audio/mpeg",
     buffer: Buffer.alloc(6 * 1024 * 1024),
   });
-  await expect(page.getByLabel("Upload result")).toContainText("موقتاً");
+  await expect(page.getByLabel("Result", { exact: true })).toContainText(
+    "موقتاً",
+  );
   expect(completed).toBe(3);
   await page.route("**/file-manager/multipart/complete", (route) => {
     completed++;
@@ -386,14 +412,14 @@ test("short-lived URLs refresh before expiry without writing persistent cache", 
   await page.route("**/file-manager/files/file-0", (route) =>
     route.fulfill({ json: { uuid: "file-0" } }),
   );
-  await page.getByRole("button", { name: "Replace file" }).click();
-  await expect(
-    page.getByLabel("Single preview", { exact: true }),
-  ).toContainText("renewed.test/file-0/1");
+  await page.getByRole("button", { name: "Replace", exact: true }).click();
+  await expect(page.getByLabel("Single URL")).toContainText(
+    "renewed.test/file-0/1",
+  );
   await page.clock.fastForward(35_000);
-  await expect(
-    page.getByLabel("Single preview", { exact: true }),
-  ).toContainText("renewed.test/file-0/2");
+  await expect(page.getByLabel("Single URL")).toContainText(
+    "renewed.test/file-0/2",
+  );
   const storedKeys = await page.evaluate(async () => {
     const path = "/src/features/runtime/_tests/storage.ts";
     return (await import(/* @vite-ignore */ path)).storedData();
@@ -404,9 +430,7 @@ test("short-lived URLs refresh before expiry without writing persistent cache", 
 test("permission failure clears stale preview without retrying", async ({
   page,
 }) => {
-  await expect(
-    page.getByLabel("Single preview", { exact: true }),
-  ).toContainText("storage.test");
+  await expect(page.getByLabel("Single URL")).toContainText("storage.test");
   let calls = 0;
   await page.route("**/file-manager/files/presigned-urls", (route) => {
     calls++;
@@ -415,12 +439,10 @@ test("permission failure clears stale preview without retrying", async ({
   await page.route("**/file-manager/files/file-0", (route) =>
     route.fulfill({ status: 409, json: {} }),
   );
-  await page.getByRole("button", { name: "Replace file" }).click();
-  await expect(page.getByLabel("Mutation error")).toContainText("تغییر کرده");
+  await page.getByRole("button", { name: "Replace", exact: true }).click();
+  await expect(page.getByLabel("Action error")).toContainText("تغییر کرده");
   await expect(page.getByLabel("Single preview error")).toHaveText("true");
-  await expect(page.getByLabel("Single preview", { exact: true })).toHaveText(
-    "",
-  );
+  await expect(page.getByLabel("Single URL")).toHaveText("");
   expect(calls).toBe(1);
 });
 
@@ -472,23 +494,23 @@ test("malformed success of simple upload is treated as an unknown outcome", asyn
     mimeType: "audio/mpeg",
     buffer: Buffer.alloc(100),
   });
-  await expect(page.getByLabel("Upload result")).toContainText("فهرست");
+  await expect(page.getByLabel("Result", { exact: true })).toContainText(
+    "فهرست",
+  );
   expect(calls).toBe(1);
 });
 
 test("an uncertain replace refreshes state and asks for inspection without retrying", async ({
   page,
 }) => {
-  await expect(
-    page.getByLabel("Single preview", { exact: true }),
-  ).toContainText("storage.test");
+  await expect(page.getByLabel("Single URL")).toContainText("storage.test");
   let calls = 0;
   await page.route("**/file-manager/files/file-0", (route) => {
     calls++;
     return route.fulfill({ status: 503, json: {} });
   });
-  await page.getByRole("button", { name: "Replace file" }).click();
-  await expect(page.getByLabel("Mutation error")).toContainText(
+  await page.getByRole("button", { name: "Replace", exact: true }).click();
+  await expect(page.getByLabel("Action error")).toContainText(
     "فایل را بررسی کنید",
   );
   expect(calls).toBe(1);

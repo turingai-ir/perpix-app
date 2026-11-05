@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 
 import * as authHttp from "../services/auth-http";
 import * as sessionManager from "../services/session-manager";
+import { sessionStore } from "../services/session-store";
 
 // Auth requests must fail visibly instead of pausing while offline.
 const AUTH_MUTATION_OPTIONS = { networkMode: "always" } as const;
@@ -9,14 +10,10 @@ const AUTH_MUTATION_OPTIONS = { networkMode: "always" } as const;
 export const useLoginMutation = () =>
   useMutation({
     ...AUTH_MUTATION_OPTIONS,
-    mutationFn: async (body: { phone_number: string; password: string }) =>
-      sessionManager.startSession(await authHttp.login(body)),
-  });
-
-export const useRegistrationChallengeMutation = () =>
-  useMutation({
-    ...AUTH_MUTATION_OPTIONS,
-    mutationFn: authHttp.requestRegistrationChallenge,
+    mutationFn: async (body: { phone_number: string; password: string }) => {
+      const cycle = sessionStore.getCycle();
+      sessionManager.startSession(await authHttp.login(body), cycle);
+    },
   });
 
 export const usePasswordResetChallengeMutation = () =>
@@ -38,8 +35,10 @@ export const useCompleteRegistrationMutation = () =>
       challenge_id: string;
       otp_code: string;
       password: string;
-    }) =>
-      sessionManager.startSession(await authHttp.completeRegistration(body)),
+    }) => {
+      const cycle = sessionStore.getCycle();
+      sessionManager.startSession(await authHttp.completeRegistration(body), cycle);
+    },
   });
 
 export const useCompletePasswordResetMutation = () =>
@@ -57,7 +56,7 @@ export const useChangePasswordMutation = () =>
 export const useSignOutMutation = () =>
   useMutation({
     ...AUTH_MUTATION_OPTIONS,
-    mutationFn: sessionManager.signOut,
+    mutationFn: (cycle: number) => sessionManager.signOut(cycle),
   });
 
 export const useSignOutEverywhereMutation = () =>

@@ -17,15 +17,17 @@ export const GenerationRulesDialog: FC = () => {
 
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        <Button
-          aria-label={t("pages.generation.rules.trigger")}
-          size="icon"
-          type="button"
-          variant="ghost"
-        >
-          <CircleHelp />
-        </Button>
+      <DialogTrigger
+        render={
+          <Button
+            aria-label={t("pages.generation.rules.trigger")}
+            size="icon"
+            type="button"
+            variant="ghost"
+          />
+        }
+      >
+        <CircleHelp />
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

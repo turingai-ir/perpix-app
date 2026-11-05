@@ -23,7 +23,7 @@ interface ImageEditorCanvasProps {
   cardPosition: { x: number; y: number };
   displayedCrop: CropArea;
   fixedRatio: boolean;
-  image: HTMLImageElement;
+  image: HTMLImageElement | HTMLCanvasElement;
   imagePosition: { x: number; y: number };
   isCropping: boolean;
   isImageSelected: boolean;

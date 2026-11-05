@@ -147,102 +147,105 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* حالت روشن (Light Mode) - لوکس و مینیمال با الهام از تیک‌های رنگی لوگو */
-  --background: oklch(0.99 0.005 240); /* سفید استخوانی بسیار ملایم */
-  --foreground: oklch(0.12 0.02 260); /* مشکی عمیق با تناژ سرمه‌ای خیلی کم */
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.12 0.02 260);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.12 0.02 260);
+  /* Sampled from the logo raster; interaction tones are adjusted for contrast. */
+  --magenta-brand: oklch(0.6358 0.2659 330.2744);
+  --violet-brand: oklch(0.5435 0.2248 307.3128);
+  --blue-brand: oklch(0.5367 0.1657 253.6122);
+  --cyan-brand: oklch(0.6757 0.1475 237.589);
+  --brand-gradient: linear-gradient(
+    120deg,
+    var(--magenta-brand),
+    var(--violet-brand) 42%,
+    var(--blue-brand) 72%,
+    var(--cyan-brand)
+  );
+  --ambient-brand: color-mix(in srgb, var(--violet-brand) 14%, transparent);
+  --ambient-media: color-mix(in srgb, var(--cyan-brand) 9%, transparent);
 
-  /* رنگ اصلی در حالت روشن: بنفشِ لوگو اما کمی ملایم‌تر برای خوانایی */
-  --primary: oklch(0.45 0.22 315);
-  --primary-foreground: oklch(0.99 0 0);
+  --background: oklch(0.975 0.008 295);
+  --foreground: oklch(0.24 0.025 285);
+  --card: oklch(0.995 0.002 295);
+  --card-foreground: var(--foreground);
+  --popover: oklch(0.995 0.002 295);
+  --popover-foreground: var(--foreground);
+  --primary: oklch(0.47 0.2 307.3128);
+  --primary-foreground: oklch(0.985 0.003 295);
+  --secondary: oklch(0.935 0.024 295);
+  --secondary-foreground: oklch(0.35 0.09 307.3128);
+  --muted: oklch(0.94 0.012 285);
+  --muted-foreground: oklch(0.47 0.025 285);
+  --accent: oklch(0.93 0.035 307.3128);
+  --accent-foreground: oklch(0.35 0.1 307.3128);
+  --destructive: oklch(0.53 0.2 25);
+  --destructive-foreground: oklch(0.985 0.003 25);
+  --border: oklch(0.85 0.022 285);
+  --input: oklch(0.58 0.025 285);
+  --ring: var(--primary);
 
-  /* رنگ دوم: آبی نئونی لوگو */
-  --secondary: oklch(0.93 0.04 220);
-  --secondary-foreground: oklch(0.4 0.2 230);
+  --image-accent: oklch(0.46 0.18 330.2744);
+  --video-accent: oklch(0.43 0.1 237.589);
+  --image-accent-soft: color-mix(in srgb, var(--image-accent) 12%, transparent);
+  --video-accent-soft: color-mix(in srgb, var(--video-accent) 12%, transparent);
+  --glass-surface: oklch(0.995 0.002 295 / 90%);
+  --glass-surface-strong: var(--card);
+  --glass-border: oklch(0.62 0.045 295 / 36%);
+  --glass-highlight: oklch(1 0 0 / 76%);
+  --glass-shadow: 0 24px 64px -32px oklch(0.3 0.04 295 / 18%);
+  --selection: oklch(0.87 0.07 307.3128);
+  --selection-foreground: oklch(0.27 0.08 307.3128);
 
-  --muted: oklch(0.95 0.01 240);
-  --muted-foreground: oklch(0.5 0.03 240);
+  --chart-1: var(--primary);
+  --chart-2: var(--video-accent);
+  --chart-3: var(--image-accent);
+  --chart-4: oklch(0.48 0.09 190);
+  --chart-5: oklch(0.55 0.11 75);
+  --radius: 0.75rem;
 
-  /* رنگ تاکید (Accent): آبی درخشان لوگو */
-  --accent: oklch(0.95 0.01 240);
-  --accent-foreground: oklch(0.12 0.02 260);
-
-  --destructive: oklch(0.6 0.22 25);
-  --destructive-foreground: oklch(0.99 0 0);
-
-  --border: oklch(0.88 0.01 240);
-  --input: oklch(0.88 0.01 240);
-  --ring: oklch(0.45 0.22 315);
-
-  /* چارت‌ها بر اساس گرادینت بنفش به آبی لوگو */
-  --chart-1: oklch(0.5 0.24 320); /* بنفش ارغوانی */
-  --chart-2: oklch(0.55 0.21 235); /* آبی درخشان */
-  --chart-3: oklch(0.65 0.18 200); /* آبی ساین روشن */
-  --chart-4: oklch(0.4 0.15 280); /* نیلی */
-  --chart-5: oklch(0.32 0.12 300); /* بنفش تیره */
-
-  --radius: 0.75rem; /* گوشه‌های کمی گردتر برای حس مدرن‌تر */
-
-  --sidebar: oklch(0.955 0.018 240);
-  --sidebar-foreground: oklch(0.12 0.02 260);
-  --sidebar-primary: oklch(0.45 0.22 315);
-  --sidebar-primary-foreground: oklch(0.99 0 0);
-  --sidebar-accent: oklch(0.93 0.04 220);
-  --sidebar-accent-foreground: oklch(0.4 0.2 230);
-  --sidebar-border: oklch(0.88 0.01 240);
-  --sidebar-ring: oklch(0.45 0.22 315);
-  --sidebar-shadow: 0 0 24px -8px oklch(0.2 0.04 240 / 18%);
+  --sidebar: oklch(0.95 0.015 295);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--accent);
+  --sidebar-accent-foreground: var(--accent-foreground);
+  --sidebar-border: var(--glass-border);
+  --sidebar-ring: var(--ring);
+  --sidebar-shadow: var(--glass-shadow);
+  color-scheme: light;
 }
 
 .dark {
-  /* حالت تاریک (Dark Mode) - دقیقاً مطابق اتمسفر مشکی و نئونی لوگو */
-  --background: oklch(0.1 0.005 240); /* مشکی عمیق و لوکس (Cyber Black) */
-  --foreground: oklch(0.98 0.005 240); /* سفید درخشان */
-  --card: oklch(0.14 0.01 240); /* یک درجه روشن‌تر از بک‌گراند برای کارت‌ها */
-  --card-foreground: oklch(0.98 0.005 240);
-  --popover: oklch(0.12 0.01 240);
-  --popover-foreground: oklch(0.98 0.005 240);
+  --background: oklch(0.145 0.018 285);
+  --foreground: oklch(0.965 0.008 295);
+  --card: oklch(0.205 0.022 285);
+  --popover: oklch(0.235 0.025 285);
+  --primary: oklch(0.76 0.145 307.3128);
+  --primary-foreground: oklch(0.18 0.035 307.3128);
+  --secondary: oklch(0.275 0.04 295);
+  --secondary-foreground: oklch(0.9 0.04 307.3128);
+  --muted: oklch(0.255 0.023 285);
+  --muted-foreground: oklch(0.74 0.025 285);
+  --accent: oklch(0.3 0.055 307.3128);
+  --accent-foreground: oklch(0.92 0.035 307.3128);
+  --destructive: oklch(0.74 0.16 25);
+  --destructive-foreground: oklch(0.18 0.025 25);
+  --border: oklch(0.35 0.028 285);
+  --input: oklch(0.55 0.035 285);
 
-  /* رنگ اصلی دارک: بنفش ارغوانی فوق‌العاده جذابِ سمت چپ لوگو */
-  --primary: oklch(0.62 0.26 315);
-  --primary-foreground: oklch(0.1 0.005 240);
+  --image-accent: oklch(0.8 0.13 330.2744);
+  --video-accent: oklch(0.79 0.105 237.589);
+  --image-accent-soft: color-mix(in srgb, var(--image-accent) 16%, transparent);
+  --video-accent-soft: color-mix(in srgb, var(--video-accent) 14%, transparent);
+  --glass-surface: oklch(0.205 0.022 285 / 88%);
+  --glass-border: oklch(0.74 0.045 295 / 26%);
+  --glass-highlight: oklch(0.94 0.02 295 / 12%);
+  --glass-shadow: 0 24px 64px -32px oklch(0.06 0.012 285 / 72%);
+  --selection: oklch(0.39 0.1 307.3128);
+  --selection-foreground: oklch(0.97 0.012 307.3128);
 
-  /* رنگ دوم: آبی تیره سایبر */
-  --secondary: oklch(0.2 0.04 240);
-  --secondary-foreground: oklch(0.9 0.05 220);
-
-  --muted: oklch(0.18 0.02 240);
-  --muted-foreground: oklch(0.65 0.03 240);
-
-  /* رنگ تاکید (Accent): آبی ساین / سایبرپانکِ سمت راست لوگو */
-  --accent: oklch(0.18 0.02 240);
-  --accent-foreground: oklch(0.98 0.005 240);
-
-  --destructive: oklch(0.5 0.22 25);
-  --destructive-foreground: oklch(0.98 0.005 240);
-
-  --border: oklch(0.22 0.02 240);
-  --input: oklch(0.22 0.02 240);
-  --ring: oklch(0.68 0.22 230);
-
-  --chart-1: oklch(0.62 0.26 315);
-  --chart-2: oklch(0.68 0.22 230);
-  --chart-3: oklch(0.5 0.2 260);
-  --chart-4: oklch(0.75 0.15 190);
-  --chart-5: oklch(0.55 0.25 340);
-
-  --sidebar: oklch(0.145 0.018 240);
-  --sidebar-foreground: oklch(0.98 0.005 240);
-  --sidebar-primary: oklch(0.62 0.26 315);
-  --sidebar-primary-foreground: oklch(0.1 0.005 240);
-  --sidebar-accent: oklch(0.2 0.04 240);
-  --sidebar-accent-foreground: oklch(0.9 0.05 220);
-  --sidebar-border: oklch(0.22 0.02 240);
-  --sidebar-ring: oklch(0.68 0.22 230);
-  --sidebar-shadow: 0 0 28px -8px oklch(0 0 0 / 60%);
+  --chart-4: oklch(0.76 0.09 190);
+  --chart-5: oklch(0.8 0.12 75);
+  --sidebar: oklch(0.185 0.025 285);
+  color-scheme: dark;
 }
 
 @theme inline {
@@ -307,7 +310,79 @@
   body {
     @apply bg-background text-foreground;
   }
+  ::selection {
+    background: var(--selection);
+    color: var(--selection-foreground);
+  }
+  :is(input, textarea) {
+    caret-color: var(--primary);
+  }
   html {
     @apply font-sans;
+    scrollbar-color: var(--border) var(--background);
+  }
+}
+
+/*
+ * Shared primitives (dialog, sheet, drawer, popover, select, dropdown, tooltip)
+ * use tw-animate enter/exit animations through variant classes such as
+ * `data-open:animate-in`. Honour reduced motion for all of them in one place.
+ * Unlayered so it wins over the layered utilities; popups unmount immediately
+ * when the exit animation is `none`.
+ */
+@media (prefers-reduced-motion: reduce) {
+  [class*="animate-in"],
+  [class*="animate-out"] {
+    animation: none;
+  }
+}
+
+/* Glass surface tokens and accessibility variants shared by page layouts. */
+@custom-variant reduced-transparency (@media (prefers-reduced-transparency: reduce));
+
+@theme inline {
+  --color-glass: color-mix(in srgb, var(--card) 76%, transparent);
+  --color-glass-strong: color-mix(in srgb, var(--card) 88%, transparent);
+  --color-glass-edge: color-mix(in srgb, var(--foreground) 13%, transparent);
+  --ease-out-quint: cubic-bezier(0.23, 1, 0.32, 1);
+  --animate-card-arrival: card-arrival 260ms var(--ease-out-quint) both;
+
+  @keyframes card-arrival {
+    from {
+      opacity: 0;
+      transform: translateY(8px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+/*
+ * Backdrop blur with the fallbacks glass panels need: solid card background
+ * when the browser lacks backdrop-filter or the user asks for less transparency.
+ */
+@utility glass-blur {
+  backdrop-filter: blur(var(--glass-blur, 24px)) saturate(var(--glass-saturate, 160%));
+
+  @media (prefers-reduced-transparency: reduce) {
+    background: var(--card) !important;
+    backdrop-filter: none;
+  }
+
+  @supports not (backdrop-filter: blur(1px)) {
+    background: var(--card) !important;
+  }
+}
+
+@custom-variant hover-capable (@media (hover: hover) and (pointer: fine));
+
+/* The gallery page hides its parent scroll-area bar on small screens. */
+@media (max-width: 767px) {
+  [data-slot="scroll-area"]:has([data-gallery-page])
+    > [data-slot="scroll-area-scrollbar"] {
+    opacity: 0;
+    pointer-events: none;
   }
 }

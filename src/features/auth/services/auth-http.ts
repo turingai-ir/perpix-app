@@ -12,7 +12,9 @@ import {
 
 import { APP_KEYS } from "@/utils";
 
-const AUTH_BASE_URL = `${APP_KEYS.API_BASE_URL}/api/v1/auth`;
+const AUTH_BASE_URL = import.meta.env.DEV
+  ? "/api/v1/auth"
+  : `${APP_KEYS.API_BASE_URL}/api/v1/auth`;
 const CSRF_HEADER = "X-CSRF-TOKEN";
 
 interface SendOptions {
@@ -20,6 +22,7 @@ interface SendOptions {
   body?: unknown;
   csrfToken?: string;
   bearer?: string;
+  signal?: AbortSignal;
 }
 
 async function send(path: string, options: SendOptions = {}) {
@@ -37,6 +40,7 @@ async function send(path: string, options: SendOptions = {}) {
       headers,
       credentials: "include",
       cache: "no-store",
+      signal: options.signal,
       body:
         options.body === undefined ? undefined : JSON.stringify(options.body),
     });
@@ -64,12 +68,14 @@ async function readIssuedSession(response: Response): Promise<IssuedSession> {
   const access = await parse(response, accessResponseSchema);
   // A missing CSRF header means CORS/proxy misconfiguration: refresh would
   // be impossible later, so fail the sign-in now instead of silently.
-  if (!response.headers.get(CSRF_HEADER)) {
+  const csrfToken = response.headers.get(CSRF_HEADER);
+  if (!csrfToken) {
     throw new AuthRequestError({ kind: "contract" });
   }
 
   return {
     accessToken: access.access_token,
+    csrfToken,
     expiresInSeconds: access.expires_in,
   };
 }
@@ -79,10 +85,6 @@ const challenge = async (path: string, phoneNumber: string) =>
     await send(path, { body: { phone_number: phoneNumber } }),
     challengeSchema,
   );
-
-export const requestRegistrationChallenge = (
-  phoneNumber: string,
-): Promise<AuthChallenge> => challenge("/registration-challenges", phoneNumber);
 
 export const requestPasswordResetChallenge = (
   phoneNumber: string,
@@ -114,15 +116,19 @@ export const completePasswordReset = async (body: {
 export const login = async (body: { phone_number: string; password: string }) =>
   readIssuedSession(await send("/login", { body }));
 
-export const fetchCsrfToken = async () =>
-  (await parse(await send("/csrf", { method: "GET" }), csrfResponseSchema))
-    .csrf_token;
+export const fetchCsrfToken = async (signal?: AbortSignal) =>
+  (
+    await parse(
+      await send("/csrf", { method: "GET", signal }),
+      csrfResponseSchema,
+    )
+  ).csrf_token;
 
-export const refreshTokens = async (csrfToken: string) =>
-  readIssuedSession(await send("/refresh", { csrfToken }));
+export const refreshTokens = async (csrfToken: string, signal?: AbortSignal) =>
+  readIssuedSession(await send("/refresh", { csrfToken, signal }));
 
-export const logout = async (csrfToken: string) => {
-  await send("/logout", { csrfToken });
+export const logout = async (csrfToken: string, signal?: AbortSignal) => {
+  await send("/logout", { csrfToken, signal });
 };
 
 export const logoutAll = async (bearer: string) => {

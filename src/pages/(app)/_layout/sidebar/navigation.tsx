@@ -1,10 +1,13 @@
 import { type ComponentType, type FC } from "react";
 import { NavLink } from "react-router";
-import { House, Images, WandSparkles } from "lucide-react";
-import { TbCameraAi, TbPhotoAi } from "react-icons/tb";
-
-import { Badge } from "@/components/ui/badge";
-import { buttonVariants } from "@/components/ui/button";
+import {
+  EditorIcon,
+  GalleryIcon,
+  HomeIcon,
+  ImageIcon,
+  VideoIcon,
+} from "./menu-icons";
+import styles from "./sidebar.module.css";
 import { useAppTranslate } from "@/hooks";
 import { cn } from "@/lib/utils";
 import { APP_ROUTES_KEY } from "@/router/routes";
@@ -15,6 +18,7 @@ type SidebarMenuItem = {
   label: string;
   href: string;
   Icon: ComponentType<{ "aria-hidden"?: boolean; className?: string }>;
+  tone: "neutralLink" | "imageLink" | "videoLink";
   badge?: string;
 };
 
@@ -26,55 +30,67 @@ const AppLayoutSidebarNavigation: FC = () => {
       key: "home",
       label: t("pages.app.layout.sidebar.menu.home.label"),
       href: APP_ROUTES_KEY.app.path,
-      Icon: House,
+      Icon: HomeIcon,
+      tone: "neutralLink",
     },
     {
       key: "image-generations",
       label: t("pages.app.layout.sidebar.menu.imageGeneration.label"),
       href: APP_ROUTES_KEY.generation.image.path,
-      Icon: TbPhotoAi,
+      Icon: ImageIcon,
+      tone: "imageLink",
     },
     {
       key: "video-generation",
       label: t("pages.app.layout.sidebar.menu.videoGeneration.label"),
       href: APP_ROUTES_KEY.generation.video.path,
-      Icon: TbCameraAi,
+      Icon: VideoIcon,
+      tone: "videoLink",
     },
     {
       key: "gallery",
       label: t("pages.app.layout.sidebar.menu.gallery.label"),
       href: APP_ROUTES_KEY.gallery.path,
-      Icon: Images,
+      Icon: GalleryIcon,
+      tone: "neutralLink",
     },
     {
       key: "editor",
       label: t("pages.app.layout.sidebar.menu.editor.label"),
       href: APP_ROUTES_KEY.editor.path,
-      Icon: WandSparkles,
+      Icon: EditorIcon,
+      tone: "neutralLink",
       badge: t("pages.app.layout.sidebar.menu.editor.badge"),
     },
   ];
 
   return (
-    <ul className="flex min-w-0 flex-col gap-1.5">
-      {menuItems.map(({ key, label, href, Icon, badge }) => (
-        <li key={key} className="min-w-0">
+    <ul className={styles.navigation}>
+      {menuItems.map(({ key, label, href, Icon, tone, badge }) => (
+        <li
+          key={key}
+          className={cn(
+            styles.navigationItem,
+            key === "gallery" && styles.navigationGroupStart,
+          )}
+        >
           <NavLink
             to={href}
+            end={key === "home"}
             className={({ isActive }) =>
               cn(
-                buttonVariants({ variant: "ghost" }),
-                "w-full min-w-0 justify-start gap-3",
-                isActive && "bg-sidebar-accent text-sidebar-accent-foreground",
+                styles.navigationLink,
+                styles[tone],
+                isActive && styles.navigationLinkActive,
               )
             }
           >
-            <Icon aria-hidden className="h-5 w-5" />
-            <span className="truncate">{label}</span>
+            <span className={styles.navigationIcon}>
+              <Icon aria-hidden className={styles.navigationIconSvg} />
+            </span>
+            <span className={styles.navigationLabel}>{label}</span>
             {badge ? (
-              <Badge variant="secondary" className="ms-auto">
-                {badge}
-              </Badge>
+              <span className={styles.navigationBadge}>{badge}</span>
             ) : null}
           </NavLink>
         </li>

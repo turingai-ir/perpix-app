@@ -5,7 +5,7 @@ import type { AuthChallenge, ChallengePurpose } from "../model/types";
 import { useChallengeTimers } from "../hooks/use-challenge-timers";
 import {
   usePasswordResetChallengeMutation,
-  useRegistrationChallengeMutation,
+  useStartAuthMutation,
   useResendChallengeMutation,
 } from "../hooks/use-auth-mutations";
 
@@ -20,6 +20,8 @@ interface ResendCodeControlsProps {
   challenge: AuthChallenge;
   onChallenge: (challenge: AuthChallenge) => void;
   onError: (error: unknown) => void;
+  lockedSeconds: number;
+  onBack: () => void;
 }
 
 export const ResendCodeControls: FC<ResendCodeControlsProps> = ({
@@ -28,24 +30,31 @@ export const ResendCodeControls: FC<ResendCodeControlsProps> = ({
   challenge,
   onChallenge,
   onError,
+  lockedSeconds,
+  onBack,
 }) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const timers = useChallengeTimers(challenge);
   const resend = useResendChallengeMutation();
-  const registration = useRegistrationChallengeMutation();
+  const start = useStartAuthMutation();
   const reset = usePasswordResetChallengeMutation();
   const isExpired = timers.expiresInSeconds <= 0;
-  const request = isExpired
-    ? purpose === "registration"
-      ? () => registration.mutateAsync(phone)
-      : () => reset.mutateAsync(phone)
-    : () => resend.mutateAsync(challenge.challenge_id);
-  const isPending =
-    resend.isPending || registration.isPending || reset.isPending;
+  const isPending = resend.isPending || start.isPending || reset.isPending;
 
   const handleClick = async () => {
     try {
-      onChallenge(await request());
+      if (isExpired && purpose === "registration") {
+        const result = await start.mutateAsync(phone);
+        if (result.next_step === "password") {
+          onBack();
+          return;
+        }
+        onChallenge(result);
+      } else if (isExpired) {
+        onChallenge(await reset.mutateAsync(phone));
+      } else {
+        onChallenge(await resend.mutateAsync(challenge.challenge_id));
+      }
       toast.info(t("features.auth.toasts.codeResent"));
     } catch (error) {
       onError(error);
@@ -66,7 +75,7 @@ export const ResendCodeControls: FC<ResendCodeControlsProps> = ({
     <Button
       type="button"
       variant="link"
-      disabled={isPending}
+      disabled={isPending || lockedSeconds > 0}
       onClick={handleClick}
     >
       {t(

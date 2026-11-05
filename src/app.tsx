@@ -1,11 +1,14 @@
+import { Suspense, useEffect, useState } from "react";
+import { useAtomValue } from "jotai";
 import { RouterProvider } from "react-router";
-import { DirectionProvider } from "@radix-ui/react-direction";
+import { DirectionProvider } from "@base-ui/react/direction-provider";
 
 import { queryClient } from "@/lib/react-query";
 import { router } from "@/router/router";
 import { Toaster } from "@/components/ui/sonner";
 import { RuntimeCleanup } from "@/features/runtime";
-import PricingFeature from "@/feature/pricing";
+import { BootSplash } from "@/features/boot-splash";
+import { PricingFeature, pricingFeatureAtom } from "@/feature/pricing";
 import { QueryClientProvider } from "@tanstack/react-query";
 
 import "./lib/private-data";
@@ -14,15 +17,25 @@ import "./styles/globals.css";
 import "./styles/tailwind.css";
 
 function App() {
+  const { open: pricingOpen } = useAtomValue(pricingFeatureAtom);
+  const [pricingWasOpened, setPricingWasOpened] = useState(false);
+
+  useEffect(() => {
+    if (pricingOpen) setPricingWasOpened(true);
+  }, [pricingOpen]);
+
   return (
     <>
-      <DirectionProvider dir="rtl">
+      <DirectionProvider direction="rtl">
         <QueryClientProvider client={queryClient}>
           <Toaster duration={4000} richColors position="top-center" />
           <RuntimeCleanup />
           {/* <SupportChatProvider /> */}
-          <PricingFeature />
+          <Suspense fallback={null}>
+            {pricingWasOpened && <PricingFeature />}
+          </Suspense>
           <RouterProvider router={router} />
+          <BootSplash router={router} />
         </QueryClientProvider>
       </DirectionProvider>
     </>

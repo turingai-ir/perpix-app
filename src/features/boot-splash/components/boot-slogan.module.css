@@ -1,0 +1,96 @@
+.stage {
+  perspective: 900px;
+  display: grid;
+  place-items: center;
+  gap: 0.35em;
+  font-family: "Vazirmatn", system-ui, sans-serif;
+  font-weight: 900;
+  line-height: 1.25;
+  text-align: center;
+}
+
+.block {
+  transform-style: preserve-3d;
+  animation: float 4.2s ease-in-out infinite;
+}
+
+/* Stacked offset shadows extrude the glyphs into a solid 3D slab. */
+.line {
+  position: relative;
+  font-size: clamp(2rem, 6.4vw, 5rem);
+  background: linear-gradient(
+    100deg,
+    #ffffff 0%,
+    #f6d8ff 30%,
+    #e02bd6 46%,
+    #ffffff 50%,
+    #2d7bff 56%,
+    #35c8ff 72%,
+    #ffffff 100%
+  );
+  background-size: 260% 100%;
+  background-clip: text;
+  color: transparent;
+  animation: sweep 2.8s cubic-bezier(0.45, 0, 0.2, 1) infinite;
+  filter: drop-shadow(0 1px 0 #b24ee8) drop-shadow(0 2px 0 #8b3df0)
+    drop-shadow(0 3px 0 #6a34d8) drop-shadow(0 4px 0 #4a2bb8)
+    drop-shadow(0 6px 0 #241a6e) drop-shadow(0 18px 24px rgb(0 0 0 / 65%))
+    drop-shadow(0 0 28px rgb(139 61 240 / 55%));
+}
+
+.accent {
+  font-size: clamp(2.4rem, 8vw, 6.25rem);
+  animation-delay: 0.35s;
+}
+
+/* Neon underline that charges from both ends towards the middle. */
+.charge {
+  height: 3px;
+  width: min(62vw, 520px);
+  border-radius: 999px;
+  background: linear-gradient(90deg, #e02bd6, #8b3df0 50%, #35c8ff);
+  box-shadow:
+    0 0 14px rgb(224 43 214 / 80%),
+    0 0 26px rgb(53 200 255 / 60%);
+  transform-origin: center;
+  animation: charge 1.6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: rotateX(14deg) rotateY(-8deg) translateZ(0);
+  }
+  50% {
+    transform: rotateX(6deg) rotateY(8deg) translateZ(30px);
+  }
+}
+
+@keyframes sweep {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -60% 0;
+  }
+}
+
+@keyframes charge {
+  0%,
+  100% {
+    transform: scaleX(0.15);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .block,
+  .line,
+  .charge {
+    animation: none;
+  }
+}

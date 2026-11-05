@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
+import type { GenerationComposerIntent } from "../../_types/conversation";
 
 import type { DynamicConfigForm } from "@/pages/(app)/generation/_components/dynamic-config";
+import type { useModel } from "@/pages/(app)/generation/_hooks/model";
 import type {
   AiRegistryModelSupportedTypesEnumValue,
   SchemaAiTaskMessageResponse,
@@ -21,16 +23,30 @@ export interface GenerationPromptBoxProps {
   advancedExcludedFieldNames: ReadonlySet<string>;
   configDefaultsResolver?: ConfigDefaultsResolver;
   extraContent?: (props: PromptBoxExtraContentProps) => ReactNode;
+  modelSelectionContent?: (props: {
+    disabled: boolean;
+    dynamicForm: DynamicConfigForm;
+    model: ReturnType<typeof useModel>;
+  }) => ReactNode;
+  primaryActionLabel?: string;
+  advancedSettingsLabel?: string;
+  composerLabel?: string;
+  modelLabel?: string;
+  composerIntent?: GenerationComposerIntent;
+  initialPrompt?: string;
   isLoading?: boolean;
   lastMessageConfig?: SchemaAiTaskMessageResponse["ai_model_config"];
   lastMessageModelUuid?: SchemaAiTaskMessageResponse["ai_model_uuid"];
   lastMessageStatus?: SchemaAiTaskMessageResponse["task_status"];
+  /** Return false when a guard prevents submission, so the draft stays unsent. */
   onSubmit: (
     data: Readonly<Record<string, unknown>>,
     aiModelUuid: string,
-  ) => Promise<void> | void;
+  ) => Promise<void | false> | void | false;
+  onComposerIntentApplied?: (intentId: string) => void;
   successfulMessageClearKey?: string;
   promptBoxFieldNames: ReadonlySet<string>;
   promptPlaceholderKey: string;
+  showModeSection?: boolean;
   supportedOutputs: AiRegistryModelSupportedTypesEnumValue[];
 }

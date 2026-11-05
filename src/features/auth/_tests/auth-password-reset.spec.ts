@@ -30,7 +30,7 @@ test("password reset returns to the login page without signing in", async ({
   await page.goto("/auth/login");
   await page.getByLabel("شماره موبایل").fill("09123456789");
   await page.getByRole("button", { name: "ادامه دادن" }).click();
-  await page.getByRole("button", { name: "فراموشی رمز عبور" }).click();
+  await page.getByRole("button", { name: "رمزت رو فراموش کردی؟" }).click();
   await page.getByLabel("کد تأیید").fill("012345");
   await page.getByLabel("رمز عبور جدید").fill("NewStrongPass1");
   await page.getByLabel("تکرار رمز عبور").fill("NewStrongPass1");

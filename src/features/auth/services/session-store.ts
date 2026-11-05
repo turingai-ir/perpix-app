@@ -9,6 +9,7 @@ export interface SessionSnapshot {
 let snapshot: SessionSnapshot = { status: "initializing", cycle: 0 };
 let accessToken: string | null = null;
 let expiresAtMs = 0;
+let csrfToken: string | null = null;
 
 const listeners = new Set<() => void>();
 
@@ -19,8 +20,8 @@ function publish(next: Partial<SessionSnapshot>) {
 
 /**
  * In-memory only: the access token must never reach any storage. The CSRF
- * value is not kept at all; it is fetched right before each refresh/logout
- * because another tab may have rotated the refresh cookie it belongs to.
+ * value is captured with the access token. It is re-fetched under the browser
+ * lock before refresh/logout because another tab may have rotated the cookie.
  */
 export const sessionStore = {
   subscribe(listener: () => void) {
@@ -34,9 +35,11 @@ export const sessionStore = {
   getStatus: () => snapshot.status,
   getCycle: () => snapshot.cycle,
   getAccessToken: () => accessToken,
+  getCsrfToken: () => csrfToken,
   getExpiresAt: () => expiresAtMs,
   setSession(issued: IssuedSession, startsNewCycle: boolean) {
     accessToken = issued.accessToken;
+    csrfToken = issued.csrfToken;
     expiresAtMs = Date.now() + issued.expiresInSeconds * 1000;
     publish({
       status: "authenticated",
@@ -48,6 +51,7 @@ export const sessionStore = {
   },
   clear() {
     accessToken = null;
+    csrfToken = null;
     expiresAtMs = 0;
     publish({ status: "anonymous", cycle: snapshot.cycle + 1 });
   },

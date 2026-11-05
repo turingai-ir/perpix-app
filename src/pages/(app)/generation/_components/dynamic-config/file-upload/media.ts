@@ -28,7 +28,11 @@ export function getPreviewType(
 }
 
 export function isListFileField(property?: JsonSchemaProperty) {
-  return property?.["x-file"]?.type === "list";
+  return (
+    property?.["x-file"]?.type === "list" ||
+    property?.type === "array" ||
+    (Array.isArray(property?.type) && property.type.includes("array"))
+  );
 }
 
 export function clearTopLevelMediaConflicts(

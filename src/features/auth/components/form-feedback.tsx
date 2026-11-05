@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import { LoaderCircle } from "lucide-react";
+import { ArrowLeft, LoaderCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -26,8 +26,12 @@ export const SubmitButton: FC<SubmitButtonProps> = ({
     type="submit"
     disabled={isPending || lockedSeconds > 0}
   >
-    {isPending ? <LoaderCircle className="animate-spin" aria-hidden /> : null}
-    {label}
-    {lockedSeconds > 0 ? ` (${lockedSeconds})` : null}
+    <span>
+      {label}
+      {lockedSeconds > 0 ? ` (${lockedSeconds})` : null}
+    </span>
+    <span aria-hidden="true" data-auth-submit-icon="">
+      {isPending ? <LoaderCircle className="animate-spin" /> : <ArrowLeft />}
+    </span>
   </Button>
 );

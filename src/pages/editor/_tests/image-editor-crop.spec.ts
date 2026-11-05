@@ -54,15 +54,15 @@ test.describe("Image editor crop", () => {
 
     const cropToolbar = page.getByRole("toolbar", { name: "نسبت برش" });
     await expect(cropToolbar).toBeVisible();
-    for (const ratio of ["FreeSize", "1:1", "3:4", "16:9", "4:3", "9:16"]) {
+    for (const ratio of ["آزاد", "1:1", "3:4", "16:9", "4:3", "9:16"]) {
       await expect(
-        cropToolbar.getByRole("button", { name: ratio }),
+        cropToolbar.getByRole("button", { name: ratio, exact: true }),
       ).toBeVisible();
     }
 
-    await cropToolbar.getByRole("button", { name: "1:1" }).click();
+    await cropToolbar.getByRole("button", { name: "1:1", exact: true }).click();
     await expect(
-      cropToolbar.getByRole("button", { name: "1:1" }),
+      cropToolbar.getByRole("button", { name: "1:1", exact: true }),
     ).toHaveAttribute("aria-pressed", "true");
     await expect(page.getByTestId("crop-frame")).toHaveAttribute(
       "data-aspect-ratio",

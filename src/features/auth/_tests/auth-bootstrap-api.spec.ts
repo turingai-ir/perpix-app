@@ -134,13 +134,14 @@ test("changing accounts during bootstrap cancels the waiting private request", a
         await import(modulePath);
       manager.startSession({
         accessToken: "new-account-token",
+        csrfToken: "test-csrf-token",
         expiresInSeconds: 900,
       });
     });
   } finally {
     releaseRefresh();
   }
-  expect(await pending).toEqual({ sent: 0, error: "AuthRequestError" });
+  expect(await pending).toEqual({ sent: 0, error: "AbortError" });
 });
 
 test("a public plan read remains available without a session", async ({
@@ -195,6 +196,7 @@ test("a token expiring while refresh fails is never sent to a private endpoint",
     const auth: AuthorizedFetchModule = await import(modulePath);
     manager.startSession({
       accessToken: "expiring-token",
+      csrfToken: "test-csrf-token",
       expiresInSeconds: 1,
     });
     let sent = 0;

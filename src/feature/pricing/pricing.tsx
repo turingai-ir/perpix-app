@@ -122,7 +122,23 @@ function PricingFeature() {
           <ErrorSection onRetry={() => plansState.refetch()} />
         )}
 
-        {open && plansState.isSuccess ? (
+        {open && plansState.isSuccess && plans.length === 0 ? (
+          <div className="flex min-h-0 flex-1 flex-col items-center gap-4 overflow-y-auto px-6 py-8 text-center">
+            <div role="status" className="max-w-md space-y-2">
+              <h3 className="text-lg font-medium">
+                {t("features.pricing.emptyTitle")}
+              </h3>
+              <p className="text-muted-foreground text-sm">
+                {t("features.pricing.emptyDescription")}
+              </p>
+            </div>
+            <Button type="button" variant="outline" onClick={closePricingFeature}>
+              {t("features.pricing.close")}
+            </Button>
+          </div>
+        ) : null}
+
+        {open && plansState.isSuccess && plans.length > 0 ? (
           <ScrollArea
             className="h-0 min-h-0 flex-1 overflow-hidden"
             viewportClassName="h-full touch-pan-y overscroll-contain"

@@ -84,16 +84,16 @@ function buildCombinedModeSchema(
         merged[key] = { ...prop };
       } else {
         const existing = merged[key];
-        const combinedEnum =
-          Array.isArray(existing.enum) && Array.isArray(prop.enum)
-            ? Array.from(new Set([...existing.enum, ...prop.enum]))
-            : (prop.enum ?? existing.enum);
-
+        // Each mode validates its own field in its conditional branch below.
+        // Keeping one mode's constraints at the root rejects other modes' values.
+        const sameType =
+          JSON.stringify(existing.type) === JSON.stringify(prop.type);
         merged[key] = {
-          ...existing,
-          ...prop,
+          ...(sameType && prop.type !== undefined ? { type: prop.type } : {}),
           default: prop.default ?? existing.default,
-          enum: combinedEnum,
+          title: prop.title ?? existing.title,
+          description: prop.description ?? existing.description,
+          "x-file": prop["x-file"] ?? existing["x-file"],
         };
       }
     }
@@ -108,9 +108,12 @@ function buildCombinedModeSchema(
   const allFieldNames = Object.keys(modeProperties);
 
   return {
-    $id: modes
-      .map(({ config_schema, value }) => config_schema.$id ?? value)
-      .join(":"),
+    // Mode names may contain underscores, so they must not become URI schemes.
+    $id: `urn:perpix:dynamic-config:${encodeURIComponent(
+      modes
+        .map(({ config_schema, value }) => config_schema.$id ?? value)
+        .join(":"),
+    )}`,
     type: "object",
     additionalProperties: false,
     required: ["mode"],
@@ -133,7 +136,11 @@ function buildCombinedModeSchema(
         then: {
           properties: mode.config_schema.properties,
           required: mode.config_schema.required,
-          allOf: modeSchema.allOf,
+          allOf:
+            modeSchema.not === undefined
+              ? modeSchema.allOf
+              : [...(mode.config_schema.allOf ?? []), { not: modeSchema.not }],
+          anyOf: modeSchema.anyOf,
           oneOf: modeSchema.oneOf,
           not: inactiveFieldNames.length
             ? {

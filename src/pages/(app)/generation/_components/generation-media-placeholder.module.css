@@ -1,0 +1,286 @@
+.root {
+  display: flex;
+  width: 100%;
+  max-width: min(100%, calc(65dvh * var(--media-ratio)));
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.viewport {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  min-height: 10rem;
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 10%);
+  border-radius: 0.75rem;
+  background: radial-gradient(
+    circle at 50% 42%,
+    #17213b 0,
+    #090d18 42%,
+    #04060b 100%
+  );
+  box-shadow:
+    inset 0 1px rgb(255 255 255 / 7%),
+    inset 0 -40px 80px rgb(0 0 0 / 36%);
+  perspective: 900px;
+}
+
+.grid {
+  position: absolute;
+  inset: 42% -25% -45%;
+  background-image:
+    linear-gradient(rgb(105 130 255 / 12%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(105 130 255 / 12%) 1px, transparent 1px);
+  background-size: 2.4rem 2.4rem;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    #000 35%,
+    transparent 85%
+  );
+  transform: rotateX(64deg) translateZ(-50px);
+  transform-origin: top;
+  animation: gridDrift 7s linear infinite;
+}
+
+.frame {
+  position: absolute;
+  inset: 12%;
+  overflow: hidden;
+  border: 1px solid rgb(138 157 255 / 22%);
+  border-radius: 0.55rem;
+  background: linear-gradient(
+    145deg,
+    rgb(104 79 255 / 10%),
+    rgb(22 197 255 / 5%)
+  );
+  box-shadow:
+    0 0 0 1px rgb(0 0 0 / 45%),
+    0 24px 70px rgb(0 0 0 / 45%);
+  transform-style: preserve-3d;
+  animation: frameForm 5.2s cubic-bezier(0.22, 0.8, 0.24, 1) infinite;
+}
+
+.frame::after {
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgb(189 206 255 / 16%);
+  border-radius: inherit;
+  content: "";
+  box-shadow: inset 0 0 28px rgb(99 102 241 / 12%);
+}
+
+.tiles {
+  display: grid;
+  height: 100%;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 2px;
+}
+
+.tiles i {
+  background:
+    linear-gradient(135deg, rgb(132 94 247 / 35%), rgb(49 201 255 / 22%)),
+    radial-gradient(circle at 70% 20%, rgb(255 255 255 / 24%), transparent 45%);
+  opacity: 0;
+  transform: translate3d(
+      calc((var(--tile) - 6) * 7px),
+      calc((5 - var(--tile)) * 5px),
+      120px
+    )
+    rotateY(35deg) scale(0.72);
+  animation: tileForm 5.2s cubic-bezier(0.22, 0.8, 0.24, 1) infinite;
+  animation-delay: calc(var(--tile) * 45ms);
+  will-change: transform, opacity;
+}
+
+.scan {
+  position: absolute;
+  inset-inline: 0;
+  top: -12%;
+  height: 12%;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgb(119 219 255 / 28%),
+    rgb(255 255 255 / 70%)
+  );
+  opacity: 0;
+  transform: translate3d(0, 0, 1px);
+  animation: scan 5.2s ease-in-out infinite;
+}
+
+.particles {
+  position: absolute;
+  inset: 0;
+}
+.particles i {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #a5b4fc;
+  opacity: 0;
+  animation: particle 5.2s ease-in-out infinite;
+}
+.particles i:nth-child(1) {
+  left: 8%;
+  top: 24%;
+  animation-delay: -0.2s;
+}
+.particles i:nth-child(2) {
+  left: 18%;
+  top: 76%;
+  animation-delay: 0.35s;
+}
+.particles i:nth-child(3) {
+  left: 37%;
+  top: 12%;
+  animation-delay: 0.7s;
+}
+.particles i:nth-child(4) {
+  left: 64%;
+  top: 84%;
+  animation-delay: 1.05s;
+}
+.particles i:nth-child(5) {
+  left: 78%;
+  top: 17%;
+  animation-delay: 1.4s;
+}
+.particles i:nth-child(6) {
+  left: 91%;
+  top: 61%;
+  animation-delay: 1.75s;
+}
+.particles i:nth-child(7) {
+  left: 54%;
+  top: 53%;
+  animation-delay: 2.1s;
+}
+
+.horizon {
+  position: absolute;
+  inset-inline: 8%;
+  bottom: 8%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(126 149 255 / 45%),
+    transparent
+  );
+  animation: horizon 5.2s ease infinite;
+}
+
+@keyframes tileForm {
+  0%,
+  8% {
+    opacity: 0;
+  }
+  42%,
+  88% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) rotateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(0, 0, 70px) scale(0.94);
+  }
+}
+@keyframes frameForm {
+  0%,
+  8% {
+    opacity: 0.15;
+    transform: rotateX(8deg) rotateY(-7deg) translate3d(0, 14px, -90px)
+      scale(0.88);
+  }
+  42%,
+  88% {
+    opacity: 1;
+    transform: rotateX(0) rotateY(0) translate3d(0, 0, 0) scale(1);
+  }
+  100% {
+    opacity: 0.2;
+    transform: translate3d(0, 0, 50px) scale(0.97);
+  }
+}
+@keyframes scan {
+  0%,
+  38% {
+    opacity: 0;
+    transform: translate3d(0, 0, 1px);
+  }
+  45% {
+    opacity: 1;
+  }
+  72% {
+    opacity: 0;
+    transform: translate3d(0, 850%, 1px);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes particle {
+  0%,
+  15%,
+  90%,
+  100% {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0) scale(0.5);
+  }
+  35%,
+  70% {
+    opacity: 0.7;
+    transform: translate3d(0, -12px, 0) scale(1);
+  }
+}
+@keyframes gridDrift {
+  to {
+    transform: rotateX(64deg) translate3d(0, 2.4rem, -50px);
+  }
+}
+@keyframes horizon {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scaleX(0.45);
+  }
+  45%,
+  80% {
+    opacity: 0.8;
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grid,
+  .frame,
+  .tiles i,
+  .scan,
+  .particles i,
+  .horizon {
+    animation: none;
+  }
+  .frame,
+  .tiles i {
+    opacity: 1;
+    transform: none;
+  }
+  .scan,
+  .particles i {
+    display: none;
+  }
+  .horizon {
+    opacity: 0.65;
+    transform: none;
+  }
+}

@@ -1,4 +1,4 @@
-import { useState, type RefObject } from "react";
+import { useRef, useState, type RefObject } from "react";
 import { useSetAtom } from "jotai";
 import { useImageAlignmentSnap } from "./use-image-alignment-snap";
 import { useImageCrop } from "./use-image-crop";
@@ -16,6 +16,7 @@ import type { ImageEditorWorkspaceViewModel } from "./image-editor-workspace-typ
 import { useImageWorkspaceHistory } from "./use-image-workspace-history";
 import { useInitialZoomResets } from "./use-initial-zoom-resets";
 import { zoomAtom, panAtom } from "../_model/editor-settings";
+import { DEFAULT_EDITOR_EDITS, type EditorEdits } from "../_model/editor-edits";
 
 const ZERO_SIZE = { height: 0, width: 0 };
 
@@ -27,6 +28,9 @@ export function useImageEditorWorkspace(
   const crop = useImageCrop();
   const [isImageSelected, setIsImageSelected] = useState(false);
   const history = useImageWorkspaceHistory(image, documentId);
+  const [draftEdits, setDraftEdits] = useState<EditorEdits | null>(null);
+  const draftEditsRef = useRef<EditorEdits | null>(null);
+  const edits = draftEdits ?? history.current.edits ?? DEFAULT_EDITOR_EDITS;
   const setZoom = useSetAtom(zoomAtom);
   const setPan = useSetAtom(panAtom);
 
@@ -71,6 +75,7 @@ export function useImageEditorWorkspace(
       ? denormalizeCrop(crop.draftCrop, imageSize, imagePosition)
       : crop.draftCrop,
     draftCrop: crop.draftCrop,
+    edits,
     fixedCropRatio: crop.selectedRatioValue !== null,
     imagePosition,
     imageSize,
@@ -99,7 +104,24 @@ export function useImageEditorWorkspace(
     selectImage: () => setIsImageSelected(true),
     canRedo: history.canRedo,
     canUndo: history.canUndo,
-    redo: history.redo,
-    undo: history.undo,
+    redo: () => {
+      draftEditsRef.current = null;
+      setDraftEdits(null);
+      history.redo();
+    },
+    undo: () => {
+      draftEditsRef.current = null;
+      setDraftEdits(null);
+      history.undo();
+    },
+    previewEdits: (nextEdits: EditorEdits) => {
+      draftEditsRef.current = nextEdits;
+      setDraftEdits(nextEdits);
+    },
+    commitEdits: (nextEdits?: EditorEdits) => {
+      history.updateEdits(nextEdits ?? draftEditsRef.current ?? edits);
+      draftEditsRef.current = null;
+      setDraftEdits(null);
+    },
   };
 }

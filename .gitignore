@@ -38,3 +38,16 @@ dev-dist
 
 
 graphify-out
+
+# Local development tooling and generated artifacts
+/.artifacts/
+/deploy/test.env
+/.codex/skills/
+/.codex/higgsfield-video.png
+/.impeccable/
+/.agents/skills/ui-ux-pro-max/
+
+# Claude Code skills link (created by scripts/setup-ai-tools)
+/.claude/skills
+# Personal Claude Code settings (team settings live in .claude/settings.json)
+/.claude/settings.local.json

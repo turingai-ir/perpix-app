@@ -6,11 +6,15 @@ test.beforeEach(async ({ page }) => {
   await mockAnonymousSession(page);
 });
 
-for (const width of [390, 1280]) {
+for (const [width, height] of [
+  [375, 812],
+  [768, 1024],
+  [1440, 900],
+]) {
   test(`phone first and change number at width ${width}`, async ({
     page,
   }, testInfo) => {
-    await page.setViewportSize({ width, height: 844 });
+    await page.setViewportSize({ width, height });
     const phones: unknown[] = [];
     await page.route("**/api/v1/auth/start", (route) => {
       phones.push(route.request().postDataJSON());
@@ -19,11 +23,28 @@ for (const width of [390, 1280]) {
     await page.goto("/auth/login");
     await expect(page.getByLabel("شماره موبایل")).toBeVisible();
     await expect(page.getByLabel("رمز عبور", { exact: true })).toBeHidden();
-    await page.screenshot({ path: testInfo.outputPath("phone.png") });
+    await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBe(true);
+    await page.screenshot({
+      path: testInfo.outputPath("phone.png"),
+      fullPage: true,
+    });
     await page.getByLabel("شماره موبایل").fill("09123456789");
     await page.getByRole("button", { name: "ادامه دادن" }).click();
     await expect(page.getByLabel("رمز عبور", { exact: true })).toBeFocused();
-    await page.screenshot({ path: testInfo.outputPath("password.png") });
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBe(true);
+    await page.screenshot({
+      path: testInfo.outputPath("password.png"),
+      fullPage: true,
+    });
     await page.getByLabel("رمز عبور", { exact: true }).fill("secret");
     await page.getByRole("button", { name: "تغییر شماره موبایل" }).click();
     await expect(page.getByLabel("شماره موبایل")).toHaveValue("+989123456789");
@@ -48,9 +69,7 @@ test("a connection failure keeps the phone form and never retries automatically"
   await page.goto("/auth/login");
   await page.getByLabel("شماره موبایل").fill("09123456789");
   await page.getByRole("button", { name: "ادامه دادن" }).click();
-  await expect(page.getByRole("alert")).toContainText(
-    "ارتباط با سرور برقرار نشد",
-  );
+  await expect(page.getByRole("alert")).toContainText("اتصال برقرار نشد");
   await expect(page.getByLabel("شماره موبایل")).toHaveValue("09123456789");
   expect(starts).toBe(1);
 });
@@ -65,7 +84,7 @@ test("an incomplete registration response does not open the code form", async ({
   await page.getByLabel("شماره موبایل").fill("09123456789");
   await page.getByRole("button", { name: "ادامه دادن" }).click();
   await expect(page.getByRole("alert")).toHaveText(
-    "پاسخ نامعتبر از سرور دریافت شد.",
+    "پاسخ سرور درست نبود. کمی بعد دوباره امتحان کن.",
   );
   await expect(page.getByLabel("کد تأیید")).toBeHidden();
 });

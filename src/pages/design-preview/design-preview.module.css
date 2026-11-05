@@ -1,0 +1,92 @@
+.preview {
+  --preview-canvas: #07080c;
+  --preview-grid: rgba(139, 92, 246, 0.07);
+  background:
+    radial-gradient(circle at 76% 26%, rgba(65, 105, 225, 0.12), transparent 30%),
+    radial-gradient(circle at 62% 34%, rgba(192, 38, 211, 0.11), transparent 24%),
+    var(--preview-canvas);
+}
+
+.preview::before {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  background-image:
+    linear-gradient(var(--preview-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--preview-grid) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(circle at 70% 26%, black, transparent 58%);
+}
+
+.logoStage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  isolation: isolate;
+}
+
+.logoHalo {
+  position: absolute;
+  width: 66%;
+  aspect-ratio: 1;
+  border-radius: 999px;
+  background: conic-gradient(from 210deg, #c026d3, #7c3aed, #168eea, #c026d3);
+  filter: blur(54px);
+  opacity: 0.28;
+}
+
+.orbit {
+  position: absolute;
+  width: 82%;
+  aspect-ratio: 1;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 999px;
+  box-shadow: inset 0 0 70px rgba(124, 58, 237, 0.07);
+}
+
+.heroLogo {
+  position: relative;
+  z-index: 2;
+  width: 58%;
+  border-radius: 28%;
+  filter: drop-shadow(0 28px 50px rgba(96, 72, 255, 0.2));
+  mix-blend-mode: screen;
+  animation: logo-float 6s ease-in-out infinite;
+}
+
+.modelChip {
+  position: absolute;
+  z-index: 3;
+  display: flex;
+  min-height: 40px;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  background: rgba(15, 17, 24, 0.82);
+  padding: 0 14px;
+  color: #d5d9e3;
+  font-size: 12px;
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(16px);
+}
+
+.modelChipOne { top: 17%; right: 2%; }
+.modelChipTwo { bottom: 20%; left: 0; }
+.modelChipThree { bottom: 8%; right: 18%; }
+
+@keyframes logo-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@media (max-width: 640px) {
+  .modelChip { min-height: 36px; padding-inline: 10px; font-size: 10px; }
+  .modelChipOne { right: 0; }
+  .modelChipTwo { left: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heroLogo { animation: none; }
+}

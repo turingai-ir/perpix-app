@@ -3,7 +3,7 @@ import { z } from "zod";
 const CHANNEL_NAME = "perpix-auth";
 
 const messageSchema = z.object({
-  type: z.literal("session-ended"),
+  type: z.enum(["session-ended", "session-started"]),
   senderId: z.string(),
 });
 
@@ -26,13 +26,22 @@ export function announceSessionEnded() {
   getChannel()?.postMessage({ type: "session-ended", senderId });
 }
 
-export function listenForSessionEnded(onEnded: () => void) {
+export function announceSessionStarted() {
+  getChannel()?.postMessage({ type: "session-started", senderId });
+}
+
+export function listenForSessionChanges(handlers: {
+  ended?: () => void;
+  started?: () => void;
+}) {
   const target = getChannel();
   if (!target) return () => undefined;
 
   const handler = (event: MessageEvent<unknown>) => {
     const message = messageSchema.safeParse(event.data);
-    if (message.success && message.data.senderId !== senderId) onEnded();
+    if (!message.success || message.data.senderId === senderId) return;
+    if (message.data.type === "session-ended") handlers.ended?.();
+    else handlers.started?.();
   };
   target.addEventListener("message", handler);
 

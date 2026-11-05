@@ -15,6 +15,7 @@ export default tseslint.config(
   {
     ignores: [
       ".agents/**",
+      ".artifacts/**",
       "dist",
       "dev-dist",
       "build",
@@ -26,15 +27,24 @@ export default tseslint.config(
   },
   ...mantine,
   {
+    settings: {
+      react: {
+        version: "19.2",
+      },
+    },
+    languageOptions: {
+      parserOptions: {
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+  },
+  {
     files: ["**/*.{ts,tsx}"],
     languageOptions: {
       ecmaVersion: 2020,
       sourceType: "module",
       globals: globals.browser,
       parser: tseslint.parser,
-      parserOptions: {
-        tsconfigRootDir: import.meta.dirname,
-      },
     },
     plugins: {
       react,
@@ -87,6 +97,14 @@ export default tseslint.config(
       "import/order": "off",
       "react/react-in-jsx-scope": "off",
       "react/prop-types": "off",
+    },
+  },
+  {
+    // react-three-fiber JSX intrinsics (<mesh position>, <pointLight intensity>)
+    // are three.js props, not DOM attributes.
+    files: ["src/features/boot-splash/components/**/*.tsx"],
+    rules: {
+      "react/no-unknown-property": "off",
     },
   },
   prettierConfig,

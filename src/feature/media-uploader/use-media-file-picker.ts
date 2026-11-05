@@ -16,6 +16,7 @@ interface UseMediaFilePickerOptions {
   isUploading: boolean;
   selectedIds: readonly string[];
   onFileSelect?: (file: File) => void | Promise<string | void>;
+  onFileUploaded?: (id: string) => void;
   onUploadedFileSelect?: (id: string) => void;
 }
 
@@ -26,6 +27,7 @@ export function useMediaFilePicker({
   isUploading,
   selectedIds,
   onFileSelect,
+  onFileUploaded,
   onUploadedFileSelect,
 }: UseMediaFilePickerOptions) {
   const { getUserFilesState } = useInfiniteUserFiles({
@@ -44,6 +46,14 @@ export function useMediaFilePicker({
   );
   const isLoadingFiles = getUserFilesState.isPending && !userFilesResponse;
 
+  const uploadFile = async (file: File) => {
+    if (disabled || isUploading) return;
+
+    const uploadedFileId = await onFileSelect?.(file);
+    if (uploadedFileId) onFileUploaded?.(uploadedFileId);
+    await getUserFilesState.refetch();
+  };
+
   const handleFileChange: ChangeEventHandler<HTMLInputElement> = async (
     event,
   ) => {
@@ -59,8 +69,7 @@ export function useMediaFilePicker({
 
     if (!selectedFile) return;
 
-    await onFileSelect?.(selectedFile);
-    await getUserFilesState.refetch();
+    await uploadFile(selectedFile);
   };
 
   const fetchMoreFiles = () => {
@@ -89,11 +98,12 @@ export function useMediaFilePicker({
 
   return {
     handleFileChange,
+    uploadFile,
     fetchMoreFiles,
     hasMoreFiles: getUserFilesState.hasNextPage,
     isFetchingFiles: getUserFilesState.isFetching,
     isFetchingMoreFiles: getUserFilesState.isFetchingNextPage,
-    isFilesError: getUserFilesState.isError && !userFiles.length,
+    isFilesError: getUserFilesState.isError,
     isLoadingFiles,
     refetchFiles: getUserFilesState.refetch,
     selectedIdsSet,

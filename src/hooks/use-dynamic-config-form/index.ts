@@ -13,6 +13,8 @@ import {
   sanitizeConfigValues,
   stripUndefinedDeep,
 } from "./schema";
+
+const EMPTY_PRESERVED_FIELDS: readonly string[] = [];
 import type {
   DynamicConfigValidationMessages,
   DynamicConfigValues,
@@ -55,6 +57,7 @@ export function useDynamicConfigForm({
   configMeta,
   schemaKey,
   autoResetOnSchemaChange = true,
+  preserveFieldsOnSchemaChange = EMPTY_PRESERVED_FIELDS,
   formOptions,
 }: UseDynamicConfigFormInput) {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
@@ -116,7 +119,10 @@ export function useDynamicConfigForm({
   const form = useForm<DynamicConfigValues>({
     resolver,
     defaultValues,
-    mode: "onBlur",
+    // Validating on blur shows errors as focus moves to a nearby control, which
+    // shifts the layout mid-click and swallows the click (e.g. adding a reference).
+    mode: "onSubmit",
+    reValidateMode: "onChange",
     ...formOptions,
   });
   const currentValues = useWatch({ control: form.control });
@@ -158,9 +164,25 @@ export function useDynamicConfigForm({
 
     if (prevSchemaKeyRef.current !== resolvedSchemaKey) {
       prevSchemaKeyRef.current = resolvedSchemaKey;
-      form.reset(defaultValues);
+      const currentFormValues = form.getValues();
+      const preservedValues = Object.fromEntries(
+        preserveFieldsOnSchemaChange.flatMap((fieldName) =>
+          fieldName in safeConfigSchema.properties &&
+          currentFormValues[fieldName] !== undefined
+            ? [[fieldName, currentFormValues[fieldName]]]
+            : [],
+        ),
+      );
+      form.reset({ ...defaultValues, ...preservedValues });
     }
-  }, [resolvedSchemaKey, autoResetOnSchemaChange, form, defaultValues]);
+  }, [
+    resolvedSchemaKey,
+    autoResetOnSchemaChange,
+    form,
+    defaultValues,
+    preserveFieldsOnSchemaChange,
+    safeConfigSchema.properties,
+  ]);
 
   const visibleFieldSignature = useWatch({
     control: form.control,
