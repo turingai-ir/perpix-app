@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useAppTranslate } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
 import type { GalleryMediaType } from "../_utils/types";
-import styles from "../gallery.module.css";
+import { cn } from "@/lib/utils";
 
 interface Props {
   url?: string;
@@ -37,14 +37,20 @@ export function GalleryViewerMedia({ url, name, mediaType, zoomed }: Props) {
     );
   if (mediaType === "image")
     return (
-      <div dir="ltr" className={styles.viewerImageViewport}>
+      <div
+        dir="ltr"
+        className="size-full [scrollbar-width:thin] overflow-auto overscroll-contain"
+      >
         <img
           key={attempt}
           src={url}
           alt={name}
           draggable={false}
           onError={() => setFailed(true)}
-          className={`${styles.viewerImage} ${zoomed ? styles.viewerImageZoomed : ""}`}
+          className={cn(
+            "ease-out-quint block size-full max-w-none origin-center scale-100 object-contain transition-transform duration-240 select-none [-webkit-user-drag:none] motion-reduce:duration-[0.01ms]",
+            zoomed && "scale-200 cursor-zoom-out",
+          )}
         />
       </div>
     );
