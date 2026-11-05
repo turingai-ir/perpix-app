@@ -6,6 +6,9 @@ import App from "./app.tsx";
 import { ErrorBoundary } from "./components/custom/error-boundary.tsx";
 import AppContextProvider from "./hooks/app/provider.tsx";
 import { jotaiStore } from "./lib/jotai-store.ts";
+import { initVisualQuality } from "./lib/visual-quality";
+
+initVisualQuality();
 
 const container = document.getElementById("root");
 
