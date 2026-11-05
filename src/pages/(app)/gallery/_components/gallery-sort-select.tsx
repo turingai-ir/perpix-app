@@ -33,7 +33,7 @@ export function GallerySortSelect({
       >
         <SelectTrigger
           aria-label={t("pages.gallery.studio.sort")}
-          className="border-foreground/10 bg-background/64 text-foreground focus-visible:border-ring h-12 w-full justify-between rounded-2xl border px-[0.85rem] text-[0.8125rem] outline-none focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_20%,transparent)] max-md:min-w-0 max-md:text-base"
+          className="border-foreground/10 bg-background/64 text-foreground focus-visible:border-ring h-12 w-full justify-between rounded-2xl border px-[0.85rem] text-[0.8125rem] outline-none focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_20%,transparent)] data-[size=default]:h-12 max-md:min-w-0 max-md:text-base"
         >
           <SelectValue />
         </SelectTrigger>
