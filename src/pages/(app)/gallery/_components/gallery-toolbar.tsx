@@ -26,6 +26,10 @@ interface Props {
 }
 export function GalleryToolbar(props: Props) {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
+  const sortItems = ["original", "name", "size"].map((value) => ({
+    value,
+    label: t(`pages.gallery.studio.${value}`),
+  }));
   return (
     <section className={styles.toolbar} aria-label={t("pages.gallery.title")}>
       <div className={styles.toolbarTopline}>
@@ -79,7 +83,13 @@ export function GalleryToolbar(props: Props) {
           )}
         </div>
         <div className={styles.sortControl}>
-          <Select value={props.sort} onValueChange={props.onSort}>
+          <Select
+            value={props.sort}
+            items={sortItems}
+            onValueChange={(value) => {
+              if (value) props.onSort(value);
+            }}
+          >
             <SelectTrigger
               aria-label={t("pages.gallery.studio.sort")}
               className={styles.sortSelect}
@@ -87,7 +97,7 @@ export function GalleryToolbar(props: Props) {
               <SelectValue />
             </SelectTrigger>
             <SelectContent
-              position="popper"
+              alignItemWithTrigger={false}
               align="start"
               className={styles.sortContent}
             >

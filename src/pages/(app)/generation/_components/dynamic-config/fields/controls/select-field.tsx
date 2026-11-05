@@ -54,11 +54,15 @@ export const DynamicConfigSelectField: FC<{
           name={field.name}
           value={
             resolveFieldValue(field.value, property.default) == null
-              ? ""
+              ? null
               : String(resolveFieldValue(field.value, property.default))
           }
+          items={options.map((option) => ({
+            value: String(option),
+            label: optionLabels?.[String(option)] ?? String(option),
+          }))}
           onValueChange={(value) =>
-            field.onChange(coerceSelectValue(value, options))
+            field.onChange(coerceSelectValue(value ?? "", options))
           }
           disabled={disabled}
         >

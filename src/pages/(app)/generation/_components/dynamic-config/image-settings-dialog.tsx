@@ -6,14 +6,12 @@ import {
   DialogContent,
   DialogDescription,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   Drawer,
   DrawerContent,
   DrawerDescription,
   DrawerTitle,
-  DrawerTrigger,
 } from "@/components/ui/drawer";
 import { useAppTranslate } from "@/hooks";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -41,7 +39,6 @@ export function ImageSettingsDialog({
   const triggerRef = useRef<HTMLButtonElement>(null);
   const settings = useImageSettings(dynamicForm, fieldNames);
   const Root = mobile ? Drawer : Dialog;
-  const Trigger = mobile ? DrawerTrigger : DialogTrigger;
   const Content = mobile ? DrawerContent : DialogContent;
   const Title = mobile ? DrawerTitle : DialogTitle;
   const Description = mobile ? DrawerDescription : DialogDescription;
@@ -74,36 +71,40 @@ export function ImageSettingsDialog({
       onOpenChange={setOpen}
       {...(mobile ? { autoFocus: true } : {})}
     >
-      <Trigger asChild>
-        <Button
-          ref={triggerRef}
-          type="button"
-          variant="outline"
-          disabled={disabled}
-          className={styles.trigger}
-        >
-          <SlidersHorizontal aria-hidden="true" className="size-4" />
-          {title}
-          {settings.changed.length > 0 && (
-            <span
-              className={styles.count}
-              aria-label={t(
-                "pages.generation.image.studio.settings.changedCount",
-                { count: settings.changed.length },
-              )}
-            >
-              {settings.changed.length}
-            </span>
-          )}
-        </Button>
-      </Trigger>
+      <Button
+        ref={triggerRef}
+        type="button"
+        variant="outline"
+        disabled={disabled}
+        className={styles.trigger}
+        aria-expanded={open}
+        onClick={() => setOpen(true)}
+      >
+        <SlidersHorizontal aria-hidden="true" className="size-4" />
+        {title}
+        {settings.changed.length > 0 && (
+          <span
+            className={styles.count}
+            aria-label={t(
+              "pages.generation.image.studio.settings.changedCount",
+              { count: settings.changed.length },
+            )}
+          >
+            {settings.changed.length}
+          </span>
+        )}
+      </Button>
       <Content
         className={styles.panel}
         {...(!mobile ? { showCloseButton: false } : {})}
-        onCloseAutoFocus={(event) => {
-          event.preventDefault();
-          triggerRef.current?.focus();
-        }}
+        {...(mobile
+          ? {
+              onCloseAutoFocus: (event: Event) => {
+                event.preventDefault();
+                triggerRef.current?.focus();
+              },
+            }
+          : { finalFocus: triggerRef })}
       >
         <header className={styles.header}>
           <div className={styles.headingRow}>

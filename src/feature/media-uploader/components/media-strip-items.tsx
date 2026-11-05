@@ -87,23 +87,21 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
       {!isError && previewUrl && previewType === "image" ? (
         presentation === "composer" || presentation === "video-dock" ? (
           <Dialog>
-            <DialogTrigger asChild>
-              <button
-                type="button"
-                className="focus-visible:ring-primary/60 size-full overflow-hidden rounded-lg outline-none focus-visible:ring-2"
-                aria-label={t(
-                  presentation === "video-dock"
-                    ? `features.mediaUploader.videoDock.preview.${previewType}`
-                    : "features.mediaUploader.composer.preview",
-                  { index },
-                )}
-              >
-                <img
-                  src={previewUrl}
-                  alt=""
-                  className="size-full object-cover"
+            <DialogTrigger
+              render={
+                <button
+                  type="button"
+                  className="focus-visible:ring-primary/60 size-full overflow-hidden rounded-lg outline-none focus-visible:ring-2"
+                  aria-label={t(
+                    presentation === "video-dock"
+                      ? `features.mediaUploader.videoDock.preview.${previewType}`
+                      : "features.mediaUploader.composer.preview",
+                    { index },
+                  )}
                 />
-              </button>
+              }
+            >
+              <img src={previewUrl} alt="" className="size-full object-cover" />
             </DialogTrigger>
             <DialogContent className="w-[calc(100vw-2rem)] max-w-3xl p-3 sm:p-4">
               <DialogTitle className="sr-only">

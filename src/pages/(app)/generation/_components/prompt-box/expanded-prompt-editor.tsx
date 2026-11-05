@@ -90,18 +90,20 @@ export function ExpandedPromptEditor({
             <DialogDescription>
               {t("pages.generation.image.studio.promptEditorDescription")}
             </DialogDescription>
-            <DialogClose asChild>
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon-lg"
-                className="hover:bg-muted absolute end-0 top-0 rounded-full"
-                aria-label={t(
-                  "pages.generation.image.studio.closePromptEditor",
-                )}
-              >
-                <X aria-hidden="true" />
-              </Button>
+            <DialogClose
+              render={
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-lg"
+                  className="hover:bg-muted absolute end-0 top-0 rounded-full"
+                  aria-label={t(
+                    "pages.generation.image.studio.closePromptEditor",
+                  )}
+                />
+              }
+            >
+              <X aria-hidden="true" />
             </DialogClose>
           </DialogHeader>
           <textarea

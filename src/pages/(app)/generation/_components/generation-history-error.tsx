@@ -3,7 +3,8 @@ import { Link } from "react-router";
 
 import type { GenerationHistoryErrorKind } from "../_types/conversation";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { useAppTranslate } from "@/hooks";
 
 interface Props {
@@ -41,11 +42,12 @@ export function GenerationHistoryError({
             {t("pages.generation.historyError.retry")}
           </Button>
         )}
-        <Button asChild variant="outline">
-          <Link to={newConversationPath}>
-            {t("pages.generation.historyError.newConversation")}
-          </Link>
-        </Button>
+        <Link
+          to={newConversationPath}
+          className={cn(buttonVariants({ variant: "outline" }))}
+        >
+          {t("pages.generation.historyError.newConversation")}
+        </Link>
       </div>
     </section>
   );

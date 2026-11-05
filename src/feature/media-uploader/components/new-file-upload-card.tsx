@@ -1,7 +1,8 @@
 import { ClipboardPaste, LoaderCircle, Upload } from "lucide-react";
 import type { ChangeEventHandler, FC } from "react";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { useAppTranslate } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
 
@@ -61,21 +62,27 @@ export const NewFileUploadCard: FC<NewFileUploadCardProps> = ({
             {t("features.mediaUploader.newFile.paste")}
           </Button>
         )}
-        <Button asChild disabled={disabled || isUploading} size="sm">
-          <label htmlFor={inputId} className="cursor-pointer">
-            {isUploading ? (
-              <LoaderCircle
-                aria-hidden="true"
-                className="motion-safe:animate-spin"
-              />
-            ) : (
-              <Upload />
-            )}
-            {isUploading
-              ? t("common.uploading")
-              : t("features.mediaUploader.actions.upload")}
-          </label>
-        </Button>
+        <label
+          htmlFor={inputId}
+          aria-disabled={disabled || isUploading}
+          className={cn(
+            buttonVariants({ size: "sm" }),
+            "cursor-pointer",
+            (disabled || isUploading) && "pointer-events-none opacity-50",
+          )}
+        >
+          {isUploading ? (
+            <LoaderCircle
+              aria-hidden="true"
+              className="motion-safe:animate-spin"
+            />
+          ) : (
+            <Upload />
+          )}
+          {isUploading
+            ? t("common.uploading")
+            : t("features.mediaUploader.actions.upload")}
+        </label>
       </div>
     </div>
   );

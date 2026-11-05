@@ -105,16 +105,18 @@ export function VideoOutputItem({ fileId, index = 0 }: Props) {
                 <Download aria-hidden="true" />
                 {t("common.download")}
               </Button>
-              <DialogTrigger asChild>
-                <Button
-                  type="button"
-                  variant="secondary"
-                  className="min-h-11 gap-2"
-                  disabled={!previewUrl}
-                >
-                  <Expand aria-hidden="true" />
-                  {t("pages.generation.video.output.preview")}
-                </Button>
+              <DialogTrigger
+                render={
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    className="min-h-11 gap-2"
+                    disabled={!previewUrl}
+                  />
+                }
+              >
+                <Expand aria-hidden="true" />
+                {t("pages.generation.video.output.preview")}
               </DialogTrigger>
             </div>
           </div>

@@ -1,11 +1,7 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CircleHelp, Lightbulb } from "lucide-react";
 
-import {
-  Popover,
-  PopoverAnchor,
-  PopoverContent,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent } from "@/components/ui/popover";
 import { useAppTranslate } from "@/hooks";
 
 export function SettingHelpPopover({
@@ -19,7 +15,23 @@ export function SettingHelpPopover({
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
   const [pinned, setPinned] = useState(false);
+  const anchorRef = useRef<HTMLButtonElement>(null);
   const open = hovered || focused || pinned;
+
+  useEffect(() => {
+    if (!open) return;
+    // Escape closes only this guide, not the dialog that contains it.
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      event.stopPropagation();
+      setHovered(false);
+      setFocused(false);
+      setPinned(false);
+    };
+    window.addEventListener("keydown", closeOnEscape, true);
+    return () => window.removeEventListener("keydown", closeOnEscape, true);
+  }, [open]);
+
   const [description, example] = hint.split(/\s*مثال:\s*/u, 2);
 
   return (
@@ -33,30 +45,30 @@ export function SettingHelpPopover({
         }
       }}
     >
-      <PopoverAnchor asChild>
-        <button
-          type="button"
-          className="border-border bg-background text-muted-foreground hover:border-primary/40 hover:text-primary focus-visible:ring-ring flex min-h-9 shrink-0 cursor-help items-center gap-1.5 rounded-lg border px-2.5 text-xs transition-colors outline-none focus-visible:ring-2"
-          aria-label={t("pages.generation.image.studio.settings.help", {
-            field: label,
-          })}
-          aria-expanded={open}
-          onClick={() => setPinned((value) => !value)}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
-          onPointerEnter={() => setHovered(true)}
-          onPointerLeave={() => setHovered(false)}
-        >
-          <CircleHelp aria-hidden="true" className="size-4" />
-          {t("pages.generation.image.studio.settings.guide")}
-        </button>
-      </PopoverAnchor>
+      <button
+        ref={anchorRef}
+        type="button"
+        className="border-border bg-background text-muted-foreground hover:border-primary/40 hover:text-primary focus-visible:ring-ring flex min-h-9 shrink-0 cursor-help items-center gap-1.5 rounded-lg border px-2.5 text-xs transition-colors outline-none focus-visible:ring-2"
+        aria-label={t("pages.generation.image.studio.settings.help", {
+          field: label,
+        })}
+        aria-expanded={open}
+        onClick={() => setPinned((value) => !value)}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+        onPointerEnter={() => setHovered(true)}
+        onPointerLeave={() => setHovered(false)}
+      >
+        <CircleHelp aria-hidden="true" className="size-4" />
+        {t("pages.generation.image.studio.settings.guide")}
+      </button>
       <PopoverContent
+        anchor={anchorRef}
         side="top"
         align="end"
         sideOffset={8}
         className="border-border bg-popover w-[min(320px,calc(100vw-2rem))] gap-2 rounded-xl border p-4 shadow-2xl"
-        onOpenAutoFocus={(event) => event.preventDefault()}
+        initialFocus={false}
       >
         <div className="flex items-center gap-2 text-sm font-semibold">
           <Lightbulb aria-hidden="true" className="text-primary size-4" />

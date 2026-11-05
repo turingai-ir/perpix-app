@@ -20,7 +20,8 @@ import {
   ZoomOut,
 } from "lucide-react";
 import { Link } from "react-router";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -137,10 +138,7 @@ export function GalleryViewer({
       <DialogContent
         showCloseButton={false}
         className={`${styles.viewer} inset-0 flex h-dvh max-h-dvh w-screen max-w-none translate-x-0 translate-y-0 flex-col rounded-none border-0 sm:max-w-none rtl:translate-x-0`}
-        onCloseAutoFocus={(event) => {
-          event.preventDefault();
-          trigger?.focus();
-        }}
+        finalFocus={() => trigger ?? false}
         onKeyDown={(event) => {
           if (
             zoomed ||
@@ -265,12 +263,13 @@ export function GalleryViewer({
               <Download />
             </Button>
             {mediaType === "image" && (
-              <Button asChild className="h-11">
-                <Link to={`/editor/${selected}`}>
-                  <Image />
-                  {t("pages.editor.edit")}
-                </Link>
-              </Button>
+              <Link
+                to={`/editor/${selected}`}
+                className={cn(buttonVariants({}), "h-11")}
+              >
+                <Image />
+                {t("pages.editor.edit")}
+              </Link>
             )}
           </div>
         </footer>

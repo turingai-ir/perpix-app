@@ -45,15 +45,17 @@ export const ModelTokenPriceTooltip: FC<{
 
   return (
     <Popover>
-      <PopoverTrigger asChild>
-        <Button
-          type="button"
-          variant="outline"
-          size="icon"
-          aria-label={t("pages.generation.modelTokenPrice.ariaLabel")}
-        >
-          <DollarSign className="h-4 w-4" />
-        </Button>
+      <PopoverTrigger
+        render={
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            aria-label={t("pages.generation.modelTokenPrice.ariaLabel")}
+          />
+        }
+      >
+        <DollarSign className="h-4 w-4" />
       </PopoverTrigger>
       <PopoverContent
         side="top"
