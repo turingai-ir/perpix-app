@@ -27,7 +27,7 @@ export function GalleryHeader({
           {t("pages.gallery.studio.description")}
         </p>
         <div className={styles.headerActions}>
-          <Link to="/" className={cn(buttonVariants({}), styles.createButton)}>
+          <Link to="/" className={cn(buttonVariants(), styles.createButton)}>
             <span>{t("pages.gallery.studio.create")}</span>
             <ArrowUpLeft aria-hidden="true" className="ltr:rotate-90" />
           </Link>

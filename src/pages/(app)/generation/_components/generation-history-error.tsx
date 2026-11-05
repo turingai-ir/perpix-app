@@ -4,7 +4,6 @@ import { Link } from "react-router";
 import type { GenerationHistoryErrorKind } from "../_types/conversation";
 
 import { Button, buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import { useAppTranslate } from "@/hooks";
 
 interface Props {
@@ -44,7 +43,7 @@ export function GenerationHistoryError({
         )}
         <Link
           to={newConversationPath}
-          className={cn(buttonVariants({ variant: "outline" }))}
+          className={buttonVariants({ variant: "outline" })}
         >
           {t("pages.generation.historyError.newConversation")}
         </Link>

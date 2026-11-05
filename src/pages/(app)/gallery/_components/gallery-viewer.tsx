@@ -265,7 +265,7 @@ export function GalleryViewer({
             {mediaType === "image" && (
               <Link
                 to={`/editor/${selected}`}
-                className={cn(buttonVariants({}), "h-11")}
+                className={cn(buttonVariants(), "h-11")}
               >
                 <Image />
                 {t("pages.editor.edit")}
