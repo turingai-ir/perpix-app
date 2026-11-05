@@ -7,6 +7,7 @@ import { queryClient } from "@/lib/react-query";
 import { router } from "@/router/router";
 import { Toaster } from "@/components/ui/sonner";
 import { RuntimeCleanup } from "@/features/runtime";
+import { BootSplash } from "@/features/boot-splash";
 import { PricingFeature, pricingFeatureAtom } from "@/feature/pricing";
 import { QueryClientProvider } from "@tanstack/react-query";
 
@@ -34,6 +35,7 @@ function App() {
             {pricingWasOpened && <PricingFeature />}
           </Suspense>
           <RouterProvider router={router} />
+          <BootSplash router={router} />
         </QueryClientProvider>
       </DirectionProvider>
     </>
