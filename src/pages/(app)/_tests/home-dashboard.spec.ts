@@ -605,7 +605,11 @@ test("keeps the sidebar navigation usable across screen sizes", async ({
 
 test("keeps the account menu visible and keyboard accessible across screen sizes", async ({
   page,
+  browserName,
 }, testInfo) => {
+  // Three full dashboard loads take ~28s in Playwright WebKit on Windows,
+  // right at the 30s default; Chromium needs ~9s.
+  test.slow(browserName === "webkit", "three full page loads in WebKit");
   await mockDashboardApi(page);
 
   for (const viewport of [
@@ -806,35 +810,42 @@ test("keeps the image creation turn and composer in view", async ({ page }) => {
       },
     }),
   );
+  let generatedTask: Record<string, unknown> | undefined;
+  // The conversation refetches its task after generating; an aborted refetch
+  // intentionally swaps the turn for the history error state.
+  await page.route("**/api/v1/ai-task/generation-task", (route) =>
+    generatedTask
+      ? route.fulfill({ json: generatedTask })
+      : route.fulfill({ status: 404, json: { detail: "Not found" } }),
+  );
   await page.route("**/api/v1/ai-task/generate", async (route) => {
     const request = route.request().postDataJSON() as {
       ai_model_config: Record<string, unknown>;
     };
-    await route.fulfill({
-      json: {
-        uuid: "generation-task",
-        task_type: "IMAGE",
-        created_at: "2026-09-15T20:00:00Z",
-        updated_at: "2026-09-15T20:00:00Z",
-        messages: [
-          {
-            uuid: "generation-user-message",
-            role: "USER",
-            message: request.ai_model_config.prompt,
-            ai_model_uuid: "model-1",
-            ai_model_config: request.ai_model_config,
-          },
-          {
-            uuid: "generation-assistant-message",
-            role: "ASSISTANT",
-            message: null,
-            task_status: "IN_PROGRESS",
-            ai_model_uuid: "model-1",
-            ai_model_config: request.ai_model_config,
-          },
-        ],
-      },
-    });
+    generatedTask = {
+      uuid: "generation-task",
+      task_type: "IMAGE",
+      created_at: "2026-09-15T20:00:00Z",
+      updated_at: "2026-09-15T20:00:00Z",
+      messages: [
+        {
+          uuid: "generation-user-message",
+          role: "USER",
+          message: request.ai_model_config.prompt,
+          ai_model_uuid: "model-1",
+          ai_model_config: request.ai_model_config,
+        },
+        {
+          uuid: "generation-assistant-message",
+          role: "ASSISTANT",
+          message: null,
+          task_status: "IN_PROGRESS",
+          ai_model_uuid: "model-1",
+          ai_model_config: request.ai_model_config,
+        },
+      ],
+    };
+    await route.fulfill({ json: generatedTask });
   });
   await page.goto("http://localhost:5173/generation/image");
   await expect(
