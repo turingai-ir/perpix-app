@@ -14,9 +14,11 @@ import {
 import { useDeleteUserFile } from "@/feature/file-manager";
 import { useAppTranslate } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
+import { cn } from "@/lib/utils";
 import { downloadFile } from "@/utils";
 import type { GalleryFile } from "../_utils/types";
-import styles from "../gallery.module.css";
+
+const actionButton = "h-11 w-11 rounded-xl max-md:w-10";
 
 export function GalleryActions({
   file,
@@ -42,10 +44,10 @@ export function GalleryActions({
     }
   }
   return (
-    <div className={styles.cardActions}>
+    <div className="border-foreground/7 bg-background/36 flex flex-none gap-[0.1rem] rounded-[0.9rem] border p-0.5 transition-opacity duration-160 max-md:gap-0 max-md:border-0 max-md:bg-transparent">
       <Button
         variant="ghost"
-        className={styles.cardActionButton}
+        className={actionButton}
         aria-label={t("common.download")}
         disabled={!downloadUrl}
         onClick={() => downloadUrl && downloadFile(downloadUrl)}
@@ -62,21 +64,27 @@ export function GalleryActions({
           render={
             <Button
               variant="ghost"
-              className={`${styles.cardActionButton} ${styles.deleteAction}`}
+              className={cn(
+                actionButton,
+                "text-muted-foreground hover:bg-destructive/10 hover:text-destructive",
+              )}
               aria-label={t("pages.gallery.actions.delete")}
             />
           }
         >
           <Trash2 />
         </DialogTrigger>
-        <DialogContent className={styles.deleteDialog} showCloseButton={false}>
+        <DialogContent
+          className="glass-blur border-glass-edge bg-glass-strong overflow-hidden rounded-3xl border bg-[linear-gradient(145deg,rgb(255_255_255/7%),transparent_45%)] p-5 shadow-[inset_0_1px_rgb(255_255_255/12%),0_32px_100px_rgb(0_0_0/42%)] [--glass-blur:28px] [--glass-saturate:150%]"
+          showCloseButton={false}
+        >
           <DialogTitle>{t("pages.gallery.delete.title")}</DialogTitle>
           <DialogDescription>
             {t("pages.gallery.delete.description", {
               fileName: file.file_name || t("common.emptyTitle"),
             })}
           </DialogDescription>
-          <DialogFooter className={styles.deleteDialogFooter}>
+          <DialogFooter className="bg-background/42 -mx-5 -mb-5 rounded-none px-5 py-4">
             <DialogClose
               render={
                 <Button

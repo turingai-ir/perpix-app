@@ -1,4 +1,3 @@
-import { Expand, Play } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FileFacts, useVisibleFilePreview } from "@/features/file-manager";
 import { useAppTranslate } from "@/hooks";
@@ -6,9 +5,15 @@ import { APP_I18_KEYS } from "@/services/i18";
 import { GalleryPreview } from "./gallery-preview";
 import { GalleryFallback } from "./gallery-fallback";
 import { GalleryActions } from "./gallery-actions";
+import { GalleryAffordance } from "./gallery-affordance";
+import {
+  GalleryCardShell,
+  cardBodyClass,
+  cardFactsClass,
+} from "./gallery-card-shell";
+import { cn } from "@/lib/utils";
 import { getGalleryMediaType } from "../_utils/gallery";
 import type { GalleryFile } from "../_utils/types";
-import styles from "../gallery.module.css";
 
 interface Props {
   file: GalleryFile;
@@ -26,16 +31,15 @@ export function GalleryFileCard({ file, index, compact, onOpen }: Props) {
   const name = file.file_name || t("common.emptyTitle");
   const mediaType = getGalleryMediaType(file.content_type);
   return (
-    <article
-      ref={ref}
-      className={`${styles.card} group`}
-      style={{ animationDelay: `${Math.min(index, 7) * 35}ms` }}
-    >
+    <GalleryCardShell ref={ref} delay={Math.min(index, 7) * 35}>
       <button
         type="button"
         aria-label={name}
         onClick={(event) => onOpen(event.currentTarget)}
-        className={`${styles.preview} focus-visible:ring-ring block w-full cursor-zoom-in outline-none focus-visible:ring-2 focus-visible:ring-inset`}
+        className={cn(
+          "focus-visible:ring-ring relative block w-full cursor-zoom-in overflow-hidden bg-[color-mix(in_srgb,var(--muted)_72%,var(--background))] bg-[radial-gradient(circle_at_50%_12%,rgb(255_255_255/6%),transparent_45%)] outline-none focus-visible:ring-2 focus-visible:ring-inset",
+          compact ? "aspect-square" : "aspect-[4/3]",
+        )}
       >
         {previewUrls?.preview_url && (mediaType !== "video" || visible) && (
           <GalleryPreview
@@ -53,32 +57,32 @@ export function GalleryFileCard({ file, index, compact, onOpen }: Props) {
         {!previewUrls?.preview_url && !isPreviewLoading && (
           <GalleryFallback mediaType={mediaType} />
         )}
+        <GalleryAffordance video={mediaType === "video"} />
         <span
           aria-hidden="true"
-          className={
-            mediaType === "video"
-              ? styles.videoAffordance
-              : styles.openAffordance
-          }
-        >
-          {mediaType === "video" ? <Play /> : <Expand />}
-        </span>
-        <span aria-hidden="true" className={styles.previewSheen} />
+          className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,transparent_62%,rgb(0_0_0/16%))]"
+        />
       </button>
-      <div className={styles.cardBody}>
-        <div className={styles.cardCopy}>
-          <h2 className={styles.cardTitle} dir="auto" title={name}>
+      <div
+        className={cn(cardBodyClass, compact && "max-[430px]:justify-center")}
+      >
+        <div className={cn("min-w-0", compact && "max-[430px]:hidden")}>
+          <h2
+            className="text-foreground/92 overflow-hidden text-[0.8125rem] leading-[1.65] font-[620] text-ellipsis whitespace-nowrap max-[430px]:max-w-[16ch]"
+            dir="auto"
+            title={name}
+          >
             {name}
           </h2>
-          <span className={styles.mediaType}>
+          <span className="text-foreground/52 mt-[0.1rem] block text-[0.6875rem] leading-[1.4]">
             {t(`pages.gallery.mediaTypes.${mediaType}`)}
           </span>
         </div>
         <GalleryActions file={file} downloadUrl={previewUrls?.download_url} />
       </div>
-      <div className={styles.fileFacts}>
+      <div className={cn(cardFactsClass, compact && "hidden")}>
         <FileFacts file={file} />
       </div>
-    </article>
+    </GalleryCardShell>
   );
 }

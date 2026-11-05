@@ -1,7 +1,12 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAppTranslate } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
-import styles from "../gallery.module.css";
+import { GalleryGrid } from "./gallery-grid";
+import {
+  GalleryCardShell,
+  cardBodyClass,
+  cardFactsClass,
+} from "./gallery-card-shell";
 
 export const GallerySkeleton = () => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
@@ -11,27 +16,27 @@ export const GallerySkeleton = () => {
       aria-busy="true"
       aria-label={t("features.mediaUploader.loadingFiles")}
     >
-      <div className={styles.grid} aria-hidden="true">
+      <GalleryGrid hidden>
         {Array.from({ length: 12 }).map((_, index) => (
-          <div
+          <GalleryCardShell
             key={index}
             data-slot="gallery-skeleton-card"
-            className={`${styles.card} ${styles.skeletonCard}`}
+            animated={false}
           >
             <Skeleton className="aspect-[4/3] w-full rounded-none motion-reduce:animate-none" />
-            <div className={styles.cardBody}>
+            <div className={cardBodyClass}>
               <div className="w-1/2 space-y-2">
                 <Skeleton className="h-3 w-full animate-none" />
                 <Skeleton className="h-2.5 w-2/3 animate-none" />
               </div>
               <div className="h-11 w-[5.5rem] shrink-0" />
             </div>
-            <div className={styles.fileFacts}>
+            <div className={cardFactsClass}>
               <Skeleton className="h-2.5 w-2/5 animate-none" />
             </div>
-          </div>
+          </GalleryCardShell>
         ))}
-      </div>
+      </GalleryGrid>
     </div>
   );
 };

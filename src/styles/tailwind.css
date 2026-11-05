@@ -336,3 +336,53 @@
     animation: none;
   }
 }
+
+/* Glass surface tokens and accessibility variants shared by page layouts. */
+@custom-variant reduced-transparency (@media (prefers-reduced-transparency: reduce));
+
+@theme inline {
+  --color-glass: color-mix(in srgb, var(--card) 76%, transparent);
+  --color-glass-strong: color-mix(in srgb, var(--card) 88%, transparent);
+  --color-glass-edge: color-mix(in srgb, var(--foreground) 13%, transparent);
+  --ease-out-quint: cubic-bezier(0.23, 1, 0.32, 1);
+  --animate-card-arrival: card-arrival 260ms var(--ease-out-quint) both;
+
+  @keyframes card-arrival {
+    from {
+      opacity: 0;
+      transform: translateY(8px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+/*
+ * Backdrop blur with the fallbacks glass panels need: solid card background
+ * when the browser lacks backdrop-filter or the user asks for less transparency.
+ */
+@utility glass-blur {
+  backdrop-filter: blur(var(--glass-blur, 24px)) saturate(var(--glass-saturate, 160%));
+
+  @media (prefers-reduced-transparency: reduce) {
+    background: var(--card) !important;
+    backdrop-filter: none;
+  }
+
+  @supports not (backdrop-filter: blur(1px)) {
+    background: var(--card) !important;
+  }
+}
+
+@custom-variant hover-capable (@media (hover: hover) and (pointer: fine));
+
+/* The gallery page hides its parent scroll-area bar on small screens. */
+@media (max-width: 767px) {
+  [data-slot="scroll-area"]:has([data-gallery-page])
+    > [data-slot="scroll-area-scrollbar"] {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
