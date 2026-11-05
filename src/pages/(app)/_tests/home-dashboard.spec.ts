@@ -1026,3 +1026,225 @@ test("turns video generation into an immersive persistent workspace", async ({
     });
   }
 });
+
+const VISUAL_QUALITY_KEY = "perpix:visual-quality";
+
+const readGlassLayout = (page: Page) =>
+  page.evaluate(() => {
+    const hero = document.querySelector<HTMLElement>('[class*="_hero_"]');
+    const panels = [
+      ...document.querySelectorAll<HTMLElement>(
+        '[class*="_hero_"], [class*="_glassPanel_"], [class*="_contentWell_"]',
+      ),
+    ];
+    const robot = document.querySelector<HTMLElement>(
+      '[class*="_companionRobot_"]',
+    );
+    return {
+      tier: document.documentElement.dataset.fx,
+      heroBackdrop: hero ? getComputedStyle(hero).backdropFilter : "missing",
+      robotTransition: robot
+        ? getComputedStyle(robot).transitionDuration
+        : "missing",
+      boxes: panels.map((panel) => {
+        const { x, y, width, height } = panel.getBoundingClientRect();
+        return [x, y, width, height].map(Math.round);
+      }),
+    };
+  });
+
+test("lite visual tier drops glass blur without moving the layout", async ({
+  page,
+}) => {
+  await mockDashboardApi(page);
+  await page.goto("/?fx=full");
+  await expect(page.locator("#creation-choice-title")).toBeVisible();
+  await expect(
+    page.locator("[data-dashboard-scroll-companion]"),
+  ).toHaveAttribute("data-scrollable", "true");
+  const full = await readGlassLayout(page);
+  expect(full.tier).toBe("full");
+  expect(full.heroBackdrop).toContain("blur");
+  // The companion tracks scrolling directly on every tier.
+  expect(full.robotTransition).toBe("0s");
+
+  await page.goto("/?fx=lite");
+  await expect(page.locator("#creation-choice-title")).toBeVisible();
+  await expect(
+    page.locator("[data-dashboard-scroll-companion]"),
+  ).toHaveAttribute("data-scrollable", "true");
+  const lite = await readGlassLayout(page);
+  expect(lite.tier).toBe("lite");
+  expect(lite.heroBackdrop).toBe("none");
+  expect(lite.boxes).toEqual(full.boxes);
+
+  // A pinned tier survives navigation until `?fx=auto` clears it.
+  await page.goto("/");
+  await expect(page.locator("html")).toHaveAttribute("data-fx", "lite");
+  // Let the session route settle before the next navigation (WebKit).
+  await expect(page.locator("#creation-choice-title")).toBeVisible();
+  await page.goto("/?fx=auto");
+  await expect
+    .poll(() =>
+      page.evaluate(
+        (key) => JSON.parse(localStorage.getItem(key) ?? "{}").source,
+        VISUAL_QUALITY_KEY,
+      ),
+    )
+    .toBe("auto");
+});
+
+test("low-memory devices start on the lite visual tier", async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, "deviceMemory", { get: () => 2 });
+  });
+  await mockDashboardApi(page);
+  await page.goto("/");
+  await expect(page.locator("html")).toHaveAttribute("data-fx", "lite");
+});
+
+const scrollWithWheel = async (page: Page, steps: number) => {
+  await page.mouse.move(700, 450);
+  for (let step = 0; step < steps; step += 1) {
+    await page.mouse.wheel(0, step % 8 < 4 ? 260 : -260);
+    await page.waitForTimeout(45);
+  }
+};
+
+const openDashboardOnFullTier = async (page: Page) => {
+  await page.addInitScript((key) => {
+    if (!localStorage.getItem(key)) {
+      localStorage.setItem(
+        key,
+        JSON.stringify({ tier: "full", source: "auto", at: Date.now() }),
+      );
+    }
+  }, VISUAL_QUALITY_KEY);
+  await mockDashboardApi(page);
+  await page.goto("/");
+  await expect(page.locator("#creation-choice-title")).toBeVisible();
+  await expect(page.locator("html")).toHaveAttribute("data-fx", "full");
+};
+
+/**
+ * Simulates a weak GPU (~30ms of work per frame) while scrolling `selector`.
+ * mouse.wheel waits for a rendered frame, so scrolling is driven in-page.
+ */
+const scrollJankily = (page: Page, selector: string) =>
+  page.evaluate(
+    (target) =>
+      new Promise<void>((resolve) => {
+        let isDone = false;
+        const burn = () => {
+          const end = performance.now() + 30;
+          while (performance.now() < end) {
+            // busy wait
+          }
+          if (!isDone) requestAnimationFrame(burn);
+        };
+        requestAnimationFrame(burn);
+        const scroller = document.querySelector<HTMLElement>(target);
+        let step = 0;
+        const timer = window.setInterval(() => {
+          if (scroller) scroller.scrollTop = (step % 20) * 40;
+          step += 1;
+          if (step > 300) {
+            window.clearInterval(timer);
+            isDone = true;
+            resolve();
+          }
+        }, 40);
+      }),
+    selector,
+  );
+
+const readStoredQuality = (page: Page) =>
+  page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key) ?? "{}"),
+    VISUAL_QUALITY_KEY,
+  );
+
+test("janky dashboard scrolling downgrades to lite once the gesture settles", async ({
+  page,
+  browserName,
+}) => {
+  // Playwright WebKit on Windows renders ~1 frame/s, so frame timing is noise.
+  test.skip(browserName !== "chromium", "frame pacing is measured in Chromium");
+  test.setTimeout(60_000);
+  await openDashboardOnFullTier(page);
+
+  await scrollJankily(page, '[data-slot="scroll-area-viewport"]');
+
+  await expect(page.locator("html")).toHaveAttribute("data-fx", "lite", {
+    timeout: 5_000,
+  });
+  expect(await readStoredQuality(page)).toMatchObject({
+    tier: "lite",
+    source: "auto",
+  });
+});
+
+test("janky scrolling outside the dashboard viewport keeps the full tier", async ({
+  page,
+  browserName,
+}) => {
+  test.skip(browserName !== "chromium", "frame pacing is measured in Chromium");
+  test.setTimeout(60_000);
+  await openDashboardOnFullTier(page);
+  await page.evaluate(() => {
+    const scroller = document.createElement("div");
+    scroller.id = "unrelated-scroller";
+    scroller.style.cssText =
+      "position:fixed;inset:auto 0 0 auto;width:200px;height:200px;overflow:auto";
+    scroller.innerHTML = '<div style="height:4000px"></div>';
+    document.body.append(scroller);
+  });
+
+  await scrollJankily(page, "#unrelated-scroller");
+  // Give a wrongly attached monitor time to settle and downgrade.
+  await page.waitForTimeout(1_500);
+
+  await expect(page.locator("html")).toHaveAttribute("data-fx", "full");
+  expect(await readStoredQuality(page)).toMatchObject({ tier: "full" });
+});
+
+for (const tier of ["full", "lite"] as const) {
+  test(`reports scroll frame pacing on the ${tier} tier`, async ({
+    page,
+    browserName,
+  }) => {
+    test.skip(
+      browserName !== "chromium",
+      "frame pacing is measured in Chromium",
+    );
+    test.setTimeout(90_000);
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await mockDashboardApi(page);
+    await page.goto(`/?fx=${tier}`);
+    await expect(page.locator("#creation-choice-title")).toBeVisible();
+    await page.evaluate(() => {
+      const deltas: number[] = [];
+      let last = 0;
+      const sample = (time: number) => {
+        if (last) deltas.push(time - last);
+        last = time;
+        requestAnimationFrame(sample);
+      };
+      requestAnimationFrame(sample);
+      Object.assign(window, { __frameDeltas: deltas });
+    });
+    await scrollWithWheel(page, 60);
+    const deltas = await page.evaluate(
+      () => (window as unknown as { __frameDeltas: number[] }).__frameDeltas,
+    );
+    const sorted = [...deltas].sort((a, b) => a - b);
+    const p50 = sorted[Math.floor(sorted.length * 0.5)];
+    const p95 = sorted[Math.floor(sorted.length * 0.95)];
+    const slow = deltas.filter((delta) => delta > (1000 / 60) * 1.6).length;
+    const summary = `${tier}: frames=${deltas.length} p50=${p50.toFixed(1)}ms p95=${p95.toFixed(1)}ms slow=${((slow / deltas.length) * 100).toFixed(1)}%`;
+    test
+      .info()
+      .annotations.push({ type: "scroll-pacing", description: summary });
+    expect(deltas.length).toBeGreaterThan(60);
+  });
+}

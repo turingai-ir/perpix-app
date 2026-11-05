@@ -86,8 +86,8 @@
   align-items: center;
   justify-content: center;
   filter: drop-shadow(0 8px 12px rgb(0 0 0 / 48%));
+  /* No transition: the robot tracks scrollTop frame-for-frame instead of lagging. */
   transform: translate3d(-50%, var(--robot-y), 0);
-  transition: transform 90ms linear;
   will-change: transform;
 }
 
@@ -2174,6 +2174,43 @@
     background: var(--dashboard-glass-strong);
     backdrop-filter: none;
   }
+}
+
+/*
+ * Lite tier (set on <html data-fx> by lib/visual-quality) for devices that
+ * cannot re-blur large glass panels every scroll frame. Layout, colors and
+ * gradients stay identical; only per-frame filter cost is removed.
+ */
+:global(html[data-fx="lite"]) .hero,
+:global(html[data-fx="lite"]) .choiceCard,
+:global(html[data-fx="lite"]) .contentWell,
+:global(html[data-fx="lite"]) .glassPanel,
+:global(html[data-fx="lite"]) .resumeCard {
+  background: var(--dashboard-glass-strong);
+  backdrop-filter: none;
+}
+
+:global(html[data-fx="lite"]) .aurora {
+  /* A radial mask reproduces the soft glow without a 110px blur layer. */
+  filter: none;
+  mask-image: radial-gradient(closest-side, #000, transparent);
+  scale: 1.6;
+}
+
+:global(html[data-fx="lite"]) .choiceCard::after {
+  filter: none;
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--choice-accent) 12%, transparent),
+    transparent
+  );
+}
+
+:global(html[data-fx="lite"]) .canvasGlow,
+:global(html[data-fx="lite"]) .companionFace,
+:global(html[data-fx="lite"]) .companionEye,
+:global(html[data-fx="lite"]) .companionAntenna::before {
+  animation: none;
 }
 
 @media (prefers-contrast: more) {

@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { AlertTriangle } from "lucide-react";
 
 import { DashboardAccount } from "./_components/dashboard-account";
@@ -11,12 +12,15 @@ import { DashboardTransactions } from "./_components/dashboard-transactions";
 import styles from "./dashboard.module.css";
 import { useDashboardAccount } from "./_hooks/use-dashboard-account";
 import { useDashboardContent } from "./_hooks/use-dashboard-content";
+import { useDashboardVisualQuality } from "./_hooks/use-dashboard-visual-quality";
 
 import { useAppTranslate } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
 
 const AppPage = () => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
+  const pageRef = useRef<HTMLDivElement>(null);
+  useDashboardVisualQuality(pageRef);
   const account = useDashboardAccount();
   const allowedModels = account.subscription?.plan.allowed_models ?? [];
   const content = useDashboardContent(allowedModels);
@@ -31,6 +35,7 @@ const AppPage = () => {
 
   return (
     <div
+      ref={pageRef}
       className={`${styles.page} relative min-h-full w-full overflow-hidden text-zinc-100`}
     >
       <DashboardScrollCompanion />
