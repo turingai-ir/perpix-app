@@ -99,5 +99,13 @@ export default tseslint.config(
       "react/prop-types": "off",
     },
   },
+  {
+    // react-three-fiber JSX intrinsics (<mesh position>, <pointLight intensity>)
+    // are three.js props, not DOM attributes.
+    files: ["src/features/boot-splash/components/**/*.tsx"],
+    rules: {
+      "react/no-unknown-property": "off",
+    },
+  },
   prettierConfig,
 );

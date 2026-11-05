@@ -197,6 +197,13 @@
     }
   },
   "features": {
+    "bootSplash": {
+      "loading": "در حال ورود به پرپیکس…",
+      "brand": "PERPIX",
+      "versus": "VS",
+      "sloganLead": "ایده‌اش با تو،",
+      "sloganAccent": "ساختش با پرپیکس."
+    },
     "auth": {
       "validation": {
         "phone": "یه شماره موبایل معتبر ایران وارد کن.",
