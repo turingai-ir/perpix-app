@@ -58,14 +58,16 @@ export function GalleryActions({
           if (!deleteFileState.isPending) setOpen(value);
         }}
       >
-        <DialogTrigger asChild>
-          <Button
-            variant="ghost"
-            className={`${styles.cardActionButton} ${styles.deleteAction}`}
-            aria-label={t("pages.gallery.actions.delete")}
-          >
-            <Trash2 />
-          </Button>
+        <DialogTrigger
+          render={
+            <Button
+              variant="ghost"
+              className={`${styles.cardActionButton} ${styles.deleteAction}`}
+              aria-label={t("pages.gallery.actions.delete")}
+            />
+          }
+        >
+          <Trash2 />
         </DialogTrigger>
         <DialogContent className={styles.deleteDialog} showCloseButton={false}>
           <DialogTitle>{t("pages.gallery.delete.title")}</DialogTitle>
@@ -75,14 +77,16 @@ export function GalleryActions({
             })}
           </DialogDescription>
           <DialogFooter className={styles.deleteDialogFooter}>
-            <DialogClose asChild>
-              <Button
-                variant="outline"
-                className="h-11"
-                disabled={deleteFileState.isPending}
-              >
-                {t("common.cancel")}
-              </Button>
+            <DialogClose
+              render={
+                <Button
+                  variant="outline"
+                  className="h-11"
+                  disabled={deleteFileState.isPending}
+                />
+              }
+            >
+              {t("common.cancel")}
             </DialogClose>
             <Button
               variant="destructive"

@@ -3,7 +3,8 @@ import { Sparkles } from "lucide-react";
 import { FaTelegramPlane } from "react-icons/fa";
 // import { MessageCircle } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { useActiveSubscription, usePricingFeature } from "@/feature/pricing";
 // import { useSupportChatWidget } from "@/feature/support-chat";
 import { useAppTranslate } from "@/hooks";
@@ -37,12 +38,18 @@ const AppLayoutSidebarUserActions: FC = () => {
         <MessageCircle />
         {t("pages.app.layout.sidebar.user.chatSupport")}
       </Button> */}
-      <Button asChild className={styles.supportAction} variant="ghost">
-        <a href={telegramSupportUrl} rel="noreferrer" target="_blank">
-          <FaTelegramPlane aria-hidden="true" />
-          {t("pages.app.layout.sidebar.user.telegramSupport")}
-        </a>
-      </Button>
+      <a
+        href={telegramSupportUrl}
+        rel="noreferrer"
+        target="_blank"
+        className={cn(
+          buttonVariants({ variant: "ghost" }),
+          styles.supportAction,
+        )}
+      >
+        <FaTelegramPlane aria-hidden="true" />
+        {t("pages.app.layout.sidebar.user.telegramSupport")}
+      </a>
     </div>
   );
 };

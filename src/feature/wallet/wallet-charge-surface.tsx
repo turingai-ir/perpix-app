@@ -23,14 +23,17 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 const WalletChargeMobileContext = createContext(false);
 
-export function WalletChargeTitle(props: ComponentProps<typeof DialogTitle>) {
+type WalletChargeTextProps = Pick<
+  ComponentProps<"h2">,
+  "className" | "children"
+>;
+
+export function WalletChargeTitle(props: WalletChargeTextProps) {
   const mobile = useContext(WalletChargeMobileContext);
   return mobile ? <DrawerTitle {...props} /> : <DialogTitle {...props} />;
 }
 
-export function WalletChargeDescription(
-  props: ComponentProps<typeof DialogDescription>,
-) {
+export function WalletChargeDescription(props: WalletChargeTextProps) {
   const mobile = useContext(WalletChargeMobileContext);
   return mobile ? (
     <DrawerDescription {...props} />

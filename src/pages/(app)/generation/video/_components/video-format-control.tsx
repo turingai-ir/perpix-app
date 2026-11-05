@@ -91,23 +91,25 @@ export function VideoFormatControl({
           <FormItem className={styles.formatCard}>
             <FormLabel>{label}</FormLabel>
             <Popover open={open && !disabled} onOpenChange={setOpen}>
-              <PopoverTrigger asChild>
-                <FormControl>
-                  <button
-                    ref={field.ref}
-                    type="button"
-                    disabled={disabled}
-                    data-testid={`video-${fieldName}-control`}
-                    className={styles.formatTrigger}
-                    aria-label={`${label}: ${optionLabel(value)}`}
-                    onBlur={field.onBlur}
-                  >
-                    {icon(value)}
-                    <span dir="ltr">{optionLabel(value)}</span>
-                    <ChevronDown size={15} aria-hidden="true" />
-                  </button>
-                </FormControl>
-              </PopoverTrigger>
+              <FormControl>
+                <PopoverTrigger
+                  render={
+                    <button
+                      ref={field.ref}
+                      type="button"
+                      disabled={disabled}
+                      data-testid={`video-${fieldName}-control`}
+                      className={styles.formatTrigger}
+                      aria-label={`${label}: ${optionLabel(value)}`}
+                      onBlur={field.onBlur}
+                    />
+                  }
+                >
+                  {icon(value)}
+                  <span dir="ltr">{optionLabel(value)}</span>
+                  <ChevronDown size={15} aria-hidden="true" />
+                </PopoverTrigger>
+              </FormControl>
               <PopoverContent
                 align="start"
                 side="top"

@@ -21,8 +21,18 @@ export const PromptModelSelector: FC<{
   upgradeLabel: string;
 }> = ({ chooseModelLabel, disabled, model, upgradeLabel }) => (
   <Select
-    value={model.currentModel ?? ""}
-    onValueChange={model.setCurrentModel}
+    value={model.currentModel || null}
+    items={
+      model.modelsListState.isSuccess
+        ? model.modelsListState.data.map((item) => ({
+            value: item.uuid,
+            label: item.display_name ?? item.name,
+          }))
+        : []
+    }
+    onValueChange={(value) => {
+      if (value) model.setCurrentModel(value);
+    }}
     disabled={disabled}
   >
     <SelectTrigger className="w-full">

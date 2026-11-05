@@ -3,7 +3,7 @@ import { Download, Image as ImageIcon, Video } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -118,41 +118,43 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
         style={{ aspectRatio }}
       >
         {!isError && mediaUrl ? (
-          <DialogTrigger asChild>
-            <button
-              type="button"
-              className="group focus-visible:ring-ring/50 relative h-full w-full cursor-zoom-in overflow-hidden text-start outline-none focus-visible:ring-3"
-              aria-label={previewLabel}
-            >
-              {type === "image" ? (
-                <img
+          <DialogTrigger
+            render={
+              <button
+                type="button"
+                className="group focus-visible:ring-ring/50 relative h-full w-full cursor-zoom-in overflow-hidden text-start outline-none focus-visible:ring-3"
+                aria-label={previewLabel}
+              />
+            }
+          >
+            {type === "image" ? (
+              <img
+                className={cn(
+                  "h-full w-full motion-safe:transition-transform motion-safe:[@media(hover:hover)_and_(pointer:fine)]:group-hover:scale-[1.02]",
+                  fit === "contain" ? "object-contain" : "object-cover",
+                )}
+                src={mediaUrl}
+                alt={alt ?? `${mediaLabel} ${(index ?? 0) + 1}`}
+                onError={() => setFailedUrl(mediaUrl)}
+              />
+            ) : (
+              <>
+                {}
+                <video
                   className={cn(
                     "h-full w-full motion-safe:transition-transform motion-safe:[@media(hover:hover)_and_(pointer:fine)]:group-hover:scale-[1.02]",
                     fit === "contain" ? "object-contain" : "object-cover",
                   )}
                   src={mediaUrl}
-                  alt={alt ?? `${mediaLabel} ${(index ?? 0) + 1}`}
+                  preload="metadata"
+                  muted
                   onError={() => setFailedUrl(mediaUrl)}
                 />
-              ) : (
-                <>
-                  {}
-                  <video
-                    className={cn(
-                      "h-full w-full motion-safe:transition-transform motion-safe:[@media(hover:hover)_and_(pointer:fine)]:group-hover:scale-[1.02]",
-                      fit === "contain" ? "object-contain" : "object-cover",
-                    )}
-                    src={mediaUrl}
-                    preload="metadata"
-                    muted
-                    onError={() => setFailedUrl(mediaUrl)}
-                  />
-                  <span className="absolute inset-0 flex items-center justify-center bg-black/10 text-white">
-                    <Video className="h-8 w-8 drop-shadow" />
-                  </span>
-                </>
-              )}
-            </button>
+                <span className="absolute inset-0 flex items-center justify-center bg-black/10 text-white">
+                  <Video className="h-8 w-8 drop-shadow" />
+                </span>
+              </>
+            )}
           </DialogTrigger>
         ) : null}
 
@@ -227,26 +229,23 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
                 <span>{t("pages.editor.edit")}</span>
               </Button>
             )}
-            <Button
-              asChild
-              variant="secondary"
-              size="lg"
-              className="h-11 px-5 text-base"
-            >
-              <a
-                href={downloadUrl ?? "#"}
-                download
-                aria-disabled={!downloadUrl || isDownloading}
-                className={cn(
+            <a
+              href={downloadUrl ?? "#"}
+              download
+              aria-disabled={!downloadUrl || isDownloading}
+              onClick={handleDownload}
+              className={cn(
+                buttonVariants({ variant: "secondary", size: "lg" }),
+                "h-11 px-5 text-base",
+                cn(
                   (!downloadUrl || isDownloading) &&
                     "pointer-events-none opacity-50",
-                )}
-                onClick={handleDownload}
-              >
-                <Download />
-                {t("common.download")}
-              </a>
-            </Button>
+                ),
+              )}
+            >
+              <Download />
+              {t("common.download")}
+            </a>
           </div>
         )}
       </DialogContent>

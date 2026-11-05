@@ -42,16 +42,18 @@ export const AdvancedPromptSettingsDialog: FC<{
 
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        <Button
-          type="button"
-          variant="outline"
-          className="w-full md:w-auto"
-          disabled={disabled}
-        >
-          <SlidersHorizontal className="h-4 w-4" />
-          {label ?? t("common.advancedSettings")}
-        </Button>
+      <DialogTrigger
+        render={
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full md:w-auto"
+            disabled={disabled}
+          />
+        }
+      >
+        <SlidersHorizontal className="h-4 w-4" />
+        {label ?? t("common.advancedSettings")}
       </DialogTrigger>
       <DialogContent className="max-h-[min(640px,calc(100dvh-2rem))] w-[calc(100vw-2rem)] max-w-[480px] grid-rows-[auto_minmax(0,1fr)] overflow-hidden">
         <DialogHeader>

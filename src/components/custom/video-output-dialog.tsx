@@ -46,16 +46,18 @@ export function VideoOutputDialog({
     >
       <div className={`${styles.header} shrink-0`}>
         <DialogTitle>{label}</DialogTitle>
-        <DialogClose asChild>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            className="min-h-11 min-w-11"
-            aria-label={t("pages.generation.video.output.close")}
-          >
-            <X aria-hidden="true" />
-          </Button>
+        <DialogClose
+          render={
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="min-h-11 min-w-11"
+              aria-label={t("pages.generation.video.output.close")}
+            />
+          }
+        >
+          <X aria-hidden="true" />
         </DialogClose>
       </div>
       <DialogDescription className="sr-only">

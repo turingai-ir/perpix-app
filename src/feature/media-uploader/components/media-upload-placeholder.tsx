@@ -82,9 +82,9 @@ export const MediaUploadPlaceholder: FC<MediaUploadPlaceholderProps> = ({
 
   if (presentation !== "composer") return button;
   return (
-    <TooltipProvider delayDuration={250}>
+    <TooltipProvider delay={250}>
       <Tooltip>
-        <TooltipTrigger asChild>{button}</TooltipTrigger>
+        <TooltipTrigger render={button} />
         <TooltipContent side="top" sideOffset={8}>
           {label}
         </TooltipContent>

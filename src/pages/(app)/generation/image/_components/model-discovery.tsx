@@ -81,38 +81,38 @@ export function ImageModelDiscovery({ disabled, model }: Props) {
   const loading = model.modelsListState.isLoading;
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          type="button"
-          variant="outline"
-          disabled={disabled || loading}
-          role="combobox"
-          aria-expanded={open}
-          aria-label={t("common.chooseModel")}
-          onPointerDown={(event) => {
-            openedWithTouch.current = event.pointerType !== "mouse";
-          }}
-          onKeyDown={() => {
-            openedWithTouch.current = false;
-          }}
-          className="bg-muted/40 hover:bg-muted/60 h-11 w-full max-w-full justify-start gap-3 rounded-xl px-3 transition-colors"
-        >
-          {loading ? (
-            <Loader2 className="size-5 animate-spin" />
-          ) : (
-            <ImageModelLogo
-              name={selected?.name ?? ""}
-              displayName={selected?.display_name}
-              iconUrl={selected?.icon_url}
-            />
-          )}
-          <span dir="ltr" className="min-w-0 flex-1 truncate text-start">
-            {selected?.display_name ??
-              selected?.name ??
-              t("common.chooseModel")}
-          </span>
-          <ChevronDown className="text-muted-foreground size-4 shrink-0" />
-        </Button>
+      <PopoverTrigger
+        render={
+          <Button
+            type="button"
+            variant="outline"
+            disabled={disabled || loading}
+            role="combobox"
+            aria-expanded={open}
+            aria-label={t("common.chooseModel")}
+            onPointerDown={(event) => {
+              openedWithTouch.current = event.pointerType !== "mouse";
+            }}
+            onKeyDown={() => {
+              openedWithTouch.current = false;
+            }}
+            className="bg-muted/40 hover:bg-muted/60 h-11 w-full max-w-full justify-start gap-3 rounded-xl px-3 transition-colors"
+          />
+        }
+      >
+        {loading ? (
+          <Loader2 className="size-5 animate-spin" />
+        ) : (
+          <ImageModelLogo
+            name={selected?.name ?? ""}
+            displayName={selected?.display_name}
+            iconUrl={selected?.icon_url}
+          />
+        )}
+        <span dir="ltr" className="min-w-0 flex-1 truncate text-start">
+          {selected?.display_name ?? selected?.name ?? t("common.chooseModel")}
+        </span>
+        <ChevronDown className="text-muted-foreground size-4 shrink-0" />
       </PopoverTrigger>
       <PopoverContent
         ref={popoverRef}
@@ -121,13 +121,11 @@ export function ImageModelDiscovery({ disabled, model }: Props) {
         align="end"
         sideOffset={12}
         collisionPadding={16}
-        onOpenAutoFocus={(event) => {
-          if (!openedWithTouch.current) return;
-          // Keep focus in the popup without summoning a touch keyboard.
-          event.preventDefault();
-          popoverRef.current?.focus({ preventScroll: true });
-        }}
-        className="border-border max-h-(--radix-popover-content-available-height) w-[min(460px,calc(100vw-2rem))] overflow-hidden rounded-2xl border p-1.5 shadow-2xl"
+        // Keep focus in the popup without summoning a touch keyboard.
+        initialFocus={() =>
+          openedWithTouch.current ? popoverRef.current : true
+        }
+        className="border-border max-h-(--available-height) w-[min(460px,calc(100vw-2rem))] overflow-hidden rounded-2xl border p-1.5 shadow-2xl"
       >
         <Command className="h-auto min-h-0">
           <CommandInput

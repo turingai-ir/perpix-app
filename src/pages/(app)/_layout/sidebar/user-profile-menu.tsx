@@ -46,43 +46,44 @@ const AppLayoutSidebarUserProfileMenu: FC<UserProfileMenuProps> = ({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild className="mt-auto">
-        <Button
-          ref={triggerRef}
-          variant="ghost"
-          size="lg"
-          className={styles.profileTrigger}
-        >
-          <AppLayoutSidebarUserAvatar />
-          <div className={styles.profileText}>
-            <span>{t("pages.app.layout.sidebar.user.account")}</span>
-            <small>{planName}</small>
-          </div>
-          <ChevronsUpDown
-            className={styles.profileChevron}
-            aria-hidden="true"
+      <DropdownMenuTrigger
+        className="mt-auto"
+        render={
+          <Button
+            ref={triggerRef}
+            variant="ghost"
+            size="lg"
+            className={styles.profileTrigger}
           />
-        </Button>
+        }
+      >
+        <AppLayoutSidebarUserAvatar />
+        <div className={styles.profileText}>
+          <span>{t("pages.app.layout.sidebar.user.account")}</span>
+          <small>{planName}</small>
+        </div>
+        <ChevronsUpDown className={styles.profileChevron} aria-hidden="true" />
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        className={`${styles.profileDropdown} z-[70] w-(--radix-dropdown-menu-trigger-width) min-w-56`}
+        positionerClassName="z-[70]"
+        className={`${styles.profileDropdown} z-[70] w-(--anchor-width) min-w-56`}
         side="top"
         align="end"
         sideOffset={8}
-        onCloseAutoFocus={(event) => {
-          // Let the guide take focus instead of the closing dropdown.
-          if (isIosGuideOpen) event.preventDefault();
-        }}
+        // Let the guide take focus instead of the closing dropdown.
+        finalFocus={!isIosGuideOpen}
       >
-        <DropdownMenuLabel className={styles.profileDropdownHeader}>
-          <div className={styles.profileDropdownIdentity}>
-            <AppLayoutSidebarUserAvatar />
-            <div className={styles.profileText}>
-              <span>{t("pages.app.layout.sidebar.user.membership")}</span>
-              <small className={styles.profilePlan}>{planName}</small>
+        <DropdownMenuGroup>
+          <DropdownMenuLabel className={styles.profileDropdownHeader}>
+            <div className={styles.profileDropdownIdentity}>
+              <AppLayoutSidebarUserAvatar />
+              <div className={styles.profileText}>
+                <span>{t("pages.app.layout.sidebar.user.membership")}</span>
+                <small className={styles.profilePlan}>{planName}</small>
+              </div>
             </div>
-          </div>
-        </DropdownMenuLabel>
+          </DropdownMenuLabel>
+        </DropdownMenuGroup>
         <DropdownMenuGroup className={styles.profileDropdownItems}>
           <DropdownMenuItem
             className={styles.profileMenuItem}
@@ -97,7 +98,7 @@ const AppLayoutSidebarUserProfileMenu: FC<UserProfileMenuProps> = ({
             <DropdownMenuItem
               className={`${styles.profileMenuItem} ${styles.profileMenuItemInstall}`}
               disabled={isInstallPending}
-              onSelect={() => void requestInstall()}
+              onClick={() => void requestInstall()}
             >
               <span className={styles.profileMenuIcon}>
                 <Download aria-hidden="true" />
@@ -108,7 +109,7 @@ const AppLayoutSidebarUserProfileMenu: FC<UserProfileMenuProps> = ({
           <DropdownMenuItem
             className={`${styles.profileMenuItem} ${styles.profileMenuItemExit}`}
             disabled={signOutActions.isPending}
-            onSelect={() => void signOutActions.signOut()}
+            onClick={() => void signOutActions.signOut()}
           >
             <span className={styles.profileMenuIcon}>
               <LogOut aria-hidden="true" />

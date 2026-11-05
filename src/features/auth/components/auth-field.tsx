@@ -1,4 +1,4 @@
-import type { FC, ReactNode } from "react";
+import type { FC, ReactElement } from "react";
 import {
   useFormContext,
   type ControllerRenderProps,
@@ -18,7 +18,7 @@ interface AuthFieldProps {
   name: string;
   label: string;
   hint?: string;
-  children: (field: ControllerRenderProps<FieldValues, string>) => ReactNode;
+  children: (field: ControllerRenderProps<FieldValues, string>) => ReactElement;
 }
 
 export const AuthField: FC<AuthFieldProps> = ({

@@ -4,7 +4,7 @@
   border-radius: 12px;
   background: color-mix(in srgb, var(--muted) 35%, transparent);
 }
-.trigger[data-state="open"] {
+.trigger[aria-expanded="true"] {
   border-color: var(--primary);
   background: color-mix(in srgb, var(--primary) 10%, var(--card));
 }
@@ -256,7 +256,7 @@
 .disclosure:hover {
   border-color: color-mix(in srgb, var(--foreground) 22%, var(--border));
 }
-.disclosure[data-state="open"] {
+.disclosure[data-panel-open] {
   border-color: color-mix(in srgb, var(--primary) 40%, var(--border));
   background: color-mix(in srgb, var(--primary) 9%, var(--background));
 }
@@ -273,7 +273,7 @@
   margin-inline-start: auto;
   transition: transform 180ms ease;
 }
-.disclosure[data-state="open"] .chevron {
+.disclosure[data-panel-open] .chevron {
   transform: rotate(180deg);
 }
 .professionalHint {

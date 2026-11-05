@@ -2,7 +2,8 @@ import { Link, useParams } from "react-router";
 
 import LoadingSection from "@/components/custom/loading-section";
 import ErrorSection from "@/components/custom/error-section";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import {
   getPaymentViewStatus,
   usePaymentStatus,
@@ -104,11 +105,15 @@ function PaymentResultPage() {
               {t("pages.payment.result.retry")}
             </Button>
           ) : null}
-          <Button asChild variant="outline" className="h-11 w-full">
-            <Link to={APP_ROUTES_KEY.app.path}>
-              {t("pages.payment.result.return")}
-            </Link>
-          </Button>
+          <Link
+            to={APP_ROUTES_KEY.app.path}
+            className={cn(
+              buttonVariants({ variant: "outline" }),
+              "h-11 w-full",
+            )}
+          >
+            {t("pages.payment.result.return")}
+          </Link>
         </>
       }
     />

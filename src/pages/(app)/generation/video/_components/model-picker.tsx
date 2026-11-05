@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Check, ChevronDown, LockKeyhole, Search, X } from "lucide-react";
-import { Dialog as DialogPrimitive } from "radix-ui";
+import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
 
 import styles from "../composer.module.css";
 import {
@@ -117,29 +117,27 @@ export function VideoModelPicker({
         if (!value) setQuery("");
       }}
     >
-      <DialogTrigger asChild>
-        <button
-          type="button"
-          disabled={disabled}
-          className={styles.modelTrigger}
-          aria-label={`${t("common.chooseModel")} ${name}`}
-        >
-          <ModelIcon
-            key={`${name}-${current?.icon_url ?? ""}`}
-            url={current?.icon_url}
-            name={name}
-            modelId={current?.name}
-          />
-          <span className={styles.modelName}>
-            <small>{t("pages.generation.video.studio.model")}</small>
-            <strong dir="auto">{name}</strong>
-          </span>
-          <ChevronDown size={18} aria-hidden="true" />
-        </button>
+      <DialogTrigger
+        type="button"
+        disabled={disabled}
+        className={styles.modelTrigger}
+        aria-label={`${t("common.chooseModel")} ${name}`}
+      >
+        <ModelIcon
+          key={`${name}-${current?.icon_url ?? ""}`}
+          url={current?.icon_url}
+          name={name}
+          modelId={current?.name}
+        />
+        <span className={styles.modelName}>
+          <small>{t("pages.generation.video.studio.model")}</small>
+          <strong dir="auto">{name}</strong>
+        </span>
+        <ChevronDown size={18} aria-hidden="true" />
       </DialogTrigger>
       <DialogPortal>
         <DialogOverlay />
-        <DialogPrimitive.Content
+        <DialogPrimitive.Popup
           data-slot="dialog-content"
           className={styles.modelDialog}
         >
@@ -217,7 +215,7 @@ export function VideoModelPicker({
               </p>
             )}
           </div>
-        </DialogPrimitive.Content>
+        </DialogPrimitive.Popup>
       </DialogPortal>
     </Dialog>
   );

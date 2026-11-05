@@ -1,7 +1,7 @@
 import { FileQuestion, RefreshCw, TriangleAlert } from "lucide-react";
 import { Link } from "react-router";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { useAppTranslate } from "@/hooks";
 import { cn } from "@/lib/utils";
 import { APP_I18_KEYS } from "@/services/i18";
@@ -110,9 +110,15 @@ export function MediaUnavailableState({
         </Button>
       )}
       {!compact && missing && actionTo && actionLabel && (
-        <Button asChild variant="secondary" className="mt-1 min-h-11">
-          <Link to={actionTo}>{actionLabel}</Link>
-        </Button>
+        <Link
+          to={actionTo}
+          className={cn(
+            buttonVariants({ variant: "secondary" }),
+            "mt-1 min-h-11",
+          )}
+        >
+          {actionLabel}
+        </Link>
       )}
       {!compact && !missing && onRetry && (
         <Button

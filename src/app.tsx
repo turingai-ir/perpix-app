@@ -1,7 +1,7 @@
 import { Suspense, useEffect, useState } from "react";
 import { useAtomValue } from "jotai";
 import { RouterProvider } from "react-router";
-import { DirectionProvider } from "@radix-ui/react-direction";
+import { DirectionProvider } from "@base-ui/react/direction-provider";
 
 import { queryClient } from "@/lib/react-query";
 import { router } from "@/router/router";
@@ -25,7 +25,7 @@ function App() {
 
   return (
     <>
-      <DirectionProvider dir="rtl">
+      <DirectionProvider direction="rtl">
         <QueryClientProvider client={queryClient}>
           <Toaster duration={4000} richColors position="top-center" />
           <RuntimeCleanup />

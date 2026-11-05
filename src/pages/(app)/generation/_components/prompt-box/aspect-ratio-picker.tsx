@@ -63,27 +63,29 @@ export function AspectRatioPicker({
           <FormItem>
             <FormLabel className="sr-only">{label}</FormLabel>
             <Popover open={open} onOpenChange={setOpen}>
-              <PopoverTrigger asChild>
-                <FormControl>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    role="combobox"
-                    aria-expanded={open}
-                    disabled={disabled}
-                    className="bg-muted/40 h-11 min-w-24 gap-2 rounded-xl px-3"
-                  >
-                    <RatioShape ratio={value} />
-                    <bdi dir="ltr" className="font-semibold">
-                      {value}
-                    </bdi>
-                    <ChevronDown
-                      aria-hidden="true"
-                      className="text-muted-foreground ms-auto size-4"
+              <FormControl>
+                <PopoverTrigger
+                  render={
+                    <Button
+                      type="button"
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={open}
+                      disabled={disabled}
+                      className="bg-muted/40 h-11 min-w-24 gap-2 rounded-xl px-3"
                     />
-                  </Button>
-                </FormControl>
-              </PopoverTrigger>
+                  }
+                >
+                  <RatioShape ratio={value} />
+                  <bdi dir="ltr" className="font-semibold">
+                    {value}
+                  </bdi>
+                  <ChevronDown
+                    aria-hidden="true"
+                    className="text-muted-foreground ms-auto size-4"
+                  />
+                </PopoverTrigger>
+              </FormControl>
               <PopoverContent
                 side="top"
                 align="center"

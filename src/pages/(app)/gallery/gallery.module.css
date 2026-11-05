@@ -346,7 +346,7 @@
 }
 
 .sortContent {
-  min-width: var(--radix-select-trigger-width);
+  min-width: var(--anchor-width);
   border: 1px solid var(--gallery-edge);
   border-radius: 1rem;
   padding: 0.3rem;
@@ -365,7 +365,7 @@
   font-size: 0.8125rem;
 }
 
-.sortItem[data-state="checked"] {
+.sortItem[data-selected] {
   color: var(--foreground);
   background: color-mix(in srgb, var(--primary) 16%, transparent);
 }
