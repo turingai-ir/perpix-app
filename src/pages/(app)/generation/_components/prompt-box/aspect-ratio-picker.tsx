@@ -90,10 +90,13 @@ export function AspectRatioPicker({
                 side="top"
                 align="center"
                 sideOffset={10}
-                className="border-border w-[min(220px,calc(100vw-2rem))] rounded-2xl border p-3 shadow-2xl"
+                collisionPadding={8}
+                className="border-border max-h-(--available-height) w-[min(220px,calc(100vw-2rem))] overflow-hidden rounded-2xl border p-3 shadow-2xl"
               >
-                <p className="px-1 pb-3 text-sm font-semibold">{label}</p>
-                <div className="flex max-h-[min(480px,calc(100dvh-10rem))] [scrollbar-width:none] flex-col gap-1 overflow-y-auto overscroll-contain [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+                <p className="shrink-0 px-1 pb-3 text-sm font-semibold">
+                  {label}
+                </p>
+                <div className="flex max-h-120 min-h-0 [scrollbar-width:thin] flex-col gap-1 overflow-y-auto overscroll-contain">
                   {options.map((option) => {
                     const optionValue = String(option);
                     const selected = optionValue === value;

@@ -1,113 +1,79 @@
-import {
-  lazy,
-  Suspense,
-  useEffect,
-  useMemo,
-  useState,
-  type TransitionEvent,
-} from "react";
+import { useReducedMotion } from "motion/react";
+import { useEffect, useRef, useState } from "react";
 
-import { cn } from "@/lib/utils";
-import {
-  shouldShowSplash,
-  useAppReady,
-  useSceneSupport,
-} from "../hooks/use-app-ready";
-import { BootSlogan } from "./boot-slogan";
+import { useAppTranslate } from "@/hooks";
+import { APP_I18_KEYS } from "@/services/i18";
+import { shouldShowSplash, useAppReady } from "../hooks/use-app-ready";
+import { BootOffice } from "./boot-office";
 import { BootSplashHud } from "./boot-splash-hud";
-import { copyCanvas } from "./copy-canvas";
-import { FreezeFrame } from "./freeze-frame";
-
-const VersusScene = lazy(() => import("./versus-scene"));
-const IceShatter3D = lazy(() => import("./ice-shatter-3d"));
-
-/** Long enough for the fighters to land at least one clash. */
-const FIGHT_MIN_MS = 2400;
-const STATIC_MIN_MS = 400;
-const SCENE_LATE_MS = 3000;
+import styles from "./boot-office.module.css";
 
 type ReadySource = Parameters<typeof useAppReady>[0];
 
-/**
- * Full-screen first-load splash: two logo "P"s fight until the app is ready,
- * then the frozen frame shatters into 3D ice revealing the app behind it.
- */
 export function BootSplash({ router }: { router: ReadySource }) {
-  const [show] = useState(shouldShowSplash);
-  return show ? <BootSplashOverlay router={router} /> : null;
+  const [show, setShow] = useState(shouldShowSplash);
+  return show ? (
+    <BootSplashOverlay router={router} onVisibilityChange={setShow} />
+  ) : null;
 }
 
-function BootSplashOverlay({ router }: { router: ReadySource }) {
-  const { enabled, lite } = useSceneSupport();
-  const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null);
-  const [sceneLate, setSceneLate] = useState(false);
-  const [shatterPainted, setShatterPainted] = useState(false);
-  const [done, setDone] = useState(false);
-  const ready = useAppReady(
-    router,
-    canvas ? FIGHT_MIN_MS : STATIC_MIN_MS,
-    !enabled || canvas !== null || sceneLate,
-  );
+function BootSplashOverlay({
+  router,
+  onVisibilityChange,
+}: {
+  router: ReadySource;
+  onVisibilityChange: (visible: boolean) => void;
+}) {
+  const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
+  const reduceMotion = useReducedMotion();
+  const dialog = useRef<HTMLDialogElement>(null);
+  const [skip, setSkip] = useState(false);
+  const [timedOut, setTimedOut] = useState(false);
+  const bypass = skip || timedOut;
+  const fadeOnly = Boolean(reduceMotion) || bypass;
+  const ready = useAppReady(router, fadeOnly ? 0 : 1800, true);
+  const leaving = ready || bypass;
 
-  // A slow 3D chunk must never hold the app hostage: fall back to a fade.
   useEffect(() => {
-    if (!enabled) return;
-    const timer = window.setTimeout(() => setSceneLate(true), SCENE_LATE_MS);
+    const element = dialog.current;
+    element?.showModal();
+    return () => element?.close();
+  }, []);
+
+  // Route initialization must not leave a native modal blocking the app forever.
+  useEffect(() => {
+    const timer = window.setTimeout(() => setTimedOut(true), 10_000);
     return () => window.clearTimeout(timer);
-  }, [enabled]);
+  }, []);
 
-  // Freeze the current frame exactly once, when the shatter begins.
-  const snapshot = useMemo(
-    () => (ready && canvas ? copyCanvas(canvas) : null),
-    [ready, canvas],
-  );
-  const fading = ready && !snapshot;
-
-  const finishFade = (event: TransitionEvent<HTMLDivElement>) => {
-    if (fading && event.target === event.currentTarget) setDone(true);
-  };
-
-  if (done) return null;
+  // Assets and transition events must never hold the application behind the splash.
+  useEffect(() => {
+    if (!leaving) return;
+    const timer = window.setTimeout(
+      () => {
+        dialog.current?.close();
+        onVisibilityChange(false);
+      },
+      fadeOnly ? 180 : 1200,
+    );
+    return () => window.clearTimeout(timer);
+  }, [leaving, fadeOnly, onVisibilityChange]);
 
   return (
-    <div
+    <dialog
+      ref={dialog}
       data-boot-splash
-      className={cn(
-        "fixed inset-0 z-[200] overflow-hidden transition-opacity duration-300",
-        snapshot ? "pointer-events-none" : "bg-[#08090d]",
-        fading && "opacity-0",
-      )}
-      onTransitionEnd={finishFade}
+      data-leaving={leaving}
+      data-skip={bypass}
+      className={styles.overlay}
+      aria-label={t("features.bootSplash.loading")}
+      onCancel={(event) => {
+        event.preventDefault();
+        setSkip(true);
+      }}
     >
-      {!snapshot && (
-        <>
-          <BootSlogan />
-          {enabled && (
-            <div
-              className={cn(
-                "absolute inset-0 transition-opacity duration-500",
-                canvas ? "opacity-100" : "opacity-0",
-              )}
-            >
-              <Suspense fallback={null}>
-                <VersusScene lite={lite} onFirstFrame={setCanvas} />
-              </Suspense>
-            </div>
-          )}
-        </>
-      )}
-      {snapshot && !shatterPainted && <FreezeFrame frame={snapshot} />}
-      {snapshot && (
-        <Suspense fallback={null}>
-          <IceShatter3D
-            snapshot={snapshot}
-            lite={lite}
-            onFirstFrame={() => setShatterPainted(true)}
-            onDone={() => setDone(true)}
-          />
-        </Suspense>
-      )}
-      <BootSplashHud leaving={ready} fighting={canvas !== null} />
-    </div>
+      <BootOffice />
+      <BootSplashHud onSkip={() => setSkip(true)} skipped={bypass} />
+    </dialog>
   );
 }

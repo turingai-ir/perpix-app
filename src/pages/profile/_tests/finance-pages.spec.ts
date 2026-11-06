@@ -1,5 +1,6 @@
 import { expect, test, type BrowserContext, type Page } from "@playwright/test";
 import { mockAuthenticatedSession } from "../../../../__tests__/support/auth-session";
+import type { SchemaPaymentDetailsResponse } from "../../../services/api";
 
 const paymentId = "c0202000-0000-4000-8000-000000000005";
 const walletId = "d0202000-0000-4000-8000-000000000005";
@@ -311,6 +312,92 @@ test("wallet transactions paginate ten at a time through the backend", async ({
   await expect(pagination.getByRole("button").nth(1)).toBeDisabled();
   expect(requests.at(-1)).toEqual({ offset: 20, limit: 10 });
 });
+
+for (const viewport of [
+  { width: 375, height: 812 },
+  { width: 768, height: 1024 },
+  { width: 1440, height: 900 },
+]) {
+  test(`payment archive keeps long records readable at ${viewport.width}`, async ({
+    page,
+    context,
+    baseURL,
+  }) => {
+    await authenticate(context, baseURL);
+    await mockAccount(page);
+    await page.setViewportSize(viewport);
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    const history = paymentHistory();
+    history.items[0].payment.amount = "90071992547409930";
+    history.items[0].payment.fulfillment_status = "PENDING";
+    const details: SchemaPaymentDetailsResponse = {
+      id: paymentId,
+      currency: "IRR",
+      base_amount_usdmicro: "1000000",
+      tax_amount_usdmicro: "0",
+      total_amount_usdmicro: "1000000",
+      base_amount: "90071992547409930",
+      tax_amount: "0",
+      total_amount: "90071992547409930",
+    };
+    await page.route("**/api/v1/payment-intents?*", (route) =>
+      route.fulfill({ json: history }),
+    );
+    await page.route(
+      `**/api/v1/payment-intents/${paymentId}/details`,
+      (route) =>
+        route.fulfill({ json: details }),
+    );
+    await page.goto("/profile/payments");
+    const archive = page.getByRole("region", { name: "آرشیو پرداخت‌ها" });
+    const mobile = viewport.width < 1024;
+    const records = mobile
+      ? archive.getByRole("list")
+      : archive.getByRole("table");
+    await expect(records).toBeVisible();
+    await expect(
+      records.getByText("پرداخت شده؛ در حال اعمال", { exact: true }),
+    ).toBeVisible();
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= window.innerWidth,
+      ),
+    ).toBe(true);
+    await expect(archive).toHaveJSProperty(
+      "scrollWidth",
+      await archive.evaluate((el) => el.clientWidth),
+    );
+    if (mobile) {
+      const record = records.getByRole("listitem");
+      expect(
+        await record.evaluate((el) => el.scrollWidth <= el.clientWidth),
+      ).toBe(true);
+      const id = record.locator("bdi").last();
+      expect(await id.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(
+        true,
+      );
+      const button = record.getByRole("button", { name: "جزئیات رسید" });
+      expect((await button.boundingBox())?.height).toBeGreaterThanOrEqual(44);
+    }
+    await archive.screenshot({
+      path: `.impeccable/review/payment-archive-${viewport.width}.png`,
+    });
+    await records.getByRole("button").click();
+    const receipt = page.getByRole("dialog");
+    await expect(receipt).toBeVisible();
+    const formattedAmount = `${9007199254740993n.toLocaleString("fa-IR")} تومان`;
+    await expect(
+      receipt.getByText(formattedAmount, { exact: true }),
+    ).toHaveCount(2);
+    expect(
+      await receipt.evaluate(
+        (element) => element.scrollWidth <= element.clientWidth,
+      ),
+    ).toBe(true);
+    await page.keyboard.press("Escape");
+    await expect(page.getByRole("dialog")).toBeHidden();
+  });
+}
 
 for (const viewport of [
   { width: 375, height: 812 },

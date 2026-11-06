@@ -1,0 +1,257 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  color: #f7f0e9;
+  background: #100d11;
+  opacity: 1;
+  transition: opacity 350ms ease 750ms;
+}
+
+.overlay::backdrop {
+  background: transparent;
+}
+.overlay[data-leaving="true"] {
+  opacity: 0;
+  pointer-events: none;
+}
+.camera {
+  --focus-x: 55.5%;
+  --focus-y: 57.5%;
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.room {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: max(100vw, 150dvh);
+  aspect-ratio: 3 / 2;
+  transform: translate(-50%, -50%);
+  transform-origin: var(--focus-x) var(--focus-y);
+  transition: transform 1100ms cubic-bezier(0.65, 0, 0.35, 1);
+}
+.overlay[data-leaving="true"] .room {
+  transform: translate(calc(-1 * var(--focus-x)), calc(-1 * var(--focus-y)))
+    scale(9);
+}
+.photograph {
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+.camera[data-loaded="true"] .photograph {
+  opacity: 1;
+}
+.screen {
+  position: absolute;
+  left: 49.5%;
+  top: 50.6%;
+  width: 12.1%;
+  height: 14.4%;
+  clip-path: polygon(3% 0, 100% 3%, 96% 100%, 0 96%);
+  background: #14131c;
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+.camera[data-loaded="true"] .screen {
+  opacity: 1;
+}
+.camera[data-scene="turing"] {
+  --focus-x: 53.6%;
+  --focus-y: 56.5%;
+  --sign-frame: #272a21;
+  --sign-metal: #a38750;
+  --sign-background: #101b16ed;
+  --sign-edge: #e3c587;
+  --sign-glow: #ddae5d;
+  --brand-glow: #edb667;
+  --promise-glow: #68d8ad;
+}
+.camera[data-scene="turing"] .screen {
+  left: 45.4%;
+  top: 47.8%;
+  width: 16.3%;
+  height: 17.4%;
+  clip-path: inset(0 round 9% / 12%);
+}
+.camera[data-scene="tesla"] {
+  --focus-x: 54.2%;
+  --focus-y: 54.4%;
+  /* Anchor the frame above the character, including on short screens. */
+  --sign-top: auto;
+  --sign-bottom: 69%;
+  --sign-frame: #252e33;
+  --sign-metal: #7e919b;
+  --sign-background: #101a20ed;
+  --sign-edge: #a3e8ee;
+  --sign-glow: #55c9e3;
+  --brand-glow: #8b9fff;
+  --promise-glow: #59e0ed;
+}
+.camera[data-scene="tesla"] .screen {
+  left: 43.4%;
+  top: 45%;
+  width: 21.6%;
+  height: 18.8%;
+  /* Preserve the photographed shoulder in front of the lower left corner. */
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 14% 100%, 9% 89%, 0 80%);
+}
+.screen img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+}
+.screen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(transparent 0 2px, #09021c33 3px 4px),
+    linear-gradient(125deg, #dbabff20, transparent 60%);
+  box-shadow: inset 0 0 12px #b89cde35;
+  pointer-events: none;
+}
+.hud {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: max(24px, env(safe-area-inset-top))
+    max(24px, env(safe-area-inset-right)) max(28px, env(safe-area-inset-bottom))
+    max(24px, env(safe-area-inset-left));
+  background: linear-gradient(#0008, transparent 18% 65%, #000d);
+  pointer-events: none;
+  transition: opacity 180ms ease;
+}
+.overlay[data-leaving="true"] .hud {
+  opacity: 0;
+}
+.masthead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  direction: ltr;
+  gap: 16px;
+}
+.wordmark {
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+}
+.skip {
+  display: inline-flex;
+  direction: rtl;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 8px 16px;
+  border: 1px solid #d3c0c459;
+  border-radius: 999px;
+  background: #080709b3;
+  color: #f7f0e9;
+  font-size: 12px;
+  cursor: pointer;
+  pointer-events: auto;
+}
+.skip:hover {
+  background: #302138;
+}
+.skip:focus-visible {
+  outline: 2px solid #e0b3ef;
+  outline-offset: 4px;
+}
+.skip:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.caption {
+  font-size: clamp(17px, 2vw, 25px);
+  line-height: 1.6;
+}
+.caption p {
+  margin: 0;
+}
+.caption p:nth-child(2) {
+  color: #e6c6ed;
+}
+.status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 18px;
+  font-size: 12px;
+  color: #d1c9d1;
+}
+.indicator {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #d8a4ea;
+  animation: breathe 1600ms ease-in-out infinite alternate;
+}
+@keyframes breathe {
+  to {
+    opacity: 0.35;
+  }
+}
+@media (min-width: 1024px) {
+  .hud {
+    padding: 32px 48px;
+  }
+  .caption p {
+    display: inline;
+  }
+  .caption p + p::before {
+    content: " ";
+    white-space: pre;
+  }
+}
+@media (max-height: 500px) and (orientation: landscape) {
+  .hud {
+    padding: 12px 24px;
+  }
+  .caption p {
+    display: none;
+  }
+  .status {
+    margin-top: 0;
+  }
+}
+.overlay[data-skip="true"] {
+  transition: opacity 150ms ease;
+}
+.overlay[data-skip="true"] .room {
+  transition: none;
+  transform: translate(-50%, -50%);
+}
+@media (prefers-reduced-motion: reduce) {
+  .overlay {
+    transition: opacity 150ms ease;
+  }
+  .overlay .room,
+  .overlay[data-leaving="true"] .room {
+    transition: none;
+    transform: translate(-50%, -50%);
+  }
+  .photograph,
+  .screen,
+  .hud {
+    transition: none;
+  }
+  .indicator {
+    animation: none;
+  }
+}

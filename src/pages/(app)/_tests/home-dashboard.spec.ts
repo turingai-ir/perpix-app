@@ -452,6 +452,62 @@ for (const surface of [
   });
 }
 
+for (const viewport of [
+  { width: 375, height: 812 },
+  { width: 768, height: 1024 },
+  { width: 1440, height: 900 },
+]) {
+  test(`office entrance reveals the dashboard at ${viewport.width}px`, async ({
+    page,
+  }) => {
+    await page.setViewportSize(viewport);
+    await page.addInitScript(() =>
+      localStorage.setItem("perpix:boot-splash", "on"),
+    );
+    await mockDashboardApi(page);
+    await page.goto("/");
+    await expect(page.locator("[data-office-screen]")).toBeVisible();
+    await expect(page.locator("[data-boot-splash]")).toHaveCount(0, {
+      timeout: 10_000,
+    });
+    await expect(page).toHaveURL("/");
+    await expect(
+      page.getByRole("heading", { name: "چی می‌خوای بسازی؟" }),
+    ).toBeVisible();
+    await expect(page.locator("body")).not.toHaveAttribute("inert");
+  });
+}
+
+test("office entrance waits for the account shell before revealing the dashboard", async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem("perpix:boot-splash", "on"));
+  await page.clock.install();
+  await page.clock.pauseAt(new Date(Date.now() + 1000));
+  await mockDashboardApi(page);
+  let release = () => {};
+  let requested = () => {};
+  const held = new Promise<void>((resolve) => { release = resolve; });
+  const started = new Promise<void>((resolve) => { requested = resolve; });
+  await page.route("**/api/v1/user/get-info", async (route) => {
+    requested();
+    await held;
+    await route.fallback().catch(() => {});
+  });
+  try {
+    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await started;
+    const entrance = page.locator("[data-boot-splash]");
+    await expect(entrance).toBeVisible();
+    await page.clock.runFor(4000);
+    await page.clock.runFor(2000);
+    await expect(entrance).toBeVisible();
+    await expect(entrance).toHaveAttribute("data-leaving", "false");
+    release();
+    await page.clock.resume();
+    await expect(entrance).toHaveCount(0, { timeout: 5000 });
+    await expect(page.getByRole("heading", { name: "چی می‌خوای بسازی؟" })).toBeVisible();
+  } finally { release(); }
+});
+
 test("shows a personal studio dashboard backed by current APIs", async ({
   page,
 }) => {
