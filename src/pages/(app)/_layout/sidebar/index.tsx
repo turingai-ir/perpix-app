@@ -1,5 +1,5 @@
 import { useImmerAtom } from "jotai-immer";
-import { useState, type CSSProperties, type FC, type RefObject } from "react";
+import { type CSSProperties, type FC, type RefObject } from "react";
 
 import appLayoutAtom from "../_state";
 
@@ -28,7 +28,11 @@ const AppLayoutSidebar: FC<{
   const walletState = useWallet();
   const activeSubscriptionState = useActiveSubscription();
   const { openPricingFeature } = usePricingFeature();
-  const [isWalletChargeOpen, setIsWalletChargeOpen] = useState(false);
+  const isWalletChargeOpen = appLayoutState.isWalletChargeOpen;
+  const setIsWalletChargeOpen = (open: boolean) =>
+    setAppLayoutState((draft) => {
+      draft.isWalletChargeOpen = open;
+    });
   const balanceUsdmicro = walletState.data?.balance_usdmicro ?? 0;
   const sidebarContent = (
     <AppLayoutSidebarContent

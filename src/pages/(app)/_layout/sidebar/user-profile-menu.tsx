@@ -1,6 +1,6 @@
 import type { FC, RefObject } from "react";
 import { useNavigate } from "react-router";
-import { ChevronsUpDown, Download, LogOut } from "lucide-react";
+import { ChevronsUpDown, Crown, Download, LogOut } from "lucide-react";
 
 import { AccountIcon } from "./menu-icons";
 import AppLayoutSidebarUserAvatar from "./user-avatar";
@@ -15,7 +15,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useActiveSubscription } from "@/feature/pricing";
+import { useActiveSubscription, usePricingFeature } from "@/feature/pricing";
 import { useSignOutActions } from "@/features/auth";
 import { useAppTranslate } from "@/hooks";
 import { APP_ROUTES_KEY } from "@/router/routes";
@@ -40,6 +40,7 @@ const AppLayoutSidebarUserProfileMenu: FC<UserProfileMenuProps> = ({
   const navigate = useNavigate();
   const signOutActions = useSignOutActions();
   const activeSubscriptionState = useActiveSubscription();
+  const { openPricingFeature } = usePricingFeature();
   const planName =
     activeSubscriptionState.data?.plan.display_name ??
     t("features.pricing.plans.free.title");
@@ -93,6 +94,15 @@ const AppLayoutSidebarUserProfileMenu: FC<UserProfileMenuProps> = ({
               <AccountIcon aria-hidden="true" />
             </span>
             <span>{t("pages.app.layout.sidebar.user.manageAccount")}</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className={styles.profileMenuItem}
+            onClick={() => openPricingFeature()}
+          >
+            <span className={styles.profileMenuIcon}>
+              <Crown aria-hidden="true" />
+            </span>
+            <span>{t("pages.app.layout.sidebar.user.plan.manage")}</span>
           </DropdownMenuItem>
           {canInstall ? (
             <DropdownMenuItem

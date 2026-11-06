@@ -9,11 +9,7 @@
   border-color: var(--glass-border);
   background:
     radial-gradient(ellipse at 90% -8%, var(--ambient-brand), transparent 42%),
-    radial-gradient(
-      ellipse at -30% 54%,
-      var(--ambient-media),
-      transparent 48%
-    ),
+    radial-gradient(ellipse at -30% 54%, var(--ambient-media), transparent 48%),
     color-mix(in srgb, var(--sidebar) 94%, transparent);
   box-shadow:
     inset -1px 0 var(--glass-highlight),
@@ -311,8 +307,7 @@
   flex-direction: column;
   gap: 0.4rem;
 }
-.supportAction,
-.upgradeAction {
+.supportAction {
   width: 100%;
   min-height: 2.8rem;
   justify-content: flex-start;
@@ -332,9 +327,6 @@
   width: 1.1rem;
   height: 1.1rem;
   color: #8dd8f6;
-}
-.upgradeAction svg {
-  color: #e894f4;
 }
 .profileTrigger {
   display: flex;
@@ -541,7 +533,6 @@
     transform: translate(-2px, -2px);
   }
   .supportAction:hover,
-  .upgradeAction:hover,
   .profileTrigger:hover {
     border-color: rgb(217 186 252 / 26%);
     background-color: rgb(255 255 255 / 8%);
@@ -552,7 +543,6 @@
 .navigationLink:focus-visible,
 .walletAction:focus-visible,
 .supportAction:focus-visible,
-.upgradeAction:focus-visible,
 .profileTrigger:focus-visible {
   outline: 2px solid #b98af4;
   outline-offset: 2px;
@@ -565,7 +555,6 @@
   .walletAction,
   .walletAction svg,
   .supportAction,
-  .upgradeAction,
   .profileTrigger {
     transition: none;
   }
@@ -580,7 +569,6 @@
   .navigationLink:hover .navigationIcon,
   .walletAction:hover svg,
   .supportAction:hover,
-  .upgradeAction:hover,
   .profileTrigger:hover {
     transform: none;
   }

@@ -1,14 +1,16 @@
 import { useCallback, useMemo } from "react";
 import { useAtomValue } from "jotai";
-import { CircleCheck, LoaderCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAppTranslate } from "@/hooks";
 import LoadingSection from "@/components/custom/loading-section";
 import ErrorSection from "@/components/custom/error-section";
-import { type SchemaSubscriptionPlanListResponse } from "@/services/api";
+import {
+  type SchemaSubscriptionPlanListResponse,
+  type SchemaSubscriptionPlanResponse,
+  type SchemaUserSubscriptionResponse,
+} from "@/services/api";
 import {
   Sheet,
   SheetContent,
@@ -17,8 +19,6 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { APP_I18_KEYS } from "@/services/i18";
-import { cn } from "@/lib/utils";
-import { Muted } from "@/components/ui/typography";
 import {
   useActiveSubscription,
   usePurchaseSubscription,
@@ -27,13 +27,44 @@ import {
 import { usePaymentRedirect } from "@/feature/payment";
 import { usePricingFeature } from "./hook";
 import { pricingFeatureAtom } from "./state";
-import PricingPlanPrice from "./pricing-plan-price";
+import PricingPlanCard from "./pricing-plan-card";
+import PricingPlanAction from "./pricing-plan-action";
+import { getPlanAccess, resolvePlanTiers } from "./plan-tiers";
 
 const normalizeList = <T,>(value: unknown): T[] => {
   if (!value) {
     return [];
   }
   return Array.isArray(value) ? [...value] : Array.from(value as ArrayLike<T>);
+};
+
+const isPurchasablePrice = (plan: SchemaSubscriptionPlanResponse) =>
+  typeof plan.base_price_irr === "number" &&
+  Number.isSafeInteger(plan.base_price_irr) &&
+  typeof plan.discounted_price_irr === "number" &&
+  Number.isSafeInteger(plan.discounted_price_irr);
+
+const HEADER_KEYS = {
+  default: {
+    title: "features.pricing.title",
+    description: "features.pricing.description",
+  },
+  upgrade: {
+    title: "features.pricing.upgradeTitle",
+    description: "features.pricing.upgradeDescription",
+  },
+  renew: {
+    title: "features.pricing.renewTitle",
+    description: "features.pricing.renewDescription",
+  },
+} as const;
+
+const getHeaderKey = (
+  hasPaidPlan: boolean,
+  isExpiring: boolean,
+): keyof typeof HEADER_KEYS => {
+  if (!hasPaidPlan) return "default";
+  return isExpiring ? "renew" : "upgrade";
 };
 
 function PricingFeature() {
@@ -55,23 +86,49 @@ function PricingFeature() {
     [plansState.data?.items],
   );
 
+  const tiers = useMemo(
+    () =>
+      resolvePlanTiers(
+        planItems as readonly SchemaSubscriptionPlanResponse[],
+        activeSubscriptionState.data as
+          | SchemaUserSubscriptionResponse
+          | undefined,
+      ),
+    [activeSubscriptionState.data, planItems],
+  );
+
+  const hasRequirements =
+    requiredScopes.length > 0 || requiredModelNames.length > 0;
+
   const plans = useMemo(() => {
-    return planItems.filter(
+    // A paid action needs specific scopes/models: only offer purchasable plans.
+    // Otherwise show the whole ladder, with unavailable plans locked.
+    const candidates = hasRequirements
+      ? [
+          ...(tiers.canRenew && tiers.currentPlan ? [tiers.currentPlan] : []),
+          ...tiers.upgrades,
+        ]
+      : tiers.ladder;
+    return candidates.filter(
       (plan) =>
-        plan.uuid !== activeSubscriptionState.data?.plan.uuid &&
-        plan.is_default !== true &&
         requiredScopes.every((scope) => plan.scopes.includes(scope)) &&
         (!requiredModelNames.length ||
           requiredModelNames.some((modelName) =>
             plan.allowed_models.includes(modelName),
           )),
     );
-  }, [
-    activeSubscriptionState.data?.plan.uuid,
-    planItems,
-    requiredModelNames,
-    requiredScopes,
-  ]);
+  }, [hasRequirements, requiredModelNames, requiredScopes, tiers]);
+
+  const hasPaidPlan = tiers.status !== "free";
+  const isTopTier =
+    hasPaidPlan && tiers.status === "top" && !hasRequirements;
+  const headerKey = getHeaderKey(hasPaidPlan, tiers.isExpiring);
+  const getLevel = (uuid: string) => {
+    const index = tiers.ladder.findIndex((item) => item.uuid === uuid);
+    return index < 0
+      ? undefined
+      : { position: index + 1, total: tiers.ladder.length };
+  };
 
   const handlePurchasePlan = useCallback(
     async (planId: string) => {
@@ -110,10 +167,10 @@ function PricingFeature() {
       >
         <SheetHeader className="p-4 sm:p-6">
           <SheetTitle className="text-center text-2xl sm:text-4xl">
-            {t("features.pricing.title")}
+            {t(HEADER_KEYS[headerKey].title)}
           </SheetTitle>
           <SheetDescription className="text-center text-base sm:text-lg">
-            {t("features.pricing.description")}
+            {t(HEADER_KEYS[headerKey].description)}
           </SheetDescription>
         </SheetHeader>
 
@@ -123,18 +180,51 @@ function PricingFeature() {
         )}
 
         {open && plansState.isSuccess && plans.length === 0 ? (
-          <div className="flex min-h-0 flex-1 flex-col items-center gap-4 overflow-y-auto px-6 py-8 text-center">
+          <div className="flex min-h-0 flex-1 flex-col items-center gap-6 overflow-y-auto px-6 py-8 text-center">
+            {isTopTier && tiers.currentPlan ? (
+              <div className="w-full max-w-sm">
+                <PricingPlanCard
+                  plan={tiers.currentPlan}
+                  isCurrent
+                  hasPrice={isPurchasablePrice(tiers.currentPlan)}
+                >
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="lg"
+                    className="w-full"
+                    onClick={closePricingFeature}
+                  >
+                    {t("features.pricing.close")}
+                  </Button>
+                </PricingPlanCard>
+              </div>
+            ) : null}
             <div role="status" className="max-w-md space-y-2">
               <h3 className="text-lg font-medium">
-                {t("features.pricing.emptyTitle")}
+                {t(
+                  isTopTier
+                    ? "features.pricing.topTierTitle"
+                    : "features.pricing.emptyTitle",
+                )}
               </h3>
               <p className="text-muted-foreground text-sm">
-                {t("features.pricing.emptyDescription")}
+                {t(
+                  isTopTier
+                    ? "features.pricing.topTierDescription"
+                    : "features.pricing.emptyDescription",
+                )}
               </p>
             </div>
-            <Button type="button" variant="outline" onClick={closePricingFeature}>
-              {t("features.pricing.close")}
-            </Button>
+            {isTopTier ? null : (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={closePricingFeature}
+              >
+                {t("features.pricing.close")}
+              </Button>
+            )}
           </div>
         ) : null}
 
@@ -143,80 +233,37 @@ function PricingFeature() {
             className="h-0 min-h-0 flex-1 overflow-hidden"
             viewportClassName="h-full touch-pan-y overscroll-contain"
           >
-            <div className="mx-auto flex w-full max-w-(--breakpoint-lg) flex-col gap-4 px-4 pt-4 sm:px-6 sm:pt-8 lg:flex-row lg:gap-8">
-              {plans?.map((plan) => (
-                <div
-                  key={plan?.name}
-                  className={cn(
-                    "bg-card flex w-full max-w-none flex-col rounded-xl border p-4 shadow-sm transition-shadow hover:shadow-md sm:max-w-80 sm:rounded-2xl sm:p-6",
-                    {
-                      "border-primary ring-primary/25 ring-1":
-                        plan?.is_recommended,
-                    },
-                  )}
+            <div className="mx-auto flex w-full max-w-(--breakpoint-xl) flex-col gap-5 px-4 pt-4 pb-10 sm:px-6 sm:pt-6 lg:grid lg:grid-cols-[repeat(auto-fit,minmax(18rem,1fr))] lg:gap-6">
+              {plans.map((plan) => (
+                <PricingPlanCard
+                  key={plan.uuid}
+                  plan={plan}
+                  isCurrent={plan.uuid === tiers.currentPlan?.uuid && hasPaidPlan}
+                  hasPrice={isPurchasablePrice(plan)}
+                  isLocked={getPlanAccess(plan, tiers) === "lower"}
+                  daysLeft={
+                    plan.uuid === tiers.currentPlan?.uuid && hasPaidPlan
+                      ? tiers.daysLeft
+                      : null
+                  }
+                  level={getLevel(plan.uuid)}
                 >
-                  <h3 className="text-lg font-medium">{plan?.display_name}</h3>
-                  {typeof plan.base_price_irr === "number" &&
-                  Number.isSafeInteger(plan.base_price_irr) &&
-                  typeof plan.discounted_price_irr === "number" &&
-                  Number.isSafeInteger(plan.discounted_price_irr) ? (
-                    <PricingPlanPrice
-                      currency={plan.currency}
-                      basePriceIrr={plan.base_price_irr}
-                      discountedPriceIrr={plan.discounted_price_irr}
-                    />
-                  ) : (
-                    <p className="text-muted-foreground mt-5 text-sm">
-                      {t("features.pricing.priceUnavailable")}
-                    </p>
-                  )}
-                  <p className="text-muted-foreground mt-3 font-medium sm:mt-4">
-                    {plan?.description}
-                  </p>
-
-                  <Separator className="my-3 sm:my-4" />
-
-                  <ul className="space-y-2">
-                    {((plan.meta?.features as string[]) ?? []).map(
-                      (feature) => (
-                        <li
-                          key={feature}
-                          className="flex items-start gap-2 text-sm"
-                        >
-                          <CircleCheck className="mt-1 h-4 w-4 text-green-500" />
-                          <Muted> {feature}</Muted>
-                        </li>
-                      ),
-                    )}
-                  </ul>
-
-                  <div className="mt-auto pt-5 sm:pt-7">
-                    <Button
-                      type="button"
-                      variant={plan?.is_recommended ? "default" : "outline"}
-                      size="lg"
-                      className="w-full"
-                      disabled={
-                        purchaseSubscriptionState.isPending ||
-                        typeof plan.base_price_irr !== "number" ||
-                        !Number.isSafeInteger(plan.base_price_irr) ||
-                        typeof plan.discounted_price_irr !== "number" ||
-                        !Number.isSafeInteger(plan.discounted_price_irr)
-                      }
-                      onClick={async () => {
-                        await handlePurchasePlan(plan.uuid);
-                      }}
-                    >
-                      {purchaseSubscriptionState.isPending &&
+                  <PricingPlanAction
+                    kind={getPlanAccess(plan, tiers)}
+                    isRecommended={plan.is_recommended}
+                    needsConfirm={hasPaidPlan}
+                    isPending={
+                      purchaseSubscriptionState.isPending &&
                       purchaseSubscriptionState.variables?.body.plan_uuid ===
-                        plan?.uuid ? (
-                        <LoaderCircle className="animate-spin" />
-                      ) : (
-                        t("features.pricing.purchase")
-                      )}
-                    </Button>
-                  </div>
-                </div>
+                        plan.uuid
+                    }
+                    isDisabled={
+                      purchaseSubscriptionState.isPending ||
+                      !isPurchasablePrice(plan)
+                    }
+                    onPurchase={() => handlePurchasePlan(plan.uuid)}
+                  />
+                </PricingPlanCard>
               ))}
             </div>
           </ScrollArea>

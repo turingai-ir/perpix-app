@@ -48,7 +48,7 @@ for (const scenario of ["no-plans", "filtered-plans", "eligible-plan"] as const)
       const harness = await import(/* @vite-ignore */ path);
       harness.mount();
     });
-    const dialog = page.getByRole("dialog", { name: "بسته‌ها" });
+    const dialog = page.getByRole("dialog", { name: /بسته‌ها|ارتقای اشتراک/ });
     const emptyTitle = dialog.getByRole("heading", {
       name: "بسته‌ای برای این درخواست پیدا نشد",
     });
