@@ -10,6 +10,7 @@ import {
 } from "@/utils/custom-fetch/fetch-errors";
 import { HttpStatus } from "@/utils";
 import { useAppTranslate } from "@/hooks";
+import { getViewportBreakpoints } from "@/hooks/use-viewport-breakpoint";
 import { appEventBus } from "@/lib/event-bus";
 import {
   AuthUnavailable,
@@ -182,12 +183,16 @@ const RootLayout: FC = () => {
       return;
     }
 
+    previousPathnameRef.current = location.pathname;
+
+    // Below lg the sidebar is an overlay sheet and must get out of the way
+    // after navigating; on desktop it is a persistent rail the user toggles.
+    if (getViewportBreakpoints().lg) return;
+
     setAppLayoutState((state) => ({
       ...state,
       isSidebarOpen: false,
     }));
-
-    previousPathnameRef.current = location.pathname;
   }, [location.pathname, setAppLayoutState]);
 
   const matches = useMatches();

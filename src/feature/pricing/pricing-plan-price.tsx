@@ -2,6 +2,7 @@ import { type FC } from "react";
 
 import { useAppTranslate } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
+import styles from "./pricing-plan-card.module.css";
 import { PaymentAmount } from "@/features/payment";
 import {
   SupportedCurrencyMap,
@@ -12,6 +13,7 @@ type PricingPlanPriceProps = {
   currency?: SchemaSupportedCurrency;
   basePriceIrr: number;
   discountedPriceIrr: number;
+  durationDays?: number;
 };
 
 const getDiscountPercent = (
@@ -38,6 +40,7 @@ const getDiscountPercent = (
 const PricingPlanPrice: FC<PricingPlanPriceProps> = ({
   basePriceIrr,
   discountedPriceIrr,
+  durationDays,
   currency = SupportedCurrencyMap.IRR,
 }) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
@@ -45,44 +48,45 @@ const PricingPlanPrice: FC<PricingPlanPriceProps> = ({
   const hasDiscount = discountedPriceIrr < basePriceIrr;
 
   return (
-    <dl className="border-border/70 bg-muted/40 mt-5 rounded-xl border p-4 shadow-sm">
-      <div className="flex min-h-5 items-center justify-between gap-3 text-sm">
-        {hasDiscount ? (
-          <>
-            <dt className="text-muted-foreground">
-              {t("features.pricing.previousPrice")}
-            </dt>
-            <dd className="text-muted-foreground decoration-muted-foreground/70 whitespace-nowrap line-through">
-              <PaymentAmount amount={basePriceIrr} currency={currency} />
-            </dd>
-          </>
+    <div className={styles.price}>
+      <div className={styles.priceMain}>
+        <strong>
+          <span className="sr-only">
+            {t(
+              hasDiscount
+                ? "features.pricing.discountedPrice"
+                : "features.pricing.currentPrice",
+            )}
+            :{" "}
+          </span>
+          <PaymentAmount amount={discountedPriceIrr} currency={currency} />
+        </strong>
+        {durationDays ? (
+          <span>
+            {t("features.pricing.perDuration", {
+              days: durationDays.toLocaleString("fa-IR"),
+            })}
+          </span>
         ) : null}
       </div>
-      <div className="border-border/70 my-3 border-t" />
-      <div className="flex items-end justify-between gap-3">
-        <dt className="font-medium">
-          {t(
-            hasDiscount
-              ? "features.pricing.discountedPrice"
-              : "features.pricing.currentPrice",
-          )}
-        </dt>
-        <dd className="flex flex-wrap items-center justify-end gap-2 text-end">
+      {hasDiscount ? (
+        <div className={styles.priceMeta}>
+          <s>
+            <span className="sr-only">
+              {t("features.pricing.previousPrice")}:{" "}
+            </span>
+            <PaymentAmount amount={basePriceIrr} currency={currency} />
+          </s>
           {discountPercent !== null ? (
-            <span className="rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-bold text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200">
+            <span className={styles.discount}>
               {t("features.pricing.discountPercent", {
                 percent: discountPercent,
               })}
             </span>
-          ) : (
-            <span className="w-20" aria-hidden="true" />
-          )}
-          <span className="text-2xl font-bold tracking-tight whitespace-nowrap">
-            <PaymentAmount amount={discountedPriceIrr} currency={currency} />
-          </span>
-        </dd>
-      </div>
-    </dl>
+          ) : null}
+        </div>
+      ) : null}
+    </div>
   );
 };
 

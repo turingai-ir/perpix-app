@@ -1,35 +1,23 @@
 import { type FC } from "react";
-import { Sparkles } from "lucide-react";
 import { FaTelegramPlane } from "react-icons/fa";
 // import { MessageCircle } from "lucide-react";
 
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { useActiveSubscription, usePricingFeature } from "@/feature/pricing";
 // import { useSupportChatWidget } from "@/feature/support-chat";
 import { useAppTranslate } from "@/hooks";
 import { APP_I18_KEYS } from "@/services/i18";
+import AppLayoutSidebarPlanCard from "./plan-card";
 import styles from "./sidebar.module.css";
 
 const AppLayoutSidebarUserActions: FC = () => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   // const { openChatWidget } = useSupportChatWidget();
-  const { openPricingFeature } = usePricingFeature();
-  const activeSubscriptionState = useActiveSubscription();
   const telegramSupportUrl = import.meta.env.VITE_APP_TELEGRAM_SUPPORT;
 
   return (
     <div className={styles.userActions}>
-      {activeSubscriptionState.data?.plan.is_default ? (
-        <Button
-          className={styles.upgradeAction}
-          variant="ghost"
-          onClick={() => openPricingFeature()}
-        >
-          <Sparkles />
-          {t("pages.app.layout.sidebar.user.upgrade")}
-        </Button>
-      ) : null}
+      <AppLayoutSidebarPlanCard />
       {/* <Button
         className="w-full justify-start"
         variant="ghost"

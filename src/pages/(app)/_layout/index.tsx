@@ -6,6 +6,7 @@ import { Menu } from "lucide-react";
 import AppLayoutSidebar from "./sidebar";
 import appLayoutAtom from "./_state";
 import HeaderSlogan from "./header-slogan";
+import AccountWidget from "./account-widget/account-widget";
 import styles from "./header-slogan.module.css";
 
 import { Button } from "@/components/ui/button";
@@ -161,6 +162,7 @@ const AppLayout: FC = () => {
               />
             </Button>
             <HeaderSlogan />
+            <AccountWidget />
           </header>
           <section className="relative flex w-full min-w-0 overflow-x-hidden">
             <Outlet />

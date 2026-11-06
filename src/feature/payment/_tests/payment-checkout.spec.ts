@@ -269,19 +269,17 @@ for (const viewport of [
     }
     await page.getByRole("button", { name: "شارژ کیف پول" }).click();
     await page.getByRole("button", { name: "خرید اشتراک" }).click();
-    const unavailablePlan = page
-      .getByRole("heading", { name: "Unavailable" })
-      .locator("..");
+    const planCard = (name: string) =>
+      page
+        .getByRole("article")
+        .filter({ has: page.getByRole("heading", { name }) });
+    const unavailablePlan = planCard("Unavailable");
     await expect(unavailablePlan.getByText("قیمت در دسترس نیست")).toBeVisible();
-    await expect(
-      page.getByRole("heading", { name: "Starter" }).locator(".."),
-    ).toContainText("۲٬۰۰۰ تومان");
+    await expect(planCard("Starter")).toContainText("۲٬۰۰۰ تومان");
     await expect(
       unavailablePlan.getByRole("button", { name: "خرید", exact: true }),
     ).toBeDisabled();
-    await page
-      .getByRole("heading", { name: "Starter" })
-      .locator("..")
+    await planCard("Starter")
       .getByRole("button", { name: "خرید", exact: true })
       .click();
     await expect(

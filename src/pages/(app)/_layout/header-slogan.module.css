@@ -1,4 +1,6 @@
 .header {
+  /* Lets header children (account widget) respond to the real header width. */
+  container-type: inline-size;
   isolation: isolate;
   overflow: hidden;
   border-bottom: 1px solid var(--glass-border);

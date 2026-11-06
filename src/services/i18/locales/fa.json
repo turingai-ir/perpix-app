@@ -369,6 +369,27 @@
       "close": "بستن",
       "previousPrice": "قیمت قبل از تخفیف",
       "priceUnavailable": "قیمت در دسترس نیست",
+      "topTierTitle": "الان روی بالاترین بسته‌ای",
+      "topTierDescription": "بستهٔ بالاتری برای ارتقا وجود نداره. وقتی اشتراکت به ۷ روز آخر رسید، می‌تونی تمدیدش کنی.",
+      "level": "سطح {{level}} از {{total}}",
+      "lowerTier": "پایین‌تر از بستهٔ فعلی",
+      "yourPlan": "این پلن شماست",
+      "daysLeft": "{{days}} روز مانده",
+      "recommended": "پیشنهادی",
+      "perDuration": "برای {{days}} روز",
+      "durationDays": "اعتبار {{days}} روزه",
+      "giftBalance": "{{amount}} توکن هدیهٔ کیف پول",
+      "modelsCount": "دسترسی به {{count}} مدل",
+      "upgradeTitle": "ارتقای اشتراک",
+      "renewTitle": "تمدید اشتراک",
+      "upgradeDescription": "بستهٔ بالاتر رو انتخاب کن تا امکانات بیشتری داشته باشی.",
+      "renewDescription": "اشتراکت داره تموم می‌شه؛ برای ادامه تمدیدش کن.",
+      "upgrade": "ارتقا",
+      "renew": "تمدید",
+      "currentPlan": "بستهٔ فعلی",
+      "confirmNotice": "این خرید روی اشتراک فعلی‌ت اثر می‌ذاره. بعد از تأیید به درگاه پرداخت می‌ری.",
+      "confirmAction": "تأیید و پرداخت",
+      "cancel": "انصراف",
       "plans": {
         "basic": {
           "action": "خرید",
@@ -611,6 +632,31 @@
     },
     "app": {
       "layout": {
+        "accountWidget": {
+          "label": "وضعیت حساب",
+          "triggerLabel": "وضعیت حساب: {{balance}} توکن، {{plan}}",
+          "balance": "موجودی توکن",
+          "balanceUnavailable": "نامشخص",
+          "token": "توکن",
+          "plan": "اشتراک",
+          "freePlan": "بدون اشتراک",
+          "freeShort": "رایگان",
+          "daysUnit": "{{days}} روز",
+          "today": "امروز",
+          "creations": "{{count}} ساخت",
+          "spentToday": "مصرف امروز",
+          "createdToday": "ساخت امروز",
+          "runway": "با مصرف این هفته حدود {{days}} روز کافیه",
+          "runwayLow": "اعتبارت فقط برای حدود {{days}} روز کافیه",
+          "runwayLessThanDay": "اعتبارت کمتر از یک روز کافیه",
+          "weekLabel": "مصرف ۷ روز اخیر",
+          "weekEmpty": "هنوز مصرفی در ۷ روز اخیر نداشتی",
+          "daysLeft": "{{days}} روز مانده",
+          "daysShort": "روز",
+          "expiresOn": "تا {{date}}",
+          "zeroBalance": "اعتبارت تموم شده",
+          "charge": "شارژ"
+        },
         "slogan": {
           "brand": "پرپیکس",
           "promise": "می‌تونه!"
@@ -695,7 +741,20 @@
             "noPlan": "بدون اشتراک",
             "chatSupport": "پشتیبانی چت",
             "telegramSupport": "پشتیبانی تلگرام",
-            "upgrade": "خرید اشتراک"
+            "upgrade": "خرید اشتراک",
+            "plan": {
+              "label": "اشتراک من",
+              "freeTitle": "بدون اشتراک",
+              "freeHint": "با خرید اشتراک، همهٔ امکانات و مدل‌ها برات باز می‌شه.",
+              "daysLeft": "{{days}} روز مانده",
+              "endsToday": "امروز تموم می‌شه",
+              "topHint": "از بالاترین بسته استفاده می‌کنی.",
+              "progressLabel": "زمان باقی‌مانده اشتراک",
+              "subscribe": "خرید اشتراک",
+              "upgradeTo": "ارتقا به {{plan}}",
+              "renew": "تمدید اشتراک",
+              "manage": "ارتقا و تمدید اشتراک"
+            }
           }
         }
       }

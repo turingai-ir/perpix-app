@@ -2,6 +2,8 @@ import { lazy } from "react";
 
 export * from "./api";
 export * from "./hook";
+export * from "./plan-tiers";
+export * from "./use-plan-tiers";
 export * from "./state";
 export * from "./types";
 
