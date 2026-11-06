@@ -22,12 +22,12 @@ const referenceFiles = [
 export const fullModelUuid = "a509b349-d43f-4065-9cf2-de444bf4aa2c";
 export const limitedModelUuid = "2d1fcf14-a655-47c5-af08-3fa450dc99cc";
 
-function imageModel(limited: boolean) {
+function imageModel(limited: boolean, aspectRatios: string[]) {
   const properties = {
     prompt: { type: "string", minLength: 3, maxLength: 3000 },
     aspect_ratio: {
       type: "string",
-      enum: ["1:1", "16:9", "9:16"],
+      enum: aspectRatios,
       default: "1:1",
     },
     resolution: { type: "string", enum: ["1K", "2K"], default: "1K" },
@@ -116,12 +116,19 @@ function imageModel(limited: boolean) {
   };
 }
 
-export const test = base.extend<{ safeImageApi: void }>({
+export const test = base.extend<{
+  safeImageApi: void;
+  aspectRatios: string[];
+}>({
+  aspectRatios: [["1:1", "16:9", "9:16"], { option: true }],
   safeImageApi: [
-    async ({ context, baseURL }, runFixture) => {
+    async ({ context, baseURL, aspectRatios }, runFixture) => {
       const mutations: string[] = [];
       const generationRequests: string[] = [];
-      const models = [imageModel(false), imageModel(true)];
+      const models = [
+        imageModel(false, aspectRatios),
+        imageModel(true, aspectRatios),
+      ];
       await context.addInitScript(() => {
         localStorage.clear();
         indexedDB.deleteDatabase("REACT_QUERY_OFFLINE_CACHE");

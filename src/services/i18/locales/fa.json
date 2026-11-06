@@ -199,6 +199,7 @@
   "features": {
     "bootSplash": {
       "loading": "در حال ورود به پرپیکس…",
+      "skip": "ورود به پرپیکس",
       "brand": "PERPIX",
       "versus": "VS",
       "sloganLead": "ایده‌اش با تو،",

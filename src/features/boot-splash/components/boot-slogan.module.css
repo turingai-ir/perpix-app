@@ -1,96 +1,64 @@
-.stage {
-  perspective: 900px;
-  display: grid;
-  place-items: center;
-  gap: 0.35em;
-  font-family: "Vazirmatn", system-ui, sans-serif;
-  font-weight: 900;
-  line-height: 1.25;
+.sign {
+  position: absolute;
+  top: var(--sign-top, 17%);
+  bottom: var(--sign-bottom, auto);
+  left: 50%;
+  width: min(35%, calc(100vw - 3rem));
+  transform: translateX(-50%);
+  padding: clamp(14px, 2vw, 28px);
+  border: 5px solid var(--sign-frame, #292220);
+  border-radius: 8px;
+  background: var(--sign-background, #1a1319e8);
+  box-shadow:
+    inset 0 0 0 1px var(--sign-metal, #79604d),
+    0 2px 0 var(--sign-metal, #8a6f57),
+    0 12px 24px #0009,
+    0 0 80px #a667b526;
   text-align: center;
 }
 
-.block {
-  transform-style: preserve-3d;
-  animation: float 4.2s ease-in-out infinite;
-}
-
-/* Stacked offset shadows extrude the glyphs into a solid 3D slab. */
-.line {
-  position: relative;
-  font-size: clamp(2rem, 6.4vw, 5rem);
-  background: linear-gradient(
-    100deg,
-    #ffffff 0%,
-    #f6d8ff 30%,
-    #e02bd6 46%,
-    #ffffff 50%,
-    #2d7bff 56%,
-    #35c8ff 72%,
-    #ffffff 100%
-  );
-  background-size: 260% 100%;
-  background-clip: text;
-  color: transparent;
-  animation: sweep 2.8s cubic-bezier(0.45, 0, 0.2, 1) infinite;
-  filter: drop-shadow(0 1px 0 #b24ee8) drop-shadow(0 2px 0 #8b3df0)
-    drop-shadow(0 3px 0 #6a34d8) drop-shadow(0 4px 0 #4a2bb8)
-    drop-shadow(0 6px 0 #241a6e) drop-shadow(0 18px 24px rgb(0 0 0 / 65%))
-    drop-shadow(0 0 28px rgb(139 61 240 / 55%));
-}
-
-.accent {
-  font-size: clamp(2.4rem, 8vw, 6.25rem);
-  animation-delay: 0.35s;
-}
-
-/* Neon underline that charges from both ends towards the middle. */
-.charge {
-  height: 3px;
-  width: min(62vw, 520px);
-  border-radius: 999px;
-  background: linear-gradient(90deg, #e02bd6, #8b3df0 50%, #35c8ff);
+.sign::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border: 1px solid var(--sign-edge, #c2a4d0);
+  border-radius: 3px;
   box-shadow:
-    0 0 14px rgb(224 43 214 / 80%),
-    0 0 26px rgb(53 200 255 / 60%);
-  transform-origin: center;
-  animation: charge 1.6s ease-in-out infinite;
+    0 0 5px var(--sign-glow, #ba88d4),
+    inset 0 0 5px var(--sign-glow, #ba88d4);
+  opacity: 0.65;
 }
 
-@keyframes float {
-  0%,
-  100% {
-    transform: rotateX(14deg) rotateY(-8deg) translateZ(0);
-  }
-  50% {
-    transform: rotateX(6deg) rotateY(8deg) translateZ(30px);
-  }
+.sign p {
+  margin: 0;
+  font-size: clamp(1.5rem, 3.5vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1.8;
+  white-space: nowrap;
 }
 
-@keyframes sweep {
-  from {
-    background-position: 100% 0;
-  }
-  to {
-    background-position: -60% 0;
-  }
+.brand {
+  color: #ffe5fc;
+  text-shadow:
+    0 0 3px #fff,
+    0 0 12px var(--brand-glow, #df7eea),
+    0 0 28px var(--brand-glow, #b34cca);
 }
 
-@keyframes charge {
-  0%,
-  100% {
-    transform: scaleX(0.15);
-    opacity: 0.5;
-  }
-  50% {
-    transform: scaleX(1);
-    opacity: 1;
-  }
+.promise {
+  color: #e5f5ff;
+  text-shadow:
+    0 0 3px #fff,
+    0 0 12px var(--promise-glow, #8bd6e7),
+    0 0 28px var(--promise-glow, #528dbb);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .block,
-  .line,
-  .charge {
-    animation: none;
+@media (max-height: 500px) and (orientation: landscape) {
+  .sign {
+    top: var(--sign-top, 22%);
+    padding: 8px 16px;
+  }
+  .sign p {
+    font-size: 1.5rem;
   }
 }

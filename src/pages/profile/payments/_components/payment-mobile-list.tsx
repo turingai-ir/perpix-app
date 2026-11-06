@@ -20,7 +20,7 @@ export function PaymentMobileList({ payments, onOpenDetails }: Props) {
 
   return (
     <ol
-      className="finance-mobile-list"
+      className="finance-mobile-list finance-payment-list"
       aria-label={t("pages.profile.finance.paymentArchive")}
     >
       {payments.map(({ payment, target_type, created_at }) => (
@@ -49,6 +49,9 @@ export function PaymentMobileList({ payments, onOpenDetails }: Props) {
             </span>
           </div>
           <div className="finance-record-footer">
+            <span className="finance-record-id-label">
+              {t("pages.profile.finance.trackingId")}
+            </span>
             <bdi className="finance-record-id" title={payment.id}>
               {payment.id}
             </bdi>

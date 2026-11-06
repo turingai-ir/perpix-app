@@ -1,4 +1,5 @@
 import { useEffect, useState, useSyncExternalStore } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface ReadySource {
   state: { initialized: boolean };
@@ -6,14 +7,27 @@ interface ReadySource {
 }
 
 /**
- * True once the router finished its first load and `minMs` have passed since
- * the splash was `armed` (for the 3D fight: since its first frame).
+ * Wait for the initial route and observed shell-blocking queries, not background
+ * refetches or decorative assets. `minMs` only controls the entrance duration.
  */
 export function useAppReady(
   source: ReadySource,
   minMs: number,
   armed: boolean,
 ) {
+  const cache = useQueryClient().getQueryCache();
+  const shellPending = useSyncExternalStore(
+    (notify) => cache.subscribe(() => notify()),
+    () =>
+      cache
+        .getAll()
+        .some(
+          (query) =>
+            query.meta?.bootBlocking === true &&
+            query.getObserversCount() > 0 &&
+            query.state.status === "pending",
+        ),
+  );
   const initialized = useSyncExternalStore(
     (notify) => source.subscribe(notify),
     () => source.state.initialized,
@@ -26,15 +40,7 @@ export function useAppReady(
     return () => window.clearTimeout(timer);
   }, [minMs, armed]);
 
-  return initialized && waited;
-}
-
-function supportsWebGL() {
-  try {
-    return Boolean(document.createElement("canvas").getContext("webgl2"));
-  } catch {
-    return false;
-  }
+  return initialized && waited && !shellPending;
 }
 
 export const SPLASH_OPT_IN_KEY = "perpix:boot-splash";
@@ -50,18 +56,4 @@ export function shouldShowSplash() {
   } catch {
     return false;
   }
-}
-
-/** Whether the live 3D fight should run on this device. */
-export function useSceneSupport() {
-  const [support] = useState(() => {
-    const reducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-    return {
-      enabled: !reducedMotion && supportsWebGL(),
-      lite: document.documentElement.dataset.fx === "lite",
-    };
-  });
-  return support;
 }

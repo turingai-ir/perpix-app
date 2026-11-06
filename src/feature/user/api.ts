@@ -3,7 +3,9 @@ import { useQueryClient } from "@tanstack/react-query";
 
 export const useUser = () => {
   const { useQuery } = useReactQueryApi();
-  return useQuery("get", "/api/v1/user/get-info", undefined);
+  return useQuery("get", "/api/v1/user/get-info", undefined, {
+    meta: { bootBlocking: true },
+  });
 };
 
 export const useEditUserInfo = () => {
