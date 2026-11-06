@@ -38,11 +38,40 @@
 }
 
 .brand {
-  color: #ffe5fc;
-  text-shadow:
-    0 0 3px #fff,
-    0 0 12px var(--brand-glow, #df7eea),
-    0 0 28px var(--brand-glow, #b34cca);
+  display: inline-block;
+  color: transparent;
+  font-weight: 900;
+  /* Both layers clip to the existing glyphs, preserving joined Persian letters. */
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 96' preserveAspectRatio='none' fill='none'%3E%3Cg stroke='%2396f4ff' stroke-width='1.15' stroke-linecap='round' stroke-linejoin='round' opacity='.85'%3E%3Cpath d='M2 48 18 41 29 48 43 33 55 42 68 35 81 48 96 37 110 46 124 32 139 42 152 35 167 47 181 34 195 43 211 30 225 39 239 33'/%3E%3Cpath d='m43 33 7-12 10 3 6-11m30 24 4-14 10-4m29 23 8 12 12-3 6 13m16-30 1-15 11-6M12 69l18-6 11 7 16-12 12 8 17-9 13 11 15-10 13 7 16-12 14 8 14-9 15 10 12-8 18 6 16-9 12 7'/%3E%3C/g%3E%3C/svg%3E"),
+    linear-gradient(110deg, #ed27cf 8%, #a738e3 43%, #6566ee 68%, #159fef 100%);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: none;
+  filter: drop-shadow(0 0 5px #bd2cdf66) drop-shadow(0 0 12px #248fea40);
+  animation: electric-charge 2200ms cubic-bezier(0.77, 0, 0.175, 1) both;
+}
+
+@keyframes electric-charge {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  40% {
+    opacity: 0.84;
+  }
+  65% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand {
+    animation: none;
+  }
 }
 
 .promise {
