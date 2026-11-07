@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { useDynamicConfigForm } from "@/shared/hooks/use-dynamic-config-form";
+import { useDynamicConfigForm } from "@/features/dynamic-config";
 import type { GenerationPromptBoxProps } from "@/pages/(app)/generation/_components/prompt-box/types";
 import { useModel } from "@/pages/(app)/generation/_hooks/model";
 import { getModelDynamicConfig } from "@/pages/(app)/generation/_utils/model-dynamic-config";

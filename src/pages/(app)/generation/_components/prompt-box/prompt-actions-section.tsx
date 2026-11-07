@@ -4,7 +4,7 @@ import {
   AdvancedPromptSettingsDialog,
   DynamicPromptConfigField,
   type DynamicConfigForm,
-} from "../dynamic-config";
+} from "../../../../../features/dynamic-config";
 import { ModelTokenPriceTooltip } from "../model-token-price-tooltip";
 import { GenerationRulesDialog } from "./generation-rules-dialog";
 import { ImagePromptActions } from "./image-prompt-actions";

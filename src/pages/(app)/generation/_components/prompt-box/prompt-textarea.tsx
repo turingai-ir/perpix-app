@@ -10,7 +10,7 @@ import {
   FormMessage,
 } from "@/shared/ui/form";
 import { ScrollArea } from "@/shared/ui/scroll-area";
-import type { DynamicConfigForm } from "@/pages/(app)/generation/_components/dynamic-config";
+import type { DynamicConfigForm } from "@/features/dynamic-config";
 import { ExpandedPromptEditor } from "./expanded-prompt-editor";
 
 export const PromptTextarea: FC<{

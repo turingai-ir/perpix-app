@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { Images } from "lucide-react";
 import {
+  clearTopLevelMediaConflicts,
   DynamicConfigFileField,
   type DynamicConfigForm,
-} from "@/pages/(app)/generation/_components/dynamic-config";
-import { clearTopLevelMediaConflicts } from "@/pages/(app)/generation/_components/dynamic-config/file-upload/media";
+} from "@/features/dynamic-config";
 import { normalizeMediaIds } from "@/features/media-uploader";
 import { useAppTranslate } from "@/shared/hooks";
 

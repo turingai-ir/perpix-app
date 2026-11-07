@@ -5,7 +5,7 @@ import {
   getPrimaryType,
   type DynamicConfigValues,
   type JsonSchemaProperty,
-} from "@/shared/hooks/use-dynamic-config-form";
+} from "@/features/dynamic-config";
 
 type DynamicFormProperties = Record<string, JsonSchemaProperty>;
 

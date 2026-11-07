@@ -1,6 +1,6 @@
 import { expect, test, type BrowserContext, type Page } from "@playwright/test";
 import { mockAuthenticatedSession } from "../../../../__tests__/support/auth-session";
-import type { SchemaPaymentDetailsResponse } from "../../../services/api";
+import type { SchemaPaymentDetailsResponse } from "../../../shared/api";
 
 const paymentId = "c0202000-0000-4000-8000-000000000005";
 const walletId = "d0202000-0000-4000-8000-000000000005";

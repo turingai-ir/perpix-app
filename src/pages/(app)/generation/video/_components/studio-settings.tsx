@@ -5,7 +5,7 @@ import { VideoDurationControl } from "./video-duration-control";
 import { VideoFormatControl } from "./video-format-control";
 import styles from "../composer.module.css";
 import { useAppTranslate } from "@/shared/hooks";
-import { DynamicPromptConfigField } from "@/pages/(app)/generation/_components/dynamic-config";
+import { DynamicPromptConfigField } from "@/features/dynamic-config";
 import type { useGenerationPromptBox } from "@/pages/(app)/generation/_hooks";
 
 const QUICK_FIELD_ORDER = ["duration", "aspect_ratio", "resolution"];

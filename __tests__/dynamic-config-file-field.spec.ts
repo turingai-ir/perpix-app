@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-import { isListFileField } from "../src/pages/(app)/generation/_components/dynamic-config/file-upload/media";
+import { isListFileField } from "../src/features/dynamic-config/components/file-upload/media";
 
 test("array reference field without x-file metadata is a file list", () => {
   const property = {

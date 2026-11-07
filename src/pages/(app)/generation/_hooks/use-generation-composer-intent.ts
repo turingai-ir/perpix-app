@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 
-import type { DynamicConfigForm } from "../_components/dynamic-config";
+import type { DynamicConfigForm } from "../../../../features/dynamic-config";
 import type { GenerationComposerIntent } from "../_types/conversation";
 import type { useModel } from "./model";
 

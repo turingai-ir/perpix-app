@@ -1,7 +1,7 @@
 import {
   AdvancedPromptSettingsDialog,
   DynamicPromptConfigField,
-} from "../dynamic-config";
+} from "../../../../../features/dynamic-config";
 import { ModelTokenPriceTooltip } from "../model-token-price-tooltip";
 import { GenerationRulesDialog } from "./generation-rules-dialog";
 import { PromptModelSelector } from "./model-selector";

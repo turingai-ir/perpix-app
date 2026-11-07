@@ -12,7 +12,7 @@ import { useWatch } from "react-hook-form";
 
 import styles from "../composer.module.css";
 import { useAppTranslate } from "@/shared/hooks";
-import type { DynamicConfigForm } from "@/pages/(app)/generation/_components/dynamic-config";
+import type { DynamicConfigForm } from "@/features/dynamic-config";
 import { APP_I18_KEYS } from "@/shared/i18n";
 
 interface Props {

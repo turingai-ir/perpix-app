@@ -10,7 +10,7 @@ import {
   getPrimaryType,
   type JsonConfigMeta,
   type JsonConfigSchema,
-} from "../src/shared/hooks/use-dynamic-config-form";
+} from "../src/features/dynamic-config/hooks/use-dynamic-config-form";
 import { getModelDynamicConfig } from "../src/pages/(app)/generation/_utils/model-dynamic-config";
 
 const klingVideoConfig = JSON.parse(

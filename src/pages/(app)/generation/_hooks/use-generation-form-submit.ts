@@ -1,6 +1,6 @@
 import type { SubmitEventHandler } from "react";
 
-import type { DynamicConfigForm } from "@/pages/(app)/generation/_components/dynamic-config";
+import type { DynamicConfigForm } from "@/features/dynamic-config";
 import type { GenerationPromptBoxProps } from "@/pages/(app)/generation/_components/prompt-box/types";
 import type { useModel } from "@/pages/(app)/generation/_hooks/model";
 import { showDynamicFormErrorsToast } from "@/pages/(app)/generation/_utils/dynamic-form-errors-toast";

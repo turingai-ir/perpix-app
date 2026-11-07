@@ -156,7 +156,7 @@ for (const pendingEndpoint of ["csrf", "logout"]) {
       await expect(tab.getByLabel("نام کامل", { exact: true })).toBeVisible();
       await tab.evaluate(async () => {
         const path = "/src/shared/lib/react-query.ts";
-        const { queryClient }: typeof import("../../../lib/react-query") =
+        const { queryClient }: typeof import("../../../shared/lib/react-query") =
           await import(path);
         queryClient.setQueryData(["qa-private-before-logout"], "previous-user");
       });
@@ -191,7 +191,7 @@ for (const pendingEndpoint of ["csrf", "logout"]) {
           const { sessionStore }: typeof import("../services/session-store") =
             await import(storePath);
           const queryPath = "/src/shared/lib/react-query.ts";
-          const { queryClient }: typeof import("../../../lib/react-query") =
+          const { queryClient }: typeof import("../../../shared/lib/react-query") =
             await import(queryPath);
           const fetchPath = "/src/features/auth/services/authorized-fetch.ts";
           const auth: typeof import("../services/authorized-fetch") =

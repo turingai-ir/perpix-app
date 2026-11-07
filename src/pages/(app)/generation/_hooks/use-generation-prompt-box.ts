@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-import { getPromptConfigFieldNames } from "@/pages/(app)/generation/_components/dynamic-config";
+import { getPromptConfigFieldNames } from "@/features/dynamic-config";
 import type { GenerationPromptBoxProps } from "@/pages/(app)/generation/_components/prompt-box/types";
 import { useGenerationDynamicForm } from "@/pages/(app)/generation/_hooks/use-generation-dynamic-form";
 import { useGenerationFormSubmit } from "@/pages/(app)/generation/_hooks/use-generation-form-submit";

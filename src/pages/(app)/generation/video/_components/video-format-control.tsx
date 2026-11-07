@@ -18,7 +18,7 @@ import { useAppTranslate } from "@/shared/hooks";
 import {
   DynamicPromptConfigField,
   type DynamicConfigForm,
-} from "@/pages/(app)/generation/_components/dynamic-config";
+} from "@/features/dynamic-config";
 import { APP_I18_KEYS } from "@/shared/i18n";
 
 type FormatField = "aspect_ratio" | "resolution";
