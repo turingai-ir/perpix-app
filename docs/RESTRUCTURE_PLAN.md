@@ -244,3 +244,4 @@ app → pages → features → shared
 7. **رنگ**: فقط توکن‌های semantic شادسی‌ان (`background`, `foreground`, `card`, `muted`, `primary`, `border`, `ring`, `destructive`) + توکن‌های برند (`--brand-*`, `--image-accent`, `--video-accent`). `#hex` و `rgb()` در کامپوننت ممنوع.
 8. **سایز/فاصله**: فقط مقیاس Tailwind (`gap-2`, `p-4`, `text-sm`…)؛ مقدار دلخواه `[13px]` فقط با دلیل و ترجیحاً با توکن.
 9. **Mobile-first**: کلاس پایه برای موبایل، `md:`/`lg:` برای بزرگ‌تر؛ breakpointهای `max-width` ممنوع.
+10. **استثنا (صحنه‌های هنری انیمیشنی)**: `boot-office`/`boot-slogan`، placeholderهای تولید (`generation-media-placeholder`, `image-generation-placeholder`)، `brand-cinema`، `video-idle-scene` و پس‌زمینه‌ی neural چندین `@keyframes` و مختصات کالیبره‌شده دارند؛ اینها CSS Module کنار کامپوننت می‌مانند، اما فقط با توکن (بدون hex) و بدون layout/رنگ UI عادی.
