@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { Group, Rect, Transformer } from "react-konva";
 import type Konva from "konva";
-import type { CropArea } from "../_model/crop-area";
+import type { CropArea } from "../model/crop-area";
 import { CropShade } from "./crop-shade";
 
 interface ImageCropOverlayProps {

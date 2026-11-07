@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { openAuthenticatedEditor } from "../../../pages/editor/_tests/image-editor-test-setup";
+import { openAuthenticatedEditor } from "../../editor/_tests/image-editor-test-setup";
 
 test("startup removes obsolete API caches and preserves editor drafts", async ({
   page,

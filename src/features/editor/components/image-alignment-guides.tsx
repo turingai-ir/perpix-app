@@ -1,5 +1,5 @@
 import { Line } from "react-konva";
-import type { AlignmentGuide } from "../_model/image-alignment";
+import type { AlignmentGuide } from "../model/image-alignment";
 
 interface ImageAlignmentGuidesProps {
   guides: AlignmentGuide[];

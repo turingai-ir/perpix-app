@@ -1,4 +1,4 @@
-import type { CropArea } from "../_model/crop-area";
+import type { CropArea } from "../model/crop-area";
 
 export function saveCroppedImage(
   image: HTMLImageElement,

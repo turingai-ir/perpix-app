@@ -1,5 +1,5 @@
 import { Rect } from "react-konva";
-import type { CropArea } from "../_model/crop-area";
+import type { CropArea } from "../model/crop-area";
 
 interface CropShadeProps {
   bounds: CropArea;

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useAtom } from "jotai";
 import type Konva from "konva";
-import { zoomAtom, panAtom } from "../_model/editor-settings";
+import { zoomAtom, panAtom } from "../model/editor-settings";
 
 export function useCanvasWheel(
   stageRef: React.RefObject<Konva.Stage | null>,

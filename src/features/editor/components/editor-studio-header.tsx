@@ -1,7 +1,7 @@
 import { useAtom } from "jotai";
 import { ArrowRight, Download, Grid2X2, Ruler, Columns2 } from "lucide-react";
 import { useAppTranslate } from "@/shared/hooks/i18/use-app-translate";
-import { showGridAtom, showRulerAtom } from "../_model/editor-settings";
+import { showGridAtom, showRulerAtom } from "../model/editor-settings";
 import { EditorHistoryControls } from "./editor-history-controls";
 import { ImageEditorZoomControls } from "./image-editor-zoom-controls";
 

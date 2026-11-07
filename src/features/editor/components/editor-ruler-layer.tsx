@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { useAtomValue } from "jotai";
 import { Group, Line, Shape } from "react-konva";
 import type Konva from "konva";
-import { showRulerAtom, zoomAtom, panAtom } from "../_model/editor-settings";
+import { showRulerAtom, zoomAtom, panAtom } from "../model/editor-settings";
 import { drawRulers } from "./draw-rulers";
 
 interface EditorRulerLayerProps {

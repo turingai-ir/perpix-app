@@ -10,13 +10,13 @@ import {
   normalizeCrop,
   type CropArea,
   type CropDisplayOrigin,
-} from "../_model/crop-area";
-import type { CropRatioId } from "../_model/crop-ratios";
+} from "../model/crop-area";
+import type { CropRatioId } from "../model/crop-ratios";
 import type { ImageEditorWorkspaceViewModel } from "./image-editor-workspace-types";
 import { useImageWorkspaceHistory } from "./use-image-workspace-history";
 import { useInitialZoomResets } from "./use-initial-zoom-resets";
-import { zoomAtom, panAtom } from "../_model/editor-settings";
-import { DEFAULT_EDITOR_EDITS, type EditorEdits } from "../_model/editor-edits";
+import { zoomAtom, panAtom } from "../model/editor-settings";
+import { DEFAULT_EDITOR_EDITS, type EditorEdits } from "../model/editor-edits";
 
 const ZERO_SIZE = { height: 0, width: 0 };
 

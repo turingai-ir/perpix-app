@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { CROP_RATIO_OPTIONS, type CropRatioId } from "../_model/crop-ratios";
-import type { CropArea } from "../_model/crop-area";
+import { CROP_RATIO_OPTIONS, type CropRatioId } from "../model/crop-ratios";
+import type { CropArea } from "../model/crop-area";
 
 const FULL_AREA: CropArea = { height: 1, width: 1, x: 0, y: 0 };
 

@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { useAtom } from "jotai";
 import type Konva from "konva";
-import { zoomAtom, panAtom } from "../_model/editor-settings";
+import { zoomAtom, panAtom } from "../model/editor-settings";
 
 interface TouchPanHandlers {
   onMouseDown: (e: Konva.KonvaEventObject<MouseEvent>) => void;

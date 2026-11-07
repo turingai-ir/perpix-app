@@ -6,9 +6,9 @@ import {
   Download,
 } from "lucide-react";
 import { useAppTranslate } from "@/shared/hooks/i18/use-app-translate";
-import type { ImageEditorWorkspaceViewModel } from "../_hooks/image-editor-workspace-types";
-import { CROP_RATIO_OPTIONS, type CropRatioId } from "../_model/crop-ratios";
-import { DEFAULT_EDITOR_EDITS, type EditorEdits } from "../_model/editor-edits";
+import type { ImageEditorWorkspaceViewModel } from "../hooks/image-editor-workspace-types";
+import { CROP_RATIO_OPTIONS, type CropRatioId } from "../model/crop-ratios";
+import { DEFAULT_EDITOR_EDITS, type EditorEdits } from "../model/editor-edits";
 import { EditorOverlayControls } from "./editor-overlay-controls";
 import { EditorOutputSize } from "./editor-output-size";
 

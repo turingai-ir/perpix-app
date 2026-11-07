@@ -1,4 +1,4 @@
-import type { CropArea } from "../_model/crop-area";
+import type { CropArea } from "../model/crop-area";
 import { ImageEditorHeaderLeft } from "./image-editor-header-left";
 import { ImageEditorHeaderRight } from "./image-editor-header-right";
 import { ScrollArea } from "@/shared/ui/scroll-area";

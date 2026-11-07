@@ -1,5 +1,5 @@
 import { Group, Image as KonvaImage, Rect } from "react-konva";
-import type { CropArea } from "../_model/crop-area";
+import type { CropArea } from "../model/crop-area";
 
 export type CanvasDragMoveHandler = NonNullable<
   React.ComponentProps<typeof Group>["onDragMove"]

@@ -1,8 +1,8 @@
 import type Konva from "konva";
-import type { AlignmentGuide } from "../_model/image-alignment";
-import type { CropArea, CropDisplayOrigin } from "../_model/crop-area";
-import type { CropRatioId } from "../_model/crop-ratios";
-import type { EditorEdits } from "../_model/editor-edits";
+import type { AlignmentGuide } from "../model/image-alignment";
+import type { CropArea, CropDisplayOrigin } from "../model/crop-area";
+import type { CropRatioId } from "../model/crop-ratios";
+import type { EditorEdits } from "../model/editor-edits";
 
 export interface DisplaySize {
   height: number;
