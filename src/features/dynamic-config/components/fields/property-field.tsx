@@ -2,7 +2,10 @@ import type { FC } from "react";
 
 import { DynamicConfigFileField } from "../file-upload/file-field";
 import { clearElementMediaConflicts } from "../file-upload/media";
-import { getNestedLabel, resolvePropertyInputType } from "../../model/field-schema";
+import {
+  getNestedLabel,
+  resolvePropertyInputType,
+} from "../../model/field-schema";
 import type { DynamicConfigPropertyFieldProps } from "../../model/field-types";
 import { DynamicConfigArrayField } from "./array-field";
 import {

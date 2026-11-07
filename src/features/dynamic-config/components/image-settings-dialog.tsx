@@ -18,7 +18,9 @@ import { useIsMobile } from "@/shared/hooks/use-mobile";
 import { ImageSettingsFields } from "./image-settings-fields";
 import { useImageSettings } from "../hooks/use-image-settings";
 import type { DynamicConfigForm } from "../model/field-types";
-import styles from "./image-settings.module.css";
+import { Badge } from "@/shared/ui/badge";
+import { cn } from "@/shared/lib/utils";
+import { SETTINGS_BORDER_CLASS } from "./image-settings-styles";
 
 export function ImageSettingsDialog({
   dynamicForm,
@@ -76,26 +78,31 @@ export function ImageSettingsDialog({
         type="button"
         variant="outline"
         disabled={disabled}
-        className={styles.trigger}
+        className="bg-muted/35 aria-expanded:border-primary min-h-11 gap-2 rounded-xl aria-expanded:bg-[color-mix(in_srgb,var(--primary)_10%,var(--card))]"
         aria-expanded={open}
         onClick={() => setOpen(true)}
       >
         <SlidersHorizontal aria-hidden="true" className="size-4" />
         {title}
         {settings.changed.length > 0 && (
-          <span
-            className={styles.count}
+          <Badge
+            variant="outline"
+            className="border-primary/28 text-foreground h-auto rounded-md bg-[color-mix(in_srgb,var(--primary)_18%,var(--card))] px-1.5 py-0.5"
             aria-label={t(
               "pages.generation.image.studio.settings.changedCount",
               { count: settings.changed.length },
             )}
           >
             {settings.changed.length}
-          </span>
+          </Badge>
         )}
       </Button>
       <Content
-        className={styles.panel}
+        className={cn(
+          "bg-popover/94 flex max-h-[min(820px,calc(100dvh-48px))] w-[calc(100vw-48px)] max-w-140 flex-col gap-0 overflow-hidden rounded-3xl border-[color-mix(in_srgb,var(--foreground)_14%,var(--border))] bg-[radial-gradient(circle_at_85%_-10%,color-mix(in_srgb,var(--primary)_13%,transparent),transparent_38%)] p-0 shadow-[inset_0_1px_color-mix(in_srgb,var(--foreground)_10%,transparent),0_28px_100px_rgb(0_0_0/52%)] backdrop-blur-xl backdrop-saturate-[145%] motion-reduce:animate-none motion-reduce:transition-none",
+          "data-[slot=drawer-content]:max-h-[90dvh] data-[slot=drawer-content]:w-full data-[slot=drawer-content]:max-w-none data-[slot=drawer-content]:rounded-t-3xl data-[slot=drawer-content]:rounded-b-none",
+          "contrast-more:border-foreground",
+        )}
         {...(!mobile ? { showCloseButton: false } : {})}
         {...(mobile
           ? {
@@ -106,15 +113,22 @@ export function ImageSettingsDialog({
             }
           : { finalFocus: triggerRef })}
       >
-        <header className={styles.header}>
-          <div className={styles.headingRow}>
-            <span className={styles.headingIcon}>
+        <header
+          className={cn(
+            "from-foreground/4 flex-none border-b bg-linear-to-b to-transparent px-5 py-4 md:px-6 md:pt-6 md:pb-5",
+            SETTINGS_BORDER_CLASS,
+          )}
+        >
+          <div className="flex items-center gap-3">
+            <span className="border-primary/28 bg-primary/12 text-primary grid size-11 flex-none place-items-center rounded-[14px] border shadow-[inset_0_1px_color-mix(in_srgb,var(--foreground)_10%,transparent),0_8px_24px_color-mix(in_srgb,var(--primary)_12%,transparent)] [&_svg]:size-5">
               <SlidersHorizontal aria-hidden="true" />
             </span>
             <div className="min-w-0 flex-1">
-              <Title className={styles.title}>{title}</Title>
+              <Title className="text-lg leading-relaxed font-semibold">
+                {title}
+              </Title>
               {modelName && (
-                <p className={styles.model}>
+                <p className="text-muted-foreground text-start text-xs leading-loose wrap-anywhere">
                   <bdi dir="ltr">{modelName}</bdi>
                 </p>
               )}
@@ -129,11 +143,11 @@ export function ImageSettingsDialog({
               <X aria-hidden="true" />
             </Button>
           </div>
-          <Description className={styles.description}>
+          <Description className="text-muted-foreground mt-4 text-[13px] leading-loose">
             {t("pages.generation.image.studio.settingsHelp")}
           </Description>
         </header>
-        <div className={styles.scroll}>
+        <div className="min-h-0 flex-1 [scrollbar-width:none] overflow-y-auto overscroll-contain [&::-webkit-scrollbar]:hidden">
           <ImageSettingsFields
             dynamicForm={dynamicForm}
             settings={settings}
@@ -142,9 +156,11 @@ export function ImageSettingsDialog({
             onProfessionalOpenChange={setProfessionalOpen}
           />
         </div>
-        <footer className={styles.footer}>
-          <p>{t("pages.generation.image.studio.settings.liveHint")}</p>
-          <div className={styles.footerActions}>
+        <footer className="contrast-more:border-foreground flex-none border-t border-[color-mix(in_srgb,var(--foreground)_14%,var(--border))] bg-[color-mix(in_srgb,var(--muted)_42%,var(--popover))] px-5 pt-3 pb-[max(16px,env(safe-area-inset-bottom))] shadow-[0_-10px_28px_rgb(0_0_0/8%)] md:px-6 md:pt-4 md:pb-5">
+          <p className="text-muted-foreground mb-3 text-xs leading-relaxed">
+            {t("pages.generation.image.studio.settings.liveHint")}
+          </p>
+          <div className="flex items-center justify-between gap-3 [&_button]:min-h-11 [&_button]:rounded-xl">
             <Button
               type="button"
               variant="ghost"

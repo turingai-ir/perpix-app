@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 import { useAppTranslate } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";
-import styles from "./studio.module.css";
+import styles from "./studio-scene.module.css";
 
 const nodes = [
   [7, 37],

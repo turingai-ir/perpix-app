@@ -6,7 +6,7 @@ import { useNeuralCanvasSize } from "../hooks/use-neural-canvas-size";
 import { useNeuralAnimation } from "../hooks/use-neural-animation";
 import { useAnimationVisibility } from "@/shared/hooks/use-animation-visibility";
 import { NeuralNetworkLayer } from "./neural-network-layer";
-import styles from "./studio.module.css";
+import styles from "./studio-scene.module.css";
 
 export function NeuralNetworkBackground() {
   const { containerRef, width, height } = useNeuralCanvasSize();

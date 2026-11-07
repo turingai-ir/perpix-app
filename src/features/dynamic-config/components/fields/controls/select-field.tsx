@@ -19,8 +19,14 @@ import {
 } from "@/shared/ui/select";
 import type { JsonSchemaProperty } from "@/features/dynamic-config/hooks/use-dynamic-config-form.ts";
 
-import { coerceSelectValue, resolveFieldValue } from "../../../model/field-schema";
-import type { DynamicConfigForm, DynamicConfigOptions } from "../../../model/field-types";
+import {
+  coerceSelectValue,
+  resolveFieldValue,
+} from "../../../model/field-schema";
+import type {
+  DynamicConfigForm,
+  DynamicConfigOptions,
+} from "../../../model/field-types";
 import type { FieldLayoutClasses } from "./field-layout";
 
 export const DynamicConfigSelectField: FC<{
