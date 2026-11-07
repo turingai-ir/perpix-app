@@ -4,7 +4,7 @@ import { FaTelegramPlane } from "react-icons/fa";
 
 import { buttonVariants } from "@/shared/ui/button";
 import { cn } from "@/shared/lib/utils";
-// import { useSupportChatWidget } from "@/feature/support-chat";
+// import { useSupportChatWidget } from "@/features/support-chat";
 import { useAppTranslate } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";
 import AppLayoutSidebarPlanCard from "./plan-card";

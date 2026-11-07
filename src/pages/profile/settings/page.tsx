@@ -24,7 +24,7 @@ import {
   FormMessage,
 } from "@/shared/ui/form";
 import { Input } from "@/shared/ui/input";
-import { useEditUserInfo, useUser } from "@/feature/user";
+import { useEditUserInfo, useUser } from "@/features/user";
 import { useAppTranslate } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";
 

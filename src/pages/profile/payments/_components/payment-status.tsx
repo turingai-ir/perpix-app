@@ -6,7 +6,7 @@ import {
   XCircle,
 } from "lucide-react";
 
-import type { PaymentViewStatus } from "@/feature/payment";
+import type { PaymentViewStatus } from "@/features/payment";
 import { useAppTranslate } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";
 

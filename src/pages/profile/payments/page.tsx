@@ -3,8 +3,11 @@ import { Radio } from "lucide-react";
 import { useSearchParams } from "react-router";
 
 import { Button } from "@/shared/ui/button";
-import { usePayments, getPaymentViewStatus } from "@/feature/payment";
-import { PaymentDetailsDialog } from "@/features/payment";
+import {
+  getPaymentViewStatus,
+  PaymentDetailsDialog,
+  usePayments,
+} from "@/features/payment";
 import { useAppTranslate } from "@/shared/hooks";
 import { FinanceHero } from "@/pages/profile/_components/finance-hero";
 import { FinanceToolbar } from "@/pages/profile/_components/finance-toolbar";

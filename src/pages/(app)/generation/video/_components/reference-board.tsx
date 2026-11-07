@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Paperclip } from "lucide-react";
 
 import styles from "../composer.module.css";
-import { normalizeMediaIds } from "@/feature/media-uploader";
+import { normalizeMediaIds } from "@/features/media-uploader";
 import { useAppTranslate } from "@/shared/hooks";
 import { DynamicConfigFileField } from "@/pages/(app)/generation/_components/dynamic-config";
 import {

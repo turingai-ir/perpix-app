@@ -5,7 +5,7 @@ import { DashboardFileVisual } from "./dashboard-file-visual";
 import styles from "../dashboard.module.css";
 
 import { Skeleton } from "@/shared/ui/skeleton";
-import type { FilePreviewUrls, UserFileItem } from "@/feature/file-manager";
+import type { FilePreviewUrls, UserFileItem } from "@/features/file-manager";
 import { useAppTranslate } from "@/shared/hooks";
 import { cn } from "@/shared/lib/utils";
 import { APP_ROUTES_KEY } from "@/app/router/routes";

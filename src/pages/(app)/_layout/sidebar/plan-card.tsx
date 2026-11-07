@@ -2,7 +2,7 @@ import { type CSSProperties, type FC } from "react";
 import { ArrowUpLeft, Crown, Sparkles } from "lucide-react";
 
 import { Skeleton } from "@/shared/ui/skeleton";
-import { usePlanTiers, usePricingFeature } from "@/feature/pricing";
+import { usePlanTiers, usePricingFeature } from "@/features/pricing";
 import { useAppTranslate } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";
 import styles from "./plan-card.module.css";

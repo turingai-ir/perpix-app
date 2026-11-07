@@ -1,6 +1,5 @@
 import { Button } from "@/shared/ui/button";
-import { getPaymentViewStatus } from "@/feature/payment";
-import { PaymentAmount } from "@/features/payment";
+import { getPaymentViewStatus, PaymentAmount } from "@/features/payment";
 import { useAppTranslate } from "@/shared/hooks";
 import { dayjs } from "@/shared/lib/dayjs";
 import type { SchemaPaymentHistoryItemResponse } from "@/shared/api";

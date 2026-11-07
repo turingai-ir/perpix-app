@@ -1,6 +1,6 @@
-import { useActiveSubscription } from "@/feature/pricing";
-import { useUser } from "@/feature/user";
-import { useWallet, useWalletTransactions } from "@/feature/wallet";
+import { useActiveSubscription } from "@/features/pricing";
+import { useUser } from "@/features/user";
+import { useWallet, useWalletTransactions } from "@/features/wallet";
 import type {
   SchemaGetWalletResponse,
   SchemaGetWalletTransactionsResponse,

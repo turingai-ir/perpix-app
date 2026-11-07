@@ -15,7 +15,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/shared/ui/dropdown-menu";
-import { useActiveSubscription, usePricingFeature } from "@/feature/pricing";
+import { useActiveSubscription, usePricingFeature } from "@/features/pricing";
 import { useSignOutActions } from "@/features/auth";
 import { useAppTranslate } from "@/shared/hooks";
 import { APP_ROUTES_KEY } from "@/app/router/routes";

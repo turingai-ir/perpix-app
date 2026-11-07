@@ -17,8 +17,8 @@ import {
   useAuthStatus,
   useSessionLifecycle,
 } from "@/features/auth";
-import { usePricingFeature } from "@/feature/pricing";
-import { PaymentEventsProvider } from "@/feature/payment";
+import { usePricingFeature } from "@/features/pricing";
+import { PaymentEventsProvider } from "@/features/payment";
 import appLayoutAtom from "@/pages/(app)/_layout/_state";
 
 const AUTH_ENDPOINT_PREFIX = "/api/v1/auth/";

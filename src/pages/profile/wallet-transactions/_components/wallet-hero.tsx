@@ -2,8 +2,8 @@ import { useState } from "react";
 import { Plus, Wallet } from "lucide-react";
 
 import { Button } from "@/shared/ui/button";
-import { useActiveSubscription, usePricingFeature } from "@/feature/pricing";
-import { useWallet, WalletChargeFlow } from "@/feature/wallet";
+import { useActiveSubscription, usePricingFeature } from "@/features/pricing";
+import { useWallet, WalletChargeFlow } from "@/features/wallet";
 import { useAppTranslate } from "@/shared/hooks";
 import { FinanceHero } from "@/pages/profile/_components/finance-hero";
 import { APP_I18_KEYS } from "@/shared/i18n";

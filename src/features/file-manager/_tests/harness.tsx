@@ -9,8 +9,8 @@ import {
   useDeleteUserFile,
   useReplaceUserFile,
   useInfiniteUserFiles,
-} from "@/feature/file-manager";
-import { MediaUploadStrip } from "@/feature/media-uploader";
+} from "@/features/file-manager";
+import { MediaUploadStrip } from "@/features/media-uploader";
 
 function Harness() {
   const [result, setResult] = useState("");

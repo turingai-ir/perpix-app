@@ -21,7 +21,7 @@ const ui = [
   "__tests__/sidebar-install-accessibility.spec.ts",
   "__tests__/media-preview-actions.spec.ts",
   "__tests__/app-layout-scroll.spec.ts",
-  "src/feature/pricing/_tests/pricing-empty.spec.ts",
+  "src/features/pricing/_tests/pricing-empty.spec.ts",
   "src/pages/profile/_tests/finance-pages.spec.ts",
   "src/pages/(app)/generation/_tests/prompt-field.spec.ts",
 ];

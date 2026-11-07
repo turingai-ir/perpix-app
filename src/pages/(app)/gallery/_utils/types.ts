@@ -1,7 +1,7 @@
 import type {
   FileManagerAllowedContentType,
   UserFileItem,
-} from "@/feature/file-manager";
+} from "@/features/file-manager";
 
 export type GalleryFilter = "all" | "image" | "video" | "audio";
 export type GalleryMediaType = Exclude<GalleryFilter, "all">;

@@ -6,10 +6,10 @@ import { Button, buttonVariants } from "@/shared/ui/button";
 import { cn } from "@/shared/lib/utils";
 import {
   getPaymentViewStatus,
+  PaymentAmount,
   usePaymentStatus,
   useRetryPayment,
-} from "@/feature/payment";
-import { PaymentAmount } from "@/features/payment";
+} from "@/features/payment";
 import { useAppTranslate } from "@/shared/hooks";
 import { APP_ROUTES_KEY } from "@/app/router/routes";
 import { APP_I18_KEYS } from "@/shared/i18n";

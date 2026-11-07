@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 
-import { usePlanTiers } from "@/feature/pricing";
-import { useWallet, useWalletTransactions } from "@/feature/wallet";
+import { usePlanTiers } from "@/features/pricing";
+import { useWallet, useWalletTransactions } from "@/features/wallet";
 import type { SchemaGetWalletTransactionsResponse } from "@/shared/api";
 import { formatTokenAmount } from "@/shared/utils";
 
