@@ -14,8 +14,8 @@ import { useDashboardAccount } from "./_hooks/use-dashboard-account";
 import { useDashboardContent } from "./_hooks/use-dashboard-content";
 import { useDashboardVisualQuality } from "./_hooks/use-dashboard-visual-quality";
 
-import { useAppTranslate } from "@/hooks";
-import { APP_I18_KEYS } from "@/services/i18";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_I18_KEYS } from "@/shared/i18n";
 
 const AppPage = () => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);

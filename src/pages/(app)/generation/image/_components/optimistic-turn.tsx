@@ -1,9 +1,9 @@
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { ChatBubble } from "@/components/custom";
+import { Avatar, AvatarImage } from "@/shared/ui/avatar";
+import { ChatBubble } from "@/shared/components";
 import { GenerationFailure } from "@/pages/(app)/generation/_components/generation-failure";
 import { ImageGenerationPlaceholder } from "./image-generation-placeholder";
 import type { OptimisticGenerationTurn } from "@/pages/(app)/generation/_types/conversation";
-import { useAppTranslate } from "@/hooks";
+import { useAppTranslate } from "@/shared/hooks";
 import { ImageRequestSummary } from "./request-summary";
 
 export function OptimisticImageTurn({

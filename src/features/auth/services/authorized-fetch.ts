@@ -3,8 +3,8 @@ import { sessionStore } from "./session-store";
 
 import { AuthRequestError } from "../model/auth-failure";
 
-import { FetchHttpError } from "@/utils/custom-fetch/fetch-errors";
-import { HttpStatus } from "@/utils/custom-fetch/http-status";
+import { FetchHttpError } from "@/shared/utils/custom-fetch/fetch-errors";
+import { HttpStatus } from "@/shared/utils/custom-fetch/http-status";
 
 const AUTH_PREFIX = "/api/v1/auth/";
 const COOKIE_OR_PUBLIC_AUTH_PATHS = [

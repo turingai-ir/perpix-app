@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { apiClient } from "@/services/api";
+import { apiClient } from "@/shared/api";
 import { sessionStore } from "@/features/auth/session";
 import { fileIdSchema } from "../model/contracts";
 import {

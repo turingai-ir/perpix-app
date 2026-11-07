@@ -1,4 +1,4 @@
-import type { SchemaWalletTransactionResponse } from "@/services/api";
+import type { SchemaWalletTransactionResponse } from "@/shared/api";
 
 import { WalletMobileList } from "./wallet-mobile-list";
 import { WalletTable } from "./wallet-table";

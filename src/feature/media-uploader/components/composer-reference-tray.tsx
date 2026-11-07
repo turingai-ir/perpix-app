@@ -1,9 +1,9 @@
 import { Plus } from "lucide-react";
 import type { FC } from "react";
 
-import { useAppTranslate } from "@/hooks";
-import { APP_I18_KEYS } from "@/services/i18";
-import { formatLocalizedNumber } from "@/utils";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_I18_KEYS } from "@/shared/i18n";
+import { formatLocalizedNumber } from "@/shared/utils";
 import { FileManagerUploadStatus } from "@/feature/file-manager";
 
 import { LocalMediaPreviewItem, MediaPreviewItem } from "./media-strip-items";

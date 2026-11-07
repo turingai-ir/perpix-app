@@ -7,11 +7,11 @@ import {
   FetchHttpError,
   FetchNetworkError,
   FetchTimeoutError,
-} from "@/utils/custom-fetch/fetch-errors";
-import { HttpStatus } from "@/utils";
-import { useAppTranslate } from "@/hooks";
-import { getViewportBreakpoints } from "@/hooks/use-viewport-breakpoint";
-import { appEventBus } from "@/lib/event-bus";
+} from "@/shared/utils/custom-fetch/fetch-errors";
+import { HttpStatus } from "@/shared/utils";
+import { useAppTranslate } from "@/shared/hooks";
+import { getViewportBreakpoints } from "@/shared/hooks/use-viewport-breakpoint";
+import { appEventBus } from "@/shared/lib/event-bus";
 import {
   AuthUnavailable,
   useAuthStatus,

@@ -1,7 +1,7 @@
 import type {
   SchemaSubscriptionPlanResponse,
   SchemaUserSubscriptionResponse,
-} from "@/services/api";
+} from "@/shared/api";
 
 export type PlanTierStatus = "free" | "upgradable" | "top";
 

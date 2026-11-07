@@ -8,8 +8,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { ScrollArea } from "@/components/ui/scroll-area";
+} from "@/shared/ui/form";
+import { ScrollArea } from "@/shared/ui/scroll-area";
 import type { DynamicConfigForm } from "@/pages/(app)/generation/_components/dynamic-config";
 import { ExpandedPromptEditor } from "./expanded-prompt-editor";
 

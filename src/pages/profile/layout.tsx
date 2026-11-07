@@ -2,10 +2,10 @@ import type { FC } from "react";
 import { CreditCard, History, Settings } from "lucide-react";
 import { NavLink, Outlet } from "react-router";
 
-import { APP_ROUTES_KEY } from "@/router/routes";
-import { cn } from "@/lib/utils";
-import { useAppTranslate } from "@/hooks";
-import { APP_I18_KEYS } from "@/services/i18";
+import { APP_ROUTES_KEY } from "@/app/router/routes";
+import { cn } from "@/shared/lib/utils";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_I18_KEYS } from "@/shared/i18n";
 
 const profileNavItems = [
   {

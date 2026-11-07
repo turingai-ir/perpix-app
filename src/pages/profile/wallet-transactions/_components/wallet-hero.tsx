@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { Plus, Wallet } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import { useActiveSubscription, usePricingFeature } from "@/feature/pricing";
 import { useWallet, WalletChargeFlow } from "@/feature/wallet";
-import { useAppTranslate } from "@/hooks";
+import { useAppTranslate } from "@/shared/hooks";
 import { FinanceHero } from "@/pages/profile/_components/finance-hero";
-import { APP_I18_KEYS } from "@/services/i18";
-import { formatTokenAmount } from "@/utils";
+import { APP_I18_KEYS } from "@/shared/i18n";
+import { formatTokenAmount } from "@/shared/utils";
 
 export function WalletHero() {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);

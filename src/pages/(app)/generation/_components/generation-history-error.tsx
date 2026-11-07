@@ -3,8 +3,8 @@ import { Link } from "react-router";
 
 import type { GenerationHistoryErrorKind } from "../_types/conversation";
 
-import { Button, buttonVariants } from "@/components/ui/button";
-import { useAppTranslate } from "@/hooks";
+import { Button, buttonVariants } from "@/shared/ui/button";
+import { useAppTranslate } from "@/shared/hooks";
 
 interface Props {
   kind: GenerationHistoryErrorKind;

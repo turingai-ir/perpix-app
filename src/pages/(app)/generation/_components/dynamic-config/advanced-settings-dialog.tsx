@@ -1,7 +1,7 @@
 import type { FC } from "react";
 import { SlidersHorizontal } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -9,10 +9,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { useAppTranslate } from "@/hooks";
-import { APP_I18_KEYS } from "@/services/i18";
+} from "@/shared/ui/dialog";
+import { ScrollArea } from "@/shared/ui/scroll-area";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_I18_KEYS } from "@/shared/i18n";
 
 import { DynamicPromptConfigField } from "./dynamic-config-field";
 import { ImageSettingsDialog } from "./image-settings-dialog";

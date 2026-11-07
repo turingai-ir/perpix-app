@@ -1,4 +1,4 @@
-import { apiClient } from "@/services/api/client";
+import { apiClient } from "@/shared/api/client";
 import type { FileManagerAllowedContentType } from "../model/content-types";
 import { httpError, requireOnline, toFileManagerError } from "../model/errors";
 import { serializeFile } from "./transport";

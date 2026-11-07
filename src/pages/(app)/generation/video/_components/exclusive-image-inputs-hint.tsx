@@ -1,8 +1,8 @@
 import type { FC } from "react";
 
-import { Muted } from "@/components/ui/typography";
-import { useAppTranslate } from "@/hooks";
-import type { JsonConfigSchema } from "@/hooks/use-dynamic-config-form/types";
+import { Muted } from "@/shared/ui/typography";
+import { useAppTranslate } from "@/shared/hooks";
+import type { JsonConfigSchema } from "@/shared/hooks/use-dynamic-config-form/types";
 
 const FRAME_IMAGES_FIELD = "frame_images";
 const REFERENCE_IMAGES_FIELD = "reference_images";

@@ -1,8 +1,8 @@
 import type { FC } from "react";
 
-import { Muted } from "@/components/ui/typography";
-import { useAppTranslate } from "@/hooks";
-import { APP_I18_KEYS } from "@/services/i18";
+import { Muted } from "@/shared/ui/typography";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_I18_KEYS } from "@/shared/i18n";
 
 const defaultPerpixMainUrl = "https://perpixai.ir";
 

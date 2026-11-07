@@ -1,12 +1,12 @@
 import { CalendarDays, ReceiptText } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import { getPaymentViewStatus } from "@/feature/payment";
 import { PaymentAmount } from "@/features/payment";
-import { useAppTranslate } from "@/hooks";
-import { dayjs } from "@/lib/dayjs";
-import type { SchemaPaymentHistoryItemResponse } from "@/services/api";
-import { APP_I18_KEYS } from "@/services/i18";
+import { useAppTranslate } from "@/shared/hooks";
+import { dayjs } from "@/shared/lib/dayjs";
+import type { SchemaPaymentHistoryItemResponse } from "@/shared/api";
+import { APP_I18_KEYS } from "@/shared/i18n";
 
 import { PaymentStatus } from "./payment-status";
 

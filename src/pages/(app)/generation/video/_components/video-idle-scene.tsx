@@ -1,6 +1,6 @@
 import { useId, type CSSProperties } from "react";
 
-import { useAppTranslate } from "@/hooks";
+import { useAppTranslate } from "@/shared/hooks";
 import styles from "./video-idle-scene.module.css";
 
 // Six folded exposures surround the same moment, separate, then become one.

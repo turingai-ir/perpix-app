@@ -10,10 +10,10 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useAppTranslate, useViewportBreakpoint } from "@/hooks";
-import { APP_I18_KEYS } from "@/services/i18";
+} from "@/shared/ui/popover";
+import { Skeleton } from "@/shared/ui/skeleton";
+import { useAppTranslate, useViewportBreakpoint } from "@/shared/hooks";
+import { APP_I18_KEYS } from "@/shared/i18n";
 
 const PREFIX = "pages.app.layout.accountWidget";
 

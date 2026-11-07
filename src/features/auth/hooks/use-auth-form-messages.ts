@@ -2,8 +2,8 @@ import { useMemo } from "react";
 
 import type { AuthFormMessages } from "../model/schemas";
 
-import { useAppTranslate } from "@/hooks";
-import { APP_I18_KEYS } from "@/services/i18";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_I18_KEYS } from "@/shared/i18n";
 
 export function useAuthFormMessages(): AuthFormMessages {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);

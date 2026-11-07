@@ -1,8 +1,8 @@
 import { useRef, useState, type CSSProperties } from "react";
 import { Clapperboard, Pause, Play } from "lucide-react";
-import { useAnimationVisibility } from "@/hooks/use-animation-visibility";
+import { useAnimationVisibility } from "@/shared/hooks/use-animation-visibility";
 
-import { useAppTranslate } from "@/hooks";
+import { useAppTranslate } from "@/shared/hooks";
 import styles from "./brand-cinema.module.css";
 import { VideoIdleScene } from "./video-idle-scene";
 

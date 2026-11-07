@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Check, FileAudio, FileVideo, Image as ImageIcon } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/shared/ui/skeleton";
 
 type MediaKind = "image" | "video" | "audio";
 interface Props {

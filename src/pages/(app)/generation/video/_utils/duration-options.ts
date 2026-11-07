@@ -1,6 +1,6 @@
 import Ajv from "ajv";
 
-import type { JsonSchemaProperty } from "@/hooks/use-dynamic-config-form";
+import type { JsonSchemaProperty } from "@/shared/hooks/use-dynamic-config-form";
 
 type DurationProperty = JsonSchemaProperty & {
   anyOf?: DurationProperty[];

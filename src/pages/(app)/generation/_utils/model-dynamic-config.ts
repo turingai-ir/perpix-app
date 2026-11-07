@@ -5,7 +5,7 @@ import {
   type JsonConfigMeta,
   type JsonConfigSchema,
   type JsonSchemaProperty,
-} from "@/hooks/use-dynamic-config-form";
+} from "@/shared/hooks/use-dynamic-config-form";
 
 type ModeConfig = {
   config_schema: JsonConfigSchema;

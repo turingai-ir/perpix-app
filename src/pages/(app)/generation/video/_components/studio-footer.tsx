@@ -1,13 +1,13 @@
 import { Coins, WifiOff } from "lucide-react";
 
 import styles from "../composer.module.css";
-import { Button } from "@/components/ui/button";
-import { useAppTranslate } from "@/hooks";
+import { Button } from "@/shared/ui/button";
+import { useAppTranslate } from "@/shared/hooks";
 import { GenerationRulesDialog } from "@/pages/(app)/generation/_components/prompt-box/generation-rules-dialog";
 import { PromptSubmitButton } from "@/pages/(app)/generation/_components/prompt-box/submit-button";
 import type { useGenerationPromptBox } from "@/pages/(app)/generation/_hooks";
 import { getTierPriceUsdmicroRange } from "@/pages/(app)/generation/_utils/model-pricing";
-import { formatTokenAmount } from "@/utils";
+import { formatTokenAmount } from "@/shared/utils";
 
 type Studio = ReturnType<typeof useGenerationPromptBox>;
 export function VideoStudioFooter({

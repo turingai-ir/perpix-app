@@ -1,16 +1,16 @@
 import type { FC } from "react";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import {
   FormControl,
   FormDescription,
   FormField,
   FormItem,
   FormMessage,
-} from "@/components/ui/form";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import type { JsonSchemaProperty } from "@/hooks/use-dynamic-config-form";
-import { cn } from "@/lib/utils";
+} from "@/shared/ui/form";
+import { ScrollArea } from "@/shared/ui/scroll-area";
+import type { JsonSchemaProperty } from "@/shared/hooks/use-dynamic-config-form";
+import { cn } from "@/shared/lib/utils";
 
 import { coerceSelectValue, resolveFieldValue } from "../../schema";
 import type { DynamicConfigForm, DynamicConfigOptions } from "../../types";

@@ -1,7 +1,7 @@
 import type { FC } from "react";
 
-import { useAppTranslate } from "@/hooks";
-import { APP_I18_KEYS } from "@/services/i18";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_I18_KEYS } from "@/shared/i18n";
 
 import { DynamicConfigPropertyField } from "./fields/property-field";
 import type { DynamicConfigForm, FieldLayout } from "./types";

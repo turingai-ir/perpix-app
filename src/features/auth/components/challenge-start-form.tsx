@@ -14,10 +14,10 @@ import { AuthCard } from "./auth-card";
 import { AuthField } from "./auth-field";
 import { FormAlert, SubmitButton } from "./form-feedback";
 
-import { Form } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useAppTranslate } from "@/hooks";
-import { APP_I18_KEYS } from "@/services/i18";
+import { Form } from "@/shared/ui/form";
+import { Input } from "@/shared/ui/input";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_I18_KEYS } from "@/shared/i18n";
 
 interface ChallengeStartFormProps {
   phone: string;

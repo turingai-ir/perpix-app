@@ -1,5 +1,5 @@
 import type { DynamicConfigForm } from "@/pages/(app)/generation/_components/dynamic-config";
-import { useAppTranslate } from "@/hooks";
+import { useAppTranslate } from "@/shared/hooks";
 
 type Props = {
   disabled: boolean;

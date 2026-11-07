@@ -22,7 +22,7 @@ const OPENAPI_URL = "http://localhost:8000/api-schema-6f47a9d2c18b4e30.json";
 const TEMP_DIR = path.resolve("./scripts/generate-api/_output");
 const TEMP_OPENAPI_JSON_PATH = path.join(TEMP_DIR, "openapi.json");
 const TEMP_API_OUTPUT_PATH = path.join(TEMP_DIR, "api.ts");
-const FINAL_API_OUTPUT_PATH = path.resolve("./src/services/api/api.ts");
+const FINAL_API_OUTPUT_PATH = path.resolve("./src/shared/api/api.ts");
 
 const downloadOpenApiSchema = async (targetPath: string) => {
   const response = await fetch(OPENAPI_URL, {

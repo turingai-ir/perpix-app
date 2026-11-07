@@ -1,24 +1,24 @@
 import { useCallback, useMemo } from "react";
 import { useAtomValue } from "jotai";
 
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { useAppTranslate } from "@/hooks";
-import LoadingSection from "@/components/custom/loading-section";
-import ErrorSection from "@/components/custom/error-section";
+import { Button } from "@/shared/ui/button";
+import { ScrollArea } from "@/shared/ui/scroll-area";
+import { useAppTranslate } from "@/shared/hooks";
+import LoadingSection from "@/shared/components/loading-section";
+import ErrorSection from "@/shared/components/error-section";
 import {
   type SchemaSubscriptionPlanListResponse,
   type SchemaSubscriptionPlanResponse,
   type SchemaUserSubscriptionResponse,
-} from "@/services/api";
+} from "@/shared/api";
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "@/components/ui/sheet";
-import { APP_I18_KEYS } from "@/services/i18";
+} from "@/shared/ui/sheet";
+import { APP_I18_KEYS } from "@/shared/i18n";
 import {
   useActiveSubscription,
   usePurchaseSubscription,

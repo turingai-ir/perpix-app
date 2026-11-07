@@ -3,10 +3,10 @@ import { Link } from "react-router";
 
 import { useActiveSubscription } from "@/feature/pricing";
 import { useWallet } from "@/feature/wallet";
-import { useAppTranslate } from "@/hooks";
-import { APP_ROUTES_KEY } from "@/router/routes";
-import { APP_I18_KEYS } from "@/services/i18";
-import { formatTokenAmount } from "@/utils";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_ROUTES_KEY } from "@/app/router/routes";
+import { APP_I18_KEYS } from "@/shared/i18n";
+import { formatTokenAmount } from "@/shared/utils";
 
 export function AccountGlance() {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);

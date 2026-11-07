@@ -1,10 +1,10 @@
 import { type CSSProperties, type FC } from "react";
 import { ArrowUpLeft, Crown, Sparkles } from "lucide-react";
 
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/shared/ui/skeleton";
 import { usePlanTiers, usePricingFeature } from "@/feature/pricing";
-import { useAppTranslate } from "@/hooks";
-import { APP_I18_KEYS } from "@/services/i18";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_I18_KEYS } from "@/shared/i18n";
 import styles from "./plan-card.module.css";
 
 type PlanCardTone = "free" | "active" | "expiring" | "top";

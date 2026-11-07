@@ -1,18 +1,18 @@
 import { useMemo, type FC } from "react";
 import { DollarSign } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { useAppTranslate } from "@/hooks";
+} from "@/shared/ui/popover";
+import { useAppTranslate } from "@/shared/hooks";
 import {
   getTierPriceUsdmicroRange,
   normalizePricingTiers,
 } from "@/pages/(app)/generation/_utils/model-pricing";
-import { formatTokenAmount } from "@/utils";
+import { formatTokenAmount } from "@/shared/utils";
 
 export const ModelTokenPriceTooltip: FC<{
   isLoading?: boolean;

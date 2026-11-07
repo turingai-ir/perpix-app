@@ -1,7 +1,7 @@
 import type { FC } from "react";
 
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { cn } from "@/lib/utils";
+import { ScrollArea } from "@/shared/ui/scroll-area";
+import { cn } from "@/shared/lib/utils";
 
 import { ComposerReferenceTray } from "./composer-reference-tray";
 import { MediaFilePickerDialog } from "./media-file-picker-dialog";

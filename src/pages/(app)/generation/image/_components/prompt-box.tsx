@@ -3,7 +3,7 @@ import type { FC } from "react";
 import { ImageModelDiscovery } from "./model-discovery";
 import { ImageReferenceInput } from "./image-reference-input";
 
-import { useAppTranslate } from "@/hooks";
+import { useAppTranslate } from "@/shared/hooks";
 
 import { GenerationPromptBox } from "@/pages/(app)/generation/_components/prompt-box";
 import type { GenerationPromptBoxProps } from "@/pages/(app)/generation/_components/prompt-box/types";
@@ -11,7 +11,7 @@ import type { GenerationComposerIntent } from "@/pages/(app)/generation/_types/c
 import {
   AiRegistryModelSupportedTypesEnumMap,
   type SchemaAiTaskMessageResponse,
-} from "@/services/api";
+} from "@/shared/api";
 
 interface Props {
   initialPrompt?: string;

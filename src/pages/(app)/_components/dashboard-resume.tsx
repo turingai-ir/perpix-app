@@ -2,10 +2,10 @@ import { ArrowUpLeft, CircleDashed, Image, Video } from "lucide-react";
 import { Link } from "react-router";
 import styles from "../dashboard.module.css";
 
-import { useAppTranslate } from "@/hooks";
-import { APP_ROUTES_KEY } from "@/router/routes";
-import type { SchemaAiTaskResponse } from "@/services/api";
-import { APP_I18_KEYS } from "@/services/i18";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_ROUTES_KEY } from "@/app/router/routes";
+import type { SchemaAiTaskResponse } from "@/shared/api";
+import { APP_I18_KEYS } from "@/shared/i18n";
 
 interface DashboardResumeProps {
   task?: SchemaAiTaskResponse;

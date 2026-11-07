@@ -6,20 +6,20 @@ import {
 } from "react";
 import { X } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "@/shared/ui/dialog";
 import {
   Drawer,
   DrawerContent,
   DrawerDescription,
   DrawerTitle,
-} from "@/components/ui/drawer";
-import { useIsMobile } from "@/hooks/use-mobile";
+} from "@/shared/ui/drawer";
+import { useIsMobile } from "@/shared/hooks/use-mobile";
 
 const WalletChargeMobileContext = createContext(false);
 

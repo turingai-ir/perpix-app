@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { SchemaFileManagerUploadFileResponse } from "@/services/api/api";
+import type { SchemaFileManagerUploadFileResponse } from "@/shared/api/api";
 
 export type UserFileItem = SchemaFileManagerUploadFileResponse;
 export const previewSchema = z.object({

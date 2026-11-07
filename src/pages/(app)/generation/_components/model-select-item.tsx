@@ -1,8 +1,8 @@
 import { Lock } from "lucide-react";
 
-import { SelectItem } from "@/components/ui/select";
-import { cn } from "@/lib/utils";
-import type { SchemaAiRegistryModelSummary } from "@/services/api";
+import { SelectItem } from "@/shared/ui/select";
+import { cn } from "@/shared/lib/utils";
+import type { SchemaAiRegistryModelSummary } from "@/shared/api";
 import { isModelAllowed } from "@/pages/(app)/generation/_utils/model-access";
 
 interface ModelSelectItemProps {

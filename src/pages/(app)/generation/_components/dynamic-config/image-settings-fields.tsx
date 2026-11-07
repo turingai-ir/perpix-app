@@ -4,8 +4,8 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { useAppTranslate } from "@/hooks";
+} from "@/shared/ui/collapsible";
+import { useAppTranslate } from "@/shared/hooks";
 import { DynamicPromptConfigField } from "./dynamic-config-field";
 import { SettingHelpPopover } from "./setting-help-popover";
 import type { DynamicConfigForm } from "./types";

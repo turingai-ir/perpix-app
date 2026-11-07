@@ -6,7 +6,7 @@ import { AccountIcon } from "./menu-icons";
 import AppLayoutSidebarUserAvatar from "./user-avatar";
 import styles from "./sidebar.module.css";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,12 +14,12 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/shared/ui/dropdown-menu";
 import { useActiveSubscription, usePricingFeature } from "@/feature/pricing";
 import { useSignOutActions } from "@/features/auth";
-import { useAppTranslate } from "@/hooks";
-import { APP_ROUTES_KEY } from "@/router/routes";
-import { APP_I18_KEYS } from "@/services/i18";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_ROUTES_KEY } from "@/app/router/routes";
+import { APP_I18_KEYS } from "@/shared/i18n";
 
 type UserProfileMenuProps = {
   canInstall: boolean;

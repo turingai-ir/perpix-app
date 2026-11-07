@@ -2,8 +2,8 @@ import { useRef, type CSSProperties } from "react";
 import { Sparkles } from "lucide-react";
 
 import styles from "./image-generation-placeholder.module.css";
-import { useAppTranslate } from "@/hooks";
-import { useAnimationVisibility } from "@/hooks/use-animation-visibility";
+import { useAppTranslate } from "@/shared/hooks";
+import { useAnimationVisibility } from "@/shared/hooks/use-animation-visibility";
 
 const frames = Array.from({ length: 8 });
 const particles = Array.from({ length: 16 });

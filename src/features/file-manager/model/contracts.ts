@@ -14,7 +14,7 @@ export const FILE_MANAGER_ALLOWED_CONTENT_TYPES = [
   "audio/x-m4a",
 ] as const;
 import { z } from "zod";
-import type { SchemaFileManagerUploadFileResponse } from "@/services/api/api";
+import type { SchemaFileManagerUploadFileResponse } from "@/shared/api/api";
 
 export const mediaFactsSchema = z.object({
   kind: z.enum(["image", "video", "audio"]),

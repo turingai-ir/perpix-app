@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useRef } from "react";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { useAppTranslate, useSecondsCountDown } from "@/hooks";
-import { APP_I18_KEYS } from "@/services/i18";
-import { formatLocalizedNumber } from "@/utils";
+import { Button } from "@/shared/ui/button";
+import { Progress } from "@/shared/ui/progress";
+import { useAppTranslate, useSecondsCountDown } from "@/shared/hooks";
+import { APP_I18_KEYS } from "@/shared/i18n";
+import { formatLocalizedNumber } from "@/shared/utils";
 
 const REDIRECT_SECONDS = 10;
 

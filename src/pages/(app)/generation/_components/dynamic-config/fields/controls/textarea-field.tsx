@@ -7,8 +7,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Textarea } from "@/components/ui/textarea";
+} from "@/shared/ui/form";
+import { Textarea } from "@/shared/ui/textarea";
 
 import type { DynamicConfigForm } from "../../types";
 import type { FieldLayoutClasses } from "./field-layout";

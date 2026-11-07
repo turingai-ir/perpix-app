@@ -1,15 +1,15 @@
 import { Check, FileAudio, FileVideo, Image as ImageIcon } from "lucide-react";
 import type { FC } from "react";
 
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/shared/ui/skeleton";
 import {
   canUseFileForGeneration,
   FileFacts,
   useVisibleFilePreview,
 } from "@/features/file-manager";
-import { useAppTranslate } from "@/hooks";
-import { cn } from "@/lib/utils";
-import { APP_I18_KEYS } from "@/services/i18";
+import { useAppTranslate } from "@/shared/hooks";
+import { cn } from "@/shared/lib/utils";
+import { APP_I18_KEYS } from "@/shared/i18n";
 
 import type { MediaPreviewType } from "../types";
 import { formatFileSize, type UserFileWithUuid } from "../utils";

@@ -1,6 +1,6 @@
 import { useEffect, useEffectEvent } from "react";
 
-import { appEventBus } from "@/lib/event-bus";
+import { appEventBus } from "@/shared/lib/event-bus";
 
 type UseScrollToLatestMessageParams = {
   isGenerating: boolean;

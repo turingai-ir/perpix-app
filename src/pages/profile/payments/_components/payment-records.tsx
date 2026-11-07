@@ -1,4 +1,4 @@
-import type { SchemaPaymentHistoryItemResponse } from "@/services/api";
+import type { SchemaPaymentHistoryItemResponse } from "@/shared/api";
 
 import { PaymentMobileList } from "./payment-mobile-list";
 import { PaymentTable } from "./payment-table";

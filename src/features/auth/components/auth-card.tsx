@@ -7,8 +7,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Heading2, Paragraph } from "@/components/ui/typography";
+} from "@/shared/ui/card";
+import { Heading2, Paragraph } from "@/shared/ui/typography";
 import { AuthReaction } from "./auth-reaction";
 import styles from "./auth-reaction.module.css";
 

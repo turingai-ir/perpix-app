@@ -1,8 +1,8 @@
-import { useReactQueryApi } from "@/hooks/app";
+import { useReactQueryApi } from "@/shared/hooks/app";
 import type {
   SchemaWalletOperationSourceEnum,
   SchemaWalletTransactionTypeEnum,
-} from "@/services/api";
+} from "@/shared/api";
 
 export const useWallet = (enabled = true) => {
   const { useQuery } = useReactQueryApi();

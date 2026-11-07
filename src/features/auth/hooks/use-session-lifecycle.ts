@@ -10,9 +10,9 @@ import { getLoginPath } from "../model/auth-navigation";
 
 import { useAuthStatus } from "./use-auth-status";
 
-import { useAppTranslate } from "@/hooks";
-import { APP_ROUTES_KEY } from "@/router/routes";
-import { APP_I18_KEYS } from "@/services/i18";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_ROUTES_KEY } from "@/app/router/routes";
+import { APP_I18_KEYS } from "@/shared/i18n";
 
 /**
  * Sends the user to the login page when an authenticated session ends

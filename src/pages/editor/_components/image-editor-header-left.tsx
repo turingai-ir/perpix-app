@@ -1,7 +1,7 @@
 import { ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useAppTranslate } from "@/hooks/i18/use-app-translate";
-import { useRouteBack } from "@/hooks/use-route-back";
+import { Button } from "@/shared/ui/button";
+import { useAppTranslate } from "@/shared/hooks/i18/use-app-translate";
+import { useRouteBack } from "@/shared/hooks/use-route-back";
 import { EditorHistoryControls } from "./editor-history-controls";
 
 interface ImageEditorHeaderLeftProps {

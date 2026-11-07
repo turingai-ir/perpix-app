@@ -1,6 +1,6 @@
 import { useEffect, type RefObject } from "react";
 
-import { monitorScrollQuality } from "@/lib/visual-quality";
+import { monitorScrollQuality } from "@/shared/lib/visual-quality";
 
 /**
  * The dashboard owns the heavy glass effects, so it alone measures scrolling

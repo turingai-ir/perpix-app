@@ -9,19 +9,19 @@ import HeaderSlogan from "./header-slogan";
 import AccountWidget from "./account-widget/account-widget";
 import styles from "./header-slogan.module.css";
 
-import { Button } from "@/components/ui/button";
-import LoadingSection from "@/components/custom/loading-section";
-import ErrorSection from "@/components/custom/error-section";
-import { APP_LAYOUT_SIDEBAR_WIDTH } from "@/utils";
+import { Button } from "@/shared/ui/button";
+import LoadingSection from "@/shared/components/loading-section";
+import ErrorSection from "@/shared/components/error-section";
+import { APP_LAYOUT_SIDEBAR_WIDTH } from "@/shared/utils";
 
-import { appEventBus } from "@/lib/event-bus";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import { appEventBus } from "@/shared/lib/event-bus";
+import { ScrollArea } from "@/shared/ui/scroll-area";
+import { TooltipProvider } from "@/shared/ui/tooltip";
 import { PaymentRedirectPortal } from "@/feature/payment";
 import { useUser } from "@/feature/user";
 import { AiTaskEventsProvider } from "@/feature/ai-task-events";
-import { useAppTranslate } from "@/hooks";
-import { APP_I18_KEYS } from "@/services/i18";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_I18_KEYS } from "@/shared/i18n";
 
 const AppLayout: FC = () => {
   const [appLayoutState, setAppLayoutState] = useImmerAtom(appLayoutAtom);

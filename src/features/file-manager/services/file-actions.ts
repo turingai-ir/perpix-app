@@ -1,4 +1,4 @@
-import { apiClient } from "@/services/api";
+import { apiClient } from "@/shared/api";
 import {
   fileError,
   requireConnection,

@@ -1,20 +1,20 @@
 import { AlertCircle, LoaderCircle } from "lucide-react";
 import { useCallback, useRef, type FC } from "react";
 
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/shared/ui/skeleton";
 import {
   Dialog,
   DialogContent,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from "@/shared/ui/dialog";
 import {
   FileManagerUploadStatus,
   useFilePreview,
 } from "@/feature/file-manager";
-import { useAppTranslate } from "@/hooks";
-import { cn } from "@/lib/utils";
-import { APP_I18_KEYS } from "@/services/i18";
+import { useAppTranslate } from "@/shared/hooks";
+import { cn } from "@/shared/lib/utils";
+import { APP_I18_KEYS } from "@/shared/i18n";
 
 import { AudioPreviewButton } from "./audio-preview-button";
 import {

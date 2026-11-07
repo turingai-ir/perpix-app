@@ -4,7 +4,7 @@ import { useActiveSubscription, useSubscriptionPlans } from "./api";
 import type {
   SchemaSubscriptionPlanResponse,
   SchemaUserSubscriptionResponse,
-} from "@/services/api";
+} from "@/shared/api";
 import { resolvePlanTiers, type PlanTiers } from "./plan-tiers";
 
 interface PlanTiersState {

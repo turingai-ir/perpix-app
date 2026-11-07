@@ -1,11 +1,11 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { useAppTranslate } from "@/hooks";
+} from "@/shared/ui/dialog";
+import { useAppTranslate } from "@/shared/hooks";
 
 export function RegenerateImageDialog({
   disabled,

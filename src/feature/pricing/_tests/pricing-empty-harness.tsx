@@ -2,7 +2,7 @@ import { createRoot } from "react-dom/client";
 import { createStore, Provider } from "jotai";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import AppContextProvider from "@/hooks/app/provider";
+import AppContextProvider from "@/shared/hooks/app/provider";
 import PricingFeature from "../pricing";
 import { pricingFeatureAtom } from "../state";
 

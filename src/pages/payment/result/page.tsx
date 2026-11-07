@@ -1,19 +1,19 @@
 import { Link, useParams } from "react-router";
 
-import LoadingSection from "@/components/custom/loading-section";
-import ErrorSection from "@/components/custom/error-section";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import LoadingSection from "@/shared/components/loading-section";
+import ErrorSection from "@/shared/components/error-section";
+import { Button, buttonVariants } from "@/shared/ui/button";
+import { cn } from "@/shared/lib/utils";
 import {
   getPaymentViewStatus,
   usePaymentStatus,
   useRetryPayment,
 } from "@/feature/payment";
 import { PaymentAmount } from "@/features/payment";
-import { useAppTranslate } from "@/hooks";
-import { APP_ROUTES_KEY } from "@/router/routes";
-import { APP_I18_KEYS } from "@/services/i18";
-import { isSafeExternalUrl } from "@/utils/safe-external-url";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_ROUTES_KEY } from "@/app/router/routes";
+import { APP_I18_KEYS } from "@/shared/i18n";
+import { isSafeExternalUrl } from "@/shared/utils/safe-external-url";
 import { PaymentReceipt } from "./payment-receipt";
 
 function PaymentResultPage() {

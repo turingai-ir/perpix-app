@@ -3,8 +3,8 @@ import {
   useQueryClient,
   type InfiniteData,
 } from "@tanstack/react-query";
-import { useAppTranslate } from "@/hooks/i18";
-import type { SchemaFileManagerUserFilesResponse } from "@/services/api/api";
+import { useAppTranslate } from "@/shared/hooks/i18";
+import type { SchemaFileManagerUserFilesResponse } from "@/shared/api/api";
 import { deleteFile, replaceFile } from "../services/files";
 import { previewKey, userFilesKey } from "../model/types";
 import {

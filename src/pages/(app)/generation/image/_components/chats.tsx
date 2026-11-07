@@ -1,12 +1,12 @@
 import type { FC } from "react";
 
 import { GenerationChats } from "@/pages/(app)/generation/_components/chats";
-import { useAppTranslate } from "@/hooks";
-import type { SchemaAiTaskMessageResponse } from "@/services/api";
+import { useAppTranslate } from "@/shared/hooks";
+import type { SchemaAiTaskMessageResponse } from "@/shared/api";
 import type { OptimisticGenerationTurn } from "@/pages/(app)/generation/_types/conversation";
 import { OptimisticImageTurn } from "./optimistic-turn";
 import { ImageResultCard } from "./result-card";
-import { APP_I18_KEYS } from "@/services/i18";
+import { APP_I18_KEYS } from "@/shared/i18n";
 import { ImageGenerationPlaceholder } from "./image-generation-placeholder";
 import { ImageRequestSummary } from "./request-summary";
 import type { ImageComparisonItem } from "./image-comparison.types";

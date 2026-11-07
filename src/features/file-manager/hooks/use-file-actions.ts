@@ -3,7 +3,7 @@ import {
   useQueryClient,
   type InfiniteData,
 } from "@tanstack/react-query";
-import { useAppTranslate } from "@/hooks";
+import { useAppTranslate } from "@/shared/hooks";
 import { deleteUserFile, replaceUserFile } from "../services/file-actions";
 import {
   fileError,

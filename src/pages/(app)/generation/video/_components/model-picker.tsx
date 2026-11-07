@@ -11,8 +11,8 @@ import {
   DialogPortal,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { useAppTranslate } from "@/hooks";
+} from "@/shared/ui/dialog";
+import { useAppTranslate } from "@/shared/hooks";
 import type { useGenerationPromptBox } from "@/pages/(app)/generation/_hooks";
 import { isModelAllowed } from "@/pages/(app)/generation/_utils/model-access";
 import { getModelLogo } from "@/pages/(app)/generation/_utils/model-logo";

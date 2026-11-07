@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState, type FC } from "react";
 
-import { useAppTranslate } from "@/hooks";
+import { useAppTranslate } from "@/shared/hooks";
 import type { MediaUploadPresentation } from "@/feature/media-uploader";
 
 import { DynamicConfigFileField } from "./file-field";

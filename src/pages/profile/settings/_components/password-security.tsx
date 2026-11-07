@@ -1,8 +1,8 @@
 import { KeyRound, LockKeyhole } from "lucide-react";
 
 import { ChangePasswordForm } from "@/features/auth";
-import { useAppTranslate } from "@/hooks";
-import { APP_I18_KEYS } from "@/services/i18";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_I18_KEYS } from "@/shared/i18n";
 
 export function PasswordSecurity() {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);

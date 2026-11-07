@@ -1,8 +1,8 @@
 import { useId, useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { MediaPreviewItem } from "@/components/custom/media-preview-item";
-import { Button } from "@/components/ui/button";
-import { useAppTranslate } from "@/hooks";
+import { MediaPreviewItem } from "@/shared/components/media-preview-item";
+import { Button } from "@/shared/ui/button";
+import { useAppTranslate } from "@/shared/hooks";
 
 export function VideoRequestSummary({
   prompt,

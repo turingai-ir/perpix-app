@@ -17,10 +17,10 @@ import { AuthField } from "./auth-field";
 import { FormAlert, SubmitButton } from "./form-feedback";
 
 import { LoginActions } from "./login-actions";
-import { Form } from "@/components/ui/form";
-import { PasswordInput } from "@/components/ui/password-input";
-import { useAppTranslate } from "@/hooks";
-import { APP_I18_KEYS } from "@/services/i18";
+import { Form } from "@/shared/ui/form";
+import { PasswordInput } from "@/shared/ui/password-input";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_I18_KEYS } from "@/shared/i18n";
 
 interface LoginFormProps {
   phone: string;

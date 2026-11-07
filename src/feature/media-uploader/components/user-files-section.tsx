@@ -1,12 +1,12 @@
 import { AlertCircle, RefreshCw } from "lucide-react";
 import type { FC } from "react";
 
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useAppTranslate } from "@/hooks";
-import { useInfiniteScroll } from "@/hooks/use-infinite-scroll";
-import { cn } from "@/lib/utils";
-import { APP_I18_KEYS } from "@/services/i18";
+import { Button } from "@/shared/ui/button";
+import { Skeleton } from "@/shared/ui/skeleton";
+import { useAppTranslate } from "@/shared/hooks";
+import { useInfiniteScroll } from "@/shared/hooks/use-infinite-scroll";
+import { cn } from "@/shared/lib/utils";
+import { APP_I18_KEYS } from "@/shared/i18n";
 
 import { UserFileCard } from "./user-file-card";
 import type { MediaPreviewType } from "../types";

@@ -4,7 +4,7 @@ import {
   useInfiniteUserFiles,
   userFilesPageLimit,
 } from "@/feature/file-manager";
-import { useInfiniteScroll } from "@/hooks/use-infinite-scroll";
+import { useInfiniteScroll } from "@/shared/hooks/use-infinite-scroll";
 
 import { galleryContentTypes, getGalleryFiles } from "../_utils/gallery";
 import type { GalleryFilter } from "../_utils/types";

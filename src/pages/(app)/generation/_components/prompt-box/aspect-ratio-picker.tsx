@@ -1,20 +1,20 @@
 import { useState } from "react";
 import { Check, ChevronDown } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import {
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from "@/shared/ui/form";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { useAppTranslate } from "@/hooks";
+} from "@/shared/ui/popover";
+import { useAppTranslate } from "@/shared/hooks";
 import type { DynamicConfigForm } from "../dynamic-config";
 
 function RatioShape({

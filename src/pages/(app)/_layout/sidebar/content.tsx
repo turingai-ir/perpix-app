@@ -6,8 +6,8 @@ import AppLayoutSidebarNavigation from "./navigation";
 import AppLayoutSidebarUserMenu from "./user-menu";
 import styles from "./sidebar.module.css";
 
-import { useAppTranslate } from "@/hooks";
-import { APP_I18_KEYS } from "@/services/i18";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_I18_KEYS } from "@/shared/i18n";
 
 type AppLayoutSidebarContentProps = {
   balanceUsdmicro: number;

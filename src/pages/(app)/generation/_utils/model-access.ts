@@ -1,4 +1,4 @@
-import type { SchemaAiRegistryModelSummary } from "@/services/api";
+import type { SchemaAiRegistryModelSummary } from "@/shared/api";
 
 export const isModelAllowed = (
   model: Pick<SchemaAiRegistryModelSummary, "name">,

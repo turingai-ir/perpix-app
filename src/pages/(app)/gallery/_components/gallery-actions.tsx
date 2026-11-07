@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Download, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import {
   Dialog,
   DialogClose,
@@ -10,12 +10,12 @@ import {
   DialogFooter,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from "@/shared/ui/dialog";
 import { useDeleteUserFile } from "@/feature/file-manager";
-import { useAppTranslate } from "@/hooks";
-import { APP_I18_KEYS } from "@/services/i18";
-import { cn } from "@/lib/utils";
-import { downloadFile } from "@/utils";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_I18_KEYS } from "@/shared/i18n";
+import { cn } from "@/shared/lib/utils";
+import { downloadFile } from "@/shared/utils";
 import type { GalleryFile } from "../_utils/types";
 
 const actionButton = "h-11 w-11 rounded-xl max-md:w-10";

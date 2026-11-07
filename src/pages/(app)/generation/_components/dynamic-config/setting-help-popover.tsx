@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { CircleHelp, Lightbulb } from "lucide-react";
 
-import { Popover, PopoverContent } from "@/components/ui/popover";
-import { useAppTranslate } from "@/hooks";
+import { Popover, PopoverContent } from "@/shared/ui/popover";
+import { useAppTranslate } from "@/shared/hooks";
 
 export function SettingHelpPopover({
   label,

@@ -6,7 +6,7 @@ import type {
   SchemaGetWalletTransactionsResponse,
   SchemaUserGetInfoResponse,
   SchemaUserSubscriptionResponse,
-} from "@/services/api";
+} from "@/shared/api";
 
 export function useDashboardAccount() {
   const userState = useUser();

@@ -1,19 +1,19 @@
 import type { FC, ReactNode } from "react";
 import { Plus, Trash2 } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/shared/ui/button";
+import { Checkbox } from "@/shared/ui/checkbox";
 import {
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-} from "@/components/ui/form";
-import { Textarea } from "@/components/ui/textarea";
+} from "@/shared/ui/form";
+import { Textarea } from "@/shared/ui/textarea";
 import {
   getPrimaryType,
   type JsonSchemaProperty,
-} from "@/hooks/use-dynamic-config-form";
+} from "@/shared/hooks/use-dynamic-config-form";
 
 import { getDefaultValueForProperty, normalizeArrayValue } from "../schema";
 import type { DynamicConfigFieldProps } from "../types";

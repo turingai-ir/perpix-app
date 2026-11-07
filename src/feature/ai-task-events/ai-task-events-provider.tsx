@@ -6,13 +6,13 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useAiTaskEvents } from "./use-ai-task-events";
 import type { AiTaskMessageEvent } from "./types";
 
-import { useReactQueryApi } from "@/hooks/app";
-import { useAppTranslate } from "@/hooks";
-import { APP_ROUTES_KEY } from "@/router/routes";
+import { useReactQueryApi } from "@/shared/hooks/app";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_ROUTES_KEY } from "@/app/router/routes";
 import {
   AiRegistryModelSupportedTypesEnumMap,
   type SchemaAiTaskResponse,
-} from "@/services/api";
+} from "@/shared/api";
 
 const getTaskUrl = (task: SchemaAiTaskResponse, messageUuid: string) => {
   if (task.task_type === AiRegistryModelSupportedTypesEnumMap.VIDEO) {

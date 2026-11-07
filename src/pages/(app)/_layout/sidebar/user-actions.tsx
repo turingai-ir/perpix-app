@@ -2,11 +2,11 @@ import { type FC } from "react";
 import { FaTelegramPlane } from "react-icons/fa";
 // import { MessageCircle } from "lucide-react";
 
-import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { buttonVariants } from "@/shared/ui/button";
+import { cn } from "@/shared/lib/utils";
 // import { useSupportChatWidget } from "@/feature/support-chat";
-import { useAppTranslate } from "@/hooks";
-import { APP_I18_KEYS } from "@/services/i18";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_I18_KEYS } from "@/shared/i18n";
 import AppLayoutSidebarPlanCard from "./plan-card";
 import styles from "./sidebar.module.css";
 

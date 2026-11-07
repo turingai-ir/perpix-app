@@ -16,10 +16,10 @@ import {
   toClipboardImageFile,
   toUploadedMediaItems,
 } from "@/feature/media-uploader";
-import { useAppTranslate } from "@/hooks";
-import type { JsonSchemaProperty } from "@/hooks/use-dynamic-config-form";
-import { HttpStatus } from "@/utils";
-import { FetchHttpError } from "@/utils/custom-fetch/fetch-errors";
+import { useAppTranslate } from "@/shared/hooks";
+import type { JsonSchemaProperty } from "@/shared/hooks/use-dynamic-config-form";
+import { HttpStatus } from "@/shared/utils";
+import { FetchHttpError } from "@/shared/utils/custom-fetch/fetch-errors";
 
 import {
   getAcceptList,

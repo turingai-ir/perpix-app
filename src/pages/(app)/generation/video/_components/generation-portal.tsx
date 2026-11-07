@@ -1,5 +1,5 @@
 import styles from "../studio.module.css";
-import { useAppTranslate } from "@/hooks";
+import { useAppTranslate } from "@/shared/hooks";
 import { VideoBrandCinema } from "./brand-cinema";
 
 export function VideoGenerationPortal({

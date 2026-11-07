@@ -1,7 +1,7 @@
 import { type ComponentProps, useEffect, useRef, useState } from "react";
 import { Maximize2, X } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import {
   Dialog,
   DialogClose,
@@ -10,9 +10,9 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { useAppTranslate } from "@/hooks";
-import { cn } from "@/lib/utils";
+} from "@/shared/ui/dialog";
+import { useAppTranslate } from "@/shared/hooks";
+import { cn } from "@/shared/lib/utils";
 
 export function ExpandedPromptEditor({
   className,

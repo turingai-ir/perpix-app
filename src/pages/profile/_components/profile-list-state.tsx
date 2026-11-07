@@ -1,5 +1,5 @@
-import ErrorSection from "@/components/custom/error-section";
-import LoadingSection from "@/components/custom/loading-section";
+import ErrorSection from "@/shared/components/error-section";
+import LoadingSection from "@/shared/components/loading-section";
 
 export function ProfileListLoading() {
   return (

@@ -15,9 +15,9 @@ export function frontendQaGuard(): Plugin {
         }
         if (path === "/__qa/ready") {
           ready ??= Promise.all([
-            "/src/main.tsx",
+            "/src/app/main.tsx",
             "/src/features/auth/_tests/auth-reliability-harness.ts",
-            "/src/utils/custom-fetch/custom-fetch.ts",
+            "/src/shared/utils/custom-fetch/custom-fetch.ts",
           ].map((entry) => server.transformRequest(entry))).then(async (results) => {
             const dependencies = new Set<string>();
             for (const result of results) {

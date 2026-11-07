@@ -2,8 +2,8 @@ import { useMemo } from "react";
 
 import { usePlanTiers } from "@/feature/pricing";
 import { useWallet, useWalletTransactions } from "@/feature/wallet";
-import type { SchemaGetWalletTransactionsResponse } from "@/services/api";
-import { formatTokenAmount } from "@/utils";
+import type { SchemaGetWalletTransactionsResponse } from "@/shared/api";
+import { formatTokenAmount } from "@/shared/utils";
 
 import { getRunwayDays, LOW_RUNWAY_DAYS, summarizeActivity } from "./activity";
 import type { RingTone } from "./days-ring";

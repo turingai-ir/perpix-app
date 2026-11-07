@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react";
 import { AlertCircle, Images, Search } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useAppTranslate } from "@/hooks";
-import { APP_I18_KEYS } from "@/services/i18";
+import { Button } from "@/shared/ui/button";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_I18_KEYS } from "@/shared/i18n";
 import { GalleryFileCard } from "./_components/gallery-file-card";
 import { GalleryHeader } from "./_components/gallery-header";
 import { GalleryToolbar } from "./_components/gallery-toolbar";

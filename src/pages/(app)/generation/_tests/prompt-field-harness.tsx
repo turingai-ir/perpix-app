@@ -1,11 +1,11 @@
 import { useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 
-import { Form } from "@/components/ui/form";
+import { Form } from "@/shared/ui/form";
 import {
   type JsonConfigSchema,
   useDynamicConfigForm,
-} from "@/hooks/use-dynamic-config-form";
+} from "@/shared/hooks/use-dynamic-config-form";
 import { ExpandedPromptEditor } from "../_components/prompt-box/expanded-prompt-editor";
 import { PromptTextarea } from "../_components/prompt-box/prompt-textarea";
 

@@ -8,10 +8,10 @@ import {
   VideoIcon,
 } from "./menu-icons";
 import styles from "./sidebar.module.css";
-import { useAppTranslate } from "@/hooks";
-import { cn } from "@/lib/utils";
-import { APP_ROUTES_KEY } from "@/router/routes";
-import { APP_I18_KEYS } from "@/services/i18";
+import { useAppTranslate } from "@/shared/hooks";
+import { cn } from "@/shared/lib/utils";
+import { APP_ROUTES_KEY } from "@/app/router/routes";
+import { APP_I18_KEYS } from "@/shared/i18n";
 
 type SidebarMenuItem = {
   key: string;

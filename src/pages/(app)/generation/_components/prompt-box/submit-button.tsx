@@ -1,7 +1,7 @@
 import type { FC } from "react";
 import { ArrowUp, Loader2, Sparkles } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import type { DynamicConfigForm } from "@/pages/(app)/generation/_components/dynamic-config";
 import { isGenerationPromptInvalid } from "@/pages/(app)/generation/_hooks/use-generation-form-submit";
 

@@ -1,20 +1,20 @@
 import { useRef, useState } from "react";
 import { Check, ChevronDown, Loader2, LockKeyhole } from "lucide-react";
 import { ImageModelLogo } from "./model-logo";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import {
   Command,
   CommandInput,
   CommandList,
   CommandEmpty,
   CommandItem,
-} from "@/components/ui/command";
+} from "@/shared/ui/command";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { useAppTranslate } from "@/hooks";
+} from "@/shared/ui/popover";
+import { useAppTranslate } from "@/shared/hooks";
 import type { useModel } from "@/pages/(app)/generation/_hooks/model";
 import { isModelAllowed } from "@/pages/(app)/generation/_utils/model-access";
 

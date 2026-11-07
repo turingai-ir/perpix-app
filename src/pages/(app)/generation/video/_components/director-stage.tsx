@@ -2,7 +2,7 @@ import { BookOpen, Clapperboard, Library, Sparkles } from "lucide-react";
 import { useState } from "react";
 
 import styles from "../studio.module.css";
-import { useAppTranslate } from "@/hooks";
+import { useAppTranslate } from "@/shared/hooks";
 
 export function VideoDirectorStage() {
   const { t } = useAppTranslate();

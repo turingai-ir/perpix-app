@@ -3,9 +3,9 @@ import type { FieldValues, Path, UseFormReturn } from "react-hook-form";
 
 import { failureOf, type AuthFailure } from "../model/auth-failure";
 
-import { useAppTranslate, useSecondsCountDown } from "@/hooks";
-import { APP_I18_KEYS } from "@/services/i18";
-import { isErrorAbortError } from "@/utils/custom-fetch/helpers";
+import { useAppTranslate, useSecondsCountDown } from "@/shared/hooks";
+import { APP_I18_KEYS } from "@/shared/i18n";
+import { isErrorAbortError } from "@/shared/utils/custom-fetch/helpers";
 
 export type FailureContext = "default" | "change-password";
 

@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
-import { useAppTranslate } from "@/hooks/i18/use-app-translate";
+import { useAppTranslate } from "@/shared/hooks/i18/use-app-translate";
 import { useImageEditorWorkspace } from "../_hooks/use-image-editor-workspace";
 import {
   DEFAULT_EDITOR_EDITS,
