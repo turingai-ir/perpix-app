@@ -17,7 +17,7 @@ test("formats numbers when NumberFormat is callable but not constructible", asyn
     });
 
     try {
-      const modulePath = "/src/utils/number.ts";
+      const modulePath = "/src/shared/utils/number.ts";
       const { formatLocalizedNumber } = await import(modulePath);
       return formatLocalizedNumber({ value: 1_234 });
     } finally {

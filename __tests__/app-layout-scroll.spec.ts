@@ -27,7 +27,7 @@ test("normal and forced scrolling consult the current reduced-motion preference"
         element.removeAttribute("data-scroll-call");
       }, force);
       await page.evaluate(async (forced) => {
-        const path = "/src/lib/event-bus/index.ts";
+        const path = "/src/shared/lib/event-bus/index.ts";
         const { appEventBus } = await import(/* @vite-ignore */ path);
         appEventBus.emit("SCROLL_APP_LAYOUT_UNTIL_END", { force: forced });
       }, force);
@@ -45,7 +45,7 @@ test("normal and forced scrolling consult the current reduced-motion preference"
         element.removeAttribute("data-scroll-call");
       }, distanceFromEnd);
       await page.evaluate(async () => {
-        const path = "/src/lib/event-bus/index.ts";
+        const path = "/src/shared/lib/event-bus/index.ts";
         const { appEventBus } = await import(/* @vite-ignore */ path);
         appEventBus.emit("SCROLL_APP_LAYOUT_UNTIL_END", undefined);
       });

@@ -100,7 +100,7 @@ test("concurrent protected requests share one refresh", async ({ page }) => {
     return route.fulfill({ json: { balance_usdmicro: 25 } });
   });
   const balances = await page.evaluate(async () => {
-    const modulePath = "/src/services/api/client.ts";
+    const modulePath = "/src/shared/api/client.ts";
     const { apiClient } = await import(modulePath);
     const results = await Promise.all(
       Array.from({ length: 4 }, () => apiClient.GET("/api/v1/wallet/wallet")),

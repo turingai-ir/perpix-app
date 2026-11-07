@@ -12,7 +12,7 @@ test("boot discards legacy offline data without restoring it or deleting editor 
   await page.reload();
   await expect(page.getByRole("button", { name: "بازگشت" })).toBeVisible();
   const restored = await page.evaluate(async () => {
-    const path = "/src/lib/react-query.ts";
+    const path = "/src/shared/lib/react-query.ts";
     return (await import(/* @vite-ignore */ path)).queryClient.getQueryData([
       "offline-sentinel",
     ]);

@@ -72,7 +72,7 @@ for (const { alt, index, name } of [
     await expect(page.getByRole("textbox", { name: "توصیف تصویر" })).toBeVisible();
     await page.evaluate(
       async ({ description, position }) => {
-        const path = "/src/components/custom/_tests/media-preview-item-harness.tsx";
+        const path = "/src/shared/components/_tests/media-preview-item-harness.tsx";
         const { mount } = await import(/* @vite-ignore */ path);
         mount(description, position);
       },

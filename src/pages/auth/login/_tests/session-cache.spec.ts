@@ -74,7 +74,7 @@ for (const sameSession of [true, false]) {
         await expect.poll(() => requested).toBe(true);
         expect(
           await page.evaluate(async () => {
-            const modulePath = "/src/lib/react-query.ts";
+            const modulePath = "/src/shared/lib/react-query.ts";
             const { queryClient } = await import(modulePath);
             return queryClient
               .getQueryCache()

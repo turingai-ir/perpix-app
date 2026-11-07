@@ -1,6 +1,6 @@
 import { expect, test as base } from "@playwright/test";
 import { mockAuthenticatedSession } from "../support/auth-session";
-import type { SchemaUserGetInfoResponse } from "../../src/services/api";
+import type { SchemaUserGetInfoResponse } from "../../src/shared/api";
 
 const providerUuid = "9a6d5ea1-5276-4d7c-b445-d2e4dc2b4ee5";
 const referenceFiles = [
