@@ -4,7 +4,7 @@ import { type CSSProperties, type FC, type RefObject } from "react";
 import appLayoutAtom from "../_state";
 
 import AppLayoutSidebarContent from "./content";
-import styles from "./sidebar.module.css";
+import { SIDEBAR_SHELL_CLASS } from "./sidebar-styles";
 
 import { cn } from "@/shared/lib/utils";
 import { useAppTranslate, useViewportBreakpoint } from "@/shared/hooks";
@@ -68,8 +68,8 @@ const AppLayoutSidebar: FC<{
           inert={!appLayoutState.isSidebarOpen}
           aria-hidden={!appLayoutState.isSidebarOpen}
           className={cn(
-            styles.shell,
-            "text-sidebar-foreground flex h-full min-h-0 w-(--sidebar-width) flex-col border-e transition-[transform,opacity] duration-300 ease-in-out motion-reduce:transition-none",
+            SIDEBAR_SHELL_CLASS,
+            "text-sidebar-foreground relative flex h-full min-h-0 w-(--sidebar-width) flex-col border-e transition-[transform,opacity] duration-300 ease-in-out motion-reduce:transition-none",
             appLayoutState.isSidebarOpen
               ? "translate-x-0 opacity-100"
               : "translate-x-full opacity-0",
@@ -98,7 +98,10 @@ const AppLayoutSidebar: FC<{
       >
         <SheetContent
           dir="rtl"
-          className={`${styles.mobileShell} h-dvh max-h-dvh w-[min(var(--sidebar-width),100dvw)] max-w-full min-w-0 overflow-x-hidden p-0`}
+          className={cn(
+            SIDEBAR_SHELL_CLASS,
+            "fixed z-60 h-dvh max-h-dvh w-[min(var(--sidebar-width),100dvw)] max-w-full min-w-0 overflow-x-hidden overscroll-contain p-0",
+          )}
           style={
             {
               "--sidebar-width": sidebarWidth,
