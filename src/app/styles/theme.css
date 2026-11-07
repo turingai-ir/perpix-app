@@ -78,6 +78,15 @@
 
 @theme inline {
   --animate-float: float 6s ease-in-out infinite;
+  --animate-reveal: reveal 280ms ease-out both;
+
+  @keyframes reveal {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+  }
+
 
   @keyframes float {
     0%,
