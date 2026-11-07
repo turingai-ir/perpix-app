@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAppTranslate } from "@/hooks/i18/use-app-translate";
+import { useAppTranslate } from "@/shared/hooks/i18/use-app-translate";
 import type { ImageEditorWorkspaceViewModel } from "../_hooks/image-editor-workspace-types";
 import { DEFAULT_EDITOR_EDITS } from "../_model/editor-edits";
 import type { EditorOverlay } from "../_model/editor-overlays";

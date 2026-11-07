@@ -8,9 +8,9 @@ import {
 import { PromptTextarea } from "./prompt-textarea";
 import type { GenerationPromptBoxProps } from "./types";
 
-import { Card } from "@/components/ui/card";
-import { Form } from "@/components/ui/form";
-import { useAppTranslate } from "@/hooks";
+import { Card } from "@/shared/ui/card";
+import { Form } from "@/shared/ui/form";
+import { useAppTranslate } from "@/shared/hooks";
 import {
   useGenerationPromptBox,
   usePromptBoxFieldGroups,

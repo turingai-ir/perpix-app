@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { motion } from "motion/react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/shared/ui/dialog";
 import { useFilePreview } from "@/feature/file-manager";
-import { useAppTranslate } from "@/hooks";
-import { APP_I18_KEYS } from "@/services/i18";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_I18_KEYS } from "@/shared/i18n";
 import { getGalleryMediaType } from "../_utils/gallery";
 import type { GalleryFile } from "../_utils/types";
 import { useViewerSwipe } from "../_hooks/use-viewer-swipe";

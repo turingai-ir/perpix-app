@@ -16,12 +16,12 @@ import type { ImageComparisonItem } from "./_components/image-comparison.types";
 import { GeneratedMediaField, useGenerationPage } from "../_hooks";
 import { getGenerationDraftPrompt } from "../_state/generation-draft";
 
-import LoadingSection from "@/components/custom/loading-section";
-import { useAppTranslate } from "@/hooks";
-import { APP_ROUTES_KEY } from "@/router/routes";
-import { AiRegistryModelSupportedTypesEnumMap } from "@/services/api";
-import { APP_I18_KEYS } from "@/services/i18";
-import { appEventBus } from "@/lib/event-bus";
+import LoadingSection from "@/shared/components/loading-section";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_ROUTES_KEY } from "@/app/router/routes";
+import { AiRegistryModelSupportedTypesEnumMap } from "@/shared/api";
+import { APP_I18_KEYS } from "@/shared/i18n";
+import { appEventBus } from "@/shared/lib/event-bus";
 import type { GenerationComposerIntent } from "../_types/conversation";
 
 function getFocusPhase(

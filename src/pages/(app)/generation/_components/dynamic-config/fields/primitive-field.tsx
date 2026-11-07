@@ -1,6 +1,6 @@
 import type { FC } from "react";
 
-import type { JsonSchemaProperty } from "@/hooks/use-dynamic-config-form";
+import type { JsonSchemaProperty } from "@/shared/hooks/use-dynamic-config-form";
 
 import { DynamicConfigCheckboxField } from "./controls/checkbox-field";
 import { getFieldLayoutClasses } from "./controls/field-layout";

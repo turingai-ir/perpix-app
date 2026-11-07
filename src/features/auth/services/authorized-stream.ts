@@ -6,7 +6,7 @@ import { z } from "zod";
 
 import { ensureAccessToken, refreshSession } from "./session-manager";
 
-import { APP_KEYS } from "@/utils";
+import { APP_KEYS } from "@/shared/utils";
 
 const AUTH_ERROR_EVENT = "auth_error";
 const INITIAL_BACKOFF_MS = 1_000;

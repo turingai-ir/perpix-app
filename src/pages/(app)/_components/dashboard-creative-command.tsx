@@ -4,7 +4,7 @@ import { DashboardCreationStations } from "./dashboard-creation-stations";
 
 import type { CreativeMode } from "./dashboard-creative-presets";
 
-import { APP_ROUTES_KEY } from "@/router/routes";
+import { APP_ROUTES_KEY } from "@/app/router/routes";
 
 export function DashboardCreativeCommand() {
   const navigate = useNavigate();

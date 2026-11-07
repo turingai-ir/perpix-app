@@ -14,16 +14,16 @@ import type {
   OptimisticGenerationTurn,
 } from "../_types/conversation";
 
-import { useReactQueryApi } from "@/hooks/app";
+import { useReactQueryApi } from "@/shared/hooks/app";
 import { buildRetryConfig } from "@/pages/(app)/generation/_utils/retry-config";
-import { FetchHttpError } from "@/utils/custom-fetch/fetch-errors";
+import { FetchHttpError } from "@/shared/utils/custom-fetch/fetch-errors";
 
 import {
   AiTaskRuleEnumMap,
   type AiRegistryModelSupportedTypesEnumKey,
   type SchemaAiTaskMessageResponse,
   type SchemaAiTaskResponse,
-} from "@/services/api";
+} from "@/shared/api";
 
 interface UseGenerationPageInput {
   generatedMediaField: GeneratedMediaField;

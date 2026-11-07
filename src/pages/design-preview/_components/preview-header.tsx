@@ -2,9 +2,9 @@ import type { FC } from "react";
 import { Images } from "lucide-react";
 import { Link } from "react-router";
 
-import { useAppTranslate } from "@/hooks";
-import { APP_ROUTES_KEY } from "@/router/routes";
-import { APP_I18_KEYS } from "@/services/i18";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_ROUTES_KEY } from "@/app/router/routes";
+import { APP_I18_KEYS } from "@/shared/i18n";
 
 const PreviewHeader: FC = () => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);

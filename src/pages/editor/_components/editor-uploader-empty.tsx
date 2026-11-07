@@ -7,8 +7,8 @@ import {
   Sparkles,
   UploadCloud,
 } from "lucide-react";
-import { useAppTranslate } from "@/hooks/i18/use-app-translate";
-import { useRouteBack } from "@/hooks/use-route-back";
+import { useAppTranslate } from "@/shared/hooks/i18/use-app-translate";
+import { useRouteBack } from "@/shared/hooks/use-route-back";
 import "./editor-studio.css";
 
 interface Props {

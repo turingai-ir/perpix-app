@@ -1,9 +1,9 @@
 import { Download, Grid, Ruler } from "lucide-react";
 import { toast } from "sonner";
 import { useAtom } from "jotai";
-import { Button } from "@/components/ui/button";
-import { useAppTranslate } from "@/hooks/i18/use-app-translate";
-import { cn } from "@/lib/utils";
+import { Button } from "@/shared/ui/button";
+import { useAppTranslate } from "@/shared/hooks/i18/use-app-translate";
+import { cn } from "@/shared/lib/utils";
 import type { CropArea } from "../_model/crop-area";
 import { showGridAtom, showRulerAtom } from "../_model/editor-settings";
 import { saveCroppedImage } from "./save-cropped-image";

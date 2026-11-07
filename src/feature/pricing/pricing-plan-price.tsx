@@ -1,13 +1,13 @@
 import { type FC } from "react";
 
-import { useAppTranslate } from "@/hooks";
-import { APP_I18_KEYS } from "@/services/i18";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_I18_KEYS } from "@/shared/i18n";
 import styles from "./pricing-plan-card.module.css";
 import { PaymentAmount } from "@/features/payment";
 import {
   SupportedCurrencyMap,
   type SchemaSupportedCurrency,
-} from "@/services/api";
+} from "@/shared/api";
 
 type PricingPlanPriceProps = {
   currency?: SchemaSupportedCurrency;

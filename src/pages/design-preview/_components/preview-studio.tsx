@@ -1,8 +1,8 @@
 import type { FC } from "react";
 import { Image, SlidersHorizontal, Video } from "lucide-react";
 
-import { useAppTranslate } from "@/hooks";
-import { APP_I18_KEYS } from "@/services/i18";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_I18_KEYS } from "@/shared/i18n";
 
 const studioItems = [
   { icon: Image, title: "imageTitle", description: "imageDescription" },

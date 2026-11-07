@@ -12,11 +12,11 @@ import {
 import { GeneratedMediaField, useGenerationPage } from "../_hooks";
 import { getGenerationDraftPrompt } from "../_state/generation-draft";
 
-import LoadingSection from "@/components/custom/loading-section";
-import { useAppTranslate } from "@/hooks";
-import { APP_ROUTES_KEY } from "@/router/routes";
-import { AiRegistryModelSupportedTypesEnumMap } from "@/services/api";
-import { APP_I18_KEYS } from "@/services/i18";
+import LoadingSection from "@/shared/components/loading-section";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_ROUTES_KEY } from "@/app/router/routes";
+import { AiRegistryModelSupportedTypesEnumMap } from "@/shared/api";
+import { APP_I18_KEYS } from "@/shared/i18n";
 
 function getFocusPhase(
   optimisticStatus: string | undefined,

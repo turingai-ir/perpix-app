@@ -2,8 +2,8 @@ import {
   type SchemaPaymentDetailsResponse,
   type SchemaSupportedCurrency,
   SupportedCurrencyMap,
-} from "@/services/api";
-import { formatTomanAmount } from "@/utils";
+} from "@/shared/api";
+import { formatTomanAmount } from "@/shared/utils";
 
 export type PaymentBreakdown = Pick<
   SchemaPaymentDetailsResponse,

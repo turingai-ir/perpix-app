@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
-import { useAppTranslate } from "@/hooks";
+import { useAppTranslate } from "@/shared/hooks";
 
 type BeforeInstallPromptOutcome = "accepted" | "dismissed";
 

@@ -2,7 +2,7 @@ import type {
   FieldMeta,
   JsonSchemaProperty,
   useDynamicConfigForm,
-} from "@/hooks/use-dynamic-config-form";
+} from "@/shared/hooks/use-dynamic-config-form";
 
 export type DynamicConfigForm = ReturnType<typeof useDynamicConfigForm>;
 export type FieldLayout = "inline" | "stacked";

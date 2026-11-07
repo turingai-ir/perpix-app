@@ -1,8 +1,8 @@
 import { X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { DialogDescription, DialogTitle } from "@/components/ui/dialog";
-import { useAppTranslate } from "@/hooks";
-import { APP_I18_KEYS } from "@/services/i18";
+import { Button } from "@/shared/ui/button";
+import { DialogDescription, DialogTitle } from "@/shared/ui/dialog";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_I18_KEYS } from "@/shared/i18n";
 import type { GalleryMediaType } from "../_utils/types";
 import { GalleryViewerBar } from "./gallery-viewer-bar";
 

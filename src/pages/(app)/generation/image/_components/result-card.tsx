@@ -7,10 +7,10 @@ import {
   RotateCcw,
 } from "lucide-react";
 
-import { MediaPreviewItem } from "@/components/custom/media-preview-item";
-import { Button } from "@/components/ui/button";
-import { useAppTranslate } from "@/hooks";
-import type { SchemaAiTaskMessageResponse } from "@/services/api";
+import { MediaPreviewItem } from "@/shared/components/media-preview-item";
+import { Button } from "@/shared/ui/button";
+import { useAppTranslate } from "@/shared/hooks";
+import type { SchemaAiTaskMessageResponse } from "@/shared/api";
 import { RegenerateImageDialog } from "./regenerate-dialog";
 import { ResultSpecRobot } from "./result-spec-robot";
 import styles from "./result-card.module.css";

@@ -1,14 +1,14 @@
 import { AudioLines, Image as ImageIcon, Plus, Video } from "lucide-react";
 import type { FC } from "react";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 import type { MediaPreviewType, MediaUploadPresentation } from "../types";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from "@/shared/ui/tooltip";
 
 interface MediaUploadPlaceholderProps {
   disabled: boolean;

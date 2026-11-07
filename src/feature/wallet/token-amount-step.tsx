@@ -4,7 +4,7 @@ import { AlertCircle, LoaderCircle, WalletCards } from "lucide-react";
 import { NumericFormat } from "react-number-format";
 import z from "zod";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import {
   Form,
   FormControl,
@@ -12,11 +12,11 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useAppTranslate } from "@/hooks";
-import { APP_I18_KEYS } from "@/services/i18";
-import { formatLocalizedNumber } from "@/utils";
+} from "@/shared/ui/form";
+import { Input } from "@/shared/ui/input";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_I18_KEYS } from "@/shared/i18n";
+import { formatLocalizedNumber } from "@/shared/utils";
 import {
   WalletChargeDescription,
   WalletChargeTitle,

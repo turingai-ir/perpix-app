@@ -11,8 +11,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Muted } from "@/components/ui/typography";
+} from "@/shared/ui/form";
+import { Muted } from "@/shared/ui/typography";
 
 interface AuthFieldProps {
   name: string;

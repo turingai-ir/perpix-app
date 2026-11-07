@@ -24,9 +24,9 @@
 - Do not modify or refactor unrelated code.
 - Before reading more than five files, confirm they are necessary for the task.
 - Never print an entire large file when a focused excerpt is sufficient.
-- Treat `src/services/api/api.ts` as a large generated file. Never read it completely; search for the exact symbol, type or endpoint and inspect only the relevant section.
-- Do not edit `src/services/api/api.ts` manually unless explicitly requested.
-- Never read `src/services/i18/locales/fa.json` completely. Search for the exact translation key and inspect only nearby entries.
+- Treat `src/shared/api/api.ts` as a large generated file. Never read it completely; search for the exact symbol, type or endpoint and inspect only the relevant section.
+- Do not edit `src/shared/api/api.ts` manually unless explicitly requested.
+- Never read `src/shared/i18n/locales/fa.json` completely. Search for the exact translation key and inspect only nearby entries.
 - Use `ui-ux-pro-max` only for new pages, complete redesigns or explicit design-system work.
 - Do not load `ui-ux-pro-max` for text changes, bug fixes or minor styling.
 

@@ -24,10 +24,10 @@ import { OtpField } from "./otp-field";
 import RegistrationPolicies from "./registration-policies";
 import { ResendCodeControls } from "./resend-code-controls";
 
-import { Button } from "@/components/ui/button";
-import { Form } from "@/components/ui/form";
-import { useAppTranslate } from "@/hooks";
-import { APP_I18_KEYS } from "@/services/i18";
+import { Button } from "@/shared/ui/button";
+import { Form } from "@/shared/ui/form";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_I18_KEYS } from "@/shared/i18n";
 
 interface ChallengeCompleteFormProps {
   purpose: ChallengePurpose;

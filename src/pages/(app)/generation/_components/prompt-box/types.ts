@@ -6,7 +6,7 @@ import type { useModel } from "@/pages/(app)/generation/_hooks/model";
 import type {
   AiRegistryModelSupportedTypesEnumValue,
   SchemaAiTaskMessageResponse,
-} from "@/services/api";
+} from "@/shared/api";
 
 export type ConfigDefaultsResolver = (
   lastMessageConfig: SchemaAiTaskMessageResponse["ai_model_config"] | undefined,

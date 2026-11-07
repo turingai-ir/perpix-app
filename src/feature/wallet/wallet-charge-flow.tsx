@@ -1,9 +1,9 @@
 import { useState } from "react";
 
 import { usePaymentRedirect } from "@/feature/payment";
-import { useAppTranslate } from "@/hooks";
-import { APP_I18_KEYS } from "@/services/i18";
-import { formatTokenAmount, parseTokenAmount } from "@/utils";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_I18_KEYS } from "@/shared/i18n";
+import { formatTokenAmount, parseTokenAmount } from "@/shared/utils";
 
 import { CheckoutStepMotion } from "./checkout-step-motion";
 import { SubscriptionRequiredStep } from "./subscription-required-step";

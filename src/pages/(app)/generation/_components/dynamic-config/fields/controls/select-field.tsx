@@ -7,7 +7,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from "@/shared/ui/form";
 import {
   Select,
   SelectContent,
@@ -16,8 +16,8 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import type { JsonSchemaProperty } from "@/hooks/use-dynamic-config-form";
+} from "@/shared/ui/select";
+import type { JsonSchemaProperty } from "@/shared/hooks/use-dynamic-config-form";
 
 import { coerceSelectValue, resolveFieldValue } from "../../schema";
 import type { DynamicConfigForm, DynamicConfigOptions } from "../../types";

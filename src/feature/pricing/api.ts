@@ -1,4 +1,4 @@
-import { useReactQueryApi } from "@/hooks/app";
+import { useReactQueryApi } from "@/shared/hooks/app";
 
 export const useSubscriptionPlans = (enabled = true) => {
   const { useQuery } = useReactQueryApi();

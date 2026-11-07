@@ -1,4 +1,4 @@
-import type { SchemaFileManagerMultipartCompleteRequest } from "@/services/api/api";
+import type { SchemaFileManagerMultipartCompleteRequest } from "@/shared/api/api";
 const completions = new Map<
   string,
   SchemaFileManagerMultipartCompleteRequest

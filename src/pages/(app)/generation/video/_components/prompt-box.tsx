@@ -7,12 +7,12 @@ import { VideoReferenceBoard } from "./reference-board";
 import { VideoStudioFooter } from "./studio-footer";
 import { VideoStudioSettings } from "./studio-settings";
 import styles from "../composer.module.css";
-import { Form } from "@/components/ui/form";
-import { useAppTranslate } from "@/hooks";
+import { Form } from "@/shared/ui/form";
+import { useAppTranslate } from "@/shared/hooks";
 import { PromptTextarea } from "@/pages/(app)/generation/_components/prompt-box/prompt-textarea";
 import type { GenerationPromptBoxProps } from "@/pages/(app)/generation/_components/prompt-box/types";
 import { useGenerationPromptBox } from "@/pages/(app)/generation/_hooks";
-import { AiRegistryModelSupportedTypesEnumMap } from "@/services/api";
+import { AiRegistryModelSupportedTypesEnumMap } from "@/shared/api";
 
 type Props = Pick<
   GenerationPromptBoxProps,

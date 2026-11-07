@@ -10,8 +10,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { useAppTranslate } from "@/hooks";
+} from "@/shared/ui/form";
+import { useAppTranslate } from "@/shared/hooks";
 import {
   DynamicPromptConfigField,
   type DynamicConfigForm,

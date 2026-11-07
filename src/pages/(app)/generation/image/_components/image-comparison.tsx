@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { Columns2, Trash2, X } from "lucide-react";
 
-import { MediaPreviewItem } from "@/components/custom/media-preview-item";
-import { Button } from "@/components/ui/button";
+import { MediaPreviewItem } from "@/shared/components/media-preview-item";
+import { Button } from "@/shared/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { useAppTranslate } from "@/hooks";
+} from "@/shared/ui/dialog";
+import { useAppTranslate } from "@/shared/hooks";
 import type { ImageComparisonItem } from "./image-comparison.types";
 import styles from "./image-comparison.module.css";
 

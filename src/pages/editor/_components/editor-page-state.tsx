@@ -1,7 +1,7 @@
 import { AlertCircle, Loader2 } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import { useAppTranslate } from "@/hooks/i18/use-app-translate";
+import { Button } from "@/shared/ui/button";
+import { useAppTranslate } from "@/shared/hooks/i18/use-app-translate";
 
 export function EditorPageLoading() {
   const { t } = useAppTranslate();

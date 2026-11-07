@@ -1,4 +1,4 @@
-import { useAppTranslate } from "@/hooks";
+import { useAppTranslate } from "@/shared/hooks";
 import type { UserFileItem } from "../model/contracts";
 import { useFileTime } from "../hooks/use-file-time";
 

@@ -2,12 +2,12 @@ import { CircleCheck, CircleDashed, CircleX, Image, Video } from "lucide-react";
 import { Link } from "react-router";
 import styles from "../dashboard.module.css";
 
-import { Skeleton } from "@/components/ui/skeleton";
-import { useAppTranslate } from "@/hooks";
-import { dayjs } from "@/lib/dayjs";
-import { APP_ROUTES_KEY } from "@/router/routes";
-import type { SchemaAiTaskResponse } from "@/services/api";
-import { APP_I18_KEYS } from "@/services/i18";
+import { Skeleton } from "@/shared/ui/skeleton";
+import { useAppTranslate } from "@/shared/hooks";
+import { dayjs } from "@/shared/lib/dayjs";
+import { APP_ROUTES_KEY } from "@/app/router/routes";
+import type { SchemaAiTaskResponse } from "@/shared/api";
+import { APP_I18_KEYS } from "@/shared/i18n";
 
 interface DashboardActivityProps {
   isLoading: boolean;

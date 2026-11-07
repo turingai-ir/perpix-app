@@ -4,10 +4,10 @@ import { FinanceSummary } from "@/pages/profile/_components/finance-summary";
 import {
   WalletTransactionTypeEnumMap,
   type SchemaWalletTransactionResponse,
-} from "@/services/api";
-import { useAppTranslate } from "@/hooks";
-import { APP_I18_KEYS } from "@/services/i18";
-import { formatTokenAmount } from "@/utils";
+} from "@/shared/api";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_I18_KEYS } from "@/shared/i18n";
+import { formatTokenAmount } from "@/shared/utils";
 
 export function WalletSummary({
   transactions,

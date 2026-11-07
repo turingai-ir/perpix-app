@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { CreditCard, ShieldCheck, WalletCards } from "lucide-react";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 
 type FinanceHeroProps = {
   kind: "payments" | "wallet";

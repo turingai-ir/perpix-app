@@ -2,13 +2,13 @@ import { useMemo, useState } from "react";
 import { useLocation } from "react-router";
 import { ChevronDown, LoaderCircle, RotateCcw, Sparkles } from "lucide-react";
 
-import ErrorSection from "@/components/custom/error-section";
-import LoadingSection from "@/components/custom/loading-section";
-import { useAppTranslate } from "@/hooks";
-import { APP_ROUTES_KEY } from "@/router/routes";
-import { AiRegistryModelSupportedTypesEnumMap } from "@/services/api";
-import { APP_I18_KEYS } from "@/services/i18";
-import { formatLocalizedNumber } from "@/utils";
+import ErrorSection from "@/shared/components/error-section";
+import LoadingSection from "@/shared/components/loading-section";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_ROUTES_KEY } from "@/app/router/routes";
+import { AiRegistryModelSupportedTypesEnumMap } from "@/shared/api";
+import { APP_I18_KEYS } from "@/shared/i18n";
+import { formatLocalizedNumber } from "@/shared/utils";
 import {
   AI_TASKS_PAGE_SIZE,
   useAiTasksList,

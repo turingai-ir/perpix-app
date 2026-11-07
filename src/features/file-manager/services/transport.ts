@@ -1,5 +1,5 @@
-import { apiClient } from "@/services/api/client";
-import type { SchemaFileManagerMultipartCompleteRequest } from "@/services/api/api";
+import { apiClient } from "@/shared/api/client";
+import type { SchemaFileManagerMultipartCompleteRequest } from "@/shared/api/api";
 import { fileResponseSchema } from "../model/types";
 import { FileManagerError, httpError } from "../model/errors";
 

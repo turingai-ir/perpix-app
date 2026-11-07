@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { VideoDurationControl } from "./video-duration-control";
 import { VideoFormatControl } from "./video-format-control";
 import styles from "../composer.module.css";
-import { useAppTranslate } from "@/hooks";
+import { useAppTranslate } from "@/shared/hooks";
 import { DynamicPromptConfigField } from "@/pages/(app)/generation/_components/dynamic-config";
 import type { useGenerationPromptBox } from "@/pages/(app)/generation/_hooks";
 

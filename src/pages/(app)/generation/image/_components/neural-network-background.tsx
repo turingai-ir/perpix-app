@@ -4,7 +4,7 @@ import { Stage } from "react-konva";
 import { motion, useReducedMotion } from "motion/react";
 import { useNeuralCanvasSize } from "../_hooks/use-neural-canvas-size";
 import { useNeuralAnimation } from "../_hooks/use-neural-animation";
-import { useAnimationVisibility } from "@/hooks/use-animation-visibility";
+import { useAnimationVisibility } from "@/shared/hooks/use-animation-visibility";
 import { NeuralNetworkLayer } from "./neural-network-layer";
 import styles from "../studio.module.css";
 

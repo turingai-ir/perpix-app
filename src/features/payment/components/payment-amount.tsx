@@ -1,6 +1,6 @@
-import type { SchemaSupportedCurrency } from "@/services/api";
-import { useAppTranslate } from "@/hooks";
-import { APP_I18_KEYS } from "@/services/i18";
+import type { SchemaSupportedCurrency } from "@/shared/api";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_I18_KEYS } from "@/shared/i18n";
 import { paymentCurrencyDisplay } from "../model/payment-money";
 
 type Props = { amount: string | number; currency: SchemaSupportedCurrency };

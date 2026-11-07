@@ -7,7 +7,7 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/shared/ui/select";
 import type { useModel } from "@/pages/(app)/generation/_hooks/model";
 
 import { ModelSelectItem } from "../model-select-item";

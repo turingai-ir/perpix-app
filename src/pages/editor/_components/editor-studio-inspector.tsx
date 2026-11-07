@@ -5,7 +5,7 @@ import {
   RotateCw,
   Download,
 } from "lucide-react";
-import { useAppTranslate } from "@/hooks/i18/use-app-translate";
+import { useAppTranslate } from "@/shared/hooks/i18/use-app-translate";
 import type { ImageEditorWorkspaceViewModel } from "../_hooks/image-editor-workspace-types";
 import { CROP_RATIO_OPTIONS, type CropRatioId } from "../_model/crop-ratios";
 import { DEFAULT_EDITOR_EDITS, type EditorEdits } from "../_model/editor-edits";

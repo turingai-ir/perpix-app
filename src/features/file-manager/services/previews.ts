@@ -1,4 +1,4 @@
-import { apiClient } from "@/services/api/client";
+import { apiClient } from "@/shared/api/client";
 import { httpError, toFileManagerError } from "../model/errors";
 import { previewsSchema, type FilePreviewUrls } from "../model/types";
 

@@ -1,4 +1,4 @@
-import type { SchemaPaymentResponse } from "@/services/api";
+import type { SchemaPaymentResponse } from "@/shared/api";
 
 type PaymentState = Pick<
   SchemaPaymentResponse,

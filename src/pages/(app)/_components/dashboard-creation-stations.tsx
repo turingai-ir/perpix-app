@@ -4,8 +4,8 @@ import { DashboardBrandEntrance } from "./dashboard-brand-entrance";
 import type { CreativeMode } from "./dashboard-creative-presets";
 import styles from "../dashboard.module.css";
 
-import { useAppTranslate } from "@/hooks";
-import { APP_I18_KEYS } from "@/services/i18";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_I18_KEYS } from "@/shared/i18n";
 
 interface DashboardCreationStationsProps {
   onEnter: (mode: CreativeMode) => void;

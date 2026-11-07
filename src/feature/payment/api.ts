@@ -1,6 +1,6 @@
 import { getPaymentViewStatus } from "./status";
 
-import { useReactQueryApi } from "@/hooks/app";
+import { useReactQueryApi } from "@/shared/hooks/app";
 
 export const usePaymentStatus = (executionUuid?: string) => {
   const { useQuery } = useReactQueryApi();

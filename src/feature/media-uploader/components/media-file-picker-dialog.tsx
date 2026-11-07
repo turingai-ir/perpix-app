@@ -1,21 +1,21 @@
 import { useId, useState, type ClipboardEvent, type FC } from "react";
 import { toast } from "sonner";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "@/shared/ui/dialog";
 import {
   FileManagerUploadStatus,
   type FileManagerAllowedContentType,
 } from "@/feature/file-manager";
 import { getClipboardImage, toClipboardImageFile } from "../clipboard-image";
-import { useAppTranslate } from "@/hooks";
-import { APP_I18_KEYS } from "@/services/i18";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_I18_KEYS } from "@/shared/i18n";
 
 import { LocalUploadStatusItem } from "./local-upload-status-item";
 import { NewFileUploadCard } from "./new-file-upload-card";

@@ -5,9 +5,9 @@ import { VideoGenerationPortal } from "./generation-portal";
 import { VideoRequestSummary } from "./request-summary";
 
 import { GenerationChats } from "@/pages/(app)/generation/_components/chats";
-import { useAppTranslate } from "@/hooks";
-import type { SchemaAiTaskMessageResponse } from "@/services/api";
-import { APP_I18_KEYS } from "@/services/i18";
+import { useAppTranslate } from "@/shared/hooks";
+import type { SchemaAiTaskMessageResponse } from "@/shared/api";
+import { APP_I18_KEYS } from "@/shared/i18n";
 import type { OptimisticGenerationTurn } from "@/pages/(app)/generation/_types/conversation";
 
 interface Props {

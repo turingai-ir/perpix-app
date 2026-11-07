@@ -1,12 +1,12 @@
 import { ChevronLeft, Clock3, Image, Video } from "lucide-react";
 import { NavLink } from "react-router";
-import { useAppTranslate } from "@/hooks";
-import { APP_ROUTES_KEY } from "@/router/routes";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_ROUTES_KEY } from "@/app/router/routes";
 import {
   AiRegistryModelSupportedTypesEnumMap,
   type SchemaAiTaskResponse,
-} from "@/services/api";
-import { APP_I18_KEYS } from "@/services/i18";
+} from "@/shared/api";
+import { APP_I18_KEYS } from "@/shared/i18n";
 import styles from "./sidebar.module.css";
 
 const historyDate = new Intl.DateTimeFormat("fa-IR", {

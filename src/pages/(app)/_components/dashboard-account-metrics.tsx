@@ -8,12 +8,12 @@ import {
 import { DashboardMetricCard } from "./dashboard-metric-card";
 import styles from "../dashboard.module.css";
 
-import { useAppTranslate } from "@/hooks";
+import { useAppTranslate } from "@/shared/hooks";
 import type {
   SchemaUserGetInfoResponse,
   SchemaUserSubscriptionResponse,
-} from "@/services/api";
-import { APP_I18_KEYS } from "@/services/i18";
+} from "@/shared/api";
+import { APP_I18_KEYS } from "@/shared/i18n";
 
 interface DashboardAccountMetricsProps {
   balance: string;

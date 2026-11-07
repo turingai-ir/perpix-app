@@ -7,10 +7,10 @@ import {
   Sparkles,
 } from "lucide-react";
 
-import { useAppTranslate } from "@/hooks";
-import { type SchemaSubscriptionPlanResponse } from "@/services/api";
-import { APP_I18_KEYS } from "@/services/i18";
-import { formatTokenAmount } from "@/utils";
+import { useAppTranslate } from "@/shared/hooks";
+import { type SchemaSubscriptionPlanResponse } from "@/shared/api";
+import { APP_I18_KEYS } from "@/shared/i18n";
+import { formatTokenAmount } from "@/shared/utils";
 import PricingPlanPrice from "./pricing-plan-price";
 import styles from "./pricing-plan-card.module.css";
 

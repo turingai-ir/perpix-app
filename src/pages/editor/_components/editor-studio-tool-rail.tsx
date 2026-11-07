@@ -5,7 +5,7 @@ import {
   SlidersHorizontal,
   Type,
 } from "lucide-react";
-import { useAppTranslate } from "@/hooks/i18/use-app-translate";
+import { useAppTranslate } from "@/shared/hooks/i18/use-app-translate";
 import type { EditorTool } from "./editor-studio-inspector";
 
 interface Props {

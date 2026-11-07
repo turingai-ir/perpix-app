@@ -2,7 +2,7 @@ import {
   FetchHttpError,
   FetchNetworkError,
   FetchTimeoutError,
-} from "@/utils/custom-fetch/fetch-errors";
+} from "@/shared/utils/custom-fetch/fetch-errors";
 
 export class FileError extends Error {
   constructor(

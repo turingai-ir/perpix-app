@@ -1,6 +1,6 @@
 import { get, keys, set } from "idb-keyval";
 import { onlineManager } from "@tanstack/react-query";
-import { queryClient } from "@/lib/react-query";
+import { queryClient } from "@/shared/lib/react-query";
 
 export async function readOldCache() {
   try {

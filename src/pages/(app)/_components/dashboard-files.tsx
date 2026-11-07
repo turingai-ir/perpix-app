@@ -4,12 +4,12 @@ import { Link } from "react-router";
 import { DashboardFileVisual } from "./dashboard-file-visual";
 import styles from "../dashboard.module.css";
 
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/shared/ui/skeleton";
 import type { FilePreviewUrls, UserFileItem } from "@/feature/file-manager";
-import { useAppTranslate } from "@/hooks";
-import { cn } from "@/lib/utils";
-import { APP_ROUTES_KEY } from "@/router/routes";
-import { APP_I18_KEYS } from "@/services/i18";
+import { useAppTranslate } from "@/shared/hooks";
+import { cn } from "@/shared/lib/utils";
+import { APP_ROUTES_KEY } from "@/app/router/routes";
+import { APP_I18_KEYS } from "@/shared/i18n";
 
 interface DashboardFilesProps {
   files: readonly UserFileItem[];

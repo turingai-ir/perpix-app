@@ -1,6 +1,6 @@
 import { GenerationFailure } from "@/pages/(app)/generation/_components/generation-failure";
 import type { OptimisticGenerationTurn } from "@/pages/(app)/generation/_types/conversation";
-import { useAppTranslate } from "@/hooks";
+import { useAppTranslate } from "@/shared/hooks";
 import { VideoGenerationPortal } from "./generation-portal";
 import { VideoRequestSummary } from "./request-summary";
 

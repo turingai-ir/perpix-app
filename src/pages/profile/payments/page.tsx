@@ -2,10 +2,10 @@ import { useDeferredValue, useState } from "react";
 import { Radio } from "lucide-react";
 import { useSearchParams } from "react-router";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import { usePayments, getPaymentViewStatus } from "@/feature/payment";
 import { PaymentDetailsDialog } from "@/features/payment";
-import { useAppTranslate } from "@/hooks";
+import { useAppTranslate } from "@/shared/hooks";
 import { FinanceHero } from "@/pages/profile/_components/finance-hero";
 import { FinanceToolbar } from "@/pages/profile/_components/finance-toolbar";
 import { PaginationFooter } from "@/pages/profile/_components/pagination-footer";
@@ -14,8 +14,8 @@ import {
   ProfileListError,
   ProfileListLoading,
 } from "@/pages/profile/_components/profile-list-state";
-import { APP_I18_KEYS } from "@/services/i18";
-import { formatLocalizedNumber } from "@/utils";
+import { APP_I18_KEYS } from "@/shared/i18n";
+import { formatLocalizedNumber } from "@/shared/utils";
 
 import { PaymentRecords } from "./_components/payment-records";
 import { PaymentSummary } from "./_components/payment-summary";

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAppTranslate } from "@/hooks/i18/use-app-translate";
+import { useAppTranslate } from "@/shared/hooks/i18/use-app-translate";
 
 interface Props {
   naturalWidth: number;

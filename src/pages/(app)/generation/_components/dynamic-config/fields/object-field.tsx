@@ -1,7 +1,7 @@
 import type { FC, ReactNode } from "react";
 
-import type { JsonSchemaProperty } from "@/hooks/use-dynamic-config-form";
-import { cn } from "@/lib/utils";
+import type { JsonSchemaProperty } from "@/shared/hooks/use-dynamic-config-form";
+import { cn } from "@/shared/lib/utils";
 
 import { resolvePropertyInputType } from "../schema";
 import type { DynamicConfigFieldProps } from "../types";

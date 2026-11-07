@@ -12,9 +12,9 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
 
-import ErrorSection from "@/components/custom/error-section";
-import LoadingSection from "@/components/custom/loading-section";
-import { Button } from "@/components/ui/button";
+import ErrorSection from "@/shared/components/error-section";
+import LoadingSection from "@/shared/components/loading-section";
+import { Button } from "@/shared/ui/button";
 import {
   Form,
   FormControl,
@@ -22,11 +22,11 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+} from "@/shared/ui/form";
+import { Input } from "@/shared/ui/input";
 import { useEditUserInfo, useUser } from "@/feature/user";
-import { useAppTranslate } from "@/hooks";
-import { APP_I18_KEYS } from "@/services/i18";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_I18_KEYS } from "@/shared/i18n";
 
 import { AccountGlance } from "./_components/account-glance";
 import { IdentityHero } from "./_components/identity-hero";

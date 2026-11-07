@@ -4,11 +4,11 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import ErrorSection from "@/components/custom/error-section";
-import LoadingSection from "@/components/custom/loading-section";
-import { useAppTranslate } from "@/hooks";
-import { APP_I18_KEYS } from "@/services/i18";
+} from "@/shared/ui/dialog";
+import ErrorSection from "@/shared/components/error-section";
+import LoadingSection from "@/shared/components/loading-section";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_I18_KEYS } from "@/shared/i18n";
 import { usePaymentDetails } from "../hooks/use-payment-details";
 import { PaymentBreakdown } from "./payment-breakdown";
 

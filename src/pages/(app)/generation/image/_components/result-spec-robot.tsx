@@ -1,4 +1,4 @@
-import { useAppTranslate } from "@/hooks";
+import { useAppTranslate } from "@/shared/hooks";
 import styles from "./result-card.module.css";
 
 export function ResultSpecRobot({

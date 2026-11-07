@@ -1,9 +1,9 @@
 import { ArrowUpLeft, RefreshCw, Sparkles } from "lucide-react";
 import { Link } from "react-router";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { useAppTranslate } from "@/hooks";
-import { APP_I18_KEYS } from "@/services/i18";
+import { Button, buttonVariants } from "@/shared/ui/button";
+import { cn } from "@/shared/lib/utils";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_I18_KEYS } from "@/shared/i18n";
 import { DashboardBrandEntrance } from "../../_components/dashboard-brand-entrance";
 import { GalleryOrbit } from "./gallery-orbit";
 

@@ -2,7 +2,7 @@ import type { FC } from "react";
 
 import { AuthField } from "./auth-field";
 
-import { PasswordInput } from "@/components/ui/password-input";
+import { PasswordInput } from "@/shared/ui/password-input";
 
 interface NewPasswordFieldsProps {
   passwordName: string;

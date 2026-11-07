@@ -1,4 +1,4 @@
-import { useAppTranslate } from "@/hooks/i18";
+import { useAppTranslate } from "@/shared/hooks/i18";
 import { useFileClock } from "../hooks/use-file-clock";
 import { canUseFileForGeneration } from "../model/expiry";
 import type { UserFileItem } from "../model/types";

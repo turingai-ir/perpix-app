@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useAppTranslate } from "@/hooks";
+import { useAppTranslate } from "@/shared/hooks";
 import { sessionStore } from "@/features/auth/session";
 import { transferFile } from "../services/transfers";
 import { uploadKey } from "../services/upload-session";

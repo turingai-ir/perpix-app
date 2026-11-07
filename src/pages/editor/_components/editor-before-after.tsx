@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useAppTranslate } from "@/hooks/i18/use-app-translate";
+import { useAppTranslate } from "@/shared/hooks/i18/use-app-translate";
 
 export function EditorBeforeAfter({
   before,

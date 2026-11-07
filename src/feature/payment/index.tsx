@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { PaymentConfirmationDialog } from "@/features/payment";
-import type { SchemaPaymentResponse } from "@/services/api";
-import { isSafeExternalUrl } from "@/utils/safe-external-url";
+import type { SchemaPaymentResponse } from "@/shared/api";
+import { isSafeExternalUrl } from "@/shared/utils/safe-external-url";
 
 export * from "./api";
 export * from "./checkout-session";

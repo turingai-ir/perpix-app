@@ -1,7 +1,7 @@
 import type { FC } from "react";
 import { CircleHelp } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -9,8 +9,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { useAppTranslate } from "@/hooks";
+} from "@/shared/ui/dialog";
+import { useAppTranslate } from "@/shared/hooks";
 
 export const GenerationRulesDialog: FC = () => {
   const { t } = useAppTranslate();

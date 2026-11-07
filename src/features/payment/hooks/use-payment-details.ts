@@ -1,4 +1,4 @@
-import { useReactQueryApi } from "@/hooks/app";
+import { useReactQueryApi } from "@/shared/hooks/app";
 
 export function usePaymentDetails(intentUuid: string) {
   const { useQuery } = useReactQueryApi();

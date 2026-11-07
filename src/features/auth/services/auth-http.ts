@@ -10,7 +10,7 @@ import {
   type IssuedSession,
 } from "../model/types";
 
-import { APP_KEYS } from "@/utils";
+import { APP_KEYS } from "@/shared/utils";
 
 const AUTH_BASE_URL = import.meta.env.DEV
   ? "/api/v1/auth"

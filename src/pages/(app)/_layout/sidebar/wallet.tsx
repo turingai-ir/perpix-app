@@ -2,9 +2,9 @@ import { ArrowUpLeft } from "lucide-react";
 
 import { CreditIcon } from "./menu-icons";
 import styles from "./sidebar.module.css";
-import { useAppTranslate } from "@/hooks";
-import { APP_I18_KEYS } from "@/services/i18";
-import { formatTokenAmount } from "@/utils";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_I18_KEYS } from "@/shared/i18n";
+import { formatTokenAmount } from "@/shared/utils";
 
 type AppLayoutSidebarWalletProps = {
   balanceUsdmicro: number;

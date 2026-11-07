@@ -1,8 +1,8 @@
 import { Camera, Clapperboard, Package, RotateCcw, Sprout } from "lucide-react";
 
 import styles from "../studio.module.css";
-import { Button } from "@/components/ui/button";
-import { useAppTranslate } from "@/hooks";
+import { Button } from "@/shared/ui/button";
+import { useAppTranslate } from "@/shared/hooks";
 import type { DynamicConfigForm } from "@/pages/(app)/generation/_components/dynamic-config";
 import { PromptTextarea } from "@/pages/(app)/generation/_components/prompt-box/prompt-textarea";
 

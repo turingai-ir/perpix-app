@@ -1,7 +1,7 @@
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/shared/ui/skeleton";
 import { FileFacts, useVisibleFilePreview } from "@/features/file-manager";
-import { useAppTranslate } from "@/hooks";
-import { APP_I18_KEYS } from "@/services/i18";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_I18_KEYS } from "@/shared/i18n";
 import { GalleryPreview } from "./gallery-preview";
 import { GalleryFallback } from "./gallery-fallback";
 import { GalleryActions } from "./gallery-actions";
@@ -11,7 +11,7 @@ import {
   cardBodyClass,
   cardFactsClass,
 } from "./gallery-card-shell";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 import { getGalleryMediaType } from "../_utils/gallery";
 import type { GalleryFile } from "../_utils/types";
 

@@ -11,7 +11,7 @@ import { AspectRatioPicker } from "./aspect-ratio-picker";
 import { ResolutionPicker } from "./resolution-picker";
 import styles from "./image-prompt-actions.module.css";
 
-import { useAppTranslate } from "@/hooks";
+import { useAppTranslate } from "@/shared/hooks";
 
 export function ImagePromptActions({
   advancedFieldNames,

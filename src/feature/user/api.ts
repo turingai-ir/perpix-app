@@ -1,4 +1,4 @@
-import { useReactQueryApi } from "@/hooks/app";
+import { useReactQueryApi } from "@/shared/hooks/app";
 import { useQueryClient } from "@tanstack/react-query";
 
 export const useUser = () => {

@@ -1,5 +1,5 @@
 import { Expand, Play } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 
 /** Round badge on a preview: an expand hint on hover, or a permanent play mark for video. */
 export function GalleryAffordance({ video }: { video: boolean }) {

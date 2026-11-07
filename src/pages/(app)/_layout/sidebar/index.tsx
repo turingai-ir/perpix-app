@@ -6,9 +6,9 @@ import appLayoutAtom from "../_state";
 import AppLayoutSidebarContent from "./content";
 import styles from "./sidebar.module.css";
 
-import { cn } from "@/lib/utils";
-import { useAppTranslate, useViewportBreakpoint } from "@/hooks";
-import { APP_I18_KEYS } from "@/services/i18";
+import { cn } from "@/shared/lib/utils";
+import { useAppTranslate, useViewportBreakpoint } from "@/shared/hooks";
+import { APP_I18_KEYS } from "@/shared/i18n";
 import { useActiveSubscription, usePricingFeature } from "@/feature/pricing";
 import { useWallet, WalletChargeFlow } from "@/feature/wallet";
 import {
@@ -16,7 +16,7 @@ import {
   SheetContent,
   SheetHeader,
   SheetTitle,
-} from "@/components/ui/sheet";
+} from "@/shared/ui/sheet";
 
 const AppLayoutSidebar: FC<{
   sidebarWidth: string;

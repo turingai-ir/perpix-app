@@ -7,9 +7,9 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import type { JsonSchemaProperty } from "@/hooks/use-dynamic-config-form";
+} from "@/shared/ui/form";
+import { Input } from "@/shared/ui/input";
+import type { JsonSchemaProperty } from "@/shared/hooks/use-dynamic-config-form";
 
 import { resolveFieldValue } from "../../schema";
 import type { DynamicConfigForm } from "../../types";

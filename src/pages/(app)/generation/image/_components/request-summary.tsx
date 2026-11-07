@@ -1,4 +1,4 @@
-import { MediaPreviewItem } from "@/components/custom/media-preview-item";
+import { MediaPreviewItem } from "@/shared/components/media-preview-item";
 
 export function ImageRequestSummary({
   prompt,

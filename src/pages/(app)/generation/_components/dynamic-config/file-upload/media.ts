@@ -1,4 +1,4 @@
-import type { JsonSchemaProperty } from "@/hooks/use-dynamic-config-form";
+import type { JsonSchemaProperty } from "@/shared/hooks/use-dynamic-config-form";
 import type { MediaPreviewType } from "@/feature/media-uploader";
 
 import type { DynamicConfigForm } from "../types";

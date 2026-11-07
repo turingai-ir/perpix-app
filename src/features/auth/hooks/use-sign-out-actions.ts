@@ -8,9 +8,9 @@ import {
 import { onSessionEnded } from "../services/session-manager";
 import { sessionStore } from "../services/session-store";
 
-import { useAppTranslate } from "@/hooks";
-import { APP_I18_KEYS } from "@/services/i18";
-import { isErrorAbortError } from "@/utils/custom-fetch/helpers";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_I18_KEYS } from "@/shared/i18n";
+import { isErrorAbortError } from "@/shared/utils/custom-fetch/helpers";
 
 export function useSignOutActions() {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);

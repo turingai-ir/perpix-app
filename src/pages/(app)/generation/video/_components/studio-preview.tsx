@@ -1,7 +1,7 @@
 import { Aperture, ArrowDown, Film, Focus, Play } from "lucide-react";
 
 import styles from "../studio.module.css";
-import { useAppTranslate } from "@/hooks";
+import { useAppTranslate } from "@/shared/hooks";
 
 export function VideoStudioPreview({ hasResults }: { hasResults: boolean }) {
   const { t } = useAppTranslate();

@@ -1,11 +1,11 @@
 import { ArrowDownLeft, ArrowUpRight, RotateCcw } from "lucide-react";
 
-import { useAppTranslate } from "@/hooks";
+import { useAppTranslate } from "@/shared/hooks";
 import {
   WalletTransactionTypeEnumMap,
   type SchemaWalletTransactionTypeEnum,
-} from "@/services/api";
-import { APP_I18_KEYS } from "@/services/i18";
+} from "@/shared/api";
+import { APP_I18_KEYS } from "@/shared/i18n";
 
 const typeView = {
   [WalletTransactionTypeEnumMap.DEPOSIT]: {

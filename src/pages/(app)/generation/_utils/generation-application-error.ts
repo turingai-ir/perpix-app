@@ -1,4 +1,4 @@
-import { FetchHttpError } from "@/utils/custom-fetch/fetch-errors";
+import { FetchHttpError } from "@/shared/utils/custom-fetch/fetch-errors";
 
 interface GenerationApplicationError {
   detail: unknown;

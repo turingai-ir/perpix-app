@@ -6,7 +6,7 @@ import {
   Sparkles,
 } from "lucide-react";
 
-import { useAppTranslate } from "@/hooks";
+import { useAppTranslate } from "@/shared/hooks";
 import styles from "./generation-focus-state.module.css";
 
 export type GenerationFocusPhase = "submitting" | "queued" | "processing";

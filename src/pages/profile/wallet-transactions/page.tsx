@@ -1,9 +1,9 @@
 import { useDeferredValue, useState } from "react";
 import { useSearchParams } from "react-router";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import { useWalletTransactions } from "@/feature/wallet";
-import { useAppTranslate } from "@/hooks";
+import { useAppTranslate } from "@/shared/hooks";
 import { FinanceToolbar } from "@/pages/profile/_components/finance-toolbar";
 import { PaginationFooter } from "@/pages/profile/_components/pagination-footer";
 import {
@@ -14,9 +14,9 @@ import {
 import {
   WalletTransactionTypeEnumMap,
   type SchemaWalletTransactionTypeEnum,
-} from "@/services/api";
-import { APP_I18_KEYS } from "@/services/i18";
-import { formatLocalizedNumber } from "@/utils";
+} from "@/shared/api";
+import { APP_I18_KEYS } from "@/shared/i18n";
+import { formatLocalizedNumber } from "@/shared/utils";
 
 import { WalletHero } from "./_components/wallet-hero";
 import { WalletRecords } from "./_components/wallet-records";

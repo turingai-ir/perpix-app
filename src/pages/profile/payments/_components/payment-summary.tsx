@@ -2,10 +2,10 @@ import { CircleAlert, CircleCheckBig, Hourglass } from "lucide-react";
 
 import { getPaymentViewStatus } from "@/feature/payment";
 import { FinanceSummary } from "@/pages/profile/_components/finance-summary";
-import type { SchemaPaymentHistoryItemResponse } from "@/services/api";
-import { useAppTranslate } from "@/hooks";
-import { APP_I18_KEYS } from "@/services/i18";
-import { formatLocalizedNumber, formatTomanAmount } from "@/utils";
+import type { SchemaPaymentHistoryItemResponse } from "@/shared/api";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_I18_KEYS } from "@/shared/i18n";
+import { formatLocalizedNumber, formatTomanAmount } from "@/shared/utils";
 
 export function PaymentSummary({
   payments,

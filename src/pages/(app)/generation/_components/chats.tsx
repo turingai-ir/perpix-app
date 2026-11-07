@@ -2,13 +2,13 @@ import type { FC, ReactNode } from "react";
 
 import { GenerationFailure } from "./generation-failure";
 
-import { ChatBubble } from "@/components/custom";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { cn } from "@/lib/utils";
+import { ChatBubble } from "@/shared/components";
+import { Avatar, AvatarImage } from "@/shared/ui/avatar";
+import { cn } from "@/shared/lib/utils";
 import {
   AiTaskRuleEnumMap,
   type SchemaAiTaskMessageResponse,
-} from "@/services/api";
+} from "@/shared/api";
 
 interface GenerationChatMedia {
   generatedMedia: string[];

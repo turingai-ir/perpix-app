@@ -2,9 +2,9 @@ import { AlertCircle, Check, LoaderCircle } from "lucide-react";
 import type { FC } from "react";
 
 import { FileManagerUploadStatus } from "@/feature/file-manager";
-import { useAppTranslate } from "@/hooks";
-import { cn } from "@/lib/utils";
-import { APP_I18_KEYS } from "@/services/i18";
+import { useAppTranslate } from "@/shared/hooks";
+import { cn } from "@/shared/lib/utils";
+import { APP_I18_KEYS } from "@/shared/i18n";
 
 import type { LocalMediaItem } from "../types";
 

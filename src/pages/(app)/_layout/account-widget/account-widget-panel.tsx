@@ -9,8 +9,8 @@ import type { useAccountWidget } from "./use-account-widget";
 import styles from "./account-widget.module.css";
 
 import { usePricingFeature } from "@/feature/pricing";
-import { useAppTranslate } from "@/hooks";
-import { APP_I18_KEYS } from "@/services/i18";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_I18_KEYS } from "@/shared/i18n";
 
 const PREFIX = "pages.app.layout.accountWidget";
 const PLAN_PREFIX = "pages.app.layout.sidebar.user.plan";

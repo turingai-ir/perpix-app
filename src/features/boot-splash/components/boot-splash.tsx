@@ -1,8 +1,8 @@
 import { useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 
-import { useAppTranslate } from "@/hooks";
-import { APP_I18_KEYS } from "@/services/i18";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_I18_KEYS } from "@/shared/i18n";
 import { shouldShowSplash, useAppReady } from "../hooks/use-app-ready";
 import { BootOffice } from "./boot-office";
 import { BootSplashHud } from "./boot-splash-hud";

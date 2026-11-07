@@ -1,20 +1,20 @@
 import { useRef, useState } from "react";
 import { Check, RotateCcw, SlidersHorizontal, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "@/shared/ui/dialog";
 import {
   Drawer,
   DrawerContent,
   DrawerDescription,
   DrawerTitle,
-} from "@/components/ui/drawer";
-import { useAppTranslate } from "@/hooks";
-import { useIsMobile } from "@/hooks/use-mobile";
+} from "@/shared/ui/drawer";
+import { useAppTranslate } from "@/shared/hooks";
+import { useIsMobile } from "@/shared/hooks/use-mobile";
 import { ImageSettingsFields } from "./image-settings-fields";
 import { useImageSettings } from "./use-image-settings";
 import type { DynamicConfigForm } from "./types";

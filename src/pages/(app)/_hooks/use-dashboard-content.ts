@@ -5,12 +5,12 @@ import {
   useFilesPreviews,
   useInfiniteUserFiles,
 } from "@/feature/file-manager";
-import { useReactQueryApi } from "@/hooks/app";
+import { useReactQueryApi } from "@/shared/hooks/app";
 import type {
   SchemaAiRegistryModelSummary,
   SchemaAiTaskResponse,
   SchemaFileManagerUserFilesResponse,
-} from "@/services/api";
+} from "@/shared/api";
 
 export function useDashboardContent(allowedModelNames: readonly string[]) {
   const { useQuery } = useReactQueryApi();

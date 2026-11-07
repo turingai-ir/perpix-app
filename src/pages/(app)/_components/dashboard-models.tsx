@@ -2,12 +2,12 @@ import { ArrowUpLeft, AudioLines, Image, Type, Video } from "lucide-react";
 import { Link } from "react-router";
 import styles from "../dashboard.module.css";
 
-import { Skeleton } from "@/components/ui/skeleton";
-import { useAppTranslate } from "@/hooks";
-import { APP_ROUTES_KEY } from "@/router/routes";
-import type { SchemaAiRegistryModelSummary } from "@/services/api";
-import { APP_I18_KEYS } from "@/services/i18";
-import { formatTokenAmount } from "@/utils";
+import { Skeleton } from "@/shared/ui/skeleton";
+import { useAppTranslate } from "@/shared/hooks";
+import { APP_ROUTES_KEY } from "@/app/router/routes";
+import type { SchemaAiRegistryModelSummary } from "@/shared/api";
+import { APP_I18_KEYS } from "@/shared/i18n";
+import { formatTokenAmount } from "@/shared/utils";
 
 interface DashboardModelsProps {
   isLoading: boolean;

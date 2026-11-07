@@ -2,7 +2,7 @@ import { useNavigate, useParams } from "react-router";
 import { ImageEditor } from "./_components/image-editor";
 import { EditorUploaderEmpty } from "./_components/editor-uploader-empty";
 import { toast } from "sonner";
-import { useAppTranslate } from "@/hooks/i18/use-app-translate";
+import { useAppTranslate } from "@/shared/hooks/i18/use-app-translate";
 import { useFilePreview } from "@/feature/file-manager";
 import { useEditorImageSource } from "./_hooks/use-editor-image-source";
 import {

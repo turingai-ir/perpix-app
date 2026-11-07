@@ -1,7 +1,7 @@
 import type { FC } from "react";
 import { ArrowLeft, LoaderCircle } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 
 export const FormAlert: FC<{ message: string | null }> = ({ message }) =>
   message ? (

@@ -1,6 +1,6 @@
 import { get, keys, set } from "idb-keyval";
 import { dehydrate, onlineManager } from "@tanstack/react-query";
-import { queryClient } from "@/lib/react-query";
+import { queryClient } from "@/shared/lib/react-query";
 
 export async function seedLegacyOfflineData() {
   queryClient.setQueryData(["offline-sentinel"], { cached: true });

@@ -1,8 +1,8 @@
-import { useAppTranslate } from "@/hooks";
-import { dayjs } from "@/lib/dayjs";
-import type { SchemaWalletTransactionResponse } from "@/services/api";
-import { APP_I18_KEYS } from "@/services/i18";
-import { formatTokenAmount } from "@/utils";
+import { useAppTranslate } from "@/shared/hooks";
+import { dayjs } from "@/shared/lib/dayjs";
+import type { SchemaWalletTransactionResponse } from "@/shared/api";
+import { APP_I18_KEYS } from "@/shared/i18n";
+import { formatTokenAmount } from "@/shared/utils";
 
 import { WalletTransactionType } from "./wallet-transaction-type";
 

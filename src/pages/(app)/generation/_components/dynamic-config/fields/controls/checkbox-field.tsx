@@ -1,6 +1,6 @@
 import type { FC } from "react";
 
-import { Checkbox } from "@/components/ui/checkbox";
+import { Checkbox } from "@/shared/ui/checkbox";
 import {
   FormControl,
   FormDescription,
@@ -8,9 +8,9 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import type { JsonSchemaProperty } from "@/hooks/use-dynamic-config-form";
-import { cn } from "@/lib/utils";
+} from "@/shared/ui/form";
+import type { JsonSchemaProperty } from "@/shared/hooks/use-dynamic-config-form";
+import { cn } from "@/shared/lib/utils";
 
 import { resolveFieldValue } from "../../schema";
 import type { DynamicConfigForm } from "../../types";

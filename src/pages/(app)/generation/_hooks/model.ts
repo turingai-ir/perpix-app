@@ -14,7 +14,7 @@ import {
   selectedVideoModelAtom,
 } from "../_state/selected-model-atom";
 
-import { useReactQueryApi } from "@/hooks/app";
+import { useReactQueryApi } from "@/shared/hooks/app";
 import { useActiveSubscription } from "@/feature/pricing";
 import {
   PaidActionScope,
@@ -31,7 +31,7 @@ import type {
   SchemaAiTaskMessageResponse,
   SchemaAiTaskResponse,
   SchemaAiRegistryModelSummary,
-} from "@/services/api";
+} from "@/shared/api";
 
 export const AI_TASKS_PAGE_SIZE = 5;
 
