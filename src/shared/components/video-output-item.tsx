@@ -3,7 +3,15 @@ import { Check, Clapperboard, Download, Expand } from "lucide-react";
 
 import { useVideoOutput } from "./use-video-output";
 import { VideoOutputDialog } from "./video-output-dialog";
-import styles from "./video-output.module.css";
+import {
+  VideoOutputActions,
+  VideoOutputBadge,
+  VideoOutputFooter,
+  VideoOutputHeader,
+  VideoOutputHint,
+  VideoOutputScreen,
+  VideoOutputTitle,
+} from "./video-output-parts";
 
 import { Button } from "@/shared/ui/button";
 import { Dialog, DialogTrigger } from "@/shared/ui/dialog";
@@ -11,7 +19,6 @@ import { Skeleton } from "@/shared/ui/skeleton";
 import { MediaUnavailableState } from "./media-unavailable-state";
 import { useAppTranslate } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";
-import { cn } from "@/shared/lib/utils";
 
 interface Props {
   fileId: string;
@@ -41,25 +48,24 @@ export function VideoOutputItem({ fileId, index = 0 }: Props) {
         if (open) player.current?.pause();
       }}
     >
-      <div role="group" aria-label={label} className={styles.output}>
-        <div className={styles.header}>
-          <span className={styles.title}>
+      <div
+        role="group"
+        aria-label={label}
+        className="border-border bg-background min-w-0 overflow-hidden rounded-2xl border shadow-[0_12px_30px] shadow-black/10"
+      >
+        <VideoOutputHeader>
+          <VideoOutputTitle>
             <Clapperboard aria-hidden="true" />
             {label}
-          </span>
+          </VideoOutputTitle>
           {previewUrl && !hasMediaError ? (
-            <span className={styles.badge}>
+            <VideoOutputBadge>
               <Check aria-hidden="true" />
               {t("pages.generation.video.output.ready")}
-            </span>
+            </VideoOutputBadge>
           ) : null}
-        </div>
-        <div
-          className={cn(
-            styles.screen,
-            (!previewUrl || hasMediaError) && styles.unavailableScreen,
-          )}
-        >
+        </VideoOutputHeader>
+        <VideoOutputScreen unavailable={!previewUrl || hasMediaError}>
           {previewUrl && !hasMediaError ? (
             // Generated videos do not include a captions track in the file contract.
             // eslint-disable-next-line jsx-a11y/media-has-caption
@@ -87,15 +93,15 @@ export function VideoOutputItem({ fileId, index = 0 }: Props) {
               isRefreshing={isRefreshing}
             />
           ) : null}
-        </div>
+        </VideoOutputScreen>
         {!isMissing && (
-          <div className={styles.footer}>
+          <VideoOutputFooter>
             {previewUrl && !hasMediaError ? (
-              <p className={styles.hint}>
+              <VideoOutputHint>
                 {t("pages.generation.video.output.hint")}
-              </p>
+              </VideoOutputHint>
             ) : null}
-            <div className={styles.actions}>
+            <VideoOutputActions>
               <Button
                 type="button"
                 className="min-h-11 gap-2"
@@ -118,8 +124,8 @@ export function VideoOutputItem({ fileId, index = 0 }: Props) {
                 <Expand aria-hidden="true" />
                 {t("pages.generation.video.output.preview")}
               </DialogTrigger>
-            </div>
-          </div>
+            </VideoOutputActions>
+          </VideoOutputFooter>
         )}
       </div>
       <VideoOutputDialog

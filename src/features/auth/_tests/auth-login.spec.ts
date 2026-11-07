@@ -89,9 +89,7 @@ test("reports a connection problem when the request cannot be sent", async ({
   await page.goto("/auth/login");
   await fillCredentials(page, "09123456789", "secret");
 
-  await expect(page.getByRole("alert")).toContainText(
-    "اتصال برقرار نشد",
-  );
+  await expect(page.getByRole("alert")).toContainText("اتصال برقرار نشد");
 });
 
 test("validates the phone number before sending anything", async ({ page }) => {

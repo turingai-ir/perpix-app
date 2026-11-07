@@ -108,7 +108,9 @@ function assertSessionCycle(cycle: number) {
   }
 }
 
-async function exchangeRefreshCookie(signal: AbortSignal): Promise<IssuedSession> {
+async function exchangeRefreshCookie(
+  signal: AbortSignal,
+): Promise<IssuedSession> {
   // The CSRF value may belong to a cookie another tab already rotated.
   const csrfToken = await authHttp.fetchCsrfToken(signal);
   signal.throwIfAborted();
@@ -319,25 +321,22 @@ export async function signOut(
   });
   const timeout = setTimeout(() => controller.abort(), SIGN_OUT_TIMEOUT_MS);
   try {
-    await withBrowserLock(
-      async () => {
-        const assertCurrentAttempt = () => {
-          if (
-            sessionStore.getCycle() !== expectedCycle + 1 ||
-            (tracksSharedIntent && localSignOut() === false)
-          ) {
-            superseded = true;
-            controller.abort();
-          }
-          controller.signal.throwIfAborted();
-        };
-        assertCurrentAttempt();
-        const csrfToken = await authHttp.fetchCsrfToken(controller.signal);
-        assertCurrentAttempt();
-        await authHttp.logout(csrfToken, controller.signal);
-      },
-      controller.signal,
-    );
+    await withBrowserLock(async () => {
+      const assertCurrentAttempt = () => {
+        if (
+          sessionStore.getCycle() !== expectedCycle + 1 ||
+          (tracksSharedIntent && localSignOut() === false)
+        ) {
+          superseded = true;
+          controller.abort();
+        }
+        controller.signal.throwIfAborted();
+      };
+      assertCurrentAttempt();
+      const csrfToken = await authHttp.fetchCsrfToken(controller.signal);
+      assertCurrentAttempt();
+      await authHttp.logout(csrfToken, controller.signal);
+    }, controller.signal);
 
     return "confirmed";
   } catch (error) {

@@ -29,13 +29,16 @@ export const AuthCard: FC<AuthCardProps> = ({
   <div className="relative isolate w-full max-w-full">
     <Card className="w-full max-w-sm">
       <CardHeader>
-        <div className="mb-8 flex w-full items-center gap-3.5" aria-hidden="true">
+        <div
+          className="mb-8 flex w-full items-center gap-3.5"
+          aria-hidden="true"
+        >
           <img
             src="/android-chrome-192x192.png"
             alt=""
-            className="size-10 rounded-xl border border-primary/40 bg-accent object-contain p-1.5"
+            className="border-primary/40 bg-accent size-10 rounded-xl border object-contain p-1.5"
           />
-          <span className="h-px flex-1 bg-gradient-to-r from-primary/50 to-transparent rtl:bg-gradient-to-l" />
+          <span className="from-primary/50 h-px flex-1 bg-gradient-to-r to-transparent rtl:bg-gradient-to-l" />
         </div>
         <CardTitle>
           <Heading2>{title}</Heading2>

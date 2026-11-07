@@ -156,8 +156,11 @@ for (const pendingEndpoint of ["csrf", "logout"]) {
       await expect(tab.getByLabel("نام کامل", { exact: true })).toBeVisible();
       await tab.evaluate(async () => {
         const path = "/src/shared/lib/react-query.ts";
-        const { queryClient }: typeof import("../../../shared/lib/react-query") =
-          await import(path);
+        const {
+          queryClient,
+        }: typeof import("../../../shared/lib/react-query") = await import(
+          path
+        );
         queryClient.setQueryData(["qa-private-before-logout"], "previous-user");
       });
     }
@@ -191,8 +194,11 @@ for (const pendingEndpoint of ["csrf", "logout"]) {
           const { sessionStore }: typeof import("../services/session-store") =
             await import(storePath);
           const queryPath = "/src/shared/lib/react-query.ts";
-          const { queryClient }: typeof import("../../../shared/lib/react-query") =
-            await import(queryPath);
+          const {
+            queryClient,
+          }: typeof import("../../../shared/lib/react-query") = await import(
+            queryPath
+          );
           const fetchPath = "/src/features/auth/services/authorized-fetch.ts";
           const auth: typeof import("../services/authorized-fetch") =
             await import(fetchPath);
@@ -210,7 +216,8 @@ for (const pendingEndpoint of ["csrf", "logout"]) {
           return {
             status: sessionStore.getStatus(),
             hasToken: sessionStore.getAccessToken() !== null,
-            cached: queryClient.getQueryData(["qa-private-before-logout"]) ?? null,
+            cached:
+              queryClient.getQueryData(["qa-private-before-logout"]) ?? null,
             sent,
             denied,
           };
@@ -306,7 +313,10 @@ test("changing the password reports a wrong current password without retrying", 
     return route.fulfill({ status: 401, json: errorBody() });
   });
   await page.goto("/profile/settings");
-  const dialog = page.getByRole("region", { name: "تغییر رمز عبور", exact: true });
+  const dialog = page.getByRole("region", {
+    name: "تغییر رمز عبور",
+    exact: true,
+  });
   await dialog.getByLabel("رمز عبور فعلی").fill("wrong-current");
   await dialog
     .getByLabel("رمز عبور جدید", { exact: true })
@@ -342,7 +352,10 @@ test("a successful password change ends the session and asks to sign in again", 
     return route.fulfill({ status: 204 });
   });
   await page.goto("/profile/settings");
-  const dialog = page.getByRole("region", { name: "تغییر رمز عبور", exact: true });
+  const dialog = page.getByRole("region", {
+    name: "تغییر رمز عبور",
+    exact: true,
+  });
   await dialog.getByLabel("رمز عبور فعلی").fill("current-pass");
   await dialog
     .getByLabel("رمز عبور جدید", { exact: true })

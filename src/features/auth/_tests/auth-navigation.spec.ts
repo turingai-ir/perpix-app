@@ -18,11 +18,9 @@ for (const destination of [
     await page.goto(`/auth/login?returnTo=${encodeURIComponent(destination)}`);
     await expect(page).toHaveURL("/");
     await expect(
-      page
-        .getByRole("complementary")
-        .filter({
-          has: page.getByRole("link", { name: "صفحه اصلی", exact: true }),
-        }),
+      page.getByRole("complementary").filter({
+        has: page.getByRole("link", { name: "صفحه اصلی", exact: true }),
+      }),
     ).toBeVisible();
   });
 }

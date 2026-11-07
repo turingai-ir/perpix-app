@@ -37,7 +37,10 @@ export const useCompleteRegistrationMutation = () =>
       password: string;
     }) => {
       const cycle = sessionStore.getCycle();
-      sessionManager.startSession(await authHttp.completeRegistration(body), cycle);
+      sessionManager.startSession(
+        await authHttp.completeRegistration(body),
+        cycle,
+      );
     },
   });
 
