@@ -6,8 +6,7 @@ x-logging: &default-logging
 
 services:
   test-perpix-app:
-    # image: perpix-app:latest
-    image: test-perpix-app:latest
+    image: perpix-app:latest
     build:
       context: .
       dockerfile: Dockerfile
