@@ -2,7 +2,6 @@ import { useRef, type FC } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 
-import styles from "./auth-reaction.module.css";
 
 gsap.registerPlugin(useGSAP);
 
@@ -56,14 +55,14 @@ export const AuthReaction: FC<AuthReactionProps> = ({ kind, message }) => {
   return (
     <div
       ref={scope}
-      className={styles.scene}
+      className="pointer-events-none absolute inset-0 z-[5] overflow-hidden rounded-3xl motion-reduce:hidden"
       data-auth-reaction={kind}
       aria-hidden="true"
     >
-      <div className={styles.flash} data-reaction-flash />
-      <div className={styles.left} data-reaction-left />
-      <div className={styles.right} data-reaction-right />
-      <svg className={styles.bolt} viewBox="0 0 100 180" fill="none">
+      <div className="absolute inset-0 bg-primary opacity-0" data-reaction-flash />
+      <div className="absolute inset-y-0 start-0 w-1/2 [clip-path:polygon(0_0,100%_0,89%_30%,100%_58%,90%_100%,0_100%)] bg-[linear-gradient(145deg,var(--accent),var(--background)_80%)] shadow-[0_0_32px] shadow-primary/60" data-reaction-left />
+      <div className="absolute inset-y-0 end-0 w-1/2 [clip-path:polygon(10%_0,100%_0,100%_100%,0_100%,10%_64%,0_30%)] bg-[linear-gradient(145deg,var(--accent),var(--background)_80%)] shadow-[0_0_32px] shadow-primary/60" data-reaction-right />
+      <svg className="absolute start-[calc(50%-44px)] top-[12%] h-[150px] w-[88px] text-primary drop-shadow-[0_0_13px_var(--primary)]" viewBox="0 0 100 180" fill="none">
         <path
           data-reaction-bolt
           d="M59 3 24 77h29L35 177l44-91H49L59 3Z"
@@ -73,7 +72,7 @@ export const AuthReaction: FC<AuthReactionProps> = ({ kind, message }) => {
           strokeDasharray="180"
         />
       </svg>
-      <span className={styles.caption} data-reaction-caption>
+      <span className="absolute inset-x-3.5 bottom-[18%] m-auto w-fit max-w-[calc(100%-28px)] rounded-full border border-primary bg-popover px-[18px] py-2.5 text-center font-bold text-popover-foreground shadow-[0_8px_32px] shadow-primary/40" data-reaction-caption>
         {message}
       </span>
     </div>

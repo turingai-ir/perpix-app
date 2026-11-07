@@ -9,7 +9,7 @@ import { usePasswordResetChallengeMutation } from "../hooks/use-auth-mutations";
 import { ChallengeCompleteForm } from "./challenge-complete-form";
 import { ChallengeStartForm } from "./challenge-start-form";
 import { LoginForm } from "./login-form";
-import styles from "./auth-flow.module.css";
+import { AuthProgress } from "./auth-progress";
 
 type FlowView =
   | { name: "phone"; phone: string }
@@ -40,29 +40,13 @@ export const AuthFlow: FC<{ onAuthenticated: () => Promise<void> }> = ({
   }
 
   return (
-    <div className={styles.flow}>
-      <div
-        className={styles.progress}
-        aria-label={t("pages.auth.login.visual.progressLabel")}
-      >
-        <span
-          className={isFirstStep ? styles.current : styles.done}
-          aria-current={isFirstStep ? "step" : undefined}
-        >
-          <b>01</b>
-          {t("pages.auth.login.visual.stepPhone")}
-        </span>
-        <span className={styles.track} aria-hidden="true">
-          <i data-complete={!isFirstStep} />
-        </span>
-        <span
-          className={!isFirstStep ? styles.current : undefined}
-          aria-current={!isFirstStep ? "step" : undefined}
-        >
-          <b>02</b>
-          {nextLabel}
-        </span>
-      </div>
+    <div className="w-full">
+      <AuthProgress
+        label={t("pages.auth.login.visual.progressLabel")}
+        firstStep={{ badge: "01", text: t("pages.auth.login.visual.stepPhone") }}
+        secondStep={{ badge: "02", text: nextLabel }}
+        isFirstStep={isFirstStep}
+      />
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={step}

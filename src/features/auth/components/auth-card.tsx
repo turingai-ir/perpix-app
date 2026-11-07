@@ -10,7 +10,6 @@ import {
 } from "@/shared/ui/card";
 import { Heading2, Paragraph } from "@/shared/ui/typography";
 import { AuthReaction } from "./auth-reaction";
-import styles from "./auth-reaction.module.css";
 
 interface AuthCardProps {
   title: string;
@@ -27,12 +26,16 @@ export const AuthCard: FC<AuthCardProps> = ({
   children,
   reaction,
 }) => (
-  <div className={styles.stage}>
+  <div className="relative isolate w-full max-w-full">
     <Card className="w-full max-w-sm">
       <CardHeader>
-        <div className={styles.brandMark} aria-hidden="true">
-          <img src="/android-chrome-192x192.png" alt="" />
-          <span />
+        <div className="mb-8 flex w-full items-center gap-3.5" aria-hidden="true">
+          <img
+            src="/android-chrome-192x192.png"
+            alt=""
+            className="size-10 rounded-xl border border-primary/40 bg-accent object-contain p-1.5"
+          />
+          <span className="h-px flex-1 bg-gradient-to-r from-primary/50 to-transparent rtl:bg-gradient-to-l" />
         </div>
         <CardTitle>
           <Heading2>{title}</Heading2>
