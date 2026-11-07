@@ -2,7 +2,7 @@ import { useAtom } from "jotai";
 import { ZoomIn, ZoomOut } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { useAppTranslate } from "@/shared/hooks/i18/use-app-translate";
-import { zoomAtom, panAtom } from "../_model/editor-settings";
+import { zoomAtom, panAtom } from "../model/editor-settings";
 
 interface ImageEditorZoomControlsProps {
   stageSize: { height: number; width: number } | null;

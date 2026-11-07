@@ -1,14 +1,14 @@
 import { useNavigate, useParams } from "react-router";
-import { ImageEditor } from "./_components/image-editor";
-import { EditorUploaderEmpty } from "./_components/editor-uploader-empty";
 import { toast } from "sonner";
 import { useAppTranslate } from "@/shared/hooks/i18/use-app-translate";
 import { useFilePreview } from "@/features/file-manager";
-import { useEditorImageSource } from "./_hooks/use-editor-image-source";
 import {
   EditorPageLoadError,
   EditorPageLoading,
-} from "./_components/editor-page-state";
+  EditorUploaderEmpty,
+  ImageEditor,
+  useEditorImageSource,
+} from "@/features/editor";
 
 export default function EditorPage() {
   const { t } = useAppTranslate();

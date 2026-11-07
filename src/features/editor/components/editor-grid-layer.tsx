@@ -1,6 +1,6 @@
 import { useAtomValue } from "jotai";
 import { Group, Shape } from "react-konva";
-import { showGridAtom, zoomAtom, panAtom } from "../_model/editor-settings";
+import { showGridAtom, zoomAtom, panAtom } from "../model/editor-settings";
 
 interface EditorGridLayerProps {
   stageSize: { width: number; height: number };

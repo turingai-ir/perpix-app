@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useAppTranslate } from "@/shared/hooks/i18/use-app-translate";
-import type { ImageEditorWorkspaceViewModel } from "../_hooks/image-editor-workspace-types";
-import { DEFAULT_EDITOR_EDITS } from "../_model/editor-edits";
-import type { EditorOverlay } from "../_model/editor-overlays";
+import type { ImageEditorWorkspaceViewModel } from "../hooks/image-editor-workspace-types";
+import { DEFAULT_EDITOR_EDITS } from "../model/editor-edits";
+import type { EditorOverlay } from "../model/editor-overlays";
 
 type OverlayKey = "textOverlay" | "watermarkOverlay";
 

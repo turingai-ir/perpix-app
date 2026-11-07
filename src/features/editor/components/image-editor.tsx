@@ -1,11 +1,11 @@
 import { useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useAppTranslate } from "@/shared/hooks/i18/use-app-translate";
-import { useImageEditorWorkspace } from "../_hooks/use-image-editor-workspace";
+import { useImageEditorWorkspace } from "../hooks/use-image-editor-workspace";
 import {
   DEFAULT_EDITOR_EDITS,
   renderEditedImage,
-} from "../_model/editor-edits";
+} from "../model/editor-edits";
 import { ImageEditorCanvas } from "./image-editor-canvas";
 import { ImageEditorMetadata } from "./image-editor-metadata";
 import { EditorPageLoadError, EditorPageLoading } from "./editor-page-state";
@@ -16,7 +16,7 @@ import {
 } from "./editor-studio-inspector";
 import { EditorStudioToolRail } from "./editor-studio-tool-rail";
 import { EditorBeforeAfter } from "./editor-before-after";
-import { useLoadedImage } from "../_hooks/use-loaded-image";
+import { useLoadedImage } from "../hooks/use-loaded-image";
 import "./editor-studio.css";
 
 interface ImageEditorProps {

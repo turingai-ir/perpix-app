@@ -2,16 +2,16 @@ import { useRef } from "react";
 import { useAtomValue } from "jotai";
 import { Group, Layer, Stage } from "react-konva";
 import type Konva from "konva";
-import type { CropArea } from "../_model/crop-area";
-import type { AlignmentGuide } from "../_model/image-alignment";
+import type { CropArea } from "../model/crop-area";
+import type { AlignmentGuide } from "../model/image-alignment";
 import { CheckerboardBackground } from "./checkerboard-background";
 import { ImageAlignmentGuides } from "./image-alignment-guides";
 import { ImageCropOverlay } from "./image-crop-overlay";
 import { EditorGridLayer } from "./editor-grid-layer";
 import { EditorRulerLayer } from "./editor-ruler-layer";
-import { zoomAtom, panAtom } from "../_model/editor-settings";
-import { useCanvasWheel } from "../_hooks/use-canvas-wheel";
-import { useCanvasTouchPan } from "../_hooks/use-canvas-touch-pan";
+import { zoomAtom, panAtom } from "../model/editor-settings";
+import { useCanvasWheel } from "../hooks/use-canvas-wheel";
+import { useCanvasTouchPan } from "../hooks/use-canvas-touch-pan";
 import {
   EditorCanvasImage,
   type CanvasDragMoveHandler,
