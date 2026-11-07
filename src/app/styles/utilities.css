@@ -1,0 +1,27 @@
+/*
+ * Backdrop blur with the fallbacks glass panels need: solid card background
+ * when the browser lacks backdrop-filter or the user asks for less transparency.
+ */
+@utility glass-blur {
+  backdrop-filter: blur(var(--glass-blur, 24px)) saturate(var(--glass-saturate, 160%));
+
+  @media (prefers-reduced-transparency: reduce) {
+    background: var(--card) !important;
+    backdrop-filter: none;
+  }
+
+  @supports not (backdrop-filter: blur(1px)) {
+    background: var(--card) !important;
+  }
+}
+
+@custom-variant hover-capable (@media (hover: hover) and (pointer: fine));
+
+/* The gallery page hides its parent scroll-area bar on small screens. */
+@media (max-width: 767px) {
+  [data-slot="scroll-area"]:has([data-gallery-page])
+    > [data-slot="scroll-area-scrollbar"] {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
