@@ -1,4 +1,4 @@
-import { useEffect, type ComponentType } from "react";
+import { useEffect } from "react";
 import {
   createBrowserRouter,
   redirect,
@@ -7,9 +7,21 @@ import {
 } from "react-router";
 
 import { APP_ROUTES_KEY } from "./routes";
-import { loadRouteModule } from "./dynamic-import-recovery";
 
 import RootLayout from "@/pages/(root)/layout";
+import Route1 from "@/pages/(app)/_layout";
+import Route2 from "@/pages/(app)/page";
+import Route3 from "@/pages/(app)/gallery/page";
+import Route4 from "@/pages/(app)/generation/image/page";
+import Route5 from "@/pages/(app)/generation/video/page";
+import Route6 from "@/pages/profile/layout";
+import Route7 from "@/pages/profile/settings/page";
+import Route8 from "@/pages/profile/payments/page";
+import Route9 from "@/pages/profile/wallet-transactions/page";
+import Route10 from "@/pages/design-preview/page";
+import Route11 from "@/pages/editor/page";
+import Route12 from "@/pages/auth/login/page";
+import Route13 from "@/pages/payment/result/page";
 import {
   bootstrapSession,
   getLoginPath,
@@ -36,15 +48,6 @@ const redirectIfAuthenticated = async ({ request }: LoaderFunctionArgs) => {
   return null;
 };
 
-const lazyRoute = (
-  importRouteModule: () => Promise<{ default: ComponentType }>,
-) => {
-  return async () => {
-    const routeModule = await loadRouteModule(importRouteModule);
-    return { Component: routeModule.default };
-  };
-};
-
 export const router = createBrowserRouter([
   {
     Component: RootLayout,
@@ -53,19 +56,19 @@ export const router = createBrowserRouter([
     children: [
       {
         path: APP_ROUTES_KEY.app.path,
-        lazy: lazyRoute(() => import("@/pages/(app)/_layout")),
+        Component: Route1,
         loader: requireSession,
         children: [
           {
             index: true,
-            lazy: lazyRoute(() => import("@/pages/(app)/page")),
+            Component: Route2,
             handle: {
               title: APP_ROUTES_KEY.app.meta.title,
             },
           },
           {
             path: APP_ROUTES_KEY.gallery.path,
-            lazy: lazyRoute(() => import("@/pages/(app)/gallery/page")),
+            Component: Route3,
             handle: {
               title: APP_ROUTES_KEY.gallery.meta.title,
             },
@@ -75,18 +78,14 @@ export const router = createBrowserRouter([
             children: [
               {
                 index: true,
-                lazy: lazyRoute(
-                  () => import("@/pages/(app)/generation/image/page"),
-                ),
+                Component: Route4,
                 handle: {
                   title: APP_ROUTES_KEY.generation.image.meta.title,
                 },
               },
               {
                 path: APP_ROUTES_KEY.generation.image.history.path,
-                lazy: lazyRoute(
-                  () => import("@/pages/(app)/generation/image/page"),
-                ),
+                Component: Route4,
                 handle: {
                   title: APP_ROUTES_KEY.generation.image.history.meta.title,
                 },
@@ -98,18 +97,14 @@ export const router = createBrowserRouter([
             children: [
               {
                 index: true,
-                lazy: lazyRoute(
-                  () => import("@/pages/(app)/generation/video/page"),
-                ),
+                Component: Route5,
                 handle: {
                   title: APP_ROUTES_KEY.generation.video.meta.title,
                 },
               },
               {
                 path: APP_ROUTES_KEY.generation.video.history.path,
-                lazy: lazyRoute(
-                  () => import("@/pages/(app)/generation/video/page"),
-                ),
+                Component: Route5,
                 handle: {
                   title: APP_ROUTES_KEY.generation.video.history.meta.title,
                 },
@@ -118,7 +113,7 @@ export const router = createBrowserRouter([
           },
           {
             path: APP_ROUTES_KEY.profile.root.path,
-            lazy: lazyRoute(() => import("@/pages/profile/layout")),
+            Component: Route6,
             children: [
               {
                 index: true,
@@ -126,23 +121,21 @@ export const router = createBrowserRouter([
               },
               {
                 path: APP_ROUTES_KEY.profile.settings.path,
-                lazy: lazyRoute(() => import("@/pages/profile/settings/page")),
+                Component: Route7,
                 handle: {
                   title: APP_ROUTES_KEY.profile.settings.meta.title,
                 },
               },
               {
                 path: APP_ROUTES_KEY.profile.payments.path,
-                lazy: lazyRoute(() => import("@/pages/profile/payments/page")),
+                Component: Route8,
                 handle: {
                   title: APP_ROUTES_KEY.profile.payments.meta.title,
                 },
               },
               {
                 path: APP_ROUTES_KEY.profile.walletTransactions.path,
-                lazy: lazyRoute(
-                  () => import("@/pages/profile/wallet-transactions/page"),
-                ),
+                Component: Route9,
                 handle: {
                   title: APP_ROUTES_KEY.profile.walletTransactions.meta.title,
                 },
@@ -153,7 +146,7 @@ export const router = createBrowserRouter([
       },
       {
         path: APP_ROUTES_KEY.designPreview.path,
-        lazy: lazyRoute(() => import("@/pages/design-preview/page")),
+        Component: Route10,
         handle: {
           title: APP_ROUTES_KEY.designPreview.meta.title,
         },
@@ -163,11 +156,11 @@ export const router = createBrowserRouter([
         children: [
           {
             index: true,
-            lazy: lazyRoute(() => import("@/pages/editor/page")),
+            Component: Route11,
           },
           {
             path: ":fileUuid",
-            lazy: lazyRoute(() => import("@/pages/editor/page")),
+            Component: Route11,
           },
         ],
         loader: requireSession,
@@ -177,7 +170,7 @@ export const router = createBrowserRouter([
       },
       {
         path: APP_ROUTES_KEY.auth.login.path,
-        lazy: lazyRoute(() => import("@/pages/auth/login/page")),
+        Component: Route12,
         loader: redirectIfAuthenticated,
         handle: {
           title: APP_ROUTES_KEY.auth.login.meta.title,
@@ -186,7 +179,7 @@ export const router = createBrowserRouter([
       {
         path: APP_ROUTES_KEY.payment.result.path,
         loader: requireSession,
-        lazy: lazyRoute(() => import("@/pages/payment/result/page")),
+        Component: Route13,
         handle: {
           title: APP_ROUTES_KEY.payment.result.meta.title,
         },
