@@ -6,11 +6,7 @@ import { useAppTranslate } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";
 
 export type PricingPlanActionKind =
-  | "buy"
-  | "upgrade"
-  | "renew"
-  | "current"
-  | "lower";
+  "buy" | "upgrade" | "renew" | "current" | "lower";
 
 type PricingPlanActionProps = {
   kind: PricingPlanActionKind;
@@ -72,7 +68,11 @@ const PricingPlanAction: FC<PricingPlanActionProps> = ({
       ) : null}
       <Button
         type="button"
-        variant={isRecommended || kind === "upgrade" || kind === "renew" ? "default" : "outline"}
+        variant={
+          isRecommended || kind === "upgrade" || kind === "renew"
+            ? "default"
+            : "outline"
+        }
         size="lg"
         className="w-full"
         disabled={isPending || isDisabled || isLocked}

@@ -2,7 +2,6 @@ import { type FC } from "react";
 
 import { useAppTranslate } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";
-import styles from "./pricing-plan-card.module.css";
 import { PaymentAmount } from "@/features/payment";
 import {
   SupportedCurrencyMap,
@@ -48,9 +47,9 @@ const PricingPlanPrice: FC<PricingPlanPriceProps> = ({
   const hasDiscount = discountedPriceIrr < basePriceIrr;
 
   return (
-    <div className={styles.price}>
-      <div className={styles.priceMain}>
-        <strong>
+    <div className="flex flex-col gap-1.5 rounded-2xl bg-black/22 p-4 shadow-[inset_0_0_0_1px_rgb(255_255_255/7%)]">
+      <div className="flex flex-wrap items-baseline gap-2">
+        <strong className="text-3xl leading-tight font-extrabold tracking-tight whitespace-nowrap">
           <span className="sr-only">
             {t(
               hasDiscount
@@ -62,7 +61,7 @@ const PricingPlanPrice: FC<PricingPlanPriceProps> = ({
           <PaymentAmount amount={discountedPriceIrr} currency={currency} />
         </strong>
         {durationDays ? (
-          <span>
+          <span className="text-muted-foreground text-xs">
             {t("features.pricing.perDuration", {
               days: durationDays.toLocaleString("fa-IR"),
             })}
@@ -70,15 +69,15 @@ const PricingPlanPrice: FC<PricingPlanPriceProps> = ({
         ) : null}
       </div>
       {hasDiscount ? (
-        <div className={styles.priceMeta}>
-          <s>
+        <div className="text-muted-foreground flex flex-wrap items-center gap-2.5 text-sm">
+          <s className="whitespace-nowrap decoration-1">
             <span className="sr-only">
               {t("features.pricing.previousPrice")}:{" "}
             </span>
             <PaymentAmount amount={basePriceIrr} currency={currency} />
           </s>
           {discountPercent !== null ? (
-            <span className={styles.discount}>
+            <span className="bg-accent-emerald/16 text-accent-emerald rounded-full px-2 py-0.5 text-xs font-bold">
               {t("features.pricing.discountPercent", {
                 percent: discountPercent,
               })}

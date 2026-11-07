@@ -13,7 +13,9 @@ export function mount() {
     requiredModelNames: ["required-model"],
     requiredScopes: ["ai_task:write"],
   });
-  const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  const client = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
   const host = document.createElement("div");
   document.body.replaceChildren(host);
   createRoot(host).render(

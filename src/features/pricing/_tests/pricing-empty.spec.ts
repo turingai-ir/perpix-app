@@ -26,7 +26,11 @@ const excludedPlans = [
   { ...eligiblePlan, uuid: "wrong-scope", name: "scope", scopes: [] },
 ];
 
-for (const scenario of ["no-plans", "filtered-plans", "eligible-plan"] as const) {
+for (const scenario of [
+  "no-plans",
+  "filtered-plans",
+  "eligible-plan",
+] as const) {
   test(`pricing handles ${scenario} without offering an ineligible purchase`, async ({
     page,
   }) => {
@@ -41,7 +45,9 @@ for (const scenario of ["no-plans", "filtered-plans", "eligible-plan"] as const)
       page.getByRole("combobox").filter({ hasText: "Nano Banana" }),
     ).toBeVisible();
     await page.route("**/api/v1/user/subscription/active", (route) =>
-      route.fulfill({ json: { plan: { ...eligiblePlan, uuid: "current-plan" } } }),
+      route.fulfill({
+        json: { plan: { ...eligiblePlan, uuid: "current-plan" } },
+      }),
     );
     await page.evaluate(async () => {
       const path = "/src/features/pricing/_tests/pricing-empty-harness.tsx";

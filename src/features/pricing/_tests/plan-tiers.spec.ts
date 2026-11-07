@@ -97,6 +97,8 @@ test.describe("resolvePlanTiers", () => {
 
   test("free users may buy every plan", () => {
     const tiers = resolvePlanTiers(plans, subscribe(free, 30), now);
-    expect(tiers.ladder.every((plan) => getPlanAccess(plan, tiers) === "buy")).toBe(true);
+    expect(
+      tiers.ladder.every((plan) => getPlanAccess(plan, tiers) === "buy"),
+    ).toBe(true);
   });
 });

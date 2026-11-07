@@ -19,11 +19,9 @@ export const usePlanTiers = (enabled = true): PlanTiersState => {
 
   // Query data is typed as a deep mapped type; narrow it to the schema types.
   const items = plansState.data?.items as
-    | readonly SchemaSubscriptionPlanResponse[]
-    | undefined;
+    readonly SchemaSubscriptionPlanResponse[] | undefined;
   const subscription = activeState.data as
-    | SchemaUserSubscriptionResponse
-    | undefined;
+    SchemaUserSubscriptionResponse | undefined;
   const isReady = plansState.isSuccess && activeState.isSuccess;
 
   const tiers = useMemo(
