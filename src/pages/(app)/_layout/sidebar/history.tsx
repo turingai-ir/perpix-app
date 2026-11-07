@@ -9,10 +9,7 @@ import { APP_ROUTES_KEY } from "@/app/router/routes";
 import { AiRegistryModelSupportedTypesEnumMap } from "@/shared/api";
 import { APP_I18_KEYS } from "@/shared/i18n";
 import { formatLocalizedNumber } from "@/shared/utils";
-import {
-  AI_TASKS_PAGE_SIZE,
-  useAiTasksList,
-} from "@/features/generation";
+import { AI_TASKS_PAGE_SIZE, useAiTasksList } from "@/features/generation";
 import HistoryItem from "./history-item";
 import styles from "./sidebar.module.css";
 

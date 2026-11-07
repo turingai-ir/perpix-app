@@ -6,9 +6,14 @@ import appLayoutAtom from "../_state";
 import ActivityBlock from "./activity-block";
 import DaysRing from "./days-ring";
 import type { useAccountWidget } from "./use-account-widget";
-import styles from "./account-widget.module.css";
+import {
+  AccountBlock,
+  AccountLabel,
+  AccountUnit,
+} from "./account-widget-parts";
 
 import { usePricingFeature } from "@/features/pricing";
+import { Button } from "@/shared/ui/button";
 import { useAppTranslate } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";
 
@@ -59,11 +64,14 @@ const AccountWidgetPanel: FC<PanelProps> = ({ widget, onClose }) => {
   };
 
   return (
-    <div className={styles.panel} data-tone={tone}>
-      <section className={styles.planBlock}>
+    <div
+      className="group/panel *:animate-rise flex flex-col gap-3.5 *:motion-reduce:animate-none [&>:nth-child(2)]:[animation-delay:70ms] [&>:nth-child(3)]:[animation-delay:140ms] [&>:nth-child(4)]:[animation-delay:210ms]"
+      data-tone={tone}
+    >
+      <AccountBlock className="flex items-center gap-4">
         <DaysRing ratio={tiers?.remainingRatio ?? null} tone={tone} size={76}>
           {isFree || daysLeft === null ? (
-            <Sparkles className={styles.ringIconLg} />
+            <Sparkles className="size-6" />
           ) : (
             <>
               <b>{daysLeft.toLocaleString("fa-IR")}</b>
@@ -71,61 +79,73 @@ const AccountWidgetPanel: FC<PanelProps> = ({ widget, onClose }) => {
             </>
           )}
         </DaysRing>
-        <div className={styles.planText}>
-          <small>{t(`${PREFIX}.plan`)}</small>
-          <strong>{isFree ? t(`${PREFIX}.freePlan`) : planName}</strong>
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
+          <AccountLabel>{t(`${PREFIX}.plan`)}</AccountLabel>
+          <strong className="truncate text-lg font-extrabold">
+            {isFree ? t(`${PREFIX}.freePlan`) : planName}
+          </strong>
           {!isFree && daysLeft !== null ? (
-            <b className={styles.daysLine}>
+            <b className="text-sm font-extrabold text-white">
               {t(`${PREFIX}.daysLeft`, {
                 days: daysLeft.toLocaleString("fa-IR"),
               })}
             </b>
           ) : null}
           {!isFree && tiers?.expiresAt ? (
-            <span>
+            <span className="text-xs text-white/75">
               {t(`${PREFIX}.expiresOn`, { date: formatDate(tiers.expiresAt) })}
             </span>
           ) : null}
         </div>
-      </section>
+      </AccountBlock>
 
-      <section className={styles.balanceBlock}>
-        <div className={styles.balanceText}>
-          <small>{t(`${PREFIX}.balance`)}</small>
-          <p>
-            <Coins aria-hidden="true" />
-            <strong>
+      <AccountBlock className="flex items-center gap-4">
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
+          <AccountLabel>{t(`${PREFIX}.balance`)}</AccountLabel>
+          <p className="flex items-baseline gap-1.5 tabular-nums">
+            <Coins
+              aria-hidden="true"
+              className="text-accent-gold size-5 self-center"
+            />
+            <strong className="text-[1.6rem] font-extrabold tracking-tight">
               {widget.balanceText ?? t(`${PREFIX}.balanceUnavailable`)}
             </strong>
-            <span>{t(`${PREFIX}.token`)}</span>
+            <AccountUnit>{t(`${PREFIX}.token`)}</AccountUnit>
           </p>
           {runwayText ? (
-            <em data-low={needsCharge || undefined}>{runwayText}</em>
+            <em
+              className="text-accent-rose data-low:text-accent-gold text-xs font-bold not-italic"
+              data-low={needsCharge || undefined}
+            >
+              {runwayText}
+            </em>
           ) : null}
         </div>
-        <button
+        <Button
           type="button"
-          className={styles.chargeButton}
+          size="lg"
+          className="hover-capable:hover:brightness-110 data-primary:from-accent-orange data-primary:to-accent-gold data-primary:text-on-accent flex-none rounded-full bg-white/12 px-4 text-sm font-extrabold text-white shadow-[inset_0_1px_rgb(255_255_255/18%)] data-primary:bg-linear-to-br motion-reduce:transition-none"
           data-primary={needsCharge || undefined}
           onClick={run(() =>
             setLayout((state) => ({ ...state, isWalletChargeOpen: true })),
           )}
         >
           {t(`${PREFIX}.charge`)}
-        </button>
-      </section>
+        </Button>
+      </AccountBlock>
 
       {widget.activity ? <ActivityBlock activity={widget.activity} /> : null}
 
       {ctaLabel ? (
-        <button
+        <Button
           type="button"
-          className={styles.cta}
+          size="lg"
+          className="from-accent-violet to-accent-pink hover-capable:hover:brightness-110 group-data-[tone=expiring]/panel:from-accent-orange group-data-[tone=expiring]/panel:to-accent-gold group-data-[tone=expiring]/panel:text-on-accent h-12 w-full justify-between rounded-xl bg-linear-to-br px-4 text-sm font-extrabold text-white shadow-[inset_0_1px_rgb(255_255_255/28%),0_8px_22px_rgb(143_107_242/35%)] motion-reduce:transition-none"
           onClick={run(() => openPricingFeature())}
         >
           <span>{ctaLabel}</span>
-          <ArrowUpLeft aria-hidden="true" />
-        </button>
+          <ArrowUpLeft aria-hidden="true" className="size-4" />
+        </Button>
       ) : null}
     </div>
   );

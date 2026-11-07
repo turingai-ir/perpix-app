@@ -16,6 +16,14 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+  --color-accent-violet: var(--accent-violet);
+  --color-accent-pink: var(--accent-pink);
+  --color-accent-gold: var(--accent-gold);
+  --color-accent-orange: var(--accent-orange);
+  --color-accent-sky: var(--accent-sky);
+  --color-accent-blue: var(--accent-blue);
+  --color-accent-rose: var(--accent-rose);
+  --color-on-accent: var(--on-accent);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -78,7 +86,16 @@
 
 @theme inline {
   --animate-float: float 6s ease-in-out infinite;
+  --animate-rise: rise 320ms var(--ease-out-quint) backwards;
   --animate-reveal: reveal 280ms ease-out both;
+  --animate-electric-flash: electric-flash 8s steps(1, end) infinite;
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+  }
 
   @keyframes reveal {
     from {
@@ -87,6 +104,29 @@
     }
   }
 
+
+  @keyframes electric-flash {
+    0%,
+    2%,
+    5%,
+    9%,
+    12%,
+    100% {
+      opacity: 0;
+    }
+    3%,
+    7%,
+    10% {
+      opacity: 0.95;
+      clip-path: inset(31% 0 49% 0);
+    }
+    4%,
+    8%,
+    11% {
+      opacity: 0.5;
+      clip-path: inset(58% 0 25% 0);
+    }
+  }
 
   @keyframes float {
     0%,
