@@ -1,0 +1,33 @@
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  ::selection {
+    background: var(--selection);
+    color: var(--selection-foreground);
+  }
+  :is(input, textarea) {
+    caret-color: var(--primary);
+  }
+  html {
+    @apply font-sans;
+    scrollbar-color: var(--border) var(--background);
+  }
+}
+
+/*
+ * Shared primitives (dialog, sheet, drawer, popover, select, dropdown, tooltip)
+ * use tw-animate enter/exit animations through variant classes such as
+ * `data-open:animate-in`. Honour reduced motion for all of them in one place.
+ * Unlayered so it wins over the layered utilities; popups unmount immediately
+ * when the exit animation is `none`.
+ */
+@media (prefers-reduced-motion: reduce) {
+  [class*="animate-in"],
+  [class*="animate-out"] {
+    animation: none;
+  }
+}
