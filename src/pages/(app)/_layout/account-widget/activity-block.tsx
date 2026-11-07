@@ -1,7 +1,11 @@
 import { type CSSProperties, type FC } from "react";
 
 import type { DailyActivity } from "./activity";
-import styles from "./account-widget.module.css";
+import {
+  AccountBlock,
+  AccountLabel,
+  AccountUnit,
+} from "./account-widget-parts";
 
 import { useAppTranslate } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";
@@ -28,22 +32,24 @@ const ActivityBlock: FC<ActivityBlockProps> = ({ activity }) => {
   const hasActivity = activity.maxSpent > 0;
 
   return (
-    <section className={styles.activityBlock}>
-      <div className={styles.activityStats}>
-        <div>
-          <small>{t(`${PREFIX}.spentToday`)}</small>
-          <strong>
+    <AccountBlock className="flex flex-col gap-3.5">
+      <div className="flex justify-between gap-4 tabular-nums">
+        <div className="flex flex-col gap-1">
+          <AccountLabel>{t(`${PREFIX}.spentToday`)}</AccountLabel>
+          <strong className="text-base font-extrabold">
             {formatTokenAmount(activity.todaySpent)}
-            <em>{t(`${PREFIX}.token`)}</em>
+            <AccountUnit className="ms-1">{t(`${PREFIX}.token`)}</AccountUnit>
           </strong>
         </div>
-        <div>
-          <small>{t(`${PREFIX}.createdToday`)}</small>
-          <strong>{activity.todayCount.toLocaleString("fa-IR")}</strong>
+        <div className="flex flex-col gap-1">
+          <AccountLabel>{t(`${PREFIX}.createdToday`)}</AccountLabel>
+          <strong className="text-base font-extrabold">
+            {activity.todayCount.toLocaleString("fa-IR")}
+          </strong>
         </div>
       </div>
       <div
-        className={styles.bars}
+        className="flex items-end gap-2"
         role="img"
         aria-label={
           hasActivity ? t(`${PREFIX}.weekLabel`) : t(`${PREFIX}.weekEmpty`)
@@ -58,25 +64,28 @@ const ActivityBlock: FC<ActivityBlockProps> = ({ activity }) => {
           return (
             <span
               key={index}
-              className={styles.barSlot}
+              className="group/bar flex flex-1 flex-col items-stretch gap-1.5"
               title={`${weekdayLongFormat.format(day)}: ${formatTokenAmount(spent)} ${t(`${PREFIX}.token`)}`}
             >
               <span
-                className={styles.bar}
+                className="ease-out-quint data-today:from-accent-pink data-today:to-accent-violet h-[3.2rem] origin-bottom scale-y-(--bar) rounded-md bg-white/18 transition-transform duration-600 group-hover/bar:bg-white/30 data-today:bg-linear-to-b motion-reduce:transition-none"
                 data-today={isToday || undefined}
                 style={{ "--bar": ratio } as CSSProperties}
               />
-              <small data-today={isToday || undefined}>
+              <small
+                className="data-today:text-accent-pink text-center text-[0.7rem] text-white/50 data-today:font-extrabold"
+                data-today={isToday || undefined}
+              >
                 {weekdayFormat.format(day)}
               </small>
             </span>
           );
         })}
       </div>
-      <small className={styles.barsCaption}>
+      <AccountLabel>
         {hasActivity ? t(`${PREFIX}.weekLabel`) : t(`${PREFIX}.weekEmpty`)}
-      </small>
-    </section>
+      </AccountLabel>
+    </AccountBlock>
   );
 };
 

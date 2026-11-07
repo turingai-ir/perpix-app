@@ -7,7 +7,6 @@ import AppLayoutSidebar from "./sidebar";
 import appLayoutAtom from "./_state";
 import HeaderSlogan from "./header-slogan";
 import AccountWidget from "./account-widget/account-widget";
-import styles from "./header-slogan.module.css";
 
 import { Button } from "@/shared/ui/button";
 import LoadingSection from "@/shared/components/loading-section";
@@ -22,6 +21,14 @@ import { useUser } from "@/features/user";
 import { AiTaskEventsProvider } from "@/features/ai-task-events";
 import { useAppTranslate } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";
+
+const HEADER_SURFACE_CLASS = [
+  "@container isolate overflow-hidden border-b border-(--glass-border) bg-background",
+  "bg-[radial-gradient(ellipse_36%_120%_at_50%_118%,var(--ambient-brand),transparent_74%),radial-gradient(ellipse_22%_95%_at_65%_0%,var(--ambient-media),transparent_85%),linear-gradient(90deg,transparent,rgb(15_11_28/65%)_25%,rgb(15_11_28/65%)_75%,transparent)]",
+  "shadow-[inset_0_-1px_0_rgb(54_202_255/11%)]",
+  "before:pointer-events-none before:absolute before:inset-0 before:-z-10 before:content-[''] before:bg-[linear-gradient(rgb(167_70_222/11%)_1px,transparent_1px),linear-gradient(90deg,rgb(68_186_243/9%)_1px,transparent_1px)] before:bg-[size:16px_16px] before:mask-[linear-gradient(90deg,transparent_8%,#000_30%_70%,transparent_92%)]",
+  "after:pointer-events-none after:absolute after:inset-x-[21%] after:bottom-0 after:h-px after:content-[''] after:bg-[linear-gradient(90deg,transparent,var(--image-accent)_35%,var(--video-accent)_65%,transparent)] after:shadow-[0_0_10px_rgb(174_49_235/55%)]",
+].join(" ");
 
 const AppLayout: FC = () => {
   const [appLayoutState, setAppLayoutState] = useImmerAtom(appLayoutAtom);
@@ -69,7 +76,8 @@ const AppLayout: FC = () => {
           );
           viewport?.scrollTo({
             top: viewport.scrollHeight,
-            behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+            behavior: window.matchMedia("(prefers-reduced-motion: reduce)")
+              .matches
               ? "instant"
               : "smooth",
           });
@@ -126,7 +134,9 @@ const AppLayout: FC = () => {
           className="relative flex h-full max-h-full min-h-0 w-full min-w-0 flex-col overflow-hidden"
           viewportClassName="[&>div]:!grid [&>div]:!min-h-full [&>div]:!grid-rows-[auto_1fr]"
         >
-          <header className={`${styles.header} sticky top-0 z-10 flex min-h-[68px] w-full min-w-0 items-center px-3 sm:px-5`}>
+          <header
+            className={`${HEADER_SURFACE_CLASS} sticky top-0 z-10 flex min-h-[68px] w-full min-w-0 items-center px-3 sm:px-5`}
+          >
             <Button
               variant="ghost"
               size="sm"

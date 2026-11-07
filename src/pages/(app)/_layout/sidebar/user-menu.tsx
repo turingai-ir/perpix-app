@@ -18,7 +18,9 @@ const AppLayoutSidebarUserMenu: FC = () => {
     if (!shouldRestoreFocus) return;
 
     // The install menu item is removed when its dropdown closes.
-    const frame = requestAnimationFrame(() => profileTriggerRef.current?.focus());
+    const frame = requestAnimationFrame(() =>
+      profileTriggerRef.current?.focus(),
+    );
     return () => cancelAnimationFrame(frame);
   }, [pwaInstall.isIosGuideOpen]);
 
