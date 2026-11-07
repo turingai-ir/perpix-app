@@ -1,4 +1,4 @@
-import { sanitizeConfigValues } from "@/shared/hooks/use-dynamic-config-form";
+import { sanitizeConfigValues } from "@/features/dynamic-config/model";
 import { getModelDynamicConfig } from "@/pages/(app)/generation/_utils/model-dynamic-config";
 
 const SERVER_OUTPUT_FIELDS = ["images_generated", "videos_generated"];

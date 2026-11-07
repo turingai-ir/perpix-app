@@ -5,7 +5,7 @@ import { Form } from "@/shared/ui/form";
 import {
   type JsonConfigSchema,
   useDynamicConfigForm,
-} from "@/shared/hooks/use-dynamic-config-form";
+} from "@/features/dynamic-config";
 import { ExpandedPromptEditor } from "../_components/prompt-box/expanded-prompt-editor";
 import { PromptTextarea } from "../_components/prompt-box/prompt-textarea";
 

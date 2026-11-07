@@ -11,7 +11,7 @@ import { readFileSync } from "node:fs";
 import type {
   JsonConfigMeta,
   JsonConfigSchema,
-} from "../src/shared/hooks/use-dynamic-config-form";
+} from "../src/features/dynamic-config/hooks/use-dynamic-config-form";
 import { mockAuthenticatedSession } from "./support/auth-session";
 
 const MODEL_UUID = "2d1fcf14-a655-47c5-af08-3fa450dc99cc";

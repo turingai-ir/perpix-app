@@ -1,0 +1,286 @@
+import { useEffect, useEffectEvent, useMemo, useRef, type FC } from "react";
+import { toast } from "sonner";
+
+import { useFileManager, useFilesPreviews } from "@/features/file-manager";
+import {
+  appendMediaId,
+  getClipboardImage,
+  hasReachedMediaMaxItems,
+  hasUploadingLocalItem,
+  MediaUploadStrip,
+  type MediaUploadPresentation,
+  normalizeMediaIds,
+  removeMediaId,
+  toLocalMediaItems,
+  toClipboardImageFile,
+  toUploadedMediaItems,
+} from "@/features/media-uploader";
+import { useAppTranslate } from "@/shared/hooks";
+import type { JsonSchemaProperty } from "@/features/dynamic-config/hooks/use-dynamic-config-form.ts";
+import { HttpStatus } from "@/shared/utils";
+import { FetchHttpError } from "@/shared/utils/custom-fetch/fetch-errors";
+
+import {
+  getAcceptList,
+  getPreviewType,
+  isListFileField,
+  type MediaPreviewType,
+} from "./media";
+import type { DynamicConfigForm } from "../../model/field-types";
+
+const HINT_CLASS_NAME = "text-muted-foreground/60 text-[0.7rem] leading-snug";
+
+export const DynamicConfigFileField: FC<{
+  disabled?: boolean;
+  dynamicForm: DynamicConfigForm;
+  fieldName: string;
+  hint?: string;
+  label: string;
+  onValueChange?: (value: string | string[] | undefined) => void;
+  onUploadingChange?: (isUploading: boolean) => void;
+  maxItemsOverride?: number;
+  property?: JsonSchemaProperty;
+  presentation?: MediaUploadPresentation;
+  requestId?: string;
+  pasteFromParentForm?: boolean;
+}> = ({
+  disabled = false,
+  dynamicForm,
+  fieldName,
+  hint,
+  label,
+  onValueChange,
+  onUploadingChange,
+  maxItemsOverride,
+  property,
+  presentation = "default",
+  requestId = "dynamic_config",
+  pasteFromParentForm = false,
+}) => {
+  const { t } = useAppTranslate();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const acceptList = useMemo(() => getAcceptList(property), [property]);
+  const previewType = getPreviewType(acceptList);
+  const isList = isListFileField(property);
+  const maxItems = isList
+    ? getMaxItems(property?.maxItems, maxItemsOverride)
+    : 1;
+  const { pendingUploads, removePendingUpload, requestUpload } = useFileManager(
+    `${requestId}_${fieldName.replace(/\./g, "_")}`,
+    {
+      allowedFileTypes: [...acceptList],
+    },
+  );
+
+  const selectedFileIds = normalizeMediaIds(dynamicForm.watch(fieldName));
+  const { getFilesPreviewsState: previews } = useFilesPreviews(selectedFileIds);
+  const localItems = toLocalMediaItems(pendingUploads.values());
+  const isUploading = hasUploadingLocalItem(localItems);
+  const hasReachedMaxItems = hasReachedMediaMaxItems(
+    selectedFileIds,
+    localItems,
+    maxItems,
+  );
+
+  useEffect(() => {
+    onUploadingChange?.(isUploading || previews.isPending);
+  }, [isUploading, previews.isPending, onUploadingChange]);
+
+  const setFileValue = (value: string | string[] | undefined) => {
+    dynamicForm.setValue(fieldName, value, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+    onValueChange?.(value);
+  };
+
+  const discardMissingFiles = useEffectEvent(
+    (missingIds: readonly string[]) => {
+      const current = normalizeMediaIds(dynamicForm.getValues(fieldName));
+      const remaining = current.filter((id) => !missingIds.includes(id));
+      if (remaining.length === current.length) return;
+
+      setFileValue(isList ? remaining : remaining[0]);
+      toast.info(t("features.mediaUploader.missingReferencesRemoved"));
+    },
+  );
+
+  useEffect(() => {
+    if (previews.missingFileIds.length) {
+      discardMissingFiles(previews.missingFileIds);
+    }
+  }, [previews.missingFileIds]);
+
+  const handleDelete = (fileId: string) => {
+    if (disabled) return;
+
+    if (!isList) {
+      setFileValue(undefined);
+      return;
+    }
+
+    setFileValue(removeMediaId(selectedFileIds, fileId));
+  };
+
+  const handleLocalDelete = (fileName: string) => {
+    if (!disabled) removePendingUpload(fileName);
+  };
+
+  const handleUploadedFileSelect = (fileId: string) => {
+    if (disabled) {
+      return;
+    }
+
+    const nextSelectedFileIds = normalizeMediaIds(
+      dynamicForm.getValues(fieldName),
+    );
+
+    if (!isList) {
+      setFileValue(fileId);
+      return;
+    }
+
+    const selectedWithNewFile = appendMediaId(
+      nextSelectedFileIds,
+      fileId,
+      maxItems,
+    );
+
+    if (!selectedWithNewFile) return;
+
+    setFileValue(selectedWithNewFile);
+  };
+
+  const handleFileSelect = async (file: File, selectAfterUpload = true) => {
+    if (disabled || hasReachedMaxItems) return;
+
+    try {
+      const uploadedFileId = await requestUpload(file);
+
+      if (!uploadedFileId) return;
+      if (!selectAfterUpload) return uploadedFileId;
+
+      if (!isList) {
+        setFileValue(uploadedFileId);
+        return uploadedFileId;
+      }
+
+      const nextSelectedFileIds = normalizeMediaIds(
+        dynamicForm.getValues(fieldName),
+      );
+      const selectedWithUploadedFile = appendMediaId(
+        nextSelectedFileIds,
+        uploadedFileId,
+        maxItems,
+      );
+
+      if (!selectedWithUploadedFile) return;
+
+      setFileValue(selectedWithUploadedFile);
+
+      return uploadedFileId;
+    } catch (error) {
+      if (
+        error instanceof FetchHttpError &&
+        error.response.status === HttpStatus.FORBIDDEN
+      ) {
+        return;
+      }
+
+      const errorMessage =
+        error instanceof Error ? error.message : String(error || "");
+
+      toast.error(errorMessage || t("common.errorOnUploading"));
+    }
+  };
+
+  const handlePastedImage = useEffectEvent(async (image: File) => {
+    if (disabled || hasReachedMaxItems) return;
+
+    try {
+      const file = await toClipboardImageFile(image, acceptList);
+      if (!file) {
+        toast.error(t("common.validationErrors.invalidFileFormat"));
+        return;
+      }
+      await handleFileSelect(file);
+    } catch {
+      toast.error(t("common.validationErrors.imageDimensionsUnreadable"));
+    }
+  });
+
+  useEffect(() => {
+    if (!pasteFromParentForm || previewType !== "image") return;
+
+    const form = containerRef.current?.closest("form");
+    if (!form) return;
+
+    const handlePaste = (event: ClipboardEvent) => {
+      if (!event.clipboardData) return;
+      const image = getClipboardImage(event.clipboardData);
+      if (!image) return;
+
+      event.preventDefault();
+      void handlePastedImage(image);
+    };
+
+    form.addEventListener("paste", handlePaste);
+    return () => form.removeEventListener("paste", handlePaste);
+  }, [pasteFromParentForm, previewType]);
+
+  return (
+    <div
+      ref={containerRef}
+      className={
+        presentation === "composer" || presentation === "video-dock"
+          ? "flex min-w-0 flex-col"
+          : "flex w-full min-w-0 flex-col gap-2 py-2"
+      }
+    >
+      <span
+        className={
+          presentation === "composer" || presentation === "video-dock"
+            ? "sr-only"
+            : "text-muted-foreground text-sm font-normal"
+        }
+      >
+        {label}
+      </span>
+      {hint ? <p className={HINT_CLASS_NAME}>{hint}</p> : null}
+      <MediaUploadStrip
+        uploadedItems={toUploadedMediaItems(selectedFileIds)}
+        localItems={localItems}
+        disabled={disabled}
+        onDeleteClick={handleDelete}
+        onLocalDeleteClick={handleLocalDelete}
+        onFileSelect={(file) =>
+          handleFileSelect(file, presentation === "default")
+        }
+        onUploadedFileSelect={handleUploadedFileSelect}
+        showPlaceholder={!hasReachedMaxItems}
+        label={getUploadLabel(previewType, t)}
+        accept={acceptList.join(", ")}
+        previewType={previewType}
+        presentation={presentation}
+        maxItems={maxItems}
+      />
+    </div>
+  );
+};
+
+function getMaxItems(schemaMaxItems?: number, maxItemsOverride?: number) {
+  if (maxItemsOverride === undefined) return schemaMaxItems;
+  if (schemaMaxItems === undefined) return maxItemsOverride;
+
+  return Math.min(schemaMaxItems, maxItemsOverride);
+}
+
+function getUploadLabel(
+  previewType: MediaPreviewType,
+  t: ReturnType<typeof useAppTranslate>["t"],
+) {
+  if (previewType === "video") return t("common.addVideo");
+  if (previewType === "audio") return t("common.addAudio");
+
+  return t("common.addImage");
+}

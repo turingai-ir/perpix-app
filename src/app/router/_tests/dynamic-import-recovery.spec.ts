@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { mockAuthenticatedSession } from "../../../__tests__/support/auth-session";
+import { mockAuthenticatedSession } from "../../../../__tests__/support/auth-session";
 
 test("loads a route when session storage is unavailable", async ({ page }) => {
   await page.addInitScript(() => {

@@ -1,4 +1,4 @@
-import type { DynamicConfigForm } from "@/pages/(app)/generation/_components/dynamic-config";
+import type { DynamicConfigForm } from "@/features/dynamic-config";
 import { useAppTranslate } from "@/shared/hooks";
 
 type Props = {

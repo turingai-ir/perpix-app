@@ -15,7 +15,7 @@ import {
   PopoverTrigger,
 } from "@/shared/ui/popover";
 import { useAppTranslate } from "@/shared/hooks";
-import type { DynamicConfigForm } from "../dynamic-config";
+import type { DynamicConfigForm } from "../../../../../features/dynamic-config";
 
 function resolutionHint(
   value: string,

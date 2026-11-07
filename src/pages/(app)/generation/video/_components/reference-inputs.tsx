@@ -1,6 +1,6 @@
 import { ExclusiveImageInputsHint } from "./exclusive-image-inputs-hint";
 
-import { DynamicConfigFileFields } from "@/pages/(app)/generation/_components/dynamic-config";
+import { DynamicConfigFileFields } from "@/features/dynamic-config";
 import type { PromptBoxExtraContentProps } from "@/pages/(app)/generation/_components/prompt-box/types";
 
 export function VideoReferenceInputs({

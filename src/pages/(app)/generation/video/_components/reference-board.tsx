@@ -4,13 +4,13 @@ import { Paperclip } from "lucide-react";
 import styles from "../composer.module.css";
 import { normalizeMediaIds } from "@/features/media-uploader";
 import { useAppTranslate } from "@/shared/hooks";
-import { DynamicConfigFileField } from "@/pages/(app)/generation/_components/dynamic-config";
 import {
   clearTopLevelMediaConflicts,
+  DynamicConfigFileField,
   getAcceptList,
   getPreviewType,
   isListFileField,
-} from "@/pages/(app)/generation/_components/dynamic-config/file-upload/media";
+} from "@/features/dynamic-config";
 import type { useGenerationPromptBox } from "@/pages/(app)/generation/_hooks";
 import { formatLocalizedNumber } from "@/shared/utils";
 

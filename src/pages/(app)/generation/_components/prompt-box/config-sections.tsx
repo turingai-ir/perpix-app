@@ -1,6 +1,6 @@
 import type { FC } from "react";
 
-import { DynamicPromptConfigField, type DynamicConfigForm } from "../dynamic-config";
+import { DynamicPromptConfigField, type DynamicConfigForm } from "../../../../../features/dynamic-config";
 
 export { PromptActionsSection } from "./prompt-actions-section";
 

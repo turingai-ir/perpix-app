@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import type { GenerationComposerIntent } from "../../_types/conversation";
 
-import type { DynamicConfigForm } from "@/pages/(app)/generation/_components/dynamic-config";
+import type { DynamicConfigForm } from "@/features/dynamic-config";
 import type { useModel } from "@/pages/(app)/generation/_hooks/model";
 import type {
   AiRegistryModelSupportedTypesEnumValue,

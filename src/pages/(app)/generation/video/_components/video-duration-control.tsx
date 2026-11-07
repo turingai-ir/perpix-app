@@ -15,7 +15,7 @@ import { useAppTranslate } from "@/shared/hooks";
 import {
   DynamicPromptConfigField,
   type DynamicConfigForm,
-} from "@/pages/(app)/generation/_components/dynamic-config";
+} from "@/features/dynamic-config";
 
 export function VideoDurationControl({
   disabled,
