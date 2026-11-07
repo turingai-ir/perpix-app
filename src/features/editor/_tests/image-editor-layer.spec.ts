@@ -19,7 +19,7 @@ test.describe("Image editor fullscreen layer", () => {
 
     // The studio reserves the header, tool rail and inspector; the layer fills the stage.
     const stageBounds = await workspace
-      .locator(".editor-studio-stage")
+      .locator("[data-editor-stage]")
       .boundingBox();
     const layerBounds = await layer.boundingBox();
     expect(layerBounds?.width).toBe(stageBounds?.width);

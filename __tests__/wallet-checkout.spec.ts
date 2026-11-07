@@ -14,24 +14,24 @@ const payment = {
 };
 
 test.beforeEach(async ({ context, page }) => {
-    await context.routeWebSocket("**/*", (socket) => socket.close());
-    await context.route("**/*", (route) => {
-      const request = route.request();
-      const url = new URL(request.url());
-      if (
-        url.origin === "http://localhost:5173" &&
-        request.method() === "GET" &&
-        !url.pathname.startsWith("/api/") &&
-        !["fetch", "xhr"].includes(request.resourceType())
-      ) return route.continue();
-      return route.abort("blockedbyclient");
-    });
-    await mockAuthenticatedSession(context);
-    await mockAppApi(page);
+  await context.routeWebSocket("**/*", (socket) => socket.close());
+  await context.route("**/*", (route) => {
+    const request = route.request();
+    const url = new URL(request.url());
+    if (
+      url.origin === "http://localhost:5173" &&
+      request.method() === "GET" &&
+      !url.pathname.startsWith("/api/") &&
+      !["fetch", "xhr"].includes(request.resourceType())
+    )
+      return route.continue();
+    return route.abort("blockedbyclient");
+  });
+  await mockAuthenticatedSession(context);
+  await mockAppApi(page);
 });
 
 test.describe("Wallet checkout", () => {
-
   test("reviews the exact server price before navigating to the gateway", async ({
     browserName,
     page,
@@ -121,8 +121,13 @@ test.describe("Wallet checkout", () => {
         page.getByRole("heading", { name: "تأیید مبلغ پرداخت" }),
       ).toBeVisible();
       // Escape has separate coverage; this scenario verifies unit conversion.
-      await page.getByRole("dialog").getByRole("button", { name: "Close", exact: true }).click();
-      await expect(page.getByRole("heading", { name: "تأیید مبلغ پرداخت" })).toBeHidden();
+      await page
+        .getByRole("dialog")
+        .getByRole("button", { name: "Close", exact: true })
+        .click();
+      await expect(
+        page.getByRole("heading", { name: "تأیید مبلغ پرداخت" }),
+      ).toBeHidden();
       await page.getByRole("button", { name: "شارژ کیف پول" }).click();
     }
   });
@@ -275,7 +280,9 @@ test.describe("Payment result", () => {
         new URL(request.url()).pathname ===
           `/api/v1/payment-intents/${payment.id}/executions`,
     );
-    await page.getByRole("button", { name: "دوباره پرداخت کن", exact: true }).click();
+    await page
+      .getByRole("button", { name: "دوباره پرداخت کن", exact: true })
+      .click();
     expect((await retryRequest).headers()["idempotency-key"]).toBeUndefined();
     await expect(page).toHaveURL(/\/mock-gateway$/);
   });
@@ -343,7 +350,7 @@ function activeSubscription() {
       name: "pro",
       display_name: "Pro",
       description: null,
-    scopes: ["subscription:read", "wallet:read", "wallet:write"],
+      scopes: ["subscription:read", "wallet:read", "wallet:write"],
       allowed_models: [],
       price_usdmicro: 0,
       duration_days: 30,

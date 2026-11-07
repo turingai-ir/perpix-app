@@ -23,8 +23,7 @@ export function useDashboardContent(allowedModelNames: readonly string[]) {
     limit: 6,
   }).getUserFilesState;
   const firstFilesPage = filesState.data?.pages[0] as unknown as
-    | SchemaFileManagerUserFilesResponse
-    | undefined;
+    SchemaFileManagerUserFilesResponse | undefined;
   const files = firstFilesPage?.files ?? [];
   const fileUuids = files.flatMap((file) => (file.uuid ? [file.uuid] : []));
   const previewsState = useFilesPreviews(
@@ -32,8 +31,7 @@ export function useDashboardContent(allowedModelNames: readonly string[]) {
     !filesState.isError,
   ).getFilesPreviewsState;
   const tasksResponse = tasksState.data as unknown as
-    | { items: readonly SchemaAiTaskResponse[] }
-    | undefined;
+    { items: readonly SchemaAiTaskResponse[] } | undefined;
   const tasks = Array.from(tasksResponse?.items ?? []);
   const models = Array.from(
     (modelsState.data as unknown as readonly SchemaAiRegistryModelSummary[]) ??

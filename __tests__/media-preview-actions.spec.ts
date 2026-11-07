@@ -25,7 +25,11 @@ test("named preview buttons select the correct image across multiple results", a
     uuid: `last-${message.uuid}`,
   }));
   lastTurn[1].ai_model_config.images_generated = imageIds.slice(2);
-  imageConversationApi.setTaskMessages([...firstTurn, ...failedTurn, ...lastTurn]);
+  imageConversationApi.setTaskMessages([
+    ...firstTurn,
+    ...failedTurn,
+    ...lastTurn,
+  ]);
   const previewUrl = (id: string) =>
     `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" id="${id}"/>`)}`;
   await page.route("**/file-manager/files/presigned-urls", async (route) => {
@@ -51,7 +55,10 @@ test("named preview buttons select the correct image across multiple results", a
     await expect(button.getByRole("img")).toHaveAttribute("alt", prompt);
     await button.click();
     const dialog = page.getByRole("dialog");
-    await expect(dialog.getByRole("img")).toHaveAttribute("src", previewUrl(id));
+    await expect(dialog.getByRole("img")).toHaveAttribute(
+      "src",
+      previewUrl(id),
+    );
     await page.keyboard.press("Escape");
     await expect(dialog).toBeHidden();
     await expect(button).toBeFocused();
@@ -61,7 +68,11 @@ test("named preview buttons select the correct image across multiple results", a
 
 for (const { alt, index, name } of [
   { alt: "Quiet lake", index: undefined, name: "دیدن عکس: Quiet lake" },
-  { alt: "A detailed prompt ".repeat(20), index: undefined, name: "دیدن عکس 1" },
+  {
+    alt: "A detailed prompt ".repeat(20),
+    index: undefined,
+    name: "دیدن عکس 1",
+  },
   { alt: "Quiet lake", index: 2, name: "دیدن عکس 3" },
 ]) {
   test(`single-file preview preserves alt with action name ${name}`, async ({
@@ -69,10 +80,13 @@ for (const { alt, index, name } of [
     imageConversationApi,
   }) => {
     await page.goto("/generation/image", { waitUntil: "domcontentloaded" });
-    await expect(page.getByRole("textbox", { name: "توصیف تصویر" })).toBeVisible();
+    await expect(
+      page.getByRole("textbox", { name: "توصیف تصویر" }),
+    ).toBeVisible();
     await page.evaluate(
       async ({ description, position }) => {
-        const path = "/src/shared/components/_tests/media-preview-item-harness.tsx";
+        const path =
+          "/src/shared/components/_tests/media-preview-item-harness.tsx";
         const { mount } = await import(/* @vite-ignore */ path);
         mount(description, position);
       },

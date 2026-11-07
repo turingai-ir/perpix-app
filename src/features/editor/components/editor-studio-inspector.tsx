@@ -11,6 +11,17 @@ import { CROP_RATIO_OPTIONS, type CropRatioId } from "../model/crop-ratios";
 import { DEFAULT_EDITOR_EDITS, type EditorEdits } from "../model/editor-edits";
 import { EditorOverlayControls } from "./editor-overlay-controls";
 import { EditorOutputSize } from "./editor-output-size";
+import {
+  ACTION_ROW_CLASS,
+  FIELD_LABEL_CLASS,
+  GRID_3_CLASS,
+  PANEL_CONTENT_CLASS,
+  PRIMARY_BUTTON_CLASS,
+  SECONDARY_BUTTON_CLASS,
+  SLIDER_CLASS,
+  SOCIAL_GRID_CLASS,
+  TRANSFORM_GRID_CLASS,
+} from "./editor-styles";
 
 export type EditorTool = "crop" | "adjust" | "transform" | "text" | "export";
 type Format = "png" | "jpeg" | "webp";
@@ -52,19 +63,28 @@ export function EditorStudioInspector(props: Props) {
   };
 
   return (
-    <aside className="editor-studio-inspector" aria-label={title}>
-      <div className="editor-studio-inspector-heading">
-        <span className="editor-studio-inspector-kicker">PERPIX / STUDIO</span>
-        <h2>{title}</h2>
-        <p>{hint}</p>
+    <aside
+      className="border-foreground/13 bg-card/62 col-start-1 row-start-3 flex min-h-0 min-w-0 flex-col overflow-y-auto border-0 px-4.25 py-3.5 backdrop-blur-xl max-md:max-h-65 min-[701px]:col-start-3 min-[701px]:row-start-1 min-[701px]:border-s md:px-5 md:pt-6 md:pb-4.5"
+      aria-label={title}
+    >
+      <div>
+        <span className="text-muted-foreground hidden text-[9px] tracking-[0.2em] [direction:ltr] md:block">
+          PERPIX / STUDIO
+        </span>
+        <h2 className="mt-1.5 mb-px text-[17px] font-extrabold md:mt-3 md:mb-1.5 md:text-[22px]">
+          {title}
+        </h2>
+        <p className="text-muted-foreground m-0 text-[11px] leading-loose md:text-xs">
+          {hint}
+        </p>
       </div>
       {props.tool === "crop" && (
-        <section className="editor-studio-panel-content">
-          <div className="editor-studio-field-label">
+        <section className={PANEL_CONTENT_CLASS}>
+          <div className={FIELD_LABEL_CLASS}>
             {t("pages.editor.studio.socialPresets")}
           </div>
           <div
-            className="editor-studio-social-grid"
+            className={SOCIAL_GRID_CLASS}
             role="group"
             aria-label={t("pages.editor.studio.socialPresets")}
           >
@@ -86,18 +106,18 @@ export function EditorStudioInspector(props: Props) {
           {!props.editor.isCropping ? (
             <button
               type="button"
-              className="editor-studio-panel-primary"
+              className={PRIMARY_BUTTON_CLASS}
               onClick={props.editor.beginCrop}
             >
               {t("pages.editor.cropImage")}
             </button>
           ) : (
             <>
-              <div className="editor-studio-field-label">
+              <div className={FIELD_LABEL_CLASS}>
                 {t("pages.editor.studio.cropRatios")}
               </div>
               <div
-                className="editor-studio-ratio-grid"
+                className={GRID_3_CLASS}
                 role="toolbar"
                 aria-label={t("pages.editor.studio.cropRatios")}
               >
@@ -112,17 +132,17 @@ export function EditorStudioInspector(props: Props) {
                   </button>
                 ))}
               </div>
-              <div className="editor-studio-action-row">
+              <div className={ACTION_ROW_CLASS}>
                 <button
                   type="button"
-                  className="editor-studio-secondary-button"
+                  className={SECONDARY_BUTTON_CLASS}
                   onClick={props.editor.cancelCrop}
                 >
                   {t("pages.editor.studio.cancel")}
                 </button>
                 <button
                   type="button"
-                  className="editor-studio-panel-primary"
+                  className={PRIMARY_BUTTON_CLASS}
                   onClick={props.editor.applyCrop}
                 >
                   {t("pages.editor.studio.apply")}
@@ -133,9 +153,9 @@ export function EditorStudioInspector(props: Props) {
         </section>
       )}
       {props.tool === "adjust" && (
-        <section className="editor-studio-panel-content">
+        <section className={PANEL_CONTENT_CLASS}>
           {(["brightness", "contrast", "saturation"] as const).map((key) => (
-            <div className="editor-studio-slider" key={key}>
+            <div className={SLIDER_CLASS} key={key}>
               <span>
                 <span>
                   {t(
@@ -170,7 +190,7 @@ export function EditorStudioInspector(props: Props) {
           ))}
           <button
             type="button"
-            className="editor-studio-secondary-button"
+            className={SECONDARY_BUTTON_CLASS}
             onClick={() =>
               props.editor.commitEdits({
                 ...props.editor.edits,
@@ -185,7 +205,7 @@ export function EditorStudioInspector(props: Props) {
         </section>
       )}
       {props.tool === "transform" && (
-        <section className="editor-studio-panel-content editor-studio-transform-grid">
+        <section className={`${PANEL_CONTENT_CLASS} ${TRANSFORM_GRID_CLASS}`}>
           <button
             type="button"
             onClick={() =>
@@ -230,11 +250,11 @@ export function EditorStudioInspector(props: Props) {
       )}
       {props.tool === "text" && <EditorOverlayControls editor={props.editor} />}
       {props.tool === "export" && (
-        <section className="editor-studio-panel-content">
-          <div className="editor-studio-field-label">
+        <section className={PANEL_CONTENT_CLASS}>
+          <div className={FIELD_LABEL_CLASS}>
             {t("pages.editor.studio.format")}
           </div>
-          <div className="editor-studio-format-grid">
+          <div className={GRID_3_CLASS}>
             {(["png", "jpeg", "webp"] as const).map((value) => (
               <button
                 type="button"
@@ -247,7 +267,7 @@ export function EditorStudioInspector(props: Props) {
             ))}
           </div>
           {props.format !== "png" && (
-            <div className="editor-studio-slider">
+            <div className={SLIDER_CLASS}>
               <span>
                 <span>{t("pages.editor.studio.quality")}</span>
                 <b dir="ltr">{props.quality}%</b>
@@ -264,7 +284,7 @@ export function EditorStudioInspector(props: Props) {
               />
             </div>
           )}
-          <div className="editor-studio-output-size">
+          <div className="border-foreground/13 text-muted-foreground [&_strong]:text-foreground flex items-center justify-between gap-2.5 border-y py-3.5 text-xs [&_strong]:font-mono">
             <span>{t("pages.editor.studio.dimensions")}</span>
             <strong dir="ltr">
               {props.outputWidth ?? Math.round(outputWidth)} ×{" "}
@@ -283,7 +303,7 @@ export function EditorStudioInspector(props: Props) {
           />
           <button
             type="button"
-            className="editor-studio-panel-primary"
+            className={PRIMARY_BUTTON_CLASS}
             onClick={props.onDownload}
           >
             <Download size={17} />
@@ -291,8 +311,8 @@ export function EditorStudioInspector(props: Props) {
           </button>
         </section>
       )}
-      <div className="editor-studio-inspector-foot">
-        <span className="editor-studio-inspector-foot-dot" />
+      <div className="text-muted-foreground mt-auto hidden items-center gap-2 pt-6.5 text-[11px] md:flex">
+        <span className="bg-accent-emerald inline-block size-1.75 rounded-full shadow-[0_0_12px_var(--accent-emerald)]" />
         {t("pages.editor.studio.ready")}
       </div>
     </aside>

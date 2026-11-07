@@ -6,6 +6,11 @@ import type { SchemaPaymentHistoryItemResponse } from "@/shared/api";
 import { APP_I18_KEYS } from "@/shared/i18n";
 
 import { PaymentStatus } from "./payment-status";
+import {
+  FINANCE_TABLE_CLASS,
+  FINANCE_TABLE_ID_CLASS,
+  FINANCE_TABLE_SHELL_CLASS,
+} from "@/pages/profile/_components/finance-styles";
 
 type Props = {
   payments: readonly SchemaPaymentHistoryItemResponse[];
@@ -16,8 +21,8 @@ export function PaymentTable({ payments, onOpenDetails }: Props) {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
 
   return (
-    <div className="finance-table-shell">
-      <table className="finance-table">
+    <div className={FINANCE_TABLE_SHELL_CLASS}>
+      <table className={FINANCE_TABLE_CLASS}>
         <caption className="sr-only">
           {t("pages.profile.finance.paymentArchive")}
         </caption>
@@ -36,7 +41,7 @@ export function PaymentTable({ payments, onOpenDetails }: Props) {
           {payments.map(({ payment, target_type, created_at }) => (
             <tr key={payment.id}>
               <td>
-                <bdi className="finance-table-id" title={payment.id}>
+                <bdi className={FINANCE_TABLE_ID_CLASS} title={payment.id}>
                   {payment.id}
                 </bdi>
               </td>

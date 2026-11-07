@@ -57,17 +57,23 @@ test.describe("App sidebar", () => {
       });
       await expect(errorMessage).toBeVisible();
       await expect(retryButton).toBeVisible();
-      await expect(page.locator("[data-dashboard-primary-action]")).toHaveCount(0);
+      await expect(page.locator("[data-dashboard-primary-action]")).toHaveCount(
+        0,
+      );
       const failedRequests = userRequests;
 
       shouldFail = false;
       await retryButton.click();
       await expect(errorMessage).toBeHidden();
       await expect(page.locator(".animate-spin")).toBeVisible();
-      await expect(page.locator("[data-dashboard-primary-action]")).toHaveCount(0);
+      await expect(page.locator("[data-dashboard-primary-action]")).toHaveCount(
+        0,
+      );
 
       releaseUserRead();
-      await expect(page.locator("[data-dashboard-primary-action]")).toHaveCount(2);
+      await expect(page.locator("[data-dashboard-primary-action]")).toHaveCount(
+        2,
+      );
       await expect(
         page.getByRole("link", { name: "گالری", exact: true }),
       ).toBeVisible();
@@ -84,17 +90,25 @@ test.describe("App sidebar", () => {
   }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/");
-    const sidebar = page.locator("aside").filter({ has: page.locator('a[href="/gallery"]') });
+    const sidebar = page
+      .locator("aside")
+      .filter({ has: page.locator('a[href="/gallery"]') });
     const closeButton = page.getByRole("button", { name: "بستن نوار کناری" });
     await closeButton.focus();
     await page.keyboard.press("Enter");
 
-    const openButton = page.getByRole("button", { name: "باز کردن نوار کناری" });
+    const openButton = page.getByRole("button", {
+      name: "باز کردن نوار کناری",
+    });
     await expect(openButton).toHaveAttribute("aria-expanded", "false");
     await expect(openButton).toBeFocused();
     await expect(sidebar).toHaveAttribute("inert", "");
     await expect(sidebar).toHaveAttribute("aria-hidden", "true");
-    await expect(page.getByRole("complementary").filter({ has: page.locator('a[href="/gallery"]') })).toHaveCount(0);
+    await expect(
+      page
+        .getByRole("complementary")
+        .filter({ has: page.locator('a[href="/gallery"]') }),
+    ).toHaveCount(0);
     await expect(
       page.getByRole("link", { name: "گالری", exact: true }),
     ).toHaveCount(0);
@@ -124,17 +138,27 @@ test.describe("App sidebar", () => {
     await expect(closeButton).toHaveAttribute("aria-expanded", "true");
     await expect(sidebar).not.toHaveAttribute("inert");
     await expect(sidebar).toHaveAttribute("aria-hidden", "false");
-    await expect(page.getByRole("complementary").filter({ has: page.locator('a[href="/gallery"]') })).toBeVisible();
+    await expect(
+      page
+        .getByRole("complementary")
+        .filter({ has: page.locator('a[href="/gallery"]') }),
+    ).toBeVisible();
     const galleryLink = page.getByRole("link", { name: "گالری", exact: true });
     await expect(galleryLink).toBeVisible();
     await galleryLink.focus();
     await expect(galleryLink).toBeFocused();
-    const editorLink = page.getByRole("link", { name: /ویرایشگر تصویر\s+آزمایشی/ });
+    const editorLink = page.getByRole("link", {
+      name: /ویرایشگر تصویر\s+آزمایشی/,
+    });
     if (browserName === "webkit") {
       // Safari's link traversal depends on the OS keyboard-access preference.
       // Verify native focusability and declared DOM order without an OS shortcut.
-      expect(await editorLink.evaluate((link) => link.tabIndex)).toBeGreaterThanOrEqual(0);
-      const order = await sidebar.locator("a").evaluateAll((links) => links.map((link) => link.getAttribute("href")));
+      expect(
+        await editorLink.evaluate((link) => link.tabIndex),
+      ).toBeGreaterThanOrEqual(0);
+      const order = await sidebar
+        .locator("a")
+        .evaluateAll((links) => links.map((link) => link.getAttribute("href")));
       expect(order.indexOf("/editor")).toBe(order.indexOf("/gallery") + 1);
       await editorLink.focus();
     } else {
@@ -157,20 +181,41 @@ test.describe("App sidebar", () => {
       .getByRole("button", { name: "بستن نوار کناری" })
       .dispatchEvent("click");
 
-    const openButton = page.getByRole("button", { name: "باز کردن نوار کناری" });
+    const openButton = page.getByRole("button", {
+      name: "باز کردن نوار کناری",
+    });
     await expect(openButton).toBeFocused();
     await expect(openButton).toHaveAttribute("aria-expanded", "false");
-    await expect(page.locator("aside").filter({ has: page.locator('a[href="/gallery"]') })).toHaveAttribute("inert", "");
-    await expect(page.getByRole("complementary").filter({ has: page.locator('a[href="/gallery"]') })).toHaveCount(0);
+    await expect(
+      page.locator("aside").filter({ has: page.locator('a[href="/gallery"]') }),
+    ).toHaveAttribute("inert", "");
+    await expect(
+      page
+        .getByRole("complementary")
+        .filter({ has: page.locator('a[href="/gallery"]') }),
+    ).toHaveCount(0);
     await page.keyboard.press("Enter");
     await galleryLink.focus();
     await expect(galleryLink).toBeFocused();
   });
 
   test("loads the pricing sheet when it is first opened", async ({ page }) => {
-    await page.route("**/api/v1/user/subscription/active", (route) => route.fulfill({
-      json: { uuid: "free-subscription", plan: { uuid: "free-plan", name: "free", display_name: "Free", is_default: true, scopes: [], allowed_models: [], meta: {} } },
-    }));
+    await page.route("**/api/v1/user/subscription/active", (route) =>
+      route.fulfill({
+        json: {
+          uuid: "free-subscription",
+          plan: {
+            uuid: "free-plan",
+            name: "free",
+            display_name: "Free",
+            is_default: true,
+            scopes: [],
+            allowed_models: [],
+            meta: {},
+          },
+        },
+      }),
+    );
     const pricingRequests: string[] = [];
     page.on("request", (request) => {
       if (request.url().includes("/features/pricing/components/pricing.tsx")) {
@@ -184,13 +229,19 @@ test.describe("App sidebar", () => {
     expect(pricingRequests).toHaveLength(0);
 
     await upgradeButton.click();
-    await expect(page.getByRole("dialog", { name: "بسته‌ها", exact: true })).toBeVisible();
+    await expect(
+      page.getByRole("dialog", { name: "بسته‌ها", exact: true }),
+    ).toBeVisible();
     expect(pricingRequests).toHaveLength(1);
 
     await page.getByRole("button", { name: "Close" }).click();
-    await expect(page.getByRole("dialog", { name: "بسته‌ها", exact: true })).toBeHidden();
+    await expect(
+      page.getByRole("dialog", { name: "بسته‌ها", exact: true }),
+    ).toBeHidden();
     await upgradeButton.click();
-    await expect(page.getByRole("dialog", { name: "بسته‌ها", exact: true })).toBeVisible();
+    await expect(
+      page.getByRole("dialog", { name: "بسته‌ها", exact: true }),
+    ).toBeVisible();
     expect(pricingRequests).toHaveLength(1);
   });
 
@@ -240,13 +291,9 @@ test.describe("App sidebar", () => {
 
     await page.getByRole("button", { name: "شارژ کیف پول" }).click();
 
+    await expect(page.getByText("اول اشتراکت رو بخر")).toBeVisible();
     await expect(
-      page.getByText("اول اشتراکت رو بخر"),
-    ).toBeVisible();
-    await expect(
-      page.getByText(
-        "برای شارژ کیف پول، اول باید اشتراک بخری.",
-      ),
+      page.getByText("برای شارژ کیف پول، اول باید اشتراک بخری."),
     ).toBeVisible();
     await expect(
       page.getByRole("button", { name: "خرید اشتراک" }),

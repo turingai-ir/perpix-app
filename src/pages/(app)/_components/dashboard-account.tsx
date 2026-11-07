@@ -1,7 +1,8 @@
 import { Link } from "react-router";
 
 import { DashboardAccountMetrics } from "./dashboard-account-metrics";
-import styles from "../dashboard.module.css";
+import { GLASS_PANEL_CLASS, SECTION_LINK_CLASS } from "./dashboard-styles";
+import { DashboardSectionHeader } from "./dashboard-parts";
 
 import { Skeleton } from "@/shared/ui/skeleton";
 import { useAppTranslate } from "@/shared/hooks";
@@ -39,23 +40,24 @@ export function DashboardAccount({
     : t("pages.root.dashboard.account.noExpiry");
 
   return (
-    <section aria-labelledby="account-heading" className={styles.glassPanel}>
-      <div className={styles.sectionHeader}>
-        <div>
-          <p className={styles.sectionEyebrow}>
-            {t("pages.root.dashboard.account.eyebrow")}
-          </p>
-          <h2 id="account-heading" className={styles.sectionTitle}>
-            {t("pages.root.dashboard.account.title")}
-          </h2>
-        </div>
-        <Link
-          to={APP_ROUTES_KEY.profile.settings.path}
-          className={styles.sectionLink}
-        >
-          {t("pages.root.dashboard.actions.manage")}
-        </Link>
-      </div>
+    <section
+      aria-labelledby="account-heading"
+      className={GLASS_PANEL_CLASS}
+      data-dashboard-panel
+    >
+      <DashboardSectionHeader
+        eyebrow={t("pages.root.dashboard.account.eyebrow")}
+        title={t("pages.root.dashboard.account.title")}
+        titleId="account-heading"
+        action={
+          <Link
+            to={APP_ROUTES_KEY.profile.settings.path}
+            className={SECTION_LINK_CLASS}
+          >
+            {t("pages.root.dashboard.actions.manage")}
+          </Link>
+        }
+      />
       <DashboardAccountMetrics
         balance={balance}
         expiry={expiry}

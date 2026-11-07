@@ -6,6 +6,7 @@ import {
   type SchemaWalletTransactionTypeEnum,
 } from "@/shared/api";
 import { APP_I18_KEYS } from "@/shared/i18n";
+import { FinanceStatus } from "@/pages/profile/_components/finance-status";
 
 const typeView = {
   [WalletTransactionTypeEnumMap.DEPOSIT]: {
@@ -30,9 +31,8 @@ export function WalletTransactionType({
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const { icon: Icon, tone } = typeView[type];
   return (
-    <span className={`finance-status finance-status-${tone}`}>
-      <Icon aria-hidden="true" />
+    <FinanceStatus tone={tone} icon={Icon}>
       {t(`pages.profile.finance.${type}`)}
-    </span>
+    </FinanceStatus>
   );
 }

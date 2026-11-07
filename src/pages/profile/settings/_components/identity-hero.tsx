@@ -20,21 +20,24 @@ export function IdentityHero({ user }: IdentityHeroProps) {
 
   return (
     <section
-      className="settings-hero relative isolate overflow-hidden rounded-[2rem]"
+      className="relative isolate overflow-hidden rounded-[2rem] bg-[linear-gradient(115deg,oklch(0.18_0.08_285),oklch(0.23_0.1_300)_52%,oklch(0.31_0.1_315))] text-white shadow-[0_24px_60px_-38px_oklch(0.35_0.15_295)] after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:border after:border-white/13 after:content-['']"
       aria-labelledby="settings-title"
     >
       <div
-        className="settings-hero-orb settings-hero-orb-one"
+        className="pointer-events-none absolute -top-52 left-[21%] size-96 rounded-full bg-[radial-gradient(circle,rgb(136_87_254/44%),transparent_70%)] blur-[3px]"
         aria-hidden="true"
       />
       <div
-        className="settings-hero-orb settings-hero-orb-two"
+        className="pointer-events-none absolute -right-20 -bottom-52 size-84 rounded-full bg-[radial-gradient(circle,rgb(217_100_233/36%),transparent_70%)] blur-[3px]"
         aria-hidden="true"
       />
-      <div className="settings-hero-grid" aria-hidden="true" />
+      <div
+        className="absolute inset-0 bg-[linear-gradient(rgb(255_255_255/14%)_1px,transparent_1px),linear-gradient(90deg,rgb(255_255_255/14%)_1px,transparent_1px)] mask-[linear-gradient(90deg,transparent_15%,black_100%)] bg-size-[38px_38px] opacity-18"
+        aria-hidden="true"
+      />
       <div className="relative z-10 grid min-h-80 items-center gap-8 px-6 py-9 sm:px-10 lg:grid-cols-[1fr_360px] lg:px-14 lg:py-10 xl:grid-cols-[1fr_440px]">
-        <div className="settings-hero-copy">
-          <span className="settings-hero-kicker">
+        <div>
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3.5 py-2 text-xs font-bold text-white backdrop-blur-md supports-[not(backdrop-filter:blur(1px))]:bg-white/20">
             <Sparkles aria-hidden="true" className="size-4" />{" "}
             {t("pages.profile.settings.heroKicker")}
           </span>
@@ -53,7 +56,7 @@ export function IdentityHero({ user }: IdentityHeroProps) {
             </span>
             <span className="min-w-0 truncate font-medium">{displayName}</span>
             {user.is_verified && (
-              <span className="settings-verified">
+              <span className="border-accent-emerald/32 text-accent-emerald inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs">
                 <BadgeCheck aria-hidden="true" className="size-4" />
                 {t("pages.profile.settings.verified")}
               </span>

@@ -478,15 +478,23 @@ for (const viewport of [
   });
 }
 
-test("office entrance waits for the account shell before revealing the dashboard", async ({ page }) => {
-  await page.addInitScript(() => localStorage.setItem("perpix:boot-splash", "on"));
+test("office entrance waits for the account shell before revealing the dashboard", async ({
+  page,
+}) => {
+  await page.addInitScript(() =>
+    localStorage.setItem("perpix:boot-splash", "on"),
+  );
   await page.clock.install();
   await page.clock.pauseAt(new Date(Date.now() + 1000));
   await mockDashboardApi(page);
   let release = () => {};
   let requested = () => {};
-  const held = new Promise<void>((resolve) => { release = resolve; });
-  const started = new Promise<void>((resolve) => { requested = resolve; });
+  const held = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  const started = new Promise<void>((resolve) => {
+    requested = resolve;
+  });
   await page.route("**/api/v1/user/get-info", async (route) => {
     requested();
     await held;
@@ -504,8 +512,12 @@ test("office entrance waits for the account shell before revealing the dashboard
     release();
     await page.clock.resume();
     await expect(entrance).toHaveCount(0, { timeout: 5000 });
-    await expect(page.getByRole("heading", { name: "چی می‌خوای بسازی؟" })).toBeVisible();
-  } finally { release(); }
+    await expect(
+      page.getByRole("heading", { name: "چی می‌خوای بسازی؟" }),
+    ).toBeVisible();
+  } finally {
+    release();
+  }
 });
 
 test("shows a personal studio dashboard backed by current APIs", async ({
@@ -1085,16 +1097,20 @@ test("turns video generation into an immersive persistent workspace", async ({
 
 const VISUAL_QUALITY_KEY = "perpix:visual-quality";
 
-const readGlassLayout = (page: Page) =>
-  page.evaluate(() => {
-    const hero = document.querySelector<HTMLElement>('[class*="_hero_"]');
+const readGlassLayout = async (page: Page) => {
+  // Panels render as their queries settle; measure only the settled layout.
+  for (const id of ["account", "activity", "transactions"]) {
+    await expect(page.locator(`#${id}-heading`)).toBeVisible();
+  }
+  return page.evaluate(() => {
+    const hero = document.querySelector<HTMLElement>("[data-dashboard-hero]");
     const panels = [
       ...document.querySelectorAll<HTMLElement>(
-        '[class*="_hero_"], [class*="_glassPanel_"], [class*="_contentWell_"]',
+        "[data-dashboard-hero], [data-dashboard-panel]",
       ),
     ];
     const robot = document.querySelector<HTMLElement>(
-      '[class*="_companionRobot_"]',
+      "[data-dashboard-companion-robot]",
     );
     return {
       tier: document.documentElement.dataset.fx,
@@ -1108,6 +1124,7 @@ const readGlassLayout = (page: Page) =>
       }),
     };
   });
+};
 
 test("lite visual tier drops glass blur without moving the layout", async ({
   page,

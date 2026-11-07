@@ -45,7 +45,9 @@ export default defineConfig({
     viewports.map(({ name, width, height }) => ({
       name: `${browser}-${name}-viewport`,
       use: {
-        ...devices[browser === "chromium" ? "Desktop Chrome" : "Desktop Safari"],
+        ...devices[
+          browser === "chromium" ? "Desktop Chrome" : "Desktop Safari"
+        ],
         viewport: { width, height },
       },
     })),

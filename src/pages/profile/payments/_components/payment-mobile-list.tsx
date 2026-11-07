@@ -7,6 +7,13 @@ import { dayjs } from "@/shared/lib/dayjs";
 import type { SchemaPaymentHistoryItemResponse } from "@/shared/api";
 import { APP_I18_KEYS } from "@/shared/i18n";
 
+import {
+  FINANCE_LIST_CLASS,
+  FINANCE_RECORD_AMOUNT_CLASS,
+  FINANCE_RECORD_CLASS,
+  FINANCE_RECORD_META_CLASS,
+  FINANCE_RECORD_ROW_CLASS,
+} from "@/pages/profile/_components/finance-styles";
 import { PaymentStatus } from "./payment-status";
 
 type Props = {
@@ -19,13 +26,14 @@ export function PaymentMobileList({ payments, onOpenDetails }: Props) {
 
   return (
     <ol
-      className="finance-mobile-list finance-payment-list"
+      className={FINANCE_LIST_CLASS}
+      data-finance-list
       aria-label={t("pages.profile.finance.paymentArchive")}
     >
       {payments.map(({ payment, target_type, created_at }) => (
-        <li key={payment.id} className="finance-record">
-          <div className="finance-record-top">
-            <strong className="finance-record-amount">
+        <li key={payment.id} className={FINANCE_RECORD_CLASS}>
+          <div className={FINANCE_RECORD_ROW_CLASS}>
+            <strong className={FINANCE_RECORD_AMOUNT_CLASS}>
               <PaymentAmount
                 amount={payment.amount}
                 currency={payment.currency}
@@ -33,7 +41,7 @@ export function PaymentMobileList({ payments, onOpenDetails }: Props) {
             </strong>
             <PaymentStatus status={getPaymentViewStatus(payment)} />
           </div>
-          <div className="finance-record-meta">
+          <div className={FINANCE_RECORD_META_CLASS}>
             <span>
               {t(`pages.profile.payments.targets.${target_type}`, {
                 defaultValue: t("pages.profile.payments.targets.other"),
@@ -47,11 +55,14 @@ export function PaymentMobileList({ payments, onOpenDetails }: Props) {
                 .format("YYYY/MM/DD")}
             </span>
           </div>
-          <div className="finance-record-footer">
-            <span className="finance-record-id-label">
+          <div className="border-border mt-4 grid grid-cols-1 gap-2 border-t pt-3 [&>button]:mt-1 [&>button]:min-h-11">
+            <span className="text-muted-foreground text-xs">
               {t("pages.profile.finance.trackingId")}
             </span>
-            <bdi className="finance-record-id" title={payment.id}>
+            <bdi
+              className="min-w-0 font-mono text-xs leading-relaxed wrap-anywhere [direction:ltr]"
+              title={payment.id}
+            >
               {payment.id}
             </bdi>
             <Button variant="outline" onClick={() => onOpenDetails(payment.id)}>

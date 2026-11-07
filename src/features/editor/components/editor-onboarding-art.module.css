@@ -1,0 +1,164 @@
+/* Art-scene exception (docs/RESTRUCTURE_PLAN.md §9.10): 3D onboarding illustration. */
+.editorOnboardingArt {
+  position: relative;
+  min-height: 550px;
+  perspective: 1100px;
+  transform-style: preserve-3d;
+}
+.editorOnboardingOrbit {
+  position: absolute;
+  border: 1px solid #aaa4ed2b;
+  border-radius: 50%;
+  transform: rotateX(65deg) rotateZ(-22deg);
+}
+.orbitOne {
+  inset: 55px -28px 65px;
+}
+.orbitTwo {
+  inset: 100px 24px 110px;
+}
+.editorOnboardingArtCard {
+  position: absolute;
+  overflow: hidden;
+  width: 72%;
+  height: 67%;
+  top: 15%;
+  left: 14%;
+  border: 1px solid #fff7;
+  border-radius: 28px;
+  box-shadow:
+    0 35px 70px #0707168c,
+    inset 0 1px #fff8;
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.artCardBack {
+  background: linear-gradient(155deg, #eecac3, #c58699 45%, #564e88);
+  transform: translate3d(-34px, -22px, -70px) rotateY(-19deg) rotateZ(-8deg);
+}
+.artCardFront {
+  background:
+    radial-gradient(
+      circle at 68% 27%,
+      #f8d0aa 0%,
+      #e3a3a8 26%,
+      transparent 48%
+    ),
+    linear-gradient(135deg, #6e7ba8, #2f3b63 62%, #232d4e);
+  transform: translate3d(24px, 25px, 75px) rotateY(12deg) rotateZ(5deg);
+}
+.editorOnboardingArt:hover .artCardFront {
+  transform: translate3d(40px, 9px, 110px) rotateY(4deg) rotateZ(2deg);
+}
+.editorOnboardingArt:hover .artCardBack {
+  transform: translate3d(-48px, -34px, -88px) rotateY(-25deg) rotateZ(-11deg);
+}
+.artCardTop {
+  position: absolute;
+  top: 21px;
+  left: 22px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+  letter-spacing: 0.16em;
+  font-size: 10px;
+  font-family: monospace;
+}
+.artCardSun {
+  position: absolute;
+  width: 125px;
+  height: 125px;
+  right: 32px;
+  top: 86px;
+  border-radius: 50%;
+  background: #ffe2b6;
+  filter: blur(1px);
+}
+.artCardLandscape,
+.artCardShape {
+  position: absolute;
+  display: block;
+  bottom: -30%;
+  width: 130%;
+  height: 65%;
+  border-radius: 48% 48% 0 0;
+  transform: rotate(-18deg);
+}
+.artCardLandscape {
+  right: -20%;
+  background: #414774;
+}
+.shapeOne {
+  right: -42%;
+  bottom: -24%;
+  background: linear-gradient(#8093a8, #283757);
+}
+.shapeTwo {
+  left: -30%;
+  bottom: -44%;
+  height: 76%;
+  background: linear-gradient(#424b75, #192844);
+  transform: rotate(24deg);
+}
+.artCardSheen {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    112deg,
+    transparent 20%,
+    #ffffff1c 47%,
+    transparent 60%
+  );
+}
+.editorOnboardingArtChip {
+  position: absolute;
+  bottom: 11%;
+  right: 3%;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 15px 18px;
+  border: 1px solid #ffffff61;
+  border-radius: 16px;
+  background: #e9e7ff25;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 20px 50px #0007;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  direction: ltr;
+}
+@media (max-width: 700px) {
+  .editorOnboardingArt {
+    width: 100%;
+    min-height: 330px;
+    order: -1;
+    margin-bottom: -15px;
+  }
+  .editorOnboardingArtCard {
+    width: 60%;
+    height: 67%;
+    left: 20%;
+  }
+  .editorOnboardingArtChip {
+    bottom: 6%;
+    right: 7%;
+  }
+}
+@media (max-width: 400px) {
+  .editorOnboardingArt {
+    min-height: 270px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .editorOnboardingArtCard {
+    transition: none;
+  }
+  .editorOnboardingArt:hover .artCardFront {
+    transform: translate3d(24px, 25px, 75px) rotateY(12deg) rotateZ(5deg);
+  }
+  .editorOnboardingArt:hover .artCardBack {
+    transform: translate3d(-34px, -22px, -70px) rotateY(-19deg) rotateZ(-8deg);
+  }
+}

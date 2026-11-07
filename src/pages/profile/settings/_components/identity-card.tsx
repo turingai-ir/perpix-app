@@ -10,6 +10,7 @@ import {
 
 import { useAppTranslate } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";
+import styles from "./identity-card.module.css";
 
 type IdentityCardProps = {
   user: { phone_number: string; is_verified: boolean; created_at: string };
@@ -71,15 +72,15 @@ export function IdentityCard({ user, displayName }: IdentityCardProps) {
   }
 
   return (
-    <div className="settings-card-stage">
+    <div className={styles.cardStage}>
       <motion.div
-        className="settings-card-tilt"
+        className={styles.cardTilt}
         style={reduceMotion ? undefined : { transform: tilt }}
       >
         <button
           ref={surfaceRef}
           type="button"
-          className="settings-card-button"
+          className={styles.cardButton}
           data-testid="identity-card"
           data-side={isFlipped ? "back" : "front"}
           aria-label={t(
@@ -87,35 +88,37 @@ export function IdentityCard({ user, displayName }: IdentityCardProps) {
               ? "pages.profile.settings.cardShowFront"
               : "pages.profile.settings.cardShowBack",
           )}
-          aria-describedby={
-            isFlipped ? "settings-card-back-details" : undefined
-          }
+          aria-describedby={isFlipped ? styles.cardBackDetails : undefined}
           aria-pressed={isFlipped}
           onClick={() => setIsFlipped((value) => !value)}
           onPointerMove={handlePointerMove}
           onPointerLeave={resetPointer}
           onBlur={resetPointer}
         >
-          <span className="settings-card-rotor">
-            <span className="settings-card-face settings-card-front">
+          <span className={styles.cardRotor} data-card="rotor">
+            <span className={`${styles.cardFace} ${styles.cardFront}`}>
               <motion.span
-                className="settings-card-light"
+                className={styles.cardLight}
                 style={reduceMotion ? undefined : { transform: light }}
                 aria-hidden="true"
               />
-              <span className="settings-card-noise" aria-hidden="true" />
-              <span className="settings-card-header">
-                <span className="settings-card-brand">
+              <span className={styles.cardNoise} aria-hidden="true" />
+              <span className={styles.cardHeader}>
+                <span className={styles.cardBrand}>
                   PERPIX <i>✦</i>
                 </span>
-                <span className="settings-card-edition">
+                <span className={styles.cardEdition}>
                   {t("pages.profile.settings.cardEdition")}
                 </span>
               </span>
-              <span className="settings-card-core" aria-hidden="true">
-                <span className="settings-card-orbit settings-card-orbit-one" />
-                <span className="settings-card-orbit settings-card-orbit-two" />
-                <span className="settings-card-emblem">
+              <span className={styles.cardCore} aria-hidden="true">
+                <span
+                  className={`${styles.cardOrbit} ${styles.cardOrbitOne}`}
+                />
+                <span
+                  className={`${styles.cardOrbit} ${styles.cardOrbitTwo}`}
+                />
+                <span className={styles.cardEmblem} data-card="emblem">
                   <img
                     src="/android-chrome-512x512.png"
                     alt=""
@@ -123,40 +126,44 @@ export function IdentityCard({ user, displayName }: IdentityCardProps) {
                   />
                 </span>
               </span>
-              <span className="settings-card-footer">
-                <span className="settings-card-owner">
+              <span className={styles.cardFooter}>
+                <span className={styles.cardOwner}>
                   <small>{t("pages.profile.settings.cardOwner")}</small>
                   <strong>{displayName}</strong>
                 </span>
-                <span className="settings-card-member">
+                <span className={styles.cardMember}>
                   {t("pages.profile.settings.cardMember")}
-                  <span className="settings-card-member-dot" />
+                  <span className={styles.cardMemberDot} />
                 </span>
               </span>
-              <span className="settings-card-flip-hint" aria-hidden="true">
+              <span className={styles.cardFlipHint} aria-hidden="true">
                 <RotateCcw size={12} />
                 {t("pages.profile.settings.cardFlipHint")}
               </span>
             </span>
-            <span className="settings-card-face settings-card-back">
-              <span className="settings-card-back-halo" aria-hidden="true" />
-              <span className="settings-card-header">
-                <span className="settings-card-brand">
+            <span
+              className={`${styles.cardFace} ${styles.cardBack}`}
+              data-card="back"
+            >
+              <span className={styles.cardBackHalo} aria-hidden="true" />
+              <span className={styles.cardHeader}>
+                <span className={styles.cardBrand}>
                   PERPIX <i>✦</i>
                 </span>
-                <span className="settings-card-edition">
+                <span className={styles.cardEdition}>
                   {t("pages.profile.settings.cardBackEdition")}
                 </span>
               </span>
-              <span className="settings-card-back-center">
-                <span className="settings-card-back-icon">
+              <span className={styles.cardBackCenter} data-card="back-center">
+                <span className={styles.cardBackIcon}>
                   <Sparkles size={20} aria-hidden="true" />
                 </span>
                 <strong>{t("pages.profile.settings.cardBackTitle")}</strong>
                 <small>{t("pages.profile.settings.cardBackDescription")}</small>
               </span>
               <span
-                className="settings-card-back-details"
+                className={styles.cardBackDetails}
+                data-card="back-details"
                 id="settings-card-back-details"
               >
                 <span>
@@ -167,7 +174,7 @@ export function IdentityCard({ user, displayName }: IdentityCardProps) {
                   <small>{t("pages.profile.settings.cardPhone")}</small>
                   <strong dir="ltr">••• ••• {memberCode}</strong>
                 </span>
-                <span className="settings-card-back-status">
+                <span className={styles.cardBackStatus}>
                   <BadgeCheck size={13} aria-hidden="true" />
                   {t(
                     user.is_verified

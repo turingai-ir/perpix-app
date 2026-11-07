@@ -1,8 +1,9 @@
 import { useNavigate } from "react-router";
 
-import { DashboardCreationStations } from "./dashboard-creation-stations";
-
-import type { CreativeMode } from "./dashboard-creative-presets";
+import {
+  DashboardCreationStations,
+  type CreativeMode,
+} from "./dashboard-creation-stations";
 
 import { APP_ROUTES_KEY } from "@/app/router/routes";
 

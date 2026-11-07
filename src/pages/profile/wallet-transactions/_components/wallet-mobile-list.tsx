@@ -7,6 +7,15 @@ import { APP_I18_KEYS } from "@/shared/i18n";
 import { formatTokenAmount } from "@/shared/utils";
 
 import { WalletTransactionType } from "./wallet-transaction-type";
+import {
+  FINANCE_LIST_CLASS,
+  FINANCE_RECORD_AMOUNT_CLASS,
+  FINANCE_RECORD_CLASS,
+  FINANCE_RECORD_FOOTER_CLASS,
+  FINANCE_RECORD_ID_CLASS,
+  FINANCE_RECORD_META_CLASS,
+  FINANCE_RECORD_ROW_CLASS,
+} from "@/pages/profile/_components/finance-styles";
 
 export function WalletMobileList({
   transactions,
@@ -17,19 +26,20 @@ export function WalletMobileList({
 
   return (
     <ol
-      className="finance-mobile-list"
+      className={FINANCE_LIST_CLASS}
+      data-finance-list
       aria-label={t("pages.profile.finance.walletArchive")}
     >
       {transactions.map((transaction) => (
-        <li key={transaction.transaction_uuid} className="finance-record">
-          <div className="finance-record-top">
-            <strong className="finance-record-amount">
+        <li key={transaction.transaction_uuid} className={FINANCE_RECORD_CLASS}>
+          <div className={FINANCE_RECORD_ROW_CLASS}>
+            <strong className={FINANCE_RECORD_AMOUNT_CLASS}>
               {formatTokenAmount(transaction.amount_usdmicro)}{" "}
               {t("common.token")}
             </strong>
             <WalletTransactionType type={transaction.type} />
           </div>
-          <div className="finance-record-meta">
+          <div className={FINANCE_RECORD_META_CLASS}>
             <span>
               {t("pages.profile.finance.afterBalance")}:{" "}
               {formatTokenAmount(transaction.balance_after)} {t("common.token")}
@@ -42,9 +52,9 @@ export function WalletMobileList({
                 .format("YYYY/MM/DD")}
             </span>
           </div>
-          <div className="finance-record-footer">
+          <div className={FINANCE_RECORD_FOOTER_CLASS}>
             <bdi
-              className="finance-record-id"
+              className={FINANCE_RECORD_ID_CLASS}
               title={transaction.transaction_uuid}
             >
               {transaction.transaction_uuid}

@@ -1,7 +1,7 @@
 import { AudioLines, Film } from "lucide-react";
 
 import type { FilePreviewUrls, UserFileItem } from "@/features/file-manager";
-import styles from "../dashboard.module.css";
+import { DASHBOARD_FILE_MEDIA_CLASS } from "./dashboard-styles";
 
 interface DashboardFileVisualProps {
   file: UserFileItem;
@@ -18,7 +18,7 @@ export function DashboardFileVisual({
         src={preview.preview_url}
         alt=""
         loading="lazy"
-        className={styles.fileMedia}
+        className={DASHBOARD_FILE_MEDIA_CLASS}
       />
     );
   }
@@ -29,14 +29,14 @@ export function DashboardFileVisual({
         muted
         playsInline
         preload="metadata"
-        className={styles.fileMedia}
+        className={DASHBOARD_FILE_MEDIA_CLASS}
       />
     );
   }
   const MediaIcon = file.content_type.startsWith("video/") ? Film : AudioLines;
   return (
-    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-fuchsia-500/15 to-blue-500/10">
-      <MediaIcon className="h-8 w-8 text-zinc-500" />
+    <div className="flex h-full w-full items-center justify-center bg-linear-to-br from-(--image-accent-soft) to-(--video-accent-soft)">
+      <MediaIcon className="text-muted-foreground h-8 w-8" />
     </div>
   );
 }

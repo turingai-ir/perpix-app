@@ -26,12 +26,20 @@ import {
 import { Input } from "@/shared/ui/input";
 import { useEditUserInfo, useUser } from "@/features/user";
 import { useAppTranslate } from "@/shared/hooks";
+import { cn } from "@/shared/lib/utils";
 import { APP_I18_KEYS } from "@/shared/i18n";
 
 import { AccountGlance } from "./_components/account-glance";
 import { IdentityHero } from "./_components/identity-hero";
 import { PasswordSecurity } from "./_components/password-security";
-import "./settings.css";
+import {
+  SettingsEyebrow,
+  SettingsIconBox,
+  SettingsPanel,
+} from "./_components/settings-parts";
+
+const SETTINGS_INPUT_CLASS =
+  "h-12 rounded-[0.8rem] border-[color-mix(in_srgb,var(--primary)_15%,var(--border))] bg-muted/38 shadow-[inset_0_1px_rgb(255_255_255/6%)]";
 
 const ProfileSettingsPage: FC = () => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
@@ -113,21 +121,21 @@ const ProfileSettingsPage: FC = () => {
   }
 
   return (
-    <div className="settings-page pb-12">
+    <div className="pb-12">
       <IdentityHero user={userState.data} />
       <div className="mt-6 grid items-start gap-6 lg:grid-cols-[minmax(0,1.65fr)_minmax(280px,1fr)]">
-        <section
-          className="settings-panel min-w-0 p-5 sm:p-8"
+        <SettingsPanel
+          className="min-w-0 p-5 sm:p-8"
           aria-labelledby="personal-info-title"
         >
           <div className="mb-8 flex items-start gap-4">
-            <div className="settings-icon-box">
+            <SettingsIconBox>
               <UserRound aria-hidden="true" className="size-5" />
-            </div>
+            </SettingsIconBox>
             <div>
-              <p className="settings-eyebrow">
+              <SettingsEyebrow>
                 {t("pages.profile.settings.accountDetails")}
-              </p>
+              </SettingsEyebrow>
               <h2
                 id="personal-info-title"
                 className="mt-1 text-xl font-bold tracking-tight sm:text-2xl"
@@ -150,16 +158,16 @@ const ProfileSettingsPage: FC = () => {
                       <FormLabel>
                         {t("pages.profile.settings.userInfo.form.name.label")}
                       </FormLabel>
-                      <div className="settings-input-wrap">
+                      <div className="group/wrap relative">
                         <UserRound
                           aria-hidden="true"
-                          className="settings-field-icon"
+                          className="text-muted-foreground pointer-events-none absolute top-1/2 right-3.5 z-1 size-4 -translate-y-1/2 group-has-[input[dir=ltr]]/wrap:right-auto group-has-[input[dir=ltr]]/wrap:left-3.5"
                         />
                         <FormControl>
                           <Input
                             {...field}
                             autoComplete="name"
-                            className="settings-input"
+                            className={cn(SETTINGS_INPUT_CLASS, "pr-10")}
                           />
                         </FormControl>
                       </div>
@@ -175,10 +183,10 @@ const ProfileSettingsPage: FC = () => {
                       <FormLabel>
                         {t("pages.profile.settings.userInfo.form.email.label")}
                       </FormLabel>
-                      <div className="settings-input-wrap">
+                      <div className="group/wrap relative">
                         <Mail
                           aria-hidden="true"
-                          className="settings-field-icon"
+                          className="text-muted-foreground pointer-events-none absolute top-1/2 right-3.5 z-1 size-4 -translate-y-1/2 group-has-[input[dir=ltr]]/wrap:right-auto group-has-[input[dir=ltr]]/wrap:left-3.5"
                         />
                         <FormControl>
                           <Input
@@ -186,7 +194,7 @@ const ProfileSettingsPage: FC = () => {
                             type="email"
                             dir="ltr"
                             autoComplete="email"
-                            className="settings-input settings-input-ltr"
+                            className={cn(SETTINGS_INPUT_CLASS, "ps-10 pe-3.5")}
                           />
                         </FormControl>
                       </div>
@@ -204,10 +212,10 @@ const ProfileSettingsPage: FC = () => {
                       <FormLabel>
                         {t("pages.profile.settings.userInfo.form.mobile.label")}
                       </FormLabel>
-                      <div className="settings-input-wrap">
+                      <div className="group/wrap relative">
                         <Phone
                           aria-hidden="true"
-                          className="settings-field-icon"
+                          className="text-muted-foreground pointer-events-none absolute top-1/2 right-3.5 z-1 size-4 -translate-y-1/2 group-has-[input[dir=ltr]]/wrap:right-auto group-has-[input[dir=ltr]]/wrap:left-3.5"
                         />
                         <FormControl>
                           <Input
@@ -216,7 +224,7 @@ const ProfileSettingsPage: FC = () => {
                             type="tel"
                             dir="ltr"
                             autoComplete="tel"
-                            className="settings-input settings-input-ltr"
+                            className={cn(SETTINGS_INPUT_CLASS, "ps-10 pe-3.5")}
                           />
                         </FormControl>
                       </div>
@@ -250,7 +258,7 @@ const ProfileSettingsPage: FC = () => {
               </div>
             </form>
           </Form>
-        </section>
+        </SettingsPanel>
         <AccountGlance />
       </div>
       <div className="mt-6">

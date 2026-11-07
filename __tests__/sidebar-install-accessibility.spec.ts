@@ -11,7 +11,10 @@ async function mockInstallEnvironment(
   await page.addInitScript(
     ({ ios, standalone, displayMode }) => {
       Object.defineProperties(navigator, {
-        userAgent: { configurable: true, value: ios ? "iPhone" : "Test Desktop" },
+        userAgent: {
+          configurable: true,
+          value: ios ? "iPhone" : "Test Desktop",
+        },
         platform: { configurable: true, value: ios ? "iPhone" : "Win32" },
         maxTouchPoints: { configurable: true, value: ios ? 5 : 0 },
         standalone: { configurable: true, value: standalone },
@@ -57,7 +60,9 @@ for (const viewport of [
       const guide = page.getByRole("dialog", { name: "نصب روی آیفون" });
       await page.getByRole("menuitem", { name: "نصب برنامه" }).click();
       await expect(guide).toBeVisible();
-      await expect(page.getByRole("menu", { includeHidden: true })).toHaveCount(0);
+      await expect(page.getByRole("menu", { includeHidden: true })).toHaveCount(
+        0,
+      );
       await expect(guide.getByRole("button", { name: "Close" })).toBeFocused();
       await page.keyboard.press("Tab");
       await expect(guide.getByRole("button", { name: "Close" })).toBeFocused();
@@ -90,7 +95,9 @@ for (const viewport of [
         const menu = page.getByRole("dialog", { name: "منو", exact: true });
         await expect(menu).toBeVisible();
         await expect(menu).toHaveAccessibleName("منو");
-        await expect(menu.getByRole("navigation", { name: "منو" })).toBeVisible();
+        await expect(
+          menu.getByRole("navigation", { name: "منو" }),
+        ).toBeVisible();
         await menu.getByRole("button", { name: "Close" }).focus();
         await page.keyboard.press("Tab");
         expect(
@@ -121,7 +128,9 @@ test.describe("install availability", () => {
       });
       await page.goto("/");
       await openProfile(page, false);
-      await expect(page.getByRole("menuitem", { name: "نصب برنامه" })).toHaveCount(0);
+      await expect(
+        page.getByRole("menuitem", { name: "نصب برنامه" }),
+      ).toHaveCount(0);
       await expect(
         page.getByRole("dialog", { name: "نصب روی آیفون" }),
       ).toHaveCount(0);
@@ -141,7 +150,9 @@ test.describe("install availability", () => {
     await expect(guide).toBeHidden();
     await expect(profile).toBeFocused();
     await profile.click();
-    await expect(page.getByRole("menuitem", { name: "نصب برنامه" })).toHaveCount(0);
+    await expect(
+      page.getByRole("menuitem", { name: "نصب برنامه" }),
+    ).toHaveCount(0);
   });
 
   test("non-iOS prompts remain pending and consume one native offer at a time", async ({
@@ -178,11 +189,15 @@ test.describe("install availability", () => {
               userChoice,
               prompt: async () => {
                 if (used) {
-                  throw new DOMException("Offer already used", "InvalidStateError");
+                  throw new DOMException(
+                    "Offer already used",
+                    "InvalidStateError",
+                  );
                 }
                 used = true;
                 calls += 1;
-                document.documentElement.dataset.installPromptCalls = String(calls);
+                document.documentElement.dataset.installPromptCalls =
+                  String(calls);
               },
             },
           ),
@@ -224,7 +239,9 @@ test.describe("install availability", () => {
       ),
     );
     await expect(install).toHaveCount(0);
-    await expect(page.getByRole("dialog", { name: "نصب روی آیفون" })).toHaveCount(0);
+    await expect(
+      page.getByRole("dialog", { name: "نصب روی آیفون" }),
+    ).toHaveCount(0);
   });
 
   test("a rejected native prompt resets pending state and reports a localized error", async ({
@@ -234,19 +251,26 @@ test.describe("install availability", () => {
     await page.goto("/");
     await openProfile(page, false);
     await page.evaluate(() => {
-      window.dispatchEvent(Object.assign(new Event("beforeinstallprompt"), {
-        platforms: ["web"],
-        userChoice: Promise.resolve({ outcome: "dismissed", platform: "web" }),
-        prompt: async () => {
-          throw new DOMException("Synthetic rejection", "NotAllowedError");
-        },
-      }));
+      window.dispatchEvent(
+        Object.assign(new Event("beforeinstallprompt"), {
+          platforms: ["web"],
+          userChoice: Promise.resolve({
+            outcome: "dismissed",
+            platform: "web",
+          }),
+          prompt: async () => {
+            throw new DOMException("Synthetic rejection", "NotAllowedError");
+          },
+        }),
+      );
     });
     await page.getByRole("menuitem", { name: "نصب برنامه" }).click();
     await expect(
       page.getByText("نصب برنامه شروع نشد. بعداً دوباره امتحان کن."),
     ).toBeVisible();
     await page.getByRole("button", { name: /پروفایل من/ }).click();
-    await expect(page.getByRole("menuitem", { name: "نصب برنامه" })).toHaveCount(0);
+    await expect(
+      page.getByRole("menuitem", { name: "نصب برنامه" }),
+    ).toHaveCount(0);
   });
 });

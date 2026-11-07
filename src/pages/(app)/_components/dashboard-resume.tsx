@@ -1,6 +1,6 @@
 import { ArrowUpLeft, CircleDashed, Image, Video } from "lucide-react";
 import { Link } from "react-router";
-import styles from "../dashboard.module.css";
+import { RESUME_CARD_CLASS } from "./dashboard-styles";
 
 import { useAppTranslate } from "@/shared/hooks";
 import { APP_ROUTES_KEY } from "@/app/router/routes";
@@ -26,29 +26,29 @@ export function DashboardResume({ task }: DashboardResumeProps) {
   const isActive = status === "PENDING" || status === "IN_PROGRESS";
 
   return (
-    <Link to={path} className={`group ${styles.resumeCard}`}>
-      <span className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-gradient-to-br from-fuchsia-500/20 to-violet-600/5 text-fuchsia-200">
+    <Link to={path} className={RESUME_CARD_CLASS}>
+      <span className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-linear-to-br from-(--image-accent-soft) to-transparent text-(--image-accent)">
         <MediaIcon className="h-5 w-5" aria-hidden="true" />
         {isActive ? (
           <CircleDashed
-            className="absolute -end-1 -top-1 h-4 w-4 animate-spin text-sky-300"
+            className="absolute -end-1 -top-1 h-4 w-4 animate-spin text-(--video-accent)"
             aria-hidden="true"
           />
         ) : null}
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block text-xs text-fuchsia-200">
+        <span className="block text-xs text-(--image-accent)">
           {t("pages.root.dashboard.resume.eyebrow")}
         </span>
-        <span className="mt-1 block truncate text-sm font-semibold text-white sm:text-base">
+        <span className="text-foreground mt-1 block truncate text-sm font-semibold sm:text-base">
           {t(`pages.root.dashboard.resume.${isVideo ? "video" : "image"}`)}
         </span>
       </span>
-      <span className="hidden text-xs text-zinc-400 sm:block">
+      <span className="text-muted-foreground hidden text-xs sm:block">
         {t(`common.taskStatus.${resolveStatusKey(status)}`)}
       </span>
       <ArrowUpLeft
-        className="h-5 w-5 text-zinc-500 transition group-hover:-translate-x-1 group-hover:translate-y-1 group-hover:text-white"
+        className="text-muted-foreground group-hover:text-foreground h-5 w-5 transition group-hover:-translate-x-1 group-hover:translate-y-1"
         aria-hidden="true"
       />
     </Link>

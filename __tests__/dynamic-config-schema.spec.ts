@@ -493,7 +493,11 @@ test("Seedance reference-to-video requires a reference but not incompatible defa
     { reference_videos: ["video-id"] },
     { input_video: "video-id" },
   ]) {
-    const result = await resolver({ ...defaults, ...reference }, {}, {} as never);
+    const result = await resolver(
+      { ...defaults, ...reference },
+      {},
+      {} as never,
+    );
     expect(result.errors, JSON.stringify(reference)).toEqual({});
     expect(result.values).toMatchObject(reference);
     if ("input_video" in reference) {

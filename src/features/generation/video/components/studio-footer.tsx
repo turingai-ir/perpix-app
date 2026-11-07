@@ -1,6 +1,5 @@
 import { Coins, WifiOff } from "lucide-react";
 
-import styles from "./composer.module.css";
 import { Button } from "@/shared/ui/button";
 import { useAppTranslate } from "@/shared/hooks";
 import { GenerationRulesDialog } from "@/features/generation/components/prompt-box/generation-rules-dialog";
@@ -48,9 +47,12 @@ export function VideoStudioFooter({
   if (failed) status = t("pages.generation.video.studio.loadError");
   if (offline) status = t("pages.generation.video.studio.offline");
   return (
-    <footer className={styles.footer}>
+    <footer className="border-border bg-muted/40 grid grid-cols-[minmax(0,1fr)_auto] gap-2.5 border-t px-4 pt-3 pb-[max(12px,env(safe-area-inset-bottom))] max-[600px]:px-3.5">
       {status && (
-        <div role="status" className={styles.status}>
+        <div
+          role="status"
+          className="text-primary col-span-full m-0 flex flex-wrap items-center gap-2 text-xs leading-relaxed"
+        >
           {offline && <WifiOff aria-hidden="true" size={16} />}
           {status}
           {failed && !offline && (
@@ -69,12 +71,12 @@ export function VideoStudioFooter({
           )}
         </div>
       )}
-      <div className={styles.cost}>
-        <span>
+      <div className="flex min-w-0 flex-wrap items-center justify-between gap-x-1.5 gap-y-1 text-xs">
+        <span className="text-muted-foreground flex items-center gap-1.5">
           <Coins aria-hidden="true" size={16} />
           {t("pages.generation.video.studio.cost")}
         </span>
-        <strong>
+        <strong className="text-xs leading-relaxed font-semibold tabular-nums">
           {range
             ? t("pages.generation.modelTokenPrice.range", {
                 min: formatTokenAmount(range.min),
@@ -82,9 +84,11 @@ export function VideoStudioFooter({
               })
             : t("pages.generation.modelTokenPrice.empty")}
         </strong>
-        <p>{t("pages.generation.video.studio.costHint")}</p>
+        <p className="text-muted-foreground basis-full text-xs leading-normal">
+          {t("pages.generation.video.studio.costHint")}
+        </p>
       </div>
-      <div className={styles.submit}>
+      <div className="flex flex-none items-center gap-1 [&>button:not([type=submit])]:min-h-11 [&>button:not([type=submit])]:min-w-11 [&>button[type=submit]]:min-h-12 [&>button[type=submit]]:min-w-32 [&>button[type=submit]]:rounded-[10px] [&>button[type=submit]]:px-2.5 [&>button[type=submit]]:text-[13px] max-[700px]:[&>button[type=submit]]:flex-1">
         <GenerationRulesDialog />
         <PromptSubmitButton
           dynamicForm={studio.dynamicForm}

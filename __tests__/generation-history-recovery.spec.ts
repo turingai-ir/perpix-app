@@ -82,7 +82,10 @@ for (const media of ["image", "video"] as const) {
         await page.route(`**/api/v1/ai-task/${taskUuid}`, (route) => {
           if (!failed) return route.fulfill({ json: emptyTask(media) });
           if (status === 0) return route.abort("connectionrefused");
-          return route.fulfill({ status, json: { detail: "Synthetic failure" } });
+          return route.fulfill({
+            status,
+            json: { detail: "Synthetic failure" },
+          });
         });
         await page.goto(`/generation/${media}/${taskUuid}`);
         const alert = page.getByRole("alert", { name: title });
@@ -91,7 +94,10 @@ for (const media of ["image", "video"] as const) {
         const newConversation = alert.getByRole("link", {
           name: "شروع گفتگوی جدید",
         });
-        await expect(newConversation).toHaveAttribute("href", `/generation/${media}`);
+        await expect(newConversation).toHaveAttribute(
+          "href",
+          `/generation/${media}`,
+        );
         if (status === 403 || status === 404) {
           await expect(alert.getByRole("button")).toHaveCount(0);
           await newConversation.click();
@@ -100,7 +106,9 @@ for (const media of ["image", "video"] as const) {
           failed = false;
           await alert.getByRole("button", { name: "بارگذاری دوباره" }).click();
           await expect(alert).toHaveCount(0);
-          await expect(page.locator("[data-generation-composer]")).toBeVisible();
+          await expect(
+            page.locator("[data-generation-composer]"),
+          ).toBeVisible();
         }
         expect(imageConversationApi.generateRequests).toEqual([]);
       });
@@ -155,7 +163,9 @@ test("a history response for a different task never opens an editable conversati
     }),
   );
   await page.goto(`/generation/image/${taskUuid}`);
-  await expect(page.getByRole("alert", { name: "گفتگو بارگذاری نشد" })).toBeVisible();
+  await expect(
+    page.getByRole("alert", { name: "گفتگو بارگذاری نشد" }),
+  ).toBeVisible();
   await expect(page.locator("[data-generation-composer]")).toBeHidden();
   expect(imageConversationApi.generateRequests).toEqual([]);
 });
@@ -164,10 +174,12 @@ test("a delayed regeneration cannot submit after history becomes unavailable", a
   page,
   imageConversationApi,
 }) => {
-  imageConversationApi.setTaskMessages(conversationMessages({
-    prompt: "A synthetic failed request",
-    status: "FAILED",
-  }));
+  imageConversationApi.setTaskMessages(
+    conversationMessages({
+      prompt: "A synthetic failed request",
+      status: "FAILED",
+    }),
+  );
   let failed = false;
   await page.route(`**/api/v1/ai-task/${taskUuid}`, (route) =>
     failed
@@ -175,44 +187,70 @@ test("a delayed regeneration cannot submit after history becomes unavailable", a
       : route.fallback(),
   );
   await page.goto(`/generation/image/${taskUuid}`);
-  await expect(page.locator("[data-generation-composer] textarea")).toBeEditable();
+  await expect(
+    page.locator("[data-generation-composer] textarea"),
+  ).toBeEditable();
   let release = () => {};
-  const gate = new Promise<void>((resolve) => { release = resolve; });
-  let pending = false;
-  await page.route(`**/api/v1/ai-registry/models/${compatibleModelUuid}`, async (route) => {
-    pending = true;
-    await gate;
-    await route.fallback();
+  const gate = new Promise<void>((resolve) => {
+    release = resolve;
   });
+  let pending = false;
+  await page.route(
+    `**/api/v1/ai-registry/models/${compatibleModelUuid}`,
+    async (route) => {
+      pending = true;
+      await gate;
+      await route.fallback();
+    },
+  );
   await page.evaluate(async () => {
     const path = "/src/shared/lib/react-query.ts";
-    const { queryClient }: typeof import("../src/shared/lib/react-query") = await import(path);
+    const { queryClient }: typeof import("../src/shared/lib/react-query") =
+      await import(path);
     await queryClient.invalidateQueries({
       queryKey: ["get", "/api/v1/ai-registry/models/{ai_model_uuid}"],
       refetchType: "none",
     });
   });
   try {
-    await page.getByRole("button", { name: "دوباره امتحان کن", exact: true }).click();
+    await page
+      .getByRole("button", { name: "دوباره امتحان کن", exact: true })
+      .click();
     await expect.poll(() => pending).toBe(true);
     failed = true;
     await page.evaluate(async () => {
       const path = "/src/shared/lib/react-query.ts";
-      const { queryClient }: typeof import("../src/shared/lib/react-query") = await import(path);
+      const { queryClient }: typeof import("../src/shared/lib/react-query") =
+        await import(path);
       await queryClient.invalidateQueries({
         queryKey: ["get", "/api/v1/ai-task/{task_uuid}"],
       });
     });
-    await expect(page.getByRole("alert", { name: "گفتگو بارگذاری نشد" })).toBeVisible();
+    await expect(
+      page.getByRole("alert", { name: "گفتگو بارگذاری نشد" }),
+    ).toBeVisible();
     release();
-    await expect.poll(() => page.evaluate(async () => {
-      const path = "/src/shared/lib/react-query.ts";
-      const { queryClient }: typeof import("../src/shared/lib/react-query") = await import(path);
-      return queryClient.getQueryState([
-        "get", "/api/v1/ai-registry/models/{ai_model_uuid}",
-        { params: { path: { ai_model_uuid: "a509b349-d43f-4065-9cf2-de444bf4aa2c" } } },
-      ])?.fetchStatus;
-    })).toBe("idle");
+    await expect
+      .poll(() =>
+        page.evaluate(async () => {
+          const path = "/src/shared/lib/react-query.ts";
+          const {
+            queryClient,
+          }: typeof import("../src/shared/lib/react-query") = await import(
+            path
+          );
+          return queryClient.getQueryState([
+            "get",
+            "/api/v1/ai-registry/models/{ai_model_uuid}",
+            {
+              params: {
+                path: { ai_model_uuid: "a509b349-d43f-4065-9cf2-de444bf4aa2c" },
+              },
+            },
+          ])?.fetchStatus;
+        }),
+      )
+      .toBe("idle");
     expect(imageConversationApi.generateRequests).toEqual([]);
   } finally {
     release();
@@ -233,7 +271,9 @@ test("history recovery with a newer completed result does not erase an unsent pr
         : {
             ...emptyTask("image"),
             messages: completed
-              ? conversationMessages({ prompt: "A different completed request" })
+              ? conversationMessages({
+                  prompt: "A different completed request",
+                })
               : [],
           },
     }),
@@ -245,7 +285,8 @@ test("history recovery with a newer completed result does not erase an unsent pr
   failed = true;
   await page.evaluate(async () => {
     const path = "/src/shared/lib/react-query.ts";
-    const { queryClient }: typeof import("../src/shared/lib/react-query") = await import(path);
+    const { queryClient }: typeof import("../src/shared/lib/react-query") =
+      await import(path);
     await queryClient.invalidateQueries({
       queryKey: ["get", "/api/v1/ai-task/{task_uuid}"],
     });

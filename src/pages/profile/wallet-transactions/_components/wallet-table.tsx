@@ -5,6 +5,11 @@ import { APP_I18_KEYS } from "@/shared/i18n";
 import { formatTokenAmount } from "@/shared/utils";
 
 import { WalletTransactionType } from "./wallet-transaction-type";
+import {
+  FINANCE_TABLE_CLASS,
+  FINANCE_TABLE_ID_CLASS,
+  FINANCE_TABLE_SHELL_CLASS,
+} from "@/pages/profile/_components/finance-styles";
 
 export function WalletTable({
   transactions,
@@ -13,8 +18,8 @@ export function WalletTable({
 }) {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   return (
-    <div className="finance-table-shell">
-      <table className="finance-table">
+    <div className={FINANCE_TABLE_SHELL_CLASS}>
+      <table className={FINANCE_TABLE_CLASS}>
         <caption className="sr-only">
           {t("pages.profile.finance.walletArchive")}
         </caption>
@@ -33,7 +38,7 @@ export function WalletTable({
             <tr key={transaction.transaction_uuid}>
               <td>
                 <bdi
-                  className="finance-table-id"
+                  className={FINANCE_TABLE_ID_CLASS}
                   title={transaction.transaction_uuid}
                 >
                   {transaction.transaction_uuid}

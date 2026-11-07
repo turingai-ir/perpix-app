@@ -111,10 +111,10 @@ for (const viewport of [
       { path: "/generation/image", ready: "[data-generation-intro]" },
       { path: "/generation/video", ready: "[data-video-cinema]" },
       { path: "/profile/settings", ready: "[data-testid=identity-card]" },
-      { path: "/profile/payments", ready: ".finance-page-payments h1" },
+      { path: "/profile/payments", ready: "[data-finance-page=payments] h1" },
       {
         path: "/profile/wallet-transactions",
-        ready: ".finance-page-wallet h1",
+        ready: "[data-finance-page=wallet] h1",
       },
       { path: "/editor", ready: "input[type=file]" },
       { path: `/payment/verify/${paymentId}`, ready: "h1" },

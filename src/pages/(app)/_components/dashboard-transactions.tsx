@@ -1,7 +1,15 @@
 import { ArrowDownLeft, ArrowUpRight, RotateCcw } from "lucide-react";
 import { Link } from "react-router";
-import styles from "../dashboard.module.css";
+import {
+  DATA_ICON_CLASS,
+  DATA_ROW_CLASS,
+  EMPTY_STATE_CLASS,
+  GLASS_PANEL_CLASS,
+  SECTION_LINK_CLASS,
+} from "./dashboard-styles";
+import { DashboardSectionHeader } from "./dashboard-parts";
 
+import { cn } from "@/shared/lib/utils";
 import { Skeleton } from "@/shared/ui/skeleton";
 import { useAppTranslate } from "@/shared/hooks";
 import { dayjs } from "@/shared/lib/dayjs";
@@ -31,25 +39,23 @@ export function DashboardTransactions({
   return (
     <section
       aria-labelledby="transactions-heading"
-      className={styles.glassPanel}
+      className={GLASS_PANEL_CLASS}
+      data-dashboard-panel
     >
-      <div className={styles.sectionHeader}>
-        <div>
-          <p className={styles.sectionEyebrow}>
-            {t("pages.root.dashboard.transactions.eyebrow")}
-          </p>
-          <h2 id="transactions-heading" className={styles.sectionTitle}>
-            {t("pages.root.dashboard.transactions.title")}
-          </h2>
-        </div>
-        <Link
-          to={APP_ROUTES_KEY.profile.walletTransactions.path}
-          className={styles.sectionLink}
-        >
-          {t("pages.root.dashboard.actions.viewAll")}
-        </Link>
-      </div>
-      <div className={styles.dataList}>
+      <DashboardSectionHeader
+        eyebrow={t("pages.root.dashboard.transactions.eyebrow")}
+        title={t("pages.root.dashboard.transactions.title")}
+        titleId="transactions-heading"
+        action={
+          <Link
+            to={APP_ROUTES_KEY.profile.walletTransactions.path}
+            className={SECTION_LINK_CLASS}
+          >
+            {t("pages.root.dashboard.actions.viewAll")}
+          </Link>
+        }
+      />
+      <div className="grid gap-1">
         {transactions.length ? (
           transactions.map((transaction) => {
             const Icon = transactionIcons[transaction.type];
@@ -57,32 +63,34 @@ export function DashboardTransactions({
             return (
               <div
                 key={transaction.transaction_uuid}
-                className={styles.dataRow}
+                className={DATA_ROW_CLASS}
               >
-                <span className={styles.transactionIcon}>
-                  <Icon className="h-4 w-4 text-zinc-300" />
+                <span
+                  className={cn(DATA_ICON_CLASS, "size-9 rounded-[0.65rem]")}
+                >
+                  <Icon className="text-foreground/80 size-4" />
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="block text-sm text-zinc-200">
+                  <span className="text-foreground/90 block text-sm">
                     {t(
                       `pages.root.dashboard.transactions.types.${transaction.type.toLowerCase()}`,
                     )}
                   </span>
-                  <span className="text-xs text-zinc-600">
+                  <span className="text-muted-foreground text-xs">
                     {dayjs(transaction.created_at)
                       .calendar("jalali")
                       .locale("fa")
                       .format("YYYY/MM/DD")}
                   </span>
                 </span>
-                <span dir="ltr" className="text-sm font-medium text-white">
+                <span dir="ltr" className="text-foreground text-sm font-medium">
                   {amount}
                 </span>
               </div>
             );
           })
         ) : (
-          <p className={styles.emptyState}>
+          <p className={EMPTY_STATE_CLASS}>
             {t("pages.root.dashboard.transactions.empty")}
           </p>
         )}

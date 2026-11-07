@@ -4,6 +4,12 @@ import { useAppTranslate } from "@/shared/hooks/i18/use-app-translate";
 import { showGridAtom, showRulerAtom } from "../model/editor-settings";
 import { EditorHistoryControls } from "./editor-history-controls";
 import { ImageEditorZoomControls } from "./image-editor-zoom-controls";
+import {
+  CHIP_BUTTON_CLASS,
+  HEADER_GROUP_CLASS,
+  ICON_BUTTON_CLASS,
+  PRIMARY_BUTTON_CLASS,
+} from "./editor-styles";
 
 interface Props {
   onBack: () => void;
@@ -25,40 +31,47 @@ export function EditorStudioHeader(props: Props) {
 
   return (
     <header
-      className="editor-studio-header"
+      className="border-foreground/13 bg-card/75 z-2 flex h-14.75 flex-none items-center justify-between gap-3.5 border-b px-2.5 backdrop-blur-xl min-[701px]:h-17.5 min-[701px]:px-5.5"
       aria-label={t("pages.editor.studio.topMenu")}
     >
-      <div className="editor-studio-header-title">
+      <div className="flex min-w-0 items-center gap-1 min-[701px]:gap-2.5">
         <button
           type="button"
-          className="editor-studio-icon-button"
+          className={ICON_BUTTON_CLASS}
           onClick={props.onBack}
           aria-label={t("pages.editor.back")}
           title={t("pages.editor.back")}
         >
           <ArrowRight size={19} />
         </button>
-        <span className="editor-studio-brand-mark" aria-hidden="true">
+        <span
+          className="from-primary to-primary/60 text-primary-foreground grid size-8 place-items-center rounded-[11px] bg-linear-145 font-black shadow-[0_8px_28px_color-mix(in_srgb,var(--primary)_29%,transparent)] max-[400px]:hidden"
+          aria-hidden="true"
+        >
           P
         </span>
-        <span className="editor-studio-brand-copy">
-          <strong>PerPix</strong>
-          <small>{t("pages.editor.studio.eyebrow")}</small>
+        <span className="hidden flex-col text-left leading-tight [direction:ltr] min-[701px]:flex">
+          <strong className="text-[15px]">PerPix</strong>
+          <small className="text-muted-foreground text-[10px]">
+            {t("pages.editor.studio.eyebrow")}
+          </small>
         </span>
       </div>
-      <div className="editor-studio-header-actions">
+      <div className="flex min-w-0 items-center gap-0.75 min-[701px]:gap-2.5">
         <button
           type="button"
-          className="editor-studio-compare-toggle"
+          className={`${CHIP_BUTTON_CLASS} inline-flex items-center justify-center gap-1.75 px-2.75 max-[700px]:w-9.5 max-[700px]:px-0`}
           aria-pressed={props.showCompare}
           disabled={props.compareDisabled}
           onClick={props.onToggleCompare}
           title={t("pages.editor.studio.compare")}
         >
           <Columns2 size={17} />
-          <span>{t("pages.editor.studio.compare")}</span>
+          <span className="max-[700px]:hidden">
+            {t("pages.editor.studio.compare")}
+          </span>
         </button>
-        <div className="editor-studio-header-group">
+        <div className={HEADER_GROUP_CLASS}>
           <EditorHistoryControls
             canUndo={props.canUndo}
             canRedo={props.canRedo}
@@ -66,10 +79,10 @@ export function EditorStudioHeader(props: Props) {
             onRedo={props.onRedo}
           />
         </div>
-        <div className="editor-studio-header-group editor-studio-view-controls">
+        <div className={`${HEADER_GROUP_CLASS} max-[1000px]:hidden`}>
           <button
             type="button"
-            className="editor-studio-icon-button"
+            className={ICON_BUTTON_CLASS}
             aria-label={t("pages.editor.toggleGrid")}
             title={t("pages.editor.toggleGrid")}
             aria-pressed={showGrid}
@@ -79,7 +92,7 @@ export function EditorStudioHeader(props: Props) {
           </button>
           <button
             type="button"
-            className="editor-studio-icon-button"
+            className={ICON_BUTTON_CLASS}
             aria-label={t("pages.editor.toggleRuler")}
             title={t("pages.editor.toggleRuler")}
             aria-pressed={showRuler}
@@ -88,12 +101,12 @@ export function EditorStudioHeader(props: Props) {
             <Ruler size={17} />
           </button>
         </div>
-        <div className="editor-studio-view-controls">
+        <div className="max-[1000px]:hidden">
           <ImageEditorZoomControls stageSize={props.stageSize} />
         </div>
         <button
           type="button"
-          className="editor-studio-primary-button"
+          className={PRIMARY_BUTTON_CLASS}
           onClick={props.onDownload}
         >
           <Download size={17} />

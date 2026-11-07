@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
 import { useAppTranslate } from "@/shared/hooks/i18/use-app-translate";
+import {
+  FIELD_LABEL_CLASS,
+  INPUT_LABEL_CLASS,
+  SIZE_PRESETS_CLASS,
+} from "./editor-styles";
 
 interface Props {
   naturalWidth: number;
@@ -36,12 +41,10 @@ export function EditorOutputSize({
   };
 
   return (
-    <div className="editor-studio-size-controls">
-      <div className="editor-studio-field-label">
-        {t("pages.editor.studio.resize")}
-      </div>
-      <div className="editor-studio-size-fields">
-        <label className="editor-studio-input-label">
+    <div className="[&>p]:text-muted-foreground flex flex-col gap-2.75 [&>p]:m-0 [&>p]:text-[11px]">
+      <div className={FIELD_LABEL_CLASS}>{t("pages.editor.studio.resize")}</div>
+      <div className="[&>span]:text-muted-foreground grid grid-cols-[minmax(0,1fr)_12px_minmax(0,1fr)] items-end gap-2 [&>span]:pb-2.75">
+        <label className={INPUT_LABEL_CLASS}>
           {t("pages.editor.studio.width")}
           <input
             type="number"
@@ -57,14 +60,14 @@ export function EditorOutputSize({
           />
         </label>
         <span aria-hidden="true">×</span>
-        <div className="editor-studio-input-label">
+        <div className={INPUT_LABEL_CLASS}>
           {t("pages.editor.studio.height")}
           <output dir="ltr">{height}</output>
         </div>
       </div>
       <p>{t("pages.editor.studio.aspectLocked")}</p>
       <div
-        className="editor-studio-size-presets"
+        className={SIZE_PRESETS_CLASS}
         role="group"
         aria-label={t("pages.editor.studio.resizePresets")}
       >

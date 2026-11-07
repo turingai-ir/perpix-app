@@ -80,7 +80,7 @@ test("shows account data and saves editable profile fields", async ({
     "src",
     "/android-chrome-512x512.png",
   );
-  await expect(page.locator(".settings-card-emblem")).not.toHaveCSS(
+  await expect(page.locator('[data-card="emblem"]')).not.toHaveCSS(
     "animation-name",
     "none",
   );
@@ -92,7 +92,7 @@ test("shows account data and saves editable profile fields", async ({
   await page.keyboard.press("Enter");
   await expect(identityCard).toHaveAttribute("data-side", "front");
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await expect(page.locator(".settings-card-emblem")).toHaveCSS(
+  await expect(page.locator('[data-card="emblem"]')).toHaveCSS(
     "animation-name",
     "none",
   );
@@ -111,9 +111,7 @@ test("shows account data and saves editable profile fields", async ({
   await expect
     .poll(() => savedBody)
     .toEqual({ name: "نام جدید", email: "user@example.com" });
-  await expect(
-    page.getByText("اطلاعات حسابت به‌روز شد."),
-  ).toBeVisible();
+  await expect(page.getByText("اطلاعات حسابت به‌روز شد.")).toBeVisible();
   await page.setViewportSize({ width: 390, height: 844 });
   await page.reload();
   await expect(
@@ -132,9 +130,7 @@ test.describe("identity card on touch viewports", () => {
   test.use({ hasTouch: true, reducedMotion: "no-preference" });
 
   for (const width of [320, 375]) {
-    test(`keeps the back content contained at ${width}px`, async ({
-      page,
-    }) => {
+    test(`keeps the back content contained at ${width}px`, async ({ page }) => {
       await page.setViewportSize({ width, height: 812 });
       await mockProfileData(page);
       await page.goto("/profile/settings");
@@ -146,23 +142,23 @@ test.describe("identity card on touch viewports", () => {
       await expect(identityCard).toHaveAttribute("data-side", "back");
       await expect(identityCard).toHaveAttribute("aria-pressed", "true");
 
-      const backDetails = identityCard.locator(".settings-card-back-details");
+      const backDetails = identityCard.locator('[data-card="back-details"]');
       await expect(backDetails).toBeVisible();
-      await expect(identityCard.locator(".settings-card-rotor")).toHaveCSS(
+      await expect(identityCard.locator('[data-card="rotor"]')).toHaveCSS(
         "transform",
         "none",
       );
-      await expect(identityCard.locator(".settings-card-back")).toHaveCSS(
+      await expect(identityCard.locator('[data-card="back"]')).toHaveCSS(
         "backface-visibility",
         "visible",
       );
       expect(
         await identityCard.evaluate((card) => {
           const details = card.querySelector<HTMLElement>(
-            ".settings-card-back-details",
+            '[data-card="back-details"]',
           );
           const center = card.querySelector<HTMLElement>(
-            ".settings-card-back-center",
+            '[data-card="back-center"]',
           );
           if (!details || !center) return null;
 
