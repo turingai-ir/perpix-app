@@ -30,6 +30,14 @@
 - Use `ui-ux-pro-max` only for new pages, complete redesigns or explicit design-system work.
 - Do not load `ui-ux-pro-max` for text changes, bug fixes or minor styling.
 
+## Styling
+
+- Use shadcn components from `@/shared/ui` (base-nova) first, then shared components in `@/shared/components`, then Tailwind utilities. No new `*.css` / `*.module.css` for regular UI.
+- Colors come from semantic tokens (`background`, `foreground`, `card`, `muted`, `primary`, `border`, `destructive`, brand/accent tokens in `src/app/styles/tokens.css`); no `#hex` in components. New colors are added to `tokens.css` and mapped in `theme.css` first.
+- Mobile-first (`sm:`/`md:`/`lg:`); coarse-pointer sizes are handled inside `shared/ui` (`pointer-coarse:`), do not hand-size touch targets.
+- Shared keyframes live in `src/app/styles/theme.css` (`--animate-*`). The only allowed CSS Modules are animated art scenes (see `docs/RESTRUCTURE_PLAN.md` §9.10).
+- Tests select by role, text or `data-*` hooks, never by styling classes.
+
 ## Code Standards
 
 - Use TypeScript without introducing `any`.
