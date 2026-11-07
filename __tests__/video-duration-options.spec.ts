@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-import { getDurationOptions } from "../src/pages/(app)/generation/video/_utils/duration-options";
+import { getDurationOptions } from "../src/features/generation/video/model/duration-options";
 
 test("duration choices preserve sparse enum values and JSON types", () => {
   expect(getDurationOptions({ enum: ["auto", "5", 5, 12] })?.values).toEqual([

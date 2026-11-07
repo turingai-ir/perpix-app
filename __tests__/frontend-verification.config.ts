@@ -23,7 +23,7 @@ const ui = [
   "__tests__/app-layout-scroll.spec.ts",
   "src/features/pricing/_tests/pricing-empty.spec.ts",
   "src/pages/profile/_tests/finance-pages.spec.ts",
-  "src/pages/(app)/generation/_tests/prompt-field.spec.ts",
+  "src/features/generation/_tests/prompt-field.spec.ts",
 ];
 const selections: Record<string, string | string[]> = {
   gate: "__tests__/release-qa/network-safety.qa.ts",

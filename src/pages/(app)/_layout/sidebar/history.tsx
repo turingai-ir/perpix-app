@@ -12,7 +12,7 @@ import { formatLocalizedNumber } from "@/shared/utils";
 import {
   AI_TASKS_PAGE_SIZE,
   useAiTasksList,
-} from "@/pages/(app)/generation/_hooks";
+} from "@/features/generation";
 import HistoryItem from "./history-item";
 import styles from "./sidebar.module.css";
 
