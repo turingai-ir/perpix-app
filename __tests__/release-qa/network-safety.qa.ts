@@ -77,7 +77,10 @@ test("unknown local API and external fetch requests fail closed", async ({
   ).toHaveLength(3);
 });
 
-test("only an exact method and URL mock is fulfilled", async ({ page, network }) => {
+test("only an exact method and URL mock is fulfilled", async ({
+  page,
+  network,
+}) => {
   network.mock({
     method: "GET",
     url: `${APP}/api/v1/qa-canary`,
@@ -87,7 +90,11 @@ test("only an exact method and URL mock is fulfilled", async ({ page, network })
     const mocked = await fetch(url);
     const denied = await Promise.all(
       [fetch(url, { method: "POST" }), fetch(`${url}?unexpected=1`)].map(
-        (request) => request.then(() => false, () => true),
+        (request) =>
+          request.then(
+            () => false,
+            () => true,
+          ),
       ),
     );
     return { status: mocked.status, body: await mocked.json(), denied };
@@ -146,17 +153,27 @@ test("external image and script subresources are denied", async ({
   network,
 }) => {
   await page.evaluate(() => {
-      const image = new Image();
-      image.onload = () => { document.documentElement.dataset.unexpectedImageLoad = "1"; };
-      image.src = "https://media.invalid/fixture.png";
-      const script = document.createElement("script");
-      script.onload = () => { document.documentElement.dataset.unexpectedScriptLoad = "1"; };
-      script.src = "https://telemetry.invalid/script.js";
-      document.body.append(image, script);
+    const image = new Image();
+    image.onload = () => {
+      document.documentElement.dataset.unexpectedImageLoad = "1";
+    };
+    image.src = "https://media.invalid/fixture.png";
+    const script = document.createElement("script");
+    script.onload = () => {
+      document.documentElement.dataset.unexpectedScriptLoad = "1";
+    };
+    script.src = "https://telemetry.invalid/script.js";
+    document.body.append(image, script);
   });
-  await expect.poll(() => [...network.blockedResourceTypes].sort()).toEqual(["image", "script"]);
-  await expect(page.locator("html")).not.toHaveAttribute("data-unexpected-image-load");
-  await expect(page.locator("html")).not.toHaveAttribute("data-unexpected-script-load");
+  await expect
+    .poll(() => [...network.blockedResourceTypes].sort())
+    .toEqual(["image", "script"]);
+  await expect(page.locator("html")).not.toHaveAttribute(
+    "data-unexpected-image-load",
+  );
+  await expect(page.locator("html")).not.toHaveAttribute(
+    "data-unexpected-script-load",
+  );
   expect(network.events.filter((event) => event.action === "blocked")).toEqual([
     {
       action: "blocked",
@@ -177,19 +194,35 @@ test("WebSocket and SSE are denied by the guard", async ({ page, network }) => {
   await page.evaluate(() => {
     const socket = new WebSocket("wss://stream.invalid/events");
     const stream = new EventSource("http://localhost:5173/api/v1/qa-events");
-    socket.onmessage = () => { document.documentElement.dataset.unexpectedSocketMessage = "1"; };
-    stream.onopen = () => { document.documentElement.dataset.unexpectedStream = "1"; };
-    window.addEventListener("qa:close-transports", () => {
-      socket.close();
-      stream.close();
-    }, { once: true });
+    socket.onmessage = () => {
+      document.documentElement.dataset.unexpectedSocketMessage = "1";
+    };
+    stream.onopen = () => {
+      document.documentElement.dataset.unexpectedStream = "1";
+    };
+    window.addEventListener(
+      "qa:close-transports",
+      () => {
+        socket.close();
+        stream.close();
+      },
+      { once: true },
+    );
   });
   try {
-    await expect.poll(() => [...network.blockedResourceTypes].sort()).toEqual(["eventsource", "websocket"]);
-    await expect(page.locator("html")).not.toHaveAttribute("data-unexpected-socket-message");
-    await expect(page.locator("html")).not.toHaveAttribute("data-unexpected-stream");
+    await expect
+      .poll(() => [...network.blockedResourceTypes].sort())
+      .toEqual(["eventsource", "websocket"]);
+    await expect(page.locator("html")).not.toHaveAttribute(
+      "data-unexpected-socket-message",
+    );
+    await expect(page.locator("html")).not.toHaveAttribute(
+      "data-unexpected-stream",
+    );
   } finally {
-    await page.evaluate(() => window.dispatchEvent(new Event("qa:close-transports")));
+    await page.evaluate(() =>
+      window.dispatchEvent(new Event("qa:close-transports")),
+    );
   }
   expect(
     network.events.filter((event) => event.transport === "websocket"),
@@ -201,19 +234,18 @@ test("WebSocket and SSE are denied by the guard", async ({ page, network }) => {
   ).toHaveLength(1);
 });
 
-test("service worker blocking is configured and contexts start empty", async (
-  { page, context },
-  testInfo,
-) => {
+test("service worker blocking is configured and contexts start empty", async ({
+  page,
+  context,
+}, testInfo) => {
   expect(testInfo.project.use.serviceWorkers).toBe("block");
   expect(await context.cookies()).toEqual([]);
   const result = await page.evaluate(async () => {
     let registered = false;
     if ("serviceWorker" in navigator) {
       try {
-        const registration = await navigator.serviceWorker.register(
-          "/__qa/worker.js",
-        );
+        const registration =
+          await navigator.serviceWorker.register("/__qa/worker.js");
         registered = Boolean(registration);
       } catch {
         registered = false;

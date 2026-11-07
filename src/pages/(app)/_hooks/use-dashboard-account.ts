@@ -16,13 +16,11 @@ export function useDashboardAccount() {
 
   return {
     subscription: subscriptionState.data as unknown as
-      | SchemaUserSubscriptionResponse
-      | undefined,
+      SchemaUserSubscriptionResponse | undefined,
     subscriptionState,
     transactions: (
       transactionsState.data as unknown as
-        | SchemaGetWalletTransactionsResponse
-        | undefined
+        SchemaGetWalletTransactionsResponse | undefined
     )?.transactions,
     transactionsState,
     user: userState.data as unknown as SchemaUserGetInfoResponse | undefined,

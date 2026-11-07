@@ -2,6 +2,7 @@ import { useDeferredValue, useState } from "react";
 import { useSearchParams } from "react-router";
 
 import { Button } from "@/shared/ui/button";
+import { cn } from "@/shared/lib/utils";
 import { useWalletTransactions } from "@/features/wallet";
 import { useAppTranslate } from "@/shared/hooks";
 import { FinanceToolbar } from "@/pages/profile/_components/finance-toolbar";
@@ -21,7 +22,12 @@ import { formatLocalizedNumber } from "@/shared/utils";
 import { WalletHero } from "./_components/wallet-hero";
 import { WalletRecords } from "./_components/wallet-records";
 import { WalletSummary } from "./_components/wallet-summary";
-import "../_components/finance.css";
+import {
+  FINANCE_ARCHIVE_CLASS,
+  FINANCE_ARCHIVE_HEADING_CLASS,
+  FINANCE_PAGE_CLASS,
+  FINANCE_PAGE_WALLET_CLASS,
+} from "../_components/finance-styles";
 
 const PAGE_LIMIT = 10;
 const transactionFilters = [
@@ -74,14 +80,18 @@ function ProfileWalletTransactionsPage() {
   };
 
   return (
-    <div className="finance-page finance-page-wallet">
+    <div
+      className={cn(FINANCE_PAGE_CLASS, FINANCE_PAGE_WALLET_CLASS)}
+      data-finance-page="wallet"
+    >
       <WalletHero />
       <WalletSummary transactions={transactions} />
       <section
-        className="finance-archive"
+        className={FINANCE_ARCHIVE_CLASS}
+        data-finance-archive
         aria-labelledby="wallet-archive-title"
       >
-        <div className="finance-archive-heading">
+        <div className={FINANCE_ARCHIVE_HEADING_CLASS}>
           <div>
             <h2 id="wallet-archive-title">
               {t("pages.profile.finance.walletArchive")}

@@ -2,7 +2,12 @@ import { ArrowUpLeft, Images } from "lucide-react";
 import { Link } from "react-router";
 
 import { DashboardFileVisual } from "./dashboard-file-visual";
-import styles from "../dashboard.module.css";
+import {
+  DASHBOARD_FILE_CARD_CLASS,
+  EMPTY_STATE_CLASS,
+  SECTION_LINK_CLASS,
+} from "./dashboard-styles";
+import { DashboardSectionHeader } from "./dashboard-parts";
 
 import { Skeleton } from "@/shared/ui/skeleton";
 import type { FilePreviewUrls, UserFileItem } from "@/features/file-manager";
@@ -26,35 +31,32 @@ export function DashboardFiles({
   if (isLoading) return <Skeleton className="h-64 w-full rounded-2xl" />;
 
   return (
-    <section aria-labelledby="files-heading" className={styles.contentSection}>
-      <div className={styles.sectionHeader}>
-        <div>
-          <p className={styles.sectionEyebrow}>
-            {t("pages.root.dashboard.files.eyebrow")}
-          </p>
-          <h2 id="files-heading" className={styles.sectionTitle}>
-            {t("pages.root.dashboard.files.title")}
-          </h2>
-        </div>
-        <Link to={APP_ROUTES_KEY.gallery.path} className={styles.sectionLink}>
-          {t("pages.root.dashboard.actions.viewAll")}
-          <ArrowUpLeft className="h-3.5 w-3.5" />
-        </Link>
-      </div>
+    <section aria-labelledby="files-heading" className="min-w-0">
+      <DashboardSectionHeader
+        eyebrow={t("pages.root.dashboard.files.eyebrow")}
+        title={t("pages.root.dashboard.files.title")}
+        titleId="files-heading"
+        action={
+          <Link to={APP_ROUTES_KEY.gallery.path} className={SECTION_LINK_CLASS}>
+            {t("pages.root.dashboard.actions.viewAll")}
+            <ArrowUpLeft className="size-3.5" />
+          </Link>
+        }
+      />
       {files.length ? (
-        <div className={styles.fileGrid}>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {files.slice(0, 6).map((file, index) => (
             <Link
               key={file.uuid}
               to={APP_ROUTES_KEY.gallery.path}
               className={cn(
-                `group ${styles.fileCard}`,
+                DASHBOARD_FILE_CARD_CLASS,
                 index === 0 && "sm:col-span-2",
               )}
             >
               <div
                 className={cn(
-                  styles.fileVisual,
+                  "aspect-[4/3] overflow-hidden bg-black",
                   index === 0 && "sm:aspect-[2/1]",
                 )}
               >
@@ -63,9 +65,9 @@ export function DashboardFiles({
                   preview={file.uuid ? previews[file.uuid] : undefined}
                 />
               </div>
-              <div className={styles.fileScrim} />
-              <div className={styles.fileMeta}>
-                <Images className="h-4 w-4 shrink-0 text-fuchsia-300" />
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[68%] bg-linear-to-t from-black/94 via-black/40 to-transparent" />
+              <div className="absolute inset-x-0 bottom-0 flex min-w-0 items-center gap-2 p-3 sm:p-4">
+                <Images className="text-accent-pink size-4 shrink-0" />
                 <span className="truncate text-xs font-medium text-white sm:text-sm">
                   {file.file_name || t("common.emptyTitle")}
                 </span>
@@ -74,7 +76,7 @@ export function DashboardFiles({
           ))}
         </div>
       ) : (
-        <div className={styles.emptyState}>
+        <div className={EMPTY_STATE_CLASS}>
           {t("pages.root.dashboard.files.empty")}
         </div>
       )}

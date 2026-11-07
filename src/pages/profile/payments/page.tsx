@@ -22,7 +22,12 @@ import { formatLocalizedNumber } from "@/shared/utils";
 
 import { PaymentRecords } from "./_components/payment-records";
 import { PaymentSummary } from "./_components/payment-summary";
-import "../_components/finance.css";
+import {
+  FINANCE_ARCHIVE_CLASS,
+  FINANCE_ARCHIVE_HEADING_CLASS,
+  FINANCE_CHIP_CLASS,
+  FINANCE_PAGE_CLASS,
+} from "../_components/finance-styles";
 
 const PAGE_LIMIT = 100;
 const paymentFilters = ["all", "succeeded", "pending", "failed"] as const;
@@ -70,14 +75,14 @@ function ProfilePaymentsPage() {
   };
 
   return (
-    <div className="finance-page finance-page-payments">
+    <div className={FINANCE_PAGE_CLASS} data-finance-page="payments">
       <FinanceHero
         kind="payments"
         title={t("pages.profile.finance.paymentsTitle")}
         description={t("pages.profile.finance.paymentsDescription")}
         artLabel={t("pages.profile.finance.paymentArt")}
       >
-        <span className="finance-hero-chip">
+        <span className={FINANCE_CHIP_CLASS}>
           <Radio aria-hidden="true" />
           <strong>
             {t("pages.profile.finance.resultCount", {
@@ -88,10 +93,11 @@ function ProfilePaymentsPage() {
       </FinanceHero>
       <PaymentSummary payments={payments} />
       <section
-        className="finance-archive"
+        className={FINANCE_ARCHIVE_CLASS}
+        data-finance-archive
         aria-labelledby="payment-archive-title"
       >
-        <div className="finance-archive-heading">
+        <div className={FINANCE_ARCHIVE_HEADING_CLASS}>
           <div>
             <h2 id="payment-archive-title">
               {t("pages.profile.finance.paymentArchive")}

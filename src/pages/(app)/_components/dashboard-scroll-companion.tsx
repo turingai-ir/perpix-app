@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 
-import styles from "../dashboard.module.css";
+import styles from "./dashboard-scroll-companion.module.css";
 
 export function DashboardScrollCompanion() {
   const rootRef = useRef<HTMLDivElement>(null);
@@ -62,7 +62,7 @@ export function DashboardScrollCompanion() {
       <div ref={railRef} className={styles.companionRail}>
         <span className={styles.companionTrack} />
         <span className={styles.companionProgress} />
-        <div className={styles.companionRobot}>
+        <div className={styles.companionRobot} data-dashboard-companion-robot>
           <span className={styles.companionAntenna} />
           <span className={styles.companionEar} />
           <span className={styles.companionFace}>

@@ -48,14 +48,15 @@ test("crops for a post, adds text and watermark, compares, and resizes the downl
     .setInputFiles(draggableTestImage);
 
   await page.getByRole("button", { name: /پست عمودی/ }).click();
-  await expect(page.getByRole("button", { name: "4:5", exact: true })).toHaveAttribute(
-    "aria-pressed",
-    "true",
-  );
+  await expect(
+    page.getByRole("button", { name: "4:5", exact: true }),
+  ).toHaveAttribute("aria-pressed", "true");
   await page.getByRole("button", { name: "اعمال برش" }).click();
 
   await page.getByRole("button", { name: "متن", exact: true }).click();
-  await page.getByRole("textbox", { name: "متن", exact: true }).fill("سلام پرپیکس");
+  await page
+    .getByRole("textbox", { name: "متن", exact: true })
+    .fill("سلام پرپیکس");
   await page.getByRole("textbox", { name: "متن", exact: true }).blur();
   await page.getByRole("button", { name: "واترمارک" }).click();
   await page.getByRole("textbox", { name: "متن", exact: true }).fill("PERPIX");

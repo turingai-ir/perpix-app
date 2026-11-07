@@ -19,7 +19,11 @@ test("normal and forced scrolling consult the current reduced-motion preference"
     };
   });
 
-  for (const reducedMotion of ["no-preference", "reduce", "no-preference"] as const) {
+  for (const reducedMotion of [
+    "no-preference",
+    "reduce",
+    "no-preference",
+  ] as const) {
     await page.emulateMedia({ reducedMotion });
     for (const force of [false, true]) {
       await viewport.evaluate((element, forced) => {

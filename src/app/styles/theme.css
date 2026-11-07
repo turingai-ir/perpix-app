@@ -24,6 +24,10 @@
   --color-accent-blue: var(--accent-blue);
   --color-accent-rose: var(--accent-rose);
   --color-accent-emerald: var(--accent-emerald);
+  --color-accent-teal: var(--accent-teal);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-review: var(--review);
   --color-on-accent: var(--on-accent);
   --color-border: var(--border);
   --color-input: var(--input);
@@ -92,6 +96,8 @@
   --animate-ambient-field: ambient-field 18s linear infinite alternate;
   --animate-intro-enter: intro-enter 380ms var(--ease-out-quint) both;
   --animate-portal-enter: portal-enter 360ms var(--ease-out-quint) both;
+  --animate-finance-rise: finance-rise 560ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  --animate-drift: drift 900ms var(--ease-out-quint) both;
   --animate-reveal: reveal 280ms ease-out both;
   --animate-electric-flash: electric-flash 8s steps(1, end) infinite;
 
@@ -128,6 +134,22 @@
     from {
       opacity: 0;
       transform: translate3d(0, 8px, 0) scale(0.98);
+    }
+  }
+
+  @keyframes finance-rise {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+  }
+
+  @keyframes drift {
+    from {
+      transform: translate3d(-8%, -5%, 0) scale(0.95);
+    }
+    to {
+      transform: translate3d(10%, 8%, 0) scale(1.08);
     }
   }
 

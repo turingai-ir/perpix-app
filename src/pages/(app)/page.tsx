@@ -9,7 +9,16 @@ import { DashboardModels } from "./_components/dashboard-models";
 import { DashboardResume } from "./_components/dashboard-resume";
 import { DashboardScrollCompanion } from "./_components/dashboard-scroll-companion";
 import { DashboardTransactions } from "./_components/dashboard-transactions";
-import styles from "./dashboard.module.css";
+import {
+  DASHBOARD_AURORA_CLASS,
+  DASHBOARD_GRID_CLASS,
+  DASHBOARD_GRID_LAYOUT_CLASS,
+  DASHBOARD_HERO_CLASS,
+  DASHBOARD_PAGE_CLASS,
+  DASHBOARD_SHELL_CLASS,
+  CONTENT_WELL_CLASS,
+} from "./_components/dashboard-styles";
+import { cn } from "@/shared/lib/utils";
 import { useDashboardAccount } from "./_hooks/use-dashboard-account";
 import { useDashboardContent } from "./_hooks/use-dashboard-content";
 import { useDashboardVisualQuality } from "./_hooks/use-dashboard-visual-quality";
@@ -34,26 +43,29 @@ const AppPage = () => {
   ].some((state) => state.isError);
 
   return (
-    <div
-      ref={pageRef}
-      className={`${styles.page} relative min-h-full w-full overflow-hidden text-zinc-100`}
-    >
+    <div ref={pageRef} className={DASHBOARD_PAGE_CLASS} data-dashboard-page>
       <DashboardScrollCompanion />
-      <div className={`${styles.grid} pointer-events-none`} />
+      <div className={DASHBOARD_GRID_CLASS} />
       <div
-        className={`${styles.aurora} pointer-events-none end-[8%] -top-40 bg-fuchsia-500`}
+        className={cn(
+          DASHBOARD_AURORA_CLASS,
+          "end-[8%] -top-40 bg-(--magenta-brand)",
+        )}
       />
       <div
-        className={`${styles.aurora} pointer-events-none -start-48 top-[38rem] bg-sky-500 [animation-delay:-8s]`}
+        className={cn(
+          DASHBOARD_AURORA_CLASS,
+          "-start-48 top-152 bg-(--cyan-brand) [animation-delay:-8s]",
+        )}
       />
-      <div className={styles.dashboardShell}>
-        <section className={styles.hero}>
+      <div className={DASHBOARD_SHELL_CLASS}>
+        <section className={DASHBOARD_HERO_CLASS} data-dashboard-hero>
           <DashboardCreativeCommand />
         </section>
         {hasPartialError ? (
           <div
             role="status"
-            className="flex items-start gap-2 rounded-xl border border-amber-400/15 bg-amber-400/5 px-4 py-3 text-xs leading-6 text-amber-200"
+            className="border-warning/15 bg-warning/5 text-warning flex items-start gap-2 rounded-xl border px-4 py-3 text-xs leading-6"
           >
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
             {t("pages.root.dashboard.partialError")}
@@ -68,8 +80,8 @@ const AppPage = () => {
           user={account.user}
           wallet={account.wallet}
         />
-        <div className={styles.dashboardGrid}>
-          <div className={styles.contentWell}>
+        <div className={DASHBOARD_GRID_LAYOUT_CLASS}>
+          <div className={CONTENT_WELL_CLASS} data-dashboard-panel>
             <DashboardFiles
               files={content.files}
               isLoading={content.filesState.isPending}
@@ -80,7 +92,7 @@ const AppPage = () => {
               models={content.featuredModels}
             />
           </div>
-          <aside className={styles.sideRail}>
+          <aside className="min-w-0 *:not-first:mt-5">
             <DashboardActivity
               isLoading={content.tasksState.isPending}
               tasks={content.tasks}

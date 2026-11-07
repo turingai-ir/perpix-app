@@ -2,10 +2,7 @@ import { useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useAppTranslate } from "@/shared/hooks/i18/use-app-translate";
 import { useImageEditorWorkspace } from "../hooks/use-image-editor-workspace";
-import {
-  DEFAULT_EDITOR_EDITS,
-  renderEditedImage,
-} from "../model/editor-edits";
+import { DEFAULT_EDITOR_EDITS, renderEditedImage } from "../model/editor-edits";
 import { ImageEditorCanvas } from "./image-editor-canvas";
 import { ImageEditorMetadata } from "./image-editor-metadata";
 import { EditorPageLoadError, EditorPageLoading } from "./editor-page-state";
@@ -17,7 +14,7 @@ import {
 import { EditorStudioToolRail } from "./editor-studio-tool-rail";
 import { EditorBeforeAfter } from "./editor-before-after";
 import { useLoadedImage } from "../hooks/use-loaded-image";
-import "./editor-studio.css";
+import { EDITOR_SCOPE_CLASS } from "./editor-styles";
 
 interface ImageEditorProps {
   documentId?: string;
@@ -125,7 +122,7 @@ function ImageEditorWorkspace({
     <div
       role="application"
       aria-label={t("pages.editor.studio.application")}
-      className="editor-studio"
+      className={`${EDITOR_SCOPE_CLASS} flex size-full min-h-0 flex-col bg-[radial-gradient(circle_at_40%_0%,var(--card),var(--background)_56%)]`}
       dir="rtl"
     >
       <EditorStudioHeader
@@ -140,11 +137,12 @@ function ImageEditorWorkspace({
         onToggleCompare={() => setShowCompare((current) => !current)}
         compareDisabled={editor.isCropping}
       />
-      <div className="editor-studio-main">
+      <div className="grid min-h-0 flex-1 grid-cols-[minmax(0,1fr)] grid-rows-[minmax(230px,1fr)_61px_minmax(145px,auto)] min-[701px]:grid-cols-[65px_minmax(0,1fr)_250px] min-[701px]:grid-rows-none min-[1001px]:grid-cols-[76px_minmax(0,1fr)_304px]">
         <EditorStudioToolRail tool={tool} onSelect={setTool} />
         <div
           ref={containerRef}
-          className="editor-studio-stage"
+          className="relative col-start-1 row-start-1 min-h-0 min-w-0 overflow-hidden bg-[radial-gradient(circle_at_50%_45%,var(--muted)_0%,var(--card)_47%,var(--background)_100%)] before:pointer-events-none before:absolute before:inset-0 before:bg-[radial-gradient(rgb(245_240_255/11%)_0.7px,transparent_0.7px)] before:bg-size-[17px_17px] before:content-[''] min-[701px]:col-start-2"
+          data-editor-stage
           aria-label={t("pages.editor.studio.workspace")}
         >
           {editor.imageSize && editor.stageSize ? (
@@ -180,8 +178,11 @@ function ImageEditorWorkspace({
           {showCompare && compareBefore && !editor.isCropping ? (
             <EditorBeforeAfter before={compareBefore} after={preview} />
           ) : null}
-          <div className="editor-studio-stage-caption" aria-hidden="true">
-            PERPIX <span>•</span> STUDIO
+          <div
+            className="text-foreground/27 pointer-events-none absolute bottom-5 left-5.5 hidden text-[10px] font-extrabold tracking-[0.3em] [direction:ltr] min-[701px]:block"
+            aria-hidden="true"
+          >
+            PERPIX <span className="text-primary">•</span> STUDIO
           </div>
         </div>
         <EditorStudioInspector
@@ -196,10 +197,13 @@ function ImageEditorWorkspace({
           setOutputWidth={setOutputWidth}
         />
       </div>
-      <div className="editor-studio-status" aria-live="polite">
-        <span className="editor-studio-status-dot" />
+      <div
+        className="border-foreground/13 bg-background text-muted-foreground hidden h-7.5 flex-none items-center gap-2 border-t px-4.5 text-[10px] min-[701px]:flex"
+        aria-live="polite"
+      >
+        <span className="bg-accent-emerald inline-block size-1.75 rounded-full shadow-[0_0_12px_var(--accent-emerald)]" />
         {t("pages.editor.studio.ready")}
-        <span className="editor-studio-status-size" dir="ltr">
+        <span className="text-foreground/75 ms-auto font-mono" dir="ltr">
           {effectiveOutputWidth ?? Math.round(naturalWidth)} ×{" "}
           {Math.round(
             ((effectiveOutputWidth ?? naturalWidth) * naturalHeight) /

@@ -8,6 +8,7 @@ import { useAppTranslate } from "@/shared/hooks";
 import { FinanceHero } from "@/pages/profile/_components/finance-hero";
 import { APP_I18_KEYS } from "@/shared/i18n";
 import { formatTokenAmount } from "@/shared/utils";
+import { FINANCE_CHIP_CLASS } from "@/pages/profile/_components/finance-styles";
 
 export function WalletHero() {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
@@ -31,7 +32,7 @@ export function WalletHero() {
         description={t("pages.profile.finance.walletDescription")}
         artLabel={t("pages.profile.finance.walletArt")}
       >
-        <span className="finance-hero-chip">
+        <span className={FINANCE_CHIP_CLASS}>
           <Wallet aria-hidden="true" />
           <strong>{balanceLabel}</strong>
         </span>

@@ -1,0 +1,507 @@
+/* Art-scene exception (docs/RESTRUCTURE_PLAN.md §9.10): 3D flip identity card. */
+.cardStage {
+  perspective: 1000px;
+  padding: 0.6rem 0;
+  animation: settingsCardArrive 700ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.cardTilt {
+  width: min(100%, 350px);
+  margin-inline: auto;
+  transform-style: preserve-3d;
+}
+.cardButton {
+  display: block;
+  width: 100%;
+  height: 226px;
+  padding: 0;
+  border: 0;
+  border-radius: 1.4rem;
+  background: transparent;
+  color: white;
+  cursor: pointer;
+  text-align: start;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.cardButton:focus-visible {
+  outline: 2px solid #8ef4e5;
+  outline-offset: 5px;
+}
+.cardRotor {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  transform-style: preserve-3d;
+  transition: transform 650ms cubic-bezier(0.2, 0.75, 0.2, 1);
+}
+.cardButton[data-side="back"] .cardRotor {
+  transform: rotateY(180deg);
+}
+.cardFace {
+  position: absolute;
+  inset: 0;
+  display: block;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  border-radius: inherit;
+  box-shadow:
+    0 35px 55px -24px rgba(6, 2, 24, 0.76),
+    inset 0 1px rgba(255, 255, 255, 0.32),
+    inset 0 -1px rgba(115, 229, 248, 0.15);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.cardFront {
+  background:
+    radial-gradient(
+      circle at 50% 37%,
+      rgba(133, 61, 205, 0.6),
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 100% 0,
+      rgba(80, 230, 242, 0.16),
+      transparent 32%
+    ),
+    linear-gradient(132deg, #301748, #1d1439 58%, #102841);
+}
+.cardFront::after,
+.cardBack::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    128deg,
+    rgba(255, 255, 255, 0.16),
+    transparent 26% 73%,
+    rgba(143, 231, 247, 0.08)
+  );
+  pointer-events: none;
+}
+.cardLight {
+  position: absolute;
+  top: calc(50% - 8rem);
+  left: calc(50% - 8rem);
+  width: 16rem;
+  height: 16rem;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.23),
+    transparent 63%
+  );
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+.cardNoise {
+  position: absolute;
+  inset: 0;
+  opacity: 0.23;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 22px 22px;
+  mask-image: radial-gradient(circle, black 12%, transparent 78%);
+  pointer-events: none;
+}
+.cardHeader,
+.cardFooter {
+  position: absolute;
+  z-index: 2;
+  right: 19px;
+  left: 19px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+.cardHeader {
+  top: 17px;
+}
+.cardFooter {
+  bottom: 17px;
+}
+.cardBrand {
+  direction: ltr;
+  font-family: ui-monospace, monospace;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.26em;
+}
+.cardBrand i {
+  color: #80f1ed;
+  font-style: normal;
+  letter-spacing: 0;
+}
+.cardEdition {
+  color: rgba(234, 222, 255, 0.73);
+  font-family: ui-monospace, monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+}
+.cardCore {
+  position: absolute;
+  z-index: 1;
+  top: 24px;
+  left: 50%;
+  width: 180px;
+  height: 180px;
+  transform: translateX(-50%);
+}
+.cardCore::before {
+  content: "";
+  position: absolute;
+  inset: 16px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(194, 95, 255, 0.23),
+    transparent 68%
+  );
+  box-shadow: 0 0 44px rgba(157, 65, 239, 0.25);
+}
+.cardOrbit {
+  position: absolute;
+  inset: 9px;
+  border: 1px solid rgba(199, 174, 255, 0.38);
+  border-radius: 50%;
+  box-shadow: 0 0 18px rgba(170, 113, 255, 0.2);
+}
+.cardOrbit::after {
+  content: "";
+  position: absolute;
+  top: 5px;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #91faf2;
+  box-shadow: 0 0 12px 3px rgba(95, 244, 238, 0.8);
+}
+.cardOrbitOne {
+  transform: rotateX(64deg);
+  animation: settingsOrbitOne 10s linear infinite;
+}
+.cardOrbitTwo {
+  inset: 21px;
+  border-color: rgba(109, 243, 236, 0.38);
+  transform: rotateX(70deg) rotateZ(40deg);
+  animation: settingsOrbitTwo 13s linear infinite reverse;
+}
+.cardOrbitTwo::after {
+  background: #e3a2ff;
+  box-shadow: 0 0 12px 3px rgba(218, 131, 255, 0.72);
+}
+.cardEmblem {
+  position: absolute;
+  top: 42px;
+  left: 42px;
+  display: grid;
+  width: 96px;
+  height: 96px;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.43);
+  border-radius: 27px;
+  background: #08090d;
+  box-shadow:
+    0 16px 24px -8px rgba(1, 1, 8, 0.7),
+    0 0 0 8px rgba(231, 201, 255, 0.1),
+    0 0 35px rgba(200, 109, 255, 0.35);
+  animation: settingsEmblemFloat 5s ease-in-out infinite;
+}
+.cardEmblem img {
+  display: block;
+  width: 87%;
+  height: 87%;
+  object-fit: contain;
+}
+.cardOwner {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.18rem;
+}
+.cardOwner small,
+.cardBackDetails small {
+  color: #c8b9dc;
+  font-size: 0.62rem;
+}
+.cardOwner strong {
+  overflow: hidden;
+  max-width: 210px;
+  font-size: 0.83rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cardMember {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #e6dcf5;
+  font-size: 0.59rem;
+  white-space: nowrap;
+}
+.cardMemberDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #81f7ed;
+  box-shadow: 0 0 8px #81f7ed;
+}
+.cardFlipHint {
+  position: absolute;
+  bottom: 55px;
+  left: 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: rgba(237, 231, 252, 0.62);
+  font-size: 0.58rem;
+}
+.cardBack {
+  transform: rotateY(180deg);
+  background:
+    radial-gradient(
+      circle at 50% 45%,
+      rgba(108, 79, 187, 0.46),
+      transparent 52%
+    ),
+    linear-gradient(145deg, #13283b, #1b173e 53%, #3b1759);
+}
+.cardBackHalo {
+  position: absolute;
+  top: 31px;
+  left: calc(50% - 85px);
+  width: 170px;
+  height: 120px;
+  border: 1px solid rgba(169, 255, 247, 0.18);
+  border-radius: 50%;
+  transform: rotate(-25deg);
+  box-shadow:
+    0 0 0 18px rgba(240, 181, 255, 0.035),
+    0 0 0 38px rgba(143, 239, 246, 0.025);
+}
+.cardBackCenter {
+  position: absolute;
+  top: 56px;
+  right: 20px;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 0.35rem;
+  text-align: center;
+}
+.cardBackIcon {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #bffdf4;
+  box-shadow: 0 6px 20px rgba(116, 228, 243, 0.14);
+}
+.cardBackCenter strong {
+  font-size: 0.95rem;
+}
+.cardBackCenter small {
+  color: #d5cde2;
+  font-size: 0.63rem;
+}
+.cardBackDetails {
+  position: absolute;
+  right: 17px;
+  bottom: 16px;
+  left: 17px;
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 0.4rem;
+  align-items: end;
+  padding-top: 0.65rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+}
+.cardBackDetails > span:not(.cardBackStatus) {
+  display: flex;
+  flex-direction: column;
+  gap: 0.22rem;
+}
+.cardBackDetails strong {
+  font-size: 0.65rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.cardBackStatus {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  color: #9cf9eb;
+  font-size: 0.56rem;
+  white-space: nowrap;
+}
+@keyframes settingsCardArrive {
+  from {
+    opacity: 0;
+    transform: translateY(12px) rotateX(7deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) rotateX(0);
+  }
+}
+@keyframes settingsOrbitOne {
+  from {
+    transform: rotateX(64deg) rotateZ(0);
+  }
+  to {
+    transform: rotateX(64deg) rotateZ(360deg);
+  }
+}
+@keyframes settingsOrbitTwo {
+  from {
+    transform: rotateX(70deg) rotateZ(0);
+  }
+  to {
+    transform: rotateX(70deg) rotateZ(360deg);
+  }
+}
+@keyframes settingsEmblemFloat {
+  0%,
+  100% {
+    transform: translateY(0) rotateY(-8deg);
+  }
+  50% {
+    transform: translateY(-6px) rotateY(8deg);
+  }
+}
+@media (min-width: 1280px) {
+  .cardTilt {
+    width: min(100%, 420px);
+  }
+  .cardButton {
+    height: 258px;
+  }
+  .cardCore {
+    top: 40px;
+  }
+  .cardFlipHint {
+    bottom: 65px;
+  }
+}
+@media (hover: none), (pointer: coarse) {
+  .cardStage {
+    perspective: none;
+  }
+  .cardTilt {
+    transform: none !important;
+    transform-style: flat;
+  }
+  .cardRotor,
+  .cardButton[data-side="back"] .cardRotor,
+  .cardBack {
+    transform: none;
+  }
+  .cardRotor {
+    transform-style: flat;
+    transition: none;
+  }
+  .cardFront,
+  .cardBack {
+    backface-visibility: visible;
+    -webkit-backface-visibility: visible;
+    transition:
+      opacity 220ms ease,
+      visibility 220ms ease;
+  }
+  .cardButton[data-side="front"] .cardBack,
+  .cardButton[data-side="back"] .cardFront {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+@media (max-width: 400px) {
+  .cardButton {
+    height: 238px;
+  }
+  .cardHeader,
+  .cardFooter {
+    right: 14px;
+    left: 14px;
+  }
+  .cardHeader {
+    top: 14px;
+  }
+  .cardFooter {
+    bottom: 14px;
+  }
+  .cardBackCenter {
+    top: 50px;
+    right: 14px;
+    left: 14px;
+  }
+  .cardBackDetails {
+    right: 13px;
+    bottom: 12px;
+    left: 13px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.35rem 0.75rem;
+    align-items: start;
+  }
+  .cardBackDetails > span:not(.cardBackStatus) {
+    min-width: 0;
+  }
+  .cardBackStatus {
+    grid-column: 1 / -1;
+    justify-self: center;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cardStage,
+  .cardOrbit,
+  .cardEmblem {
+    animation: none;
+  }
+  .cardRotor,
+  .cardButton[data-side="back"] .cardRotor,
+  .cardBack {
+    transform: none;
+  }
+  .cardRotor {
+    transition: none;
+  }
+  .cardFront,
+  .cardBack {
+    transition:
+      opacity 180ms ease,
+      visibility 180ms ease;
+  }
+  .cardButton[data-side="front"] .cardBack,
+  .cardButton[data-side="back"] .cardFront {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .cardFront {
+    background: #281847;
+  }
+  .cardBack {
+    background: #172844;
+  }
+  .cardLight {
+    display: none;
+  }
+}
+@media (prefers-contrast: more) {
+  .cardOwner small,
+  .cardBackDetails small,
+  .cardEdition,
+  .cardBackCenter small {
+    color: #fff;
+  }
+}

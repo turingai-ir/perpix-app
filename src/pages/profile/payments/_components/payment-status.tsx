@@ -9,6 +9,7 @@ import {
 import type { PaymentViewStatus } from "@/features/payment";
 import { useAppTranslate } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";
+import { FinanceStatus } from "@/pages/profile/_components/finance-status";
 
 const statusView = {
   pending: { icon: Clock3, tone: "pending" },
@@ -23,9 +24,8 @@ export function PaymentStatus({ status }: { status: PaymentViewStatus }) {
   const { icon: Icon, tone } = statusView[status];
 
   return (
-    <span className={`finance-status finance-status-${tone}`}>
-      <Icon aria-hidden="true" />
+    <FinanceStatus tone={tone} icon={Icon}>
       {t(`pages.profile.payments.states.${status}`)}
-    </span>
+    </FinanceStatus>
   );
 }

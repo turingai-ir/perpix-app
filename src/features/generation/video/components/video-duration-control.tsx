@@ -2,7 +2,6 @@ import { Clock3 } from "lucide-react";
 import { useEffect, useMemo, type CSSProperties } from "react";
 import { useWatch } from "react-hook-form";
 
-import styles from "./composer.module.css";
 import { getDurationOptions } from "../model/duration-options";
 import {
   FormControl,
@@ -74,10 +73,13 @@ export function VideoDurationControl({
         );
         const selected = values[index];
         return (
-          <FormItem className={styles.durationCard}>
-            <div className={styles.durationHeading}>
-              <FormLabel>{label}</FormLabel>
-              <span className={styles.durationSelected} aria-hidden="true">
+          <FormItem className="col-span-full">
+            <div className="flex items-center justify-between gap-2.5">
+              <FormLabel className="text-xs">{label}</FormLabel>
+              <span
+                className="text-primary inline-flex items-center gap-1.5 text-sm font-bold whitespace-nowrap tabular-nums"
+                aria-hidden="true"
+              >
                 <Clock3 size={16} />
                 {format(selected)}
               </span>
@@ -98,7 +100,7 @@ export function VideoDurationControl({
                   const value = values[next - start];
                   if (value !== undefined) field.onChange(value);
                 }}
-                className={styles.durationRange}
+                className="[&::-moz-range-track]:bg-input [&::-moz-range-progress]:bg-primary [&::-webkit-slider-thumb]:border-primary [&::-moz-range-thumb]:border-primary mt-1 block h-7 w-full cursor-pointer appearance-none bg-transparent disabled:cursor-wait disabled:opacity-45 [&::-moz-range-progress]:h-1.5 [&::-moz-range-progress]:rounded-full [&::-moz-range-thumb]:size-3.5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-4 [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:shadow-[0_2px_10px_rgb(0_0_0/40%)] [&::-moz-range-track]:h-1.5 [&::-moz-range-track]:rounded-full [&::-webkit-slider-runnable-track]:h-1.5 [&::-webkit-slider-runnable-track]:rounded-full [&::-webkit-slider-runnable-track]:bg-[linear-gradient(to_left,var(--primary)_var(--range-progress),var(--input)_var(--range-progress))] [&::-webkit-slider-thumb]:-mt-[7px] [&::-webkit-slider-thumb]:size-5 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-4 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:shadow-[0_2px_10px_rgb(0_0_0/40%)]"
                 style={
                   {
                     "--range-progress": `${end === start ? 0 : (index / (end - start)) * 100}%`,
@@ -106,7 +108,10 @@ export function VideoDurationControl({
                 }
               />
             </FormControl>
-            <div className={styles.durationEnds} aria-hidden="true">
+            <div
+              className="text-muted-foreground flex justify-between text-xs tabular-nums"
+              aria-hidden="true"
+            >
               <span>{format(values[0])}</span>
               <span>{format(values[values.length - 1])}</span>
             </div>

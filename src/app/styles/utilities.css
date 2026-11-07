@@ -25,3 +25,10 @@
     pointer-events: none;
   }
 }
+
+/* The dashboard draws its own scroll companion instead of the scrollbar. */
+[data-slot="scroll-area"]:has([data-dashboard-page])
+  > [data-slot="scroll-area-scrollbar"] {
+  opacity: 0;
+  pointer-events: none;
+}

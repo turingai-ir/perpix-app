@@ -3,6 +3,15 @@ import { useAppTranslate } from "@/shared/hooks/i18/use-app-translate";
 import type { ImageEditorWorkspaceViewModel } from "../hooks/image-editor-workspace-types";
 import { DEFAULT_EDITOR_EDITS } from "../model/editor-edits";
 import type { EditorOverlay } from "../model/editor-overlays";
+import {
+  FIELD_LABEL_CLASS,
+  GRID_2_TABS_CLASS,
+  INPUT_LABEL_CLASS,
+  PANEL_CONTENT_CLASS,
+  POSITION_GRID_CLASS,
+  SECONDARY_BUTTON_CLASS,
+  SLIDER_CLASS,
+} from "./editor-styles";
 
 type OverlayKey = "textOverlay" | "watermarkOverlay";
 
@@ -32,9 +41,9 @@ export function EditorOverlayControls({
   ] as const;
 
   return (
-    <section className="editor-studio-panel-content">
+    <section className={PANEL_CONTENT_CLASS}>
       <div
-        className="editor-studio-overlay-tabs"
+        className={GRID_2_TABS_CLASS}
         role="group"
         aria-label={t("pages.editor.studio.overlayKind")}
       >
@@ -49,7 +58,7 @@ export function EditorOverlayControls({
           </button>
         ))}
       </div>
-      <label className="editor-studio-input-label">
+      <label className={INPUT_LABEL_CLASS}>
         {t("pages.editor.studio.overlayContent")}
         <textarea
           value={overlay.text}
@@ -64,7 +73,7 @@ export function EditorOverlayControls({
           onBlur={() => editor.commitEdits()}
         />
       </label>
-      <div className="editor-studio-slider">
+      <div className={SLIDER_CLASS}>
         <span>
           <span>{t("pages.editor.studio.textSize")}</span>
           <b>{overlay.size}%</b>
@@ -81,7 +90,7 @@ export function EditorOverlayControls({
           onBlur={() => editor.commitEdits()}
         />
       </div>
-      <div className="editor-studio-slider">
+      <div className={SLIDER_CLASS}>
         <span>
           <span>{t("pages.editor.studio.opacity")}</span>
           <b>{overlay.opacity}%</b>
@@ -98,7 +107,7 @@ export function EditorOverlayControls({
           onBlur={() => editor.commitEdits()}
         />
       </div>
-      <label className="editor-studio-color-label">
+      <label className="text-foreground/85 flex items-center justify-between text-xs [&_input]:h-9.5 [&_input]:w-12 [&_input]:cursor-pointer [&_input]:border-0 [&_input]:bg-transparent">
         {t("pages.editor.studio.textColor")}
         <input
           type="color"
@@ -107,11 +116,11 @@ export function EditorOverlayControls({
           onBlur={() => editor.commitEdits()}
         />
       </label>
-      <div className="editor-studio-field-label">
+      <div className={FIELD_LABEL_CLASS}>
         {t("pages.editor.studio.textPosition")}
       </div>
       <div
-        className="editor-studio-position-grid"
+        className={POSITION_GRID_CLASS}
         role="group"
         aria-label={t("pages.editor.studio.textPosition")}
       >
@@ -131,7 +140,7 @@ export function EditorOverlayControls({
       {overlay.text && (
         <button
           type="button"
-          className="editor-studio-secondary-button"
+          className={SECONDARY_BUTTON_CLASS}
           onClick={() => update({ text: "" }, true)}
         >
           {t("pages.editor.studio.removeOverlay")}

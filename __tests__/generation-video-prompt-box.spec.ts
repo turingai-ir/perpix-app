@@ -1333,7 +1333,10 @@ test("prevents another generation while the chat has a pending request", async (
 }, testInfo) => {
   let generationRequests = 0;
   page.on("request", (request) => {
-    if (request.method() === "POST" && new URL(request.url()).pathname === "/api/v1/ai-task/generate") {
+    if (
+      request.method() === "POST" &&
+      new URL(request.url()).pathname === "/api/v1/ai-task/generate"
+    ) {
       generationRequests += 1;
     }
   });
@@ -1403,7 +1406,9 @@ test("prevents another generation while the chat has a pending request", async (
     "animation-name",
     "none",
   );
-  await portal.screenshot({ path: testInfo.outputPath("video-studio-rendering.png") });
+  await portal.screenshot({
+    path: testInfo.outputPath("video-studio-rendering.png"),
+  });
   await page.evaluate(() => {
     document.querySelectorAll<HTMLElement>("*").forEach((element) => {
       if (element.scrollTop) element.scrollTop = 0;
@@ -1416,7 +1421,9 @@ test("prevents another generation while the chat has a pending request", async (
   await page.setViewportSize({ width: 375, height: 812 });
   const navigation = page.getByRole("dialog", { name: "منو", exact: true });
   if (await navigation.isVisible()) {
-    await navigation.getByRole("button", { name: "Close", exact: true }).click();
+    await navigation
+      .getByRole("button", { name: "Close", exact: true })
+      .click();
   }
   await expect(portal).toBeVisible();
   expect(

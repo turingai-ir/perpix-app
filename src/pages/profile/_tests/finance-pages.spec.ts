@@ -19,10 +19,15 @@ async function mockAccount(page: Page) {
   await page.addInitScript(() => {
     const nativeFetch = window.fetch.bind(window);
     window.fetch = (input, init) => {
-      const url = new URL(input instanceof Request ? input.url : String(input), location.href);
-      if (url.pathname !== "/api/v1/payment-events") return nativeFetch(input, init);
+      const url = new URL(
+        input instanceof Request ? input.url : String(input),
+        location.href,
+      );
+      if (url.pathname !== "/api/v1/payment-events")
+        return nativeFetch(input, init);
       let signal = init?.signal;
-      if (signal === undefined && input instanceof Request) signal = input.signal;
+      if (signal === undefined && input instanceof Request)
+        signal = input.signal;
       let cleanup = () => {};
       const body = new ReadableStream<Uint8Array>({
         start(controller) {
@@ -31,15 +36,24 @@ async function mockAccount(page: Page) {
             controller.error(signal?.reason);
           };
           cleanup = () => signal?.removeEventListener("abort", abort);
-          if (signal?.aborted) { abort(); return; }
-          controller.enqueue(new TextEncoder().encode(": fixture-heartbeat\n\n"));
+          if (signal?.aborted) {
+            abort();
+            return;
+          }
+          controller.enqueue(
+            new TextEncoder().encode(": fixture-heartbeat\n\n"),
+          );
           signal?.addEventListener("abort", abort, { once: true });
         },
-        cancel() { cleanup(); },
+        cancel() {
+          cleanup();
+        },
       });
-      return Promise.resolve(new Response(body, {
-        headers: { "content-type": "text/event-stream" },
-      }));
+      return Promise.resolve(
+        new Response(body, {
+          headers: { "content-type": "text/event-stream" },
+        }),
+      );
     };
   });
   await page.route("**/api/v1/user/get-info", (route) =>
@@ -196,10 +210,12 @@ for (const kind of ["payments", "wallet-transactions"] as const) {
     );
     await page.goto(`/profile/${kind}?offset=100`);
     await expect(page.getByRole("button", { name: "صفحهٔ اول" })).toBeVisible();
-    await page.getByRole("button", {
-      name: isPayments ? "پرداخت و تحویل کامل" : "برداشت",
-      exact: true,
-    }).click();
+    await page
+      .getByRole("button", {
+        name: isPayments ? "پرداخت و تحویل کامل" : "برداشت",
+        exact: true,
+      })
+      .click();
     await expect(page).not.toHaveURL(/offset=/);
     await expect.poll(() => requests.at(-1)).toBe(0);
     await expect(page.getByRole("button", { name: "صفحهٔ اول" })).toBeHidden();
@@ -295,8 +311,8 @@ test("wallet transactions paginate ten at a time through the backend", async ({
   });
 
   await page.goto("/profile/wallet-transactions");
-  const records = page.locator(".finance-mobile-list li");
-  const pagination = page.locator(".finance-archive nav");
+  const records = page.locator("[data-finance-list] li");
+  const pagination = page.locator("[data-finance-archive] nav");
   await expect(records).toHaveCount(10);
   expect(requests.at(-1)).toEqual({ offset: 0, limit: 10 });
 
@@ -345,8 +361,7 @@ for (const viewport of [
     );
     await page.route(
       `**/api/v1/payment-intents/${paymentId}/details`,
-      (route) =>
-        route.fulfill({ json: details }),
+      (route) => route.fulfill({ json: details }),
     );
     await page.goto("/profile/payments");
     const archive = page.getByRole("region", { name: "آرشیو پرداخت‌ها" });

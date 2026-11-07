@@ -1,5 +1,8 @@
 import { atom } from "jotai";
-import { atomWithSyncStorage, createSyncJotaiStorage } from "@/shared/lib/jotai";
+import {
+  atomWithSyncStorage,
+  createSyncJotaiStorage,
+} from "@/shared/lib/jotai";
 import { APP_KEYS } from "@/shared/utils/app-keys";
 
 interface EditorSettings {

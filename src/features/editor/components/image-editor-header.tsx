@@ -30,14 +30,14 @@ export function ImageEditorHeader({
     <div
       role="banner"
       aria-label="منوی بالایی"
-      className="absolute inset-x-3 top-3 z-10 mx-auto flex w-[calc(100%-1.5rem)] max-w-xl items-center rounded-2xl border border-white/10 bg-neutral-900/95 text-white shadow-2xl backdrop-blur h-[52px] overflow-hidden"
+      className="absolute inset-x-3 top-3 z-10 mx-auto flex h-[52px] w-[calc(100%-1.5rem)] max-w-xl items-center overflow-hidden rounded-2xl border border-white/10 bg-neutral-900/95 text-white shadow-2xl backdrop-blur"
     >
       <ScrollArea
-        className="w-full h-full"
+        className="h-full w-full"
         viewportClassName="overflow-x-auto overflow-y-hidden [&>div]:!flex [&>div]:!w-auto [&>div]:!min-w-max [&>div]:items-center [&>div]:h-full"
         orientation="horizontal"
       >
-        <div className="flex w-full min-w-max items-center justify-between gap-4 px-3 py-1.5 h-full">
+        <div className="flex h-full w-full min-w-max items-center justify-between gap-4 px-3 py-1.5">
           <ImageEditorHeaderLeft {...{ canRedo, canUndo, onRedo, onUndo }} />
           <ImageEditorHeaderRight {...{ image, appliedCrop, stageSize }} />
         </div>

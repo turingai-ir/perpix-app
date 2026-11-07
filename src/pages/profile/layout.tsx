@@ -48,7 +48,7 @@ const ProfileLayout: FC = () => {
                 to={item.to}
                 className={({ isActive }) =>
                   cn(
-                    "text-foreground/70 hover:text-foreground focus-visible:ring-primary/70 flex min-h-11 min-w-0 items-center justify-center gap-1 rounded-xl border border-transparent px-1.5 text-center text-xs font-semibold transition-[background,border-color,color,box-shadow] duration-200 hover:border-primary/20 hover:bg-primary/8 focus-visible:ring-2 focus-visible:outline-none sm:gap-2 sm:px-4 sm:text-sm",
+                    "text-foreground/70 hover:text-foreground focus-visible:ring-primary/70 hover:border-primary/20 hover:bg-primary/8 flex min-h-11 min-w-0 items-center justify-center gap-1 rounded-xl border border-transparent px-1.5 text-center text-xs font-semibold transition-[background,border-color,color,box-shadow] duration-200 focus-visible:ring-2 focus-visible:outline-none sm:gap-2 sm:px-4 sm:text-sm",
                     isActive &&
                       "border-primary/30 bg-primary/15 text-foreground hover:border-primary/40 hover:bg-primary/20 shadow-[inset_0_1px_0_rgb(255_255_255_/_12%)]",
                   )
