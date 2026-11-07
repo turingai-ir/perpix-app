@@ -9,19 +9,19 @@ import {
 import { APP_ROUTES_KEY } from "./routes";
 
 import RootLayout from "@/pages/(root)/layout";
-import Route1 from "@/pages/(app)/_layout";
-import Route2 from "@/pages/(app)/page";
-import Route3 from "@/pages/(app)/gallery/page";
-import Route4 from "@/pages/(app)/generation/image/page";
-import Route5 from "@/pages/(app)/generation/video/page";
-import Route6 from "@/pages/profile/layout";
-import Route7 from "@/pages/profile/settings/page";
-import Route8 from "@/pages/profile/payments/page";
-import Route9 from "@/pages/profile/wallet-transactions/page";
-import Route10 from "@/pages/design-preview/page";
-import Route11 from "@/pages/editor/page";
-import Route12 from "@/pages/auth/login/page";
-import Route13 from "@/pages/payment/result/page";
+import AppLayout from "@/pages/(app)/_layout";
+import HomePage from "@/pages/(app)/page";
+import GalleryPage from "@/pages/(app)/gallery/page";
+import ImageGenerationPage from "@/pages/(app)/generation/image/page";
+import VideoGenerationPage from "@/pages/(app)/generation/video/page";
+import ProfileLayout from "@/pages/profile/layout";
+import SettingsPage from "@/pages/profile/settings/page";
+import PaymentsPage from "@/pages/profile/payments/page";
+import WalletTransactionsPage from "@/pages/profile/wallet-transactions/page";
+import DesignPreviewPage from "@/pages/design-preview/page";
+import EditorPage from "@/pages/editor/page";
+import LoginPage from "@/pages/auth/login/page";
+import PaymentResultPage from "@/pages/payment/result/page";
 import {
   bootstrapSession,
   getLoginPath,
@@ -56,19 +56,19 @@ export const router = createBrowserRouter([
     children: [
       {
         path: APP_ROUTES_KEY.app.path,
-        Component: Route1,
+        Component: AppLayout,
         loader: requireSession,
         children: [
           {
             index: true,
-            Component: Route2,
+            Component: HomePage,
             handle: {
               title: APP_ROUTES_KEY.app.meta.title,
             },
           },
           {
             path: APP_ROUTES_KEY.gallery.path,
-            Component: Route3,
+            Component: GalleryPage,
             handle: {
               title: APP_ROUTES_KEY.gallery.meta.title,
             },
@@ -78,14 +78,14 @@ export const router = createBrowserRouter([
             children: [
               {
                 index: true,
-                Component: Route4,
+                Component: ImageGenerationPage,
                 handle: {
                   title: APP_ROUTES_KEY.generation.image.meta.title,
                 },
               },
               {
                 path: APP_ROUTES_KEY.generation.image.history.path,
-                Component: Route4,
+                Component: ImageGenerationPage,
                 handle: {
                   title: APP_ROUTES_KEY.generation.image.history.meta.title,
                 },
@@ -97,14 +97,14 @@ export const router = createBrowserRouter([
             children: [
               {
                 index: true,
-                Component: Route5,
+                Component: VideoGenerationPage,
                 handle: {
                   title: APP_ROUTES_KEY.generation.video.meta.title,
                 },
               },
               {
                 path: APP_ROUTES_KEY.generation.video.history.path,
-                Component: Route5,
+                Component: VideoGenerationPage,
                 handle: {
                   title: APP_ROUTES_KEY.generation.video.history.meta.title,
                 },
@@ -113,7 +113,7 @@ export const router = createBrowserRouter([
           },
           {
             path: APP_ROUTES_KEY.profile.root.path,
-            Component: Route6,
+            Component: ProfileLayout,
             children: [
               {
                 index: true,
@@ -121,21 +121,21 @@ export const router = createBrowserRouter([
               },
               {
                 path: APP_ROUTES_KEY.profile.settings.path,
-                Component: Route7,
+                Component: SettingsPage,
                 handle: {
                   title: APP_ROUTES_KEY.profile.settings.meta.title,
                 },
               },
               {
                 path: APP_ROUTES_KEY.profile.payments.path,
-                Component: Route8,
+                Component: PaymentsPage,
                 handle: {
                   title: APP_ROUTES_KEY.profile.payments.meta.title,
                 },
               },
               {
                 path: APP_ROUTES_KEY.profile.walletTransactions.path,
-                Component: Route9,
+                Component: WalletTransactionsPage,
                 handle: {
                   title: APP_ROUTES_KEY.profile.walletTransactions.meta.title,
                 },
@@ -146,7 +146,7 @@ export const router = createBrowserRouter([
       },
       {
         path: APP_ROUTES_KEY.designPreview.path,
-        Component: Route10,
+        Component: DesignPreviewPage,
         handle: {
           title: APP_ROUTES_KEY.designPreview.meta.title,
         },
@@ -156,11 +156,11 @@ export const router = createBrowserRouter([
         children: [
           {
             index: true,
-            Component: Route11,
+            Component: EditorPage,
           },
           {
             path: ":fileUuid",
-            Component: Route11,
+            Component: EditorPage,
           },
         ],
         loader: requireSession,
@@ -170,7 +170,7 @@ export const router = createBrowserRouter([
       },
       {
         path: APP_ROUTES_KEY.auth.login.path,
-        Component: Route12,
+        Component: LoginPage,
         loader: redirectIfAuthenticated,
         handle: {
           title: APP_ROUTES_KEY.auth.login.meta.title,
@@ -179,7 +179,7 @@ export const router = createBrowserRouter([
       {
         path: APP_ROUTES_KEY.payment.result.path,
         loader: requireSession,
-        Component: Route13,
+        Component: PaymentResultPage,
         handle: {
           title: APP_ROUTES_KEY.payment.result.meta.title,
         },
