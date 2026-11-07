@@ -12,7 +12,7 @@ import { cn } from "@/shared/lib/utils";
 import { useAppTranslate } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";
 import { downloadFile } from "@/shared/utils";
-import type { GalleryMediaType } from "../_utils/types";
+import type { GalleryMediaType } from "../model/types";
 import { GalleryViewerBar, viewerControlClass } from "./gallery-viewer-bar";
 
 interface Props {

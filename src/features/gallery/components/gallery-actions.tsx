@@ -16,7 +16,7 @@ import { useAppTranslate } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";
 import { cn } from "@/shared/lib/utils";
 import { downloadFile } from "@/shared/utils";
-import type { GalleryFile } from "../_utils/types";
+import type { GalleryFile } from "../model/types";
 
 const actionButton = "h-11 w-11 rounded-xl max-md:w-10";
 
