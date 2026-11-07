@@ -36,9 +36,9 @@ test("compact prompt links its visible error and clears the invalid state", asyn
   await expect(error).toBeVisible();
   await expect(error).toHaveAttribute("id", /\S+/);
   await expect(prompt).toHaveAttribute("aria-invalid", "true");
-  expect((await prompt.getAttribute("aria-describedby"))?.split(/\s+/)).toContain(
-    await error.getAttribute("id"),
-  );
+  expect(
+    (await prompt.getAttribute("aria-describedby"))?.split(/\s+/),
+  ).toContain(await error.getAttribute("id"));
   await expect(prompt).toHaveAccessibleDescription("Prompt is required");
   await page.getByRole("button", { name: "Clear prompt error" }).click();
   await expect(error).toBeHidden();

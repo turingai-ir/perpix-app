@@ -2,11 +2,7 @@ import { useMemo, type FC } from "react";
 import { DollarSign } from "lucide-react";
 
 import { Button } from "@/shared/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/shared/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/shared/ui/popover";
 import { useAppTranslate } from "@/shared/hooks";
 import {
   getTierPriceUsdmicroRange,
