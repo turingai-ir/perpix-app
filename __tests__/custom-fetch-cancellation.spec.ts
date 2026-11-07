@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
-type FetchModule = typeof import("../src/utils/custom-fetch/custom-fetch");
-const modulePath = "/src/utils/custom-fetch/custom-fetch.ts";
+type FetchModule = typeof import("../src/shared/utils/custom-fetch/custom-fetch");
+const modulePath = "/src/shared/utils/custom-fetch/custom-fetch.ts";
 
 test.beforeEach(async ({ context, page }) => {
   await context.routeWebSocket("**/*", (socket) => socket.close());

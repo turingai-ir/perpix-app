@@ -79,7 +79,7 @@ for (const storageUnavailable of [false, true]) {
         });
       const cachedAccountA = () =>
         page.evaluate(async () => {
-          const modulePath = "/src/lib/react-query.ts";
+          const modulePath = "/src/shared/lib/react-query.ts";
           const { queryClient } = await import(modulePath);
           return queryClient
             .getQueryCache()
@@ -110,7 +110,7 @@ for (const storageUnavailable of [false, true]) {
           }),
         );
         await page.evaluate(async () => {
-          const modulePath = "/src/services/api/client.ts";
+          const modulePath = "/src/shared/api/client.ts";
           const { apiClient } = await import(modulePath);
           try {
             await apiClient.GET("/api/v1/wallet/wallet");

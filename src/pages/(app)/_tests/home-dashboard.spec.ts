@@ -275,7 +275,7 @@ for (const [index, entrance] of brandEntrances.entries()) {
         const language = await page.evaluate(
           async (value) => {
             Math.random = () => value;
-            const modulePath = "/src/services/i18/i18.ts";
+            const modulePath = "/src/shared/i18n/i18.ts";
             const { default: i18n } = (await import(modulePath)) as {
               default: {
                 changeLanguage: (language: string) => Promise<unknown>;

@@ -28,7 +28,7 @@ test("a protected response from an ended auth cycle cannot reach the caller", as
     });
   });
   const result = page.evaluate(async () => {
-    const clientPath = "/src/services/api/client.ts";
+    const clientPath = "/src/shared/api/client.ts";
     const { apiClient } = await import(clientPath);
     try {
       await apiClient.GET("/api/v1/wallet/wallet");

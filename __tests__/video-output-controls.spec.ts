@@ -239,7 +239,7 @@ test("a missing file replaces previously cached video actions", async ({
     route.fulfill({ status: 404, json: {} }),
   );
   await page.evaluate(async () => {
-    const path = "/src/lib/react-query.ts";
+    const path = "/src/shared/lib/react-query.ts";
     const { queryClient } = await import(/* @vite-ignore */ path);
     await queryClient.invalidateQueries({
       queryKey: ["file-manager", "preview", "video-file"],

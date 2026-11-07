@@ -125,8 +125,8 @@ for (const media of ["image", "video"] as const) {
     await prompt.fill("متن پیش‌نویس نباید با تلاش مجدد پاک بشه");
     failed = true;
     await page.evaluate(async () => {
-      const path = "/src/lib/react-query.ts";
-      const { queryClient }: typeof import("../src/lib/react-query") =
+      const path = "/src/shared/lib/react-query.ts";
+      const { queryClient }: typeof import("../src/shared/lib/react-query") =
         await import(path);
       await queryClient.invalidateQueries({
         queryKey: ["get", "/api/v1/ai-task/{task_uuid}"],
@@ -185,8 +185,8 @@ test("a delayed regeneration cannot submit after history becomes unavailable", a
     await route.fallback();
   });
   await page.evaluate(async () => {
-    const path = "/src/lib/react-query.ts";
-    const { queryClient }: typeof import("../src/lib/react-query") = await import(path);
+    const path = "/src/shared/lib/react-query.ts";
+    const { queryClient }: typeof import("../src/shared/lib/react-query") = await import(path);
     await queryClient.invalidateQueries({
       queryKey: ["get", "/api/v1/ai-registry/models/{ai_model_uuid}"],
       refetchType: "none",
@@ -197,8 +197,8 @@ test("a delayed regeneration cannot submit after history becomes unavailable", a
     await expect.poll(() => pending).toBe(true);
     failed = true;
     await page.evaluate(async () => {
-      const path = "/src/lib/react-query.ts";
-      const { queryClient }: typeof import("../src/lib/react-query") = await import(path);
+      const path = "/src/shared/lib/react-query.ts";
+      const { queryClient }: typeof import("../src/shared/lib/react-query") = await import(path);
       await queryClient.invalidateQueries({
         queryKey: ["get", "/api/v1/ai-task/{task_uuid}"],
       });
@@ -206,8 +206,8 @@ test("a delayed regeneration cannot submit after history becomes unavailable", a
     await expect(page.getByRole("alert", { name: "گفتگو بارگذاری نشد" })).toBeVisible();
     release();
     await expect.poll(() => page.evaluate(async () => {
-      const path = "/src/lib/react-query.ts";
-      const { queryClient }: typeof import("../src/lib/react-query") = await import(path);
+      const path = "/src/shared/lib/react-query.ts";
+      const { queryClient }: typeof import("../src/shared/lib/react-query") = await import(path);
       return queryClient.getQueryState([
         "get", "/api/v1/ai-registry/models/{ai_model_uuid}",
         { params: { path: { ai_model_uuid: "a509b349-d43f-4065-9cf2-de444bf4aa2c" } } },
@@ -244,8 +244,8 @@ test("history recovery with a newer completed result does not erase an unsent pr
   await prompt.fill("پیش‌نویس تازه هنوز ارسال نشده");
   failed = true;
   await page.evaluate(async () => {
-    const path = "/src/lib/react-query.ts";
-    const { queryClient }: typeof import("../src/lib/react-query") = await import(path);
+    const path = "/src/shared/lib/react-query.ts";
+    const { queryClient }: typeof import("../src/shared/lib/react-query") = await import(path);
     await queryClient.invalidateQueries({
       queryKey: ["get", "/api/v1/ai-task/{task_uuid}"],
     });
