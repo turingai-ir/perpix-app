@@ -176,7 +176,8 @@ app → pages → features → shared
 - ۳۰ فایل CSS به ترتیب حجم؛ الگوی کامیت gallery (`30217e9`) مرجع است.
 - keyframeهای مشترک → `app/styles/animations.css` یا `@theme`.
 - هر مهاجرت با اسکرین‌شات قبل/بعد (Playwright) و بررسی RTL/dark.
-- هدف نهایی: صفر `*.module.css`.
+- هدف نهایی: صفر `*.module.css` **به‌جز صحنه‌های هنری انیمیشنی** (بند ۱۰ از §۹).
+- **وضعیت: انجام شد.** تمام CSS صفحه‌ها و کامپوننت‌های UI به Tailwind + shadcn + کامپوننت‌های مشترک مهاجرت کرد. تنها ۱۴ فایل CSS Module باقی مانده‌اند و همه صحنه‌ی هنری‌اند (boot-office/slogan، placeholderهای تولید، brand-cinema، video-idle-scene، studio-scene، result-spec-robot، login-artwork، auth-celebration، identity-card، dashboard-brand-entrance، dashboard-scroll-companion، editor-onboarding-art). رنگ‌های سخت‌کد در همین فایل‌ها هنوز باید به توکن نگاشت شوند (کار آینده).
 
 ### فاز ۶ — یکسان‌سازی تست‌ها (۱–۲ روز)
 - هر تست متعلق به فیچر → `features/<f>/__tests__/`؛ تست‌های E2E سراسری و `fixtures/support/release-qa` → `e2e/` (یا همان `__tests__/` ریشه با نام `e2e/`) + configهای Playwright در یک پوشه.
