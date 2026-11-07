@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-import { getModelLogo } from "../src/pages/(app)/generation/_utils/model-logo";
+import { getModelLogo } from "../src/features/generation/model/model-logo";
 
 const providerCases = [
   ["OPENAI_GPT_IMAGE_2_5_SUNBURST", "openai"],

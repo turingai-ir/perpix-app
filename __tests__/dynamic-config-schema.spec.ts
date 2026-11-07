@@ -11,7 +11,7 @@ import {
   type JsonConfigMeta,
   type JsonConfigSchema,
 } from "../src/features/dynamic-config/hooks/use-dynamic-config-form";
-import { getModelDynamicConfig } from "../src/pages/(app)/generation/_utils/model-dynamic-config";
+import { getModelDynamicConfig } from "../src/features/generation/model/model-dynamic-config";
 
 const klingVideoConfig = JSON.parse(
   readFileSync(

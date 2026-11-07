@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-import { getDefaultAccessibleModel } from "../src/pages/(app)/generation/_utils/model-access";
+import { getDefaultAccessibleModel } from "../src/features/generation/model/model-access";
 
 const models = [
   { uuid: "model-locked", name: "LOCKED_MODEL" },

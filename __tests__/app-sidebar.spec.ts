@@ -173,7 +173,7 @@ test.describe("App sidebar", () => {
     }));
     const pricingRequests: string[] = [];
     page.on("request", (request) => {
-      if (request.url().includes("/feature/pricing/pricing.tsx")) {
+      if (request.url().includes("/features/pricing/components/pricing.tsx")) {
         pricingRequests.push(request.url());
       }
     });
