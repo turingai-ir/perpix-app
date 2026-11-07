@@ -4,7 +4,6 @@ import { useLocation, useParams } from "react-router";
 import { GenerationVideoChats, GenerationVideoPromptBox } from "./index.ts";
 import { VideoBrandCinema } from "./brand-cinema";
 import { GenerationHistoryError } from "../../components/generation-history-error";
-import styles from "./studio.module.css";
 import {
   GenerationFocusState,
   type GenerationFocusPhase,
@@ -55,9 +54,7 @@ function GenerationVideoSession() {
   const focusPhase = getFocusPhase(optimisticTurn?.status, lastTaskStatus);
 
   return (
-    <main
-      className={`${styles.page} ${!shouldShowIntro ? styles.conversation : ""}`}
-    >
+    <main className="bg-background text-foreground relative isolate flex h-[calc(100dvh-72px)] min-h-140 w-full min-w-0 flex-col overflow-hidden overscroll-y-contain p-3 [-webkit-tap-highlight-color:transparent] max-[950px]:h-auto max-[950px]:min-h-[calc(100dvh-72px)] max-[950px]:overflow-visible max-[950px]:p-2.5">
       {isTaskLoading ? (
         <div className="flex min-h-64 w-full items-center justify-center">
           <LoadingSection />
@@ -73,10 +70,10 @@ function GenerationVideoSession() {
         />
       )}
       <Activity mode={isTaskLoading || historyError ? "hidden" : "visible"}>
-        <div className={styles.content}>
+        <div className="relative z-1 mx-auto grid min-h-0 w-full max-w-none grid-cols-[minmax(0,1fr)_minmax(360px,410px)] grid-rows-[minmax(0,1fr)] items-stretch gap-3 [direction:ltr] *:[direction:rtl] max-[950px]:flex max-[950px]:flex-col max-[950px]:[direction:rtl]">
           <section
             aria-label={t("pages.generation.video.studio.timelineLabel")}
-            className={styles.timeline}
+            className="border-border bg-card col-start-1 row-start-1 min-h-0 w-full max-w-none [scrollbar-width:thin] overflow-y-auto rounded-[18px] border p-4 max-[950px]:order-1 max-[950px]:min-h-60 max-[950px]:overflow-visible max-[950px]:data-[empty=true]:hidden"
             data-empty={shouldShowIntro}
           >
             <GenerationVideoChats
@@ -87,13 +84,23 @@ function GenerationVideoSession() {
             />
           </section>
           {shouldShowIntro ? (
-            <div data-generation-intro className={styles.intro}>
+            <div
+              data-generation-intro
+              className="animate-intro-enter pointer-events-none z-1 col-start-1 row-start-1 flex w-full max-w-250 flex-col items-center justify-center gap-2 self-center justify-self-center px-4 pt-3 pb-5 text-center motion-reduce:animate-none max-[950px]:order-[-2] max-[950px]:px-2"
+            >
               <VideoBrandCinema />
-              <h1>{t("pages.generation.video.studio.heroTitle")}</h1>
-              <p>{t("pages.generation.video.studio.heroDescription")}</p>
+              <h1 className="text-[clamp(23px,2vw,30px)] leading-tight font-bold tracking-tight">
+                {t("pages.generation.video.studio.heroTitle")}
+              </h1>
+              <p className="text-muted-foreground max-w-147 text-[13px] leading-[1.8]">
+                {t("pages.generation.video.studio.heroDescription")}
+              </p>
             </div>
           ) : null}
-          <div className={styles.composerDock} data-generation-composer>
+          <div
+            className="relative z-20 col-start-2 row-start-1 m-0 flex min-h-0 w-full flex-col overflow-hidden p-0 *:shrink-0 max-[950px]:order-[-1] max-[950px]:overflow-visible [&>[data-generation-composer-card]]:min-h-0 [&>[data-generation-composer-card]]:flex-1"
+            data-generation-composer
+          >
             {isBusy ? (
               <GenerationFocusState phase={focusPhase} media="video" />
             ) : null}

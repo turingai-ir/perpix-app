@@ -12,8 +12,14 @@ import { ScrollArea } from "@/shared/ui/scroll-area";
 import type { JsonSchemaProperty } from "@/features/dynamic-config/hooks/use-dynamic-config-form.ts";
 import { cn } from "@/shared/lib/utils";
 
-import { coerceSelectValue, resolveFieldValue } from "../../../model/field-schema";
-import type { DynamicConfigForm, DynamicConfigOptions } from "../../../model/field-types";
+import {
+  coerceSelectValue,
+  resolveFieldValue,
+} from "../../../model/field-schema";
+import type {
+  DynamicConfigForm,
+  DynamicConfigOptions,
+} from "../../../model/field-types";
 import type { FieldLayoutClasses } from "./field-layout";
 
 export const DynamicConfigSwitchField: FC<{

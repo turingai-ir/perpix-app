@@ -1,79 +1,4 @@
-.page {
-  isolation: isolate;
-  padding: 12px clamp(12px, 3vw, 32px) 20px;
-  min-height: calc(100svh - 36px);
-  min-height: calc(100dvh - 36px);
-  overscroll-behavior-y: contain;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.page::before,
-.page::after {
-  position: absolute;
-  z-index: -1;
-  inset: 0;
-  pointer-events: none;
-  content: "";
-}
-
-.page::before {
-  background:
-    radial-gradient(
-      ellipse at 22% 18%,
-      var(--ambient-brand),
-      transparent 28rem
-    ),
-    radial-gradient(ellipse at 82% 54%, var(--ambient-media), transparent 32rem),
-    var(--background);
-}
-
-.page::after {
-  opacity: 0.34;
-  background-image:
-    linear-gradient(
-      28deg,
-      transparent 49.7%,
-      var(--ambient-brand) 50%,
-      transparent 50.3%
-    ),
-    linear-gradient(
-      -32deg,
-      transparent 49.7%,
-      var(--ambient-media) 50%,
-      transparent 50.3%
-    );
-  background-position:
-    0 0,
-    1.5rem 2rem;
-  background-size:
-    7rem 6rem,
-    9rem 8rem;
-  mask-image: radial-gradient(ellipse at center, transparent 8%, #000 74%);
-  animation: ambientField 18s linear infinite alternate;
-}
-
-@keyframes ambientField {
-  to {
-    background-position:
-      3rem 1.5rem,
-      -2rem 4rem;
-  }
-}
-.conversation::before {
-  background:
-    radial-gradient(
-      ellipse at 50% 12%,
-      color-mix(in srgb, var(--primary) 4%, transparent),
-      transparent 30rem
-    ),
-    var(--background);
-}
-
-.conversation::after {
-  opacity: 0;
-  animation: none;
-}
-
+/* Art-scene exception (docs/RESTRUCTURE_PLAN.md §9.10): neural-network stage and background. */
 .networkBackground {
   position: absolute;
   z-index: -1;
@@ -121,31 +46,6 @@
     transform: none !important;
   }
 }
-
-.content {
-  gap: clamp(12px, 2vh, 24px);
-  justify-content: flex-end;
-}
-
-.composerDock {
-  padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
-}
-.intro {
-  isolation: isolate;
-  overflow: hidden;
-  min-height: 16rem;
-  justify-content: flex-start;
-  gap: 12px;
-  padding: 7.5rem 1rem 1rem;
-}
-
-.intro > span,
-.intro > h1,
-.intro > p {
-  position: relative;
-  z-index: 12;
-}
-
 .logoSection {
   position: absolute;
   z-index: 0;
@@ -343,167 +243,28 @@
     transform: translateY(520%);
   }
 }
-@media (max-height: 760px) {
-  .intro {
-    gap: 8px;
-    padding-bottom: 6px;
-  }
-  .intro h1 {
-    font-size: clamp(24px, 3vw, 36px);
-  }
-  .intro p {
-    font-size: 13px;
-    line-height: 1.6;
-  }
-  .content {
-    gap: 12px;
-  }
-}
-
 @media (max-width: 640px) {
-  .page {
-    min-height: calc(100svh - 3rem);
-    min-height: calc(100dvh - 3rem);
-    padding: 0 10px max(12px, env(safe-area-inset-bottom));
-  }
-
-  .page input,
-  .page select,
-  .page textarea {
-    font-size: 16px;
-  }
-
-  .content {
-    gap: 4px;
-    justify-content: flex-start;
-  }
-
-  .intro {
-    flex: 0 0 auto;
-    min-height: 0;
-    height: clamp(13rem, 27svh, 14.5rem);
-    justify-content: flex-start;
-    gap: 5px;
-    padding: 5.5rem 0.75rem 0.5rem;
-  }
-
-  .intro > span {
-    min-height: 2rem;
-    padding-inline: 0.75rem;
-    background: color-mix(in srgb, var(--primary) 10%, transparent);
-    backdrop-filter: blur(12px) saturate(1.2);
-  }
-
-  .intro > h1 {
-    max-width: 22rem;
-    font-size: clamp(1.6rem, 7vw, 2rem);
-    line-height: 1.28;
-    text-wrap: balance;
-  }
-
-  .intro > p {
-    max-width: 21rem;
-    font-size: 0.8125rem;
-    line-height: 1.7;
-    text-wrap: balance;
-  }
-
   .neuralCore {
     top: 2.75rem;
     width: 4rem;
   }
-
   .neuralLinks {
     inset-inline: -18%;
     width: 136%;
   }
-
   .previewNodes i:nth-child(3n) {
     display: none;
   }
-
-  .composerDock {
-    position: relative;
-    padding-top: 0;
-    padding-bottom: max(0.375rem, env(safe-area-inset-bottom));
-    background: transparent;
-  }
-
-  .composerDock :global([data-generation-composer-card]) {
-    border-radius: 1.5rem;
-    padding: 0.75rem;
-    border-color: rgb(255 255 255 / 10%);
-    background: rgb(11 11 16 / 82%);
-    box-shadow:
-      0 20px 56px rgb(0 0 0 / 48%),
-      inset 0 1px 0 rgb(255 255 255 / 5%);
-    backdrop-filter: blur(24px) saturate(1.15);
-  }
-
-  .composerDock :global(form) {
-    gap: 0.75rem;
-  }
-
-  .composerDock :global([data-generation-prompt-surface]) {
-    min-height: 5.75rem;
-    gap: 0.5rem;
-    border-radius: 1.125rem;
-    padding: 0.5rem;
-    background: rgb(255 255 255 / 2.5%);
-  }
 }
-
 @media (max-height: 500px) and (orientation: landscape) {
-  .intro {
-    flex: none;
-    min-height: 0;
-    height: auto;
-    padding: 4.5rem 0.75rem 0.5rem;
-  }
-
   .neuralCore {
     top: 2rem;
     width: 3rem;
   }
-
-  .composerDock {
-    position: relative;
-    padding-top: 0;
-    background: transparent;
-  }
-}
-
-@media (pointer: coarse) {
-  .page button,
-  .page input,
-  .page select,
-  .page textarea {
-    touch-action: manipulation;
-  }
-
-  .page button {
-    min-width: 44px;
-    min-height: 44px;
-    transition:
-      transform 140ms cubic-bezier(0.2, 0.8, 0.2, 1),
-      background-color 180ms ease,
-      border-color 180ms ease;
-    user-select: none;
-    -webkit-user-select: none;
-  }
-
-  .page button:active:not(:disabled) {
-    transform: scale(0.97);
-  }
 }
 @media (prefers-reduced-motion: reduce) {
-  .page::after,
   .neuralStage *,
   .neuralStage *::after {
     animation: none !important;
-  }
-
-  .page button {
-    transition-duration: 0.01ms !important;
   }
 }

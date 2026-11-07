@@ -1,6 +1,9 @@
 import { expect, test } from "@playwright/test";
 
-import { getConditionalProperty, getRequiredConfigFields } from "../model/form-schema";
+import {
+  getConditionalProperty,
+  getRequiredConfigFields,
+} from "../model/form-schema";
 
 const imageSchema = {
   type: "object" as const,

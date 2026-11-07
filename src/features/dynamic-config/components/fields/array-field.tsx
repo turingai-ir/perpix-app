@@ -3,19 +3,17 @@ import { Plus, Trash2 } from "lucide-react";
 
 import { Button } from "@/shared/ui/button";
 import { Checkbox } from "@/shared/ui/checkbox";
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-} from "@/shared/ui/form";
+import { FormControl, FormField, FormItem, FormLabel } from "@/shared/ui/form";
 import { Textarea } from "@/shared/ui/textarea";
 import {
   getPrimaryType,
   type JsonSchemaProperty,
 } from "@/features/dynamic-config/hooks/use-dynamic-config-form.ts";
 
-import { getDefaultValueForProperty, normalizeArrayValue } from "../../model/field-schema";
+import {
+  getDefaultValueForProperty,
+  normalizeArrayValue,
+} from "../../model/field-schema";
 import type { DynamicConfigFieldProps } from "../../model/field-types";
 
 const HINT_CLASS_NAME = "text-muted-foreground/60 text-[0.7rem] leading-snug";

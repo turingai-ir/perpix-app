@@ -3,7 +3,13 @@ import { useLocation, useParams } from "react-router";
 import { Sparkles } from "lucide-react";
 import StudioLogo from "./studio-logo";
 import { NeuralNetworkBackground } from "./neural-network-background";
-import styles from "./studio.module.css";
+import { cn } from "@/shared/lib/utils";
+import {
+  STUDIO_CONTENT_CLASS,
+  STUDIO_DOCK_CLASS,
+  STUDIO_INTRO_CLASS,
+  STUDIO_PAGE_CLASS,
+} from "./studio-styles";
 
 import { GenerationImageChats, GenerationImagePromptBox } from "./index.ts";
 import {
@@ -79,7 +85,8 @@ const GenerationImageSession = () => {
 
   return (
     <div
-      className={`${styles.page} ${!shouldShowIntro ? styles.conversation : ""} relative flex w-full min-w-0 flex-col`}
+      className={STUDIO_PAGE_CLASS}
+      data-conversation={!shouldShowIntro || undefined}
     >
       {shouldShowIntro ? <StudioLogo /> : null}
       {!shouldShowIntro ? <NeuralNetworkBackground /> : null}
@@ -144,15 +151,13 @@ const GenerationImageSession = () => {
             />
           </section>
 
-          <div
-            className={`${styles.content} mx-auto flex w-full max-w-4xl flex-1 flex-col items-center`}
-          >
+          <div className={STUDIO_CONTENT_CLASS}>
             {shouldShowIntro ? (
-              <div
-                data-generation-intro
-                className={`${styles.intro} relative flex w-full flex-1 flex-col items-center justify-center text-center`}
-              >
-                <span className="border-primary/20 bg-primary/5 text-primary inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold">
+              <div data-generation-intro className={STUDIO_INTRO_CLASS}>
+                <span
+                  data-slot="eyebrow"
+                  className="border-primary/20 bg-primary/5 text-primary inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold"
+                >
                   <Sparkles className="size-3.5" aria-hidden="true" />
                   {t("pages.generation.image.studio.eyebrow")}
                 </span>
@@ -167,7 +172,11 @@ const GenerationImageSession = () => {
 
             <div
               data-generation-composer
-              className={`${styles.composerDock} sticky bottom-0 z-20 w-full pt-4 pb-2 sm:pt-6 ${shouldShowIntro ? "" : "from-background via-background/95 bg-gradient-to-t to-transparent"}`}
+              className={cn(
+                STUDIO_DOCK_CLASS,
+                !shouldShowIntro &&
+                  "from-background via-background/95 bg-linear-to-t to-transparent max-sm:bg-none",
+              )}
             >
               <ImageComparison
                 disabled={isBusy}
