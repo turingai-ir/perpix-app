@@ -1,5 +1,5 @@
-import { FILE_MANAGER_ALLOWED_CONTENT_TYPES } from "@/feature/file-manager";
-import { getUserFilesWithUuid } from "@/feature/media-uploader";
+import { FILE_MANAGER_ALLOWED_CONTENT_TYPES } from "@/features/file-manager";
+import { getUserFilesWithUuid } from "@/features/media-uploader";
 
 import type {
   GalleryContentTypes,

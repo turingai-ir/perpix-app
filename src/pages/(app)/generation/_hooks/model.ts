@@ -15,11 +15,11 @@ import {
 } from "../_state/selected-model-atom";
 
 import { useReactQueryApi } from "@/shared/hooks/app";
-import { useActiveSubscription } from "@/feature/pricing";
 import {
   PaidActionScope,
+  useActiveSubscription,
   usePaidActionGuard,
-} from "@/feature/pricing/paid-action-guard";
+} from "@/features/pricing";
 import {
   getDefaultAccessibleModel,
   isModelAllowed,

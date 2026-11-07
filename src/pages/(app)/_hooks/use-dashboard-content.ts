@@ -4,7 +4,7 @@ import {
   FILE_MANAGER_ALLOWED_CONTENT_TYPES,
   useFilesPreviews,
   useInfiniteUserFiles,
-} from "@/feature/file-manager";
+} from "@/features/file-manager";
 import { useReactQueryApi } from "@/shared/hooks/app";
 import type {
   SchemaAiRegistryModelSummary,

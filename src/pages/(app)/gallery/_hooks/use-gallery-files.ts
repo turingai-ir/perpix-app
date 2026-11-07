@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import {
   useInfiniteUserFiles,
   userFilesPageLimit,
-} from "@/feature/file-manager";
+} from "@/features/file-manager";
 import { useInfiniteScroll } from "@/shared/hooks/use-infinite-scroll";
 
 import { galleryContentTypes, getGalleryFiles } from "../_utils/gallery";

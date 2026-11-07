@@ -24,3 +24,5 @@ export {
 
 export { FILE_MANAGER_ALLOWED_CONTENT_TYPES } from "./model/contracts";
 export { isMissingFilePreview } from "./model/file-error";
+export { resolveFileManagerContentTypes } from "./model/content-types";
+export type { FileManagerAllowedContentType } from "./model/content-types";

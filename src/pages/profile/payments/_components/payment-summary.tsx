@@ -1,6 +1,6 @@
 import { CircleAlert, CircleCheckBig, Hourglass } from "lucide-react";
 
-import { getPaymentViewStatus } from "@/feature/payment";
+import { getPaymentViewStatus } from "@/features/payment";
 import { FinanceSummary } from "@/pages/profile/_components/finance-summary";
 import type { SchemaPaymentHistoryItemResponse } from "@/shared/api";
 import { useAppTranslate } from "@/shared/hooks";

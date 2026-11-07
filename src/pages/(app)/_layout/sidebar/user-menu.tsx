@@ -4,7 +4,7 @@ import AppLayoutSidebarUserActions from "./user-actions";
 import AppLayoutSidebarUserProfileMenu from "./user-profile-menu";
 import styles from "./sidebar.module.css";
 
-import { PwaInstallIosDialog, usePwaInstall } from "@/feature/pwa";
+import { PwaInstallIosDialog, usePwaInstall } from "@/features/pwa";
 
 const AppLayoutSidebarUserMenu: FC = () => {
   const pwaInstall = usePwaInstall();

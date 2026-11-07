@@ -5,7 +5,7 @@ import {
   type DynamicConfigForm,
 } from "@/pages/(app)/generation/_components/dynamic-config";
 import { clearTopLevelMediaConflicts } from "@/pages/(app)/generation/_components/dynamic-config/file-upload/media";
-import { normalizeMediaIds } from "@/feature/media-uploader";
+import { normalizeMediaIds } from "@/features/media-uploader";
 import { useAppTranslate } from "@/shared/hooks";
 
 const TEXT_MODE = "text_to_image";

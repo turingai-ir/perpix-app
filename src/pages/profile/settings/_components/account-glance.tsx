@@ -1,8 +1,8 @@
 import { ArrowUpLeft, Crown, Wallet } from "lucide-react";
 import { Link } from "react-router";
 
-import { useActiveSubscription } from "@/feature/pricing";
-import { useWallet } from "@/feature/wallet";
+import { useActiveSubscription } from "@/features/pricing";
+import { useWallet } from "@/features/wallet";
 import { useAppTranslate } from "@/shared/hooks";
 import { APP_ROUTES_KEY } from "@/app/router/routes";
 import { APP_I18_KEYS } from "@/shared/i18n";

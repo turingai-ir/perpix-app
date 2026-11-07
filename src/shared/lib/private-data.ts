@@ -1,6 +1,6 @@
 import { queryClient } from "./react-query";
 
-import { clearPaymentSession } from "@/feature/payment";
+import { clearPaymentSession } from "@/features/payment";
 import { onSessionEnded } from "@/features/auth/session";
 import {
   clearUploadSession,

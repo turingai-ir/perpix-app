@@ -11,7 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/shared/ui/dialog";
-import { useDeleteUserFile } from "@/feature/file-manager";
+import { useDeleteUserFile } from "@/features/file-manager";
 import { useAppTranslate } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";
 import { cn } from "@/shared/lib/utils";

@@ -1,6 +1,6 @@
 import { AudioLines, Film } from "lucide-react";
 
-import type { FilePreviewUrls, UserFileItem } from "@/feature/file-manager";
+import type { FilePreviewUrls, UserFileItem } from "@/features/file-manager";
 import styles from "../dashboard.module.css";
 
 interface DashboardFileVisualProps {

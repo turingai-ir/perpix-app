@@ -8,7 +8,7 @@ import DaysRing from "./days-ring";
 import type { useAccountWidget } from "./use-account-widget";
 import styles from "./account-widget.module.css";
 
-import { usePricingFeature } from "@/feature/pricing";
+import { usePricingFeature } from "@/features/pricing";
 import { useAppTranslate } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";
 

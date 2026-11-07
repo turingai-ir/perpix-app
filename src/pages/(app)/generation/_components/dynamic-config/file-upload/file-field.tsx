@@ -1,8 +1,7 @@
 import { useEffect, useEffectEvent, useMemo, useRef, type FC } from "react";
 import { toast } from "sonner";
 
-import { useFileManager } from "@/feature/file-manager";
-import { useFilesPreviews } from "@/features/file-manager";
+import { useFileManager, useFilesPreviews } from "@/features/file-manager";
 import {
   appendMediaId,
   getClipboardImage,
@@ -15,7 +14,7 @@ import {
   toLocalMediaItems,
   toClipboardImageFile,
   toUploadedMediaItems,
-} from "@/feature/media-uploader";
+} from "@/features/media-uploader";
 import { useAppTranslate } from "@/shared/hooks";
 import type { JsonSchemaProperty } from "@/shared/hooks/use-dynamic-config-form";
 import { HttpStatus } from "@/shared/utils";

@@ -17,9 +17,9 @@ import { APP_LAYOUT_SIDEBAR_WIDTH } from "@/shared/utils";
 import { appEventBus } from "@/shared/lib/event-bus";
 import { ScrollArea } from "@/shared/ui/scroll-area";
 import { TooltipProvider } from "@/shared/ui/tooltip";
-import { PaymentRedirectPortal } from "@/feature/payment";
-import { useUser } from "@/feature/user";
-import { AiTaskEventsProvider } from "@/feature/ai-task-events";
+import { PaymentRedirectPortal } from "@/features/payment";
+import { useUser } from "@/features/user";
+import { AiTaskEventsProvider } from "@/features/ai-task-events";
 import { useAppTranslate } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";
 

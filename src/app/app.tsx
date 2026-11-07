@@ -8,7 +8,7 @@ import { router } from "@/app/router/router";
 import { Toaster } from "@/shared/ui/sonner";
 import { RuntimeCleanup } from "@/features/runtime";
 import { BootSplash } from "@/features/boot-splash";
-import { PricingFeature, pricingFeatureAtom } from "@/feature/pricing";
+import { PricingFeature, pricingFeatureAtom } from "@/features/pricing";
 import { QueryClientProvider } from "@tanstack/react-query";
 
 import "@/shared/lib/private-data";

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion } from "motion/react";
 import { Dialog, DialogContent } from "@/shared/ui/dialog";
-import { useFilePreview } from "@/feature/file-manager";
+import { useFilePreview } from "@/features/file-manager";
 import { useAppTranslate } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";
 import { getGalleryMediaType } from "../_utils/gallery";

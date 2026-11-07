@@ -1,7 +1,7 @@
-export { MediaUploadStrip } from "@/feature/media-uploader";
+export { MediaUploadStrip } from "@/features/media-uploader";
 export type {
   LocalMediaItem,
   MediaPreviewType,
   MediaUploadStripProps,
   UploadedMediaItem,
-} from "@/feature/media-uploader";
+} from "@/features/media-uploader";

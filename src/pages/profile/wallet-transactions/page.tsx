@@ -2,7 +2,7 @@ import { useDeferredValue, useState } from "react";
 import { useSearchParams } from "react-router";
 
 import { Button } from "@/shared/ui/button";
-import { useWalletTransactions } from "@/feature/wallet";
+import { useWalletTransactions } from "@/features/wallet";
 import { useAppTranslate } from "@/shared/hooks";
 import { FinanceToolbar } from "@/pages/profile/_components/finance-toolbar";
 import { PaginationFooter } from "@/pages/profile/_components/pagination-footer";

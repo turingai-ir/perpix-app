@@ -9,8 +9,8 @@ import styles from "./sidebar.module.css";
 import { cn } from "@/shared/lib/utils";
 import { useAppTranslate, useViewportBreakpoint } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";
-import { useActiveSubscription, usePricingFeature } from "@/feature/pricing";
-import { useWallet, WalletChargeFlow } from "@/feature/wallet";
+import { useActiveSubscription, usePricingFeature } from "@/features/pricing";
+import { useWallet, WalletChargeFlow } from "@/features/wallet";
 import {
   Sheet,
   SheetContent,
