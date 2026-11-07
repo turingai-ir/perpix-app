@@ -240,3 +240,7 @@ app → pages → features → shared
 3. **رنگ و فاصله فقط از توکن**: رنگ سخت‌کد (`#9188a5`) به توکن در `app/styles/tokens.css` نگاشت می‌شود؛ مقدارهای تکراری توکن جدید می‌گیرند.
 4. **`app/styles/`** فقط شامل tokens، theme (`@theme`)، base، `@keyframes` مشترک و `@utility`‌های مشترک است؛ استایل کامپوننت هرگز.
 5. **اعتبارسنجی**: مقایسه‌ی computed-style و موقعیت المان‌ها قبل/بعد برای هر صفحه (دسکتاپ و موبایل) — ابزار محلی در `.visual/` (خارج از git).
+6. **استاندارد موبایل (لمسی)**: روی `pointer: coarse` کنترل‌ها حداقل ۴۴px هستند (دکمه‌ی پیش‌فرض `h-11`، `lg` ‏`h-12`، `sm` ‏`h-10`، `xs` ‏`h-9`؛ input و select ‏`h-11`) و فیلد متنی `text-base` (۱۶px) است تا iOS زوم نکند. این در خود کامپوننت‌های `shared/ui` با variant ‏`pointer-coarse:` پیاده شده؛ در صفحات سایز دستی ننویسید.
+7. **رنگ**: فقط توکن‌های semantic شادسی‌ان (`background`, `foreground`, `card`, `muted`, `primary`, `border`, `ring`, `destructive`) + توکن‌های برند (`--brand-*`, `--image-accent`, `--video-accent`). `#hex` و `rgb()` در کامپوننت ممنوع.
+8. **سایز/فاصله**: فقط مقیاس Tailwind (`gap-2`, `p-4`, `text-sm`…)؛ مقدار دلخواه `[13px]` فقط با دلیل و ترجیحاً با توکن.
+9. **Mobile-first**: کلاس پایه برای موبایل، `md:`/`lg:` برای بزرگ‌تر؛ breakpointهای `max-width` ممنوع.
