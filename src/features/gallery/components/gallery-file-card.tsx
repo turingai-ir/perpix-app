@@ -12,8 +12,8 @@ import {
   cardFactsClass,
 } from "./gallery-card-shell";
 import { cn } from "@/shared/lib/utils";
-import { getGalleryMediaType } from "../_utils/gallery";
-import type { GalleryFile } from "../_utils/types";
+import { getGalleryMediaType } from "../model/gallery";
+import type { GalleryFile } from "../model/types";
 
 interface Props {
   file: GalleryFile;

@@ -1,6 +1,6 @@
 import { chromium, expect, test, type Page } from "@playwright/test";
 import { join } from "node:path";
-import { mockAuthenticatedSession } from "../../../../../__tests__/support/auth-session";
+import { mockAuthenticatedSession } from "../../../../__tests__/support/auth-session";
 
 test.afterEach(async ({ page }, info) => {
   if (process.env.GALLERY_SCREENSHOTS) {

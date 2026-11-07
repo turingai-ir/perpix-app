@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Skeleton } from "@/shared/ui/skeleton";
 import { GalleryFallback } from "./gallery-fallback";
-import type { GalleryMediaType } from "../_utils/types";
+import type { GalleryMediaType } from "../model/types";
 import { cn } from "@/shared/lib/utils";
 
 interface Props {

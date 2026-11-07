@@ -1,8 +1,8 @@
 import { Button } from "@/shared/ui/button";
 import { useAppTranslate } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";
-import { getGalleryFilters } from "../_utils/gallery";
-import type { GalleryFilter } from "../_utils/types";
+import { getGalleryFilters } from "../model/gallery";
+import type { GalleryFilter } from "../model/types";
 
 export function GalleryFilterRail({
   active,

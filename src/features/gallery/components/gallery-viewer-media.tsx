@@ -3,7 +3,7 @@ import { ImageOff } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { useAppTranslate } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";
-import type { GalleryMediaType } from "../_utils/types";
+import type { GalleryMediaType } from "../model/types";
 import { cn } from "@/shared/lib/utils";
 
 interface Props {

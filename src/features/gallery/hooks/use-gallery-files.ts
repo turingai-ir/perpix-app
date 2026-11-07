@@ -6,8 +6,8 @@ import {
 } from "@/features/file-manager";
 import { useInfiniteScroll } from "@/shared/hooks/use-infinite-scroll";
 
-import { galleryContentTypes, getGalleryFiles } from "../_utils/gallery";
-import type { GalleryFilter } from "../_utils/types";
+import { galleryContentTypes, getGalleryFiles } from "../model/gallery";
+import type { GalleryFilter } from "../model/types";
 
 export const useGalleryFiles = () => {
   const [activeFilter, setActiveFilter] = useState<GalleryFilter>("all");

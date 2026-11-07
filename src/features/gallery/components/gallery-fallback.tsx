@@ -1,7 +1,7 @@
 import type { FC } from "react";
 import { FileAudio, FileVideo, Image as ImageIcon } from "lucide-react";
 
-import type { GalleryMediaType } from "../_utils/types";
+import type { GalleryMediaType } from "../model/types";
 
 export const GalleryFallback: FC<{ mediaType: GalleryMediaType }> = ({
   mediaType,
