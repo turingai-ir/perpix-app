@@ -91,8 +91,7 @@ function PricingFeature() {
       resolvePlanTiers(
         planItems as readonly SchemaSubscriptionPlanResponse[],
         activeSubscriptionState.data as
-          | SchemaUserSubscriptionResponse
-          | undefined,
+          SchemaUserSubscriptionResponse | undefined,
       ),
     [activeSubscriptionState.data, planItems],
   );
@@ -120,8 +119,7 @@ function PricingFeature() {
   }, [hasRequirements, requiredModelNames, requiredScopes, tiers]);
 
   const hasPaidPlan = tiers.status !== "free";
-  const isTopTier =
-    hasPaidPlan && tiers.status === "top" && !hasRequirements;
+  const isTopTier = hasPaidPlan && tiers.status === "top" && !hasRequirements;
   const headerKey = getHeaderKey(hasPaidPlan, tiers.isExpiring);
   const getLevel = (uuid: string) => {
     const index = tiers.ladder.findIndex((item) => item.uuid === uuid);
@@ -238,7 +236,9 @@ function PricingFeature() {
                 <PricingPlanCard
                   key={plan.uuid}
                   plan={plan}
-                  isCurrent={plan.uuid === tiers.currentPlan?.uuid && hasPaidPlan}
+                  isCurrent={
+                    plan.uuid === tiers.currentPlan?.uuid && hasPaidPlan
+                  }
                   hasPrice={isPurchasablePrice(plan)}
                   isLocked={getPlanAccess(plan, tiers) === "lower"}
                   daysLeft={

@@ -1,8 +1,14 @@
 import { useCallback } from "react";
 import { useSetAtom } from "jotai";
 
-import { initialPricingFeatureState, pricingFeatureAtom } from "./pricing-state";
-import type { OpenPricingFeatureOptions, PricingFeatureApi } from "../model/types";
+import {
+  initialPricingFeatureState,
+  pricingFeatureAtom,
+} from "./pricing-state";
+import type {
+  OpenPricingFeatureOptions,
+  PricingFeatureApi,
+} from "../model/types";
 
 export function usePricingFeature(): PricingFeatureApi {
   const setPricingFeature = useSetAtom(pricingFeatureAtom);
