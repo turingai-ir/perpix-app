@@ -2,7 +2,6 @@ import { useEffect, useRef, type FC } from "react";
 
 import AppLayoutSidebarUserActions from "./user-actions";
 import AppLayoutSidebarUserProfileMenu from "./user-profile-menu";
-import styles from "./sidebar.module.css";
 
 import { PwaInstallIosDialog, usePwaInstall } from "@/features/pwa";
 
@@ -26,7 +25,7 @@ const AppLayoutSidebarUserMenu: FC = () => {
 
   return (
     <>
-      <div className={styles.userDock}>
+      <div className="mt-auto flex w-full flex-col gap-2.5 pt-2">
         <AppLayoutSidebarUserActions />
         <AppLayoutSidebarUserProfileMenu
           canInstall={pwaInstall.canInstall}
