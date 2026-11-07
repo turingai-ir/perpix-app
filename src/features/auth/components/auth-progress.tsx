@@ -43,15 +43,12 @@ export const AuthProgress: FC<AuthProgressProps> = ({
     aria-label={label}
   >
     <Step state={isFirstStep ? "current" : "done"} {...firstStep} />
-    <span className="h-px min-w-3 flex-1 bg-border" aria-hidden="true">
+    <span className="bg-border h-px min-w-3 flex-1" aria-hidden="true">
       <i
         data-complete={!isFirstStep}
-        className="ease-out-quint block size-full origin-right scale-x-0 bg-primary transition-transform duration-[260ms] data-[complete=true]:scale-x-100 motion-reduce:transition-none"
+        className="ease-out-quint bg-primary block size-full origin-right scale-x-0 transition-transform duration-[260ms] data-[complete=true]:scale-x-100 motion-reduce:transition-none"
       />
     </span>
-    <Step
-      state={isFirstStep ? "upcoming" : "current"}
-      {...secondStep}
-    />
+    <Step state={isFirstStep ? "upcoming" : "current"} {...secondStep} />
   </div>
 );

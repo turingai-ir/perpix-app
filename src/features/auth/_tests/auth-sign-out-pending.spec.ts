@@ -177,7 +177,8 @@ test("a logout waiting for the refresh lock times out without sending auth reque
     const pending = await page.evaluate(async () => {
       const locks = await navigator.locks.query();
       return (
-        locks.pending?.filter((lock) => lock.name === "perpix-auth-refresh") ?? []
+        locks.pending?.filter((lock) => lock.name === "perpix-auth-refresh") ??
+        []
       );
     });
     expect(pending).toEqual([]);
@@ -230,7 +231,9 @@ test("replacement login in another tab cancels a queued logout before lock relea
       .poll(() =>
         page.evaluate(async () => {
           const locks = await navigator.locks.query();
-          return locks.pending?.some((lock) => lock.name === "perpix-auth-refresh");
+          return locks.pending?.some(
+            (lock) => lock.name === "perpix-auth-refresh",
+          );
         }),
       )
       .toBe(true);
@@ -252,7 +255,9 @@ test("replacement login in another tab cancels a queued logout before lock relea
   }
 });
 
-test("a stale expected cycle cannot sign out a newer session", async ({ page }) => {
+test("a stale expected cycle cannot sign out a newer session", async ({
+  page,
+}) => {
   const state = await page.evaluate(async () => {
     const path = "/src/features/auth/services/session-manager.ts";
     const manager: SessionManager = await import(path);

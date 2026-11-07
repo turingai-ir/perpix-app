@@ -9,9 +9,13 @@ import {
 } from "@/shared/ui/dialog";
 import { useAppTranslate } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";
-import styles from "./video-output.module.css";
+import {
+  VideoOutputFooter,
+  VideoOutputHeader,
+  VideoOutputHint,
+  VideoOutputScreen,
+} from "./video-output-parts";
 import { MediaUnavailableState } from "./media-unavailable-state";
-import { cn } from "@/shared/lib/utils";
 
 interface Props {
   label: string;
@@ -42,9 +46,9 @@ export function VideoOutputDialog({
   return (
     <DialogContent
       showCloseButton={false}
-      className={`${styles.dialog} flex max-h-[calc(100dvh-2rem)] flex-col sm:max-w-5xl`}
+      className="flex max-h-[calc(100dvh-2rem)] flex-col gap-0 overflow-hidden rounded-2xl p-0 sm:max-w-5xl"
     >
-      <div className={`${styles.header} shrink-0`}>
+      <VideoOutputHeader className="shrink-0">
         <DialogTitle>{label}</DialogTitle>
         <DialogClose
           render={
@@ -59,16 +63,11 @@ export function VideoOutputDialog({
         >
           <X aria-hidden="true" />
         </DialogClose>
-      </div>
+      </VideoOutputHeader>
       <DialogDescription className="sr-only">
         {t("pages.generation.video.output.preview")}
       </DialogDescription>
-      <div
-        className={cn(
-          styles.screen,
-          (!previewUrl || hasMediaError) && styles.unavailableScreen,
-        )}
-      >
+      <VideoOutputScreen inDialog unavailable={!previewUrl || hasMediaError}>
         {previewUrl && !hasMediaError ? (
           // Generated video responses do not provide caption tracks.
           // eslint-disable-next-line jsx-a11y/media-has-caption
@@ -91,12 +90,12 @@ export function VideoOutputDialog({
             isRefreshing={isRefreshing}
           />
         )}
-      </div>
+      </VideoOutputScreen>
       {!isMissing && (
-        <div className={styles.footer}>
-          <p className={styles.hint}>
+        <VideoOutputFooter>
+          <VideoOutputHint>
             {t("pages.generation.video.output.screeningHint")}
-          </p>
+          </VideoOutputHint>
           <Button
             type="button"
             className="min-h-11 shrink-0 gap-2 self-center"
@@ -106,7 +105,7 @@ export function VideoOutputDialog({
             <Download aria-hidden="true" />
             {t("common.download")}
           </Button>
-        </div>
+        </VideoOutputFooter>
       )}
     </DialogContent>
   );

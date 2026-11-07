@@ -43,7 +43,10 @@ export const AuthFlow: FC<{ onAuthenticated: () => Promise<void> }> = ({
     <div className="w-full">
       <AuthProgress
         label={t("pages.auth.login.visual.progressLabel")}
-        firstStep={{ badge: "01", text: t("pages.auth.login.visual.stepPhone") }}
+        firstStep={{
+          badge: "01",
+          text: t("pages.auth.login.visual.stepPhone"),
+        }}
         secondStep={{ badge: "02", text: nextLabel }}
         isFirstStep={isFirstStep}
       />
