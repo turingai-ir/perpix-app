@@ -9,11 +9,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/shared/ui/form";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/shared/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/shared/ui/popover";
 import { useAppTranslate } from "@/shared/hooks";
 import type { DynamicConfigForm } from "../../../dynamic-config";
 

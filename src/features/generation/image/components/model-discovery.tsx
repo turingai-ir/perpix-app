@@ -9,11 +9,7 @@ import {
   CommandEmpty,
   CommandItem,
 } from "@/shared/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/shared/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/shared/ui/popover";
 import { useAppTranslate } from "@/shared/hooks";
 import type { useModel } from "@/features/generation/hooks/model";
 import { isModelAllowed } from "@/features/generation/model/model-access";

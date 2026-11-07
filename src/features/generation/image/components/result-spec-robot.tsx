@@ -1,5 +1,5 @@
 import { useAppTranslate } from "@/shared/hooks";
-import styles from "./result-card.module.css";
+import styles from "./result-spec-robot.module.css";
 
 export function ResultSpecRobot({
   ratio,

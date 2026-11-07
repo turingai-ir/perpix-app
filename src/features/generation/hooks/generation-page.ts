@@ -130,10 +130,7 @@ export function useGenerationPage({
     return current?.status !== "success" || current.data?.uuid !== chatId;
   }, [chatId, queryClient, queryOptions]);
   let historyError: GenerationHistoryErrorKind | undefined;
-  if (
-    chatId &&
-    (aiTaskState.isError || (aiTaskState.isSuccess && !taskData))
-  ) {
+  if (chatId && (aiTaskState.isError || (aiTaskState.isSuccess && !taskData))) {
     historyError = "temporary";
     const status =
       aiTaskState.error instanceof FetchHttpError

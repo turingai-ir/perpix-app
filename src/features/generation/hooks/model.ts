@@ -124,8 +124,7 @@ export const useModel = (
   });
 
   const models = modelsListState.data as
-    | Array<SchemaAiRegistryModelSummary>
-    | undefined;
+    Array<SchemaAiRegistryModelSummary> | undefined;
   const selectedModelSummary = models?.find(
     (model) => model.uuid === currentSelectedModel,
   );
@@ -318,8 +317,7 @@ export const useAiTaskResultPolling = (
       enabled: canPollResult,
       refetchInterval: (query) => {
         const resultMessage = query.state.data as
-          | SchemaAiTaskMessageResponse
-          | undefined;
+          SchemaAiTaskMessageResponse | undefined;
 
         if (!resultMessage) {
           return AI_TASK_POLLING_INTERVAL;

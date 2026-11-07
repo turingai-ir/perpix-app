@@ -9,12 +9,18 @@ import {
 
 import { MediaPreviewItem } from "@/shared/components/media-preview-item";
 import { Button } from "@/shared/ui/button";
+import { cn } from "@/shared/lib/utils";
 import { useAppTranslate } from "@/shared/hooks";
 import type { SchemaAiTaskMessageResponse } from "@/shared/api";
 import { RegenerateImageDialog } from "./regenerate-dialog";
 import { ResultSpecRobot } from "./result-spec-robot";
-import styles from "./result-card.module.css";
 import type { ImageComparisonItem } from "./image-comparison.types";
+
+const ACTION_BASE_CLASS =
+  "min-h-11 rounded-full transition-[color,background-color,transform] duration-150 active:scale-[0.97] motion-reduce:transition-none motion-reduce:active:scale-100";
+const OVERLAY_ACTION_CLASS = `${ACTION_BASE_CLASS} absolute end-2.5 shadow-[0_0.75rem_2rem_rgb(0_0_0/42%)]`;
+const PRIMARY_ACTION_CLASS = `${ACTION_BASE_CLASS} border border-[color-mix(in_srgb,var(--primary)_72%,white_12%)] bg-linear-135 from-[color-mix(in_srgb,var(--primary)_88%,var(--violet-brand))] to-[color-mix(in_srgb,var(--primary)_58%,var(--background))] px-3.5 text-primary-foreground shadow-[inset_0_1px_rgb(255_255_255/18%),0_0.65rem_1.8rem_color-mix(in_srgb,var(--primary)_22%,transparent)] hover-capable:hover:brightness-110`;
+const SECONDARY_ACTION_CLASS = `${ACTION_BASE_CLASS} px-3.5 text-muted-foreground hover-capable:hover:text-foreground`;
 
 function parseAspectRatio(value: unknown) {
   const match = String(value ?? "").match(/^(\d+(?:\.\d+)?):(\d+(?:\.\d+)?)$/);
@@ -77,14 +83,20 @@ export function ImageResultCard({
     });
   };
   return (
-    <article className={`${styles.reveal} ${styles.stage}`}>
-      <header className={styles.header}>
-        <span className={styles.title}>
-          <span className={styles.titleIcon}>
+    <article className="animate-message-arrival relative isolate mr-auto mb-0 ml-0 w-full max-w-3xl origin-[50%_20%] motion-reduce:animate-none">
+      <header
+        className="mb-3 flex min-h-13 w-full flex-wrap items-center justify-between gap-2.5"
+        dir="rtl"
+      >
+        <span
+          className="flex min-w-0 items-center gap-2.5 text-sm font-bold"
+          dir="rtl"
+        >
+          <span className="aspect-square w-8 flex-none overflow-hidden rounded-[0.65rem] border border-[color-mix(in_srgb,var(--border)_75%,var(--primary)_25%)] bg-black">
             <img
               src="/android-chrome-512x512.png"
               alt=""
-              className={styles.avatar}
+              className="size-full object-contain"
               aria-hidden="true"
             />
           </span>
@@ -93,12 +105,17 @@ export function ImageResultCard({
         <ResultSpecRobot ratio={ratio} resolution={resolution} />
       </header>
       <div
-        className={images.length > 1 ? styles.gallery : styles.singleGallery}
+        className={
+          images.length > 1
+            ? "grid grid-cols-2 gap-3 ps-10.5 max-sm:grid-cols-1 max-sm:ps-0"
+            : "flex justify-start"
+        }
+        dir={images.length > 1 ? undefined : "ltr"}
       >
         {images.map((fileId, index) => (
           <div
             key={fileId}
-            className={styles.artwork}
+            className="[&>div]:border-foreground/9 relative w-full overflow-hidden rounded-2xl shadow-[0_1rem_2.75rem_rgb(0_0_0/38%)] max-sm:max-w-full! max-sm:rounded-[0.85rem] [&>div]:rounded-2xl [&>div]:bg-black"
             style={
               images.length === 1
                 ? {
@@ -133,7 +150,10 @@ export function ImageResultCard({
                   (missingIds.has(fileId) && !comparedImageIds?.has(fileId)) ||
                   (comparisonLimitReached && !comparedImageIds?.has(fileId))
                 }
-                className={styles.compareAction}
+                className={cn(
+                  OVERLAY_ACTION_CLASS,
+                  "hover-capable:hover:bg-[rgb(20_18_28/90%)] supports-[not(backdrop-filter:blur(1px))]:bg-card top-2.5 border-white/12 bg-[rgb(9_9_14/78%)] backdrop-blur-[14px] backdrop-saturate-125",
+                )}
                 onClick={() => onToggleComparison(getComparisonItem(fileId))}
               >
                 {comparedImageIds?.has(fileId) ? (
@@ -154,7 +174,7 @@ export function ImageResultCard({
                 size="sm"
                 variant="secondary"
                 disabled={disabled || missingIds.has(fileId)}
-                className={styles.imageAction}
+                className={cn(OVERLAY_ACTION_CLASS, "bottom-2.5")}
                 onClick={() => onUseAsReference(fileId)}
               >
                 <ImagePlus aria-hidden="true" />
@@ -164,13 +184,13 @@ export function ImageResultCard({
           </div>
         ))}
       </div>
-      <footer className={styles.toolbar}>
+      <footer className="mt-2.5 mr-auto ml-0 flex flex-wrap items-center gap-1.5 max-sm:ms-0">
         {onUseAsReference && images[0] && images.length === 1 ? (
           <Button
             type="button"
             variant="default"
             disabled={disabled || missingIds.has(images[0])}
-            className={styles.primaryAction}
+            className={PRIMARY_ACTION_CLASS}
             onClick={() => onUseAsReference(images[0])}
           >
             <ImagePlus aria-hidden="true" />
@@ -188,7 +208,7 @@ export function ImageResultCard({
                 !comparedImageIds?.has(images[0])) ||
               (comparisonLimitReached && !comparedImageIds?.has(images[0]))
             }
-            className={styles.secondaryAction}
+            className={SECONDARY_ACTION_CLASS}
             onClick={() => onToggleComparison(getComparisonItem(images[0]))}
           >
             {comparedImageIds?.has(images[0]) ? (
@@ -209,7 +229,7 @@ export function ImageResultCard({
               type="button"
               variant="ghost"
               disabled={disabled}
-              className={styles.secondaryAction}
+              className={SECONDARY_ACTION_CLASS}
               onClick={() => onEditRequest(source)}
             >
               <PencilLine aria-hidden="true" />
@@ -221,7 +241,7 @@ export function ImageResultCard({
             type="button"
             variant="ghost"
             disabled={disabled}
-            className={styles.secondaryAction}
+            className={SECONDARY_ACTION_CLASS}
             onClick={() => setConfirmOpen(true)}
           >
             <RotateCcw aria-hidden="true" />
