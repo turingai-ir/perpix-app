@@ -4,7 +4,7 @@ import { useGSAP } from "@gsap/react";
 
 import { useAppTranslate } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";
-import styles from "../login.module.css";
+import styles from "./auth-celebration.module.css";
 
 gsap.registerPlugin(useGSAP);
 

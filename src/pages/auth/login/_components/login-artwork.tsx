@@ -1,5 +1,5 @@
 import type { PointerEvent } from "react";
-import styles from "../login.module.css";
+import styles from "./login-artwork.module.css";
 
 export default function LoginArtwork() {
   function moveLight(event: PointerEvent<HTMLDivElement>) {
