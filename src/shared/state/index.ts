@@ -5,7 +5,10 @@ import {
   type Language,
   type Theme,
 } from "@/shared/utils/consts-only";
-import { atomWithSyncStorage, createSyncJotaiStorage } from "@/shared/lib/jotai";
+import {
+  atomWithSyncStorage,
+  createSyncJotaiStorage,
+} from "@/shared/lib/jotai";
 
 // const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
 

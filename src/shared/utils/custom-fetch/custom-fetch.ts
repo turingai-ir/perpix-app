@@ -127,7 +127,11 @@ export function createCustomFetch(
         await fakeDelay(currentDelay, combinedSignal);
         currentDelay = Math.min(currentDelay * 2, maxRetryDelay);
         retriesLeft--;
-        onRetryAttempt?.({ attempt, error: lastError, nextDelayMs: currentDelay });
+        onRetryAttempt?.({
+          attempt,
+          error: lastError,
+          nextDelayMs: currentDelay,
+        });
       }
       throw lastError;
     } catch (error) {
@@ -139,7 +143,8 @@ export function createCustomFetch(
       }
       let failure = error;
       if (timeoutTriggered) failure = new FetchTimeoutError(error, input);
-      else if (error instanceof Response) failure = new FetchHttpError(error, input);
+      else if (error instanceof Response)
+        failure = new FetchHttpError(error, input);
       onFinalError?.(failure);
       throw failure;
     } finally {

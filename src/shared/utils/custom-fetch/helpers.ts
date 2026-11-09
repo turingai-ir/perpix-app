@@ -75,10 +75,7 @@ export function isErrorAbortError(error: unknown): boolean {
   );
 }
 
-export function createTimeoutScope(
-  timeoutMs: number,
-  onTimeout?: () => void,
-) {
+export function createTimeoutScope(timeoutMs: number, onTimeout?: () => void) {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => {
     try {

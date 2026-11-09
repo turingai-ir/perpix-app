@@ -7,7 +7,10 @@ import {
 } from "@/features/file-manager";
 import { useAppTranslate } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";
-import { getClipboardImage, toClipboardImageFile } from "../services/clipboard-image";
+import {
+  getClipboardImage,
+  toClipboardImageFile,
+} from "../services/clipboard-image";
 import { useMediaFilePicker } from "./use-media-file-picker";
 import type {
   LocalMediaItem,

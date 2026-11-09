@@ -3,7 +3,10 @@ import { BadgeCheck, RotateCcw, Sparkles } from "lucide-react";
 import { motion } from "motion/react";
 
 import styles from "./identity-card.module.css";
-import { useIdentityCard, type UseIdentityCardProps } from "../../hooks/use-identity-card";
+import {
+  useIdentityCard,
+  type UseIdentityCardProps,
+} from "../../hooks/use-identity-card";
 
 export type IdentityCardProps = UseIdentityCardProps;
 

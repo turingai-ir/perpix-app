@@ -42,7 +42,10 @@ export function useRootLayout() {
 
   useEffect(() => {
     const errorhandler = async (error: unknown) => {
-      if (error instanceof FetchNetworkError || error instanceof FetchTimeoutError) {
+      if (
+        error instanceof FetchNetworkError ||
+        error instanceof FetchTimeoutError
+      ) {
         toast.error(t("common.fetchErrors.network"));
         return;
       }
@@ -79,10 +82,7 @@ export function useRootLayout() {
             const parseError = await error.response.clone().json();
             if (typeof parseError?.detail === "string") {
               toast.error(parseError.detail);
-            } else if (
-              parseError?.detail &&
-              Array.isArray(parseError.detail)
-            ) {
+            } else if (parseError?.detail && Array.isArray(parseError.detail)) {
               const messages: string[] = [];
               parseError.detail.forEach((i: any) => {
                 if (i?.msg && typeof i?.msg === "string") {

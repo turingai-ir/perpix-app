@@ -33,5 +33,7 @@ export function createProfileSettingsSchema(t: TFunction) {
   });
 }
 
-export type ProfileSettingsSchema = ReturnType<typeof createProfileSettingsSchema>;
+export type ProfileSettingsSchema = ReturnType<
+  typeof createProfileSettingsSchema
+>;
 export type ProfileSettingsFormValues = z.infer<ProfileSettingsSchema>;

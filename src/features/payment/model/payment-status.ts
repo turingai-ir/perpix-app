@@ -6,11 +6,7 @@ type PaymentState = Pick<
 >;
 
 export type PaymentViewStatus =
-  | "pending"
-  | "processing"
-  | "succeeded"
-  | "failed"
-  | "review";
+  "pending" | "processing" | "succeeded" | "failed" | "review";
 
 export function getPaymentViewStatus(payment: PaymentState): PaymentViewStatus {
   if (payment.requires_review || payment.fulfillment_status === "NEEDS_REVIEW")

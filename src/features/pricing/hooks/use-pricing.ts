@@ -18,7 +18,7 @@ import { usePricingFeature } from "./use-pricing-feature";
 import { pricingFeatureAtom } from "./pricing-state";
 import { resolvePlanTiers } from "../model/plan-tiers";
 
-const normalizeList = <T,>(value: unknown): T[] => {
+const normalizeList = <T>(value: unknown): T[] => {
   if (!value) return [];
   return Array.isArray(value) ? [...value] : Array.from(value as ArrayLike<T>);
 };
@@ -128,7 +128,12 @@ export function usePricing() {
       }
       closePricingFeature();
     },
-    [closePricingFeature, openPricingFeature, requiredModelNames, requiredScopes],
+    [
+      closePricingFeature,
+      openPricingFeature,
+      requiredModelNames,
+      requiredScopes,
+    ],
   );
 
   return {

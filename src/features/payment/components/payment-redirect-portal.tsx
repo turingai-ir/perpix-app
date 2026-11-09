@@ -3,7 +3,6 @@ import { PaymentConfirmationDialog } from "./payment-confirmation-dialog";
 import type { SchemaPaymentResponse } from "@/shared/api";
 import { isSafeExternalUrl } from "@/shared/utils/safe-external-url";
 
-
 type PendingPayment = SchemaPaymentResponse & { payment_url: string };
 type PaymentRedirectListener = (payment: PendingPayment) => void;
 const paymentRedirectListeners = new Set<PaymentRedirectListener>();

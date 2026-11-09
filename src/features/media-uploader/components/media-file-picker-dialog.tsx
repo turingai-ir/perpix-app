@@ -18,7 +18,9 @@ import {
 
 export type MediaFilePickerDialogProps = UseMediaFilePickerDialogOptions;
 
-export const MediaFilePickerDialog: FC<MediaFilePickerDialogProps> = (props) => {
+export const MediaFilePickerDialog: FC<MediaFilePickerDialogProps> = (
+  props,
+) => {
   const {
     accept,
     disabled,

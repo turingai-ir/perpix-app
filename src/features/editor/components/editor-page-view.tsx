@@ -1,8 +1,5 @@
 import type { FC } from "react";
-import {
-  EditorPageLoadError,
-  EditorPageLoading,
-} from "./editor-page-state";
+import { EditorPageLoadError, EditorPageLoading } from "./editor-page-state";
 import { EditorUploaderEmpty } from "./editor-uploader-empty";
 import { ImageEditor } from "./image-editor";
 import { useEditorPage } from "../hooks/use-editor-page";

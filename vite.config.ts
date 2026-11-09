@@ -20,52 +20,59 @@ const devAppOrigin = "http://localhost:5173";
 
 export default defineConfig(({ mode }) => {
   const frontendQa = process.env.PERPIX_FRONTEND_QA === "1";
-  const authApiTarget = frontendQa ? "http://127.0.0.1:9" : loadEnv(
-    mode,
-    process.cwd(),
-    "VITE_",
-  ).VITE_PERPIX_API_URL;
+  const authApiTarget = frontendQa
+    ? "http://127.0.0.1:9"
+    : loadEnv(mode, process.cwd(), "VITE_").VITE_PERPIX_API_URL;
 
   return {
     envDir: frontendQa ? false : undefined,
-    cacheDir: frontendQa ? path.resolve(process.cwd(), ".qa-cache/vite") : undefined,
+    cacheDir: frontendQa
+      ? path.resolve(process.cwd(), ".qa-cache/vite")
+      : undefined,
     define: {
       __APP_RELEASE__: JSON.stringify(appRelease),
     },
-    plugins: [react(), tailwindcss(), legacy({}), ...(frontendQa ? [frontendQaGuard()] : [])],
+    plugins: [
+      react(),
+      tailwindcss(),
+      legacy({}),
+      ...(frontendQa ? [frontendQaGuard()] : []),
+    ],
     server: {
       host: "localhost",
       port: 5173,
       strictPort: true,
-      proxy: frontendQa ? undefined : {
-        "/api/v1/auth": {
-          target: authApiTarget,
-          changeOrigin: true,
-          cookieDomainRewrite: "",
-          configure: (proxy) => {
-            const apiOrigin = new URL(authApiTarget).origin;
-            proxy.on("proxyReq", (proxyRequest, request) => {
-              const requestOrigin = request.headers.origin;
-              if (requestOrigin && requestOrigin !== devAppOrigin) return;
+      proxy: frontendQa
+        ? undefined
+        : {
+            "/api/v1/auth": {
+              target: authApiTarget,
+              changeOrigin: true,
+              cookieDomainRewrite: "",
+              configure: (proxy) => {
+                const apiOrigin = new URL(authApiTarget).origin;
+                proxy.on("proxyReq", (proxyRequest, request) => {
+                  const requestOrigin = request.headers.origin;
+                  if (requestOrigin && requestOrigin !== devAppOrigin) return;
 
-              if (requestOrigin === devAppOrigin) {
-                proxyRequest.setHeader("Origin", apiOrigin);
-              }
+                  if (requestOrigin === devAppOrigin) {
+                    proxyRequest.setHeader("Origin", apiOrigin);
+                  }
 
-              const referer = request.headers.referer;
-              if (!referer || !URL.canParse(referer)) return;
+                  const referer = request.headers.referer;
+                  if (!referer || !URL.canParse(referer)) return;
 
-              const refererUrl = new URL(referer);
-              if (refererUrl.origin !== devAppOrigin) return;
+                  const refererUrl = new URL(referer);
+                  if (refererUrl.origin !== devAppOrigin) return;
 
-              proxyRequest.setHeader(
-                "Referer",
-                `${apiOrigin}${refererUrl.pathname}${refererUrl.search}`,
-              );
-            });
+                  proxyRequest.setHeader(
+                    "Referer",
+                    `${apiOrigin}${refererUrl.pathname}${refererUrl.search}`,
+                  );
+                });
+              },
+            },
           },
-        },
-      },
       watch: {
         // Linux inotify limits are shared with editors and other dev servers.
         usePolling: frontendQa || process.platform === "linux",

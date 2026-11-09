@@ -54,7 +54,9 @@ export const GalleryPage: FC = () => {
         onCompact={setCompact}
         count={files.length}
       />
-      {userFilesState.isPending && files.length === 0 ? <GallerySkeleton /> : null}
+      {userFilesState.isPending && files.length === 0 ? (
+        <GallerySkeleton />
+      ) : null}
       {userFilesState.isError ? (
         <div role="alert" className="mb-6 space-y-3 rounded-2xl border p-5">
           <p className="flex items-center gap-2">

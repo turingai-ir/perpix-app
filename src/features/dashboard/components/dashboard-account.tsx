@@ -1,7 +1,10 @@
 import { Link } from "react-router";
 
 import { DashboardAccountMetrics } from "./dashboard-account-metrics";
-import { GLASS_PANEL_CLASS, SECTION_LINK_CLASS } from "../model/dashboard-styles";
+import {
+  GLASS_PANEL_CLASS,
+  SECTION_LINK_CLASS,
+} from "../model/dashboard-styles";
 import { DashboardSectionHeader } from "./dashboard-parts";
 
 import { Skeleton } from "@/shared/ui/skeleton";

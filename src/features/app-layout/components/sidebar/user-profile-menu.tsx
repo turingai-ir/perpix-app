@@ -112,13 +112,19 @@ const AppLayoutSidebarUserProfileMenu: FC<UserProfileMenuProps> = ({
           </DropdownMenuLabel>
         </DropdownMenuGroup>
         <DropdownMenuGroup className="mt-2 grid gap-1">
-          <DropdownMenuItem className={MENU_ITEM_CLASS} onClick={navigateToProfile}>
+          <DropdownMenuItem
+            className={MENU_ITEM_CLASS}
+            onClick={navigateToProfile}
+          >
             <IconTile data-slot="icon-tile" className={MENU_ICON_CLASS}>
               <AccountIcon aria-hidden="true" />
             </IconTile>
             <span>{t("pages.app.layout.sidebar.user.manageAccount")}</span>
           </DropdownMenuItem>
-          <DropdownMenuItem className={MENU_ITEM_CLASS} onClick={handleOpenPricing}>
+          <DropdownMenuItem
+            className={MENU_ITEM_CLASS}
+            onClick={handleOpenPricing}
+          >
             <IconTile data-slot="icon-tile" className={MENU_ICON_CLASS}>
               <Crown aria-hidden="true" />
             </IconTile>

@@ -7,7 +7,12 @@ import { usePayments } from "./payment-queries";
 import { getPaymentViewStatus } from "../model/payment-status";
 
 export const PAYMENT_PAGE_LIMIT = 100;
-export const paymentFilters = ["all", "succeeded", "pending", "failed"] as const;
+export const paymentFilters = [
+  "all",
+  "succeeded",
+  "pending",
+  "failed",
+] as const;
 export type PaymentFilterType = (typeof paymentFilters)[number];
 
 export function usePaymentsPage() {
