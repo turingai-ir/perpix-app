@@ -1,10 +1,8 @@
 import { type FC } from "react";
 import { FaTelegramPlane } from "react-icons/fa";
-// import { MessageCircle } from "lucide-react";
 
 import { buttonVariants } from "@/shared/ui/button";
 import { cn } from "@/shared/lib/utils";
-// import { useSupportChatWidget } from "@/features/support-chat";
 import { useAppTranslate } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";
 import AppLayoutSidebarPlanCard from "./plan-card";
@@ -12,20 +10,11 @@ import { GLASS_PRESS_CLASS } from "./sidebar-styles";
 
 const AppLayoutSidebarUserActions: FC = () => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
-  // const { openChatWidget } = useSupportChatWidget();
   const telegramSupportUrl = import.meta.env.VITE_APP_TELEGRAM_SUPPORT;
 
   return (
     <div className="flex w-full flex-col gap-2">
       <AppLayoutSidebarPlanCard />
-      {/* <Button
-        className="w-full justify-start"
-        variant="ghost"
-        onClick={() => openChatWidget()}
-      >
-        <MessageCircle />
-        {t("pages.app.layout.sidebar.user.chatSupport")}
-      </Button> */}
       <a
         href={telegramSupportUrl}
         rel="noreferrer"

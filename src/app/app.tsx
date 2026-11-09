@@ -30,7 +30,6 @@ function App() {
         <QueryClientProvider client={queryClient}>
           <Toaster duration={4000} richColors position="top-center" />
           <RuntimeCleanup />
-          {/* <SupportChatProvider /> */}
           <Suspense fallback={null}>
             {pricingWasOpened && <PricingFeature />}
           </Suspense>

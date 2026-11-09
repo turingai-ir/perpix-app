@@ -77,7 +77,10 @@ test("stops reloading when a nested route stays unavailable", async ({
       return route.abort("blockedbyclient");
     }
     const path = decodeURIComponent(url.pathname);
-    if (path.includes("/pages/(app)/_layout")) {
+    if (
+      path.includes("/pages/(app)/_layout") ||
+      path.includes("/features/app-layout")
+    ) {
       return route.fulfill({
         contentType: "application/javascript",
         body: `
