@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-import { mockAuthenticatedSession } from "../../../../../__tests__/support/auth-session";
+import { mockAuthenticatedSession } from "../../../../../../__tests__/support/auth-session";
 
 const DAY = 24 * 60 * 60 * 1000;
 

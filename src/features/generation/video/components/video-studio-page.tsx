@@ -74,8 +74,13 @@ const GenerationVideoSession: FC = () => {
               </p>
             </div>
           ) : null}
-          <div className="col-start-2 row-start-1 flex min-h-0 w-full flex-col max-[950px]:order-[-1]">
-            {isBusy ? <GenerationFocusState phase={focusPhase} /> : null}
+          <div
+            className="relative z-20 col-start-2 row-start-1 m-0 flex min-h-0 w-full flex-col overflow-hidden p-0 *:shrink-0 max-[950px]:order-[-1] max-[950px]:overflow-visible [&>[data-generation-composer-card]]:min-h-0 [&>[data-generation-composer-card]]:flex-1"
+            data-generation-composer
+          >
+            {isBusy ? (
+              <GenerationFocusState phase={focusPhase} media="video" />
+            ) : null}
             <GenerationVideoPromptBox
               initialPrompt={initialPrompt}
               isLoading={isBusy}
