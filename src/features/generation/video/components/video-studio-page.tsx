@@ -1,36 +1,20 @@
-import { Activity } from "react";
-import { useLocation, useParams } from "react-router";
+import { Activity, type FC } from "react";
+import { useParams } from "react-router";
 
-import { GenerationVideoChats, GenerationVideoPromptBox } from "./index.ts";
+import { GenerationVideoChats, GenerationVideoPromptBox } from "./index";
 import { VideoBrandCinema } from "./brand-cinema";
 import { GenerationHistoryError } from "../../components/generation-history-error";
-import {
-  GenerationFocusState,
-  type GenerationFocusPhase,
-} from "../../components/generation-focus-state";
-import { GeneratedMediaField, useGenerationPage } from "../../hooks";
-import { getGenerationDraftPrompt } from "../../hooks/generation-draft";
-
+import { GenerationFocusState } from "../../components/generation-focus-state";
+import { useVideoStudio } from "../hooks/use-video-studio";
 import LoadingSection from "@/shared/components/loading-section";
-import { useAppTranslate } from "@/shared/hooks";
 import { APP_ROUTES_KEY } from "@/app/router/routes";
-import { AiRegistryModelSupportedTypesEnumMap } from "@/shared/api";
-import { APP_I18_KEYS } from "@/shared/i18n";
 
-function getFocusPhase(
-  optimisticStatus: string | undefined,
-  taskStatus: string | null | undefined,
-): GenerationFocusPhase {
-  if (optimisticStatus === "submitting") return "submitting";
-  if (taskStatus === "IN_PROGRESS") return "processing";
-  return "queued";
-}
-
-function GenerationVideoSession() {
-  const location = useLocation();
-  const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
-  const initialPrompt = getGenerationDraftPrompt(location.state);
+const GenerationVideoSession: FC = () => {
   const {
+    t,
+    initialPrompt,
+    focusPhase,
+    lastTaskStatus,
     displayedMessages,
     handleForm,
     handleRetry,
@@ -44,14 +28,7 @@ function GenerationVideoSession() {
     optimisticTurn,
     shouldShowIntro,
     successfulMessageClearKey,
-  } = useGenerationPage({
-    generatedMediaField: GeneratedMediaField.VIDEO,
-    historyPath: APP_ROUTES_KEY.generation.video.history.path,
-    taskType: AiRegistryModelSupportedTypesEnumMap.VIDEO,
-  });
-  const lastTaskStatus =
-    lastAssistantMessage?.task_status ?? lastTaskMessage?.task_status;
-  const focusPhase = getFocusPhase(optimisticTurn?.status, lastTaskStatus);
+  } = useVideoStudio();
 
   return (
     <main className="bg-background text-foreground relative isolate flex h-[calc(100dvh-72px)] min-h-140 w-full min-w-0 flex-col overflow-hidden overscroll-y-contain p-3 [-webkit-tap-highlight-color:transparent] max-[950px]:h-auto max-[950px]:min-h-[calc(100dvh-72px)] max-[950px]:overflow-visible max-[950px]:p-2.5">
@@ -61,14 +38,14 @@ function GenerationVideoSession() {
         </div>
       ) : null}
 
-      {historyError && (
+      {historyError ? (
         <GenerationHistoryError
           kind={historyError}
           isRetrying={isRetryingHistory}
           newConversationPath={APP_ROUTES_KEY.generation.video.path}
           onRetry={retryHistory}
         />
-      )}
+      ) : null}
       <Activity mode={isTaskLoading || historyError ? "hidden" : "visible"}>
         <div className="relative z-1 mx-auto grid min-h-0 w-full max-w-none grid-cols-[minmax(0,1fr)_minmax(360px,410px)] grid-rows-[minmax(0,1fr)] items-stretch gap-3 [direction:ltr] *:[direction:rtl] max-[950px]:flex max-[950px]:flex-col max-[950px]:[direction:rtl]">
           <section
@@ -97,23 +74,18 @@ function GenerationVideoSession() {
               </p>
             </div>
           ) : null}
-          <div
-            className="relative z-20 col-start-2 row-start-1 m-0 flex min-h-0 w-full flex-col overflow-hidden p-0 *:shrink-0 max-[950px]:order-[-1] max-[950px]:overflow-visible [&>[data-generation-composer-card]]:min-h-0 [&>[data-generation-composer-card]]:flex-1"
-            data-generation-composer
-          >
-            {isBusy ? (
-              <GenerationFocusState phase={focusPhase} media="video" />
-            ) : null}
+          <div className="col-start-2 row-start-1 flex min-h-0 w-full flex-col max-[950px]:order-[-1]">
+            {isBusy ? <GenerationFocusState phase={focusPhase} /> : null}
             <GenerationVideoPromptBox
               initialPrompt={initialPrompt}
               isLoading={isBusy}
               lastMessageConfig={
-                lastAssistantMessage?.ai_model_config ??
-                lastTaskMessage?.ai_model_config
+                lastTaskMessage?.ai_model_config ??
+                lastAssistantMessage?.ai_model_config
               }
               lastMessageModelUuid={
-                lastAssistantMessage?.ai_model_uuid ??
-                lastTaskMessage?.ai_model_uuid
+                lastTaskMessage?.ai_model_uuid ??
+                lastAssistantMessage?.ai_model_uuid
               }
               lastMessageStatus={lastTaskStatus}
               onSubmit={handleForm}
@@ -124,10 +96,11 @@ function GenerationVideoSession() {
       </Activity>
     </main>
   );
-}
+};
 
-const GenerationVideoPage = () => {
+export const GenerationVideoPage: FC = () => {
   const { chatId } = useParams<{ chatId?: string }>();
+
   return <GenerationVideoSession key={chatId ?? "new"} />;
 };
 

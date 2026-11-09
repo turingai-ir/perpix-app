@@ -1,5 +1,5 @@
-import { Activity, startTransition, useState } from "react";
-import { useLocation, useParams } from "react-router";
+import { Activity, type FC } from "react";
+import { useParams } from "react-router";
 import { Sparkles } from "lucide-react";
 import StudioLogo from "./studio-logo";
 import { NeuralNetworkBackground } from "./neural-network-background";
@@ -11,44 +11,28 @@ import {
   STUDIO_PAGE_CLASS,
 } from "./studio-styles";
 
-import { GenerationImageChats, GenerationImagePromptBox } from "./index.ts";
-import {
-  GenerationFocusState,
-  type GenerationFocusPhase,
-} from "../../components/generation-focus-state";
+import { GenerationImageChats, GenerationImagePromptBox } from "./index";
+import { GenerationFocusState } from "../../components/generation-focus-state";
 import { ImageComparison } from "./image-comparison";
 import { GenerationHistoryError } from "../../components/generation-history-error";
-import type { ImageComparisonItem } from "./image-comparison.types";
-import { GeneratedMediaField, useGenerationPage } from "../../hooks";
-import { getGenerationDraftPrompt } from "../../hooks/generation-draft";
-
+import { useImageStudio } from "../hooks/use-image-studio";
 import LoadingSection from "@/shared/components/loading-section";
-import { useAppTranslate } from "@/shared/hooks";
 import { APP_ROUTES_KEY } from "@/app/router/routes";
-import { AiRegistryModelSupportedTypesEnumMap } from "@/shared/api";
-import { APP_I18_KEYS } from "@/shared/i18n";
-import { appEventBus } from "@/shared/lib/event-bus";
-import type { GenerationComposerIntent } from "../../model/conversation";
 
-function getFocusPhase(
-  optimisticStatus: string | undefined,
-  taskStatus: string | null | undefined,
-): GenerationFocusPhase {
-  if (optimisticStatus === "submitting") return "submitting";
-  if (taskStatus === "IN_PROGRESS") return "processing";
-  return "queued";
-}
-
-const GenerationImageSession = () => {
-  const location = useLocation();
-  const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
-  const initialPrompt = getGenerationDraftPrompt(location.state);
-  const [composerIntent, setComposerIntent] =
-    useState<GenerationComposerIntent>();
-  const [comparisonItems, setComparisonItems] = useState<ImageComparisonItem[]>(
-    [],
-  );
+const GenerationImageSession: FC = () => {
   const {
+    t,
+    initialPrompt,
+    composerIntent,
+    setComposerIntent,
+    comparisonItems,
+    handleToggleComparison,
+    handleRemoveComparison,
+    handleClearComparison,
+    handleUseAsReference,
+    handleEditRequest,
+    focusPhase,
+    lastTaskStatus,
     displayedMessages,
     handleForm,
     handleRetry,
@@ -62,26 +46,7 @@ const GenerationImageSession = () => {
     optimisticTurn,
     successfulMessageClearKey,
     shouldShowIntro,
-  } = useGenerationPage({
-    generatedMediaField: GeneratedMediaField.IMAGE,
-    historyPath: APP_ROUTES_KEY.generation.image.history.path,
-    taskType: AiRegistryModelSupportedTypesEnumMap.IMAGE,
-  });
-  const lastTaskStatus =
-    lastAssistantMessage?.task_status ?? lastTaskMessage?.task_status;
-  const focusPhase = getFocusPhase(optimisticTurn?.status, lastTaskStatus);
-
-  const handleToggleComparison = (item: ImageComparisonItem) => {
-    startTransition(() => {
-      setComparisonItems((current) => {
-        if (current.some(({ fileId }) => fileId === item.fileId)) {
-          return current.filter(({ fileId }) => fileId !== item.fileId);
-        }
-        if (current.length >= 4) return current;
-        return [...current, item];
-      });
-    });
-  };
+  } = useImageStudio();
 
   return (
     <div
@@ -96,14 +61,15 @@ const GenerationImageSession = () => {
         </div>
       ) : null}
 
-      {historyError && (
+      {historyError ? (
         <GenerationHistoryError
           kind={historyError}
           isRetrying={isRetryingHistory}
           newConversationPath={APP_ROUTES_KEY.generation.image.path}
           onRetry={retryHistory}
         />
-      )}
+      ) : null}
+
       <Activity mode={isTaskLoading || historyError ? "hidden" : "visible"}>
         <>
           <section
@@ -120,33 +86,8 @@ const GenerationImageSession = () => {
               onToggleComparison={handleToggleComparison}
               onRetry={handleRetry}
               optimisticTurn={optimisticTurn}
-              onUseAsReference={(fileId) => {
-                startTransition(() => {
-                  setComposerIntent({
-                    id: crypto.randomUUID(),
-                    config: { reference_images: [fileId] },
-                    mergeReferences: true,
-                    requiredFields: ["reference_images"],
-                  });
-                });
-                appEventBus.emit("SCROLL_APP_LAYOUT_UNTIL_END", {
-                  force: true,
-                });
-              }}
-              onEditRequest={(message) => {
-                const modelUuid = message.ai_model_uuid;
-                if (!modelUuid) return;
-                startTransition(() => {
-                  setComposerIntent({
-                    id: crypto.randomUUID(),
-                    config: message.ai_model_config,
-                    modelUuid,
-                  });
-                });
-                appEventBus.emit("SCROLL_APP_LAYOUT_UNTIL_END", {
-                  force: true,
-                });
-              }}
+              onUseAsReference={handleUseAsReference}
+              onEditRequest={handleEditRequest}
               onRegenerate={handleRetry}
             />
           </section>
@@ -181,12 +122,8 @@ const GenerationImageSession = () => {
               <ImageComparison
                 disabled={isBusy}
                 items={comparisonItems}
-                onClear={() => setComparisonItems([])}
-                onRemove={(fileId) =>
-                  setComparisonItems((current) =>
-                    current.filter((item) => item.fileId !== fileId),
-                  )
-                }
+                onClear={handleClearComparison}
+                onRemove={handleRemoveComparison}
               />
               {isBusy ? <GenerationFocusState phase={focusPhase} /> : null}
               <GenerationImagePromptBox
@@ -218,7 +155,7 @@ const GenerationImageSession = () => {
   );
 };
 
-const GenerationImagePage = () => {
+export const GenerationImagePage: FC = () => {
   const { chatId } = useParams<{ chatId?: string }>();
 
   return <GenerationImageSession key={chatId ?? "new"} />;

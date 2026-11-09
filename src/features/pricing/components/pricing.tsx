@@ -1,16 +1,9 @@
-import { useCallback, useMemo } from "react";
-import { useAtomValue } from "jotai";
+import type { FC } from "react";
 
 import { Button } from "@/shared/ui/button";
 import { ScrollArea } from "@/shared/ui/scroll-area";
-import { useAppTranslate } from "@/shared/hooks";
 import LoadingSection from "@/shared/components/loading-section";
 import ErrorSection from "@/shared/components/error-section";
-import {
-  type SchemaSubscriptionPlanListResponse,
-  type SchemaSubscriptionPlanResponse,
-  type SchemaUserSubscriptionResponse,
-} from "@/shared/api";
 import {
   Sheet,
   SheetContent,
@@ -18,144 +11,29 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/shared/ui/sheet";
-import { APP_I18_KEYS } from "@/shared/i18n";
-import {
-  useActiveSubscription,
-  usePurchaseSubscription,
-  useSubscriptionPlans,
-} from "../hooks/pricing-queries";
-import { usePaymentRedirect } from "@/features/payment";
-import { usePricingFeature } from "../hooks/use-pricing-feature";
-import { pricingFeatureAtom } from "../hooks/pricing-state";
+import { usePricing, isPurchasablePrice } from "../hooks/use-pricing";
 import PricingPlanCard from "./pricing-plan-card";
 import PricingPlanAction from "./pricing-plan-action";
-import { getPlanAccess, resolvePlanTiers } from "../model/plan-tiers";
+import { getPlanAccess } from "../model/plan-tiers";
 
-const normalizeList = <T,>(value: unknown): T[] => {
-  if (!value) {
-    return [];
-  }
-  return Array.isArray(value) ? [...value] : Array.from(value as ArrayLike<T>);
-};
-
-const isPurchasablePrice = (plan: SchemaSubscriptionPlanResponse) =>
-  typeof plan.base_price_irr === "number" &&
-  Number.isSafeInteger(plan.base_price_irr) &&
-  typeof plan.discounted_price_irr === "number" &&
-  Number.isSafeInteger(plan.discounted_price_irr);
-
-const HEADER_KEYS = {
-  default: {
-    title: "features.pricing.title",
-    description: "features.pricing.description",
-  },
-  upgrade: {
-    title: "features.pricing.upgradeTitle",
-    description: "features.pricing.upgradeDescription",
-  },
-  renew: {
-    title: "features.pricing.renewTitle",
-    description: "features.pricing.renewDescription",
-  },
-} as const;
-
-const getHeaderKey = (
-  hasPaidPlan: boolean,
-  isExpiring: boolean,
-): keyof typeof HEADER_KEYS => {
-  if (!hasPaidPlan) return "default";
-  return isExpiring ? "renew" : "upgrade";
-};
-
-function PricingFeature() {
-  const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
-  const { open, requiredModelNames, requiredScopes } =
-    useAtomValue(pricingFeatureAtom);
-  const { openPricingFeature, closePricingFeature } = usePricingFeature();
-
-  const plansState = useSubscriptionPlans(open);
-  const activeSubscriptionState = useActiveSubscription(open);
-  const purchaseSubscriptionState = usePurchaseSubscription();
-  const { openPaymentUrl } = usePaymentRedirect();
-
-  const planItems = useMemo(
-    () =>
-      normalizeList<SchemaSubscriptionPlanListResponse["items"][number]>(
-        plansState.data?.items,
-      ),
-    [plansState.data?.items],
-  );
-
-  const tiers = useMemo(
-    () =>
-      resolvePlanTiers(
-        planItems as readonly SchemaSubscriptionPlanResponse[],
-        activeSubscriptionState.data as
-          SchemaUserSubscriptionResponse | undefined,
-      ),
-    [activeSubscriptionState.data, planItems],
-  );
-
-  const hasRequirements =
-    requiredScopes.length > 0 || requiredModelNames.length > 0;
-
-  const plans = useMemo(() => {
-    // A paid action needs specific scopes/models: only offer purchasable plans.
-    // Otherwise show the whole ladder, with unavailable plans locked.
-    const candidates = hasRequirements
-      ? [
-          ...(tiers.canRenew && tiers.currentPlan ? [tiers.currentPlan] : []),
-          ...tiers.upgrades,
-        ]
-      : tiers.ladder;
-    return candidates.filter(
-      (plan) =>
-        requiredScopes.every((scope) => plan.scopes.includes(scope)) &&
-        (!requiredModelNames.length ||
-          requiredModelNames.some((modelName) =>
-            plan.allowed_models.includes(modelName),
-          )),
-    );
-  }, [hasRequirements, requiredModelNames, requiredScopes, tiers]);
-
-  const hasPaidPlan = tiers.status !== "free";
-  const isTopTier = hasPaidPlan && tiers.status === "top" && !hasRequirements;
-  const headerKey = getHeaderKey(hasPaidPlan, tiers.isExpiring);
-  const getLevel = (uuid: string) => {
-    const index = tiers.ladder.findIndex((item) => item.uuid === uuid);
-    return index < 0
-      ? undefined
-      : { position: index + 1, total: tiers.ladder.length };
-  };
-
-  const handlePurchasePlan = useCallback(
-    async (planId: string) => {
-      const res = await purchaseSubscriptionState.purchase(planId);
-      if (res.payment_url) {
-        openPaymentUrl(res);
-      } else {
-        window.location.assign(`/payment/verify/${res.execution_uuid}`);
-      }
-    },
-    [purchaseSubscriptionState, openPaymentUrl],
-  );
-
-  const handleOpenChange = useCallback(
-    (nextOpen: boolean) => {
-      if (nextOpen) {
-        openPricingFeature({ requiredModelNames, requiredScopes });
-        return;
-      }
-
-      closePricingFeature();
-    },
-    [
-      closePricingFeature,
-      openPricingFeature,
-      requiredModelNames,
-      requiredScopes,
-    ],
-  );
+export const PricingFeature: FC = () => {
+  const {
+    t,
+    open,
+    handleOpenChange,
+    closePricingFeature,
+    plansState,
+    plans,
+    tiers,
+    hasPaidPlan,
+    isTopTier,
+    headerTitle,
+    headerDescription,
+    getLevel,
+    handlePurchasePlan,
+    isPurchasePending,
+    isPurchasingPlan,
+  } = usePricing();
 
   return (
     <Sheet open={open} onOpenChange={handleOpenChange}>
@@ -165,17 +43,18 @@ function PricingFeature() {
       >
         <SheetHeader className="p-4 sm:p-6">
           <SheetTitle className="text-center text-2xl sm:text-4xl">
-            {t(HEADER_KEYS[headerKey].title)}
+            {t(headerTitle)}
           </SheetTitle>
           <SheetDescription className="text-center text-base sm:text-lg">
-            {t(HEADER_KEYS[headerKey].description)}
+            {t(headerDescription)}
           </SheetDescription>
         </SheetHeader>
 
-        {open && plansState.isLoading && <LoadingSection />}
-        {open && plansState.isError && (
+        {open && plansState.isLoading ? <LoadingSection /> : null}
+
+        {open && plansState.isError ? (
           <ErrorSection onRetry={() => plansState.refetch()} />
-        )}
+        ) : null}
 
         {open && plansState.isSuccess && plans.length === 0 ? (
           <div className="flex min-h-0 flex-1 flex-col items-center gap-6 overflow-y-auto px-6 py-8 text-center">
@@ -252,15 +131,8 @@ function PricingFeature() {
                     kind={getPlanAccess(plan, tiers)}
                     isRecommended={plan.is_recommended}
                     needsConfirm={hasPaidPlan}
-                    isPending={
-                      purchaseSubscriptionState.isPending &&
-                      purchaseSubscriptionState.variables?.body.plan_uuid ===
-                        plan.uuid
-                    }
-                    isDisabled={
-                      purchaseSubscriptionState.isPending ||
-                      !isPurchasablePrice(plan)
-                    }
+                    isPending={isPurchasingPlan(plan.uuid)}
+                    isDisabled={isPurchasePending || !isPurchasablePrice(plan)}
                     onPurchase={() => handlePurchasePlan(plan.uuid)}
                   />
                 </PricingPlanCard>
@@ -271,6 +143,6 @@ function PricingFeature() {
       </SheetContent>
     </Sheet>
   );
-}
+};
 
 export default PricingFeature;

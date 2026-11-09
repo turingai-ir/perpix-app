@@ -1,14 +1,9 @@
-import { useReducedMotion } from "motion/react";
-import { useEffect, useRef, useState } from "react";
-
-import { useAppTranslate } from "@/shared/hooks";
-import { APP_I18_KEYS } from "@/shared/i18n";
-import { shouldShowSplash, useAppReady } from "../hooks/use-app-ready";
+import { useState, type FC } from "react";
+import { shouldShowSplash } from "../hooks/use-app-ready";
+import { useBootSplash, type ReadySource } from "../hooks/use-boot-splash";
 import { BootOffice } from "./boot-office";
 import { BootSplashHud } from "./boot-splash-hud";
 import styles from "./boot-office.module.css";
-
-type ReadySource = Parameters<typeof useAppReady>[0];
 
 export function BootSplash({ router }: { router: ReadySource }) {
   const [show, setShow] = useState(shouldShowSplash);
@@ -17,47 +12,17 @@ export function BootSplash({ router }: { router: ReadySource }) {
   ) : null;
 }
 
-function BootSplashOverlay({
-  router,
-  onVisibilityChange,
-}: {
+interface BootSplashOverlayProps {
   router: ReadySource;
   onVisibilityChange: (visible: boolean) => void;
-}) {
-  const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
-  const reduceMotion = useReducedMotion();
-  const dialog = useRef<HTMLDialogElement>(null);
-  const [skip, setSkip] = useState(false);
-  const [timedOut, setTimedOut] = useState(false);
-  const bypass = skip || timedOut;
-  const fadeOnly = Boolean(reduceMotion) || bypass;
-  const ready = useAppReady(router, fadeOnly ? 0 : 1800, true);
-  const leaving = ready || bypass;
+}
 
-  useEffect(() => {
-    const element = dialog.current;
-    element?.showModal();
-    return () => element?.close();
-  }, []);
-
-  // Route initialization must not leave a native modal blocking the app forever.
-  useEffect(() => {
-    const timer = window.setTimeout(() => setTimedOut(true), 10_000);
-    return () => window.clearTimeout(timer);
-  }, []);
-
-  // Assets and transition events must never hold the application behind the splash.
-  useEffect(() => {
-    if (!leaving) return;
-    const timer = window.setTimeout(
-      () => {
-        dialog.current?.close();
-        onVisibilityChange(false);
-      },
-      fadeOnly ? 180 : 1200,
-    );
-    return () => window.clearTimeout(timer);
-  }, [leaving, fadeOnly, onVisibilityChange]);
+const BootSplashOverlay: FC<BootSplashOverlayProps> = ({
+  router,
+  onVisibilityChange,
+}) => {
+  const { t, dialog, leaving, bypass, handleSkip, handleCancel } =
+    useBootSplash({ router, onVisibilityChange });
 
   return (
     <dialog
@@ -67,13 +32,10 @@ function BootSplashOverlay({
       data-skip={bypass}
       className={styles.overlay}
       aria-label={t("features.bootSplash.loading")}
-      onCancel={(event) => {
-        event.preventDefault();
-        setSkip(true);
-      }}
+      onCancel={handleCancel}
     >
       <BootOffice />
-      <BootSplashHud onSkip={() => setSkip(true)} skipped={bypass} />
+      <BootSplashHud onSkip={handleSkip} skipped={bypass} />
     </dialog>
   );
-}
+};

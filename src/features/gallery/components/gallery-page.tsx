@@ -1,8 +1,6 @@
-import { useMemo, useState } from "react";
+import type { FC } from "react";
 import { AlertCircle, Images, Search } from "lucide-react";
 import { Button } from "@/shared/ui/button";
-import { useAppTranslate } from "@/shared/hooks";
-import { APP_I18_KEYS } from "@/shared/i18n";
 import { GalleryFileCard } from "./gallery-file-card";
 import { GalleryHeader } from "./gallery-header";
 import { GalleryToolbar } from "./gallery-toolbar";
@@ -10,36 +8,32 @@ import { GalleryGrid } from "./gallery-grid";
 import { GalleryViewer } from "./gallery-viewer";
 import { GallerySkeleton } from "./gallery-skeleton";
 import { GalleryState } from "./gallery-state";
-import { useGalleryFiles } from "../hooks/use-gallery-files";
+import { useGallery } from "../hooks/use-gallery";
 
-export default function GalleryPage() {
-  const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
-  const { activeFilter, files, setActiveFilter, userFilesState, loadMoreRef } =
-    useGalleryFiles();
-  const [search, setSearch] = useState("");
-  const [sort, setSort] = useState("original");
-  const [compact, setCompact] = useState(false);
-  const [selected, setSelected] = useState<string | null>(null);
-  const [trigger, setTrigger] = useState<HTMLButtonElement | null>(null);
-  const visible = useMemo(() => {
-    const result = files.filter((file) =>
-      (file.file_name || "")
-        .normalize("NFKC")
-        .toLocaleLowerCase()
-        .includes(search.trim().normalize("NFKC").toLocaleLowerCase()),
-    );
-    if (sort === "name")
-      result.sort((a, b) =>
-        (a.file_name || "").localeCompare(b.file_name || "", "fa", {
-          numeric: true,
-        }),
-      );
-    if (sort === "size")
-      result.sort((a, b) => (b.file_size || 0) - (a.file_size || 0));
-    return result;
-  }, [files, search, sort]);
-  const empty =
-    !userFilesState.isPending && !userFilesState.isError && files.length === 0;
+export const GalleryPage: FC = () => {
+  const {
+    t,
+    activeFilter,
+    setActiveFilter,
+    files,
+    visible,
+    search,
+    setSearch,
+    sort,
+    setSort,
+    compact,
+    setCompact,
+    isEmpty,
+    isSearchEmpty,
+    userFilesState,
+    loadMoreRef,
+    selected,
+    setSelected,
+    trigger,
+    handleOpenViewer,
+    handleCloseViewer,
+  } = useGallery();
+
   return (
     <div
       data-gallery-page
@@ -60,8 +54,8 @@ export default function GalleryPage() {
         onCompact={setCompact}
         count={files.length}
       />
-      {userFilesState.isPending && files.length === 0 && <GallerySkeleton />}
-      {userFilesState.isError && (
+      {userFilesState.isPending && files.length === 0 ? <GallerySkeleton /> : null}
+      {userFilesState.isError ? (
         <div role="alert" className="mb-6 space-y-3 rounded-2xl border p-5">
           <p className="flex items-center gap-2">
             <AlertCircle className="size-5" />
@@ -76,21 +70,21 @@ export default function GalleryPage() {
             {t("pages.gallery.actions.refresh")}
           </Button>
         </div>
-      )}
-      {empty && (
+      ) : null}
+      {isEmpty ? (
         <GalleryState
           icon={<Images className="size-8" />}
           title={t("pages.gallery.empty.title")}
           description={t("pages.gallery.empty.description")}
         />
-      )}
-      {files.length > 0 && visible.length === 0 && (
+      ) : null}
+      {isSearchEmpty ? (
         <GalleryState
           icon={<Search className="size-8" />}
           title={t("pages.gallery.studio.noResults")}
           description={t("pages.gallery.studio.noResultsHint")}
         />
-      )}
+      ) : null}
       <GalleryGrid compact={compact}>
         {visible.map((file, index) => (
           <GalleryFileCard
@@ -98,14 +92,11 @@ export default function GalleryPage() {
             file={file}
             index={index}
             compact={compact}
-            onOpen={(element) => {
-              setTrigger(element);
-              setSelected(file.uuid);
-            }}
+            onOpen={(element) => handleOpenViewer(file.uuid, element)}
           />
         ))}
       </GalleryGrid>
-      {userFilesState.hasNextPage && (
+      {userFilesState.hasNextPage ? (
         <div
           ref={search.trim() ? undefined : loadMoreRef}
           className="flex min-h-24 items-center justify-center"
@@ -123,21 +114,23 @@ export default function GalleryPage() {
             )}
           </Button>
         </div>
-      )}
-      {!userFilesState.hasNextPage && files.length > 0 && (
+      ) : null}
+      {!userFilesState.hasNextPage && files.length > 0 ? (
         <p className="text-muted-foreground py-8 text-center text-xs">
           {t("pages.gallery.studio.end")}
         </p>
-      )}
-      {selected && (
+      ) : null}
+      {selected ? (
         <GalleryViewer
           files={visible}
           selected={selected}
           onSelect={setSelected}
-          onClose={() => setSelected(null)}
+          onClose={handleCloseViewer}
           trigger={trigger}
         />
-      )}
+      ) : null}
     </div>
   );
-}
+};
+
+export default GalleryPage;

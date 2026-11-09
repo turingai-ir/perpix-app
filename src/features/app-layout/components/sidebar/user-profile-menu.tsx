@@ -1,5 +1,4 @@
 import type { FC, RefObject } from "react";
-import { useNavigate } from "react-router";
 import { ChevronsUpDown, Crown, Download, LogOut } from "lucide-react";
 
 import { AccountIcon } from "./menu-icons";
@@ -17,11 +16,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/shared/ui/dropdown-menu";
-import { useActiveSubscription, usePricingFeature } from "@/features/pricing";
-import { useSignOutActions } from "@/features/auth";
-import { useAppTranslate } from "@/shared/hooks";
-import { APP_ROUTES_KEY } from "@/app/router/routes";
-import { APP_I18_KEYS } from "@/shared/i18n";
+import { useSidebarUserProfile } from "../../hooks/use-sidebar-user-profile";
 
 type UserProfileMenuProps = {
   canInstall: boolean;
@@ -61,14 +56,14 @@ const AppLayoutSidebarUserProfileMenu: FC<UserProfileMenuProps> = ({
   requestInstall,
   triggerRef,
 }) => {
-  const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
-  const navigate = useNavigate();
-  const signOutActions = useSignOutActions();
-  const activeSubscriptionState = useActiveSubscription();
-  const { openPricingFeature } = usePricingFeature();
-  const planName =
-    activeSubscriptionState.data?.plan.display_name ??
-    t("features.pricing.plans.free.title");
+  const {
+    t,
+    planName,
+    navigateToProfile,
+    handleOpenPricing,
+    handleSignOut,
+    isSignOutPending,
+  } = useSidebarUserProfile();
 
   return (
     <DropdownMenu>
@@ -102,7 +97,6 @@ const AppLayoutSidebarUserProfileMenu: FC<UserProfileMenuProps> = ({
         side="top"
         align="end"
         sideOffset={8}
-        // Let the guide take focus instead of the closing dropdown.
         finalFocus={!isIosGuideOpen}
       >
         <DropdownMenuGroup>
@@ -118,19 +112,13 @@ const AppLayoutSidebarUserProfileMenu: FC<UserProfileMenuProps> = ({
           </DropdownMenuLabel>
         </DropdownMenuGroup>
         <DropdownMenuGroup className="mt-2 grid gap-1">
-          <DropdownMenuItem
-            className={MENU_ITEM_CLASS}
-            onClick={() => navigate(APP_ROUTES_KEY.profile.root.path)}
-          >
+          <DropdownMenuItem className={MENU_ITEM_CLASS} onClick={navigateToProfile}>
             <IconTile data-slot="icon-tile" className={MENU_ICON_CLASS}>
               <AccountIcon aria-hidden="true" />
             </IconTile>
             <span>{t("pages.app.layout.sidebar.user.manageAccount")}</span>
           </DropdownMenuItem>
-          <DropdownMenuItem
-            className={MENU_ITEM_CLASS}
-            onClick={() => openPricingFeature()}
-          >
+          <DropdownMenuItem className={MENU_ITEM_CLASS} onClick={handleOpenPricing}>
             <IconTile data-slot="icon-tile" className={MENU_ICON_CLASS}>
               <Crown aria-hidden="true" />
             </IconTile>
@@ -156,8 +144,8 @@ const AppLayoutSidebarUserProfileMenu: FC<UserProfileMenuProps> = ({
               MENU_ITEM_CLASS,
               "text-destructive data-highlighted:bg-destructive/12 [&_[data-slot=icon-tile]]:border-destructive/25 [&_[data-slot=icon-tile]]:bg-destructive/10 [&_[data-slot=icon-tile]]:text-destructive mt-1",
             )}
-            disabled={signOutActions.isPending}
-            onClick={() => void signOutActions.signOut()}
+            disabled={isSignOutPending}
+            onClick={handleSignOut}
           >
             <IconTile data-slot="icon-tile" className={MENU_ICON_CLASS}>
               <LogOut aria-hidden="true" />
