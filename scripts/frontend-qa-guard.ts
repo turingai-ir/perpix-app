@@ -22,7 +22,9 @@ export function frontendQaGuard(): Plugin {
             const dependencies = new Set<string>();
             for (const result of results) {
               for (const match of result?.code.matchAll(/["'](\/[^"']*\/deps\/[^"']+)["']/g) ?? []) {
-                dependencies.add(match[1]);
+                if (match[1]) {
+                  dependencies.add(match[1]);
+                }
               }
             }
             await Promise.all([...dependencies].map((entry) => server.transformRequest(entry)));
