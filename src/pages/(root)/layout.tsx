@@ -19,7 +19,7 @@ import {
 } from "@/features/auth";
 import { usePricingFeature } from "@/features/pricing";
 import { PaymentEventsProvider } from "@/features/payment";
-import appLayoutAtom from "@/pages/(app)/_layout/_state";
+import { appLayoutAtom } from "@/features/app-layout";
 
 const AUTH_ENDPOINT_PREFIX = "/api/v1/auth/";
 const AUTH_ENDPOINTS_WITH_OWN_ERRORS = "api-tokens";

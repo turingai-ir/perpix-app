@@ -4,7 +4,7 @@ import { Button, buttonVariants } from "@/shared/ui/button";
 import { cn } from "@/shared/lib/utils";
 import { useAppTranslate } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";
-import { DashboardBrandEntrance } from "../../../pages/(app)/_components/dashboard-brand-entrance";
+import { DashboardBrandEntrance } from "@/features/dashboard";
 import { GalleryOrbit } from "./gallery-orbit";
 
 const pill =

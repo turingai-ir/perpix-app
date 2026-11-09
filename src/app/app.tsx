@@ -6,7 +6,7 @@ import { DirectionProvider } from "@base-ui/react/direction-provider";
 import { queryClient } from "@/shared/lib/react-query";
 import { router } from "@/app/router/router";
 import { Toaster } from "@/shared/ui/sonner";
-import { RuntimeCleanup } from "@/features/runtime";
+import { RuntimeCleanup } from "@/features/app-runtime";
 import { BootSplash } from "@/features/boot-splash";
 import { PricingFeature, pricingFeatureAtom } from "@/features/pricing";
 import { QueryClientProvider } from "@tanstack/react-query";

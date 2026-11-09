@@ -9,7 +9,7 @@ import {
 import { APP_ROUTES_KEY } from "./routes";
 
 import RootLayout from "@/pages/(root)/layout";
-import AppLayout from "@/pages/(app)/_layout";
+import { AppLayout } from "@/features/app-layout";
 import HomePage from "@/pages/(app)/page";
 import GalleryPage from "@/pages/(app)/gallery/page";
 import ImageGenerationPage from "@/pages/(app)/generation/image/page";
