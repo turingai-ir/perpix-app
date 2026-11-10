@@ -5,7 +5,7 @@ import { useAppTranslate } from "@/shared/hooks";
 
 import type { DynamicConfigForm } from "@/features/dynamic-config";
 import type { GenerationPromptBoxProps } from "@/features/generation/components/prompt-box/types";
-import type { useModel } from "@/features/generation/hooks/model";
+import type { useModel } from "@/features/generation/hooks/use-model";
 import { showDynamicFormErrorsToast } from "@/features/generation/components/dynamic-form-errors-toast";
 import { handleGenerationApplicationError } from "@/features/generation/services/handle-generation-application-error";
 import { useWallet, useWalletChargeDialog } from "@/features/wallet";

@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
 import { Paperclip } from "lucide-react";
+
+import { useVideoReferenceUploads } from "../hooks/use-video-reference-uploads";
 
 import { normalizeMediaIds } from "@/features/media-uploader";
 import { useAppTranslate } from "@/shared/hooks";
@@ -34,25 +35,8 @@ export function VideoReferenceBoard({
   studio: ReturnType<typeof useGenerationPromptBox>;
 }) {
   const { t } = useAppTranslate();
-  const { dynamicForm, setIsUploadingMedia } = studio;
-  const [uploads, setUploads] = useState<Record<string, boolean>>({});
-  const fields = dynamicForm.orderedFieldNames.filter((name) => {
-    const type = dynamicForm.getFieldMeta(name)?.inputType;
-    return (
-      dynamicForm.isFieldVisible(name) &&
-      (type === "file" || type === "file-list")
-    );
-  });
-  const reportUpload = useCallback((name: string, uploading: boolean) => {
-    setUploads((current) =>
-      current[name] === uploading ? current : { ...current, [name]: uploading },
-    );
-  }, []);
-  const uploading = fields.some((name) => uploads[name]);
-  useEffect(() => {
-    setIsUploadingMedia(uploading);
-  }, [uploading, setIsUploadingMedia]);
-  useEffect(() => () => setIsUploadingMedia(false), [setIsUploadingMedia]);
+  const { dynamicForm } = studio;
+  const { fields, reportUpload } = useVideoReferenceUploads(studio);
   if (!fields.length) return null;
   return (
     <section

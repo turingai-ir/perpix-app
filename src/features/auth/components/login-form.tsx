@@ -1,16 +1,6 @@
-import { useEffect, useMemo, useState, type FC } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useLocation, useNavigate } from "react-router";
+import type { FC } from "react";
 
-import { getPostLoginPath } from "../model/auth-navigation";
-import type { z } from "zod";
-
-import { createLoginSchema } from "../model/schemas";
-import { failureOf } from "../model/auth-failure";
-import { useAuthFeedback } from "../hooks/use-auth-feedback";
-import { useAuthFormMessages } from "../hooks/use-auth-form-messages";
-import { useLoginMutation } from "../hooks/use-auth-mutations";
+import { useLoginForm } from "../hooks/use-login-form";
 
 import { AuthCard } from "./auth-card";
 import { AuthField } from "./auth-field";
@@ -38,41 +28,15 @@ export const LoginForm: FC<LoginFormProps> = ({
   onAuthenticated,
 }) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
-  const navigate = useNavigate();
-  const { search } = useLocation();
-  const messages = useAuthFormMessages();
-  const schema = useMemo(() => createLoginSchema(messages), [messages]);
-  const form = useForm<
-    z.input<typeof schema>,
-    unknown,
-    z.output<typeof schema>
-  >({
-    resolver: zodResolver(schema),
-    defaultValues: { phone_number: phone, password: "" },
-  });
-  const { setFocus } = form;
-  useEffect(() => setFocus("password"), [setFocus]);
-  const feedback = useAuthFeedback(form);
-  const login = useLoginMutation();
-  const [reactionId, setReactionId] = useState(0);
-  const [isEntering, setIsEntering] = useState(false);
-
-  const onSubmit = async (values: z.output<typeof schema>) => {
-    feedback.clear();
-    try {
-      await login.mutateAsync(values);
-    } catch (error) {
-      feedback.handleError(error);
-      if (failureOf(error).kind === "invalid-credentials") {
-        setReactionId((id) => id + 1);
-      }
-
-      return;
-    }
-    setIsEntering(true);
-    await onAuthenticated();
-    void navigate(getPostLoginPath(search), { replace: true });
-  };
+  const {
+    feedback,
+    form,
+    handleForgotPassword,
+    isEntering,
+    isLoginPending,
+    reactionId,
+    submit,
+  } = useLoginForm({ phone, onForgotPassword, onAuthenticated });
 
   return (
     <AuthCard
@@ -91,24 +55,17 @@ export const LoginForm: FC<LoginFormProps> = ({
         <LoginActions
           onBack={onBack}
           disabled={
-            login.isPending ||
+            isLoginPending ||
             isResetPending ||
             isEntering ||
             feedback.lockedSeconds > 0
           }
-          onForgotPassword={async () => {
-            feedback.clear();
-            try {
-              await onForgotPassword();
-            } catch (error) {
-              feedback.handleError(error);
-            }
-          }}
+          onForgotPassword={handleForgotPassword}
         />
       }
     >
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form onSubmit={submit} className="space-y-8">
           <AuthField
             name="password"
             label={t("features.auth.login.passwordLabel")}
@@ -124,7 +81,7 @@ export const LoginForm: FC<LoginFormProps> = ({
           <FormAlert message={feedback.message} />
           <SubmitButton
             label={t("features.auth.login.submit")}
-            isPending={login.isPending || isResetPending || isEntering}
+            isPending={isLoginPending || isResetPending || isEntering}
             lockedSeconds={feedback.lockedSeconds}
           />
         </form>

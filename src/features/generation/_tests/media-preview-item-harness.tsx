@@ -3,7 +3,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter } from "react-router";
 
 import { queryClient } from "@/shared/lib/react-query";
-import { MediaPreviewItem } from "../media-preview-item";
+import { MediaPreviewItem } from "../components/media-output/media-preview-item";
 
 const fileUuid = "22222222-2222-4222-8222-222222222224";
 

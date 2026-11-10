@@ -1,5 +1,5 @@
 import { Avatar, AvatarImage } from "@/shared/ui/avatar";
-import { ChatBubble } from "@/shared/components";
+import { ChatBubble } from "@/features/generation/components/media-output/chat-bubble";
 import { GenerationFailure } from "@/features/generation/components/generation-failure";
 import { ImageGenerationPlaceholder } from "./image-generation-placeholder";
 import type { OptimisticGenerationTurn } from "@/features/generation/model/conversation";

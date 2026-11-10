@@ -11,7 +11,7 @@ import { BootSplash } from "@/features/boot-splash";
 import { PricingFeature, pricingFeatureAtom } from "@/features/pricing";
 import { QueryClientProvider } from "@tanstack/react-query";
 
-import "@/shared/lib/private-data";
+import "@/app/private-data";
 import "@/shared/i18n/i18";
 import "./styles/globals.css";
 import "./styles/tailwind.css";

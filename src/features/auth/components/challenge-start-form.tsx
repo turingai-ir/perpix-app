@@ -1,14 +1,7 @@
-import { useEffect, useMemo, useRef, type FC } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useSearchParams } from "react-router";
-import type { z } from "zod";
+import { useRef, type FC } from "react";
 
 import type { AuthStart } from "../model/types";
-import { createPhoneSchema } from "../model/schemas";
-import { useAuthFeedback } from "../hooks/use-auth-feedback";
-import { useAuthFormMessages } from "../hooks/use-auth-form-messages";
-import { useStartAuthMutation } from "../hooks/use-auth-mutations";
+import { useChallengeStartForm } from "../hooks/use-challenge-start-form";
 
 import { AuthCard } from "./auth-card";
 import { AuthField } from "./auth-field";
@@ -29,48 +22,12 @@ export const ChallengeStartForm: FC<ChallengeStartFormProps> = ({
   onStart,
 }) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
-  const messages = useAuthFormMessages();
-  const schema = useMemo(() => createPhoneSchema(messages), [messages]);
-  const [searchParams, setSearchParams] = useSearchParams();
-  const linkedPhone = searchParams.get("phone");
   const formElement = useRef<HTMLFormElement>(null);
-  const hasAutoSubmitted = useRef(false);
-  const form = useForm<
-    z.input<typeof schema>,
-    unknown,
-    z.output<typeof schema>
-  >({
-    resolver: zodResolver(schema),
-    defaultValues: { phone_number: linkedPhone ?? phone },
+  const { feedback, form, isPending, submit } = useChallengeStartForm({
+    formElement,
+    phone,
+    onStart,
   });
-  const feedback = useAuthFeedback(form);
-  const mutation = useStartAuthMutation();
-  const { setValue } = form;
-
-  useEffect(() => {
-    if (hasAutoSubmitted.current || linkedPhone === null) return;
-    if (!schema.safeParse({ phone_number: linkedPhone }).success) return;
-    hasAutoSubmitted.current = true;
-    setValue("phone_number", linkedPhone);
-    setSearchParams(
-      (current) => {
-        const next = new URLSearchParams(current);
-        next.delete("phone");
-        return next;
-      },
-      { replace: true },
-    );
-    formElement.current?.requestSubmit();
-  }, [linkedPhone, schema, setSearchParams, setValue]);
-
-  const onSubmit = async ({ phone_number }: z.output<typeof schema>) => {
-    feedback.clear();
-    try {
-      onStart(phone_number, await mutation.mutateAsync(phone_number));
-    } catch (error) {
-      feedback.handleError(error);
-    }
-  };
 
   return (
     <AuthCard
@@ -78,11 +35,7 @@ export const ChallengeStartForm: FC<ChallengeStartFormProps> = ({
       description={t("pages.auth.login.description")}
     >
       <Form {...form}>
-        <form
-          ref={formElement}
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-8"
-        >
+        <form ref={formElement} onSubmit={submit} className="space-y-8">
           <AuthField
             name="phone_number"
             label={t("features.auth.login.phoneLabel")}
@@ -101,7 +54,7 @@ export const ChallengeStartForm: FC<ChallengeStartFormProps> = ({
           <FormAlert message={feedback.message} />
           <SubmitButton
             label={t("pages.auth.login.startForm.submit")}
-            isPending={mutation.isPending}
+            isPending={isPending}
             lockedSeconds={feedback.lockedSeconds}
           />
         </form>

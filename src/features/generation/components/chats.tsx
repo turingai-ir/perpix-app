@@ -2,7 +2,7 @@ import type { FC, ReactNode } from "react";
 
 import { GenerationFailure } from "./generation-failure";
 
-import { ChatBubble } from "@/shared/components";
+import { ChatBubble } from "@/features/generation/components/media-output/chat-bubble";
 import { Avatar, AvatarImage } from "@/shared/ui/avatar";
 import { cn } from "@/shared/lib/utils";
 import {

@@ -1,35 +1,23 @@
-import { useMemo, useState } from "react";
-import { useLocation } from "react-router";
+import { useState } from "react";
 import { ChevronDown, LoaderCircle, RotateCcw, Sparkles } from "lucide-react";
+
+import { useSidebarHistory } from "../../hooks/use-sidebar-history";
 
 import ErrorSection from "@/shared/components/error-section";
 import LoadingSection from "@/shared/components/loading-section";
 import { useAppTranslate } from "@/shared/hooks";
-import { APP_ROUTES_KEY } from "@/app/router/routes";
-import { AiRegistryModelSupportedTypesEnumMap } from "@/shared/api";
 import { APP_I18_KEYS } from "@/shared/i18n";
 import { formatLocalizedNumber } from "@/shared/utils";
-import { AI_TASKS_PAGE_SIZE, useAiTasksList } from "@/features/generation";
+import { AI_TASKS_PAGE_SIZE } from "@/features/generation";
 import HistoryItem from "./history-item";
 import { IconTile } from "./sidebar-parts";
 import { Button } from "@/shared/ui/button";
 
 export default function AppLayoutSidebarHistory() {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
-  const { pathname } = useLocation();
   const [animateEntry, setAnimateEntry] = useState(true);
-  const taskType = useMemo(() => {
-    if (pathname.includes(APP_ROUTES_KEY.generation.image.path)) {
-      return AiRegistryModelSupportedTypesEnumMap.IMAGE;
-    }
-    if (pathname.includes(APP_ROUTES_KEY.generation.video.path)) {
-      return AiRegistryModelSupportedTypesEnumMap.VIDEO;
-    }
-    return undefined;
-  }, [pathname]);
-  const { aiTasksListStatus } = useAiTasksList(taskType);
+  const { aiTasksListStatus, historyItems, taskType } = useSidebarHistory();
   const {
-    data,
     hasNextPage,
     isLoading,
     isFetchingNextPage,
@@ -37,10 +25,6 @@ export default function AppLayoutSidebarHistory() {
     isError,
     fetchNextPage,
   } = aiTasksListStatus;
-  const historyItems = useMemo(() => {
-    const items = data?.pages.flatMap((page) => Array.from(page.items)) ?? [];
-    return Array.from(new Map(items.map((item) => [item.uuid, item])).values());
-  }, [data?.pages]);
   const hasItems = historyItems.length > 0;
   const amount = formatLocalizedNumber({ value: AI_TASKS_PAGE_SIZE });
   const total = formatLocalizedNumber({ value: historyItems.length });

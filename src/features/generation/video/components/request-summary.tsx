@@ -1,6 +1,6 @@
 import { useId, useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { MediaPreviewItem } from "@/shared/components/media-preview-item";
+import { MediaPreviewItem } from "@/features/generation/components/media-output/media-preview-item";
 import { Button } from "@/shared/ui/button";
 import { useAppTranslate } from "@/shared/hooks";
 

@@ -7,7 +7,7 @@ import {
   RotateCcw,
 } from "lucide-react";
 
-import { MediaPreviewItem } from "@/shared/components/media-preview-item";
+import { MediaPreviewItem } from "@/features/generation/components/media-output/media-preview-item";
 import { Button } from "@/shared/ui/button";
 import { cn } from "@/shared/lib/utils";
 import { useAppTranslate } from "@/shared/hooks";

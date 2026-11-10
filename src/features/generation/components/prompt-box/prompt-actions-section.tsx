@@ -11,7 +11,7 @@ import { ImagePromptActions } from "./image-prompt-actions";
 import { PromptModelSelector } from "./model-selector";
 import { PromptSubmitButton } from "./submit-button";
 
-import type { useModel } from "@/features/generation/hooks/model";
+import type { useModel } from "@/features/generation/hooks/use-model";
 
 type PromptBoxModel = ReturnType<typeof useModel>;
 

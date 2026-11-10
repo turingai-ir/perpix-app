@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Check, Copy } from "lucide-react";
 
-import { Button } from "../ui/button";
+import { Button } from "@/shared/ui/button";
 import { useAppTranslate } from "@/shared/hooks";
 
 export function ChatMessage({

@@ -8,7 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/ui/select";
-import type { useModel } from "@/features/generation/hooks/model";
+import type { useModel } from "@/features/generation/hooks/use-model";
 
 import { ModelSelectItem } from "../model-select-item";
 

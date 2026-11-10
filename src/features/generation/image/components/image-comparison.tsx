@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Columns2, Trash2, X } from "lucide-react";
 
-import { MediaPreviewItem } from "@/shared/components/media-preview-item";
+import { MediaPreviewItem } from "@/features/generation/components/media-output/media-preview-item";
 import { Button } from "@/shared/ui/button";
 import {
   Dialog,

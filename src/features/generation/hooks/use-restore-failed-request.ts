@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 import type { DynamicConfigForm } from "../../dynamic-config";
 import type { FailedGenerationRequest } from "../model/conversation";
 import { withInferredMode } from "../model/retry-config";
-import type { useModel } from "./model";
+import type { useModel } from "./use-model";
 
 /**
  * After a failed generation, puts the failed request's inputs (prompt,

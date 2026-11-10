@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 
 import type { DynamicConfigForm } from "../../dynamic-config";
 import type { GenerationComposerIntent } from "../model/conversation";
-import type { useModel } from "./model";
+import type { useModel } from "./use-model";
 import { withInferredMode } from "../model/retry-config";
 
 const strings = (value: unknown) =>

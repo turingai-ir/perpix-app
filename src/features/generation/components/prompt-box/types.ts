@@ -5,7 +5,7 @@ import type {
 } from "../../model/conversation";
 
 import type { DynamicConfigForm } from "@/features/dynamic-config";
-import type { useModel } from "@/features/generation/hooks/model";
+import type { useModel } from "@/features/generation/hooks/use-model";
 import type {
   AiRegistryModelSupportedTypesEnumValue,
   SchemaAiTaskMessageResponse,

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef } from "react";
 
 import { useDynamicConfigForm } from "@/features/dynamic-config";
 import type { GenerationPromptBoxProps } from "@/features/generation/components/prompt-box/types";
-import { useModel } from "@/features/generation/hooks/model";
+import { useModel } from "@/features/generation/hooks/use-model";
 import { getModelDynamicConfig } from "@/features/generation/model/model-dynamic-config";
 import { withInferredMode } from "@/features/generation/model/retry-config";
 

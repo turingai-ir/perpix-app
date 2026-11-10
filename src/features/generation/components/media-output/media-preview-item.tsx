@@ -1,6 +1,5 @@
-import { useEffect, useState, type FC, type MouseEvent } from "react";
+import type { FC } from "react";
 import { Download, Image as ImageIcon, Video } from "lucide-react";
-import { toast } from "sonner";
 import { useNavigate } from "react-router";
 
 import { Button, buttonVariants } from "@/shared/ui/button";
@@ -15,9 +14,8 @@ import { Skeleton } from "@/shared/ui/skeleton";
 import { useAppTranslate } from "@/shared/hooks";
 import { cn } from "@/shared/lib/utils";
 import { APP_I18_KEYS } from "@/shared/i18n";
-import { isMissingFilePreview, useFilePreview } from "@/features/file-manager";
-import { downloadFile } from "@/shared/utils";
 import { MediaUnavailableState } from "./media-unavailable-state";
+import { useMediaPreview } from "../../hooks/use-media-preview";
 
 type MediaType = "image" | "video";
 
@@ -49,28 +47,19 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
   missingActionLabel,
 }) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
-  const [isDownloading, setIsDownloading] = useState(false);
-  const [failedUrl, setFailedUrl] = useState<string>();
-  const [mountedAt] = useState(Date.now);
-  const { getFilePreviewState } = useFilePreview(fileId);
   const navigate = useNavigate();
-
-  const expireAt = getFilePreviewState.data?.expire_at
-    ? Date.parse(getFilePreviewState.data.expire_at)
-    : Number.NaN;
-  const isExpired = Number.isFinite(expireAt) && expireAt <= mountedAt;
-  const isPreviewLoading =
-    getFilePreviewState.isPending ||
-    (isExpired && getFilePreviewState.isFetching);
-  const isMissing =
-    getFilePreviewState.isError &&
-    isMissingFilePreview(getFilePreviewState.error);
-  const mediaUrl = isExpired
-    ? undefined
-    : getFilePreviewState.data?.preview_url;
-  const downloadUrl = isExpired
-    ? undefined
-    : getFilePreviewState.data?.download_url;
+  const {
+    downloadUrl,
+    handleDownload,
+    isDownloading,
+    isError,
+    isMissing,
+    isPreviewLoading,
+    isRefreshing,
+    markMediaFailed,
+    mediaUrl,
+    retryPreview,
+  } = useMediaPreview(fileId, onMissingChange);
   const mediaLabel = type === "image" ? t("common.image") : t("common.video");
   const conciseDescription = alt?.trim();
   const previewLabel =
@@ -83,31 +72,6 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
           mediaType: mediaLabel,
           index: (index ?? 0) + 1,
         });
-  const isMediaError = !!mediaUrl && failedUrl === mediaUrl;
-  const isError = getFilePreviewState.isError || isMediaError;
-
-  useEffect(() => onMissingChange?.(isMissing), [isMissing, onMissingChange]);
-
-  const retryPreview = async () => {
-    const result = await getFilePreviewState.refetch();
-    if (result.isSuccess) setFailedUrl(undefined);
-  };
-
-  const handleDownload = async (event: MouseEvent<HTMLAnchorElement>) => {
-    if (!downloadUrl || isDownloading) return;
-
-    event.preventDefault();
-
-    try {
-      setIsDownloading(true);
-      downloadFile(downloadUrl);
-    } catch {
-      toast.error(t("common.error"));
-    } finally {
-      setIsDownloading(false);
-    }
-  };
-
   return (
     <Dialog>
       <div
@@ -135,7 +99,7 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
                 )}
                 src={mediaUrl}
                 alt={alt ?? `${mediaLabel} ${(index ?? 0) + 1}`}
-                onError={() => setFailedUrl(mediaUrl)}
+                onError={() => markMediaFailed(mediaUrl)}
               />
             ) : (
               <>
@@ -148,7 +112,7 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
                   src={mediaUrl}
                   preload="metadata"
                   muted
-                  onError={() => setFailedUrl(mediaUrl)}
+                  onError={() => markMediaFailed(mediaUrl)}
                 />
                 <span className="absolute inset-0 flex items-center justify-center bg-black/10 text-white">
                   <Video className="h-8 w-8 drop-shadow" />
@@ -166,7 +130,7 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
             onAction={onMissingAction}
             actionLabel={missingActionLabel}
             onRetry={() => void retryPreview()}
-            isRefreshing={getFilePreviewState.isFetching}
+            isRefreshing={isRefreshing}
           />
         )}
 
@@ -194,14 +158,14 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
               onAction={onMissingAction}
               actionLabel={missingActionLabel}
               onRetry={() => void retryPreview()}
-              isRefreshing={getFilePreviewState.isFetching}
+              isRefreshing={isRefreshing}
             />
           ) : type === "image" ? (
             <img
               className="max-h-full max-w-full rounded-lg object-contain"
               src={mediaUrl}
               alt={alt ?? `${mediaLabel} ${(index ?? 0) + 1}`}
-              onError={() => setFailedUrl(mediaUrl)}
+              onError={() => markMediaFailed(mediaUrl)}
             />
           ) : (
             // eslint-disable-next-line jsx-a11y/media-has-caption
@@ -210,7 +174,7 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
               src={mediaUrl}
               controls
               autoPlay
-              onError={() => setFailedUrl(mediaUrl)}
+              onError={() => markMediaFailed(mediaUrl)}
             />
           )}
         </div>

@@ -86,7 +86,7 @@ for (const { alt, index, name } of [
     await page.evaluate(
       async ({ description, position }) => {
         const path =
-          "/src/shared/components/_tests/media-preview-item-harness.tsx";
+          "/src/features/generation/_tests/media-preview-item-harness.tsx";
         const { mount } = await import(/* @vite-ignore */ path);
         mount(description, position);
       },

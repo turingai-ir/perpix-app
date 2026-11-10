@@ -1,6 +1,6 @@
 import { useRef, useState, type PointerEvent } from "react";
 import { useAppTranslate } from "@/shared/hooks";
-import type { useModel } from "@/features/generation/hooks/model";
+import type { useModel } from "@/features/generation/hooks/use-model";
 
 export function useModelDiscovery(model: ReturnType<typeof useModel>) {
   const { t } = useAppTranslate();

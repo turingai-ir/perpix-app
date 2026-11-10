@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { Check, Clapperboard, Download, Expand } from "lucide-react";
 
-import { useVideoOutput } from "./use-video-output";
+import { useVideoOutput } from "../../hooks/use-video-output";
 import { VideoOutputDialog } from "./video-output-dialog";
 import {
   VideoOutputActions,

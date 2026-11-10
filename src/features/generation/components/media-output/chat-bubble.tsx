@@ -1,15 +1,15 @@
 import type { FC, ReactNode } from "react";
 import dayjs from "dayjs";
 
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Muted } from "../ui/typography";
+import { Avatar, AvatarFallback, AvatarImage } from "@/shared/ui/avatar";
+import { Muted } from "@/shared/ui/typography";
 
 import { useAppTranslate } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";
 import { cn } from "@/shared/lib/utils";
-import { MediaPreviewItem } from "@/shared/components/media-preview-item";
-import { ChatMessage } from "@/shared/components/chat-message";
-import { VideoOutputItem } from "@/shared/components/video-output-item";
+import { MediaPreviewItem } from "./media-preview-item";
+import { ChatMessage } from "./chat-message";
+import { VideoOutputItem } from "./video-output-item";
 
 type Sender = "agent" | "user";
 interface ChatBubbleProps {

@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useRef } from "react";
+import { usePaymentRedirect } from "../hooks/use-payment-redirect";
+
 import { Button } from "@/shared/ui/button";
 import { Progress } from "@/shared/ui/progress";
-import { useAppTranslate, useSecondsCountDown } from "@/shared/hooks";
+import { useAppTranslate } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";
 import { formatLocalizedNumber } from "@/shared/utils";
 
@@ -13,16 +14,10 @@ export function PaymentRedirectControls({
   paymentUrl: string;
 }) {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
-  const { seconds } = useSecondsCountDown(REDIRECT_SECONDS);
-  const redirected = useRef(false);
-  const redirect = useCallback(() => {
-    if (redirected.current) return;
-    redirected.current = true;
-    window.location.assign(paymentUrl);
-  }, [paymentUrl]);
-  useEffect(() => {
-    if (seconds === 0) redirect();
-  }, [seconds, redirect]);
+  const { redirect, seconds } = usePaymentRedirect(
+    paymentUrl,
+    REDIRECT_SECONDS,
+  );
   return (
     <>
       <div className="space-y-2">
