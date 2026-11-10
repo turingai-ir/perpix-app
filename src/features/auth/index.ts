@@ -3,7 +3,6 @@ export { AuthFlow } from "./components/auth-flow";
 export { AuthUnavailable } from "./components/auth-unavailable";
 export { ChangePasswordForm } from "./components/change-password-form";
 export { LoginPage } from "./components/login-page";
-export { default as LoginShell } from "./components/login-shell";
 export { useAuthStatus } from "./hooks/use-auth-status";
 export { useAuthorizedStream } from "./hooks/use-authorized-stream";
 export { useSessionLifecycle } from "./hooks/use-session-lifecycle";

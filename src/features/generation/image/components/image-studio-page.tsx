@@ -22,7 +22,6 @@ import { APP_ROUTES_KEY } from "@/app/router/routes";
 const GenerationImageSession: FC = () => {
   const {
     t,
-    initialPrompt,
     composerIntent,
     setComposerIntent,
     comparisonItems,
@@ -130,7 +129,6 @@ const GenerationImageSession: FC = () => {
               <GenerationImagePromptBox
                 composerIntent={composerIntent}
                 failedRequest={failedRequest}
-                initialPrompt={initialPrompt}
                 isLoading={isBusy}
                 lastMessageConfig={
                   lastTaskMessage?.ai_model_config ??

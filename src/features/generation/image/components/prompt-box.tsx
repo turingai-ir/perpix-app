@@ -17,7 +17,6 @@ import {
 } from "@/shared/api";
 
 interface Props {
-  initialPrompt?: string;
   onSubmit: GenerationPromptBoxProps["onSubmit"];
   isLoading?: boolean;
   lastMessageConfig?: SchemaAiTaskMessageResponse["ai_model_config"];

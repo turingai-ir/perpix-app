@@ -15,7 +15,6 @@ export function saveCompletion(
 export function forgetCompletion(key: string) {
   completions.delete(key);
 }
-export const removeCompletion = forgetCompletion;
 export function clearUploadSession() {
   completions.clear();
 }

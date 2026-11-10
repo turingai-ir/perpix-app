@@ -120,7 +120,3 @@ export const atomWithSyncStorage = <Value>(
 
   return storageAtom;
 };
-
-export const unregisterAtom = (key: string) => {
-  atomConfigs.delete(key);
-};

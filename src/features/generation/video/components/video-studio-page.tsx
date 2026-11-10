@@ -12,7 +12,6 @@ import { APP_ROUTES_KEY } from "@/app/router/routes";
 const GenerationVideoSession: FC = () => {
   const {
     t,
-    initialPrompt,
     focusPhase,
     lastTaskStatus,
     displayedMessages,
@@ -84,7 +83,6 @@ const GenerationVideoSession: FC = () => {
             ) : null}
             <GenerationVideoPromptBox
               failedRequest={failedRequest}
-              initialPrompt={initialPrompt}
               isLoading={isBusy}
               lastMessageConfig={
                 lastTaskMessage?.ai_model_config ??

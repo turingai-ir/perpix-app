@@ -1,4 +1,3 @@
-export * from "./button-full-icon";
 export * from "./chat-bubble";
 export * from "./error-boundary";
 export * from "./error-section";

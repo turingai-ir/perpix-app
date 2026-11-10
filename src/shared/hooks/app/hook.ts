@@ -20,14 +20,6 @@ const showOfflineMutationMessage = (message: string) => {
   toast.error(message);
 };
 
-export const useApp = () => {
-  const context = useContext(appContext);
-  if (!context) {
-    throw new Error("App Provider is required");
-  }
-  return context;
-};
-
 export const useReactQueryApi = () => {
   const context = useContext(appContext);
   const { t } = useAppTranslate();

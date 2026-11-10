@@ -1,11 +1,8 @@
-import { useLocation } from "react-router";
-
 import { useAppTranslate } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";
 import { APP_ROUTES_KEY } from "@/app/router/routes";
 import { AiRegistryModelSupportedTypesEnumMap } from "@/shared/api";
 import { GeneratedMediaField, useGenerationPage } from "../../hooks";
-import { getGenerationDraftPrompt } from "../../hooks/generation-draft";
 import type { GenerationFocusPhase } from "../../components/generation-focus-state";
 
 function getFocusPhase(
@@ -18,9 +15,7 @@ function getFocusPhase(
 }
 
 export function useVideoStudio() {
-  const location = useLocation();
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
-  const initialPrompt = getGenerationDraftPrompt(location.state);
 
   const generationPage = useGenerationPage({
     generatedMediaField: GeneratedMediaField.VIDEO,
@@ -38,7 +33,6 @@ export function useVideoStudio() {
 
   return {
     t,
-    initialPrompt,
     focusPhase,
     lastTaskStatus,
     ...generationPage,

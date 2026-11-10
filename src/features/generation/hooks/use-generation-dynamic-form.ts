@@ -11,7 +11,6 @@ const PRESERVED_MODEL_SWITCH_FIELDS = ["prompt", "reference_images"] as const;
 type Input = Pick<
   GenerationPromptBoxProps,
   | "configDefaultsResolver"
-  | "initialPrompt"
   | "lastMessageConfig"
   | "lastMessageModelUuid"
   | "lastMessageStatus"
@@ -20,7 +19,6 @@ type Input = Pick<
 
 export function useGenerationDynamicForm({
   configDefaultsResolver,
-  initialPrompt,
   lastMessageConfig,
   lastMessageModelUuid,
   lastMessageStatus,
@@ -55,9 +53,8 @@ export function useGenerationDynamicForm({
     return {
       ...(modelDynamicConfig.configDefaults ?? {}),
       ...(lastMessageDefaults ?? {}),
-      ...(initialPrompt ? { prompt: initialPrompt } : {}),
     };
-  }, [initialPrompt, lastMessageDefaults, modelDynamicConfig.configDefaults]);
+  }, [lastMessageDefaults, modelDynamicConfig.configDefaults]);
   const dynamicForm = useDynamicConfigForm({
     autoResetOnSchemaChange: true,
     configDefaults,

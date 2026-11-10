@@ -4,16 +4,11 @@
     "addImage": "افزودن عکس",
     "addVideo": "افزودن ویدیو",
     "advancedSettings": "تنظیمات پیشرفته",
-    "aiProvider": "ارائه‌دهنده هوش مصنوعی",
     "invalidField": "این مقدار درست نیست",
     "requestRejected": "درخواستت ثبت نشد و هزینه‌ای کم نشد. تنظیمات رو بررسی کن و دوباره امتحان کن.",
     "and": "و",
     "cancel": "انصراف",
-    "chat": "چت",
     "chooseModel": "انتخاب مدل",
-    "coolTexts": {
-      "cooking": "داریم آماده‌اش می‌کنیم..."
-    },
     "day": "روز",
     "download": "دانلود",
     "dynamicConfig": {
@@ -107,10 +102,7 @@
       "described": "دیدن {{mediaType}}: {{description}}"
     },
     "minute": "دقیقه",
-    "older": "قدیمی‌تر",
     "seconds": "ثانیه",
-    "selectDuration": "انتخاب مدت زمان",
-    "selectSize": "انتخاب سایز",
     "taskStatus": {
       "canceled": "لغو شده",
       "completed": "انجام شده",
@@ -125,9 +117,6 @@
       "failedDescription": "جزئیات رو ببین و اگه لازم بود دوباره امتحان کن.",
       "view": "دیدن نتیجه"
     },
-    "thisMonth": "این ماه",
-    "thisWeek": "این هفته",
-    "today": "امروز",
     "token": "توکن",
     "tomans": "تومان",
     "upgradeRequired": "نیاز به ارتقای اشتراک",
@@ -171,8 +160,7 @@
       "password": "رمز عبور باید دست‌کم ۸ کاراکتر و یک حرف بزرگ و یک حرف کوچک انگلیسی داشته باشه.",
       "passwordMatch": "رمزها یکی نیستن. دوباره چک کن.",
       "required": "{{name}} رو وارد کن."
-    },
-    "yesterday": "دیروز"
+    }
   },
   "components": {
     "custom": {
@@ -185,15 +173,6 @@
       },
       "multiImageUploadInput": {
         "maxSize": "عکسی با حجم کمتر از {{maxSize}} مگابایت انتخاب کن."
-      }
-    },
-    "form": {
-      "rules": {
-        "incorrectRegex": "{{name}} رو درست وارد کن.",
-        "maxLength": "برای {{name}} کمتر از {{max}} کاراکتر بنویس.",
-        "minLength": "برای {{name}} بیشتر از {{min}} کاراکتر بنویس.",
-        "phoneNumber": "یه شماره موبایل معتبر وارد کن.",
-        "required": "{{name}} رو وارد کن."
       }
     }
   },

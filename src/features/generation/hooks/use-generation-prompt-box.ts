@@ -13,7 +13,6 @@ type Input = Pick<
   | "composerIntent"
   | "configDefaultsResolver"
   | "failedRequest"
-  | "initialPrompt"
   | "isLoading"
   | "lastMessageConfig"
   | "lastMessageModelUuid"

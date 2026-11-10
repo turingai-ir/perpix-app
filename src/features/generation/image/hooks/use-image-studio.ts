@@ -1,5 +1,4 @@
 import { startTransition, useState } from "react";
-import { useLocation } from "react-router";
 
 import { useAppTranslate } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";
@@ -10,7 +9,6 @@ import {
 } from "@/shared/api";
 import { appEventBus } from "@/shared/lib/event-bus";
 import { GeneratedMediaField, useGenerationPage } from "../../hooks";
-import { getGenerationDraftPrompt } from "../../hooks/generation-draft";
 import type { GenerationComposerIntent } from "../../model/conversation";
 import type { GenerationFocusPhase } from "../../components/generation-focus-state";
 import type { ImageComparisonItem } from "../components/image-comparison.types";
@@ -25,9 +23,7 @@ function getFocusPhase(
 }
 
 export function useImageStudio() {
-  const location = useLocation();
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
-  const initialPrompt = getGenerationDraftPrompt(location.state);
   const [composerIntent, setComposerIntent] =
     useState<GenerationComposerIntent>();
   const [comparisonItems, setComparisonItems] = useState<ImageComparisonItem[]>(
@@ -98,7 +94,6 @@ export function useImageStudio() {
 
   return {
     t,
-    initialPrompt,
     composerIntent,
     setComposerIntent,
     comparisonItems,

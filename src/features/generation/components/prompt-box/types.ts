@@ -38,7 +38,6 @@ export interface GenerationPromptBoxProps {
   composerIntent?: GenerationComposerIntent;
   /** Failed request whose inputs are restored into the composer once. */
   failedRequest?: FailedGenerationRequest;
-  initialPrompt?: string;
   isLoading?: boolean;
   lastMessageConfig?: SchemaAiTaskMessageResponse["ai_model_config"];
   lastMessageModelUuid?: SchemaAiTaskMessageResponse["ai_model_uuid"];

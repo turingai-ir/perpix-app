@@ -1,4 +1,4 @@
-export { AppLayout, AppLayout as default } from "./components/app-layout";
+export { AppLayout } from "./components/app-layout";
 export { appLayoutAtom } from "./model/app-layout-state";
 export type { AppLayoutState } from "./model/app-layout-state";
 export { useAppLayout } from "./hooks/use-app-layout";
