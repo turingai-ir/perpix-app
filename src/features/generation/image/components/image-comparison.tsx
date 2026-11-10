@@ -32,6 +32,9 @@ export function ImageComparison({
 }) {
   const { t } = useAppTranslate();
   const [open, setOpen] = useState(false);
+  // Removing items below two must close the dialog for good; otherwise the
+  // next "add to comparison" would reopen it by itself.
+  if (open && items.length < 2) setOpen(false);
 
   if (items.length === 0) return null;
 

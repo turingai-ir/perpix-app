@@ -20,6 +20,7 @@ export function useRestoreFailedRequest({
   request?: FailedGenerationRequest;
 }) {
   const restoredKeyRef = useRef<string | undefined>(undefined);
+  const switchedKeyRef = useRef<string | undefined>(undefined);
 
   useEffect(() => {
     if (!request || restoredKeyRef.current === request.key) return;
@@ -30,6 +31,16 @@ export function useRestoreFailedRequest({
       return;
     }
     if (request.modelUuid !== model.currentModel) {
+      const models = model.modelsListState.data;
+      if (!models) return;
+      const isAvailable = models.some(({ uuid }) => uuid === request.modelUuid);
+      // Switch at most once: an unavailable model, or a user who picked
+      // another model meanwhile, must not be overridden on every render.
+      if (!isAvailable || switchedKeyRef.current === request.key) {
+        restoredKeyRef.current = request.key;
+        return;
+      }
+      switchedKeyRef.current = request.key;
       model.setCurrentModel(request.modelUuid);
       return;
     }

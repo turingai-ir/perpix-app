@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 import type { DynamicConfigForm } from "../../dynamic-config";
 import type { GenerationComposerIntent } from "../model/conversation";
 import type { useModel } from "./model";
+import { withInferredMode } from "../model/retry-config";
 
 const strings = (value: unknown) =>
   Array.isArray(value)
@@ -21,6 +22,7 @@ export function useGenerationComposerIntent({
   onApplied?: (intentId: string) => void;
 }) {
   const appliedIntentRef = useRef<string | undefined>(undefined);
+  const switchedIntentRef = useRef<string | undefined>(undefined);
   const requestedReferences = strings(intent?.config.reference_images);
   const currentReferences = strings(dynamicForm.watch("reference_images"));
   const referenceLimit = dynamicForm.properties.reference_images?.maxItems;
@@ -47,8 +49,16 @@ export function useGenerationComposerIntent({
     )
       return;
     if (intent.modelUuid && intent.modelUuid !== model.currentModel) {
-      model.setCurrentModel(intent.modelUuid);
-      return;
+      const models = model.modelsListState.data;
+      if (!models) return;
+      const isAvailable = models.some(({ uuid }) => uuid === intent.modelUuid);
+      // Switch at most once; an unavailable model would otherwise be
+      // re-selected on every render and lock the model picker.
+      if (isAvailable && switchedIntentRef.current !== intent.id) {
+        switchedIntentRef.current = intent.id;
+        model.setCurrentModel(intent.modelUuid);
+        return;
+      }
     }
     if (
       model.currentModel &&
@@ -57,10 +67,29 @@ export function useGenerationComposerIntent({
       return;
     if (requiredFieldMissing || limitExceeded) return;
 
-    const entries = Object.entries(intent.config).filter(
-      ([fieldName]) => dynamicForm.properties[fieldName],
-    );
+    const config = intent.replace
+      ? withInferredMode(intent.config, dynamicForm.configSchema)
+      : intent.config;
+    const entries = Object.entries(config)
+      .filter(([fieldName]) => dynamicForm.properties[fieldName])
+      // Mode first, so the fields it reveals accept their values.
+      .sort(([left]) => (left === "mode" ? -1 : 0));
     if (!entries.length) return;
+    if (intent.replace) {
+      // A restored request replaces the draft: inputs it did not use (e.g.
+      // references in a text-only request) must not leak into it.
+      const provided = new Set(entries.map(([fieldName]) => fieldName));
+      for (const [fieldName, property] of Object.entries(
+        dynamicForm.properties,
+      )) {
+        if (provided.has(fieldName)) continue;
+        const isArray = [property.type].flat().includes("array");
+        const emptyValue = isArray ? [] : undefined;
+        dynamicForm.setValue(fieldName, property.default ?? emptyValue, {
+          shouldDirty: true,
+        });
+      }
+    }
     for (const [fieldName, nextValue] of entries) {
       const value =
         intent.mergeReferences && fieldName === "reference_images"

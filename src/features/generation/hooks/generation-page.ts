@@ -18,7 +18,7 @@ import type {
 import { useReactQueryApi } from "@/shared/hooks/app";
 import {
   buildRetryConfig,
-  mergeRequestConfig,
+  resolveRequest,
 } from "@/features/generation/model/retry-config";
 import { FetchHttpError } from "@/shared/utils/custom-fetch/fetch-errors";
 import { HttpStatus } from "@/shared/utils/custom-fetch/http-status";
@@ -107,23 +107,15 @@ export function useGenerationPage({
         .find((message) => message.role === AiTaskRuleEnumMap.ASSISTANT),
     [displayedMessages],
   );
-  const getRequestConfig = useCallback(
-    (message: SchemaAiTaskMessageResponse) => {
-      const index = displayedMessages.findIndex(
-        ({ uuid }) => uuid === message.uuid,
-      );
-      const requestMessage = displayedMessages
-        .slice(0, Math.max(index, 0))
-        .reverse()
-        .find(({ role }) => role === AiTaskRuleEnumMap.USER);
-      return message.role === AiTaskRuleEnumMap.ASSISTANT
-        ? mergeRequestConfig(
-            message.ai_model_config,
-            requestMessage?.ai_model_config,
-          )
-        : mergeRequestConfig(undefined, message.ai_model_config);
-    },
+  const resolveMessageRequest = useCallback(
+    (message: SchemaAiTaskMessageResponse) =>
+      resolveRequest(displayedMessages, message),
     [displayedMessages],
+  );
+  const getRequestConfig = useCallback(
+    (message: SchemaAiTaskMessageResponse) =>
+      resolveMessageRequest(message).config,
+    [resolveMessageRequest],
   );
   const lastTaskMessage = useMemo(() => {
     const configuredMessages = [...displayedMessages]
@@ -165,17 +157,22 @@ export function useGenerationPage({
     const current = queryClient.getQueryState<SchemaAiTaskResponse>(
       options.queryKey,
     );
-    return current?.status !== "success" || current.data?.uuid !== chatId;
+    // A failed background refetch keeps the loaded conversation usable;
+    // only a missing task or a definitive 403/404 makes it unavailable.
+    return (
+      current?.data?.uuid !== chatId ||
+      getDefinitiveHistoryError(current.error) !== undefined
+    );
   }, [chatId, queryClient, queryOptions]);
-  let historyError: GenerationHistoryErrorKind | undefined;
-  if (chatId && (aiTaskState.isError || (aiTaskState.isSuccess && !taskData))) {
+  let historyError: GenerationHistoryErrorKind | undefined =
+    getDefinitiveHistoryError(aiTaskState.error);
+  if (
+    chatId &&
+    !historyError &&
+    !taskData &&
+    (aiTaskState.isError || aiTaskState.isSuccess)
+  ) {
     historyError = "temporary";
-    const status =
-      aiTaskState.error instanceof FetchHttpError
-        ? aiTaskState.error.response.status
-        : undefined;
-    if (status === 403) historyError = "forbidden";
-    if (status === 404) historyError = "notFound";
   }
   const isGenerating = aiGenerateState.isPending;
   const hasPendingGeneration = displayedMessages.some(
@@ -220,7 +217,25 @@ export function useGenerationPage({
     ) {
       submissionLockRef.current = false;
     }
-  }, [displayedMessages, generatedMediaField, optimisticTurn]);
+    // The generate response may not include the new assistant yet; once the
+    // task shows it and nothing is pending, the turn is finished.
+    const acceptedWithoutAssistant =
+      optimisticTurn?.status === "accepted" &&
+      !optimisticTurn.serverAssistantUuid;
+    if (
+      acceptedWithoutAssistant &&
+      !optimisticTurnForDisplay &&
+      !hasPendingGeneration
+    ) {
+      submissionLockRef.current = false;
+    }
+  }, [
+    displayedMessages,
+    generatedMediaField,
+    hasPendingGeneration,
+    optimisticTurn,
+    optimisticTurnForDisplay,
+  ]);
 
   useScrollToLatestMessage({
     isGenerating: isGenerating || hasOptimisticPending,
@@ -330,7 +345,10 @@ export function useGenerationPage({
               }
             : current,
         );
-        navigate(historyPath.replace(":chatId", responseTask.uuid));
+        // Follow-ups in the same chat must not push duplicate history entries.
+        if (responseTask.uuid !== chatId) {
+          navigate(historyPath.replace(":chatId", responseTask.uuid));
+        }
       } catch (error) {
         submissionLockRef.current = false;
         const isInsufficientBalance =
@@ -372,7 +390,7 @@ export function useGenerationPage({
   const handleRetry = useCallback(
     async (message: SchemaAiTaskMessageResponse) => {
       if (isHistoryUnavailableNow()) return;
-      const aiModelUuid = message.ai_model_uuid;
+      const { config, modelUuid: aiModelUuid } = resolveMessageRequest(message);
       if (!aiModelUuid) return;
 
       let model: unknown;
@@ -388,31 +406,18 @@ export function useGenerationPage({
       }
 
       try {
-        await handleForm(
-          buildRetryConfig(getRequestConfig(message), model),
-          aiModelUuid,
-        );
+        await handleForm(buildRetryConfig(config, model), aiModelUuid);
       } catch {
         // handleForm already displays the request failure in the conversation.
       }
     },
     [
-      getRequestConfig,
       handleForm,
       isHistoryUnavailableNow,
       queryClient,
       queryOptions,
+      resolveMessageRequest,
     ],
-  );
-  const handleRetryOptimistic = useCallback(
-    async (turn: OptimisticGenerationTurn) => {
-      try {
-        await handleForm(turn.snapshot.config, turn.snapshot.modelUuid);
-      } catch {
-        // handleForm already displays the request failure in the conversation.
-      }
-    },
-    [handleForm],
   );
 
   return {
@@ -420,9 +425,9 @@ export function useGenerationPage({
     failedRequest,
     handleForm,
     handleRetry,
-    handleRetryOptimistic,
     historyError,
     isRetryingHistory: aiTaskState.isFetching,
+    resolveMessageRequest,
     retryHistory: () => {
       void aiTaskState.refetch();
     },
@@ -434,4 +439,13 @@ export function useGenerationPage({
     successfulMessageClearKey,
     shouldShowIntro: !chatId && !optimisticTurnForDisplay,
   };
+}
+
+function getDefinitiveHistoryError(
+  error: unknown,
+): GenerationHistoryErrorKind | undefined {
+  if (!(error instanceof FetchHttpError)) return undefined;
+  if (error.response.status === 403) return "forbidden";
+  if (error.response.status === 404) return "notFound";
+  return undefined;
 }

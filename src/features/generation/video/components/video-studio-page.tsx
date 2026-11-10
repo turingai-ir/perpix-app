@@ -19,7 +19,6 @@ const GenerationVideoSession: FC = () => {
     failedRequest,
     handleForm,
     handleRetry,
-    handleRetryOptimistic,
     historyError,
     isRetryingHistory,
     retryHistory,
@@ -59,7 +58,6 @@ const GenerationVideoSession: FC = () => {
               isRetrying={isBusy}
               messages={displayedMessages}
               onRetry={handleRetry}
-              onRetryOptimistic={handleRetryOptimistic}
               optimisticTurn={optimisticTurn}
             />
           </section>

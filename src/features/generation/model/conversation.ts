@@ -30,5 +30,7 @@ export interface GenerationComposerIntent {
   id: string;
   mergeReferences?: boolean;
   modelUuid?: string;
+  /** Replace the whole draft instead of only setting the given fields. */
+  replace?: boolean;
   requiredFields?: readonly string[];
 }

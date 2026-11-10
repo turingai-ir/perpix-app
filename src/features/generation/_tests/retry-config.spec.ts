@@ -1,6 +1,10 @@
 import { expect, test } from "@playwright/test";
 
-import { buildRetryConfig, mergeRequestConfig } from "../model/retry-config";
+import {
+  buildRetryConfig,
+  mergeRequestConfig,
+  resolveRequest,
+} from "../model/retry-config";
 
 const model = {
   modes: {
@@ -121,4 +125,29 @@ test("request config keeps assistant inputs the request lacks", () => {
       { prompt: "a cat", reference_images: [] },
     ),
   ).toEqual({ prompt: "a cat", reference_images: ["file-1"] });
+});
+
+const turn = (
+  uuid: string,
+  role: "USER" | "ASSISTANT",
+  ai_model_config: Record<string, unknown>,
+  ai_model_uuid: string | null = null,
+) => ({ uuid, role, ai_model_config, ai_model_uuid });
+
+test("a request resolves from its USER message with the reply's inputs", () => {
+  const messages = [
+    turn("u1", "USER", { prompt: "first" }, "m1"),
+    turn("a1", "ASSISTANT", { prompt: "first", reference_images: ["r1"] }),
+    turn("u2", "USER", { prompt: "second" }),
+    turn("a2", "ASSISTANT", { prompt: "second" }, "m2"),
+  ];
+
+  expect(resolveRequest(messages, messages[0])).toEqual({
+    config: { prompt: "first", reference_images: ["r1"] },
+    modelUuid: "m1",
+  });
+  expect(resolveRequest(messages, messages[2]).modelUuid).toBe("m2");
+  expect(resolveRequest(messages, messages[3]).config).toEqual({
+    prompt: "second",
+  });
 });

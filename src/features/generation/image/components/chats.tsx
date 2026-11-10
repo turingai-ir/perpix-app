@@ -73,7 +73,9 @@ export const GenerationImageChats: FC<Props> = ({
         outputType="image"
         renderUserMessage={({ message, userImages }) => (
           <ImageRequestSummary
-            prompt={message.message ?? ""}
+            prompt={
+              message.message ?? String(message.ai_model_config?.prompt ?? "")
+            }
             referenceImages={userImages}
           />
         )}

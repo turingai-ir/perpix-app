@@ -85,6 +85,10 @@ export const DynamicConfigFileField: FC<{
   useEffect(() => {
     onUploadingChange?.(isUploading || previews.isPending);
   }, [isUploading, previews.isPending, onUploadingChange]);
+  // Unmounting mid-upload (e.g. switching to a model without references)
+  // must not leave the composer's submit disabled forever.
+  const reportUploadIdle = useEffectEvent(() => onUploadingChange?.(false));
+  useEffect(() => () => reportUploadIdle(), []);
 
   const setFileValue = (value: string | string[] | undefined) => {
     dynamicForm.setValue(fieldName, value, {

@@ -27,7 +27,10 @@ export function ImageRequestSummary({
         </div>
       ) : null}
       <div className="bg-muted/80 max-w-full rounded-[1.35rem] rounded-se-md px-4 py-3 text-start shadow-sm">
-        <p className="text-sm leading-7 wrap-anywhere sm:text-[0.95rem]">
+        <p
+          dir="auto"
+          className="text-sm leading-7 wrap-anywhere whitespace-pre-wrap sm:text-[0.95rem]"
+        >
           {prompt}
         </p>
       </div>

@@ -3,6 +3,7 @@ import {
   type JsonConfigSchema,
 } from "@/features/dynamic-config/model";
 import { getModelDynamicConfig } from "@/features/generation/model/model-dynamic-config";
+import type { SchemaAiTaskMessageResponse } from "@/shared/api";
 
 const SERVER_OUTPUT_FIELDS = ["images_generated", "videos_generated"];
 
@@ -87,4 +88,52 @@ export function buildRetryConfig(
     configSchema,
     withInferredMode(inputConfig, configSchema),
   );
+}
+
+type TaskMessage = Pick<
+  SchemaAiTaskMessageResponse,
+  "ai_model_config" | "ai_model_uuid" | "role" | "uuid"
+>;
+
+/**
+ * Finds the USER request and ASSISTANT reply of one turn, starting from
+ * either of them, so actions on a message see the whole request.
+ */
+export function findRequestPair<T extends TaskMessage>(
+  messages: readonly T[],
+  message: T,
+): { assistant?: T; request?: T } {
+  const index = messages.findIndex(({ uuid }) => uuid === message.uuid);
+  if (message.role === "ASSISTANT") {
+    const request = messages
+      .slice(0, Math.max(index, 0))
+      .reverse()
+      .find(({ role }) => role === "USER");
+    return { assistant: message, request };
+  }
+  const following = index < 0 ? [] : messages.slice(index + 1);
+  const nextUser = following.findIndex(({ role }) => role === "USER");
+  const assistant = (
+    nextUser < 0 ? following : following.slice(0, nextUser)
+  ).find(({ role }) => role === "ASSISTANT");
+  return { assistant, request: message };
+}
+
+/** Full inputs and model of the turn a message belongs to. */
+export function resolveRequest<T extends TaskMessage>(
+  messages: readonly T[],
+  message: T,
+): { config: Record<string, unknown>; modelUuid?: string } {
+  const { assistant, request } = findRequestPair(messages, message);
+  return {
+    config: mergeRequestConfig(
+      assistant?.ai_model_config,
+      request?.ai_model_config,
+    ),
+    modelUuid:
+      message.ai_model_uuid ??
+      assistant?.ai_model_uuid ??
+      request?.ai_model_uuid ??
+      undefined,
+  };
 }

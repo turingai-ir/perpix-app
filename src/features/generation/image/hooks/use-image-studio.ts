@@ -4,7 +4,10 @@ import { useLocation } from "react-router";
 import { useAppTranslate } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";
 import { APP_ROUTES_KEY } from "@/app/router/routes";
-import { AiRegistryModelSupportedTypesEnumMap } from "@/shared/api";
+import {
+  AiRegistryModelSupportedTypesEnumMap,
+  type SchemaAiTaskMessageResponse,
+} from "@/shared/api";
 import { appEventBus } from "@/shared/lib/event-bus";
 import { GeneratedMediaField, useGenerationPage } from "../../hooks";
 import { getGenerationDraftPrompt } from "../../hooks/generation-draft";
@@ -79,17 +82,15 @@ export function useImageStudio() {
     appEventBus.emit("SCROLL_APP_LAYOUT_UNTIL_END", { force: true });
   };
 
-  const handleEditRequest = (message: {
-    ai_model_uuid?: string | null;
-    ai_model_config?: Record<string, unknown>;
-  }) => {
-    const modelUuid = message.ai_model_uuid;
+  const handleEditRequest = (message: SchemaAiTaskMessageResponse) => {
+    const { config, modelUuid } = generationPage.resolveMessageRequest(message);
     if (!modelUuid) return;
     startTransition(() => {
       setComposerIntent({
         id: crypto.randomUUID(),
-        config: message.ai_model_config ?? {},
+        config,
         modelUuid,
+        replace: true,
       });
     });
     appEventBus.emit("SCROLL_APP_LAYOUT_UNTIL_END", { force: true });

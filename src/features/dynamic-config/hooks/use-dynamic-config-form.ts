@@ -253,24 +253,35 @@ export function useDynamicConfigForm({
     [configMeta, currentValues],
   );
 
-  const getCleanValues = useCallback(() => {
-    return sanitizeConfigValues(
-      safeConfigSchema,
-      stripUndefinedDeep(form.getValues()),
-    );
-  }, [form, safeConfigSchema]);
+  // Uses the same UI-rule visibility as the resolver, so fields hidden by
+  // uischema rules do not get their schema default sent.
+  const cleanConfigValues = useCallback(
+    (values: DynamicConfigValues) => {
+      const stripped = stripUndefinedDeep(values);
+      return sanitizeConfigValues(safeConfigSchema, stripped, {
+        visibleFields: getVisibleConfigFields(
+          safeConfigSchema,
+          stripped,
+          configMeta,
+        ),
+      });
+    },
+    [configMeta, safeConfigSchema],
+  );
+
+  const getCleanValues = useCallback(
+    () => cleanConfigValues(form.getValues()),
+    [cleanConfigValues, form],
+  );
 
   const handleSubmit: typeof form.handleSubmit = useCallback(
     (onValid, onInvalid) => {
-      return form.handleSubmit((values, event) => {
-        const cleaned = sanitizeConfigValues(
-          safeConfigSchema,
-          stripUndefinedDeep(values),
-        );
-        return onValid(cleaned, event);
-      }, onInvalid);
+      return form.handleSubmit(
+        (values, event) => onValid(cleanConfigValues(values), event),
+        onInvalid,
+      );
     },
-    [form, safeConfigSchema],
+    [cleanConfigValues, form],
   );
 
   const handleCleanSubmit = useCallback(

@@ -39,10 +39,9 @@ export const GenerationFailure: FC<GenerationFailureProps> = ({
         type="button"
         variant="outline"
       >
-        <RefreshCw
-          aria-hidden="true"
-          className={isRetrying ? "motion-safe:animate-spin" : ""}
-        />
+        {/* `isRetrying` is page-wide busy state, not this card's retry: the
+            new turn shows its own progress, so the icon must not spin. */}
+        <RefreshCw aria-hidden="true" />
         {retryLabel}
       </Button>
     ) : null}

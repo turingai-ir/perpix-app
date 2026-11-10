@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { useAtom } from "jotai";
 import {
   type InfiniteData,
@@ -290,20 +290,20 @@ export const useAiTaskResultPolling = (
     undefined,
   ).queryKey;
 
-  const refreshAfterTaskResult = () => {
+  const refreshAfterTaskResult = useEffectEvent(() => {
     if (aiTaskQueryKey) {
       void queryClient.invalidateQueries({ queryKey: aiTaskQueryKey });
     }
 
     void queryClient.invalidateQueries({ queryKey: aiTasksListQueryKey });
     void queryClient.refetchQueries({ queryKey: walletQueryKey });
-  };
+  });
 
   const shouldPoll =
     !!message?.uuid && !isAiTaskMessageTerminal(message, generatedMediaField);
   const canPollResult = useDelayedPollingStart(shouldPoll, message?.uuid);
 
-  return useQuery(
+  const resultState = useQuery(
     "get",
     "/api/v1/ai-task/result/{task_message_uuid}",
     {
@@ -319,26 +319,25 @@ export const useAiTaskResultPolling = (
         const resultMessage = query.state.data as
           SchemaAiTaskMessageResponse | undefined;
 
-        if (!resultMessage) {
-          return AI_TASK_POLLING_INTERVAL;
-        }
-
-        if (resultMessage.task_status === "FAILED") {
-          refreshAfterTaskResult();
-
-          return false;
-        }
-
-        if (isAiTaskMessageReady(resultMessage, generatedMediaField)) {
-          refreshAfterTaskResult();
-
-          return false;
-        }
-
-        return AI_TASK_POLLING_INTERVAL;
+        // Must stay pure: TanStack calls this on every options update.
+        return isAiTaskMessageTerminal(resultMessage, generatedMediaField)
+          ? false
+          : AI_TASK_POLLING_INTERVAL;
       },
     },
   );
+  const result = resultState.data as SchemaAiTaskMessageResponse | undefined;
+  const terminalResultKey =
+    result?.uuid && isAiTaskMessageTerminal(result, generatedMediaField)
+      ? `${result.uuid}:${result.task_status}`
+      : undefined;
+
+  // Refresh the task, history and wallet exactly once per finished result.
+  useEffect(() => {
+    if (terminalResultKey) refreshAfterTaskResult();
+  }, [terminalResultKey]);
+
+  return resultState;
 };
 
 export const useAiTasksList = (

@@ -37,7 +37,6 @@ const GenerationImageSession: FC = () => {
     failedRequest,
     handleForm,
     handleRetry,
-    handleRetryOptimistic,
     historyError,
     isRetryingHistory,
     retryHistory,
@@ -87,7 +86,6 @@ const GenerationImageSession: FC = () => {
               comparisonLimitReached={comparisonItems.length >= 4}
               onToggleComparison={handleToggleComparison}
               onRetry={handleRetry}
-              onRetryOptimistic={handleRetryOptimistic}
               optimisticTurn={optimisticTurn}
               onUseAsReference={handleUseAsReference}
               onEditRequest={handleEditRequest}
