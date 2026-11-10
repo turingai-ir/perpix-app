@@ -151,3 +151,29 @@ test("a request resolves from its USER message with the reply's inputs", () => {
     prompt: "second",
   });
 });
+
+test("mode inference ignores server-added keys like the backend does", () => {
+  // Stored canonical configs have no `mode` and carry `include_cost`.
+  expect(
+    buildRetryConfig(
+      {
+        prompt: "a cat",
+        reference_images: ["file-1"],
+        aspect_ratio: "1:1",
+        include_cost: true,
+      },
+      multiModeModel,
+    ),
+  ).toEqual({
+    mode: "image_to_image",
+    prompt: "a cat",
+    reference_images: ["file-1"],
+    aspect_ratio: "1:1",
+  });
+});
+
+test("mode inference skips modes whose required inputs are missing", () => {
+  expect(
+    buildRetryConfig({ prompt: "a cat", aspect_ratio: "3:2" }, multiModeModel),
+  ).toMatchObject({ mode: "text_to_image", prompt: "a cat" });
+});

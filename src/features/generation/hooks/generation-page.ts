@@ -6,6 +6,7 @@ import {
   GeneratedMediaField,
   useAiGenerate,
   useAiTaskResultPolling,
+  isAiTaskMessageReady,
   isAiTaskMessageTerminal,
 } from "./model";
 import { useScrollToLatestMessage } from "./scroll-to-latest-message";
@@ -132,7 +133,11 @@ export function useGenerationPage({
   }, [displayedMessages, getRequestConfig]);
   const failedRequest = useMemo<FailedGenerationRequest | undefined>(() => {
     const message = lastDisplayedAssistantMessage;
-    if (message?.task_status !== "FAILED" || !message.ai_model_uuid) {
+    // A SUCCESS without output failed for the user just like FAILED.
+    const producedNothing =
+      isAiTaskMessageTerminal(message, generatedMediaField) &&
+      !isAiTaskMessageReady(message, generatedMediaField);
+    if (!message || !producedNothing || !message.ai_model_uuid) {
       return undefined;
     }
     return {
@@ -140,9 +145,11 @@ export function useGenerationPage({
       key: message.uuid,
       modelUuid: message.ai_model_uuid,
     };
-  }, [getRequestConfig, lastDisplayedAssistantMessage]);
+  }, [generatedMediaField, getRequestConfig, lastDisplayedAssistantMessage]);
   const successfulMessageClearKey =
-    taskData && lastDisplayedAssistantMessage?.task_status === "SUCCESS"
+    taskData &&
+    lastDisplayedAssistantMessage &&
+    isAiTaskMessageReady(lastDisplayedAssistantMessage, generatedMediaField)
       ? `${taskData.uuid}:${lastDisplayedAssistantMessage.uuid}`
       : undefined;
   const isTaskLoading = aiTaskState.isLoading;

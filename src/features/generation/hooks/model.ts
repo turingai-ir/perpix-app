@@ -264,12 +264,15 @@ export const isAiTaskMessageReady = (
   );
 };
 
+/**
+ * The backend writes SUCCESS together with the generated media in one
+ * update, so SUCCESS is final even when the provider returned no output.
+ */
 export const isAiTaskMessageTerminal = (
   message: SchemaAiTaskMessageResponse | undefined,
-  generatedMediaField: GeneratedMediaField,
-) =>
-  message?.task_status === "FAILED" ||
-  isAiTaskMessageReady(message, generatedMediaField);
+  // Kept for call-site symmetry with isAiTaskMessageReady.
+  _generatedMediaField: GeneratedMediaField,
+) => message?.task_status === "FAILED" || message?.task_status === "SUCCESS";
 
 export const useAiTaskResultPolling = (
   taskUuid: string | undefined,

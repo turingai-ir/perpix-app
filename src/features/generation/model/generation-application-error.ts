@@ -1,6 +1,8 @@
 import { FetchHttpError } from "@/shared/utils/custom-fetch/fetch-errors";
 
 interface GenerationApplicationError {
+  /** Backend application code (`status_code` in the error body). */
+  code?: number;
   detail: unknown;
 }
 
@@ -14,7 +16,11 @@ export async function parseGenerationApplicationError(
   if (!(error instanceof FetchHttpError)) return null;
   const responseBody = await error.parseJson();
   if (!isRecord(responseBody) || !("detail" in responseBody)) return null;
-  return { detail: responseBody.detail };
+  const code =
+    typeof responseBody.status_code === "number"
+      ? responseBody.status_code
+      : undefined;
+  return { code, detail: responseBody.detail };
 }
 
 export function getCanonicalErrorPaths(detail: unknown): string[] {

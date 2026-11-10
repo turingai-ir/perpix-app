@@ -5,7 +5,12 @@ import {
 import { getModelDynamicConfig } from "@/features/generation/model/model-dynamic-config";
 import type { SchemaAiTaskMessageResponse } from "@/shared/api";
 
-const SERVER_OUTPUT_FIELDS = ["images_generated", "videos_generated"];
+// Added by the server to stored configs; never part of a user request.
+const SERVER_OUTPUT_FIELDS = [
+  "images_generated",
+  "videos_generated",
+  "include_cost",
+];
 
 type Config = Readonly<Record<string, unknown>>;
 
@@ -45,9 +50,11 @@ export function mergeRequestConfig(
 }
 
 /**
- * Stored configs may lack `mode`; the form would then fall back to the first
- * mode (e.g. text-to-image) and drop inputs that only another mode accepts.
- * Picks the first mode whose fields cover every stored input.
+ * The backend stores the mode's canonical config, which never contains
+ * `mode` (it is stripped by the mode schema). Without it the form falls back
+ * to the first mode (e.g. text-to-image) and drops inputs such as references.
+ * Mirrors the backend's `resolve_mode`: the first mode whose fields contain
+ * every stored input and whose required fields are present or defaulted.
  */
 export function withInferredMode(
   config: Config,
@@ -55,7 +62,10 @@ export function withInferredMode(
 ): Record<string, unknown> {
   if (hasValue(config.mode) || !configSchema?.allOf) return { ...config };
 
-  const inputKeys = Object.keys(config).filter((key) => hasValue(config[key]));
+  const knownFields = configSchema.properties ?? {};
+  const inputKeys = Object.keys(config).filter(
+    (key) => key !== "mode" && key in knownFields && hasValue(config[key]),
+  );
   for (const rule of configSchema.allOf) {
     if (!isRecord(rule) || !isRecord(rule.if) || !isRecord(rule.then)) continue;
     const modeProp = isRecord(rule.if.properties)
@@ -63,9 +73,17 @@ export function withInferredMode(
       : undefined;
     const fields = rule.then.properties;
     if (!isRecord(modeProp) || !isRecord(fields)) continue;
-    if (inputKeys.every((key) => key in fields)) {
-      return { ...config, mode: modeProp.const };
-    }
+    if (!inputKeys.every((key) => key in fields)) continue;
+    const required = Array.isArray(rule.then.required)
+      ? rule.then.required
+      : [];
+    const hasRequired = required.every(
+      (field) =>
+        typeof field !== "string" ||
+        inputKeys.includes(field) ||
+        (isRecord(fields[field]) && "default" in fields[field]),
+    );
+    if (hasRequired) return { ...config, mode: modeProp.const };
   }
   return { ...config };
 }

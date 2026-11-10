@@ -39,7 +39,7 @@ interface Props {
 
 // SUCCESS without media is not terminal in the API contract; keep a visible
 // recovery state while result polling waits for the file identifiers.
-const LOADING_STATUSES = new Set(["PENDING", "IN_PROGRESS", "SUCCESS"]);
+const LOADING_STATUSES = new Set(["PENDING", "IN_PROGRESS"]);
 
 export const GenerationChats: FC<Props> = ({
   copyUserMessages = false,
@@ -67,7 +67,11 @@ export const GenerationChats: FC<Props> = ({
           isAssistant &&
           !generatedMedia.length &&
           LOADING_STATUSES.has(item.task_status ?? "");
-        const isFailed = isAssistant && item.task_status === "FAILED";
+        // SUCCESS is final: without media the provider produced no output.
+        const isFailed =
+          isAssistant &&
+          (item.task_status === "FAILED" ||
+            (item.task_status === "SUCCESS" && !generatedMedia.length));
         const failureDescription = item.message || failureFallbackDescription;
         const requestMessage = [...messages.slice(0, messageIndex)]
           .reverse()

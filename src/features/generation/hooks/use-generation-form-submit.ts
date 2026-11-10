@@ -9,7 +9,10 @@ import type { useModel } from "@/features/generation/hooks/model";
 import { showDynamicFormErrorsToast } from "@/features/generation/components/dynamic-form-errors-toast";
 import { handleGenerationApplicationError } from "@/features/generation/services/handle-generation-application-error";
 import { useWallet, useWalletChargeDialog } from "@/features/wallet";
-import { isBalanceBelowCost } from "@/features/generation/model/wallet-balance";
+import {
+  INSUFFICIENT_BALANCE_ERROR_CODE,
+  isWalletInDebt,
+} from "@/features/generation/model/wallet-balance";
 
 const MIN_PROMPT_LENGTH = 3;
 
@@ -105,14 +108,9 @@ export function useGenerationFormSubmit({
       event.preventDefault();
       return;
     }
-    if (
-      isBalanceBelowCost(
-        walletState.data?.balance_usdmicro,
-        model.modelState.data?.min_cost,
-      )
-    ) {
-      // A subscription unlocks models, but each generation is paid from the
-      // wallet: guide the user to charge it instead of sending a doomed request.
+    if (isWalletInDebt(walletState.data?.balance_usdmicro)) {
+      // A subscription unlocks models, but generations are paid from the
+      // wallet and the backend rejects new ones while it is in debt.
       event.preventDefault();
       openWalletCharge("insufficientBalance");
       return;
@@ -126,7 +124,11 @@ export function useGenerationFormSubmit({
           const wasHandled = await handleGenerationApplicationError({
             dynamicForm,
             error,
-            onUnmappedApplicationError: async (detail) => {
+            onUnmappedApplicationError: async (detail, code) => {
+              if (code === INSUFFICIENT_BALANCE_ERROR_CODE) {
+                openWalletCharge("insufficientBalance");
+                return;
+              }
               // Without field errors the user would see nothing at all.
               toast.error(validationErrorTitle, {
                 description:
