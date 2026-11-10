@@ -35,7 +35,7 @@ export function OptimisticVideoTurn({
       <div data-message-role="assistant" className="mr-auto w-full max-w-3xl">
         {turn.status === "failed" ? (
           <GenerationFailure
-            title={t("pages.generation.video.generationError.title")}
+            title={t("pages.generation.video.studio.sendFailed")}
             description={t("pages.generation.video.studio.sendFailedHint")}
             retryLabel={t("pages.generation.video.generationError.action")}
             isRetrying={Boolean(isRetrying)}

@@ -21,8 +21,6 @@ import {
   resolveRequest,
 } from "@/features/generation/model/retry-config";
 import { FetchHttpError } from "@/shared/utils/custom-fetch/fetch-errors";
-import { HttpStatus } from "@/shared/utils/custom-fetch/http-status";
-import { useWalletChargeDialog } from "@/features/wallet";
 
 import {
   AiTaskRuleEnumMap,
@@ -54,7 +52,6 @@ export function useGenerationPage({
     useState<OptimisticGenerationTurn>();
   const { aiGenerateState, aiTaskState } = useAiGenerate(chatId);
   const { mutateAsync } = aiGenerateState;
-  const { openWalletCharge } = useWalletChargeDialog();
   useEffect(() => {
     isSessionActiveRef.current = true;
     return () => {
@@ -351,17 +348,16 @@ export function useGenerationPage({
         }
       } catch (error) {
         submissionLockRef.current = false;
-        const isInsufficientBalance =
+        // A 4xx is a definitive rejection: nothing was created, so the turn is
+        // removed and the composer explains it. Only network/5xx are ambiguous.
+        const wasRejected =
           error instanceof FetchHttpError &&
-          error.response.status === HttpStatus.PAYMENT_REQUIRED;
-        if (isInsufficientBalance) {
-          // Nothing was generated; explain the wallet step instead of a
-          // misleading "check history" network failure.
-          setOptimisticTurn(undefined);
-          openWalletCharge("insufficientBalance");
-        } else if (
-          error instanceof Error &&
-          error.name === "PaidActionRequirementError"
+          error.response.status >= 400 &&
+          error.response.status < 500;
+        if (
+          wasRejected ||
+          (error instanceof Error &&
+            error.name === "PaidActionRequirementError")
         ) {
           setOptimisticTurn(undefined);
         } else {
@@ -383,7 +379,6 @@ export function useGenerationPage({
       displayedMessages,
       mutateAsync,
       navigate,
-      openWalletCharge,
       taskType,
     ],
   );

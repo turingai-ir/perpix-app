@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import { useDynamicConfigForm } from "@/features/dynamic-config";
 import type { GenerationPromptBoxProps } from "@/features/generation/components/prompt-box/types";
@@ -31,33 +31,33 @@ export function useGenerationDynamicForm({
     () => getModelDynamicConfig(model.modelState.data),
     [model.modelState.data],
   );
-  const configDefaults = useMemo(() => {
-    const lastMessageDefaults =
-      !lastMessageModelUuid || lastMessageModelUuid === model.currentModel
-        ? resolveLastMessageDefaults({
-            configDefaultsResolver,
-            lastMessageConfig,
-            lastMessageStatus,
-          })
-        : undefined;
-
-    return {
-      ...(modelDynamicConfig.configDefaults ?? {}),
-      ...(lastMessageDefaults
-        ? withInferredMode(lastMessageDefaults, modelDynamicConfig.configSchema)
-        : {}),
-      ...(initialPrompt ? { prompt: initialPrompt } : {}),
-    };
+  const lastMessageDefaults = useMemo(() => {
+    if (lastMessageModelUuid && lastMessageModelUuid !== model.currentModel) {
+      return undefined;
+    }
+    const defaults = resolveLastMessageDefaults({
+      configDefaultsResolver,
+      lastMessageConfig,
+      lastMessageStatus,
+    });
+    return defaults
+      ? withInferredMode(defaults, modelDynamicConfig.configSchema)
+      : undefined;
   }, [
     configDefaultsResolver,
-    initialPrompt,
     lastMessageConfig,
-    lastMessageStatus,
     lastMessageModelUuid,
+    lastMessageStatus,
     model.currentModel,
-    modelDynamicConfig.configDefaults,
     modelDynamicConfig.configSchema,
   ]);
+  const configDefaults = useMemo(() => {
+    return {
+      ...(modelDynamicConfig.configDefaults ?? {}),
+      ...(lastMessageDefaults ?? {}),
+      ...(initialPrompt ? { prompt: initialPrompt } : {}),
+    };
+  }, [initialPrompt, lastMessageDefaults, modelDynamicConfig.configDefaults]);
   const dynamicForm = useDynamicConfigForm({
     autoResetOnSchemaChange: true,
     configDefaults,
@@ -66,6 +66,24 @@ export function useGenerationDynamicForm({
     schemaKey: `${model.modelState.data?.uuid ?? "loading"}:${modelDynamicConfig.configSchema?.$id ?? ""}`,
     preserveFieldsOnSchemaChange: PRESERVED_MODEL_SWITCH_FIELDS,
   });
+
+  // The chat's history usually loads after the form initialised from a cached
+  // schema; apply the last request's settings once, unless the user already
+  // edited the composer.
+  const appliedLastDefaultsRef = useRef(false);
+  useEffect(() => {
+    if (appliedLastDefaultsRef.current || !lastMessageDefaults) return;
+    if (!dynamicForm.isReady) return;
+    if (model.modelState.data?.uuid !== model.currentModel) return;
+    appliedLastDefaultsRef.current = true;
+    if (dynamicForm.form.formState.isDirty) return;
+    const restored = Object.fromEntries(
+      Object.entries(lastMessageDefaults).filter(
+        ([field]) => dynamicForm.properties[field],
+      ),
+    );
+    dynamicForm.form.reset({ ...dynamicForm.getValues(), ...restored });
+  }, [dynamicForm, lastMessageDefaults, model]);
 
   return { dynamicForm, model };
 }

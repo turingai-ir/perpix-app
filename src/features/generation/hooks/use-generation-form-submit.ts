@@ -1,4 +1,7 @@
 import type { SubmitEventHandler } from "react";
+import { toast } from "sonner";
+
+import { useAppTranslate } from "@/shared/hooks";
 
 import type { DynamicConfigForm } from "@/features/dynamic-config";
 import type { GenerationPromptBoxProps } from "@/features/generation/components/prompt-box/types";
@@ -66,6 +69,7 @@ export function useGenerationFormSubmit({
   validationErrorTitle,
   validationFieldErrorMessage,
 }: Input) {
+  const { t } = useAppTranslate();
   const walletState = useWallet();
   const { openWalletCharge } = useWalletChargeDialog();
   const isPromptFieldVisible =
@@ -122,7 +126,14 @@ export function useGenerationFormSubmit({
           const wasHandled = await handleGenerationApplicationError({
             dynamicForm,
             error,
-            onUnmappedApplicationError: async () => {
+            onUnmappedApplicationError: async (detail) => {
+              // Without field errors the user would see nothing at all.
+              toast.error(validationErrorTitle, {
+                description:
+                  typeof detail === "string" && detail.trim()
+                    ? detail
+                    : t("common.requestRejected"),
+              });
               await model.modelState.refetch();
             },
             validationFieldErrorMessage,

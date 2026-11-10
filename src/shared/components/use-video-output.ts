@@ -19,18 +19,41 @@ export function useVideoOutput(fileId: string) {
     expired || isMissing ? undefined : preview.data?.preview_url;
   const downloadUrl =
     expired || isMissing ? undefined : preview.data?.download_url;
+  // Keep the URL the player loaded: the signed URL is refreshed before it
+  // expires, and swapping it would remount <video> and restart playback.
+  const [pinned, setPinned] = useState<{
+    attempt: number;
+    expiresAt: number;
+    url: string;
+  }>();
+  const pinnedExpired =
+    pinned !== undefined &&
+    Number.isFinite(pinned.expiresAt) &&
+    pinned.expiresAt <= checkedAt;
+  if (
+    previewUrl &&
+    (!pinned || pinned.attempt !== mediaAttempt || pinnedExpired) &&
+    pinned?.url !== previewUrl
+  ) {
+    setPinned({ attempt: mediaAttempt, expiresAt, url: previewUrl });
+  }
+  const playbackUrl = previewUrl ? (pinned?.url ?? previewUrl) : undefined;
   const isLoading = !previewUrl && (preview.isPending || preview.isFetching);
-  const mediaKey = `${fileId}:${previewUrl ?? ""}:${mediaAttempt}`;
+  const mediaKey = `${fileId}:${playbackUrl ?? ""}:${mediaAttempt}`;
   const hasMediaError = failedMediaKey === mediaKey;
+  const nextExpiry = Math.min(
+    expiresAt,
+    pinned && !pinnedExpired ? pinned.expiresAt : Number.POSITIVE_INFINITY,
+  );
 
   useEffect(() => {
-    if (!Number.isFinite(expiresAt) || expired) return;
+    if (!Number.isFinite(nextExpiry) || nextExpiry <= checkedAt) return;
     const timeout = window.setTimeout(
       () => setCheckedAt(Date.now()),
-      Math.min(Math.max(0, expiresAt - Date.now() + 1), 2_147_483_647),
+      Math.min(Math.max(0, nextExpiry - Date.now() + 1), 2_147_483_647),
     );
     return () => window.clearTimeout(timeout);
-  }, [expiresAt, expired, checkedAt]);
+  }, [nextExpiry, checkedAt]);
 
   const download = () => {
     if (!downloadUrl) return;
@@ -61,7 +84,7 @@ export function useVideoOutput(fileId: string) {
     isRefreshing: preview.isFetching,
     mediaKey,
     onMediaError: () => setFailedMediaKey(mediaKey),
-    previewUrl,
+    previewUrl: playbackUrl,
     retry,
   };
 }

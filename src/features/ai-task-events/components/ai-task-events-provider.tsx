@@ -92,7 +92,18 @@ export function AiTaskEventsProvider() {
       void queryClient.invalidateQueries({ queryKey: aiTasksListQueryKey });
       void queryClient.refetchQueries({ queryKey: walletQueryKey });
 
-      const task = await queryClient.query(taskQueryOptions);
+      let task: unknown;
+      try {
+        task = await queryClient.query(taskQueryOptions);
+      } catch {
+        // Not processed after all: let a re-delivered event try again, and
+        // make an open conversation refetch once the network is back.
+        processedEventKeys.delete(getEventKey(payload));
+        void queryClient.invalidateQueries({
+          queryKey: taskQueryOptions.queryKey,
+        });
+        return;
+      }
 
       if (!task) return;
 

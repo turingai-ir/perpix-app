@@ -12,7 +12,7 @@ export async function handleGenerationApplicationError({
 }: {
   dynamicForm: DynamicConfigForm;
   error: unknown;
-  onUnmappedApplicationError: () => Promise<void>;
+  onUnmappedApplicationError: (detail: unknown) => Promise<void>;
   validationFieldErrorMessage: string;
 }): Promise<boolean> {
   const applicationError = await parseGenerationApplicationError(error);
@@ -20,7 +20,7 @@ export async function handleGenerationApplicationError({
 
   const canonicalErrorPaths = getCanonicalErrorPaths(applicationError.detail);
   if (canonicalErrorPaths.length === 0) {
-    await onUnmappedApplicationError();
+    await onUnmappedApplicationError(applicationError.detail);
     return true;
   }
 

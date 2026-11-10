@@ -15,6 +15,7 @@ import type { SchemaAiTaskMessageResponse } from "@/shared/api";
 import { RegenerateImageDialog } from "./regenerate-dialog";
 import { ResultSpecRobot } from "./result-spec-robot";
 import type { ImageComparisonItem } from "./image-comparison.types";
+import { mergeRequestConfig } from "../../model/retry-config";
 
 const ACTION_BASE_CLASS =
   "min-h-11 rounded-full transition-[color,background-color,transform] duration-150 active:scale-[0.97] motion-reduce:transition-none motion-reduce:active:scale-100";
@@ -62,10 +63,15 @@ export function ImageResultCard({
     () => new Set(),
   );
   const source = requestMessage ?? message;
-  const ratio = String(source.ai_model_config?.aspect_ratio ?? "1:1");
+  // Inputs may be stored on the request, the reply or both.
+  const requestConfig = mergeRequestConfig(
+    message.ai_model_config,
+    requestMessage?.ai_model_config,
+  );
+  const ratio = String(requestConfig.aspect_ratio ?? "1:1");
   const parsedRatio = parseAspectRatio(ratio);
-  const resolution = source.ai_model_config?.resolution;
-  const prompt = source.message ?? String(source.ai_model_config?.prompt ?? "");
+  const resolution = requestConfig.resolution;
+  const prompt = source.message ?? String(requestConfig.prompt ?? "");
 
   const getComparisonItem = (fileId: string): ImageComparisonItem => ({
     aspectRatio: ratio,
