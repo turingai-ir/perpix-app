@@ -4,10 +4,7 @@ export {
   useFilesPreviews,
   useVisibleFilePreview,
 } from "./hooks/use-file-previews";
-export {
-  useDeleteUserFile,
-  useReplaceUserFile,
-} from "./hooks/use-file-actions";
+export { useDeleteUserFile } from "./hooks/use-file-actions";
 export {
   FileManagerUploadStatus,
   pendingUploadsGroupedAtom,

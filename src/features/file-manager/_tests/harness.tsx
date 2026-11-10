@@ -7,7 +7,6 @@ import {
   useFilesPreviews,
   useFilePreview,
   useDeleteUserFile,
-  useReplaceUserFile,
   useInfiniteUserFiles,
 } from "@/features/file-manager";
 import { MediaUploadStrip } from "@/features/media-uploader";
@@ -23,7 +22,6 @@ function Harness() {
   );
   const single = useFilePreview("file-0").getFilePreviewState;
   const { deleteFileState } = useDeleteUserFile();
-  const { replaceFileState } = useReplaceUserFile();
   const files = useInfiniteUserFiles({
     contentTypes: ["audio/mpeg"],
   }).getUserFilesState;
@@ -56,7 +54,7 @@ function Harness() {
           .join(",")}
       </output>
       <output aria-label="Action error">
-        {deleteFileState.error?.message ?? replaceFileState.error?.message}
+        {deleteFileState.error?.message}
       </output>
       <button
         type="button"
@@ -65,19 +63,6 @@ function Harness() {
         }}
       >
         Delete
-      </button>
-      <button
-        type="button"
-        onClick={() => {
-          void replaceFileState
-            .mutateAsync({
-              fileUuid: "file-0",
-              file: new File(["sound"], "sound.mp3", { type: "audio/mpeg" }),
-            })
-            .catch(() => {});
-        }}
-      >
-        Replace
       </button>
       <output aria-label="Previews">
         {Object.keys(getFilesPreviewsState.data ?? {}).length}

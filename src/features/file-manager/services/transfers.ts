@@ -22,7 +22,7 @@ const initiation = z.object({
   chunk_size: z.number().int().positive(),
   parts_count: z.number().int().positive().max(10_000),
 });
-export function fileForm(file: File) {
+function fileForm(file: File) {
   const form = new FormData();
   form.append("file", file, file.name);
   return form;

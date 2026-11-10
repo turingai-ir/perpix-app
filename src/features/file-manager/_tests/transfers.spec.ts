@@ -178,31 +178,6 @@ test("a failed optimistic delete restores the file", async ({ page }) => {
   await expect(page.getByLabel("Action error")).toContainText("موقتاً");
   await expect(page.getByLabel("Files", { exact: true })).toHaveText("file-0");
 });
-test("replacement invalidates the preview for the stable UUID", async ({
-  page,
-}) => {
-  await expect(page.getByLabel("Single URL")).toContainText("storage.test");
-  await page.route("**/files/presigned-urls", (route) =>
-    route.fulfill({
-      json: {
-        files: route
-          .request()
-          .postDataJSON()
-          .file_uuids.map((id: string) => ({
-            file_uuid: id,
-            preview_url: `https://changed.test/${id}`,
-            download_url: `https://changed.test/${id}`,
-          })),
-      },
-    }),
-  );
-  await page.route("**/files/file-0", (route) =>
-    route.fulfill({ json: { uuid: "file-0" } }),
-  );
-  await page.getByRole("button", { name: "Replace", exact: true }).click();
-  await expect(page.getByLabel("Single URL")).toBeVisible();
-  await expect(page.getByLabel("Single URL")).toContainText("changed.test");
-});
 test("staged picker selection preserves toggling and excludes near-expiry files", async ({
   page,
 }) => {

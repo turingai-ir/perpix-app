@@ -253,34 +253,6 @@ test("a failed optimistic delete restores the file", async ({ page }) => {
   await expect(page.getByLabel("Files", { exact: true })).toHaveText("file-0");
 });
 
-test("replace refreshes the existing UUID preview", async ({ page }) => {
-  await expect(page.getByLabel("Single URL")).toContainText(
-    "storage.test/file-0",
-  );
-  await page.route("**/file-manager/files/presigned-urls", (route) =>
-    route.fulfill({
-      json: {
-        files: route
-          .request()
-          .postDataJSON()
-          .file_uuids.map((id: string) => ({
-            file_uuid: id,
-            preview_url: `https://new.test/${id}`,
-            download_url: `https://new.test/${id}`,
-            expire_at: new Date(Date.now() + 600_000).toISOString(),
-          })),
-      },
-    }),
-  );
-  await page.route("**/file-manager/files/file-0", (route) =>
-    route.fulfill({ json: { uuid: "file-0" } }),
-  );
-  await page.getByRole("button", { name: "Replace", exact: true }).click();
-  await expect(page.getByLabel("Single URL")).toHaveText(
-    "https://new.test/file-0",
-  );
-});
-
 test("a thousand previews use bounded batches and concurrency", async ({
   page,
 }) => {
@@ -410,9 +382,10 @@ test("short-lived URLs refresh before expiry without writing persistent cache", 
     });
   });
   await page.route("**/file-manager/files/file-0", (route) =>
-    route.fulfill({ json: { uuid: "file-0" } }),
+    route.fulfill({ json: {} }),
   );
-  await page.getByRole("button", { name: "Replace", exact: true }).click();
+  // A successful delete resets the file's preview, forcing a fresh URL.
+  await page.getByRole("button", { name: "Delete", exact: true }).click();
   await expect(page.getByLabel("Single URL")).toContainText(
     "renewed.test/file-0/1",
   );
@@ -437,10 +410,10 @@ test("permission failure clears stale preview without retrying", async ({
     return route.fulfill({ status: 403, json: {} });
   });
   await page.route("**/file-manager/files/file-0", (route) =>
-    route.fulfill({ status: 409, json: {} }),
+    route.fulfill({ json: {} }),
   );
-  await page.getByRole("button", { name: "Replace", exact: true }).click();
-  await expect(page.getByLabel("Action error")).toContainText("تغییر کرده");
+  // A successful delete resets the preview; its refresh is then denied.
+  await page.getByRole("button", { name: "Delete", exact: true }).click();
   await expect(page.getByLabel("Single preview error")).toHaveText("true");
   await expect(page.getByLabel("Single URL")).toHaveText("");
   expect(calls).toBe(1);
@@ -496,22 +469,6 @@ test("malformed success of simple upload is treated as an unknown outcome", asyn
   });
   await expect(page.getByLabel("Result", { exact: true })).toContainText(
     "فهرست",
-  );
-  expect(calls).toBe(1);
-});
-
-test("an uncertain replace refreshes state and asks for inspection without retrying", async ({
-  page,
-}) => {
-  await expect(page.getByLabel("Single URL")).toContainText("storage.test");
-  let calls = 0;
-  await page.route("**/file-manager/files/file-0", (route) => {
-    calls++;
-    return route.fulfill({ status: 503, json: {} });
-  });
-  await page.getByRole("button", { name: "Replace", exact: true }).click();
-  await expect(page.getByLabel("Action error")).toContainText(
-    "فایل را بررسی کنید",
   );
   expect(calls).toBe(1);
 });

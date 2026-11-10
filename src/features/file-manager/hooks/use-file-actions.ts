@@ -4,12 +4,8 @@ import {
   type InfiniteData,
 } from "@tanstack/react-query";
 import { useAppTranslate } from "@/shared/hooks";
-import { deleteUserFile, replaceUserFile } from "../services/file-actions";
-import {
-  fileError,
-  canRetryFileRequest,
-  UserFileError,
-} from "../model/file-error";
+import { deleteUserFile } from "../services/file-actions";
+import { fileError, UserFileError } from "../model/file-error";
 import {
   previewKey,
   userFilesKey,
@@ -79,33 +75,4 @@ export function useDeleteUserFile() {
     },
   });
   return { deleteFileState };
-}
-export function useReplaceUserFile() {
-  const client = useQueryClient(),
-    { t } = useAppTranslate();
-  const replaceFileState = useMutation({
-    networkMode: "always",
-    retry: false,
-    mutationFn: async (input: Parameters<typeof replaceUserFile>[0]) => {
-      try {
-        return await replaceUserFile(input);
-      } catch (error) {
-        throw new UserFileError(
-          t(
-            canRetryFileRequest(error)
-              ? "features.fileManager.errors.unknownReplace"
-              : fileError(error).key,
-          ),
-          error,
-        );
-      }
-    },
-    onSettled: async (_data, _error, { fileUuid }) => {
-      await Promise.all([
-        client.invalidateQueries({ queryKey: userFilesKey }),
-        client.invalidateQueries({ queryKey: previewKey(fileUuid) }),
-      ]);
-    },
-  });
-  return { replaceFileState };
 }
