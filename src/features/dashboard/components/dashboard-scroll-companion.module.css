@@ -1,4 +1,4 @@
-/* Art-scene exception (docs/RESTRUCTURE_PLAN.md §9.10): scroll-tracking robot mascot. */
+/* Art-scene exception (FRONTEND_ARCHITECTURE_FULL.md §3): scroll-tracking robot mascot. */
 .scrollCompanion {
   --scroll-progress: 0%;
   --robot-y: 0px;

@@ -1,4 +1,4 @@
-/* Art-scene exception (docs/RESTRUCTURE_PLAN.md §9.10): decorative celebration overlay, GSAP + keyframes. */
+/* Art-scene exception (FRONTEND_ARCHITECTURE_FULL.md §3): decorative celebration overlay, GSAP + keyframes. */
 .celebration {
   position: fixed;
   inset: 0;

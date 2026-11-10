@@ -1,3 +1,4 @@
+/* Art-scene exception (FRONTEND_ARCHITECTURE_FULL.md §3): animated slogan sign for the boot splash. */
 .sign {
   position: absolute;
   top: var(--sign-top, 17%);

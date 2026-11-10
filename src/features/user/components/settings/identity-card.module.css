@@ -1,4 +1,4 @@
-/* Art-scene exception (docs/RESTRUCTURE_PLAN.md §9.10): 3D flip identity card. */
+/* Art-scene exception (FRONTEND_ARCHITECTURE_FULL.md §3): 3D flip identity card. */
 .cardStage {
   perspective: 1000px;
   padding: 0.6rem 0;

@@ -1,4 +1,5 @@
-﻿.cinema {
+/* Art-scene exception (FRONTEND_ARCHITECTURE_FULL.md §3): animated brand cinema scene. */
+.cinema {
   position: relative;
   display: flex;
   min-height: 270px;

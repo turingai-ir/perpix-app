@@ -1,3 +1,4 @@
+/* Art-scene exception (FRONTEND_ARCHITECTURE_FULL.md §3): idle scene for the video studio. */
 .scene {
   position: relative;
   isolation: isolate;

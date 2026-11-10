@@ -1,4 +1,4 @@
-/* Art-scene exception (docs/RESTRUCTURE_PLAN.md §9.10): calibrated hero artwork with keyframes. */
+/* Art-scene exception (FRONTEND_ARCHITECTURE_FULL.md §3): calibrated hero artwork with keyframes. */
 .artwork {
   position: absolute;
   inset: 0 0 auto;

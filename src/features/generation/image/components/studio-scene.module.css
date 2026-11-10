@@ -1,4 +1,4 @@
-/* Art-scene exception (docs/RESTRUCTURE_PLAN.md §9.10): neural-network stage and background. */
+/* Art-scene exception (FRONTEND_ARCHITECTURE_FULL.md §3): neural-network stage and background. */
 .networkBackground {
   position: absolute;
   z-index: -1;

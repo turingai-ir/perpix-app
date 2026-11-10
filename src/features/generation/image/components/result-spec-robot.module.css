@@ -1,4 +1,4 @@
-/* Art-scene exception (docs/RESTRUCTURE_PLAN.md §9.10): animated 3D robot mascot. */
+/* Art-scene exception (FRONTEND_ARCHITECTURE_FULL.md §3): animated 3D robot mascot. */
 .robotScene {
   position: relative;
   width: 9rem;

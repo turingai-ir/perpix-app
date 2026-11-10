@@ -1,4 +1,4 @@
-/* Art-scene exception (docs/RESTRUCTURE_PLAN.md §9.10): 3D onboarding illustration. */
+/* Art-scene exception (FRONTEND_ARCHITECTURE_FULL.md §3): 3D onboarding illustration. */
 .editorOnboardingArt {
   position: relative;
   min-height: 550px;

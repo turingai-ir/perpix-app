@@ -1,4 +1,4 @@
-/* Art-scene exception (docs/RESTRUCTURE_PLAN.md §9.10): randomised brand entrance animation. */
+/* Art-scene exception (FRONTEND_ARCHITECTURE_FULL.md §3): randomised brand entrance animation. */
 .brandObject {
   position: relative;
   isolation: isolate;

@@ -35,7 +35,7 @@
 - Use shadcn components from `@/shared/ui` (base-nova) first, then shared components in `@/shared/components`, then Tailwind utilities. No new `*.css` / `*.module.css` for regular UI.
 - Colors come from semantic tokens (`background`, `foreground`, `card`, `muted`, `primary`, `border`, `destructive`, brand/accent tokens in `src/app/styles/tokens.css`); no `#hex` in components. New colors are added to `tokens.css` and mapped in `theme.css` first.
 - Mobile-first (`sm:`/`md:`/`lg:`); coarse-pointer sizes are handled inside `shared/ui` (`pointer-coarse:`), do not hand-size touch targets.
-- Shared keyframes live in `src/app/styles/theme.css` (`--animate-*`). The only allowed CSS Modules are animated art scenes (see `docs/RESTRUCTURE_PLAN.md` §9.10).
+- Shared keyframes live in `src/app/styles/theme.css` (`--animate-*`). The only allowed CSS Modules are animated art scenes (list and rules: `docs/agent-guides/FRONTEND_ARCHITECTURE_FULL.md` §3).
 - Tests select by role, text or `data-*` hooks, never by styling classes.
 
 ## Code Standards
