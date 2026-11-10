@@ -4,6 +4,7 @@ import { useDynamicConfigForm } from "@/features/dynamic-config";
 import type { GenerationPromptBoxProps } from "@/features/generation/components/prompt-box/types";
 import { useModel } from "@/features/generation/hooks/model";
 import { getModelDynamicConfig } from "@/features/generation/model/model-dynamic-config";
+import { withInferredMode } from "@/features/generation/model/retry-config";
 
 const PRESERVED_MODEL_SWITCH_FIELDS = ["prompt", "reference_images"] as const;
 
@@ -42,7 +43,9 @@ export function useGenerationDynamicForm({
 
     return {
       ...(modelDynamicConfig.configDefaults ?? {}),
-      ...(lastMessageDefaults ?? {}),
+      ...(lastMessageDefaults
+        ? withInferredMode(lastMessageDefaults, modelDynamicConfig.configSchema)
+        : {}),
       ...(initialPrompt ? { prompt: initialPrompt } : {}),
     };
   }, [
@@ -53,6 +56,7 @@ export function useGenerationDynamicForm({
     lastMessageModelUuid,
     model.currentModel,
     modelDynamicConfig.configDefaults,
+    modelDynamicConfig.configSchema,
   ]);
   const dynamicForm = useDynamicConfigForm({
     autoResetOnSchemaChange: true,

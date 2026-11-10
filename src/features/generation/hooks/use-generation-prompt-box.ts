@@ -5,12 +5,14 @@ import type { GenerationPromptBoxProps } from "@/features/generation/components/
 import { useGenerationDynamicForm } from "@/features/generation/hooks/use-generation-dynamic-form";
 import { useGenerationFormSubmit } from "@/features/generation/hooks/use-generation-form-submit";
 import { useGenerationComposerIntent } from "./use-generation-composer-intent";
+import { useRestoreFailedRequest } from "./use-restore-failed-request";
 
 type Input = Pick<
   GenerationPromptBoxProps,
   | "advancedExcludedFieldNames"
   | "composerIntent"
   | "configDefaultsResolver"
+  | "failedRequest"
   | "initialPrompt"
   | "isLoading"
   | "lastMessageConfig"
@@ -69,6 +71,11 @@ export function useGenerationPromptBox(input: Input) {
     intent: input.composerIntent,
     model,
     onApplied: input.onComposerIntentApplied,
+  });
+  useRestoreFailedRequest({
+    dynamicForm,
+    model,
+    request: input.failedRequest,
   });
 
   useEffect(() => {

@@ -7,7 +7,10 @@ import { useAppTranslate } from "@/shared/hooks";
 
 import { GenerationPromptBox } from "@/features/generation/components/prompt-box";
 import type { GenerationPromptBoxProps } from "@/features/generation/components/prompt-box/types";
-import type { GenerationComposerIntent } from "@/features/generation/model/conversation";
+import type {
+  FailedGenerationRequest,
+  GenerationComposerIntent,
+} from "@/features/generation/model/conversation";
 import {
   AiRegistryModelSupportedTypesEnumMap,
   type SchemaAiTaskMessageResponse,
@@ -22,6 +25,7 @@ interface Props {
   lastMessageStatus?: SchemaAiTaskMessageResponse["task_status"];
   successfulMessageClearKey?: string;
   composerIntent?: GenerationComposerIntent;
+  failedRequest?: FailedGenerationRequest;
   onComposerIntentApplied?: (intentId: string) => void;
 }
 

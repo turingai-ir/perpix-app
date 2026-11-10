@@ -1,5 +1,8 @@
 import type { ReactNode } from "react";
-import type { GenerationComposerIntent } from "../../model/conversation";
+import type {
+  FailedGenerationRequest,
+  GenerationComposerIntent,
+} from "../../model/conversation";
 
 import type { DynamicConfigForm } from "@/features/dynamic-config";
 import type { useModel } from "@/features/generation/hooks/model";
@@ -33,6 +36,8 @@ export interface GenerationPromptBoxProps {
   composerLabel?: string;
   modelLabel?: string;
   composerIntent?: GenerationComposerIntent;
+  /** Failed request whose inputs are restored into the composer once. */
+  failedRequest?: FailedGenerationRequest;
   initialPrompt?: string;
   isLoading?: boolean;
   lastMessageConfig?: SchemaAiTaskMessageResponse["ai_model_config"];

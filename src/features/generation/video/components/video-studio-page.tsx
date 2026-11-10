@@ -16,8 +16,10 @@ const GenerationVideoSession: FC = () => {
     focusPhase,
     lastTaskStatus,
     displayedMessages,
+    failedRequest,
     handleForm,
     handleRetry,
+    handleRetryOptimistic,
     historyError,
     isRetryingHistory,
     retryHistory,
@@ -57,6 +59,7 @@ const GenerationVideoSession: FC = () => {
               isRetrying={isBusy}
               messages={displayedMessages}
               onRetry={handleRetry}
+              onRetryOptimistic={handleRetryOptimistic}
               optimisticTurn={optimisticTurn}
             />
           </section>
@@ -82,6 +85,7 @@ const GenerationVideoSession: FC = () => {
               <GenerationFocusState phase={focusPhase} media="video" />
             ) : null}
             <GenerationVideoPromptBox
+              failedRequest={failedRequest}
               initialPrompt={initialPrompt}
               isLoading={isBusy}
               lastMessageConfig={

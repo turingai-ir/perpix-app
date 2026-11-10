@@ -14,6 +14,7 @@ interface Props {
   isRetrying?: boolean;
   messages: readonly SchemaAiTaskMessageResponse[];
   onRetry?: (message: SchemaAiTaskMessageResponse) => void;
+  onRetryOptimistic?: (turn: OptimisticGenerationTurn) => void;
   optimisticTurn?: OptimisticGenerationTurn;
 }
 
@@ -32,6 +33,7 @@ export const GenerationVideoChats: FC<Props> = ({
   isRetrying,
   messages,
   onRetry,
+  onRetryOptimistic,
   optimisticTurn,
 }) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
@@ -75,7 +77,15 @@ export const GenerationVideoChats: FC<Props> = ({
         })}
       />
       {optimisticTurn ? (
-        <OptimisticVideoTurn turn={optimisticTurn} isRetrying={isRetrying} />
+        <OptimisticVideoTurn
+          turn={optimisticTurn}
+          isRetrying={isRetrying}
+          onRetry={
+            onRetryOptimistic
+              ? () => onRetryOptimistic(optimisticTurn)
+              : undefined
+          }
+        />
       ) : null}
     </div>
   );

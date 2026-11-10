@@ -12,9 +12,11 @@ const normalizeIds = (value: unknown) =>
 export function OptimisticVideoTurn({
   turn,
   isRetrying,
+  onRetry,
 }: {
   turn: OptimisticGenerationTurn;
   isRetrying?: boolean;
+  onRetry?: () => void;
 }) {
   const { t } = useAppTranslate();
   const config = turn.snapshot.config;
@@ -39,6 +41,7 @@ export function OptimisticVideoTurn({
             description={t("pages.generation.video.studio.sendFailedHint")}
             retryLabel={t("pages.generation.video.generationError.action")}
             isRetrying={Boolean(isRetrying)}
+            onRetry={onRetry}
           />
         ) : (
           <VideoGenerationPortal

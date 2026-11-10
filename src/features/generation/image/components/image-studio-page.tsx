@@ -34,8 +34,10 @@ const GenerationImageSession: FC = () => {
     focusPhase,
     lastTaskStatus,
     displayedMessages,
+    failedRequest,
     handleForm,
     handleRetry,
+    handleRetryOptimistic,
     historyError,
     isRetryingHistory,
     retryHistory,
@@ -85,6 +87,7 @@ const GenerationImageSession: FC = () => {
               comparisonLimitReached={comparisonItems.length >= 4}
               onToggleComparison={handleToggleComparison}
               onRetry={handleRetry}
+              onRetryOptimistic={handleRetryOptimistic}
               optimisticTurn={optimisticTurn}
               onUseAsReference={handleUseAsReference}
               onEditRequest={handleEditRequest}
@@ -128,6 +131,7 @@ const GenerationImageSession: FC = () => {
               {isBusy ? <GenerationFocusState phase={focusPhase} /> : null}
               <GenerationImagePromptBox
                 composerIntent={composerIntent}
+                failedRequest={failedRequest}
                 initialPrompt={initialPrompt}
                 isLoading={isBusy}
                 lastMessageConfig={

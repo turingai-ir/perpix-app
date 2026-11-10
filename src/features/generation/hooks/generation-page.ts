@@ -10,12 +10,16 @@ import {
 } from "./model";
 import { useScrollToLatestMessage } from "./scroll-to-latest-message";
 import type {
+  FailedGenerationRequest,
   GenerationHistoryErrorKind,
   OptimisticGenerationTurn,
 } from "../model/conversation";
 
 import { useReactQueryApi } from "@/shared/hooks/app";
-import { buildRetryConfig } from "@/features/generation/model/retry-config";
+import {
+  buildRetryConfig,
+  mergeRequestConfig,
+} from "@/features/generation/model/retry-config";
 import { FetchHttpError } from "@/shared/utils/custom-fetch/fetch-errors";
 
 import {
@@ -100,6 +104,24 @@ export function useGenerationPage({
         .find((message) => message.role === AiTaskRuleEnumMap.ASSISTANT),
     [displayedMessages],
   );
+  const getRequestConfig = useCallback(
+    (message: SchemaAiTaskMessageResponse) => {
+      const index = displayedMessages.findIndex(
+        ({ uuid }) => uuid === message.uuid,
+      );
+      const requestMessage = displayedMessages
+        .slice(0, Math.max(index, 0))
+        .reverse()
+        .find(({ role }) => role === AiTaskRuleEnumMap.USER);
+      return message.role === AiTaskRuleEnumMap.ASSISTANT
+        ? mergeRequestConfig(
+            message.ai_model_config,
+            requestMessage?.ai_model_config,
+          )
+        : mergeRequestConfig(undefined, message.ai_model_config);
+    },
+    [displayedMessages],
+  );
   const lastTaskMessage = useMemo(() => {
     const configuredMessages = [...displayedMessages]
       .reverse()
@@ -107,13 +129,26 @@ export function useGenerationPage({
         (message) =>
           Boolean(message.ai_model_uuid) && Boolean(message.ai_model_config),
       );
-
-    return (
+    const message =
       configuredMessages.find(
-        (message) => message.role === AiTaskRuleEnumMap.ASSISTANT,
-      ) ?? configuredMessages[0]
-    );
-  }, [displayedMessages]);
+        (candidate) => candidate.role === AiTaskRuleEnumMap.ASSISTANT,
+      ) ?? configuredMessages[0];
+
+    return message
+      ? { ...message, ai_model_config: getRequestConfig(message) }
+      : undefined;
+  }, [displayedMessages, getRequestConfig]);
+  const failedRequest = useMemo<FailedGenerationRequest | undefined>(() => {
+    const message = lastDisplayedAssistantMessage;
+    if (message?.task_status !== "FAILED" || !message.ai_model_uuid) {
+      return undefined;
+    }
+    return {
+      config: getRequestConfig(message),
+      key: message.uuid,
+      modelUuid: message.ai_model_uuid,
+    };
+  }, [getRequestConfig, lastDisplayedAssistantMessage]);
   const successfulMessageClearKey =
     taskData && lastDisplayedAssistantMessage?.task_status === "SUCCESS"
       ? `${taskData.uuid}:${lastDisplayedAssistantMessage.uuid}`
@@ -342,20 +377,38 @@ export function useGenerationPage({
 
       try {
         await handleForm(
-          buildRetryConfig(message.ai_model_config, model),
+          buildRetryConfig(getRequestConfig(message), model),
           aiModelUuid,
         );
       } catch {
         // handleForm already displays the request failure in the conversation.
       }
     },
-    [handleForm, isHistoryUnavailableNow, queryClient, queryOptions],
+    [
+      getRequestConfig,
+      handleForm,
+      isHistoryUnavailableNow,
+      queryClient,
+      queryOptions,
+    ],
+  );
+  const handleRetryOptimistic = useCallback(
+    async (turn: OptimisticGenerationTurn) => {
+      try {
+        await handleForm(turn.snapshot.config, turn.snapshot.modelUuid);
+      } catch {
+        // handleForm already displays the request failure in the conversation.
+      }
+    },
+    [handleForm],
   );
 
   return {
     displayedMessages,
+    failedRequest,
     handleForm,
     handleRetry,
+    handleRetryOptimistic,
     historyError,
     isRetryingHistory: aiTaskState.isFetching,
     retryHistory: () => {

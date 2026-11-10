@@ -899,6 +899,67 @@ test("failed message retry network failure remains handled by the conversation",
   expect(imageConversationApi.generateRequests).toHaveLength(1);
 });
 
+test("failed request inputs return to the composer and are sent again", async ({
+  imageConversationApi,
+  page,
+}) => {
+  const reference = "44444444-4444-4444-8444-444444444444";
+  await page.route("**/file-manager/files/presigned-urls", (route) =>
+    route.fulfill({
+      json: {
+        files: [
+          {
+            file_uuid: reference,
+            preview_url:
+              "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='90'/%3E",
+            download_url: "https://storage.test/reference.webp",
+          },
+        ],
+      },
+    }),
+  );
+  const [userMessage, assistantMessage] = conversationMessages({
+    aspectRatio: "1:1",
+    prompt,
+    status: "FAILED",
+  });
+  imageConversationApi.setTaskMessages([
+    {
+      ...userMessage,
+      ai_model_config: {
+        ...userMessage.ai_model_config,
+        mode: "image_to_image",
+        reference_images: [reference],
+      },
+    },
+    // The failed reply alone does not carry the request's references.
+    { ...assistantMessage, ai_model_config: { prompt } },
+  ]);
+  await page.goto(`/generation/image/${taskUuid}`);
+
+  const references = page.getByRole("list", { name: labels.referenceImages });
+  await expect(references.getByRole("listitem")).toHaveCount(1);
+  await expect(page.getByRole("textbox", { name: "توصیف تصویر" })).toHaveValue(
+    prompt,
+  );
+  await expect(page.locator("[data-generation-mode]")).toHaveAttribute(
+    "data-generation-mode",
+    "image_to_image",
+  );
+  expect(imageConversationApi.generateRequests).toEqual([]);
+
+  await submitPrompt(page);
+  await expect.poll(() => imageConversationApi.generateRequests.length).toBe(1);
+  expect(
+    imageConversationApi.generateRequests[0].ai_model_config,
+  ).toMatchObject({
+    aspect_ratio: "1:1",
+    mode: "image_to_image",
+    prompt,
+    reference_images: [reference],
+  });
+});
+
 test("model schema incompatibility gives clear reference guidance", async ({
   imageConversationApi,
   page,

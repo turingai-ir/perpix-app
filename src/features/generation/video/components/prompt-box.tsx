@@ -15,6 +15,7 @@ import { AiRegistryModelSupportedTypesEnumMap } from "@/shared/api";
 
 type Props = Pick<
   GenerationPromptBoxProps,
+  | "failedRequest"
   | "initialPrompt"
   | "onSubmit"
   | "isLoading"

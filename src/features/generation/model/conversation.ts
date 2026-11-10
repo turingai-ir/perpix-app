@@ -1,5 +1,12 @@
 export type GenerationHistoryErrorKind = "notFound" | "forbidden" | "temporary";
 
+/** Inputs of a failed generation, restored into the composer once per key. */
+export interface FailedGenerationRequest {
+  config: Readonly<Record<string, unknown>>;
+  key: string;
+  modelUuid: string;
+}
+
 export interface GenerationSubmissionSnapshot {
   config: Readonly<Record<string, unknown>>;
   modelUuid: string;
