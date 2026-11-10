@@ -21,6 +21,8 @@ import {
   mergeRequestConfig,
 } from "@/features/generation/model/retry-config";
 import { FetchHttpError } from "@/shared/utils/custom-fetch/fetch-errors";
+import { HttpStatus } from "@/shared/utils/custom-fetch/http-status";
+import { useWalletChargeDialog } from "@/features/wallet";
 
 import {
   AiTaskRuleEnumMap,
@@ -52,6 +54,7 @@ export function useGenerationPage({
     useState<OptimisticGenerationTurn>();
   const { aiGenerateState, aiTaskState } = useAiGenerate(chatId);
   const { mutateAsync } = aiGenerateState;
+  const { openWalletCharge } = useWalletChargeDialog();
   useEffect(() => {
     isSessionActiveRef.current = true;
     return () => {
@@ -330,7 +333,15 @@ export function useGenerationPage({
         navigate(historyPath.replace(":chatId", responseTask.uuid));
       } catch (error) {
         submissionLockRef.current = false;
-        if (
+        const isInsufficientBalance =
+          error instanceof FetchHttpError &&
+          error.response.status === HttpStatus.PAYMENT_REQUIRED;
+        if (isInsufficientBalance) {
+          // Nothing was generated; explain the wallet step instead of a
+          // misleading "check history" network failure.
+          setOptimisticTurn(undefined);
+          openWalletCharge("insufficientBalance");
+        } else if (
           error instanceof Error &&
           error.name === "PaidActionRequirementError"
         ) {
@@ -354,6 +365,7 @@ export function useGenerationPage({
       displayedMessages,
       mutateAsync,
       navigate,
+      openWalletCharge,
       taskType,
     ],
   );

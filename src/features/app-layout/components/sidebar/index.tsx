@@ -10,7 +10,11 @@ import { cn } from "@/shared/lib/utils";
 import { useAppTranslate, useViewportBreakpoint } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";
 import { useActiveSubscription, usePricingFeature } from "@/features/pricing";
-import { useWallet, WalletChargeFlow } from "@/features/wallet";
+import {
+  useWallet,
+  useWalletChargeDialog,
+  WalletChargeFlow,
+} from "@/features/wallet";
 import {
   Sheet,
   SheetContent,
@@ -28,11 +32,12 @@ const AppLayoutSidebar: FC<{
   const walletState = useWallet();
   const activeSubscriptionState = useActiveSubscription();
   const { openPricingFeature } = usePricingFeature();
-  const isWalletChargeOpen = appLayoutState.isWalletChargeOpen;
-  const setIsWalletChargeOpen = (open: boolean) =>
-    setAppLayoutState((draft) => {
-      draft.isWalletChargeOpen = open;
-    });
+  const {
+    isWalletChargeOpen,
+    openWalletCharge,
+    setWalletChargeOpen,
+    walletChargeReason,
+  } = useWalletChargeDialog();
   const balanceUsdmicro = walletState.data?.balance_usdmicro ?? 0;
   const sidebarContent = (
     <AppLayoutSidebarContent
@@ -43,7 +48,7 @@ const AppLayoutSidebar: FC<{
             draft.isSidebarOpen = false;
           });
         }
-        setIsWalletChargeOpen(true);
+        openWalletCharge();
       }}
     />
   );
@@ -52,7 +57,8 @@ const AppLayoutSidebar: FC<{
     <WalletChargeFlow
       balanceUsdmicro={balanceUsdmicro}
       open={isWalletChargeOpen}
-      onOpenChange={setIsWalletChargeOpen}
+      onOpenChange={setWalletChargeOpen}
+      reason={walletChargeReason}
       requiresSubscription={
         activeSubscriptionState.data?.plan.is_default === true
       }

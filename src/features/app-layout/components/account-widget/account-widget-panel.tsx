@@ -1,8 +1,6 @@
 import { type FC } from "react";
-import { useSetAtom } from "jotai";
 import { ArrowUpLeft, Coins, Sparkles } from "lucide-react";
 
-import appLayoutAtom from "../../model/app-layout-state";
 import ActivityBlock from "./activity-block";
 import DaysRing from "./days-ring";
 import type { useAccountWidget } from "./use-account-widget";
@@ -13,6 +11,7 @@ import {
 } from "./account-widget-parts";
 
 import { usePricingFeature } from "@/features/pricing";
+import { useWalletChargeDialog } from "@/features/wallet";
 import { Button } from "@/shared/ui/button";
 import { useAppTranslate } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";
@@ -34,7 +33,7 @@ const formatDate = (iso: string | null | undefined) =>
 
 const AccountWidgetPanel: FC<PanelProps> = ({ widget, onClose }) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
-  const setLayout = useSetAtom(appLayoutAtom);
+  const { openWalletCharge } = useWalletChargeDialog();
   const { openPricingFeature } = usePricingFeature();
   const { tiers, isFree, tone } = widget;
   const daysLeft = tiers?.daysLeft ?? null;
@@ -126,9 +125,7 @@ const AccountWidgetPanel: FC<PanelProps> = ({ widget, onClose }) => {
           size="lg"
           className="hover-capable:hover:brightness-110 data-primary:from-accent-orange data-primary:to-accent-gold data-primary:text-on-accent flex-none rounded-full bg-white/12 px-4 text-sm font-extrabold text-white shadow-[inset_0_1px_rgb(255_255_255/18%)] data-primary:bg-linear-to-br motion-reduce:transition-none"
           data-primary={needsCharge || undefined}
-          onClick={run(() =>
-            setLayout((state) => ({ ...state, isWalletChargeOpen: true })),
-          )}
+          onClick={run(() => openWalletCharge())}
         >
           {t(`${PREFIX}.charge`)}
         </Button>

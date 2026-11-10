@@ -10,6 +10,7 @@ import { SubscriptionRequiredStep } from "./subscription-required-step";
 import { TokenAmountStep } from "./token-amount-step";
 import { useChargeWallet } from "../hooks/wallet-queries";
 import { WalletChargeSurface } from "./wallet-charge-surface";
+import type { WalletChargeReason } from "../hooks/use-wallet-charge-dialog";
 
 type WalletChargeFlowProps = {
   balanceUsdmicro: number;
@@ -17,6 +18,7 @@ type WalletChargeFlowProps = {
   onOpenChange: (open: boolean) => void;
   requiresSubscription: boolean;
   onOpenPricing: () => void;
+  reason?: WalletChargeReason;
 };
 
 export function WalletChargeFlow({
@@ -25,6 +27,7 @@ export function WalletChargeFlow({
   onOpenChange,
   requiresSubscription,
   onOpenPricing,
+  reason,
 }: WalletChargeFlowProps) {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const chargeWalletState = useChargeWallet();
@@ -63,6 +66,13 @@ export function WalletChargeFlow({
       initialAmount={amount}
       isError={chargeWalletState.isError}
       isPending={chargeWalletState.isPending}
+      notice={
+        reason
+          ? t(
+              `pages.app.layout.sidebar.balanceCard.chargeWallet.reasons.${reason}`,
+            )
+          : undefined
+      }
       onRetry={chargeWalletState.reset}
       onSubmit={createPayment}
     />

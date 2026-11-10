@@ -5,6 +5,8 @@ import type { GenerationPromptBoxProps } from "@/features/generation/components/
 import type { useModel } from "@/features/generation/hooks/model";
 import { showDynamicFormErrorsToast } from "@/features/generation/components/dynamic-form-errors-toast";
 import { handleGenerationApplicationError } from "@/features/generation/services/handle-generation-application-error";
+import { useWallet, useWalletChargeDialog } from "@/features/wallet";
+import { isBalanceBelowCost } from "@/features/generation/model/wallet-balance";
 
 const MIN_PROMPT_LENGTH = 3;
 
@@ -64,6 +66,8 @@ export function useGenerationFormSubmit({
   validationErrorTitle,
   validationFieldErrorMessage,
 }: Input) {
+  const walletState = useWallet();
+  const { openWalletCharge } = useWalletChargeDialog();
   const isPromptFieldVisible =
     Boolean(dynamicForm.properties.prompt) &&
     dynamicForm.isFieldVisible("prompt");
@@ -95,6 +99,18 @@ export function useGenerationFormSubmit({
 
     if (isSubmitDisabled || isPromptInvalid) {
       event.preventDefault();
+      return;
+    }
+    if (
+      isBalanceBelowCost(
+        walletState.data?.balance_usdmicro,
+        model.modelState.data?.min_cost,
+      )
+    ) {
+      // A subscription unlocks models, but each generation is paid from the
+      // wallet: guide the user to charge it instead of sending a doomed request.
+      event.preventDefault();
+      openWalletCharge("insufficientBalance");
       return;
     }
 

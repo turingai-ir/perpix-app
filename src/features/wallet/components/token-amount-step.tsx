@@ -1,9 +1,10 @@
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AlertCircle, LoaderCircle, WalletCards } from "lucide-react";
+import { AlertCircle, Info, LoaderCircle, WalletCards } from "lucide-react";
 import { NumericFormat } from "react-number-format";
 import z from "zod";
 
+import { Alert, AlertDescription } from "@/shared/ui/alert";
 import { Button } from "@/shared/ui/button";
 import {
   Form,
@@ -29,6 +30,8 @@ type TokenAmountStepProps = {
   initialAmount: string;
   isError: boolean;
   isPending: boolean;
+  /** Explains why the user was sent here (e.g. not enough balance). */
+  notice?: string;
   onRetry: () => void;
   onSubmit: (amount: string) => Promise<void>;
 };
@@ -67,6 +70,12 @@ export function TokenAmountStep(props: TokenAmountStepProps) {
             )}
           </WalletChargeDescription>
         </header>
+        {props.notice ? (
+          <Alert data-wallet-charge-notice>
+            <Info aria-hidden="true" />
+            <AlertDescription>{props.notice}</AlertDescription>
+          </Alert>
+        ) : null}
         <div className="bg-muted/30 rounded-2xl border px-4 py-3 text-sm">
           <span className="text-muted-foreground">
             {t(

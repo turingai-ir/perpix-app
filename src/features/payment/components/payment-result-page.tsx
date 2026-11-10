@@ -1,4 +1,4 @@
-import type { FC } from "react";
+import type { FC, ReactNode } from "react";
 import { Link } from "react-router";
 
 import LoadingSection from "@/shared/components/loading-section";
@@ -10,7 +10,12 @@ import { PaymentAmount } from "./payment-amount";
 import { PaymentReceipt } from "./payment-receipt";
 import { usePaymentResult } from "../hooks/use-payment-result";
 
-export const PaymentResultPage: FC = () => {
+type Props = {
+  /** Guidance shown once the purchase is paid and fulfilled. */
+  successNextStep?: ReactNode;
+};
+
+export const PaymentResultPage: FC<Props> = ({ successNextStep }) => {
   const {
     t,
     payment,
@@ -70,6 +75,9 @@ export const PaymentResultPage: FC = () => {
       trackingLabel={t("pages.payment.result.trackingCode")}
       actions={
         <>
+          {status === "succeeded" && payment.fulfillment_status === "SUCCEEDED"
+            ? successNextStep
+            : null}
           {canRetry ? (
             <Button
               disabled={isRetrying}
