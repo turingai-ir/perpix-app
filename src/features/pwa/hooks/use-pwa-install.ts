@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
+import { detectInstallGuide } from "../lib/install-guide";
+
 import { useAppTranslate } from "@/shared/hooks";
 
 type BeforeInstallPromptOutcome = "accepted" | "dismissed";
@@ -18,27 +20,16 @@ const isStandaloneDisplayMode = () =>
   window.matchMedia("(display-mode: standalone)").matches ||
   window.navigator.standalone === true;
 
-const isIosDevice = () => {
-  const userAgent = window.navigator.userAgent.toLowerCase();
-  const platform = window.navigator.platform.toLowerCase();
-  const hasTouchPoints = window.navigator.maxTouchPoints > 1;
-
-  return (
-    /iphone|ipod|ipad/.test(userAgent) ||
-    (platform === "macintel" && hasTouchPoints)
-  );
-};
-
 export function usePwaInstall() {
   const { t } = useAppTranslate();
   const [installPrompt, setInstallPrompt] =
     useState<BeforeInstallPromptEvent | null>(null);
-  const [isIosGuideOpen, setIsIosGuideOpen] = useState(false);
+  const [isInstallGuideOpen, setIsInstallGuideOpen] = useState(false);
   const [isInstallPending, setIsInstallPending] = useState(false);
   const [isInstalled, setIsInstalled] = useState(() =>
     isStandaloneDisplayMode(),
   );
-  const [isIos] = useState(() => isIosDevice());
+  const [guideKind] = useState(() => detectInstallGuide(window.navigator));
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (event: Event) => {
@@ -49,7 +40,7 @@ export function usePwaInstall() {
     const handleAppInstalled = () => {
       setInstallPrompt(null);
       setIsInstalled(true);
-      setIsIosGuideOpen(false);
+      setIsInstallGuideOpen(false);
     };
 
     window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
@@ -65,19 +56,15 @@ export function usePwaInstall() {
   }, []);
 
   const canInstall = useMemo(
-    () => !isInstalled && (Boolean(installPrompt) || isIos),
-    [installPrompt, isInstalled, isIos],
+    () => !isInstalled && (Boolean(installPrompt) || guideKind !== null),
+    [guideKind, installPrompt, isInstalled],
   );
 
   const requestInstall = useCallback(async () => {
     if (isInstalled || isInstallPending) return;
 
-    if (isIos) {
-      setIsIosGuideOpen(true);
-      return;
-    }
-
     if (!installPrompt) {
+      if (guideKind) setIsInstallGuideOpen(true);
       return;
     }
 
@@ -94,13 +81,14 @@ export function usePwaInstall() {
       );
       setIsInstallPending(false);
     }
-  }, [installPrompt, isIos, isInstalled, isInstallPending, t]);
+  }, [guideKind, installPrompt, isInstalled, isInstallPending, t]);
 
   return {
     canInstall,
+    guideKind,
     isInstallPending,
-    isIosGuideOpen,
+    isInstallGuideOpen,
     requestInstall,
-    setIsIosGuideOpen,
+    setIsInstallGuideOpen,
   };
 }

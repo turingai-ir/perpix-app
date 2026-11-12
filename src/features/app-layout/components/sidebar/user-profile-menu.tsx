@@ -21,7 +21,7 @@ import { useSidebarUserProfile } from "../../hooks/use-sidebar-user-profile";
 type UserProfileMenuProps = {
   canInstall: boolean;
   isInstallPending: boolean;
-  isIosGuideOpen: boolean;
+  isInstallGuideOpen: boolean;
   requestInstall: () => Promise<void>;
   triggerRef: RefObject<HTMLButtonElement | null>;
 };
@@ -52,7 +52,7 @@ const ProfileText: FC<ProfileTextProps> = ({ title, subtitle, badge }) => (
 const AppLayoutSidebarUserProfileMenu: FC<UserProfileMenuProps> = ({
   canInstall,
   isInstallPending,
-  isIosGuideOpen,
+  isInstallGuideOpen,
   requestInstall,
   triggerRef,
 }) => {
@@ -97,7 +97,7 @@ const AppLayoutSidebarUserProfileMenu: FC<UserProfileMenuProps> = ({
         side="top"
         align="end"
         sideOffset={8}
-        finalFocus={!isIosGuideOpen}
+        finalFocus={!isInstallGuideOpen}
       >
         <DropdownMenuGroup>
           <DropdownMenuLabel className="border-primary/12 from-primary/13 rounded-xl border bg-linear-110 to-(--video-accent-soft) p-2.5">

@@ -10,6 +10,7 @@ import { cn } from "@/shared/lib/utils";
 import { useAppTranslate, useViewportBreakpoint } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";
 import { useActiveSubscription, usePricingFeature } from "@/features/pricing";
+import { PwaInstallGuideSheet, usePwaInstall } from "@/features/pwa";
 import {
   useWallet,
   useWalletChargeDialog,
@@ -38,10 +39,22 @@ const AppLayoutSidebar: FC<{
     setWalletChargeOpen,
     walletChargeReason,
   } = useWalletChargeDialog();
+  const pwaInstall = usePwaInstall();
   const balanceUsdmicro = walletState.data?.balance_usdmicro ?? 0;
+  const requestPwaInstall = async () => {
+    // Leave the mobile drawer first so the install guide is not stacked under
+    // it and does not unmount together with it.
+    if (!breakpoints.lg) {
+      setAppLayoutState((draft) => {
+        draft.isSidebarOpen = false;
+      });
+    }
+    await pwaInstall.requestInstall();
+  };
   const sidebarContent = (
     <AppLayoutSidebarContent
       balanceUsdmicro={balanceUsdmicro}
+      pwaInstall={{ ...pwaInstall, requestInstall: requestPwaInstall }}
       onOpenWalletCharge={() => {
         if (!breakpoints.lg) {
           setAppLayoutState((draft) => {
@@ -66,6 +79,14 @@ const AppLayoutSidebar: FC<{
     />
   );
 
+  const pwaInstallGuide = pwaInstall.guideKind ? (
+    <PwaInstallGuideSheet
+      kind={pwaInstall.guideKind}
+      open={pwaInstall.isInstallGuideOpen}
+      onOpenChange={pwaInstall.setIsInstallGuideOpen}
+    />
+  ) : null;
+
   if (breakpoints.lg) {
     return (
       <>
@@ -89,6 +110,7 @@ const AppLayoutSidebar: FC<{
           {sidebarContent}
         </aside>
         {walletChargeFlow}
+        {pwaInstallGuide}
       </>
     );
   }
@@ -123,6 +145,7 @@ const AppLayoutSidebar: FC<{
         </SheetContent>
       </Sheet>
       {walletChargeFlow}
+      {pwaInstallGuide}
     </>
   );
 };

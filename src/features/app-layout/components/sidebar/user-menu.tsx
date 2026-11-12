@@ -3,17 +3,20 @@ import { useEffect, useRef, type FC } from "react";
 import AppLayoutSidebarUserActions from "./user-actions";
 import AppLayoutSidebarUserProfileMenu from "./user-profile-menu";
 
-import { PwaInstallIosDialog, usePwaInstall } from "@/features/pwa";
+import type { usePwaInstall } from "@/features/pwa";
 
-const AppLayoutSidebarUserMenu: FC = () => {
-  const pwaInstall = usePwaInstall();
+export type PwaInstallState = ReturnType<typeof usePwaInstall>;
+
+const AppLayoutSidebarUserMenu: FC<{ pwaInstall: PwaInstallState }> = ({
+  pwaInstall,
+}) => {
   const profileTriggerRef = useRef<HTMLButtonElement>(null);
-  const wasIosGuideOpen = useRef(false);
+  const wasInstallGuideOpen = useRef(false);
 
   useEffect(() => {
     const shouldRestoreFocus =
-      wasIosGuideOpen.current && !pwaInstall.isIosGuideOpen;
-    wasIosGuideOpen.current = pwaInstall.isIosGuideOpen;
+      wasInstallGuideOpen.current && !pwaInstall.isInstallGuideOpen;
+    wasInstallGuideOpen.current = pwaInstall.isInstallGuideOpen;
     if (!shouldRestoreFocus) return;
 
     // The install menu item is removed when its dropdown closes.
@@ -21,25 +24,19 @@ const AppLayoutSidebarUserMenu: FC = () => {
       profileTriggerRef.current?.focus(),
     );
     return () => cancelAnimationFrame(frame);
-  }, [pwaInstall.isIosGuideOpen]);
+  }, [pwaInstall.isInstallGuideOpen]);
 
   return (
-    <>
-      <div className="mt-auto flex w-full flex-col gap-2.5 pt-2">
-        <AppLayoutSidebarUserActions />
-        <AppLayoutSidebarUserProfileMenu
-          canInstall={pwaInstall.canInstall}
-          isInstallPending={pwaInstall.isInstallPending}
-          isIosGuideOpen={pwaInstall.isIosGuideOpen}
-          requestInstall={pwaInstall.requestInstall}
-          triggerRef={profileTriggerRef}
-        />
-      </div>
-      <PwaInstallIosDialog
-        open={pwaInstall.isIosGuideOpen}
-        onOpenChange={pwaInstall.setIsIosGuideOpen}
+    <div className="mt-auto flex w-full flex-col gap-2.5 pt-2">
+      <AppLayoutSidebarUserActions />
+      <AppLayoutSidebarUserProfileMenu
+        canInstall={pwaInstall.canInstall}
+        isInstallPending={pwaInstall.isInstallPending}
+        isInstallGuideOpen={pwaInstall.isInstallGuideOpen}
+        requestInstall={pwaInstall.requestInstall}
+        triggerRef={profileTriggerRef}
       />
-    </>
+    </div>
   );
 };
 

@@ -3,7 +3,7 @@ import { type FC } from "react";
 import AppLayoutSidebarWallet from "./wallet";
 import AppLayoutSidebarHistory from "./history";
 import AppLayoutSidebarNavigation from "./navigation";
-import AppLayoutSidebarUserMenu from "./user-menu";
+import AppLayoutSidebarUserMenu, { type PwaInstallState } from "./user-menu";
 
 import { useAppTranslate } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";
@@ -11,11 +11,13 @@ import { APP_I18_KEYS } from "@/shared/i18n";
 type AppLayoutSidebarContentProps = {
   balanceUsdmicro: number;
   onOpenWalletCharge: () => void;
+  pwaInstall: PwaInstallState;
 };
 
 const AppLayoutSidebarContent: FC<AppLayoutSidebarContentProps> = ({
   balanceUsdmicro,
   onOpenWalletCharge,
+  pwaInstall,
 }) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
 
@@ -36,7 +38,7 @@ const AppLayoutSidebarContent: FC<AppLayoutSidebarContentProps> = ({
         />
         <AppLayoutSidebarHistory />
       </nav>
-      <AppLayoutSidebarUserMenu />
+      <AppLayoutSidebarUserMenu pwaInstall={pwaInstall} />
     </div>
   );
 };
