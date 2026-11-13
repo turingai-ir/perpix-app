@@ -843,6 +843,29 @@ export interface components {
             readonly expires_in: number;
         };
         /**
+         * AiRegistryModeResponse
+         * @description One mode of a model as a client sees it.
+         */
+        readonly AiRegistryModeResponse: {
+            /**
+             * Value
+             * @description The mode the client sends back to select it, when the model declares one.
+             */
+            readonly value: string | null;
+            /**
+             * Provider Uuid
+             * @description The provider currently serving the mode, if any.
+             */
+            readonly provider_uuid: string | null;
+            /**
+             * Config Schema
+             * @description JSON Schema of the generation parameters this mode accepts; absent when no provider serves it.
+             */
+            readonly config_schema: {
+                readonly [key: string]: unknown;
+            } | null;
+        };
+        /**
          * AiRegistryModelDetail
          * @description Full detail of a registered AI model including execution modes and input schema.
          */
@@ -903,10 +926,20 @@ export interface components {
              * @description Maximum estimated credits for complex generation modes.
              */
             readonly max_cost?: number | null;
-            /** @description Dictionary of available operational modes and their parameters/cost profiles. */
-            readonly modes: components["schemas"]["JsonObject-Output"];
-            /** @description JSON Schema specifying accepted input parameters and UI constraints for this model. */
-            readonly canonical_ui_schema: components["schemas"]["JsonObject-Output"];
+            /**
+             * Modes
+             * @description The model's modes by name, each with the parameters it accepts.
+             */
+            readonly modes: {
+                readonly [key: string]: components["schemas"]["AiRegistryModeResponse"];
+            };
+            /**
+             * Canonical Ui Schema
+             * @description JSON Schema specifying accepted input parameters and UI constraints for this model.
+             */
+            readonly canonical_ui_schema: {
+                readonly [key: string]: unknown;
+            };
         };
         /**
          * AiRegistryModelOwnerEnum
@@ -1063,12 +1096,22 @@ export interface components {
              * @description UUID of the AI model executed for this message, if applicable.
              */
             readonly ai_model_uuid?: string | null;
-            /** @description Model parameters used and internal output registry. */
-            readonly ai_model_config?: components["schemas"]["JsonObject-Output"];
+            /**
+             * Ai Model Config
+             * @description Model parameters used and internal output registry.
+             */
+            readonly ai_model_config?: {
+                readonly [key: string]: unknown;
+            };
             /** @description Structured error details when the message failed, parsed from internal config. */
             readonly error: components["schemas"]["AiTaskMessageError"] | null;
-            /** @description Non-sensitive generation metadata (seed, dimensions) if returned by the provider. */
-            readonly metadata: components["schemas"]["JsonObject-Output"];
+            /**
+             * Metadata
+             * @description Non-sensitive generation metadata (seed, dimensions) if returned by the provider.
+             */
+            readonly metadata: {
+                readonly [key: string]: unknown;
+            };
             /**
              * Output File Uuids
              * @description Strongly-typed list of generated output file UUIDs extracted from generation results.
@@ -1456,13 +1499,16 @@ export interface components {
              */
             readonly task_type: components["schemas"]["AiTaskTypeEnum"];
             /**
+             * Ai Model Config
              * @description Model-specific configuration parameters matching the target model's input schema (e.g. prompt, aspect_ratio, negative_prompt, steps).
              * @example {
              *       "aspect_ratio": "16:9",
              *       "prompt": "A modern architectural villa at dusk"
              *     }
              */
-            readonly ai_model_config: components["schemas"]["JsonObject-Input"];
+            readonly ai_model_config: {
+                readonly [key: string]: unknown;
+            };
             /**
              * Task Uuid
              * @description Optional client-supplied conversation UUID. If provided, appends to the existing task conversation or provides an idempotent reference key.
@@ -1531,12 +1577,6 @@ export interface components {
             /** Detail */
             readonly detail?: readonly components["schemas"]["ValidationError"][];
         };
-        readonly "JsonArray-Input": JsonArrayInput;
-        readonly "JsonArray-Output": JsonArrayOutput;
-        readonly "JsonObject-Input": JsonObjectInput;
-        readonly "JsonObject-Output": JsonObjectOutput;
-        readonly "JsonValue-Input": JsonValueInput;
-        readonly "JsonValue-Output": JsonValueOutput;
         /**
          * LoginRequest
          * @example {
@@ -1997,6 +2037,7 @@ export interface components {
     pathItems: never;
 }
 export type SchemaAccessTokenResponse = components['schemas']['AccessTokenResponse'];
+export type SchemaAiRegistryModeResponse = components['schemas']['AiRegistryModeResponse'];
 export type SchemaAiRegistryModelDetail = components['schemas']['AiRegistryModelDetail'];
 export type SchemaAiRegistryModelOwnerEnum = components['schemas']['AiRegistryModelOwnerEnum'];
 export type SchemaAiRegistryModelSummary = components['schemas']['AiRegistryModelSummary'];
@@ -2036,12 +2077,6 @@ export type SchemaGenerateTaskRequest = components['schemas']['GenerateTaskReque
 export type SchemaGetWalletResponse = components['schemas']['GetWalletResponse'];
 export type SchemaGetWalletTransactionsResponse = components['schemas']['GetWalletTransactionsResponse'];
 export type SchemaHttpValidationError = components['schemas']['HTTPValidationError'];
-export type SchemaJsonArrayInput = components['schemas']['JsonArray-Input'];
-export type SchemaJsonArrayOutput = components['schemas']['JsonArray-Output'];
-export type SchemaJsonObjectInput = components['schemas']['JsonObject-Input'];
-export type SchemaJsonObjectOutput = components['schemas']['JsonObject-Output'];
-export type SchemaJsonValueInput = components['schemas']['JsonValue-Input'];
-export type SchemaJsonValueOutput = components['schemas']['JsonValue-Output'];
 export type SchemaLoginRequest = components['schemas']['LoginRequest'];
 export type SchemaMachineScope = components['schemas']['MachineScope'];
 export type SchemaPasswordChangeRequest = components['schemas']['PasswordChangeRequest'];
@@ -3936,26 +3971,6 @@ export const supportedCurrencyValues: ReadonlyArray<FlattenedDeepRequired<compon
 export const walletOperationSourceEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["WalletOperationSourceEnum"]> = ["admin", "ai_gateway_request", "ai_task_message", "subscription"];
 export const walletTransactionTypeEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["WalletTransactionTypeEnum"]> = ["DEPOSIT", "WITHDRAW", "REFUND"];
 
-
-export type JsonValueInput =
-  | JsonObjectInput
-  | JsonArrayInput
-  | string
-  | number
-  | boolean
-  | null;
-export type JsonObjectInput = { readonly [key: string]: JsonValueInput };
-export type JsonArrayInput = readonly JsonValueInput[];
-
-export type JsonValueOutput =
-  | JsonObjectOutput
-  | JsonArrayOutput
-  | string
-  | number
-  | boolean
-  | null;
-export type JsonObjectOutput = { readonly [key: string]: JsonValueOutput };
-export type JsonArrayOutput = readonly JsonValueOutput[];
 
 export const AiRegistryModelOwnerEnumMap = {
   "ALIBABA": "ALIBABA",

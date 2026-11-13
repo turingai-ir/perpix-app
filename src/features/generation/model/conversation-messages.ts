@@ -10,10 +10,7 @@ import type {
 } from "./conversation";
 
 import { FetchHttpError } from "@/shared/utils/custom-fetch/fetch-errors";
-import type {
-  SchemaAiTaskMessageResponse,
-  SchemaJsonObjectInput,
-} from "@/shared/api";
+import type { SchemaAiTaskMessageResponse } from "@/shared/api";
 
 type Message = SchemaAiTaskMessageResponse;
 
@@ -114,11 +111,6 @@ export const findNewServerAssistant = (
         isAssistant(message) && !existingMessageIds.has(message.uuid),
     );
 };
-
-/** Converts form data to the API's JSON type; non-JSON values (undefined) are dropped. */
-export const toJsonObject = (
-  data: Readonly<Record<string, unknown>>,
-): SchemaJsonObjectInput => JSON.parse(JSON.stringify(data));
 
 export const buildSubmissionSnapshot = (
   data: Readonly<Record<string, unknown>>,

@@ -11,7 +11,6 @@ import {
   findNewServerAssistant,
   isDefinitiveGenerateRejection,
   isOptimisticTurnSettled,
-  toJsonObject,
 } from "../model/conversation-messages";
 import type { OptimisticGenerationTurn } from "../model/conversation";
 import type { useAiGenerate } from "./use-ai-generate";
@@ -130,7 +129,7 @@ export function useGenerationSubmission({
           body: {
             task_type: taskType,
             ai_model_uuid: aiModelUuid,
-            ai_model_config: toJsonObject(data),
+            ai_model_config: data,
             task_uuid: chatId ?? undefined,
           },
         });

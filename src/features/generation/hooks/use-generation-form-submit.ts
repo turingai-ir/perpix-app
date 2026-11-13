@@ -9,6 +9,7 @@ import type { useModel } from "@/features/generation/hooks/use-model";
 import { showDynamicFormErrorsToast } from "@/features/generation/components/dynamic-form-errors-toast";
 import { handleGenerationApplicationError } from "@/features/generation/services/handle-generation-application-error";
 import { useWallet, useWalletChargeDialog } from "@/features/wallet";
+import { getGenerationErrorMessageKey } from "@/features/generation/model/generation-error-codes";
 import {
   INSUFFICIENT_BALANCE_ERROR_CODE,
   isWalletInDebt,
@@ -127,6 +128,13 @@ export function useGenerationFormSubmit({
             onUnmappedApplicationError: async (detail, code) => {
               if (code === INSUFFICIENT_BALANCE_ERROR_CODE) {
                 openWalletCharge("insufficientBalance");
+                return;
+              }
+              const messageKey = getGenerationErrorMessageKey(code);
+              if (messageKey) {
+                toast.error(validationErrorTitle, {
+                  description: t(messageKey),
+                });
                 return;
               }
               // Without field errors the user would see nothing at all.

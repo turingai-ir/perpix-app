@@ -5,6 +5,7 @@ import { Button } from "@/shared/ui/button";
 
 interface GenerationFailureProps {
   description: string;
+  hint?: string;
   isRetrying: boolean;
   onRetry?: () => void;
   retryLabel: string;
@@ -13,6 +14,7 @@ interface GenerationFailureProps {
 
 export const GenerationFailure: FC<GenerationFailureProps> = ({
   description,
+  hint,
   isRetrying,
   onRetry,
   retryLabel,
@@ -29,6 +31,7 @@ export const GenerationFailure: FC<GenerationFailureProps> = ({
       <div className="flex flex-col gap-1">
         <p className="text-sm leading-6 font-semibold">{title}</p>
         <p className="text-muted-foreground text-sm leading-6">{description}</p>
+        {hint ? <p className="text-sm leading-6">{hint}</p> : null}
       </div>
     </div>
     {onRetry ? (

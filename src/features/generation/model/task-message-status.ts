@@ -8,7 +8,12 @@ export enum GeneratedMediaField {
 const getGeneratedMedia = (
   message: SchemaAiTaskMessageResponse | undefined,
   generatedMediaField: GeneratedMediaField,
-) => message?.ai_model_config?.[generatedMediaField] as string[] | undefined;
+) => {
+  const value = message?.ai_model_config?.[generatedMediaField];
+  return Array.isArray(value)
+    ? value.filter((item): item is string => typeof item === "string")
+    : undefined;
+};
 
 export const isAiTaskMessageReady = (
   message: SchemaAiTaskMessageResponse | undefined,
@@ -22,6 +27,11 @@ export const isAiTaskMessageReady = (
     generatedMedia.length > 0
   );
 };
+
+/** The backend marks failures that resubmitting the same input cannot fix. */
+export const isRetryableFailure = (
+  message: SchemaAiTaskMessageResponse | undefined,
+) => message?.error?.retryable !== false;
 
 /**
  * The backend writes SUCCESS together with the generated media in one

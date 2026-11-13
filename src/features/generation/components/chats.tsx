@@ -3,6 +3,9 @@ import type { FC, ReactNode } from "react";
 import { GenerationFailure } from "./generation-failure";
 
 import { ChatBubble } from "@/features/generation/components/media-output/chat-bubble";
+import { getFailureHintKey } from "@/features/generation/model/failure-hint";
+import { useAppTranslate } from "@/shared/hooks";
+import { isRetryableFailure } from "@/features/generation/model/task-message-status";
 import { Avatar, AvatarImage } from "@/shared/ui/avatar";
 import { cn } from "@/shared/lib/utils";
 import {
@@ -54,6 +57,7 @@ export const GenerationChats: FC<Props> = ({
   renderUserMessage,
   renderAssistantResult,
 }) => {
+  const { t } = useAppTranslate();
   if (!messages.length) return null;
 
   return (
@@ -72,7 +76,9 @@ export const GenerationChats: FC<Props> = ({
           isAssistant &&
           (item.task_status === "FAILED" ||
             (item.task_status === "SUCCESS" && !generatedMedia.length));
-        const failureDescription = item.message || failureFallbackDescription;
+        const failureDescription =
+          item.error?.message || item.message || failureFallbackDescription;
+        const hintKey = isFailed ? getFailureHintKey(item.error) : undefined;
         const requestMessage = [...messages.slice(0, messageIndex)]
           .reverse()
           .find((message) => message.role === AiTaskRuleEnumMap.USER);
@@ -103,9 +109,10 @@ export const GenerationChats: FC<Props> = ({
             {isFailed ? (
               <GenerationFailure
                 description={failureDescription}
+                hint={hintKey ? t(hintKey) : undefined}
                 isRetrying={isRetrying}
                 onRetry={
-                  item.ai_model_uuid && onRetry
+                  item.ai_model_uuid && onRetry && isRetryableFailure(item)
                     ? () => onRetry(item)
                     : undefined
                 }

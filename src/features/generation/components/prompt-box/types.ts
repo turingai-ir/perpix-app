@@ -11,11 +11,8 @@ import type {
   SchemaAiTaskMessageResponse,
 } from "@/shared/api";
 
-/** Config of the last message; the API's JSON object type is assignable to it. */
-export type LastMessageConfig = Readonly<Record<string, unknown>>;
-
 export type ConfigDefaultsResolver = (
-  lastMessageConfig: LastMessageConfig | undefined,
+  lastMessageConfig: SchemaAiTaskMessageResponse["ai_model_config"] | undefined,
 ) => Record<string, unknown> | undefined;
 
 export interface PromptBoxExtraContentProps {
@@ -42,7 +39,7 @@ export interface GenerationPromptBoxProps {
   /** Failed request whose inputs are restored into the composer once. */
   failedRequest?: FailedGenerationRequest;
   isLoading?: boolean;
-  lastMessageConfig?: LastMessageConfig;
+  lastMessageConfig?: SchemaAiTaskMessageResponse["ai_model_config"];
   lastMessageModelUuid?: SchemaAiTaskMessageResponse["ai_model_uuid"];
   lastMessageStatus?: SchemaAiTaskMessageResponse["task_status"];
   /** Return false when a guard prevents submission, so the draft stays unsent. */

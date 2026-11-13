@@ -4,11 +4,7 @@ import path from "path";
 import openapiTS, { astToString } from "openapi-typescript";
 
 import { publicApiSchema } from "./public-schema";
-import {
-  JSON_ALIASES_SOURCE,
-  makeBinaryTransform,
-  makeJsonPostTransform,
-} from "./transform";
+import { makeBinaryTransform } from "./transform";
 
 type EnumDef = {
   name: string;
@@ -123,15 +119,12 @@ const generateClient = async (
     generatePathParams: true,
     rootTypes: true,
     transform: makeBinaryTransform("File"),
-    postTransform: makeJsonPostTransform(),
   });
 
   const enumMaps = renderEnumMaps(
     await collectEnumMaps(generatedJsonFileFullPath),
   );
-  const output = [astToString(ast), JSON_ALIASES_SOURCE, enumMaps]
-    .filter(Boolean)
-    .join("\n\n");
+  const output = [astToString(ast), enumMaps].filter(Boolean).join("\n\n");
 
   await fs.mkdir(path.dirname(outputFilePath), { recursive: true });
   await fs.writeFile(outputFilePath, output, "utf-8");
