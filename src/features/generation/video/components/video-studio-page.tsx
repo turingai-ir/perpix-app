@@ -22,6 +22,7 @@ const GenerationVideoSession: FC = () => {
     isRetryingHistory,
     retryHistory,
     isBusy,
+    isReviewing,
     isTaskLoading,
     lastAssistantMessage,
     lastTaskMessage,
@@ -78,7 +79,7 @@ const GenerationVideoSession: FC = () => {
             className="relative z-20 col-start-2 row-start-1 m-0 flex min-h-0 w-full flex-col overflow-hidden p-0 *:shrink-0 max-[950px]:order-[-1] max-[950px]:overflow-visible [&>[data-generation-composer-card]]:min-h-0 [&>[data-generation-composer-card]]:flex-1"
             data-generation-composer
           >
-            {isBusy ? (
+            {isBusy && !isReviewing ? (
               <GenerationFocusState phase={focusPhase} media="video" />
             ) : null}
             <GenerationVideoPromptBox

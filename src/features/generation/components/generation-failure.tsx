@@ -1,24 +1,31 @@
 import type { FC } from "react";
 import { AlertCircle, RefreshCw } from "lucide-react";
 
+import { TrackingCode } from "./tracking-code";
+
 import { Button } from "@/shared/ui/button";
 
 interface GenerationFailureProps {
   description: string;
   hint?: string;
+  /** What it cost, when the backend guarantees it. */
+  notice?: string;
   isRetrying: boolean;
   onRetry?: () => void;
   retryLabel: string;
   title: string;
+  trackingCode?: string;
 }
 
 export const GenerationFailure: FC<GenerationFailureProps> = ({
   description,
   hint,
+  notice,
   isRetrying,
   onRetry,
   retryLabel,
   title,
+  trackingCode,
 }) => (
   <div
     className="border-destructive/30 bg-destructive/5 flex flex-col gap-3 rounded-2xl border p-4 sm:p-5"
@@ -32,6 +39,10 @@ export const GenerationFailure: FC<GenerationFailureProps> = ({
         <p className="text-sm leading-6 font-semibold">{title}</p>
         <p className="text-muted-foreground text-sm leading-6">{description}</p>
         {hint ? <p className="text-sm leading-6">{hint}</p> : null}
+        {notice ? (
+          <p className="text-muted-foreground text-xs leading-5">{notice}</p>
+        ) : null}
+        {trackingCode ? <TrackingCode code={trackingCode} /> : null}
       </div>
     </div>
     {onRetry ? (

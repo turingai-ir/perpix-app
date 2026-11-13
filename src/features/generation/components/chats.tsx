@@ -1,9 +1,15 @@
 import type { FC, ReactNode } from "react";
 
 import { GenerationFailure } from "./generation-failure";
+import { GenerationReview } from "./generation-review";
 
 import { ChatBubble } from "@/features/generation/components/media-output/chat-bubble";
 import { getFailureHintKey } from "@/features/generation/model/failure-hint";
+import {
+  getFailureTitleKey,
+  isFailureFree,
+  isUnderReview,
+} from "@/features/generation/model/failure-details";
 import { useAppTranslate } from "@/shared/hooks";
 import { isRetryableFailure } from "@/features/generation/model/task-message-status";
 import { Avatar, AvatarImage } from "@/shared/ui/avatar";
@@ -67,8 +73,10 @@ export const GenerationChats: FC<Props> = ({
         const isUser = item.role === AiTaskRuleEnumMap.USER;
         const isAssistant = item.role === AiTaskRuleEnumMap.ASSISTANT;
         if (!isUser && !isAssistant) return null;
+        const inReview = isAssistant && isUnderReview(item);
         const isGenerating =
           isAssistant &&
+          !inReview &&
           !generatedMedia.length &&
           LOADING_STATUSES.has(item.task_status ?? "");
         // SUCCESS is final: without media the provider produced no output.
@@ -79,6 +87,7 @@ export const GenerationChats: FC<Props> = ({
         const failureDescription =
           item.error?.message || item.message || failureFallbackDescription;
         const hintKey = isFailed ? getFailureHintKey(item.error) : undefined;
+        const failureTitleKey = isFailed ? getFailureTitleKey(item) : undefined;
         const requestMessage = [...messages.slice(0, messageIndex)]
           .reverse()
           .find((message) => message.role === AiTaskRuleEnumMap.USER);
@@ -110,6 +119,11 @@ export const GenerationChats: FC<Props> = ({
               <GenerationFailure
                 description={failureDescription}
                 hint={hintKey ? t(hintKey) : undefined}
+                notice={
+                  isFailureFree(item)
+                    ? t("common.generationFailure.notCharged")
+                    : undefined
+                }
                 isRetrying={isRetrying}
                 onRetry={
                   item.ai_model_uuid && onRetry && isRetryableFailure(item)
@@ -117,8 +131,11 @@ export const GenerationChats: FC<Props> = ({
                     : undefined
                 }
                 retryLabel={failureRetryLabel}
-                title={failureTitle}
+                title={failureTitleKey ? t(failureTitleKey) : failureTitle}
+                trackingCode={item.uuid}
               />
+            ) : inReview ? (
+              <GenerationReview trackingCode={item.uuid} />
             ) : userMessage ? (
               userMessage
             ) : assistantResult ? (

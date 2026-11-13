@@ -40,6 +40,7 @@ const GenerationImageSession: FC = () => {
     isRetryingHistory,
     retryHistory,
     isBusy,
+    isReviewing,
     isTaskLoading,
     lastAssistantMessage,
     lastTaskMessage,
@@ -125,7 +126,9 @@ const GenerationImageSession: FC = () => {
                 onClear={handleClearComparison}
                 onRemove={handleRemoveComparison}
               />
-              {isBusy ? <GenerationFocusState phase={focusPhase} /> : null}
+              {isBusy && !isReviewing ? (
+                <GenerationFocusState phase={focusPhase} />
+              ) : null}
               <GenerationImagePromptBox
                 composerIntent={composerIntent}
                 failedRequest={failedRequest}

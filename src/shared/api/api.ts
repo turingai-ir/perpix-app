@@ -1102,11 +1102,8 @@ export interface components {
          * @description Structured, actionable error details for client applications.
          */
         readonly AiTaskMessageError: {
-            /**
-             * Reason
-             * @description High-level category code of the generation failure.
-             */
-            readonly reason: string;
+            /** @description High-level category of the generation failure. */
+            readonly reason: components["schemas"]["GenerationFailureReasonEnum"];
             /**
              * Message
              * @description Persian localized user-facing explanation.
@@ -1117,11 +1114,8 @@ export interface components {
              * @description Translation key for client-side localization.
              */
             readonly message_key?: string | null;
-            /**
-             * Action
-             * @description Prescribed client action (e.g. MODIFY_INPUT, RETRY_LATER, RETRY_NOW, CONTACT_SUPPORT).
-             */
-            readonly action: string;
+            /** @description Prescribed client action after this failure. */
+            readonly action: components["schemas"]["GenerationFailureActionEnum"];
             /**
              * Retryable
              * @description Whether the client should allow resubmitting the request.
@@ -1171,6 +1165,12 @@ export interface components {
             readonly ai_model_config?: {
                 readonly [key: string]: unknown;
             };
+            /**
+             * Under Review
+             * @description The generation stopped for a support review while still PENDING or IN_PROGRESS. It is not generating; support will finish or fail it, and nothing is charged before that. Keep polling: the status moves on once support acts.
+             * @default false
+             */
+            readonly under_review: boolean;
             /** @description Structured error details when the message failed, parsed from internal config. */
             readonly error: components["schemas"]["AiTaskMessageError"] | null;
             /**
@@ -1267,7 +1267,7 @@ export interface components {
          * ApplicationErrorCode
          * @enum {integer}
          */
-        readonly ApplicationErrorCode: 900 | 901 | 902 | 999 | 1000 | 1100 | 1103 | 1104 | 1106 | 1107 | 1108 | 1200 | 1201 | 1202 | 1203 | 1204 | 1205 | 1206 | 1300 | 1301 | 1302 | 1303 | 1304 | 1305 | 1306 | 1307 | 1308 | 1309 | 1310 | 1400 | 1401 | 1500 | 1501 | 1502 | 1503 | 1504 | 1505 | 1600 | 1601 | 1602 | 1603 | 1604 | 1605 | 1700 | 1701 | 1702 | 1800 | 1801 | 1802 | 1803 | 1804 | 1805 | 1806 | 1807 | 1808 | 1810 | 1811 | 1812 | 1813 | 1814 | 1815 | 1816;
+        readonly ApplicationErrorCode: 900 | 901 | 902 | 999 | 1000 | 1100 | 1103 | 1104 | 1106 | 1107 | 1108 | 1200 | 1201 | 1202 | 1203 | 1204 | 1205 | 1206 | 1300 | 1301 | 1302 | 1303 | 1304 | 1305 | 1306 | 1307 | 1308 | 1309 | 1310 | 1400 | 1401 | 1500 | 1501 | 1502 | 1503 | 1504 | 1505 | 1506 | 1600 | 1601 | 1602 | 1603 | 1604 | 1605 | 1700 | 1701 | 1702 | 1800 | 1801 | 1802 | 1803 | 1804 | 1805 | 1806 | 1807 | 1808 | 1810 | 1811 | 1812 | 1813 | 1814 | 1815 | 1816;
         /** ApplicationErrorResponse */
         readonly ApplicationErrorResponse: {
             /**
@@ -1584,6 +1584,18 @@ export interface components {
              */
             readonly task_uuid?: string | null;
         };
+        /**
+         * GenerationFailureActionEnum
+         * @description What the client should offer the user after a failure.
+         * @enum {string}
+         */
+        readonly GenerationFailureActionEnum: "MODIFY_INPUT" | "RETRY_LATER" | "RETRY_NOW" | "CONTACT_SUPPORT";
+        /**
+         * GenerationFailureReasonEnum
+         * @description Why a generation failed, as far as the user can act on it; the provider's own code is kept apart.
+         * @enum {string}
+         */
+        readonly GenerationFailureReasonEnum: "CONTENT_POLICY" | "INVALID_INPUT" | "RATE_LIMITED" | "PROVIDER_UNAVAILABLE" | "PROVIDER_TIMEOUT" | "PLATFORM_CONFIGURATION" | "PROVIDER_FAILED" | "INTERNAL" | "OPERATOR";
         /** GetWalletResponse */
         readonly GetWalletResponse: {
             /**
@@ -2142,6 +2154,8 @@ export type SchemaFileManagerPresignedUrlsResponse = components['schemas']['File
 export type SchemaFileManagerUploadFileResponse = components['schemas']['FileManagerUploadFileResponse'];
 export type SchemaFileManagerUserFilesResponse = components['schemas']['FileManagerUserFilesResponse'];
 export type SchemaGenerateTaskRequest = components['schemas']['GenerateTaskRequest'];
+export type SchemaGenerationFailureActionEnum = components['schemas']['GenerationFailureActionEnum'];
+export type SchemaGenerationFailureReasonEnum = components['schemas']['GenerationFailureReasonEnum'];
 export type SchemaGetWalletResponse = components['schemas']['GetWalletResponse'];
 export type SchemaGetWalletTransactionsResponse = components['schemas']['GetWalletTransactionsResponse'];
 export type SchemaHttpValidationError = components['schemas']['HTTPValidationError'];
@@ -4133,8 +4147,10 @@ export const aiRegistryModelSupportedTypesEnumValues: ReadonlyArray<FlattenedDee
 export const aiTaskMessageStatusEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiTaskMessageStatusEnum"]> = ["PENDING", "IN_PROGRESS", "SUCCESS", "FAILED"];
 export const aiTaskRuleEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiTaskRuleEnum"]> = ["SYSTEM", "USER", "ASSISTANT", "TOOL", "FUNCTION", "INLINE"];
 export const aiTaskTypeEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiTaskTypeEnum"]> = ["TEXT", "IMAGE", "AUDIO", "VIDEO"];
-export const applicationErrorCodeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["ApplicationErrorCode"]> = [900, 901, 902, 999, 1000, 1100, 1103, 1104, 1106, 1107, 1108, 1200, 1201, 1202, 1203, 1204, 1205, 1206, 1300, 1301, 1302, 1303, 1304, 1305, 1306, 1307, 1308, 1309, 1310, 1400, 1401, 1500, 1501, 1502, 1503, 1504, 1505, 1600, 1601, 1602, 1603, 1604, 1605, 1700, 1701, 1702, 1800, 1801, 1802, 1803, 1804, 1805, 1806, 1807, 1808, 1810, 1811, 1812, 1813, 1814, 1815, 1816];
+export const applicationErrorCodeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["ApplicationErrorCode"]> = [900, 901, 902, 999, 1000, 1100, 1103, 1104, 1106, 1107, 1108, 1200, 1201, 1202, 1203, 1204, 1205, 1206, 1300, 1301, 1302, 1303, 1304, 1305, 1306, 1307, 1308, 1309, 1310, 1400, 1401, 1500, 1501, 1502, 1503, 1504, 1505, 1506, 1600, 1601, 1602, 1603, 1604, 1605, 1700, 1701, 1702, 1800, 1801, 1802, 1803, 1804, 1805, 1806, 1807, 1808, 1810, 1811, 1812, 1813, 1814, 1815, 1816];
 export const fileManagerMediaMetadataResponseKindValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["FileManagerMediaMetadataResponse"]["kind"]> = ["image", "video", "audio"];
+export const generationFailureActionEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["GenerationFailureActionEnum"]> = ["MODIFY_INPUT", "RETRY_LATER", "RETRY_NOW", "CONTACT_SUPPORT"];
+export const generationFailureReasonEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["GenerationFailureReasonEnum"]> = ["CONTENT_POLICY", "INVALID_INPUT", "RATE_LIMITED", "PROVIDER_UNAVAILABLE", "PROVIDER_TIMEOUT", "PLATFORM_CONFIGURATION", "PROVIDER_FAILED", "INTERNAL", "OPERATOR"];
 export const machineScopeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["MachineScope"]> = ["ai_registry:read", "ai_task:read", "ai_task:write", "file_manager:read", "file_manager:write"];
 export const passwordStepResponseNext_stepValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PasswordStepResponse"]["next_step"]> = ["password"];
 export const paymentExecutionStatusValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaymentExecutionStatus"]> = ["PENDING", "SUCCEEDED", "FAILED", "EXPIRED"];
@@ -4245,6 +4261,7 @@ export const ApplicationErrorCodeMap = {
   1503: 1503,
   1504: 1504,
   1505: 1505,
+  1506: 1506,
   1600: 1600,
   1601: 1601,
   1602: 1602,
@@ -4273,6 +4290,29 @@ export const ApplicationErrorCodeMap = {
 } as const;
 export type ApplicationErrorCodeKey = keyof typeof ApplicationErrorCodeMap;
 export type ApplicationErrorCodeValue = (typeof ApplicationErrorCodeMap)[ApplicationErrorCodeKey];
+
+export const GenerationFailureActionEnumMap = {
+  "MODIFY_INPUT": "MODIFY_INPUT",
+  "RETRY_LATER": "RETRY_LATER",
+  "RETRY_NOW": "RETRY_NOW",
+  "CONTACT_SUPPORT": "CONTACT_SUPPORT",
+} as const;
+export type GenerationFailureActionEnumKey = keyof typeof GenerationFailureActionEnumMap;
+export type GenerationFailureActionEnumValue = (typeof GenerationFailureActionEnumMap)[GenerationFailureActionEnumKey];
+
+export const GenerationFailureReasonEnumMap = {
+  "CONTENT_POLICY": "CONTENT_POLICY",
+  "INVALID_INPUT": "INVALID_INPUT",
+  "RATE_LIMITED": "RATE_LIMITED",
+  "PROVIDER_UNAVAILABLE": "PROVIDER_UNAVAILABLE",
+  "PROVIDER_TIMEOUT": "PROVIDER_TIMEOUT",
+  "PLATFORM_CONFIGURATION": "PLATFORM_CONFIGURATION",
+  "PROVIDER_FAILED": "PROVIDER_FAILED",
+  "INTERNAL": "INTERNAL",
+  "OPERATOR": "OPERATOR",
+} as const;
+export type GenerationFailureReasonEnumKey = keyof typeof GenerationFailureReasonEnumMap;
+export type GenerationFailureReasonEnumValue = (typeof GenerationFailureReasonEnumMap)[GenerationFailureReasonEnumKey];
 
 export const MachineScopeMap = {
   "ai_registry:read": "ai_registry:read",

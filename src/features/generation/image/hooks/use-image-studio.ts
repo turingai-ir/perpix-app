@@ -11,6 +11,7 @@ import { appEventBus } from "@/shared/lib/event-bus";
 import { GeneratedMediaField, useGenerationPage } from "../../hooks";
 import type { GenerationComposerIntent } from "../../model/conversation";
 import type { GenerationFocusPhase } from "../../components/generation-focus-state";
+import { isUnderReview } from "../../model/failure-details";
 import type { ImageComparisonItem } from "../components/image-comparison.types";
 
 function getFocusPhase(
@@ -103,6 +104,7 @@ export function useImageStudio() {
     handleUseAsReference,
     handleEditRequest,
     focusPhase,
+    isReviewing: isUnderReview(generationPage.lastAssistantMessage),
     lastTaskStatus,
     ...generationPage,
   };

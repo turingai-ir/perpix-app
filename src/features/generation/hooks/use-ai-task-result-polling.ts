@@ -7,11 +7,14 @@ import {
   type GeneratedMediaField,
   isAiTaskMessageTerminal,
 } from "../model/task-message-status";
+import { isUnderReview } from "../model/failure-details";
 
 import { useReactQueryApi } from "@/shared/hooks/app";
 import type { SchemaAiTaskMessageResponse } from "@/shared/api";
 
 const AI_TASK_POLLING_INTERVAL = 10_000;
+// Support acts in minutes, not seconds; keep watching, just less often.
+const AI_TASK_REVIEW_POLLING_INTERVAL = 30_000;
 const AI_TASK_RESULT_INITIAL_DELAY = 5_000;
 
 const useDelayedPollingStart = (shouldPoll: boolean, resetKey?: string) => {
@@ -77,8 +80,11 @@ export const useAiTaskResultPolling = (
           SchemaAiTaskMessageResponse | undefined;
 
         // Must stay pure: TanStack calls this on every options update.
-        return isAiTaskMessageTerminal(resultMessage, generatedMediaField)
-          ? false
+        if (isAiTaskMessageTerminal(resultMessage, generatedMediaField)) {
+          return false;
+        }
+        return isUnderReview(resultMessage)
+          ? AI_TASK_REVIEW_POLLING_INTERVAL
           : AI_TASK_POLLING_INTERVAL;
       },
     },

@@ -4,6 +4,7 @@ import { APP_ROUTES_KEY } from "@/app/router/routes";
 import { AiRegistryModelSupportedTypesEnumMap } from "@/shared/api";
 import { GeneratedMediaField, useGenerationPage } from "../../hooks";
 import type { GenerationFocusPhase } from "../../components/generation-focus-state";
+import { isUnderReview } from "../../model/failure-details";
 
 function getFocusPhase(
   optimisticStatus: string | undefined,
@@ -34,6 +35,7 @@ export function useVideoStudio() {
   return {
     t,
     focusPhase,
+    isReviewing: isUnderReview(generationPage.lastAssistantMessage),
     lastTaskStatus,
     ...generationPage,
   };
