@@ -6,7 +6,10 @@ import { ImageReferenceInput } from "./image-reference-input";
 import { useAppTranslate } from "@/shared/hooks";
 
 import { GenerationPromptBox } from "@/features/generation/components/prompt-box";
-import type { GenerationPromptBoxProps } from "@/features/generation/components/prompt-box/types";
+import type {
+  GenerationPromptBoxProps,
+  LastMessageConfig,
+} from "@/features/generation/components/prompt-box/types";
 import type {
   FailedGenerationRequest,
   GenerationComposerIntent,
@@ -19,7 +22,7 @@ import {
 interface Props {
   onSubmit: GenerationPromptBoxProps["onSubmit"];
   isLoading?: boolean;
-  lastMessageConfig?: SchemaAiTaskMessageResponse["ai_model_config"];
+  lastMessageConfig?: LastMessageConfig;
   lastMessageModelUuid?: SchemaAiTaskMessageResponse["ai_model_uuid"];
   lastMessageStatus?: SchemaAiTaskMessageResponse["task_status"];
   successfulMessageClearKey?: string;

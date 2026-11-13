@@ -571,7 +571,7 @@ export interface paths {
         readonly put?: never;
         /**
          * Simple Upload
-         * @description Private upload up to 5 MiB. With managed media validation enabled: 413 size, 415 unsupported/mismatched format, 422 invalid media, 503 temporary unavailability. Request body is limited to 5 MiB plus 64 KiB multipart overhead. Each POST creates a new upload; no automatic POST retry or idempotency guarantee.
+         * @description Private upload up to 5 MiB; the body must arrive within the upload body timeout (408, below the CDN's 60s limit). With managed media validation enabled: 413 size, 415 unsupported/mismatched format, 422 invalid media, 503 temporary unavailability. Request body is limited to 5 MiB plus 64 KiB multipart overhead. Each POST creates a new upload; no automatic POST retry or idempotency guarantee.
          */
         readonly post: operations["simple_upload_api_v1_file_manager_simple_upload_post"];
         readonly delete?: never;
@@ -842,71 +842,137 @@ export interface components {
             /** Expires In */
             readonly expires_in: number;
         };
-        /** AiRegistryModelDetail */
+        /**
+         * AiRegistryModelDetail
+         * @description Full detail of a registered AI model including execution modes and input schema.
+         */
         readonly AiRegistryModelDetail: {
             /**
              * Uuid
              * Format: uuid
+             * @description Unique identifier of the AI model.
+             * @example b3f2e1a0-1234-4567-89ab-cdef01234567
              */
             readonly uuid: string;
+            /** @description The author or organization providing this model (e.g. BLACK_FOREST_LABS, MIDJOURNEY). */
             readonly model_owner: components["schemas"]["AiRegistryModelOwnerEnum"];
-            /** Name */
+            /**
+             * Name
+             * @description Canonical technical name of the model.
+             * @example flux-1-schnell
+             */
             readonly name: string;
-            /** Display Name */
-            readonly display_name: string | null;
-            /** Description */
-            readonly description: string | null;
-            /** Icon Url */
-            readonly icon_url: string | null;
-            /** Tags */
-            readonly tags: readonly string[];
-            /** Supported Inputs */
+            /**
+             * Display Name
+             * @description Human-friendly display name for user interfaces.
+             * @example FLUX.1 Schnell
+             */
+            readonly display_name?: string | null;
+            /**
+             * Description
+             * @description Detailed description of model capabilities and qualities.
+             */
+            readonly description?: string | null;
+            /**
+             * Icon Url
+             * @description URL pointing to the model's visual icon or thumbnail.
+             */
+            readonly icon_url?: string | null;
+            /**
+             * Tags
+             * @description Categorization and feature tags (e.g. photorealism, fast, anime).
+             */
+            readonly tags?: readonly string[];
+            /**
+             * Supported Inputs
+             * @description Modalities accepted as input (e.g. TEXT, IMAGE).
+             */
             readonly supported_inputs: readonly components["schemas"]["AiRegistryModelSupportedTypesEnum"][];
-            /** Supported Outputs */
+            /**
+             * Supported Outputs
+             * @description Modalities produced as output (e.g. IMAGE, VIDEO).
+             */
             readonly supported_outputs: readonly components["schemas"]["AiRegistryModelSupportedTypesEnum"][];
-            /** Min Cost */
+            /**
+             * Min Cost
+             * @description Minimum base credits required to invoke this model.
+             */
             readonly min_cost?: number | null;
-            /** Max Cost */
+            /**
+             * Max Cost
+             * @description Maximum estimated credits for complex generation modes.
+             */
             readonly max_cost?: number | null;
-            /** Modes */
-            readonly modes: {
-                readonly [key: string]: unknown;
-            };
-            /** Canonical Ui Schema */
-            readonly canonical_ui_schema: {
-                readonly [key: string]: unknown;
-            };
+            /** @description Dictionary of available operational modes and their parameters/cost profiles. */
+            readonly modes: components["schemas"]["JsonObject-Output"];
+            /** @description JSON Schema specifying accepted input parameters and UI constraints for this model. */
+            readonly canonical_ui_schema: components["schemas"]["JsonObject-Output"];
         };
         /**
          * AiRegistryModelOwnerEnum
          * @enum {string}
          */
         readonly AiRegistryModelOwnerEnum: "ALIBABA" | "OPEN_AI" | "GOOGLE" | "BLACK_FOREST_LABS" | "K_LING_AI" | "BRIA" | "BYTE_DANCE" | "IMAGINE_ART" | "LIGHT_TICKS" | "MID_JOURNEY" | "MINI_MAX" | "PIX_VERSE" | "PRUNA_AI" | "RUNWAY" | "SOURCE_FUL" | "VIDU" | "IDEOGRAM" | "X_AI";
-        /** AiRegistryModelSummary */
+        /**
+         * AiRegistryModelSummary
+         * @description Summary representation of a registered AI model for catalog browsing.
+         */
         readonly AiRegistryModelSummary: {
             /**
              * Uuid
              * Format: uuid
+             * @description Unique identifier of the AI model.
+             * @example b3f2e1a0-1234-4567-89ab-cdef01234567
              */
             readonly uuid: string;
+            /** @description The author or organization providing this model (e.g. BLACK_FOREST_LABS, MIDJOURNEY). */
             readonly model_owner: components["schemas"]["AiRegistryModelOwnerEnum"];
-            /** Name */
+            /**
+             * Name
+             * @description Canonical technical name of the model.
+             * @example flux-1-schnell
+             */
             readonly name: string;
-            /** Display Name */
-            readonly display_name: string | null;
-            /** Description */
-            readonly description: string | null;
-            /** Icon Url */
-            readonly icon_url: string | null;
-            /** Tags */
-            readonly tags: readonly string[];
-            /** Supported Inputs */
+            /**
+             * Display Name
+             * @description Human-friendly display name for user interfaces.
+             * @example FLUX.1 Schnell
+             */
+            readonly display_name?: string | null;
+            /**
+             * Description
+             * @description Detailed description of model capabilities and qualities.
+             */
+            readonly description?: string | null;
+            /**
+             * Icon Url
+             * @description URL pointing to the model's visual icon or thumbnail.
+             */
+            readonly icon_url?: string | null;
+            /**
+             * Tags
+             * @description Categorization and feature tags (e.g. photorealism, fast, anime).
+             */
+            readonly tags?: readonly string[];
+            /**
+             * Supported Inputs
+             * @description Modalities accepted as input (e.g. TEXT, IMAGE).
+             */
             readonly supported_inputs: readonly components["schemas"]["AiRegistryModelSupportedTypesEnum"][];
-            /** Supported Outputs */
+            /**
+             * Supported Outputs
+             * @description Modalities produced as output (e.g. IMAGE, VIDEO).
+             */
             readonly supported_outputs: readonly components["schemas"]["AiRegistryModelSupportedTypesEnum"][];
-            /** Min Cost */
+            /**
+             * Min Cost
+             * @description Minimum base credits required to invoke this model.
+             */
             readonly min_cost?: number | null;
-            /** Max Cost */
+            /**
+             * Max Cost
+             * @description Maximum estimated credits for complex generation modes.
+             */
             readonly max_cost?: number | null;
         };
         /**
@@ -914,55 +980,135 @@ export interface components {
          * @enum {string}
          */
         readonly AiRegistryModelSupportedTypesEnum: "TEXT" | "IMAGE" | "AUDIO" | "VIDEO";
-        /** AiTaskListResponse */
+        /**
+         * AiTaskListResponse
+         * @description Paginated collection envelope for AI tasks.
+         */
         readonly AiTaskListResponse: {
-            /** Items */
+            /**
+             * Items
+             * @description List of AI task conversation summaries.
+             */
             readonly items: readonly components["schemas"]["AiTaskResponse"][];
-            /** Has Next */
+            /**
+             * Has Next
+             * @description True if additional pages are available beyond the current offset.
+             */
             readonly has_next: boolean;
         };
-        /** AiTaskMessageResponse */
+        /**
+         * AiTaskMessageError
+         * @description Structured, actionable error details for client applications.
+         */
+        readonly AiTaskMessageError: {
+            /**
+             * Reason
+             * @description High-level category code of the generation failure.
+             */
+            readonly reason: string;
+            /**
+             * Message
+             * @description Persian localized user-facing explanation.
+             */
+            readonly message: string;
+            /**
+             * Message Key
+             * @description Translation key for client-side localization.
+             */
+            readonly message_key?: string | null;
+            /**
+             * Action
+             * @description Prescribed client action (e.g. MODIFY_INPUT, RETRY_LATER, RETRY_NOW, CONTACT_SUPPORT).
+             */
+            readonly action: string;
+            /**
+             * Retryable
+             * @description Whether the client should allow resubmitting the request.
+             */
+            readonly retryable: boolean;
+            /**
+             * Target
+             * @description Specific target component of the failure if known (prompt, reference_image).
+             */
+            readonly target?: string | null;
+        };
+        /**
+         * AiTaskMessageResponse
+         * @description Standardized representation of a single message within an AI task conversation.
+         */
         readonly AiTaskMessageResponse: {
-            /** Ai Model Config */
-            readonly ai_model_config: {
-                readonly [key: string]: unknown;
-            };
-            /** Ai Model Uuid */
-            readonly ai_model_uuid: string | null;
-            readonly task_status: components["schemas"]["AiTaskMessageStatusEnum"] | null;
-            /** Message */
-            readonly message: string | null;
-            readonly role: components["schemas"]["AiTaskRuleEnum"];
             /**
              * Uuid
              * Format: uuid
+             * @description Unique identifier of this task message.
              */
             readonly uuid: string;
+            /**
+             * @description Role of the message creator: USER for user requests, ASSISTANT for AI outputs.
+             * @example ASSISTANT
+             */
+            readonly role: components["schemas"]["AiTaskRuleEnum"];
+            /**
+             * @description Current processing status of this message (e.g. SUCCESS, FAILED, IN_PROGRESS).
+             * @example SUCCESS
+             */
+            readonly task_status?: components["schemas"]["AiTaskMessageStatusEnum"] | null;
+            /**
+             * Message
+             * @description Text content, normalized prompt, or error explanation associated with this message.
+             */
+            readonly message?: string | null;
+            /**
+             * Ai Model Uuid
+             * @description UUID of the AI model executed for this message, if applicable.
+             */
+            readonly ai_model_uuid?: string | null;
+            /** @description Model parameters used and internal output registry. */
+            readonly ai_model_config?: components["schemas"]["JsonObject-Output"];
+            /** @description Structured error details when the message failed, parsed from internal config. */
+            readonly error: components["schemas"]["AiTaskMessageError"] | null;
+            /** @description Non-sensitive generation metadata (seed, dimensions) if returned by the provider. */
+            readonly metadata: components["schemas"]["JsonObject-Output"];
+            /**
+             * Output File Uuids
+             * @description Strongly-typed list of generated output file UUIDs extracted from generation results.
+             */
+            readonly output_file_uuids: readonly string[];
         };
         /**
          * AiTaskMessageStatusEnum
          * @enum {string}
          */
         readonly AiTaskMessageStatusEnum: "PENDING" | "IN_PROGRESS" | "SUCCESS" | "FAILED";
-        /** AiTaskResponse */
+        /**
+         * AiTaskResponse
+         * @description Full representation of an AI task conversation container including its message history.
+         */
         readonly AiTaskResponse: {
             /**
              * Uuid
              * Format: uuid
+             * @description Unique identifier of the task conversation.
              */
             readonly uuid: string;
-            readonly task_type: components["schemas"]["AiRegistryModelSupportedTypesEnum"];
+            /** @description Modality of the task (e.g. IMAGE, VIDEO, TEXT). */
+            readonly task_type: components["schemas"]["AiTaskTypeEnum"];
             /**
              * Created At
              * Format: date-time
+             * @description RFC 3339 timestamp when this task was initiated.
              */
             readonly created_at: string;
             /**
              * Updated At
              * Format: date-time
+             * @description RFC 3339 timestamp of the most recent message update.
              */
             readonly updated_at: string;
-            /** Messages */
+            /**
+             * Messages
+             * @description Chronological sequence of user commands and AI generation outputs.
+             */
             readonly messages: readonly components["schemas"]["AiTaskMessageResponse"][];
         };
         /**
@@ -1010,7 +1156,7 @@ export interface components {
          * ApplicationErrorCode
          * @enum {integer}
          */
-        readonly ApplicationErrorCode: 900 | 901 | 902 | 999 | 1000 | 1100 | 1103 | 1104 | 1106 | 1107 | 1108 | 1200 | 1201 | 1202 | 1203 | 1204 | 1205 | 1206 | 1300 | 1301 | 1302 | 1303 | 1304 | 1305 | 1306 | 1307 | 1308 | 1400 | 1401 | 1500 | 1501 | 1502 | 1503 | 1600 | 1601 | 1602 | 1603 | 1604 | 1605 | 1700 | 1701 | 1702 | 1800 | 1801 | 1802 | 1803 | 1804 | 1805 | 1806 | 1807;
+        readonly ApplicationErrorCode: 900 | 901 | 902 | 999 | 1000 | 1100 | 1103 | 1104 | 1106 | 1107 | 1108 | 1200 | 1201 | 1202 | 1203 | 1204 | 1205 | 1206 | 1300 | 1301 | 1302 | 1303 | 1304 | 1305 | 1306 | 1307 | 1308 | 1309 | 1310 | 1400 | 1401 | 1500 | 1501 | 1502 | 1503 | 1504 | 1505 | 1600 | 1601 | 1602 | 1603 | 1604 | 1605 | 1700 | 1701 | 1702 | 1800 | 1801 | 1802 | 1803 | 1804 | 1805 | 1806 | 1807 | 1808 | 1810 | 1811 | 1812 | 1813 | 1814 | 1815 | 1816;
         /** ApplicationErrorResponse */
         readonly ApplicationErrorResponse: {
             /**
@@ -1292,19 +1438,36 @@ export interface components {
             /** Has Next */
             readonly has_next: boolean;
         };
-        /** GenerateTaskRequest */
+        /**
+         * GenerateTaskRequest
+         * @description Input payload to create or append to an AI generation task.
+         */
         readonly GenerateTaskRequest: {
             /**
              * Ai Model Uuid
              * Format: uuid
+             * @description The unique identifier (UUID) of the target AI model registered in the system.
+             * @example b3f2e1a0-1234-4567-89ab-cdef01234567
              */
             readonly ai_model_uuid: string;
-            readonly task_type: components["schemas"]["AiRegistryModelSupportedTypesEnum"];
-            /** Ai Model Config */
-            readonly ai_model_config: {
-                readonly [key: string]: unknown;
-            };
-            /** Task Uuid */
+            /**
+             * @description The modality or task type for generation (e.g. IMAGE, VIDEO, TEXT).
+             * @example IMAGE
+             */
+            readonly task_type: components["schemas"]["AiTaskTypeEnum"];
+            /**
+             * @description Model-specific configuration parameters matching the target model's input schema (e.g. prompt, aspect_ratio, negative_prompt, steps).
+             * @example {
+             *       "aspect_ratio": "16:9",
+             *       "prompt": "A modern architectural villa at dusk"
+             *     }
+             */
+            readonly ai_model_config: components["schemas"]["JsonObject-Input"];
+            /**
+             * Task Uuid
+             * @description Optional client-supplied conversation UUID. If provided, appends to the existing task conversation or provides an idempotent reference key.
+             * @example c5e4d3c2-b1a0-9876-5432-10fedcba9876
+             */
             readonly task_uuid?: string | null;
         };
         /** GetWalletResponse */
@@ -1368,6 +1531,12 @@ export interface components {
             /** Detail */
             readonly detail?: readonly components["schemas"]["ValidationError"][];
         };
+        readonly "JsonArray-Input": JsonArrayInput;
+        readonly "JsonArray-Output": JsonArrayOutput;
+        readonly "JsonObject-Input": JsonObjectInput;
+        readonly "JsonObject-Output": JsonObjectOutput;
+        readonly "JsonValue-Input": JsonValueInput;
+        readonly "JsonValue-Output": JsonValueOutput;
         /**
          * LoginRequest
          * @example {
@@ -1833,6 +2002,7 @@ export type SchemaAiRegistryModelOwnerEnum = components['schemas']['AiRegistryMo
 export type SchemaAiRegistryModelSummary = components['schemas']['AiRegistryModelSummary'];
 export type SchemaAiRegistryModelSupportedTypesEnum = components['schemas']['AiRegistryModelSupportedTypesEnum'];
 export type SchemaAiTaskListResponse = components['schemas']['AiTaskListResponse'];
+export type SchemaAiTaskMessageError = components['schemas']['AiTaskMessageError'];
 export type SchemaAiTaskMessageResponse = components['schemas']['AiTaskMessageResponse'];
 export type SchemaAiTaskMessageStatusEnum = components['schemas']['AiTaskMessageStatusEnum'];
 export type SchemaAiTaskResponse = components['schemas']['AiTaskResponse'];
@@ -1866,6 +2036,12 @@ export type SchemaGenerateTaskRequest = components['schemas']['GenerateTaskReque
 export type SchemaGetWalletResponse = components['schemas']['GetWalletResponse'];
 export type SchemaGetWalletTransactionsResponse = components['schemas']['GetWalletTransactionsResponse'];
 export type SchemaHttpValidationError = components['schemas']['HTTPValidationError'];
+export type SchemaJsonArrayInput = components['schemas']['JsonArray-Input'];
+export type SchemaJsonArrayOutput = components['schemas']['JsonArray-Output'];
+export type SchemaJsonObjectInput = components['schemas']['JsonObject-Input'];
+export type SchemaJsonObjectOutput = components['schemas']['JsonObject-Output'];
+export type SchemaJsonValueInput = components['schemas']['JsonValue-Input'];
+export type SchemaJsonValueOutput = components['schemas']['JsonValue-Output'];
 export type SchemaLoginRequest = components['schemas']['LoginRequest'];
 export type SchemaMachineScope = components['schemas']['MachineScope'];
 export type SchemaPasswordChangeRequest = components['schemas']['PasswordChangeRequest'];
@@ -3048,6 +3224,15 @@ export interface operations {
                     readonly "application/json": components["schemas"]["FileManagerUploadFileResponse"];
                 };
             };
+            /** @description Request Timeout */
+            readonly 408: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
             /** @description Content Too Large */
             readonly 413: {
                 headers: {
@@ -3739,7 +3924,7 @@ export const aiRegistryModelSupportedTypesEnumValues: ReadonlyArray<FlattenedDee
 export const aiTaskMessageStatusEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiTaskMessageStatusEnum"]> = ["PENDING", "IN_PROGRESS", "SUCCESS", "FAILED"];
 export const aiTaskRuleEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiTaskRuleEnum"]> = ["SYSTEM", "USER", "ASSISTANT", "TOOL", "FUNCTION", "INLINE"];
 export const aiTaskTypeEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiTaskTypeEnum"]> = ["TEXT", "IMAGE", "AUDIO", "VIDEO"];
-export const applicationErrorCodeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["ApplicationErrorCode"]> = [900, 901, 902, 999, 1000, 1100, 1103, 1104, 1106, 1107, 1108, 1200, 1201, 1202, 1203, 1204, 1205, 1206, 1300, 1301, 1302, 1303, 1304, 1305, 1306, 1307, 1308, 1400, 1401, 1500, 1501, 1502, 1503, 1600, 1601, 1602, 1603, 1604, 1605, 1700, 1701, 1702, 1800, 1801, 1802, 1803, 1804, 1805, 1806, 1807];
+export const applicationErrorCodeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["ApplicationErrorCode"]> = [900, 901, 902, 999, 1000, 1100, 1103, 1104, 1106, 1107, 1108, 1200, 1201, 1202, 1203, 1204, 1205, 1206, 1300, 1301, 1302, 1303, 1304, 1305, 1306, 1307, 1308, 1309, 1310, 1400, 1401, 1500, 1501, 1502, 1503, 1504, 1505, 1600, 1601, 1602, 1603, 1604, 1605, 1700, 1701, 1702, 1800, 1801, 1802, 1803, 1804, 1805, 1806, 1807, 1808, 1810, 1811, 1812, 1813, 1814, 1815, 1816];
 export const fileManagerMediaMetadataResponseKindValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["FileManagerMediaMetadataResponse"]["kind"]> = ["image", "video", "audio"];
 export const machineScopeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["MachineScope"]> = ["ai_registry:read", "ai_task:read", "ai_task:write", "file_manager:read", "file_manager:write"];
 export const passwordStepResponseNext_stepValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PasswordStepResponse"]["next_step"]> = ["password"];
@@ -3751,6 +3936,26 @@ export const supportedCurrencyValues: ReadonlyArray<FlattenedDeepRequired<compon
 export const walletOperationSourceEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["WalletOperationSourceEnum"]> = ["admin", "ai_gateway_request", "ai_task_message", "subscription"];
 export const walletTransactionTypeEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["WalletTransactionTypeEnum"]> = ["DEPOSIT", "WITHDRAW", "REFUND"];
 
+
+export type JsonValueInput =
+  | JsonObjectInput
+  | JsonArrayInput
+  | string
+  | number
+  | boolean
+  | null;
+export type JsonObjectInput = { readonly [key: string]: JsonValueInput };
+export type JsonArrayInput = readonly JsonValueInput[];
+
+export type JsonValueOutput =
+  | JsonObjectOutput
+  | JsonArrayOutput
+  | string
+  | number
+  | boolean
+  | null;
+export type JsonObjectOutput = { readonly [key: string]: JsonValueOutput };
+export type JsonArrayOutput = readonly JsonValueOutput[];
 
 export const AiRegistryModelOwnerEnumMap = {
   "ALIBABA": "ALIBABA",
@@ -3841,12 +4046,16 @@ export const ApplicationErrorCodeMap = {
   1306: 1306,
   1307: 1307,
   1308: 1308,
+  1309: 1309,
+  1310: 1310,
   1400: 1400,
   1401: 1401,
   1500: 1500,
   1501: 1501,
   1502: 1502,
   1503: 1503,
+  1504: 1504,
+  1505: 1505,
   1600: 1600,
   1601: 1601,
   1602: 1602,
@@ -3864,6 +4073,14 @@ export const ApplicationErrorCodeMap = {
   1805: 1805,
   1806: 1806,
   1807: 1807,
+  1808: 1808,
+  1810: 1810,
+  1811: 1811,
+  1812: 1812,
+  1813: 1813,
+  1814: 1814,
+  1815: 1815,
+  1816: 1816,
 } as const;
 export type ApplicationErrorCodeKey = keyof typeof ApplicationErrorCodeMap;
 export type ApplicationErrorCodeValue = (typeof ApplicationErrorCodeMap)[ApplicationErrorCodeKey];
