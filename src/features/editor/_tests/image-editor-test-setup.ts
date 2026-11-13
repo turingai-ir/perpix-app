@@ -4,7 +4,7 @@ import { mockAuthenticatedSession } from "../../../../__tests__/support/auth-ses
 
 export async function openAuthenticatedEditor(page: Page): Promise<void> {
   await mockAuthenticatedSession(page);
-  await page.route("**/api/v1/user/get-info", (route) =>
+  await page.route("**/api/v1/user/me", (route) =>
     route.fulfill({
       json: {
         email: "test@example.com",
@@ -19,7 +19,7 @@ export async function openAuthenticatedEditor(page: Page): Promise<void> {
       },
     }),
   );
-  await page.route("**/api/v1/ai-task/list*", (route) =>
+  await page.route("**/api/v1/ai-task*", (route) =>
     route.fulfill({ json: { items: [], has_next: false } }),
   );
   for (const path of ["/api/v1/ai-task/events", "/api/v1/payment-events"]) {

@@ -20,13 +20,9 @@ test("only a valid payment_changed event counts", () => {
 });
 
 test("payment, wallet and subscription queries are affected", () => {
-  expect(isPaymentAffectedQueryKey(["get", "/api/v1/wallet/wallet"])).toBe(
-    true,
-  );
+  expect(isPaymentAffectedQueryKey(["get", "/api/v1/wallet"])).toBe(true);
   expect(
     isPaymentAffectedQueryKey(["get", "/api/v1/user/subscription/active"]),
   ).toBe(true);
-  expect(isPaymentAffectedQueryKey(["get", "/api/v1/ai-task/list"])).toBe(
-    false,
-  );
+  expect(isPaymentAffectedQueryKey(["get", "/api/v1/ai-task"])).toBe(false);
 });

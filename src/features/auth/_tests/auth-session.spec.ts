@@ -15,7 +15,7 @@ test("reload restores the session with csrf then refresh and keeps tokens out of
   const calls: string[] = [];
   let profileAuthorization: string | undefined;
   await mockAppShellApis(page);
-  await page.route("**/api/v1/user/get-info", (route) => {
+  await page.route("**/api/v1/user/me", (route) => {
     profileAuthorization = route.request().headers().authorization;
 
     return route.fulfill({

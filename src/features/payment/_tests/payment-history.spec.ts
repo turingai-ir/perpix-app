@@ -33,13 +33,13 @@ for (const taxAmount of ["2010", "0"]) {
     page,
   }) => {
     await mockAuthenticatedSession(page);
-    await page.route("**/api/v1/user/get-info", (route) =>
+    await page.route("**/api/v1/user/me", (route) =>
       route.fulfill({
         json: { uuid: "user-1", name: "Test", email: "test@example.com" },
       }),
     );
     let walletRequests = 0;
-    await page.route("**/api/v1/wallet/wallet", (route) => {
+    await page.route("**/api/v1/wallet", (route) => {
       walletRequests += 1;
       return route.fulfill({
         json: { wallet_uuid: intentUuid, balance_usdmicro: 0, is_active: true },

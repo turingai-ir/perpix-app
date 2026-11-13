@@ -226,7 +226,7 @@ test("received replacement login clears an authenticated tab even when logout wa
       return Response.json({ owner: "account-a" });
     });
     try {
-      await request(`${location.origin}/api/v1/wallet/wallet`);
+      await request(`${location.origin}/api/v1/wallet`);
       h.queryClient.setQueryData(["qa-late"], "account-a-data");
       return "accepted";
     } catch {

@@ -11,7 +11,7 @@ async function mockHistory(page: Page, options: HistoryOptions = {}) {
   const requests: URLSearchParams[] = [];
   // Keep the fixture's closed event stream from refetching history on reconnect.
   await page.route("**/api/v1/ai-task/events", (route) => route.abort());
-  await page.route("**/api/v1/ai-task/list?**", async (route) => {
+  await page.route("**/api/v1/ai-task?**", async (route) => {
     const params = new URL(route.request().url()).searchParams;
     requests.push(params);
     const offset = Number(params.get("offset"));

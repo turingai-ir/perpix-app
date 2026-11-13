@@ -300,10 +300,10 @@ async function mockAppApi(page: Page) {
     const path = new URL(request.url()).pathname;
     if (path.startsWith("/api/v1/auth/")) return route.fallback();
     if (request.method() !== "GET") return route.fallback();
-    if (path === "/api/v1/user/get-info") {
+    if (path === "/api/v1/user/me") {
       return route.fulfill({ json: { uuid: "user-1", mobile: "09120000000" } });
     }
-    if (path === "/api/v1/wallet/wallet") {
+    if (path === "/api/v1/wallet") {
       return route.fulfill({
         json: { wallet_uuid: "wallet-1", balance_usdmicro: 1_000_000 },
       });
@@ -325,7 +325,7 @@ async function mockAppApi(page: Page) {
     if (path === "/api/v1/user/subscription/active") {
       return route.fulfill({ json: activeSubscription() });
     }
-    if (path === "/api/v1/ai-task/list") {
+    if (path === "/api/v1/ai-task") {
       return route.fulfill({ json: { items: [], has_next: false } });
     }
     if (path === "/api/v1/ai-task/events") {

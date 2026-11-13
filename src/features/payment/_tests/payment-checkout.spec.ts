@@ -10,12 +10,12 @@ for (const delayedDetails of [false, true]) {
     page,
   }) => {
     await mockAuthenticatedSession(page);
-    await page.route("**/api/v1/user/get-info", (route) =>
+    await page.route("**/api/v1/user/me", (route) =>
       route.fulfill({
         json: { uuid: "user-1", name: "Test", email: "test@example.com" },
       }),
     );
-    await page.route("**/api/v1/wallet/wallet", (route) =>
+    await page.route("**/api/v1/wallet", (route) =>
       route.fulfill({
         json: {
           wallet_uuid: walletUuid,
@@ -144,12 +144,12 @@ for (const viewport of [
     await page.setViewportSize(viewport);
     const planUuid = "c0202000-0000-4000-8000-000000000004";
     await mockAuthenticatedSession(page);
-    await page.route("**/api/v1/user/get-info", (route) =>
+    await page.route("**/api/v1/user/me", (route) =>
       route.fulfill({
         json: { uuid: "user-1", name: "Test", email: "test@example.com" },
       }),
     );
-    await page.route("**/api/v1/wallet/wallet", (route) =>
+    await page.route("**/api/v1/wallet", (route) =>
       route.fulfill({ status: 503, json: { detail: "unavailable" } }),
     );
     await page.route("**/api/v1/user/subscription/active", (route) =>

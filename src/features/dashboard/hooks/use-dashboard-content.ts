@@ -14,7 +14,7 @@ import type {
 
 export function useDashboardContent(allowedModelNames: readonly string[]) {
   const { useQuery } = useReactQueryApi();
-  const tasksState = useQuery("get", "/api/v1/ai-task/list", {
+  const tasksState = useQuery("get", "/api/v1/ai-task", {
     params: { query: { offset: 0, limit: 6 } },
   });
   const modelsState = useQuery("get", "/api/v1/ai-registry/models", undefined);

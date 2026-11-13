@@ -45,12 +45,12 @@ export function useAiTaskNotifications() {
       );
       const aiTasksListQueryKey = queryOptions(
         "get",
-        "/api/v1/ai-task/list",
+        "/api/v1/ai-task",
         undefined,
       ).queryKey;
       const walletQueryKey = queryOptions(
         "get",
-        "/api/v1/wallet/wallet",
+        "/api/v1/wallet",
         undefined,
       ).queryKey;
 
@@ -105,7 +105,7 @@ export function useAiTaskNotifications() {
       if (!isReconnect) return;
       const listKey = queryOptions(
         "get",
-        "/api/v1/ai-task/list",
+        "/api/v1/ai-task",
         undefined,
       ).queryKey;
       void queryClient.invalidateQueries({ queryKey: listKey });

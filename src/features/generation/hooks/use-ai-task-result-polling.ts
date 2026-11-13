@@ -43,7 +43,7 @@ export const useAiTaskResultPolling = (
   const aiTasksListQueryKey = getAiTasksListQueryKey(queryOptions);
   const walletQueryKey = queryOptions(
     "get",
-    "/api/v1/wallet/wallet",
+    "/api/v1/wallet",
     undefined,
   ).queryKey;
 

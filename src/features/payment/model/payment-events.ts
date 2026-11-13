@@ -12,7 +12,7 @@ const affectedPaths = new Set([
   "/api/v1/payment-intents",
   "/api/v1/payment-intents/{intent_uuid}",
   "/api/v1/payment-executions/{execution_uuid}",
-  "/api/v1/wallet/wallet",
+  "/api/v1/wallet",
   "/api/v1/wallet/transactions",
   "/api/v1/user/subscription/active",
 ]);

@@ -27,7 +27,7 @@ test.beforeEach(async ({ page }) => {
       return route.abort();
     return route.continue();
   });
-  await page.route("**/api/v1/user/get-info", (route) =>
+  await page.route("**/api/v1/user/me", (route) =>
     route.fulfill({
       json: {
         name: "Gallery tester",

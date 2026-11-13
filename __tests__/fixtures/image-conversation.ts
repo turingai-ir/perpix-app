@@ -255,7 +255,7 @@ export const test = base.extend<{ imageConversationApi: ImageConversationApi }>(
         }
 
         const responses: Record<string, unknown> = {
-          "/user/get-info": { uuid: "user-1", mobile: "09120000000" },
+          "/user/me": { uuid: "user-1", mobile: "09120000000" },
           "/user/subscription/active": {
             uuid: "subscription-1",
             plan: {
@@ -268,11 +268,11 @@ export const test = base.extend<{ imageConversationApi: ImageConversationApi }>(
             },
           },
           "/user/subscription/plans": [],
-          "/wallet/wallet": {
+          "/wallet": {
             wallet_uuid: "wallet-1",
             balance_usdmicro: 1_000_000,
           },
-          "/ai-task/list": { items: [], has_next: false },
+          "/ai-task": { items: [], has_next: false },
           [`/ai-task/${taskUuid}`]: task,
           "/file-manager/user-files": { files: [], has_next: false },
           "/ai-registry/models": models,

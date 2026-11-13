@@ -19,7 +19,7 @@ export const useAiGenerate = (task_id: string | undefined) => {
   const { guardAsyncAction } = usePaidActionGuard();
   const userQueryKey = queryOptions(
     "get",
-    "/api/v1/user/get-info",
+    "/api/v1/user/me",
     undefined,
   ).queryKey;
   const aiTasksListQueryKey = getAiTasksListQueryKey(queryOptions);

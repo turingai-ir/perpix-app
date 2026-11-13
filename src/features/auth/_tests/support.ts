@@ -32,7 +32,7 @@ export async function mockAppShellApis(page: Page): Promise<void> {
       return route.fallback();
     return route.fulfill({ json: { items: [], has_next: false } });
   });
-  await page.route("**/api/v1/user/get-info", (route) =>
+  await page.route("**/api/v1/user/me", (route) =>
     route.fulfill({
       json: {
         email: null,
@@ -47,7 +47,7 @@ export async function mockAppShellApis(page: Page): Promise<void> {
       },
     }),
   );
-  await page.route("**/api/v1/wallet/wallet", (route) =>
+  await page.route("**/api/v1/wallet", (route) =>
     route.fulfill({
       json: { wallet_uuid: CHALLENGE_ID, balance_usdmicro: 0, is_active: true },
     }),
@@ -72,7 +72,7 @@ export async function mockAppShellApis(page: Page): Promise<void> {
       },
     }),
   );
-  await page.route("**/api/v1/ai-task/list*", (route) =>
+  await page.route("**/api/v1/ai-task*", (route) =>
     route.fulfill({ json: { items: [], has_next: false } }),
   );
   await page.route("**/api/v1/ai-task/events", emptyStream);

@@ -26,7 +26,7 @@ test.describe("App sidebar", () => {
     const userReadGate = new Promise<void>((resolve) => {
       releaseUserRead = resolve;
     });
-    await page.route("**/api/v1/user/get-info", async (route) => {
+    await page.route("**/api/v1/user/me", async (route) => {
       userRequests += 1;
       if (shouldFail) {
         await route.fulfill({ status: 503, json: {} });
@@ -497,10 +497,7 @@ async function mockApi(page: Page) {
       return;
     }
 
-    if (
-      request.method() === "GET" &&
-      url.pathname === "/api/v1/user/get-info"
-    ) {
+    if (request.method() === "GET" && url.pathname === "/api/v1/user/me") {
       await route.fulfill({
         contentType: "application/json",
         body: JSON.stringify({ uuid: "user-1", mobile: "09120000000" }),
@@ -508,10 +505,7 @@ async function mockApi(page: Page) {
       return;
     }
 
-    if (
-      request.method() === "GET" &&
-      url.pathname === "/api/v1/wallet/wallet"
-    ) {
+    if (request.method() === "GET" && url.pathname === "/api/v1/wallet") {
       await route.fulfill({
         contentType: "application/json",
         body: JSON.stringify({
@@ -548,7 +542,7 @@ async function mockApi(page: Page) {
       return;
     }
 
-    if (request.method() === "GET" && url.pathname === "/api/v1/ai-task/list") {
+    if (request.method() === "GET" && url.pathname === "/api/v1/ai-task") {
       await route.fulfill({
         contentType: "application/json",
         body: JSON.stringify({ items: [], has_next: false }),

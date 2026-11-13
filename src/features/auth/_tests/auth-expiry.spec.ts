@@ -15,7 +15,7 @@ for (const storageUnavailable of [false, true]) {
       await page.route("**/api/v1/**", (route) =>
         route.fulfill({ json: { items: [], has_next: false } }),
       );
-      await page.route("**/api/v1/wallet/wallet", (route) =>
+      await page.route("**/api/v1/wallet", (route) =>
         route.fulfill({
           json: {
             wallet_uuid: "wallet-a",
@@ -53,7 +53,7 @@ for (const storageUnavailable of [false, true]) {
         releaseAccountB = resolve;
       });
       await mockAuthenticatedSession(page);
-      await page.route("**/api/v1/user/get-info", async (route) => {
+      await page.route("**/api/v1/user/me", async (route) => {
         if (accountBLoggedIn) {
           accountBRequested = true;
           await accountBReady;
@@ -103,7 +103,7 @@ for (const storageUnavailable of [false, true]) {
           });
         }
         await mockAnonymousSession(page);
-        await page.route("**/api/v1/wallet/wallet", (route) =>
+        await page.route("**/api/v1/wallet", (route) =>
           route.fulfill({
             status: 401,
             json: { detail: "Session expired" },
@@ -113,7 +113,7 @@ for (const storageUnavailable of [false, true]) {
           const modulePath = "/src/shared/api/client.ts";
           const { apiClient } = await import(modulePath);
           try {
-            await apiClient.GET("/api/v1/wallet/wallet");
+            await apiClient.GET("/api/v1/wallet");
           } catch {
             /* Expected 401. */
           }
@@ -125,7 +125,7 @@ for (const storageUnavailable of [false, true]) {
         if (!storageUnavailable)
           await expect.soft.poll(persistedAccountA).toBe(false);
 
-        await page.route("**/api/v1/wallet/wallet", (route) =>
+        await page.route("**/api/v1/wallet", (route) =>
           route.fulfill({
             json: {
               wallet_uuid: "wallet-b",

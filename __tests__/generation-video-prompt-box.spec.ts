@@ -1575,10 +1575,7 @@ async function mockApi(page: Page, taskMessages: unknown[] = []) {
     const request = route.request();
     const url = new URL(request.url());
 
-    if (
-      request.method() === "GET" &&
-      url.pathname === "/api/v1/user/get-info"
-    ) {
+    if (request.method() === "GET" && url.pathname === "/api/v1/user/me") {
       await route.fulfill({
         contentType: "application/json",
         body: JSON.stringify({ uuid: "user-1", mobile: "09120000000" }),
@@ -1622,10 +1619,7 @@ async function mockApi(page: Page, taskMessages: unknown[] = []) {
       return;
     }
 
-    if (
-      request.method() === "GET" &&
-      url.pathname === "/api/v1/wallet/wallet"
-    ) {
+    if (request.method() === "GET" && url.pathname === "/api/v1/wallet") {
       await route.fulfill({
         contentType: "application/json",
         body: JSON.stringify({
@@ -1636,7 +1630,7 @@ async function mockApi(page: Page, taskMessages: unknown[] = []) {
       return;
     }
 
-    if (request.method() === "GET" && url.pathname === "/api/v1/ai-task/list") {
+    if (request.method() === "GET" && url.pathname === "/api/v1/ai-task") {
       await route.fulfill({
         contentType: "application/json",
         body: JSON.stringify({ items: [], has_next: false }),

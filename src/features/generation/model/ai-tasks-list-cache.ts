@@ -16,7 +16,7 @@ type AiTasksListQueryInit =
     }
   | undefined;
 
-/** Reads the `task_type` filter from an `/api/v1/ai-task/list` query key. */
+/** Reads the `task_type` filter from an `/api/v1/ai-task` query key. */
 export const getAiTasksListTaskType = (queryKey: readonly unknown[]) =>
   (queryKey[2] as AiTasksListQueryInit)?.params?.query?.task_type;
 

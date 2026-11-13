@@ -33,7 +33,7 @@ test("concurrent private requests wait for the initial session restore", async (
       request(
         `${location.origin}/api/v1/payment-executions/11111111-1111-4111-8111-111111111111`,
       ),
-      request(`${location.origin}/api/v1/wallet/wallet`),
+      request(`${location.origin}/api/v1/wallet`),
     ]);
     return Promise.all(responses.map((response) => response.json()));
   });

@@ -209,7 +209,7 @@ for (const pendingEndpoint of ["csrf", "logout"]) {
           });
           let denied = false;
           try {
-            await request(`${location.origin}/api/v1/wallet/wallet`);
+            await request(`${location.origin}/api/v1/wallet`);
           } catch {
             denied = true;
           }

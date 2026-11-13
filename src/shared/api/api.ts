@@ -6,14 +6,36 @@ export interface paths {
             readonly path?: never;
             readonly cookie?: never;
         };
-        /** Get Info */
-        readonly get: operations["get_info_api_v1_user_get_info_get"];
+        /**
+         * Get Info
+         * @deprecated
+         * @description Deprecated: use `GET /user/me`.
+         */
+        readonly get: operations["user_get_info_legacy"];
         readonly put?: never;
         readonly post?: never;
         readonly delete?: never;
         readonly options?: never;
         readonly head?: never;
         readonly patch?: never;
+        readonly trace?: never;
+    };
+    readonly "/api/v1/user/me": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        /** Get Info */
+        readonly get: operations["user_get_info"];
+        readonly put?: never;
+        readonly post?: never;
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        /** Edit User Info */
+        readonly patch: operations["user_edit_user_info"];
         readonly trace?: never;
     };
     readonly "/api/v1/user/edit-info": {
@@ -29,8 +51,12 @@ export interface paths {
         readonly delete?: never;
         readonly options?: never;
         readonly head?: never;
-        /** Edit User Info */
-        readonly patch: operations["edit_user_info_api_v1_user_edit_info_patch"];
+        /**
+         * Edit User Info
+         * @deprecated
+         * @description Deprecated: use `PATCH /user/me`.
+         */
+        readonly patch: operations["user_edit_info_legacy"];
         readonly trace?: never;
     };
     readonly "/api/v1/auth/login": {
@@ -308,7 +334,7 @@ export interface paths {
             readonly cookie?: never;
         };
         /** Get Subscription Plans */
-        readonly get: operations["get_subscription_plans_api_v1_user_subscription_plans_get"];
+        readonly get: operations["user_get_subscription_plans"];
         readonly put?: never;
         readonly post?: never;
         readonly delete?: never;
@@ -325,7 +351,7 @@ export interface paths {
             readonly cookie?: never;
         };
         /** Get Active Subscription */
-        readonly get: operations["get_active_subscription_api_v1_user_subscription_active_get"];
+        readonly get: operations["user_get_active_subscription"];
         readonly put?: never;
         readonly post?: never;
         readonly delete?: never;
@@ -344,7 +370,7 @@ export interface paths {
         readonly get?: never;
         readonly put?: never;
         /** Purchase Subscription */
-        readonly post: operations["purchase_subscription_api_v1_user_subscription_purchase_post"];
+        readonly post: operations["user_purchase_subscription"];
         readonly delete?: never;
         readonly options?: never;
         readonly head?: never;
@@ -361,7 +387,7 @@ export interface paths {
         readonly get?: never;
         readonly put?: never;
         /** Charge Wallet */
-        readonly post: operations["charge_wallet_api_v1_wallet_charge_post"];
+        readonly post: operations["wallet_charge_wallet"];
         readonly delete?: never;
         readonly options?: never;
         readonly head?: never;
@@ -375,8 +401,29 @@ export interface paths {
             readonly path?: never;
             readonly cookie?: never;
         };
+        /**
+         * Get Current User Wallet
+         * @deprecated
+         * @description Deprecated: use `GET /wallet`.
+         */
+        readonly get: operations["wallet_get_current_user_wallet_legacy"];
+        readonly put?: never;
+        readonly post?: never;
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
+    readonly "/api/v1/wallet": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
         /** Get Current User Wallet */
-        readonly get: operations["get_current_user_wallet_api_v1_wallet_wallet_get"];
+        readonly get: operations["wallet_get_current_user_wallet"];
         readonly put?: never;
         readonly post?: never;
         readonly delete?: never;
@@ -393,7 +440,7 @@ export interface paths {
             readonly cookie?: never;
         };
         /** Get Wallet Transactions */
-        readonly get: operations["get_wallet_transactions_api_v1_wallet_transactions_get"];
+        readonly get: operations["wallet_get_wallet_transactions"];
         readonly put?: never;
         readonly post?: never;
         readonly delete?: never;
@@ -410,7 +457,7 @@ export interface paths {
             readonly cookie?: never;
         };
         /** Stream the authenticated user's payment changes */
-        readonly get: operations["stream_payment_events_api_v1_payment_events_get"];
+        readonly get: operations["payment_events_stream_payment_events"];
         readonly put?: never;
         readonly post?: never;
         readonly delete?: never;
@@ -427,7 +474,7 @@ export interface paths {
             readonly cookie?: never;
         };
         /** List authenticated user's payment intents */
-        readonly get: operations["get_payment_intents_api_v1_payment_intents_get"];
+        readonly get: operations["payment_intents_get_payment_intents"];
         readonly put?: never;
         readonly post?: never;
         readonly delete?: never;
@@ -451,7 +498,7 @@ export interface paths {
          * Retry payment execution
          * @description Initiates a retry execution for a failed or expired payment intent. Core creates the execution UUID.
          */
-        readonly post: operations["retry_payment_api_v1_payment_intents__intent_uuid__executions_post"];
+        readonly post: operations["payment_intents_retry_payment"];
         readonly delete?: never;
         readonly options?: never;
         readonly head?: never;
@@ -471,7 +518,7 @@ export interface paths {
          * Get payment intent status
          * @description Retrieves the current status of a payment intent owned by the authenticated user.
          */
-        readonly get: operations["get_payment_intent_api_v1_payment_intents__intent_uuid__get"];
+        readonly get: operations["payment_intents_get_payment_intent"];
         readonly put?: never;
         readonly post?: never;
         readonly delete?: never;
@@ -490,7 +537,7 @@ export interface paths {
             readonly cookie?: never;
         };
         /** Get saved payment amounts */
-        readonly get: operations["get_payment_details_api_v1_payment_intents__intent_uuid__details_get"];
+        readonly get: operations["payment_intents_get_payment_details"];
         readonly put?: never;
         readonly post?: never;
         readonly delete?: never;
@@ -509,7 +556,7 @@ export interface paths {
             readonly cookie?: never;
         };
         /** Get the requested payment attempt */
-        readonly get: operations["get_payment_execution_api_v1_payment_executions__execution_uuid__get"];
+        readonly get: operations["payment_executions_get_payment_execution"];
         readonly put?: never;
         readonly post?: never;
         readonly delete?: never;
@@ -531,7 +578,7 @@ export interface paths {
          * Handle gateway return callback
          * @description Reads remote payment evidence without creating a payment, then redirects to the frontend.
          */
-        readonly get: operations["payment_return_api_v1_payment_return__execution_uuid__get"];
+        readonly get: operations["payment_return_payment_return"];
         readonly put?: never;
         readonly post?: never;
         readonly delete?: never;
@@ -551,7 +598,7 @@ export interface paths {
          * Core readiness probe
          * @description Verifies Core database and reports payment subsystem readiness. Provider outages do not fail Core readiness.
          */
-        readonly get: operations["readiness_api_v1_readiness_get"];
+        readonly get: operations["readiness_readiness"];
         readonly put?: never;
         readonly post?: never;
         readonly delete?: never;
@@ -573,7 +620,7 @@ export interface paths {
          * Simple Upload
          * @description Private upload up to 5 MiB; the body must arrive within the upload body timeout (408, below the CDN's 60s limit). With managed media validation enabled: 413 size, 415 unsupported/mismatched format, 422 invalid media, 503 temporary unavailability. Request body is limited to 5 MiB plus 64 KiB multipart overhead. Each POST creates a new upload; no automatic POST retry or idempotency guarantee.
          */
-        readonly post: operations["simple_upload_api_v1_file_manager_simple_upload_post"];
+        readonly post: operations["file_manager_simple_upload"];
         readonly delete?: never;
         readonly options?: never;
         readonly head?: never;
@@ -588,7 +635,7 @@ export interface paths {
             readonly cookie?: never;
         };
         /** List User Files */
-        readonly get: operations["list_user_files_api_v1_file_manager_user_files_get"];
+        readonly get: operations["file_manager_list_user_files"];
         readonly put?: never;
         readonly post?: never;
         readonly delete?: never;
@@ -607,7 +654,7 @@ export interface paths {
         readonly get?: never;
         readonly put?: never;
         /** Get File Presigned Urls */
-        readonly post: operations["get_file_presigned_urls_api_v1_file_manager_files_presigned_urls_post"];
+        readonly post: operations["file_manager_get_file_presigned_urls"];
         readonly delete?: never;
         readonly options?: never;
         readonly head?: never;
@@ -628,13 +675,13 @@ export interface paths {
          * Replace File
          * @description Replace file bytes while retaining its UUID and MIME. Managed replacement validates up to 100 MiB before storage and atomically updates object identity and media facts using CAS. Missing/foreign/expired files return 404; legacy/public managed targets or concurrent changes return 409. Invalid media returns 413/415/422, temporary failures 503. Unknown outcomes are retained for reconciliation; do not blindly retry writes.
          */
-        readonly put: operations["replace_file_api_v1_file_manager_files__file_uuid__put"];
+        readonly put: operations["file_manager_replace_file"];
         readonly post?: never;
         /**
          * Delete File
          * @description Delete an active owned file. Managed files are logically retired in a transaction committed before success; held bytes remain until claimed cleanup. Missing, expired, deleted or foreign files return 404. Legacy files retain their existing deletion behavior. A failed or unknown commit returns an error; inspect current state before retrying.
          */
-        readonly delete: operations["delete_file_api_v1_file_manager_files__file_uuid__delete"];
+        readonly delete: operations["file_manager_delete_file"];
         readonly options?: never;
         readonly head?: never;
         readonly patch?: never;
@@ -653,7 +700,7 @@ export interface paths {
          * Initiate Multipart Upload
          * @description Managed uploads accept an optional UUID Idempotency-Key scoped to the current owner. Reuse the key and identical payload to recover an uncertain initiation. Without a key, every POST creates a new upload. Returned object_name is opaque and must be reused unchanged.
          */
-        readonly post: operations["initiate_multipart_upload_api_v1_file_manager_multipart_initiate_post"];
+        readonly post: operations["file_manager_initiate_multipart_upload"];
         readonly delete?: never;
         readonly options?: never;
         readonly head?: never;
@@ -670,7 +717,7 @@ export interface paths {
         readonly get?: never;
         readonly put?: never;
         /** Presign Multipart Part */
-        readonly post: operations["presign_multipart_part_api_v1_file_manager_multipart_presign_part_post"];
+        readonly post: operations["file_manager_presign_multipart_part"];
         readonly delete?: never;
         readonly options?: never;
         readonly head?: never;
@@ -690,7 +737,7 @@ export interface paths {
          * Complete Multipart Upload
          * @description Managed completion binds all fields and canonical parts to the initiated operation, probes the exact completed object and atomically attaches media facts. Retry the same payload after temporary failure; Complete is never reissued. Legacy uploads require the legacy route configuration.
          */
-        readonly post: operations["complete_multipart_upload_api_v1_file_manager_multipart_complete_post"];
+        readonly post: operations["file_manager_complete_multipart_upload"];
         readonly delete?: never;
         readonly options?: never;
         readonly head?: never;
@@ -727,7 +774,7 @@ export interface paths {
         readonly get?: never;
         readonly put?: never;
         /** Generate Task */
-        readonly post: operations["generate_task_api_v1_ai_task_generate_post"];
+        readonly post: operations["ai_task_generate_task"];
         readonly delete?: never;
         readonly options?: never;
         readonly head?: never;
@@ -744,7 +791,7 @@ export interface paths {
             readonly cookie?: never;
         };
         /** Get Task Result */
-        readonly get: operations["get_task_result_api_v1_ai_task_result__task_message_uuid__get"];
+        readonly get: operations["ai_task_get_task_result"];
         readonly put?: never;
         readonly post?: never;
         readonly delete?: never;
@@ -760,8 +807,29 @@ export interface paths {
             readonly path?: never;
             readonly cookie?: never;
         };
+        /**
+         * Get Tasks List
+         * @deprecated
+         * @description Deprecated: use `GET /ai-task`.
+         */
+        readonly get: operations["ai_task_get_tasks_list_legacy"];
+        readonly put?: never;
+        readonly post?: never;
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
+    readonly "/api/v1/ai-task": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
         /** Get Tasks List */
-        readonly get: operations["get_tasks_list_api_v1_ai_task_list_get"];
+        readonly get: operations["ai_task_get_tasks_list"];
         readonly put?: never;
         readonly post?: never;
         readonly delete?: never;
@@ -780,7 +848,7 @@ export interface paths {
             readonly cookie?: never;
         };
         /** Get Task */
-        readonly get: operations["get_task_api_v1_ai_task__task_uuid__get"];
+        readonly get: operations["ai_task_get_task"];
         readonly put?: never;
         readonly post?: never;
         readonly delete?: never;
@@ -797,7 +865,7 @@ export interface paths {
             readonly cookie?: never;
         };
         /** List Models */
-        readonly get: operations["list_models_api_v1_ai_registry_models_get"];
+        readonly get: operations["ai_registry_list_models"];
         readonly put?: never;
         readonly post?: never;
         readonly delete?: never;
@@ -816,7 +884,7 @@ export interface paths {
             readonly cookie?: never;
         };
         /** Get Model */
-        readonly get: operations["get_model_api_v1_ai_registry_models__ai_model_uuid__get"];
+        readonly get: operations["ai_registry_get_model"];
         readonly put?: never;
         readonly post?: never;
         readonly delete?: never;
@@ -1234,13 +1302,13 @@ export interface components {
             readonly phone_number: string;
         };
         readonly AuthStartResponse: components["schemas"]["PasswordStepResponse"] | components["schemas"]["RegistrationStepResponse"];
-        /** Body_replace_file_api_v1_file_manager_files__file_uuid__put */
-        readonly Body_replace_file_api_v1_file_manager_files__file_uuid__put: {
+        /** Body_file_manager_replace_file */
+        readonly Body_file_manager_replace_file: {
             /** File */
             readonly file?: string | null;
         };
-        /** Body_simple_upload_api_v1_file_manager_simple_upload_post */
-        readonly Body_simple_upload_api_v1_file_manager_simple_upload_post: {
+        /** Body_file_manager_simple_upload */
+        readonly Body_file_manager_simple_upload: {
             /** File */
             readonly file?: string | null;
         };
@@ -2055,8 +2123,8 @@ export type SchemaApplicationErrorCode = components['schemas']['ApplicationError
 export type SchemaApplicationErrorResponse = components['schemas']['ApplicationErrorResponse'];
 export type SchemaAuthStartRequest = components['schemas']['AuthStartRequest'];
 export type SchemaAuthStartResponse = components['schemas']['AuthStartResponse'];
-export type SchemaBodyReplaceFileApiV1FileManagerFilesFileUuidPut = components['schemas']['Body_replace_file_api_v1_file_manager_files__file_uuid__put'];
-export type SchemaBodySimpleUploadApiV1FileManagerSimpleUploadPost = components['schemas']['Body_simple_upload_api_v1_file_manager_simple_upload_post'];
+export type SchemaBodyFileManagerReplaceFile = components['schemas']['Body_file_manager_replace_file'];
+export type SchemaBodyFileManagerSimpleUpload = components['schemas']['Body_file_manager_simple_upload'];
 export type SchemaChallengeResponse = components['schemas']['ChallengeResponse'];
 export type SchemaCreateApiTokenRequest = components['schemas']['CreateApiTokenRequest'];
 export type SchemaCreatedApiTokenResponse = components['schemas']['CreatedApiTokenResponse'];
@@ -2108,7 +2176,7 @@ export type SchemaWalletTransactionResponse = components['schemas']['WalletTrans
 export type SchemaWalletTransactionTypeEnum = components['schemas']['WalletTransactionTypeEnum'];
 export type $defs = Record<string, never>;
 export interface operations {
-    readonly get_info_api_v1_user_get_info_get: {
+    readonly user_get_info_legacy: {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -2128,7 +2196,60 @@ export interface operations {
             };
         };
     };
-    readonly edit_user_info_api_v1_user_edit_info_patch: {
+    readonly user_get_info: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["UserGetInfoResponse"];
+                };
+            };
+        };
+    };
+    readonly user_edit_user_info: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody: {
+            readonly content: {
+                readonly "application/json": components["schemas"]["UserEditInfoRequest"];
+            };
+        };
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["UserEditInfoResponse"];
+                };
+            };
+            /** @description Validation Error */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    readonly user_edit_info_legacy: {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -2843,7 +2964,7 @@ export interface operations {
             };
         };
     };
-    readonly get_subscription_plans_api_v1_user_subscription_plans_get: {
+    readonly user_get_subscription_plans: {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -2863,7 +2984,7 @@ export interface operations {
             };
         };
     };
-    readonly get_active_subscription_api_v1_user_subscription_active_get: {
+    readonly user_get_active_subscription: {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -2883,7 +3004,7 @@ export interface operations {
             };
         };
     };
-    readonly purchase_subscription_api_v1_user_subscription_purchase_post: {
+    readonly user_purchase_subscription: {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -2916,7 +3037,7 @@ export interface operations {
             };
         };
     };
-    readonly charge_wallet_api_v1_wallet_charge_post: {
+    readonly wallet_charge_wallet: {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -2949,7 +3070,7 @@ export interface operations {
             };
         };
     };
-    readonly get_current_user_wallet_api_v1_wallet_wallet_get: {
+    readonly wallet_get_current_user_wallet_legacy: {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -2969,7 +3090,27 @@ export interface operations {
             };
         };
     };
-    readonly get_wallet_transactions_api_v1_wallet_transactions_get: {
+    readonly wallet_get_current_user_wallet: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["GetWalletResponse"];
+                };
+            };
+        };
+    };
+    readonly wallet_get_wallet_transactions: {
         readonly parameters: {
             readonly query?: {
                 readonly type?: components["schemas"]["WalletTransactionTypeEnum"] | null;
@@ -3003,7 +3144,7 @@ export interface operations {
             };
         };
     };
-    readonly stream_payment_events_api_v1_payment_events_get: {
+    readonly payment_events_stream_payment_events: {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -3021,7 +3162,7 @@ export interface operations {
             };
         };
     };
-    readonly get_payment_intents_api_v1_payment_intents_get: {
+    readonly payment_intents_get_payment_intents: {
         readonly parameters: {
             readonly query?: {
                 readonly offset?: number;
@@ -3053,7 +3194,7 @@ export interface operations {
             };
         };
     };
-    readonly retry_payment_api_v1_payment_intents__intent_uuid__executions_post: {
+    readonly payment_intents_retry_payment: {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -3093,7 +3234,7 @@ export interface operations {
             };
         };
     };
-    readonly get_payment_intent_api_v1_payment_intents__intent_uuid__get: {
+    readonly payment_intents_get_payment_intent: {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -3124,7 +3265,7 @@ export interface operations {
             };
         };
     };
-    readonly get_payment_details_api_v1_payment_intents__intent_uuid__details_get: {
+    readonly payment_intents_get_payment_details: {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -3155,7 +3296,7 @@ export interface operations {
             };
         };
     };
-    readonly get_payment_execution_api_v1_payment_executions__execution_uuid__get: {
+    readonly payment_executions_get_payment_execution: {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -3186,7 +3327,7 @@ export interface operations {
             };
         };
     };
-    readonly payment_return_api_v1_payment_return__execution_uuid__get: {
+    readonly payment_return_payment_return: {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -3215,7 +3356,7 @@ export interface operations {
             };
         };
     };
-    readonly readiness_api_v1_readiness_get: {
+    readonly readiness_readiness: {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -3237,7 +3378,7 @@ export interface operations {
             };
         };
     };
-    readonly simple_upload_api_v1_file_manager_simple_upload_post: {
+    readonly file_manager_simple_upload: {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -3246,7 +3387,7 @@ export interface operations {
         };
         readonly requestBody?: {
             readonly content: {
-                readonly "multipart/form-data": components["schemas"]["Body_simple_upload_api_v1_file_manager_simple_upload_post"];
+                readonly "multipart/form-data": components["schemas"]["Body_file_manager_simple_upload"];
             };
         };
         readonly responses: {
@@ -3306,7 +3447,7 @@ export interface operations {
             };
         };
     };
-    readonly list_user_files_api_v1_file_manager_user_files_get: {
+    readonly file_manager_list_user_files: {
         readonly parameters: {
             readonly query?: {
                 /** @description Filter by content types (optional) */
@@ -3340,7 +3481,7 @@ export interface operations {
             };
         };
     };
-    readonly get_file_presigned_urls_api_v1_file_manager_files_presigned_urls_post: {
+    readonly file_manager_get_file_presigned_urls: {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -3373,7 +3514,7 @@ export interface operations {
             };
         };
     };
-    readonly replace_file_api_v1_file_manager_files__file_uuid__put: {
+    readonly file_manager_replace_file: {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -3384,7 +3525,7 @@ export interface operations {
         };
         readonly requestBody?: {
             readonly content: {
-                readonly "multipart/form-data": components["schemas"]["Body_replace_file_api_v1_file_manager_files__file_uuid__put"];
+                readonly "multipart/form-data": components["schemas"]["Body_file_manager_replace_file"];
             };
         };
         readonly responses: {
@@ -3462,7 +3603,7 @@ export interface operations {
             };
         };
     };
-    readonly delete_file_api_v1_file_manager_files__file_uuid__delete: {
+    readonly file_manager_delete_file: {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -3520,7 +3661,7 @@ export interface operations {
             };
         };
     };
-    readonly initiate_multipart_upload_api_v1_file_manager_multipart_initiate_post: {
+    readonly file_manager_initiate_multipart_upload: {
         readonly parameters: {
             readonly query?: never;
             readonly header?: {
@@ -3591,7 +3732,7 @@ export interface operations {
             };
         };
     };
-    readonly presign_multipart_part_api_v1_file_manager_multipart_presign_part_post: {
+    readonly file_manager_presign_multipart_part: {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -3660,7 +3801,7 @@ export interface operations {
             };
         };
     };
-    readonly complete_multipart_upload_api_v1_file_manager_multipart_complete_post: {
+    readonly file_manager_complete_multipart_upload: {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -3754,7 +3895,7 @@ export interface operations {
             };
         };
     };
-    readonly generate_task_api_v1_ai_task_generate_post: {
+    readonly ai_task_generate_task: {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -3787,7 +3928,7 @@ export interface operations {
             };
         };
     };
-    readonly get_task_result_api_v1_ai_task_result__task_message_uuid__get: {
+    readonly ai_task_get_task_result: {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -3818,7 +3959,7 @@ export interface operations {
             };
         };
     };
-    readonly get_tasks_list_api_v1_ai_task_list_get: {
+    readonly ai_task_get_tasks_list_legacy: {
         readonly parameters: {
             readonly query?: {
                 readonly offset?: number;
@@ -3851,7 +3992,40 @@ export interface operations {
             };
         };
     };
-    readonly get_task_api_v1_ai_task__task_uuid__get: {
+    readonly ai_task_get_tasks_list: {
+        readonly parameters: {
+            readonly query?: {
+                readonly offset?: number;
+                readonly limit?: number;
+                readonly task_type?: components["schemas"]["AiTaskTypeEnum"] | null;
+            };
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["AiTaskListResponse"];
+                };
+            };
+            /** @description Validation Error */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    readonly ai_task_get_task: {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;
@@ -3882,7 +4056,7 @@ export interface operations {
             };
         };
     };
-    readonly list_models_api_v1_ai_registry_models_get: {
+    readonly ai_registry_list_models: {
         readonly parameters: {
             readonly query?: {
                 readonly supported_inputs?: readonly components["schemas"]["AiRegistryModelSupportedTypesEnum"][] | null;
@@ -3914,7 +4088,7 @@ export interface operations {
             };
         };
     };
-    readonly get_model_api_v1_ai_registry_models__ai_model_uuid__get: {
+    readonly ai_registry_get_model: {
         readonly parameters: {
             readonly query?: never;
             readonly header?: never;

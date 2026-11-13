@@ -31,7 +31,7 @@ async function mockRotatingSession(
       },
     });
   });
-  await page.route("**/api/v1/user/get-info", (route) => {
+  await page.route("**/api/v1/user/me", (route) => {
     const authorization = route.request().headers().authorization;
     log.profileAuthorizations.push(authorization);
     if (options.profileStatus) {
@@ -93,7 +93,7 @@ test("concurrent protected requests share one refresh", async ({ page }) => {
     .poll(() => log.profileAuthorizations.includes("Bearer token-2"))
     .toBe(true);
   expect(log.refreshes).toBe(2);
-  await page.route("**/api/v1/wallet/wallet", (route) => {
+  await page.route("**/api/v1/wallet", (route) => {
     if (route.request().headers().authorization === "Bearer token-2") {
       return route.fulfill({ status: 401, json: errorBody() });
     }
@@ -103,7 +103,7 @@ test("concurrent protected requests share one refresh", async ({ page }) => {
     const modulePath = "/src/shared/api/client.ts";
     const { apiClient } = await import(modulePath);
     const results = await Promise.all(
-      Array.from({ length: 4 }, () => apiClient.GET("/api/v1/wallet/wallet")),
+      Array.from({ length: 4 }, () => apiClient.GET("/api/v1/wallet")),
     );
     return results.map((result) => result.data.balance_usdmicro);
   });

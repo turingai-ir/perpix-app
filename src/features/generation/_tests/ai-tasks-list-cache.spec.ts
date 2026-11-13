@@ -28,7 +28,7 @@ const page = (uuids: string[], hasNext = false) =>
 
 const listKey = (taskType?: string) => [
   "get",
-  "/api/v1/ai-task/list",
+  "/api/v1/ai-task",
   taskType ? { params: { query: { task_type: taskType } } } : undefined,
 ];
 

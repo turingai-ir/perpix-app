@@ -56,7 +56,7 @@ async function mockAccount(page: Page) {
       );
     };
   });
-  await page.route("**/api/v1/user/get-info", (route) =>
+  await page.route("**/api/v1/user/me", (route) =>
     route.fulfill({
       json: {
         uuid: "user-1",
@@ -66,7 +66,7 @@ async function mockAccount(page: Page) {
       },
     }),
   );
-  await page.route("**/api/v1/wallet/wallet", (route) =>
+  await page.route("**/api/v1/wallet", (route) =>
     route.fulfill({
       json: {
         wallet_uuid: walletId,

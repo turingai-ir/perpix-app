@@ -10,7 +10,7 @@ for (const sameSession of [true, false]) {
       await page.route("**/api/v1/**", (route) =>
         route.fulfill({ json: { items: [], has_next: false } }),
       );
-      await page.route("**/api/v1/wallet/wallet", (route) =>
+      await page.route("**/api/v1/wallet", (route) =>
         route.fulfill({
           json: {
             wallet_uuid: "wallet-a",
@@ -37,7 +37,7 @@ for (const sameSession of [true, false]) {
         release = resolve;
       });
       await mockAuthenticatedSession(page);
-      await page.route("**/api/v1/user/get-info", async (route) => {
+      await page.route("**/api/v1/user/me", async (route) => {
         if (reloading) {
           requested = true;
           await responseReady;

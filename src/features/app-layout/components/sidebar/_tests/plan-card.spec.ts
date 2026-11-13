@@ -39,7 +39,7 @@ async function setup(
   daysLeft: number,
 ) {
   await mockAuthenticatedSession(page);
-  await page.route("**/api/v1/user/get-info", (route) =>
+  await page.route("**/api/v1/user/me", (route) =>
     route.fulfill({ json: { uuid: "u", name: "T", email: "t@example.com" } }),
   );
   await page.route("**/api/v1/user/subscription/plans", (route) =>

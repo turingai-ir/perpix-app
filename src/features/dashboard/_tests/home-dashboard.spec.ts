@@ -19,7 +19,7 @@ const mockDashboardApi = async (page: Page) => {
     return route.abort();
   });
   await mockAuthenticatedSession(page);
-  await page.route("**/api/v1/user/get-info", (route) =>
+  await page.route("**/api/v1/user/me", (route) =>
     route.fulfill({
       json: {
         email: "user@example.com",
@@ -34,7 +34,7 @@ const mockDashboardApi = async (page: Page) => {
       },
     }),
   );
-  await page.route("**/api/v1/wallet/wallet", (route) =>
+  await page.route("**/api/v1/wallet", (route) =>
     route.fulfill({
       json: {
         wallet_uuid: "wallet-1",
@@ -86,7 +86,7 @@ const mockDashboardApi = async (page: Page) => {
       },
     }),
   );
-  await page.route("**/api/v1/ai-task/list**", (route) =>
+  await page.route("**/api/v1/ai-task**", (route) =>
     route.fulfill({
       json: {
         items: [
@@ -495,7 +495,7 @@ test("office entrance waits for the account shell before revealing the dashboard
   const started = new Promise<void>((resolve) => {
     requested = resolve;
   });
-  await page.route("**/api/v1/user/get-info", async (route) => {
+  await page.route("**/api/v1/user/me", async (route) => {
     requested();
     await held;
     await route.fallback().catch(() => {});

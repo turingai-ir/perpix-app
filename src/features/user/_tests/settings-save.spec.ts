@@ -10,7 +10,7 @@ test("saving profile information keeps the saved fields during refetch", async (
   );
   // Registered after the catch-all so session bootstrap is not swallowed by it.
   await mockAuthenticatedSession(page);
-  await page.route("**/api/v1/wallet/wallet", (route) =>
+  await page.route("**/api/v1/wallet", (route) =>
     route.fulfill({
       json: {
         wallet_uuid: "wallet-1",
@@ -44,14 +44,15 @@ test("saving profile information keeps the saved fields during refetch", async (
   });
   let savedSuccessfully = false;
   let refetchRequested = false;
-  await page.route("**/api/v1/user/get-info", async (route) => {
+  await page.route("**/api/v1/user/me", async (route) => {
     if (savedSuccessfully) {
       refetchRequested = true;
       await refetchReady;
     }
     await route.fulfill({ json: savedSuccessfully ? saved : original });
   });
-  await page.route("**/api/v1/user/edit-info", (route) => {
+  await page.route("**/api/v1/user/me", (route) => {
+    if (route.request().method() !== "PATCH") return route.fallback();
     savedSuccessfully = true;
     return route.fulfill({ json: saved });
   });

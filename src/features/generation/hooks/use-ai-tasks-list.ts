@@ -5,7 +5,7 @@ export const AI_TASKS_PAGE_SIZE = 5;
 
 export const getAiTasksListQueryKey = (
   queryOptions: ReturnType<typeof useReactQueryApi>["queryOptions"],
-) => queryOptions("get", "/api/v1/ai-task/list", undefined).queryKey;
+) => queryOptions("get", "/api/v1/ai-task", undefined).queryKey;
 
 export const useAiTasksList = (
   task_type: AiRegistryModelSupportedTypesEnumKey | undefined,
@@ -14,7 +14,7 @@ export const useAiTasksList = (
 
   const aiTasksListStatus = useInfiniteQuery(
     "get",
-    "/api/v1/ai-task/list",
+    "/api/v1/ai-task",
     {
       params: {
         query: {

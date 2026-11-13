@@ -4,7 +4,7 @@ import { mockAuthenticatedSession } from "./support/auth-session";
 
 async function mockProfileData(page: Page) {
   await mockAuthenticatedSession(page);
-  await page.route("**/api/v1/user/get-info", async (route) => {
+  await page.route("**/api/v1/user/me", async (route) => {
     await route.fulfill({
       json: {
         user_uuid: "user-1",
@@ -20,7 +20,7 @@ async function mockProfileData(page: Page) {
       },
     });
   });
-  await page.route("**/api/v1/wallet/wallet", async (route) => {
+  await page.route("**/api/v1/wallet", async (route) => {
     await route.fulfill({
       json: {
         wallet_uuid: "wallet-1",
@@ -59,7 +59,8 @@ test("shows account data and saves editable profile fields", async ({
 }) => {
   await mockProfileData(page);
   let savedBody: unknown;
-  await page.route("**/api/v1/user/edit-info", async (route) => {
+  await page.route("**/api/v1/user/me", async (route) => {
+    if (route.request().method() !== "PATCH") return route.fallback();
     savedBody = route.request().postDataJSON();
     await route.fulfill({
       json: {

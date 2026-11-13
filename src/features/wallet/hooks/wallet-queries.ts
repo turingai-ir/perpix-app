@@ -6,7 +6,7 @@ import type {
 
 export const useWallet = (enabled = true) => {
   const { useQuery } = useReactQueryApi();
-  return useQuery("get", "/api/v1/wallet/wallet", undefined, { enabled });
+  return useQuery("get", "/api/v1/wallet", undefined, { enabled });
 };
 
 export const useChargeWallet = () => {

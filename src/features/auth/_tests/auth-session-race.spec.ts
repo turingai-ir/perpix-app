@@ -16,7 +16,7 @@ test("a protected response from an ended auth cycle cannot reach the caller", as
   const gate = new Promise<void>((resolve) => {
     release = resolve;
   });
-  await page.route("**/api/v1/wallet/wallet", async (route) => {
+  await page.route("**/api/v1/wallet", async (route) => {
     requested = true;
     await gate;
     await route.fulfill({
@@ -31,7 +31,7 @@ test("a protected response from an ended auth cycle cannot reach the caller", as
     const clientPath = "/src/shared/api/client.ts";
     const { apiClient } = await import(clientPath);
     try {
-      await apiClient.GET("/api/v1/wallet/wallet");
+      await apiClient.GET("/api/v1/wallet");
       return "delivered";
     } catch (error) {
       return error instanceof DOMException ? error.name : "other-error";

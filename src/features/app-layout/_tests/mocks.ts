@@ -63,12 +63,12 @@ export async function mockShell(page: Page, options: MockOptions = {}) {
   } = options;
 
   await mockAuthenticatedSession(page);
-  await page.route("**/api/v1/user/get-info", (route) =>
+  await page.route("**/api/v1/user/me", (route) =>
     route.fulfill({
       json: { uuid: "u", name: "Test", email: "t@example.com" },
     }),
   );
-  await page.route("**/api/v1/wallet/wallet", (route) =>
+  await page.route("**/api/v1/wallet", (route) =>
     balance === "error"
       ? route.fulfill({ status: 503, json: { detail: "unavailable" } })
       : route.fulfill({

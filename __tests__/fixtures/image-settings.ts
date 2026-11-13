@@ -182,7 +182,7 @@ export const test = base.extend<{
           return;
         }
         const responses: Record<string, unknown> = {
-          "/user/get-info": {
+          "/user/me": {
             phone_number: "+989123456789",
             name: null,
             email: null,
@@ -206,11 +206,11 @@ export const test = base.extend<{
             },
           },
           "/user/subscription/plans": [],
-          "/wallet/wallet": {
+          "/wallet": {
             wallet_uuid: "wallet-1",
             balance_usdmicro: 1_000_000,
           },
-          "/ai-task/list": { items: [], has_next: false },
+          "/ai-task": { items: [], has_next: false },
           "/file-manager/user-files": {
             files: referenceFiles,
             has_next: false,

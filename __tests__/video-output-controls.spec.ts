@@ -87,14 +87,13 @@ async function openResult(
     const url = new URL(request.url());
     const path = url.pathname.replace(/^\/api\/v1/, "");
     let body: unknown;
-    if (path === "/user/get-info")
-      body = { uuid: "user-1", mobile: "09120000000" };
+    if (path === "/user/me") body = { uuid: "user-1", mobile: "09120000000" };
     if (path === "/user/subscription/active") body = null;
     if (path === "/user/subscription/plans" || path === "/ai-registry/models")
       body = [];
-    if (path === "/wallet/wallet")
+    if (path === "/wallet")
       body = { wallet_uuid: "wallet-1", balance_usdmicro: 1_000_000 };
-    if (path === "/ai-task/list") body = { items: [], has_next: false };
+    if (path === "/ai-task") body = { items: [], has_next: false };
     if (path === "/ai-task/video-output-test") {
       body = {
         uuid: "video-output-test",

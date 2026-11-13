@@ -27,7 +27,7 @@ const videoModel = {
 };
 
 async function mockReadOnlyRoutes(page: Page) {
-  await page.route("**/api/v1/user/get-info", (route) =>
+  await page.route("**/api/v1/user/me", (route) =>
     route.fulfill({
       json: {
         uuid: "user-1",
@@ -64,7 +64,7 @@ async function mockReadOnlyRoutes(page: Page) {
       body: "retry: 600000\n\n",
     }),
   );
-  await page.route("**/api/v1/ai-task/list?**", (route) =>
+  await page.route("**/api/v1/ai-task?**", (route) =>
     route.fulfill({ json: { items: [], has_next: false } }),
   );
   await page.route("**/api/v1/payment-executions/*", (route) =>
