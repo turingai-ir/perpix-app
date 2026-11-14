@@ -23,7 +23,9 @@
         "INVALID_INPUT": "ورودی‌ها پذیرفته نشد",
         "OPERATOR": "پشتیبانی این درخواست رو ناموفق اعلام کرد",
         "PLATFORM_CONFIGURATION": "یه مشکل فنی از سمت ما پیش اومد",
+        "PROVIDER_AUTH_FAILED": "سرویس ساخت فعلاً در دسترس نیست",
         "PROVIDER_FAILED": "سرویس ساخت نتونست کار رو تموم کنه",
+        "PROVIDER_OUT_OF_CREDIT": "سرویس ساخت فعلاً در دسترس نیست",
         "PROVIDER_TIMEOUT": "ساخت بیش از حد طول کشید",
         "PROVIDER_UNAVAILABLE": "سرویس ساخت فعلاً در دسترس نیست",
         "RATE_LIMITED": "سرویس ساخت الان شلوغه"

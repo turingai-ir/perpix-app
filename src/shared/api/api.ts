@@ -1595,7 +1595,7 @@ export interface components {
          * @description Why a generation failed, as far as the user can act on it; the provider's own code is kept apart.
          * @enum {string}
          */
-        readonly GenerationFailureReasonEnum: "CONTENT_POLICY" | "INVALID_INPUT" | "RATE_LIMITED" | "PROVIDER_UNAVAILABLE" | "PROVIDER_TIMEOUT" | "PLATFORM_CONFIGURATION" | "PROVIDER_FAILED" | "INTERNAL" | "OPERATOR";
+        readonly GenerationFailureReasonEnum: "CONTENT_POLICY" | "INVALID_INPUT" | "RATE_LIMITED" | "PROVIDER_UNAVAILABLE" | "PROVIDER_TIMEOUT" | "PROVIDER_OUT_OF_CREDIT" | "PROVIDER_AUTH_FAILED" | "PLATFORM_CONFIGURATION" | "PROVIDER_FAILED" | "INTERNAL" | "OPERATOR";
         /** GetWalletResponse */
         readonly GetWalletResponse: {
             /**
@@ -4150,7 +4150,7 @@ export const aiTaskTypeEnumValues: ReadonlyArray<FlattenedDeepRequired<component
 export const applicationErrorCodeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["ApplicationErrorCode"]> = [900, 901, 902, 999, 1000, 1100, 1103, 1104, 1106, 1107, 1108, 1200, 1201, 1202, 1203, 1204, 1205, 1206, 1300, 1301, 1302, 1303, 1304, 1305, 1306, 1307, 1308, 1309, 1310, 1400, 1401, 1500, 1501, 1502, 1503, 1504, 1505, 1506, 1600, 1601, 1602, 1603, 1604, 1605, 1700, 1701, 1702, 1800, 1801, 1802, 1803, 1804, 1805, 1806, 1807, 1808, 1810, 1811, 1812, 1813, 1814, 1815, 1816];
 export const fileManagerMediaMetadataResponseKindValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["FileManagerMediaMetadataResponse"]["kind"]> = ["image", "video", "audio"];
 export const generationFailureActionEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["GenerationFailureActionEnum"]> = ["MODIFY_INPUT", "RETRY_LATER", "RETRY_NOW", "CONTACT_SUPPORT"];
-export const generationFailureReasonEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["GenerationFailureReasonEnum"]> = ["CONTENT_POLICY", "INVALID_INPUT", "RATE_LIMITED", "PROVIDER_UNAVAILABLE", "PROVIDER_TIMEOUT", "PLATFORM_CONFIGURATION", "PROVIDER_FAILED", "INTERNAL", "OPERATOR"];
+export const generationFailureReasonEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["GenerationFailureReasonEnum"]> = ["CONTENT_POLICY", "INVALID_INPUT", "RATE_LIMITED", "PROVIDER_UNAVAILABLE", "PROVIDER_TIMEOUT", "PROVIDER_OUT_OF_CREDIT", "PROVIDER_AUTH_FAILED", "PLATFORM_CONFIGURATION", "PROVIDER_FAILED", "INTERNAL", "OPERATOR"];
 export const machineScopeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["MachineScope"]> = ["ai_registry:read", "ai_task:read", "ai_task:write", "file_manager:read", "file_manager:write"];
 export const passwordStepResponseNext_stepValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PasswordStepResponse"]["next_step"]> = ["password"];
 export const paymentExecutionStatusValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaymentExecutionStatus"]> = ["PENDING", "SUCCEEDED", "FAILED", "EXPIRED"];
@@ -4306,6 +4306,8 @@ export const GenerationFailureReasonEnumMap = {
   "RATE_LIMITED": "RATE_LIMITED",
   "PROVIDER_UNAVAILABLE": "PROVIDER_UNAVAILABLE",
   "PROVIDER_TIMEOUT": "PROVIDER_TIMEOUT",
+  "PROVIDER_OUT_OF_CREDIT": "PROVIDER_OUT_OF_CREDIT",
+  "PROVIDER_AUTH_FAILED": "PROVIDER_AUTH_FAILED",
   "PLATFORM_CONFIGURATION": "PLATFORM_CONFIGURATION",
   "PROVIDER_FAILED": "PROVIDER_FAILED",
   "INTERNAL": "INTERNAL",

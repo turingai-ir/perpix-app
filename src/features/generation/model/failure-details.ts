@@ -17,6 +17,10 @@ const FAILURE_TITLE_KEYS: Record<SchemaGenerationFailureReasonEnum, string> = {
   [R.PROVIDER_UNAVAILABLE]:
     "common.generationFailure.reason.PROVIDER_UNAVAILABLE",
   [R.PROVIDER_TIMEOUT]: "common.generationFailure.reason.PROVIDER_TIMEOUT",
+  [R.PROVIDER_OUT_OF_CREDIT]:
+    "common.generationFailure.reason.PROVIDER_OUT_OF_CREDIT",
+  [R.PROVIDER_AUTH_FAILED]:
+    "common.generationFailure.reason.PROVIDER_AUTH_FAILED",
   [R.PLATFORM_CONFIGURATION]:
     "common.generationFailure.reason.PLATFORM_CONFIGURATION",
   [R.PROVIDER_FAILED]: "common.generationFailure.reason.PROVIDER_FAILED",
