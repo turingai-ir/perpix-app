@@ -1919,6 +1919,8 @@ export interface components {
             readonly base_price_irr?: number | null;
             /** Discounted Price Irr */
             readonly discounted_price_irr?: number | null;
+            /** Wallet Topup Saving Irr */
+            readonly wallet_topup_saving_irr?: number | null;
             /** Duration Days */
             readonly duration_days: number;
             /** Balance Gift Amount Usdmicro */

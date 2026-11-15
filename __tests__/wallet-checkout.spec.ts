@@ -88,6 +88,40 @@ test.describe("Wallet checkout", () => {
     expect(gatewayVisits).toBe(1);
   });
 
+  for (const saving of [107800, 0]) {
+    test(`tells the user their plan makes top-ups cheaper when it saves ${saving}`, async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width: 1440, height: 900 });
+      const subscription = activeSubscription();
+      await page.route("**/api/v1/user/subscription/active", (route) =>
+        route.fulfill({
+          json: {
+            ...subscription,
+            plan: {
+              ...subscription.plan,
+              wallet_topup_discount_percent: 4,
+              wallet_topup_saving_irr: saving,
+            },
+          },
+        }),
+      );
+      await page.goto("/");
+      await page.getByRole("button", { name: "شارژ کیف پول" }).click();
+      const dialog = page.getByRole("dialog");
+      await expect(dialog.getByText("موجودی فعلی:")).toBeVisible();
+      const notice = dialog.getByText("توکن رو ارزون‌تر می‌خری", {
+        exact: false,
+      });
+      if (saving === 0) {
+        await expect(notice).toHaveCount(0);
+        return;
+      }
+      await expect(notice).toBeVisible();
+      await expect(notice).toContainText("Pro");
+    });
+  }
+
   test("submits typed formatted amounts as raw micro-units", async ({
     browserName,
     page,

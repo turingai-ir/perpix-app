@@ -4,7 +4,7 @@ import { Gift, Sparkles, WalletCards } from "lucide-react";
 import { useAppTranslate } from "@/shared/hooks";
 import { type SchemaSubscriptionPlanResponse } from "@/shared/api";
 import { APP_I18_KEYS } from "@/shared/i18n";
-import { formatTokenAmount } from "@/shared/utils";
+import { formatTokenAmount, formatTomanAmount } from "@/shared/utils";
 import PricingPlanPrice from "./pricing-plan-price";
 import { Badge } from "@/shared/ui/badge";
 import { cn } from "@/shared/lib/utils";
@@ -45,7 +45,7 @@ const PricingPlanCard: FC<PricingPlanCardProps> = ({
 }) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const gift = plan.balance_gift_amount_usdmicro;
-  const topupDiscount = plan.wallet_topup_discount_percent;
+  const topupSaving = plan.wallet_topup_saving_irr ?? 0;
   const hasDuration = Number.isFinite(plan.duration_days);
   const highlights = [
     gift
@@ -57,12 +57,12 @@ const PricingPlanCard: FC<PricingPlanCardProps> = ({
           }),
         }
       : null,
-    topupDiscount > 0
+    topupSaving > 0
       ? {
-          key: "topup-discount",
+          key: "topup-saving",
           Icon: WalletCards,
-          text: t("features.pricing.walletTopupDiscount", {
-            percent: topupDiscount.toLocaleString("fa-IR"),
+          text: t("features.pricing.walletTopupSaving", {
+            amount: formatTomanAmount(topupSaving),
           }),
         }
       : null,
@@ -102,6 +102,12 @@ const PricingPlanCard: FC<PricingPlanCardProps> = ({
             total: level.total.toLocaleString("fa-IR"),
           })}
         </small>
+      ) : null}
+
+      {plan.description ? (
+        <p className="text-muted-foreground m-0 text-sm leading-loose">
+          {plan.description}
+        </p>
       ) : null}
 
       {hasPrice ? (

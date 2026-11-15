@@ -82,12 +82,16 @@ for (const scenario of [
     await page.getByRole("button", { name: "جزئیات مبلغ" }).click();
     const dialog = page.getByRole("dialog");
     await expect(dialog.getByText("مبلغ نهایی")).toBeVisible();
-    const row = dialog.getByText("تخفیف اعمال‌شده");
+    const row = dialog.getByText("تخفیف", { exact: true });
     if (discountAmount === "0") {
       await expect(row).toHaveCount(0);
       return;
     }
     await expect(row).toBeVisible();
     await expect(dialog).toContainText("۸۰۰ تومان");
+    await expect(dialog.getByText("قیمت عادی")).toBeVisible();
+    await expect(dialog).toContainText("۲۲٬۰۰۰ تومان");
+    await expect(dialog.getByText("مبلغ بعد از تخفیف")).toBeVisible();
+    await expect(dialog.getByText("مبلغ پایه")).toHaveCount(0);
   });
 }
