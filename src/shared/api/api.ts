@@ -1763,10 +1763,10 @@ export interface components {
             readonly tax_amount: string;
             /** Total Amount */
             readonly total_amount: string;
-            /** Wallet Credit Usdmicro */
-            readonly wallet_credit_usdmicro: string | null;
-            /** Wallet Topup Discount Percent */
-            readonly wallet_topup_discount_percent: number | null;
+            /** Discount Amount Usdmicro */
+            readonly discount_amount_usdmicro: string;
+            /** Discount Amount */
+            readonly discount_amount: string;
         };
         /**
          * PaymentExecutionStatus

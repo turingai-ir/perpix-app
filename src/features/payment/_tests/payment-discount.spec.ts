@@ -4,7 +4,7 @@ import { mockAuthenticatedSession } from "../../../../__tests__/support/auth-ses
 const intentUuid = "c0202000-0000-4000-8000-000000000015";
 const executionUuid = "c0202000-0000-4000-8000-000000000016";
 
-function details(discount: number | null) {
+function details(discountAmount: string) {
   return {
     id: intentUuid,
     currency: "IRR",
@@ -14,13 +14,18 @@ function details(discount: number | null) {
     base_amount_usdmicro: "10600",
     tax_amount_usdmicro: "0",
     total_amount_usdmicro: "10600",
-    wallet_credit_usdmicro: discount === null ? null : "10000",
-    wallet_topup_discount_percent: discount,
+    discount_amount_usdmicro: discountAmount === "0" ? "0" : "400",
+    discount_amount: discountAmount,
   };
 }
 
-for (const discount of [4, 0, null]) {
-  test(`payment details ${discount === null ? "hide" : "show"} wallet top-up discount ${discount}`, async ({
+for (const scenario of [
+  { targetType: "wallet_topup", discountAmount: "8000" },
+  { targetType: "subscription", discountAmount: "8000" },
+  { targetType: "wallet_topup", discountAmount: "0" },
+]) {
+  const { targetType, discountAmount } = scenario;
+  test(`payment details for ${targetType} with discount ${discountAmount}`, async ({
     page,
   }) => {
     await mockAuthenticatedSession(page);
@@ -39,7 +44,7 @@ for (const discount of [4, 0, null]) {
     );
     await page.route(
       `**/api/v1/payment-intents/${intentUuid}/details`,
-      (route) => route.fulfill({ json: details(discount) }),
+      (route) => route.fulfill({ json: details(discountAmount) }),
     );
     await page.route("**/api/v1/payment-intents?*", (route) =>
       route.fulfill({
@@ -57,7 +62,7 @@ for (const discount of [4, 0, null]) {
                 amount: "212000",
                 payment_url: null,
               },
-              target_type: "wallet_topup",
+              target_type: targetType,
               created_at: "2026-09-30T00:00:00Z",
             },
           ],
@@ -77,18 +82,12 @@ for (const discount of [4, 0, null]) {
     await page.getByRole("button", { name: "جزئیات مبلغ" }).click();
     const dialog = page.getByRole("dialog");
     await expect(dialog.getByText("مبلغ نهایی")).toBeVisible();
-    if (discount === null) {
-      await expect(dialog.getByText("اعتبار کیف پول")).toHaveCount(0);
-      await expect(dialog.getByText("تخفیف اشتراک روی شارژ")).toHaveCount(0);
+    const row = dialog.getByText("تخفیف اعمال‌شده");
+    if (discountAmount === "0") {
+      await expect(row).toHaveCount(0);
       return;
     }
-    await expect(dialog.getByText("اعتبار کیف پول")).toBeVisible();
-    await expect(dialog).toContainText("۱۰ توکن");
-    if (discount === 0) {
-      await expect(dialog.getByText("تخفیف اشتراک روی شارژ")).toHaveCount(0);
-      return;
-    }
-    await expect(dialog.getByText("تخفیف اشتراک روی شارژ")).toBeVisible();
-    await expect(dialog).toContainText("۴٪");
+    await expect(row).toBeVisible();
+    await expect(dialog).toContainText("۸۰۰ تومان");
   });
 }

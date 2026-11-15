@@ -1,6 +1,5 @@
 import { useAppTranslate } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";
-import { formatTokenAmount } from "@/shared/utils";
 import type { PaymentBreakdown as Breakdown } from "../model/payment-money";
 import { PaymentAmount } from "./payment-amount";
 
@@ -14,29 +13,16 @@ export function PaymentBreakdown({ payment }: { payment: Breakdown }) {
       amount: payment.total_amount,
     },
   ] as const;
-  const credit = payment.wallet_credit_usdmicro;
-  const discount = payment.wallet_topup_discount_percent;
+  const discount = payment.discount_amount;
   return (
     <dl className="bg-muted/30 space-y-4 rounded-lg border p-4">
-      {credit ? (
+      {discount && discount !== "0" ? (
         <div className="flex items-center justify-between gap-4">
           <dt className="font-medium">
-            {t("pages.payment.redirect.walletCredit")}
-          </dt>
-          <dd>
-            {formatTokenAmount(credit)} {t("common.token")}
-          </dd>
-        </div>
-      ) : null}
-      {credit && discount ? (
-        <div className="flex items-center justify-between gap-4">
-          <dt className="font-medium">
-            {t("pages.payment.redirect.walletTopupDiscount")}
+            {t("pages.payment.redirect.discountAmount")}
           </dt>
           <dd className="text-accent-emerald font-semibold">
-            {t("pages.payment.redirect.percentValue", {
-              percent: discount.toLocaleString("fa-IR"),
-            })}
+            <PaymentAmount amount={discount} currency={payment.currency} />
           </dd>
         </div>
       ) : null}
