@@ -1,5 +1,5 @@
 import { type FC, type ReactNode } from "react";
-import { CircleCheck, Clock, Gift, Layers, Sparkles } from "lucide-react";
+import { Gift, Sparkles, WalletCards } from "lucide-react";
 
 import { useAppTranslate } from "@/shared/hooks";
 import { type SchemaSubscriptionPlanResponse } from "@/shared/api";
@@ -34,13 +34,6 @@ const CARD_CLASS = [
 const LIST_ITEM_CLASS =
   "flex items-start gap-2.5 text-sm leading-relaxed [&_svg]:mt-1 [&_svg]:size-4 [&_svg]:flex-none";
 
-const getFeatures = (plan: SchemaSubscriptionPlanResponse): string[] => {
-  const features: unknown = plan.meta?.features;
-  return Array.isArray(features)
-    ? features.filter((item): item is string => typeof item === "string")
-    : [];
-};
-
 const PricingPlanCard: FC<PricingPlanCardProps> = ({
   plan,
   isCurrent,
@@ -51,20 +44,10 @@ const PricingPlanCard: FC<PricingPlanCardProps> = ({
   children,
 }) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
-  const features = getFeatures(plan);
   const gift = plan.balance_gift_amount_usdmicro;
-  const modelsCount = plan.allowed_models?.length ?? 0;
+  const topupDiscount = plan.wallet_topup_discount_percent;
   const hasDuration = Number.isFinite(plan.duration_days);
   const highlights = [
-    hasDuration
-      ? {
-          key: "duration",
-          Icon: Clock,
-          text: t("features.pricing.durationDays", {
-            days: plan.duration_days.toLocaleString("fa-IR"),
-          }),
-        }
-      : null,
     gift
       ? {
           key: "gift",
@@ -74,12 +57,12 @@ const PricingPlanCard: FC<PricingPlanCardProps> = ({
           }),
         }
       : null,
-    modelsCount > 0
+    topupDiscount > 0
       ? {
-          key: "models",
-          Icon: Layers,
-          text: t("features.pricing.modelsCount", {
-            count: modelsCount.toLocaleString("fa-IR"),
+          key: "topup-discount",
+          Icon: WalletCards,
+          text: t("features.pricing.walletTopupDiscount", {
+            percent: topupDiscount.toLocaleString("fa-IR"),
           }),
         }
       : null,
@@ -121,12 +104,6 @@ const PricingPlanCard: FC<PricingPlanCardProps> = ({
         </small>
       ) : null}
 
-      {plan.description ? (
-        <p className="text-muted-foreground m-0 text-sm leading-loose">
-          {plan.description}
-        </p>
-      ) : null}
-
       {hasPrice ? (
         <PricingPlanPrice
           currency={plan.currency}
@@ -152,23 +129,6 @@ const PricingPlanCard: FC<PricingPlanCardProps> = ({
             >
               <Icon aria-hidden="true" />
               {text}
-            </li>
-          ))}
-        </ul>
-      ) : null}
-
-      {features.length > 0 ? (
-        <ul className="m-0 flex list-none flex-col gap-2 p-0">
-          {features.map((feature) => (
-            <li
-              key={feature}
-              className={cn(
-                LIST_ITEM_CLASS,
-                "text-foreground/80 [&_svg]:text-accent-emerald",
-              )}
-            >
-              <CircleCheck aria-hidden="true" />
-              {feature}
             </li>
           ))}
         </ul>
