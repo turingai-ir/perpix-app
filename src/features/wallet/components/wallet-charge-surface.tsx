@@ -63,7 +63,7 @@ export function WalletChargeSurface({
     <WalletChargeMobileContext value={mobile}>
       <Root open={open} onOpenChange={onOpenChange}>
         <Content
-          className="bg-popover border-night-foreground/10 max-h-[90dvh] overflow-hidden p-0 shadow-2xl sm:max-w-lg"
+          className="bg-popover border-border max-h-[90dvh] overflow-hidden p-0 shadow-2xl sm:max-w-lg"
           {...(!mobile ? { showCloseButton: false } : {})}
         >
           <Button

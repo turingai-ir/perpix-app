@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useAppTranslate } from "@/shared/hooks/i18/use-app-translate";
 import {
   FIELD_LABEL_CLASS,
@@ -27,7 +27,11 @@ export function EditorOutputSize({
   );
   const width = outputWidth ?? naturalWidth;
   const height = Math.round((width * naturalHeight) / naturalWidth);
-  useEffect(() => setDraft(String(width)), [width]);
+  const [syncedWidth, setSyncedWidth] = useState(width);
+  if (syncedWidth !== width) {
+    setSyncedWidth(width);
+    setDraft(String(width));
+  }
 
   const commit = () => {
     const parsed = Number(draft);

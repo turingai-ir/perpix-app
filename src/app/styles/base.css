@@ -13,8 +13,39 @@
     caret-color: var(--primary);
   }
   html {
-    @apply font-sans;
+    @apply font-sans antialiased;
     scrollbar-color: var(--border) var(--background);
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+  /* Native feel: interface chrome is not selectable text; content (prompts, results) stays selectable. */
+  :is(
+    button,
+    summary,
+    [role="button"],
+    [role="tab"],
+    [role="menuitem"],
+    [role="option"],
+    nav
+  ) {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+}
+
+/* Installed app: no pull-to-refresh or rubber-band bounce on the page; inner scrollers still scroll. */
+@media (display-mode: standalone) {
+  html,
+  body {
+    overscroll-behavior: none;
+  }
+}
+
+/* Windows High Contrast / forced colours: keep a visible focus indicator. */
+@media (forced-colors: active) {
+  :focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: 2px;
   }
 }
 

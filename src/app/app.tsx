@@ -1,4 +1,4 @@
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useState } from "react";
 import { useAtomValue } from "jotai";
 import { RouterProvider } from "react-router";
 import { DirectionProvider } from "@base-ui/react/direction-provider";
@@ -20,9 +20,7 @@ function App() {
   const { open: pricingOpen } = useAtomValue(pricingFeatureAtom);
   const [pricingWasOpened, setPricingWasOpened] = useState(false);
 
-  useEffect(() => {
-    if (pricingOpen) setPricingWasOpened(true);
-  }, [pricingOpen]);
+  if (pricingOpen && !pricingWasOpened) setPricingWasOpened(true);
 
   return (
     <>
