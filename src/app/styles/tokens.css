@@ -1,6 +1,12 @@
-/* Design tokens: light (:root) and dark (.dark) values. Add new colors here first. */
-:root {
-  /* Sampled from the logo raster; interaction tones are adjusted for contrast. */
+/*
+ * Semantic design tokens. Values reference the palette ramps (palette.css), which flip
+ * between light and dark, so most tokens are written once. Components use ONLY these tokens.
+ * New colour: add/adjust a ramp step in palette.css, then alias it here, then map it in theme.css.
+ */
+/* `:root, .dark`: semantic aliases re-resolve inside any .dark subtree, not only on <html>. */
+:root,
+.dark {
+  /* Brand primitives sampled from the logo raster; invariant across themes (gradient, logo). */
   --magenta-brand: oklch(0.6358 0.2659 330.2744);
   --violet-brand: oklch(0.5435 0.2248 307.3128);
   --blue-brand: oklch(0.5367 0.1657 253.6122);
@@ -13,6 +19,8 @@
     var(--cyan-brand)
   );
   --ambient-brand: color-mix(in srgb, var(--violet-brand) 14%, transparent);
+  --ambient-media: color-mix(in srgb, var(--cyan-brand) 9%, transparent);
+
   /* Accents for always-dark glass surfaces (account widget); same in both themes. */
   --accent-violet: oklch(0.65 0.18 290);
   --accent-pink: oklch(0.79 0.13 330);
@@ -24,51 +32,70 @@
   --accent-emerald: oklch(0.85 0.14 165);
   --accent-teal: oklch(0.66 0.11 185);
   --on-accent: oklch(0.2 0.03 300);
-  --ambient-media: color-mix(in srgb, var(--cyan-brand) 9%, transparent);
+  /* Always-dark surface and its foreground (composer, hero buttons, scrims); same in both themes. */
+  --night: oklch(0.15 0.012 285);
+  --night-foreground: oklch(0.985 0.004 295);
 
-  --background: oklch(0.975 0.008 295);
-  --foreground: oklch(0.24 0.025 285);
-  --card: oklch(0.995 0.002 295);
+  /* Surfaces: light = white cards on a tinted page (Apple grouped-background model). */
+  --background: var(--neutral-2);
+  --foreground: var(--neutral-12);
+  --card: var(--neutral-1);
   --card-foreground: var(--foreground);
-  --popover: oklch(0.995 0.002 295);
+  --popover: var(--neutral-1);
   --popover-foreground: var(--foreground);
-  --primary: oklch(0.47 0.2 307.3128);
-  --primary-foreground: oklch(0.985 0.003 295);
-  --secondary: oklch(0.935 0.024 295);
-  --secondary-foreground: oklch(0.35 0.09 307.3128);
-  --muted: oklch(0.94 0.012 285);
-  --muted-foreground: oklch(0.47 0.025 285);
-  --accent: oklch(0.93 0.035 307.3128);
-  --accent-foreground: oklch(0.35 0.1 307.3128);
-  --destructive: oklch(0.53 0.2 25);
-  --success: oklch(0.5 0.1 175);
-  --warning: oklch(0.52 0.11 70);
-  --review: oklch(0.48 0.16 305);
-  --destructive-foreground: oklch(0.985 0.003 25);
-  --border: oklch(0.85 0.022 285);
-  --input: oklch(0.58 0.025 285);
+  --muted: var(--neutral-3);
+  --muted-foreground: var(--neutral-11);
+
+  /* Actions and emphasis. Step 9 is the solid fill, step 3 the soft fill, step 4 hover tint. */
+  --primary: var(--violet-9);
+  --primary-foreground: var(--neutral-1);
+  --secondary: var(--violet-3);
+  --secondary-foreground: var(--violet-12);
+  --accent: var(--violet-4);
+  --accent-foreground: var(--violet-12);
+
+  /* Status, shadcn pattern: X + X-foreground (text on solid). Soft fills and edges use alpha:
+     bg-success/10, border-success/30 (as the destructive button variant does). */
+  --destructive: var(--red-9);
+  --destructive-foreground: var(--neutral-1);
+  --success: var(--green-9);
+  --success-foreground: var(--neutral-1);
+  --warning: var(--amber-9);
+  --warning-foreground: var(--neutral-1);
+  --info: var(--blue-9);
+  --info-foreground: var(--neutral-1);
+  --review: var(--violet-10);
+  --review-foreground: var(--neutral-1);
+
+  /* Borders, shadcn pattern: border = default edge, input = form control edge, ring = focus.
+     Emphasis uses alpha on foreground (ring-foreground/10, border-foreground/20). */
+  --border: var(--neutral-6);
+  --input: var(--neutral-9);
   --ring: var(--primary);
 
-  --image-accent: oklch(0.46 0.18 330.2744);
-  --video-accent: oklch(0.43 0.1 237.589);
+  /* Media types. */
+  --image-accent: var(--magenta-11);
+  --video-accent: var(--cyan-11);
   --image-accent-soft: color-mix(in srgb, var(--image-accent) 12%, transparent);
   --video-accent-soft: color-mix(in srgb, var(--video-accent) 12%, transparent);
-  --glass-surface: oklch(0.995 0.002 295 / 90%);
+
+  /* Glass: the card colour at partial opacity; edge and highlight derive from the neutral ramp. */
+  --glass-surface: color-mix(in oklch, var(--card) 90%, transparent);
   --glass-surface-strong: var(--card);
-  --glass-border: oklch(0.62 0.045 295 / 36%);
+  --glass-border: color-mix(in oklch, var(--neutral-9) 36%, transparent);
   --glass-highlight: oklch(1 0 0 / 76%);
-  --glass-shadow: 0 24px 64px -32px oklch(0.3 0.04 295 / 18%);
-  --selection: oklch(0.87 0.07 307.3128);
-  --selection-foreground: oklch(0.27 0.08 307.3128);
+  --glass-shadow: 0 24px 64px -32px color-mix(in oklch, var(--shadow-ink) 30%, transparent);
+  --selection: var(--violet-5);
+  --selection-foreground: var(--violet-12);
 
   --chart-1: var(--primary);
   --chart-2: var(--video-accent);
   --chart-3: var(--image-accent);
-  --chart-4: oklch(0.48 0.09 190);
-  --chart-5: oklch(0.55 0.11 75);
+  --chart-4: var(--green-10);
+  --chart-5: var(--amber-9);
   --radius: 0.75rem;
 
-  --sidebar: oklch(0.95 0.015 295);
+  --sidebar: var(--neutral-3);
   --sidebar-foreground: var(--foreground);
   --sidebar-primary: var(--primary);
   --sidebar-primary-foreground: var(--primary-foreground);
@@ -77,43 +104,55 @@
   --sidebar-border: var(--glass-border);
   --sidebar-ring: var(--ring);
   --sidebar-shadow: var(--glass-shadow);
+
+  /* Shadow tint; layered elevation (ambient + direct light) mapped to shadow-raised|overlay|modal. */
+  --shadow-ink: oklch(0.25 0.04 295);
+  --elevation-raised:
+    0 1px 2px color-mix(in oklch, var(--shadow-ink) 8%, transparent),
+    0 4px 12px -4px color-mix(in oklch, var(--shadow-ink) 14%, transparent);
+  --elevation-overlay:
+    0 2px 4px color-mix(in oklch, var(--shadow-ink) 8%, transparent),
+    0 12px 32px -8px color-mix(in oklch, var(--shadow-ink) 22%, transparent);
+  --elevation-modal:
+    0 4px 8px color-mix(in oklch, var(--shadow-ink) 10%, transparent),
+    0 24px 64px -16px color-mix(in oklch, var(--shadow-ink) 34%, transparent);
+
+  /* Glass top-edge highlight (inset 1px) in three strengths; utilities inset-shadow-highlight-sm|highlight|highlight-lg. */
+  --highlight-sm: inset 0 1px 0 color-mix(in oklch, var(--night-foreground) 8%, transparent);
+  --highlight: inset 0 1px 0 color-mix(in oklch, var(--night-foreground) 12%, transparent);
+  --highlight-lg: inset 0 1px 0 color-mix(in oklch, var(--night-foreground) 18%, transparent);
+
+  /* Motion durations: press/hover, enter, page/portal. Easing: --ease-out-quint (theme.css). */
+  --duration-press: 150ms;
+  --duration-enter: 260ms;
+  --duration-page: 380ms;
+
   color-scheme: light;
 }
 
 .dark {
-  --background: oklch(0.145 0.018 285);
-  --foreground: oklch(0.965 0.008 295);
-  --card: oklch(0.205 0.022 285);
-  --popover: oklch(0.235 0.025 285);
-  --primary: oklch(0.76 0.145 307.3128);
-  --primary-foreground: oklch(0.18 0.035 307.3128);
-  --secondary: oklch(0.275 0.04 295);
-  --secondary-foreground: oklch(0.9 0.04 307.3128);
-  --muted: oklch(0.255 0.023 285);
-  --muted-foreground: oklch(0.74 0.025 285);
-  --accent: oklch(0.3 0.055 307.3128);
-  --accent-foreground: oklch(0.92 0.035 307.3128);
-  --destructive: oklch(0.74 0.16 25);
-  --success: oklch(0.86 0.09 175);
-  --warning: oklch(0.85 0.12 85);
-  --review: oklch(0.82 0.1 310);
-  --destructive-foreground: oklch(0.18 0.025 25);
-  --border: oklch(0.35 0.028 285);
-  --input: oklch(0.55 0.035 285);
+  /* Dark surfaces step up with elevation: background < card < popover. */
+  --background: var(--neutral-1);
+  --card: var(--neutral-2);
+  --popover: var(--neutral-3);
+  --muted: var(--neutral-4);
+  --primary-foreground: var(--violet-1);
+  --destructive-foreground: var(--red-1);
+  --success-foreground: var(--green-1);
+  --warning-foreground: var(--amber-1);
+  --info-foreground: var(--blue-1);
+  --review-foreground: var(--violet-1);
+  --sidebar: var(--neutral-2);
+  --secondary: var(--violet-4);
+  --accent: var(--violet-5);
 
-  --image-accent: oklch(0.8 0.13 330.2744);
-  --video-accent: oklch(0.79 0.105 237.589);
+  --glass-border: color-mix(in oklch, var(--neutral-11) 26%, transparent);
+  --glass-highlight: oklch(0.94 0.02 295 / 12%);
+  --glass-shadow: 0 24px 64px -32px color-mix(in oklch, var(--shadow-ink) 72%, transparent);
+  --glass-surface: color-mix(in oklch, var(--card) 88%, transparent);
   --image-accent-soft: color-mix(in srgb, var(--image-accent) 16%, transparent);
   --video-accent-soft: color-mix(in srgb, var(--video-accent) 14%, transparent);
-  --glass-surface: oklch(0.205 0.022 285 / 88%);
-  --glass-border: oklch(0.74 0.045 295 / 26%);
-  --glass-highlight: oklch(0.94 0.02 295 / 12%);
-  --glass-shadow: 0 24px 64px -32px oklch(0.06 0.012 285 / 72%);
-  --selection: oklch(0.39 0.1 307.3128);
-  --selection-foreground: oklch(0.97 0.012 307.3128);
-
-  --chart-4: oklch(0.76 0.09 190);
-  --chart-5: oklch(0.8 0.12 75);
-  --sidebar: oklch(0.185 0.025 285);
+  --selection: var(--violet-7);
+  --shadow-ink: oklch(0.04 0.01 285);
   color-scheme: dark;
 }

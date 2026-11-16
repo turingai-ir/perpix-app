@@ -8,6 +8,7 @@
 @import "shadcn/tailwind.css";
 @custom-variant dark (&:is(.dark *));
 
+@import "./palette.css";
 @import "./tokens.css";
 @import "./theme.css";
 @import "./base.css";

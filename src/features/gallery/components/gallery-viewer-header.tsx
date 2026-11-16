@@ -24,17 +24,17 @@ export function GalleryViewerHeader({
       <div className="min-w-0">
         <DialogTitle
           dir="auto"
-          className="max-w-[min(64vw,46rem)] overflow-hidden text-[0.9375rem] leading-normal font-[650] text-ellipsis whitespace-nowrap text-white"
+          className="text-night-foreground text-headline max-w-[min(64vw,46rem)] overflow-hidden leading-normal font-[650] text-ellipsis whitespace-nowrap"
         >
           {name}
         </DialogTitle>
-        <DialogDescription className="text-[0.6875rem] text-[rgb(244_244_245/55%)]">
+        <DialogDescription className="text-caption text-night-foreground/55">
           {t(`pages.gallery.mediaTypes.${mediaType}`)}
         </DialogDescription>
       </div>
       <Button
         variant="outline"
-        className="size-11 flex-none rounded-full border-white/12 bg-white/6 text-white"
+        className="border-night-foreground/12 bg-night-foreground/6 text-night-foreground size-11 flex-none rounded-full"
         aria-label={t("pages.gallery.studio.close")}
         onClick={onClose}
       >

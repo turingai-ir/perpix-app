@@ -38,14 +38,14 @@ export function ImageEditorZoomControls({
 
   return (
     <div
-      className="flex items-center gap-0.5 border-l border-white/10 pl-1"
+      className="border-night-foreground/10 flex items-center gap-0.5 border-l pl-1"
       dir="ltr"
     >
       <Button
         variant="ghost"
         size="icon"
         onClick={() => handleZoom(1 / 1.2)}
-        className="h-10 w-10 text-white hover:bg-white/10 hover:text-white"
+        className="text-night-foreground hover:bg-night-foreground/10 hover:text-night-foreground h-10 w-10"
         title={t("pages.editor.zoomOut")}
         aria-label={t("pages.editor.zoomOut")}
       >
@@ -57,7 +57,7 @@ export function ImageEditorZoomControls({
           setZoom(1);
           setPan({ x: 0, y: 0 });
         }}
-        className="flex h-10 min-w-[42px] items-center justify-center rounded px-1.5 font-mono text-xs text-white hover:bg-white/10"
+        className="text-night-foreground hover:bg-night-foreground/10 flex h-10 min-w-[42px] items-center justify-center rounded px-1.5 font-mono text-xs"
         title={t("pages.editor.resetZoom")}
         aria-label={t("pages.editor.resetZoom")}
       >
@@ -67,7 +67,7 @@ export function ImageEditorZoomControls({
         variant="ghost"
         size="icon"
         onClick={() => handleZoom(1.2)}
-        className="h-10 w-10 text-white hover:bg-white/10 hover:text-white"
+        className="text-night-foreground hover:bg-night-foreground/10 hover:text-night-foreground h-10 w-10"
         title={t("pages.editor.zoomIn")}
         aria-label={t("pages.editor.zoomIn")}
       >

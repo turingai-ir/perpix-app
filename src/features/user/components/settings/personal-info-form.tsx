@@ -30,7 +30,7 @@ import {
 } from "./settings-parts";
 
 const SETTINGS_INPUT_CLASS =
-  "h-12 rounded-[0.8rem] border-[color-mix(in_srgb,var(--primary)_15%,var(--border))] bg-muted/38 shadow-[inset_0_1px_rgb(255_255_255/6%)]";
+  "h-12 rounded-lg border-[color-mix(in_srgb,var(--primary)_15%,var(--border))] bg-muted/38 inset-shadow-highlight-sm";
 
 interface PersonalInfoFormProps {
   form: UseFormReturn<ProfileSettingsFormValues>;

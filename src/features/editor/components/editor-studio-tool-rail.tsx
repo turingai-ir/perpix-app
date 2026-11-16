@@ -40,7 +40,7 @@ export function EditorStudioToolRail({ tool, onSelect }: Props) {
         <button
           key={id}
           type="button"
-          className="text-muted-foreground hover-capable:hover:border-primary/30 hover-capable:hover:bg-primary/14 hover-capable:hover:text-foreground aria-pressed:border-primary/30 aria-pressed:bg-primary/14 aria-pressed:text-foreground flex h-13 min-w-0 flex-1 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-[14px] border border-transparent bg-transparent text-[10px] whitespace-nowrap transition-colors motion-reduce:transition-none min-[701px]:h-15.5 min-[701px]:w-14.5 min-[701px]:flex-none min-[701px]:gap-1.5"
+          className="text-muted-foreground hover-capable:hover:border-primary/30 hover-capable:hover:bg-primary/14 hover-capable:hover:text-foreground aria-pressed:border-primary/30 aria-pressed:bg-primary/14 aria-pressed:text-foreground text-caption flex h-13 min-w-0 flex-1 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-lg border border-transparent bg-transparent whitespace-nowrap transition-colors motion-reduce:transition-none min-[701px]:h-15.5 min-[701px]:w-14.5 min-[701px]:flex-none min-[701px]:gap-1.5"
           aria-label={label}
           title={label}
           aria-pressed={tool === id}

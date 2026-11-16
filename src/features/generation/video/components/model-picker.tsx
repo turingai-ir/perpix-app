@@ -81,7 +81,7 @@ export function VideoModelPicker({
           </small>
           <strong
             dir="auto"
-            className="text-[15px] leading-normal font-semibold wrap-anywhere"
+            className="text-headline leading-normal font-semibold wrap-anywhere"
           >
             {name}
           </strong>
@@ -92,7 +92,7 @@ export function VideoModelPicker({
         <DialogOverlay />
         <DialogPrimitive.Popup
           data-slot="dialog-content"
-          className="border-border bg-popover text-popover-foreground [&_:is(button,input):focus-visible]:outline-ring fixed top-1/2 left-1/2 z-50 flex max-h-[min(720px,86dvh)] w-[min(720px,calc(100%-32px))] max-w-180 -translate-x-1/2 -translate-y-1/2 flex-col gap-4.5 overflow-hidden rounded-3xl border bg-[radial-gradient(circle_at_85%_-10%,var(--ambient-brand),transparent_42%)] p-6.5 text-sm shadow-[inset_0_1px_rgb(255_255_255/10%),0_32px_100px_rgb(0_0_0/62%)] backdrop-blur-xl backdrop-saturate-135 outline-none max-[600px]:top-auto max-[600px]:bottom-0 max-[600px]:left-0 max-[600px]:max-h-[90dvh] max-[600px]:w-full max-[600px]:max-w-full max-[600px]:translate-x-0 max-[600px]:translate-y-0 max-[600px]:rounded-b-none max-[600px]:px-4.5 max-[600px]:pt-5 max-[600px]:pb-[max(20px,env(safe-area-inset-bottom))] [&_:is(button,input):focus-visible]:outline-2 [&_:is(button,input):focus-visible]:outline-offset-3"
+          className="border-border bg-popover text-popover-foreground [&_:is(button,input):focus-visible]:outline-ring inset-shadow-highlight shadow-modal fixed top-1/2 left-1/2 z-50 flex max-h-[min(720px,86dvh)] w-[min(720px,calc(100%-32px))] max-w-180 -translate-x-1/2 -translate-y-1/2 flex-col gap-4.5 overflow-hidden rounded-3xl border bg-[radial-gradient(circle_at_85%_-10%,var(--ambient-brand),transparent_42%)] p-6.5 text-sm backdrop-blur-xl backdrop-saturate-135 outline-none max-[600px]:top-auto max-[600px]:bottom-0 max-[600px]:left-0 max-[600px]:max-h-[90dvh] max-[600px]:w-full max-[600px]:max-w-full max-[600px]:translate-x-0 max-[600px]:translate-y-0 max-[600px]:rounded-b-none max-[600px]:px-4.5 max-[600px]:pt-5 max-[600px]:pb-[max(20px,env(safe-area-inset-bottom))] [&_:is(button,input):focus-visible]:outline-2 [&_:is(button,input):focus-visible]:outline-offset-3"
         >
           <div className="flex items-center justify-between gap-3">
             <div>
@@ -108,7 +108,7 @@ export function VideoModelPicker({
               <X size={20} />
             </DialogClose>
           </div>
-          <label className="border-border bg-background/40 text-muted-foreground [&_input]:text-foreground flex min-h-13 items-center gap-2.5 rounded-2xl border px-4 shadow-[inset_0_1px_rgb(255_255_255/7%)] backdrop-blur-lg [&_input]:h-11.5 [&_input]:w-full [&_input]:min-w-0 [&_input]:bg-transparent [&_input]:text-base">
+          <label className="border-border bg-background/40 text-muted-foreground [&_input]:text-foreground inset-shadow-highlight-sm flex min-h-13 items-center gap-2.5 rounded-2xl border px-4 backdrop-blur-lg [&_input]:h-11.5 [&_input]:w-full [&_input]:min-w-0 [&_input]:bg-transparent [&_input]:text-base">
             <Search size={18} aria-hidden="true" />
             <input
               type="search"
@@ -135,7 +135,7 @@ export function VideoModelPicker({
                   }}
                 >
                   <ModelIcon
-                    className="size-13 rounded-[14px]"
+                    className="size-13 rounded-lg"
                     key={`${modelName}-${item.icon_url ?? ""}`}
                     url={item.icon_url}
                     name={modelName}
@@ -145,7 +145,7 @@ export function VideoModelPicker({
                     <span className="flex min-w-0 flex-col items-start">
                       <strong
                         dir="auto"
-                        className="text-[15px] leading-snug font-semibold wrap-anywhere"
+                        className="text-headline leading-snug font-semibold wrap-anywhere"
                       >
                         {modelName}
                       </strong>

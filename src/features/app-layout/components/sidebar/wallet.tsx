@@ -20,7 +20,7 @@ function AppLayoutSidebarWallet({
 
   return (
     <section
-      className="border-primary/20 from-foreground/9 to-foreground/3 text-foreground after:bg-primary/13 relative overflow-hidden rounded-3xl border bg-linear-135 to-60% p-4 shadow-[inset_0_1px_rgb(255_255_255/17%),0_14px_30px_rgb(0_0_0/15%)] backdrop-blur-lg after:pointer-events-none after:absolute after:start-1/5 after:-end-1/4 after:-bottom-4/5 after:h-36 after:rounded-full after:blur-[34px] after:content-['']"
+      className="border-primary/20 from-foreground/9 to-foreground/3 text-foreground after:bg-primary/13 inset-shadow-highlight-lg shadow-overlay relative overflow-hidden rounded-3xl border bg-linear-135 to-60% p-4 backdrop-blur-lg after:pointer-events-none after:absolute after:start-1/5 after:-end-1/4 after:-bottom-4/5 after:h-36 after:rounded-full after:blur-[34px] after:content-['']"
       aria-label={t("pages.app.layout.sidebar.balanceCard.title")}
     >
       <div className="flex items-center justify-between gap-3">

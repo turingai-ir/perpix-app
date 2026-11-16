@@ -65,9 +65,7 @@ export function DashboardTransactions({
                 key={transaction.transaction_uuid}
                 className={DATA_ROW_CLASS}
               >
-                <span
-                  className={cn(DATA_ICON_CLASS, "size-9 rounded-[0.65rem]")}
-                >
+                <span className={cn(DATA_ICON_CLASS, "size-9 rounded-md")}>
                   <Icon className="text-foreground/80 size-4" />
                 </span>
                 <span className="min-w-0 flex-1">

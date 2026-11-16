@@ -14,7 +14,7 @@ export function DashboardMetricCard({
 }: DashboardMetricCardProps) {
   return (
     <div className={METRIC_CARD_CLASS}>
-      <div className="border-foreground/8 bg-foreground/4 mb-5 grid size-10.5 place-items-center rounded-[0.8rem] border shadow-[inset_0_1px_rgb(255_255_255/7%)]">
+      <div className="border-foreground/8 bg-foreground/4 inset-shadow-highlight-sm mb-5 grid size-10.5 place-items-center rounded-lg border">
         {icon}
       </div>
       <p className="text-muted-foreground text-xs">{label}</p>

@@ -51,7 +51,7 @@ const GenerationVideoSession: FC = () => {
         <div className="relative z-1 mx-auto grid min-h-0 w-full max-w-none grid-cols-[minmax(0,1fr)_minmax(360px,410px)] grid-rows-[minmax(0,1fr)] items-stretch gap-3 [direction:ltr] *:[direction:rtl] max-[950px]:flex max-[950px]:flex-col max-[950px]:[direction:rtl]">
           <section
             aria-label={t("pages.generation.video.studio.timelineLabel")}
-            className="border-border bg-card col-start-1 row-start-1 min-h-0 w-full max-w-none [scrollbar-width:thin] overflow-y-auto rounded-[18px] border p-4 max-[950px]:order-1 max-[950px]:min-h-60 max-[950px]:overflow-visible max-[950px]:data-[empty=true]:hidden"
+            className="border-border bg-card col-start-1 row-start-1 min-h-0 w-full max-w-none [scrollbar-width:thin] overflow-y-auto rounded-xl border p-4 max-[950px]:order-1 max-[950px]:min-h-60 max-[950px]:overflow-visible max-[950px]:data-[empty=true]:hidden"
             data-empty={shouldShowIntro}
           >
             <GenerationVideoChats
@@ -70,7 +70,7 @@ const GenerationVideoSession: FC = () => {
               <h1 className="text-[clamp(23px,2vw,30px)] leading-tight font-bold tracking-tight">
                 {t("pages.generation.video.studio.heroTitle")}
               </h1>
-              <p className="text-muted-foreground max-w-147 text-[13px] leading-[1.8]">
+              <p className="text-muted-foreground text-subhead max-w-147 leading-[1.8]">
                 {t("pages.generation.video.studio.heroDescription")}
               </p>
             </div>

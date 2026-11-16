@@ -16,11 +16,11 @@ import {
 } from "./settings-parts";
 
 const STAT_CLASS =
-  "flex min-h-22 items-center gap-3.5 rounded-2xl border border-[color-mix(in_srgb,var(--primary)_13%,var(--border))] bg-linear-120 from-primary/11 to-card/30 p-4 shadow-[inset_0_1px_rgb(255_255_255/7%)]";
+  "flex min-h-22 items-center gap-3.5 rounded-2xl border border-[color-mix(in_srgb,var(--primary)_13%,var(--border))] bg-linear-120 from-primary/11 to-card/30 p-4 inset-shadow-highlight-sm";
 const STAT_ICON_CLASS =
-  "grid size-10.5 flex-none place-items-center rounded-[0.85rem]";
+  "grid size-10.5 flex-none place-items-center rounded-lg";
 const QUICK_LINK_CLASS =
-  "flex min-h-11 items-center justify-between gap-3 rounded-[0.7rem] px-3 py-2 text-[0.82rem] font-semibold text-foreground transition-colors duration-200 hover-capable:hover:bg-primary/10 hover-capable:hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none";
+  "flex min-h-11 items-center justify-between gap-3 rounded-lg px-3 py-2 text-subhead font-semibold text-foreground transition-colors duration-200 hover-capable:hover:bg-primary/10 hover-capable:hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none";
 
 export function AccountGlance() {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);

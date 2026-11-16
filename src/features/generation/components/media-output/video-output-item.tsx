@@ -51,7 +51,7 @@ export function VideoOutputItem({ fileId, index = 0 }: Props) {
       <div
         role="group"
         aria-label={label}
-        className="border-border bg-background min-w-0 overflow-hidden rounded-2xl border shadow-[0_12px_30px] shadow-black/10"
+        className="border-border bg-background shadow-night/10 min-w-0 overflow-hidden rounded-2xl border shadow-[0_12px_30px]"
       >
         <VideoOutputHeader>
           <VideoOutputTitle>

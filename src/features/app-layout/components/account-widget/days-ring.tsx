@@ -44,7 +44,7 @@ const DaysRing: FC<DaysRingProps> = ({ ratio, tone, size, children }) => {
           </linearGradient>
         </defs>
         <circle
-          className="fill-none stroke-white/10"
+          className="stroke-night-foreground/10 fill-none"
           cx={size / 2}
           cy={size / 2}
           r={radius}
@@ -64,7 +64,7 @@ const DaysRing: FC<DaysRingProps> = ({ ratio, tone, size, children }) => {
           />
         )}
       </svg>
-      <span className="group-data-[tone=free]/ring:text-accent-sky relative flex flex-col items-center leading-tight tabular-nums [&_b]:text-xs [&_b]:font-extrabold group-data-[large]/ring:[&_b]:text-[1.35rem] [&_small]:text-[0.625rem] [&_small]:text-white/65">
+      <span className="group-data-[tone=free]/ring:text-accent-sky [&_small]:text-night-foreground/65 group-data-[large]/ring:[&_b]:text-title-2 [&_small]:text-caption relative flex flex-col items-center leading-tight tabular-nums [&_b]:text-xs [&_b]:font-extrabold">
         {children}
       </span>
     </span>

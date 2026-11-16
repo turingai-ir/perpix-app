@@ -26,9 +26,18 @@
   --color-accent-emerald: var(--accent-emerald);
   --color-accent-teal: var(--accent-teal);
   --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
   --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
   --color-review: var(--review);
+  --color-review-foreground: var(--review-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
   --color-on-accent: var(--on-accent);
+  --color-image-accent: var(--image-accent);
+  --color-video-accent: var(--video-accent);
+  --color-night: var(--night);
+  --color-night-foreground: var(--night-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -65,6 +74,64 @@
       opacity: 0;
     }
   }
+}
+
+/*
+ * Type roles (Apple HIG names, density-adapted). Utilities: text-large-title … text-caption.
+ * Size, line-height and tracking belong to the role; weight stays a `font-*` class.
+ * Mirrored in `extendTailwindMerge` (shared/lib/utils.ts): keep both lists in sync.
+ */
+@theme {
+  --text-large-title: 2.125rem;
+  --text-large-title--line-height: 1.2;
+  --text-large-title--letter-spacing: -0.02em;
+  --text-title-1: 1.75rem;
+  --text-title-1--line-height: 1.25;
+  --text-title-1--letter-spacing: -0.015em;
+  --text-title-2: 1.375rem;
+  --text-title-2--line-height: 1.3;
+  --text-title-2--letter-spacing: -0.01em;
+  --text-title-3: 1.125rem;
+  --text-title-3--line-height: 1.4;
+  --text-title-3--letter-spacing: -0.005em;
+  --text-headline: 0.9375rem;
+  --text-headline--line-height: 1.4;
+  --text-body: 0.875rem;
+  --text-body--line-height: 1.5;
+  --text-subhead: 0.8125rem;
+  --text-subhead--line-height: 1.45;
+  --text-footnote: 0.75rem;
+  --text-footnote--line-height: 1.4;
+  --text-caption: 0.6875rem;
+  --text-caption--line-height: 1.35;
+}
+
+/*
+ * Role aliases for shape, elevation and spacing: pick the role, not the step.
+ * Radius: control (button, input), card (tile, popover), overlay (dialog, sheet).
+ * Elevation: raised (floating chrome), overlay (popover, menu), modal (dialog, sheet, toast).
+ * Highlight: inset-shadow-highlight-sm|highlight|highlight-lg, the lit top edge of glass; combine with a shadow-* level.
+ * Spacing: inset-* = padding inside a surface; group/block/section = gap between siblings.
+ */
+@theme inline {
+  --radius-control: var(--radius-lg);
+  --radius-card: var(--radius-xl);
+  --radius-overlay: var(--radius-2xl);
+
+  --shadow-raised: var(--elevation-raised);
+  --shadow-overlay: var(--elevation-overlay);
+  --shadow-modal: var(--elevation-modal);
+
+  --inset-shadow-highlight-sm: var(--highlight-sm);
+  --inset-shadow-highlight: var(--highlight);
+  --inset-shadow-highlight-lg: var(--highlight-lg);
+
+  --spacing-inset-sm: 0.75rem;
+  --spacing-inset: 1rem;
+  --spacing-inset-lg: 1.5rem;
+  --spacing-group: 0.5rem;
+  --spacing-block: 1rem;
+  --spacing-section: 1.5rem;
 }
 
 /* Glass surface tokens and accessibility variants shared by page layouts. */

@@ -28,7 +28,7 @@ import {
 } from "./media";
 import type { DynamicConfigForm } from "../../model/field-types";
 
-const HINT_CLASS_NAME = "text-muted-foreground/60 text-[0.7rem] leading-snug";
+const HINT_CLASS_NAME = "text-muted-foreground/60 text-caption leading-snug";
 
 export const DynamicConfigFileField: FC<{
   disabled?: boolean;

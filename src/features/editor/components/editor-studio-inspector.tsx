@@ -24,13 +24,13 @@ export function EditorStudioInspector(props: Props) {
       aria-label={title}
     >
       <div>
-        <span className="text-muted-foreground hidden text-[9px] tracking-[0.2em] [direction:ltr] md:block">
+        <span className="text-muted-foreground text-caption hidden tracking-[0.2em] [direction:ltr] md:block">
           PERPIX / STUDIO
         </span>
-        <h2 className="mt-1.5 mb-px text-[17px] font-extrabold md:mt-3 md:mb-1.5 md:text-[22px]">
+        <h2 className="md:text-title-2 mt-1.5 mb-px text-base font-extrabold md:mt-3 md:mb-1.5">
           {title}
         </h2>
-        <p className="text-muted-foreground m-0 text-[11px] leading-loose md:text-xs">
+        <p className="text-muted-foreground text-caption m-0 leading-loose md:text-xs">
           {hint}
         </p>
       </div>
@@ -41,7 +41,7 @@ export function EditorStudioInspector(props: Props) {
       )}
       {props.tool === "text" && <EditorOverlayControls editor={props.editor} />}
       {props.tool === "export" && <EditorExportPanel {...props} />}
-      <div className="text-muted-foreground mt-auto hidden items-center gap-2 pt-6.5 text-[11px] md:flex">
+      <div className="text-muted-foreground text-caption mt-auto hidden items-center gap-2 pt-6.5 md:flex">
         <span className="bg-accent-emerald inline-block size-1.75 rounded-full shadow-[0_0_12px_var(--accent-emerald)]" />
         {t("pages.editor.studio.ready")}
       </div>

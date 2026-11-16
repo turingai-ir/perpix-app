@@ -15,7 +15,7 @@ const stepClassName =
   "inline-flex items-center gap-2 text-xs font-semibold whitespace-nowrap text-muted-foreground transition-colors data-[state=current]:text-foreground motion-reduce:transition-none";
 
 const badgeClassName =
-  "grid size-7 place-items-center rounded-lg border border-border text-[11px] font-bold sm:size-8 group-data-[state=current]:border-primary group-data-[state=current]:bg-primary group-data-[state=current]:text-primary-foreground group-data-[state=current]:shadow-[0_0_18px] group-data-[state=current]:shadow-primary/40 group-data-[state=done]:border-primary/60 group-data-[state=done]:text-primary";
+  "grid size-7 place-items-center rounded-lg border border-border text-caption font-bold sm:size-8 group-data-[state=current]:border-primary group-data-[state=current]:bg-primary group-data-[state=current]:text-primary-foreground group-data-[state=current]:shadow-[0_0_18px] group-data-[state=current]:shadow-primary/40 group-data-[state=done]:border-primary/60 group-data-[state=done]:text-primary";
 
 const Step: FC<{
   state: StepState;

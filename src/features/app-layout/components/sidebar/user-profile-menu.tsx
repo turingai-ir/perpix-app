@@ -76,7 +76,7 @@ const AppLayoutSidebarUserProfileMenu: FC<UserProfileMenuProps> = ({
             size="lg"
             className={cn(
               GLASS_PRESS_CLASS,
-              "group/profile border-primary/20 from-primary/13 text-foreground [&_[data-slot=avatar]]:border-primary/30 [&_[data-slot=avatar]]:bg-primary/14 h-auto min-h-14 w-full justify-start gap-3 rounded-2xl border bg-linear-120 to-(--video-accent-soft) px-2.5 py-2 shadow-[inset_0_1px_rgb(255_255_255/12%),0_9px_28px_rgb(0_0_0/13%)] backdrop-blur-lg [&_[data-slot=avatar]]:border",
+              "group/profile border-primary/20 from-primary/13 text-foreground [&_[data-slot=avatar]]:border-primary/30 [&_[data-slot=avatar]]:bg-primary/14 inset-shadow-highlight shadow-overlay h-auto min-h-14 w-full justify-start gap-3 rounded-2xl border bg-linear-120 to-(--video-accent-soft) px-2.5 py-2 backdrop-blur-lg [&_[data-slot=avatar]]:border",
             )}
           />
         }
@@ -93,7 +93,7 @@ const AppLayoutSidebarUserProfileMenu: FC<UserProfileMenuProps> = ({
       </DropdownMenuTrigger>
       <DropdownMenuContent
         positionerClassName="z-70"
-        className="border-primary/25 z-70 w-(--anchor-width) min-w-56 rounded-2xl border bg-[radial-gradient(circle_at_85%_0%,var(--ambient-brand),transparent_58%)] p-2 shadow-[0_22px_55px_rgb(0_0_0/48%)] backdrop-blur-xl"
+        className="border-primary/25 shadow-modal z-70 w-(--anchor-width) min-w-56 rounded-2xl border bg-[radial-gradient(circle_at_85%_0%,var(--ambient-brand),transparent_58%)] p-2 backdrop-blur-xl"
         side="top"
         align="end"
         sideOffset={8}

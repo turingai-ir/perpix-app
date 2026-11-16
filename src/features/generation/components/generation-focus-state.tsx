@@ -55,7 +55,7 @@ export function GenerationFocusState({
         </span>
       </div>
       <ol
-        className="text-muted-foreground col-span-full mt-1.5 grid grid-cols-3 p-0 text-[11px]"
+        className="text-muted-foreground text-caption col-span-full mt-1.5 grid grid-cols-3 p-0"
         aria-label={t(`${translationKey}.progressLabel`)}
       >
         {phases.map((item, index) => {

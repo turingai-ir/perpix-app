@@ -17,15 +17,15 @@ const PREFIX = "pages.app.layout.accountWidget";
 const SLOT_CLASS = "relative z-1 ms-auto flex @max-[819px]:hidden";
 
 const SEGMENT_CLASS =
-  "flex flex-col items-start gap-0.5 leading-snug tabular-nums [&_strong]:inline-flex [&_strong]:items-center [&_strong]:gap-1.5 [&_strong]:text-[0.92rem] [&_strong]:font-extrabold [&_strong]:tracking-tight [&_strong]:whitespace-nowrap [&+&]:border-s [&+&]:border-white/12 [&+&]:ps-4";
+  "flex flex-col items-start gap-0.5 leading-snug tabular-nums [&_strong]:inline-flex [&_strong]:items-center [&_strong]:gap-1.5 [&_strong]:text-headline [&_strong]:font-extrabold [&_strong]:tracking-tight [&_strong]:whitespace-nowrap [&+&]:border-s [&+&]:border-night-foreground/12 [&+&]:ps-4";
 
 const TRIGGER_CLASS = [
-  "group/trigger inline-flex min-h-12 cursor-pointer items-center gap-3.5 rounded-full border border-white/12 bg-white/6 py-1.5 ps-1.5 pe-5 text-white/95",
+  "group/trigger inline-flex min-h-12 cursor-pointer items-center gap-3.5 rounded-full border border-night-foreground/12 bg-night-foreground/6 py-1.5 ps-1.5 pe-5 text-night-foreground/95",
   "[--glow:rgb(185_138_244/30%)] data-[tone=expiring]:[--glow:rgb(245_185_74/32%)] data-[tone=free]:[--glow:rgb(141_216_246/22%)]",
-  "shadow-[inset_0_1px_rgb(255_255_255/14%),0_8px_24px_rgb(0_0_0/22%),0_0_24px_-6px_var(--glow)] backdrop-blur-lg backdrop-saturate-150",
+  "shadow-[inset_0_1px_color-mix(in_oklch,var(--night-foreground)_14%,transparent),0_8px_24px_color-mix(in_oklch,var(--shadow-ink)_22%,transparent),0_0_24px_-6px_var(--glow)] backdrop-blur-lg backdrop-saturate-150",
   "transition-[scale,background-color,border-color,box-shadow] duration-200 ease-out-quint active:scale-[0.96]",
   "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-violet",
-  "data-popup-open:border-accent-violet/45 data-popup-open:bg-white/10 hover-capable:hover:border-accent-violet/40 hover-capable:hover:bg-white/10",
+  "data-popup-open:border-accent-violet/45 data-popup-open:bg-night-foreground/10 hover-capable:hover:border-accent-violet/40 hover-capable:hover:bg-night-foreground/10",
   "motion-reduce:transition-none motion-reduce:active:scale-100",
 ].join(" ");
 
@@ -114,7 +114,7 @@ const AccountWidgetContent: FC = () => {
             ) : null}
           </span>
           <ChevronDown
-            className="ease-out-quint size-4 flex-none text-white/65 transition-[rotate] duration-200 group-data-popup-open/trigger:rotate-180 motion-reduce:transition-none"
+            className="ease-out-quint text-night-foreground/65 size-4 flex-none transition-[rotate] duration-200 group-data-popup-open/trigger:rotate-180 motion-reduce:transition-none"
             aria-hidden="true"
           />
         </PopoverTrigger>
@@ -122,7 +122,7 @@ const AccountWidgetContent: FC = () => {
           align="center"
           sideOffset={10}
           collisionPadding={12}
-          className="w-84 max-w-[calc(100vw-1.5rem)] gap-0 rounded-[1.75rem] border border-white/14 bg-[radial-gradient(120%_70%_at_100%_0%,rgb(143_107_242/28%),transparent_62%),rgb(24_20_38/82%)] p-4 text-white/95 shadow-[inset_0_1px_rgb(255_255_255/14%),0_24px_60px_rgb(0_0_0/45%)] ring-0 backdrop-blur-xl backdrop-saturate-150"
+          className="border-night-foreground/14 text-night-foreground/95 inset-shadow-highlight shadow-modal w-84 max-w-[calc(100vw-1.5rem)] gap-0 rounded-3xl border bg-[radial-gradient(120%_70%_at_100%_0%,rgb(143_107_242/28%),transparent_62%),rgb(24_20_38/82%)] p-4 ring-0 backdrop-blur-xl backdrop-saturate-150"
           aria-label={t(`${PREFIX}.label`)}
         >
           <AccountWidgetPanel widget={widget} onClose={() => setOpen(false)} />

@@ -47,7 +47,7 @@ const PricingPlanPrice: FC<PricingPlanPriceProps> = ({
   const hasDiscount = discountedPriceIrr < basePriceIrr;
 
   return (
-    <div className="flex flex-col gap-1.5 rounded-2xl bg-black/22 p-4 shadow-[inset_0_0_0_1px_rgb(255_255_255/7%)]">
+    <div className="bg-night/22 flex flex-col gap-1.5 rounded-2xl p-4 shadow-[inset_0_0_0_1px_color-mix(in_oklch,var(--night-foreground)_7%,transparent)]">
       <div className="flex flex-wrap items-baseline gap-2">
         <strong className="text-3xl leading-tight font-extrabold tracking-tight whitespace-nowrap">
           <span className="sr-only">

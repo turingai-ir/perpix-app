@@ -75,7 +75,7 @@ export function SettingHelpPopover({
           {label}
         </div>
         <div>
-          <p className="text-foreground/70 mb-1 text-[11px] font-medium">
+          <p className="text-foreground/70 text-caption mb-1 font-medium">
             {t("pages.generation.image.studio.settings.effect")}
           </p>
           <p className="text-muted-foreground text-xs leading-6">
@@ -84,7 +84,7 @@ export function SettingHelpPopover({
         </div>
         {example && (
           <div className="bg-primary/7 border-primary/15 rounded-lg border p-3">
-            <p className="text-primary mb-1 text-[11px] font-semibold">
+            <p className="text-primary text-caption mb-1 font-semibold">
               {t("pages.generation.image.studio.settings.example")}
             </p>
             <p className="text-foreground/80 text-xs leading-6">{example}</p>

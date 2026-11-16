@@ -10,6 +10,7 @@ import unusedImports from "eslint-plugin-unused-imports";
 import prettier from "eslint-plugin-prettier";
 import prettierConfig from "eslint-config-prettier";
 import mantine from "eslint-config-mantine";
+import designTokens from "./scripts/eslint/design-tokens.js";
 
 export default tseslint.config(
   {
@@ -98,6 +99,18 @@ export default tseslint.config(
       "react/react-in-jsx-scope": "off",
       "react/prop-types": "off",
     },
+  },
+  {
+    // Design language: tokens and roles, never raw values (scripts/eslint/design-tokens.js).
+    // shared/ui is shadcn upstream code; the slogan is a decorative neon effect.
+    files: ["src/**/*.tsx"],
+    ignores: [
+      "src/shared/ui/**",
+      "src/**/_tests/**",
+      "src/features/app-layout/components/header-slogan.tsx",
+    ],
+    plugins: { design: designTokens },
+    rules: { "design/no-raw-values": "error" },
   },
   {
     // react-three-fiber JSX intrinsics (<mesh position>, <pointLight intensity>)

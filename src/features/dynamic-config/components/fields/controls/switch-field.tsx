@@ -73,7 +73,7 @@ export const DynamicConfigSwitchField: FC<{
                       aria-pressed={isSelected}
                       variant={isSelected ? "secondary" : "ghost"}
                       size="xs"
-                      className={`h-7 shrink-0 rounded-[6px] px-3 text-xs transition-all ${
+                      className={`h-7 shrink-0 rounded-md px-3 text-xs transition-[color,background-color,border-color,box-shadow,opacity,transform] ${
                         isSelected
                           ? "bg-background text-foreground dark:bg-muted font-semibold shadow-xs"
                           : "text-muted-foreground hover:text-foreground"

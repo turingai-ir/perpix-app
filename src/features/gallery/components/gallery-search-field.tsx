@@ -29,7 +29,7 @@ export function GallerySearchField({
       {value && (
         <Button
           variant="ghost"
-          className="absolute end-0.5 size-11 rounded-[0.875rem]"
+          className="absolute end-0.5 size-11 rounded-lg"
           aria-label={t("pages.gallery.studio.clear")}
           onClick={() => onChange("")}
         >

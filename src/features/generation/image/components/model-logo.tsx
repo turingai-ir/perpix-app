@@ -20,12 +20,12 @@ export function ImageModelLogo({
   const isLocalLogo = source === logo?.src;
   let imageClassName = "size-6 shrink-0 rounded object-contain";
   if (isLocalLogo && logo?.id === "runway") {
-    imageClassName += " bg-black p-0.5";
+    imageClassName += " bg-night p-0.5";
   } else if (
     isLocalLogo &&
     ["xai", "alibaba", "bytedance", "kuaishou"].includes(logo?.id ?? "")
   ) {
-    imageClassName += " bg-white p-0.5";
+    imageClassName += " bg-night-foreground p-0.5";
   }
 
   if (!source)

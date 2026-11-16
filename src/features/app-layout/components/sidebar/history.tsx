@@ -41,7 +41,7 @@ export default function AppLayoutSidebarHistory() {
 
   return (
     <section
-      className="border-foreground/8 bg-sidebar-accent/42 relative overflow-hidden rounded-3xl border p-2 shadow-[inset_0_1px_rgb(255_255_255/8%),0_12px_32px_rgb(0_0_0/10%)]"
+      className="border-foreground/8 bg-sidebar-accent/42 inset-shadow-highlight-sm shadow-overlay relative overflow-hidden rounded-3xl border p-2"
       aria-labelledby="sidebar-history-heading"
     >
       <header className="flex items-center justify-between px-2 pt-2 pb-3">

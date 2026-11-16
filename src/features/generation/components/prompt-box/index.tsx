@@ -75,7 +75,7 @@ export const GenerationPromptBox: FC<GenerationPromptBoxProps> = ({
       data-generation-composer-card
       className={
         primaryActionLabel
-          ? "w-full min-w-0 rounded-[1.75rem] border border-white/10 bg-[#0b0b10]/88 p-4 shadow-[0_24px_80px_rgba(0,0,0,0.42)] ring-1 ring-white/5 backdrop-blur-2xl supports-[backdrop-filter]:bg-[#0b0b10]/72 sm:p-5"
+          ? "border-night-foreground/10 bg-night/88 shadow-modal ring-night-foreground/5 supports-[backdrop-filter]:bg-night/72 w-full min-w-0 rounded-3xl border p-4 ring-1 backdrop-blur-2xl sm:p-5"
           : "w-full min-w-0 overflow-hidden px-2"
       }
     >

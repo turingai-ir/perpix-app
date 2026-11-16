@@ -28,7 +28,7 @@ function RatioShape({
   return (
     <span
       aria-hidden="true"
-      className="inline-block shrink-0 rounded-[3px] border-2 border-current"
+      className="inline-block shrink-0 rounded-md border-2 border-current"
       style={{
         width: Math.max(8, Math.round(width * scale)),
         height: Math.max(8, Math.round(height * scale)),

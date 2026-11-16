@@ -150,7 +150,7 @@ export const VideoModeTabs: FC<Props> = ({ disabled, dynamicForm }) => {
               return (
                 <button
                   aria-checked={selectedMode === option}
-                  className="border-border bg-muted/50 text-muted-foreground hover-capable:hover:not-aria-checked:not-disabled:bg-accent/50 aria-checked:border-primary/70 aria-checked:bg-accent aria-checked:text-accent-foreground [&_svg]:text-muted-foreground aria-checked:[&_svg]:text-primary flex min-h-18 min-w-0 flex-col items-center justify-center gap-1.5 rounded-[10px] border px-1 py-2.5 text-xs leading-normal font-semibold transition-[color,background-color,border-color] duration-150 disabled:cursor-wait disabled:opacity-50 motion-reduce:transition-none"
+                  className="border-border bg-muted/50 text-muted-foreground hover-capable:hover:not-aria-checked:not-disabled:bg-accent/50 aria-checked:border-primary/70 aria-checked:bg-accent aria-checked:text-accent-foreground [&_svg]:text-muted-foreground aria-checked:[&_svg]:text-primary flex min-h-18 min-w-0 flex-col items-center justify-center gap-1.5 rounded-md border px-1 py-2.5 text-xs leading-normal font-semibold transition-[color,background-color,border-color] duration-150 disabled:cursor-wait disabled:opacity-50 motion-reduce:transition-none"
                   disabled={disabled}
                   key={option}
                   onClick={() => selectMode(option)}

@@ -26,12 +26,12 @@ export function FinanceSummary({ items }: { items: FinanceSummaryItem[] }) {
       {items.map(({ label, value, unit, icon: Icon, tone }, index) => (
         <article
           key={label}
-          className="animate-finance-rise bg-card/86 not-supports-[backdrop-filter:blur(1px)]:bg-card flex min-h-22 min-w-0 items-center gap-3.5 rounded-[1.25rem] p-4 shadow-[0_18px_45px_-34px_rgb(20_12_38/70%),inset_0_1px_rgb(255_255_255/35%)] outline outline-[color-mix(in_oklab,var(--border)_72%,transparent)] backdrop-blur-xl backdrop-saturate-[118%] [animation-delay:calc((var(--finance-order)+1)*70ms)] motion-reduce:animate-none contrast-more:outline-2 sm:min-h-25"
+          className="animate-finance-rise bg-card/86 not-supports-[backdrop-filter:blur(1px)]:bg-card inset-shadow-highlight-lg shadow-modal flex min-h-22 min-w-0 items-center gap-3.5 rounded-2xl p-4 outline outline-[color-mix(in_oklab,var(--border)_72%,transparent)] backdrop-blur-xl backdrop-saturate-[118%] [animation-delay:calc((var(--finance-order)+1)*70ms)] motion-reduce:animate-none contrast-more:outline-2 sm:min-h-25"
           style={{ "--finance-order": index } as CSSProperties}
         >
           <span
             className={cn(
-              "grid size-11 flex-none place-items-center rounded-[0.95rem] bg-(--finance-accent-soft) text-(--finance-accent) [&_svg]:size-5",
+              "grid size-11 flex-none place-items-center rounded-xl bg-(--finance-accent-soft) text-(--finance-accent) [&_svg]:size-5",
               TONE_ICON_CLASS[tone],
             )}
             aria-hidden="true"

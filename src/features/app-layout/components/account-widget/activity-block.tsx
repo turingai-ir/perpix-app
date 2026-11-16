@@ -68,12 +68,12 @@ const ActivityBlock: FC<ActivityBlockProps> = ({ activity }) => {
               title={`${weekdayLongFormat.format(day)}: ${formatTokenAmount(spent)} ${t(`${PREFIX}.token`)}`}
             >
               <span
-                className="ease-out-quint data-today:from-accent-pink data-today:to-accent-violet h-[3.2rem] origin-bottom scale-y-(--bar) rounded-md bg-white/18 transition-transform duration-600 group-hover/bar:bg-white/30 data-today:bg-linear-to-b motion-reduce:transition-none"
+                className="ease-out-quint data-today:from-accent-pink data-today:to-accent-violet bg-night-foreground/18 group-hover/bar:bg-night-foreground/30 h-[3.2rem] origin-bottom scale-y-(--bar) rounded-md transition-transform duration-600 data-today:bg-linear-to-b motion-reduce:transition-none"
                 data-today={isToday || undefined}
                 style={{ "--bar": ratio } as CSSProperties}
               />
               <small
-                className="data-today:text-accent-pink text-center text-[0.7rem] text-white/50 data-today:font-extrabold"
+                className="data-today:text-accent-pink text-night-foreground/50 text-caption text-center data-today:font-extrabold"
                 data-today={isToday || undefined}
               >
                 {weekdayFormat.format(day)}

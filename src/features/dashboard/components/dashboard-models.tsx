@@ -52,7 +52,7 @@ export function DashboardModels({ isLoading, models }: DashboardModelsProps) {
                 to={path}
                 className={DASHBOARD_MODEL_CARD_CLASS}
               >
-                <span className="border-foreground/9 flex size-11 flex-none items-center justify-center overflow-hidden rounded-[0.8rem] border bg-black/22 shadow-[inset_0_1px_rgb(255_255_255/6%),0_8px_20px_-14px_rgb(0_0_0/80%)]">
+                <span className="border-foreground/9 bg-night/22 inset-shadow-highlight-sm shadow-overlay flex size-11 flex-none items-center justify-center overflow-hidden rounded-lg border">
                   {model.icon_url ? (
                     <img
                       src={model.icon_url}

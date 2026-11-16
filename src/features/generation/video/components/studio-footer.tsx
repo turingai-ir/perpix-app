@@ -88,7 +88,7 @@ export function VideoStudioFooter({
           {t("pages.generation.video.studio.costHint")}
         </p>
       </div>
-      <div className="flex flex-none items-center gap-1 [&>button:not([type=submit])]:min-h-11 [&>button:not([type=submit])]:min-w-11 [&>button[type=submit]]:min-h-12 [&>button[type=submit]]:min-w-32 [&>button[type=submit]]:rounded-[10px] [&>button[type=submit]]:px-2.5 [&>button[type=submit]]:text-[13px] max-[700px]:[&>button[type=submit]]:flex-1">
+      <div className="[&>button[type=submit]]:text-subhead flex flex-none items-center gap-1 [&>button:not([type=submit])]:min-h-11 [&>button:not([type=submit])]:min-w-11 [&>button[type=submit]]:min-h-12 [&>button[type=submit]]:min-w-32 [&>button[type=submit]]:rounded-md [&>button[type=submit]]:px-2.5 max-[700px]:[&>button[type=submit]]:flex-1">
         <GenerationRulesDialog />
         <PromptSubmitButton
           dynamicForm={studio.dynamicForm}

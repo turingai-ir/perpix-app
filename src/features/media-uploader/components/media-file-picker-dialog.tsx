@@ -63,7 +63,7 @@ export const MediaFilePickerDialog: FC<MediaFilePickerDialogProps> = (
       <DialogContent
         className={
           presentation === "video-dock"
-            ? "flex max-h-[min(720px,calc(100dvh-2rem))] w-[calc(100vw-2rem)] max-w-3xl grid-rows-none flex-col overflow-hidden border-white/15 bg-[#14151a]/94 p-0 shadow-2xl backdrop-blur-2xl sm:max-w-3xl"
+            ? "border-night-foreground/15 bg-night/94 flex max-h-[min(720px,calc(100dvh-2rem))] w-[calc(100vw-2rem)] max-w-3xl grid-rows-none flex-col overflow-hidden p-0 shadow-2xl backdrop-blur-2xl sm:max-w-3xl"
             : "flex max-h-[min(720px,calc(100dvh-2rem))] w-[calc(100vw-2rem)] max-w-3xl grid-rows-none flex-col overflow-hidden p-0 sm:max-w-3xl"
         }
         showCloseButton={!isUploading}

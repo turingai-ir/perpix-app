@@ -85,7 +85,7 @@ export const AppLayout: FC = () => {
               aria-expanded={appLayoutState.isSidebarOpen}
               aria-label={sidebarToggleLabel}
               title={sidebarToggleLabel}
-              className="group text-foreground focus-visible:ring-primary/75 focus-visible:ring-offset-background relative min-h-11 gap-2.5 overflow-hidden rounded-full border border-white/10 bg-white/5 px-2.5 shadow-[inset_0_1px_0_rgb(255_255_255_/_12%),0_8px_24px_rgb(0_0_0_/_16%)] transition-[background,border-color,box-shadow,transform] duration-200 ease-out hover:border-white/18 hover:bg-white/9 hover:shadow-[inset_0_1px_0_rgb(255_255_255_/_18%),0_10px_28px_rgb(0_0_0_/_22%)] focus-visible:ring-2 focus-visible:ring-offset-2 active:scale-[0.97] active:bg-white/12 motion-reduce:transition-none"
+              className="group text-foreground focus-visible:ring-primary/75 focus-visible:ring-offset-background border-night-foreground/10 bg-night-foreground/5 hover:border-night-foreground/18 hover:bg-night-foreground/9 active:bg-night-foreground/12 inset-shadow-highlight shadow-overlay hover:inset-shadow-highlight-lg hover:shadow-overlay relative min-h-11 gap-2.5 overflow-hidden rounded-full border px-2.5 transition-[background,border-color,box-shadow,transform] duration-200 ease-out focus-visible:ring-2 focus-visible:ring-offset-2 active:scale-[0.97] motion-reduce:transition-none"
               onClick={toggleSidebar}
             >
               <span className="relative flex h-4 w-4 items-center justify-center">

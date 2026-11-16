@@ -104,7 +104,7 @@ export const UserFileCard: FC<UserFileCardProps> = ({
       </div>
       <div className="flex min-w-0 flex-col gap-0.5 p-2">
         <span className="truncate text-xs font-medium">{fileName}</span>
-        <span className="text-muted-foreground truncate text-[10px]">
+        <span className="text-muted-foreground text-caption truncate">
           {formatFileSize(file.file_size)}
         </span>
         <FileFacts file={file} forGeneration />

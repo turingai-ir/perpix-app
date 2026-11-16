@@ -17,7 +17,7 @@ export function EditorHistoryControls(props: EditorHistoryControlsProps) {
         aria-label="بازگردانی"
         disabled={!props.canUndo}
         onClick={props.onUndo}
-        className="text-white hover:bg-white/10 hover:text-white"
+        className="text-night-foreground hover:bg-night-foreground/10 hover:text-night-foreground"
       >
         <Undo2 className="h-4 w-4" />
       </Button>
@@ -27,7 +27,7 @@ export function EditorHistoryControls(props: EditorHistoryControlsProps) {
         aria-label="انجام دوباره"
         disabled={!props.canRedo}
         onClick={props.onRedo}
-        className="text-white hover:bg-white/10 hover:text-white"
+        className="text-night-foreground hover:bg-night-foreground/10 hover:text-night-foreground"
       >
         <Redo2 className="h-4 w-4" />
       </Button>

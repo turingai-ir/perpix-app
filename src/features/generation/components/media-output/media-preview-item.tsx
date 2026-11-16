@@ -114,7 +114,7 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
                   muted
                   onError={() => markMediaFailed(mediaUrl)}
                 />
-                <span className="absolute inset-0 flex items-center justify-center bg-black/10 text-white">
+                <span className="bg-night/10 text-night-foreground absolute inset-0 flex items-center justify-center">
                   <Video className="h-8 w-8 drop-shadow" />
                 </span>
               </>
@@ -189,7 +189,7 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
                 className="h-11 gap-2 px-5 text-base"
                 onClick={() => navigate(`/editor/${fileId}`)}
               >
-                <ImageIcon className="h-4 w-4 text-emerald-500" />
+                <ImageIcon className="text-success h-4 w-4" />
                 <span>{t("pages.editor.edit")}</span>
               </Button>
             )}

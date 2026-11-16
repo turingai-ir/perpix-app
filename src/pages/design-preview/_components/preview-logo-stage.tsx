@@ -24,16 +24,16 @@ const PreviewLogoStage: FC = () => {
         alt={t("pages.designPreview.logoAlt")}
         className="animate-float relative z-[2] w-[58%] rounded-[28%] mix-blend-screen drop-shadow-[0_28px_50px_color-mix(in_srgb,var(--primary)_25%,transparent)] motion-reduce:animate-none"
       />
-      <span className="border-foreground/10 bg-card/80 text-foreground/80 absolute top-[17%] right-0 z-[3] flex min-h-9 items-center gap-2 rounded-xl border px-2.5 text-[11px] shadow-[0_18px_60px] shadow-black/35 backdrop-blur-lg sm:right-[2%] sm:min-h-10 sm:px-3.5 sm:text-xs">
-        <i aria-hidden="true" className="size-2 rounded-full bg-fuchsia-400" />
+      <span className="border-foreground/10 bg-card/80 text-foreground/80 text-caption shadow-night/35 absolute top-[17%] right-0 z-[3] flex min-h-9 items-center gap-2 rounded-xl border px-2.5 shadow-[0_18px_60px] backdrop-blur-lg sm:right-[2%] sm:min-h-10 sm:px-3.5 sm:text-xs">
+        <i aria-hidden="true" className="bg-image-accent size-2 rounded-full" />
         {t("pages.designPreview.hero.modelOne")}
       </span>
-      <span className="border-foreground/10 bg-card/80 text-foreground/80 absolute bottom-[20%] left-0 z-[3] flex min-h-9 items-center gap-2 rounded-xl border px-2.5 text-[11px] shadow-[0_18px_60px] shadow-black/35 backdrop-blur-lg sm:min-h-10 sm:px-3.5 sm:text-xs">
-        <i aria-hidden="true" className="size-2 rounded-full bg-sky-400" />
+      <span className="border-foreground/10 bg-card/80 text-foreground/80 text-caption shadow-night/35 absolute bottom-[20%] left-0 z-[3] flex min-h-9 items-center gap-2 rounded-xl border px-2.5 shadow-[0_18px_60px] backdrop-blur-lg sm:min-h-10 sm:px-3.5 sm:text-xs">
+        <i aria-hidden="true" className="bg-video-accent size-2 rounded-full" />
         {t("pages.designPreview.hero.modelTwo")}
       </span>
-      <span className="border-foreground/10 bg-card/80 text-foreground/80 absolute right-[18%] bottom-[8%] z-[3] flex min-h-9 items-center gap-2 rounded-xl border px-2.5 text-[11px] shadow-[0_18px_60px] shadow-black/35 backdrop-blur-lg sm:min-h-10 sm:px-3.5 sm:text-xs">
-        <i aria-hidden="true" className="size-2 rounded-full bg-violet-400" />
+      <span className="border-foreground/10 bg-card/80 text-foreground/80 text-caption shadow-night/35 absolute right-[18%] bottom-[8%] z-[3] flex min-h-9 items-center gap-2 rounded-xl border px-2.5 shadow-[0_18px_60px] backdrop-blur-lg sm:min-h-10 sm:px-3.5 sm:text-xs">
+        <i aria-hidden="true" className="bg-primary size-2 rounded-full" />
         {t("pages.designPreview.hero.modelThree")}
       </span>
     </div>

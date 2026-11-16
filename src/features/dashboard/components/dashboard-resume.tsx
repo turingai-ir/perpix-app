@@ -27,7 +27,7 @@ export function DashboardResume({ task }: DashboardResumeProps) {
 
   return (
     <Link to={path} className={RESUME_CARD_CLASS}>
-      <span className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-linear-to-br from-(--image-accent-soft) to-transparent text-(--image-accent)">
+      <span className="border-night-foreground/10 relative flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border bg-linear-to-br from-(--image-accent-soft) to-transparent text-(--image-accent)">
         <MediaIcon className="h-5 w-5" aria-hidden="true" />
         {isActive ? (
           <CircleDashed

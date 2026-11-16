@@ -51,7 +51,7 @@ const PricingPlanAction: FC<PricingPlanActionProps> = ({
     return (
       <div
         role="status"
-        className="flex min-h-11 items-center justify-center gap-2 rounded-xl border border-sky-300/40 bg-sky-300/15 px-4 text-sm font-bold text-sky-200"
+        className="border-accent-sky/40 bg-accent-sky/15 text-accent-sky flex min-h-11 items-center justify-center gap-2 rounded-xl border px-4 text-sm font-bold"
       >
         <CircleCheck className="size-4" aria-hidden="true" />
         {t("features.pricing.yourPlan")}

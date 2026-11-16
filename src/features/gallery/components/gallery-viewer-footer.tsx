@@ -47,7 +47,7 @@ export function GalleryViewerFooter(props: Props) {
         </Button>
         <span
           aria-live="polite"
-          className="min-w-18 text-center text-xs text-[rgb(244_244_245/62%)] tabular-nums"
+          className="text-night-foreground/62 min-w-18 text-center text-xs tabular-nums"
         >
           {t("pages.gallery.studio.position", {
             current: props.index + 1,

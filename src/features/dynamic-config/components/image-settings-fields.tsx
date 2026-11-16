@@ -89,7 +89,7 @@ export function ImageSettingsFields({
           className={SETTINGS_CARD_CLASS}
           aria-label={t("pages.generation.image.studio.settings.basic")}
         >
-          <h3 className="mb-4 flex items-center gap-2 text-[13px] font-semibold text-[color-mix(in_srgb,var(--foreground)_92%,var(--primary))]">
+          <h3 className="text-subhead mb-4 flex items-center gap-2 font-semibold text-[color-mix(in_srgb,var(--foreground)_92%,var(--primary))]">
             <Sparkles aria-hidden="true" className="text-primary size-4" />
             {t("pages.generation.image.studio.settings.basic")}
           </h3>

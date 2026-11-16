@@ -41,7 +41,7 @@ export function EditorOutputSize({
   };
 
   return (
-    <div className="[&>p]:text-muted-foreground flex flex-col gap-2.75 [&>p]:m-0 [&>p]:text-[11px]">
+    <div className="[&>p]:text-muted-foreground [&>p]:text-caption flex flex-col gap-2.75 [&>p]:m-0">
       <div className={FIELD_LABEL_CLASS}>{t("pages.editor.studio.resize")}</div>
       <div className="[&>span]:text-muted-foreground grid grid-cols-[minmax(0,1fr)_12px_minmax(0,1fr)] items-end gap-2 [&>span]:pb-2.75">
         <label className={INPUT_LABEL_CLASS}>

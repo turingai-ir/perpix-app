@@ -54,7 +54,7 @@ export const VideoOutputScreen: FC<VideoOutputScreenProps> = ({
 }) => (
   <div
     className={cn(
-      "flex items-center justify-center bg-black [&_video]:block [&_video]:w-full [&_video]:object-contain",
+      "bg-night flex items-center justify-center [&_video]:block [&_video]:w-full [&_video]:object-contain",
       inDialog
         ? "[&_video]:max-h-[calc(100dvh-16rem)] sm:[&_video]:max-h-[calc(100dvh-13rem)]"
         : "min-h-40 [&_video]:max-h-[min(55dvh,32rem)]",

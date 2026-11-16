@@ -40,7 +40,7 @@ export function VideoRequestSummary({
         <p
           id={promptId}
           dir="auto"
-          className={`text-start text-sm leading-7 wrap-anywhere whitespace-pre-wrap sm:text-[0.95rem] ${isLong && !expanded ? "line-clamp-4" : ""}`}
+          className={`sm:text-headline text-start text-sm leading-7 wrap-anywhere whitespace-pre-wrap ${isLong && !expanded ? "line-clamp-4" : ""}`}
         >
           {prompt}
         </p>

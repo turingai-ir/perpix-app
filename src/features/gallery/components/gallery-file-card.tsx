@@ -37,7 +37,7 @@ export function GalleryFileCard({ file, index, compact, onOpen }: Props) {
         aria-label={name}
         onClick={(event) => onOpen(event.currentTarget)}
         className={cn(
-          "focus-visible:ring-ring relative block w-full cursor-zoom-in overflow-hidden bg-[color-mix(in_srgb,var(--muted)_72%,var(--background))] bg-[radial-gradient(circle_at_50%_12%,rgb(255_255_255/6%),transparent_45%)] outline-none focus-visible:ring-2 focus-visible:ring-inset",
+          "focus-visible:ring-ring relative block w-full cursor-zoom-in overflow-hidden bg-[color-mix(in_srgb,var(--muted)_72%,var(--background))] bg-[radial-gradient(circle_at_50%_12%,color-mix(in_oklch,var(--night-foreground)_6%,transparent),transparent_45%)] outline-none focus-visible:ring-2 focus-visible:ring-inset",
           compact ? "aspect-square" : "aspect-[4/3]",
         )}
       >
@@ -60,7 +60,7 @@ export function GalleryFileCard({ file, index, compact, onOpen }: Props) {
         <GalleryAffordance video={mediaType === "video"} />
         <span
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,transparent_62%,rgb(0_0_0/16%))]"
+          className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,transparent_62%,color-mix(in_oklch,var(--night)_16%,transparent))]"
         />
       </button>
       <div
@@ -68,13 +68,13 @@ export function GalleryFileCard({ file, index, compact, onOpen }: Props) {
       >
         <div className={cn("min-w-0", compact && "max-[430px]:hidden")}>
           <h2
-            className="text-foreground/92 overflow-hidden text-[0.8125rem] leading-[1.65] font-[620] text-ellipsis whitespace-nowrap max-[430px]:max-w-[16ch]"
+            className="text-foreground/92 text-subhead overflow-hidden leading-[1.65] font-[620] text-ellipsis whitespace-nowrap max-[430px]:max-w-[16ch]"
             dir="auto"
             title={name}
           >
             {name}
           </h2>
-          <span className="text-foreground/52 mt-[0.1rem] block text-[0.6875rem] leading-[1.4]">
+          <span className="text-foreground/52 text-caption mt-[0.1rem] block leading-[1.4]">
             {t(`pages.gallery.mediaTypes.${mediaType}`)}
           </span>
         </div>

@@ -45,14 +45,14 @@ export function EditorStudioHeader(props: Props) {
           <ArrowRight size={19} />
         </button>
         <span
-          className="from-primary to-primary/60 text-primary-foreground grid size-8 place-items-center rounded-[11px] bg-linear-145 font-black shadow-[0_8px_28px_color-mix(in_srgb,var(--primary)_29%,transparent)] max-[400px]:hidden"
+          className="from-primary to-primary/60 text-primary-foreground grid size-8 place-items-center rounded-md bg-linear-145 font-black shadow-[0_8px_28px_color-mix(in_srgb,var(--primary)_29%,transparent)] max-[400px]:hidden"
           aria-hidden="true"
         >
           P
         </span>
         <span className="hidden flex-col text-left leading-tight [direction:ltr] min-[701px]:flex">
-          <strong className="text-[15px]">PerPix</strong>
-          <small className="text-muted-foreground text-[10px]">
+          <strong className="text-headline">PerPix</strong>
+          <small className="text-muted-foreground text-caption">
             {t("pages.editor.studio.eyebrow")}
           </small>
         </span>

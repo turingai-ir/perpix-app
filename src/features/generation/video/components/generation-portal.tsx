@@ -10,7 +10,7 @@ export function VideoGenerationPortal({
 
   return (
     <section
-      className="animate-portal-enter border-border bg-background relative w-full min-w-0 overflow-hidden rounded-[18px] border shadow-[inset_0_1px_rgb(255_255_255/7%),0_20px_55px_rgb(0_0_0/24%)] motion-reduce:animate-none sm:rounded-[20px]"
+      className="animate-portal-enter border-border bg-background inset-shadow-highlight-sm shadow-modal relative w-full min-w-0 overflow-hidden rounded-xl border motion-reduce:animate-none sm:rounded-2xl"
       data-video-generation-portal
       aria-label={t("pages.generation.video.generationLoading.content")}
     >
@@ -23,7 +23,7 @@ export function VideoGenerationPortal({
         <strong className="mt-1.5 block text-[clamp(1.2rem,3vw,1.45rem)] leading-normal">
           {t("pages.generation.video.studio.renderingTitle")}
         </strong>
-        <p className="text-muted-foreground mt-1.5 text-[13px] leading-[1.8]">
+        <p className="text-muted-foreground text-subhead mt-1.5 leading-[1.8]">
           {t("pages.generation.video.studio.renderingHint")}
         </p>
       </div>

@@ -15,15 +15,15 @@ type PaymentReceiptProps = {
 const styles = {
   success: {
     icon: Check,
-    color: "text-emerald-500",
-    surface: "bg-emerald-500/12",
+    color: "text-success",
+    surface: "bg-success/12",
   },
   pending: {
     icon: Clock3,
-    color: "text-amber-500",
-    surface: "bg-amber-500/12",
+    color: "text-warning",
+    surface: "bg-warning/12",
   },
-  failed: { icon: X, color: "text-rose-500", surface: "bg-rose-500/12" },
+  failed: { icon: X, color: "text-destructive", surface: "bg-destructive/12" },
 };
 
 export function PaymentReceipt(props: PaymentReceiptProps) {
@@ -50,7 +50,7 @@ export function PaymentReceipt(props: PaymentReceiptProps) {
             }}
             animate={{ opacity: 1, transform: "scale(1)" }}
             transition={{ duration: 0.25, ease: [0.23, 1, 0.32, 1] }}
-            className={`flex size-20 items-center justify-center rounded-[1.75rem] ${stateStyle.surface} ${stateStyle.color}`}
+            className={`flex size-20 items-center justify-center rounded-3xl ${stateStyle.surface} ${stateStyle.color}`}
           >
             <Icon aria-hidden="true" className="size-9 stroke-[2.5]" />
           </motion.div>

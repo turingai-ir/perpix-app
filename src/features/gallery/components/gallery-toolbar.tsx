@@ -22,7 +22,7 @@ export function GalleryToolbar(props: Props) {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   return (
     <section
-      className="glass-blur border-glass-edge bg-glass-strong group/toolbar contrast-more:border-foreground/44 sticky top-10 z-20 mt-4 mb-6 flex flex-col gap-3 rounded-3xl border bg-[linear-gradient(135deg,rgb(255_255_255/7%),transparent_42%)] p-3 shadow-[inset_0_1px_rgb(255_255_255/12%),0_18px_56px_-36px_rgb(0_0_0/62%)] max-md:top-9 max-md:mt-3 max-md:mb-4 max-md:rounded-[1.25rem] max-md:p-2.5 [&_button]:touch-manipulation"
+      className="glass-blur border-glass-edge bg-glass-strong group/toolbar contrast-more:border-foreground/44 inset-shadow-highlight shadow-modal sticky top-10 z-20 mt-4 mb-6 flex flex-col gap-3 rounded-3xl border bg-[linear-gradient(135deg,color-mix(in_oklch,var(--night-foreground)_7%,transparent),transparent_42%)] p-3 max-md:top-9 max-md:mt-3 max-md:mb-4 max-md:rounded-2xl max-md:p-2.5 [&_button]:touch-manipulation"
       aria-label={t("pages.gallery.title")}
     >
       <div className="flex min-w-0 items-center justify-between gap-3 max-md:flex-col-reverse max-md:items-stretch">

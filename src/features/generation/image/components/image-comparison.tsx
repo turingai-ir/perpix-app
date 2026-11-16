@@ -41,10 +41,10 @@ export function ImageComparison({
   return (
     <>
       <aside
-        className="animate-card-arrival border-foreground/9 bg-card/90 contrast-more:border-foreground/30 supports-[not(backdrop-filter:blur(1px))]:bg-card mx-auto mb-2.5 grid min-h-15 w-[calc(100%-1rem)] grid-cols-[2.75rem_minmax(0,1fr)] items-start gap-3 rounded-[1.35rem] border p-3 shadow-[inset_0_1px_rgb(255_255_255/6%),0_0.8rem_2.5rem_rgb(0_0_0/18%)] backdrop-blur-lg backdrop-saturate-125 motion-reduce:animate-none min-[641px]:flex min-[641px]:items-center min-[641px]:gap-2.5 min-[641px]:rounded-[1.2rem] min-[641px]:px-2.5 min-[641px]:py-2"
+        className="animate-card-arrival border-foreground/9 bg-card/90 contrast-more:border-foreground/30 supports-[not(backdrop-filter:blur(1px))]:bg-card inset-shadow-highlight-sm shadow-overlay mx-auto mb-2.5 grid min-h-15 w-[calc(100%-1rem)] grid-cols-[2.75rem_minmax(0,1fr)] items-start gap-3 rounded-2xl border p-3 backdrop-blur-lg backdrop-saturate-125 motion-reduce:animate-none min-[641px]:flex min-[641px]:items-center min-[641px]:gap-2.5 min-[641px]:rounded-2xl min-[641px]:px-2.5 min-[641px]:py-2"
         aria-live="polite"
       >
-        <span className="bg-primary/15 text-primary grid size-11 flex-none place-items-center rounded-[0.9rem] min-[641px]:size-9 min-[641px]:rounded-xl [&_svg]:size-4.5 min-[641px]:[&_svg]:size-4">
+        <span className="bg-primary/15 text-primary grid size-11 flex-none place-items-center rounded-xl min-[641px]:size-9 min-[641px]:rounded-xl [&_svg]:size-4.5 min-[641px]:[&_svg]:size-4">
           <Columns2 aria-hidden="true" />
         </span>
         <div className="[&_span]:text-muted-foreground min-w-0 flex-1 py-1 min-[641px]:py-0 [&_span]:mt-0.5 [&_span]:block [&_span]:text-xs [&_span]:leading-relaxed [&_strong]:block [&_strong]:text-sm [&_strong]:leading-snug min-[641px]:[&_strong]:text-xs">
@@ -81,7 +81,7 @@ export function ImageComparison({
         </div>
       </aside>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="border-foreground/10 bg-popover/94 max-h-[90dvh] w-[min(74rem,calc(100%-1.5rem))] max-w-296 overflow-auto rounded-[1.25rem] border shadow-[0_2rem_8rem_rgb(0_0_0/72%)] backdrop-blur-xl backdrop-saturate-130 sm:max-h-[min(88dvh,60rem)] sm:max-w-296">
+        <DialogContent className="border-foreground/10 bg-popover/94 shadow-modal max-h-[90dvh] w-[min(74rem,calc(100%-1.5rem))] max-w-296 overflow-auto rounded-2xl border backdrop-blur-xl backdrop-saturate-130 sm:max-h-[min(88dvh,60rem)] sm:max-w-296">
           <DialogHeader>
             <DialogTitle>
               {t("pages.generation.image.compare.title")}
@@ -100,7 +100,7 @@ export function ImageComparison({
                   type="button"
                   size="icon-sm"
                   variant="secondary"
-                  className="absolute end-2 top-2 z-3 rounded-full shadow-[0_0.5rem_1.5rem_rgb(0_0_0/40%)]"
+                  className="shadow-overlay absolute end-2 top-2 z-3 rounded-full"
                   aria-label={t("pages.generation.image.compare.remove")}
                   onClick={() => onRemove(item.fileId)}
                 >

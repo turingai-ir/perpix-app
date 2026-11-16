@@ -38,7 +38,7 @@ export const ErrorPreview: FC<{ label: string; className?: string }> = ({
     )}
   >
     <AlertCircle className="h-5 w-5" />
-    <span className="text-[10px] whitespace-normal">{label}</span>
+    <span className="text-caption whitespace-normal">{label}</span>
   </div>
 );
 
@@ -53,7 +53,7 @@ export const DeleteButton: FC<{
       type="button"
       aria-label={label ?? t("features.mediaUploader.actions.remove")}
       className={cn(
-        "absolute top-1 right-1 z-20 flex size-8 cursor-pointer items-center justify-center rounded-full outline-none after:absolute after:-inset-1.5 after:content-[''] focus-visible:ring-2 focus-visible:ring-white",
+        "focus-visible:ring-night-foreground absolute top-1 right-1 z-20 flex size-8 cursor-pointer items-center justify-center rounded-full outline-none after:absolute after:-inset-1.5 after:content-[''] focus-visible:ring-2",
         variant === "strong" ? "bg-destructive" : "bg-destructive/80",
       )}
       onClick={onClick}

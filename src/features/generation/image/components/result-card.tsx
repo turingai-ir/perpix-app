@@ -19,8 +19,8 @@ import { mergeRequestConfig } from "../../model/retry-config";
 
 const ACTION_BASE_CLASS =
   "min-h-11 rounded-full transition-[color,background-color,transform] duration-150 active:scale-[0.97] motion-reduce:transition-none motion-reduce:active:scale-100";
-const OVERLAY_ACTION_CLASS = `${ACTION_BASE_CLASS} absolute end-2.5 shadow-[0_0.75rem_2rem_rgb(0_0_0/42%)]`;
-const PRIMARY_ACTION_CLASS = `${ACTION_BASE_CLASS} border border-[color-mix(in_srgb,var(--primary)_72%,white_12%)] bg-linear-135 from-[color-mix(in_srgb,var(--primary)_88%,var(--violet-brand))] to-[color-mix(in_srgb,var(--primary)_58%,var(--background))] px-3.5 text-primary-foreground shadow-[inset_0_1px_rgb(255_255_255/18%),0_0.65rem_1.8rem_color-mix(in_srgb,var(--primary)_22%,transparent)] hover-capable:hover:brightness-110`;
+const OVERLAY_ACTION_CLASS = `${ACTION_BASE_CLASS} absolute end-2.5 shadow-overlay`;
+const PRIMARY_ACTION_CLASS = `${ACTION_BASE_CLASS} border border-[color-mix(in_srgb,var(--primary)_72%,white_12%)] bg-linear-135 from-[color-mix(in_srgb,var(--primary)_88%,var(--violet-brand))] to-[color-mix(in_srgb,var(--primary)_58%,var(--background))] px-3.5 text-primary-foreground shadow-[inset_0_1px_color-mix(in_oklch,var(--night-foreground)_18%,transparent),0_0.65rem_1.8rem_color-mix(in_srgb,var(--primary)_22%,transparent)] hover-capable:hover:brightness-110`;
 const SECONDARY_ACTION_CLASS = `${ACTION_BASE_CLASS} px-3.5 text-muted-foreground hover-capable:hover:text-foreground`;
 
 function parseAspectRatio(value: unknown) {
@@ -98,7 +98,7 @@ export function ImageResultCard({
           className="flex min-w-0 items-center gap-2.5 text-sm font-bold"
           dir="rtl"
         >
-          <span className="aspect-square w-8 flex-none overflow-hidden rounded-[0.65rem] border border-[color-mix(in_srgb,var(--border)_75%,var(--primary)_25%)] bg-black">
+          <span className="bg-night aspect-square w-8 flex-none overflow-hidden rounded-md border border-[color-mix(in_srgb,var(--border)_75%,var(--primary)_25%)]">
             <img
               src="/android-chrome-512x512.png"
               alt=""
@@ -121,7 +121,7 @@ export function ImageResultCard({
         {images.map((fileId, index) => (
           <div
             key={fileId}
-            className="[&>div]:border-foreground/9 relative w-full overflow-hidden rounded-2xl shadow-[0_1rem_2.75rem_rgb(0_0_0/38%)] max-sm:max-w-full! max-sm:rounded-[0.85rem] [&>div]:rounded-2xl [&>div]:bg-black"
+            className="[&>div]:border-foreground/9 [&>div]:bg-night shadow-modal relative w-full overflow-hidden rounded-2xl max-sm:max-w-full! max-sm:rounded-lg [&>div]:rounded-2xl"
             style={
               images.length === 1
                 ? {
@@ -158,7 +158,7 @@ export function ImageResultCard({
                 }
                 className={cn(
                   OVERLAY_ACTION_CLASS,
-                  "hover-capable:hover:bg-[rgb(20_18_28/90%)] supports-[not(backdrop-filter:blur(1px))]:bg-card top-2.5 border-white/12 bg-[rgb(9_9_14/78%)] backdrop-blur-[14px] backdrop-saturate-125",
+                  "hover-capable:hover:bg-night/90 supports-[not(backdrop-filter:blur(1px))]:bg-card border-night-foreground/12 bg-night/78 top-2.5 backdrop-blur-[14px] backdrop-saturate-125",
                 )}
                 onClick={() => onToggleComparison(getComparisonItem(fileId))}
               >

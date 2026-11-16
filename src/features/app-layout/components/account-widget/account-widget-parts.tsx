@@ -9,7 +9,7 @@ export const AccountBlock: FC<ComponentProps<"section">> = ({
 }) => (
   <section
     className={cn(
-      "rounded-xl bg-white/6 p-4 shadow-[inset_0_0_0_1px_rgb(255_255_255/8%)]",
+      "bg-night-foreground/6 rounded-xl p-4 shadow-[inset_0_0_0_1px_color-mix(in_oklch,var(--night-foreground)_8%,transparent)]",
       className,
     )}
     {...props}
@@ -20,7 +20,12 @@ export const AccountBlock: FC<ComponentProps<"section">> = ({
 export const AccountLabel: FC<ComponentProps<"small">> = ({
   className,
   ...props
-}) => <small className={cn("text-xs text-white/65", className)} {...props} />;
+}) => (
+  <small
+    className={cn("text-night-foreground/65 text-xs", className)}
+    {...props}
+  />
+);
 
 /** Unit suffix such as "token" next to an amount. */
 export const AccountUnit: FC<ComponentProps<"em">> = ({
@@ -28,7 +33,10 @@ export const AccountUnit: FC<ComponentProps<"em">> = ({
   ...props
 }) => (
   <em
-    className={cn("text-xs font-semibold text-white/65 not-italic", className)}
+    className={cn(
+      "text-night-foreground/65 text-xs font-semibold not-italic",
+      className,
+    )}
     {...props}
   />
 );

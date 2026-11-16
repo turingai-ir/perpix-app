@@ -84,14 +84,14 @@ const AccountWidgetPanel: FC<PanelProps> = ({ widget, onClose }) => {
             {isFree ? t(`${PREFIX}.freePlan`) : planName}
           </strong>
           {!isFree && daysLeft !== null ? (
-            <b className="text-sm font-extrabold text-white">
+            <b className="text-night-foreground text-sm font-extrabold">
               {t(`${PREFIX}.daysLeft`, {
                 days: daysLeft.toLocaleString("fa-IR"),
               })}
             </b>
           ) : null}
           {!isFree && tiers?.expiresAt ? (
-            <span className="text-xs text-white/75">
+            <span className="text-night-foreground/75 text-xs">
               {t(`${PREFIX}.expiresOn`, { date: formatDate(tiers.expiresAt) })}
             </span>
           ) : null}
@@ -106,7 +106,7 @@ const AccountWidgetPanel: FC<PanelProps> = ({ widget, onClose }) => {
               aria-hidden="true"
               className="text-accent-gold size-5 self-center"
             />
-            <strong className="text-[1.6rem] font-extrabold tracking-tight">
+            <strong className="text-title-1 font-extrabold tracking-tight">
               {widget.balanceText ?? t(`${PREFIX}.balanceUnavailable`)}
             </strong>
             <AccountUnit>{t(`${PREFIX}.token`)}</AccountUnit>
@@ -123,7 +123,7 @@ const AccountWidgetPanel: FC<PanelProps> = ({ widget, onClose }) => {
         <Button
           type="button"
           size="lg"
-          className="hover-capable:hover:brightness-110 data-primary:from-accent-orange data-primary:to-accent-gold data-primary:text-on-accent flex-none rounded-full bg-white/12 px-4 text-sm font-extrabold text-white shadow-[inset_0_1px_rgb(255_255_255/18%)] data-primary:bg-linear-to-br motion-reduce:transition-none"
+          className="hover-capable:hover:brightness-110 data-primary:from-accent-orange data-primary:to-accent-gold data-primary:text-on-accent bg-night-foreground/12 text-night-foreground inset-shadow-highlight-lg flex-none rounded-full px-4 text-sm font-extrabold data-primary:bg-linear-to-br motion-reduce:transition-none"
           data-primary={needsCharge || undefined}
           onClick={run(() => openWalletCharge())}
         >
@@ -137,7 +137,7 @@ const AccountWidgetPanel: FC<PanelProps> = ({ widget, onClose }) => {
         <Button
           type="button"
           size="lg"
-          className="from-accent-violet to-accent-pink hover-capable:hover:brightness-110 group-data-[tone=expiring]/panel:from-accent-orange group-data-[tone=expiring]/panel:to-accent-gold group-data-[tone=expiring]/panel:text-on-accent h-12 w-full justify-between rounded-xl bg-linear-to-br px-4 text-sm font-extrabold text-white shadow-[inset_0_1px_rgb(255_255_255/28%),0_8px_22px_rgb(143_107_242/35%)] motion-reduce:transition-none"
+          className="from-accent-violet to-accent-pink hover-capable:hover:brightness-110 group-data-[tone=expiring]/panel:from-accent-orange group-data-[tone=expiring]/panel:to-accent-gold group-data-[tone=expiring]/panel:text-on-accent text-night-foreground h-12 w-full justify-between rounded-xl bg-linear-to-br px-4 text-sm font-extrabold shadow-[inset_0_1px_color-mix(in_oklch,var(--night-foreground)_28%,transparent),0_8px_22px_rgb(143_107_242/35%)] motion-reduce:transition-none"
           onClick={run(() => openPricingFeature())}
         >
           <span>{ctaLabel}</span>

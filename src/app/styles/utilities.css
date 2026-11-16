@@ -15,6 +15,19 @@
   }
 }
 
+/* Motion duration roles (tokens.css). Pair with an explicit transition-* property class. */
+@utility duration-press {
+  transition-duration: var(--duration-press);
+}
+
+@utility duration-enter {
+  transition-duration: var(--duration-enter);
+}
+
+@utility duration-page {
+  transition-duration: var(--duration-page);
+}
+
 @custom-variant hover-capable (@media (hover: hover) and (pointer: fine));
 
 /* The gallery page hides its parent scroll-area bar on small screens. */

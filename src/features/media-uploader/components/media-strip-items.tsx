@@ -239,9 +239,9 @@ export const LocalMediaPreviewItem: FC<LocalMediaPreviewItemProps> = ({
       {previewType === "audio" ? <AudioPreviewButton file={item.file} /> : null}
 
       {isUploading && (
-        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-1 bg-black/45 text-white backdrop-blur-[1px]">
+        <div className="bg-night/45 text-night-foreground absolute inset-0 z-10 flex flex-col items-center justify-center gap-1 backdrop-blur-[1px]">
           <LoaderCircle className="h-5 w-5 animate-spin" />
-          <span className="text-[10px] font-medium whitespace-nowrap">
+          <span className="text-caption font-medium whitespace-nowrap">
             {t("common.uploading")}
           </span>
         </div>
@@ -251,7 +251,7 @@ export const LocalMediaPreviewItem: FC<LocalMediaPreviewItemProps> = ({
         <div className="bg-background/85 absolute inset-0 z-10 flex flex-col items-center justify-center gap-1 p-2 text-center backdrop-blur-[1px]">
           <AlertCircle className="text-destructive h-5 w-5" />
           <span
-            className="text-destructive text-[10px] whitespace-normal"
+            className="text-destructive text-caption whitespace-normal"
             title={t(item.errorKey ?? "common.error")}
           >
             {t("common.error")}

@@ -37,7 +37,7 @@ export const GalleryPage: FC = () => {
   return (
     <div
       data-gallery-page
-      className="relative isolate mx-auto min-h-full w-full max-w-[1800px] min-w-0 overflow-clip bg-[radial-gradient(circle_at_92%_2%,color-mix(in_oklch,var(--primary)_13%,transparent),transparent_28rem),radial-gradient(circle_at_4%_36%,rgb(41_171_255/8%),transparent_32rem)] p-[clamp(12px,3vw,40px)] [-webkit-tap-highlight-color:transparent] before:pointer-events-none before:absolute before:inset-0 before:-z-10 before:bg-[linear-gradient(rgb(255_255_255/3%)_1px,transparent_1px),linear-gradient(90deg,rgb(255_255_255/3%)_1px,transparent_1px)] before:mask-[linear-gradient(to_bottom,black,transparent_64%)] before:bg-size-[52px_52px] before:opacity-[0.22] before:content-[''] max-md:px-3"
+      className="relative isolate mx-auto min-h-full w-full max-w-[1800px] min-w-0 overflow-clip bg-[radial-gradient(circle_at_92%_2%,color-mix(in_oklch,var(--primary)_13%,transparent),transparent_28rem),radial-gradient(circle_at_4%_36%,rgb(41_171_255/8%),transparent_32rem)] p-[clamp(12px,3vw,40px)] [-webkit-tap-highlight-color:transparent] before:pointer-events-none before:absolute before:inset-0 before:-z-10 before:bg-[linear-gradient(color-mix(in_oklch,var(--night-foreground)_3%,transparent)_1px,transparent_1px),linear-gradient(90deg,color-mix(in_oklch,var(--night-foreground)_3%,transparent)_1px,transparent_1px)] before:mask-[linear-gradient(to_bottom,black,transparent_64%)] before:bg-size-[52px_52px] before:opacity-[0.22] before:content-[''] max-md:px-3"
     >
       <GalleryHeader
         refreshing={userFilesState.isFetching}

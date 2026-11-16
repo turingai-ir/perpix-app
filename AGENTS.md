@@ -37,6 +37,7 @@
 - Mobile-first (`sm:`/`md:`/`lg:`); coarse-pointer sizes are handled inside `shared/ui` (`pointer-coarse:`), do not hand-size touch targets.
 - Shared keyframes live in `src/app/styles/theme.css` (`--animate-*`). The only allowed CSS Modules are animated art scenes (list and rules: `docs/agent-guides/FRONTEND_ARCHITECTURE_FULL.md` §3).
 - Tests select by role, text or `data-*` hooks, never by styling classes.
+- Design language (Apple HIG as reference): `docs/agent-guides/DESIGN_LANGUAGE.md`. Read it before new pages, redesigns or any change that picks a font size, radius, shadow or colour. Pick a role, never a pixel value; do not add `text-[..px]`, `rounded-[..]`, `#hex` or `transition-all`.
 
 ## Code Standards
 

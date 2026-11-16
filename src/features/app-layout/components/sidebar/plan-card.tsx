@@ -46,26 +46,26 @@ const AppLayoutSidebarPlanCard: FC = () => {
   return (
     <section
       data-tone={tone}
-      className="group/plan bg-card/60 text-foreground relative isolate flex w-full flex-col gap-2.5 overflow-hidden rounded-2xl border border-[color-mix(in_srgb,var(--plan-accent)_28%,transparent)] bg-[radial-gradient(120%_90%_at_100%_0%,color-mix(in_srgb,var(--plan-accent)_20%,transparent),transparent_62%)] p-3.5 shadow-[inset_0_1px_oklch(1_0_0/12%),0_14px_34px_oklch(0_0_0/18%)] backdrop-blur-lg backdrop-saturate-[1.2] [--plan-accent-2:var(--primary)] [--plan-accent:var(--image-accent)] data-[tone=expiring]:[--plan-accent:var(--chart-5)] data-[tone=top]:[--plan-accent:var(--video-accent)]"
+      className="group/plan bg-card/60 text-foreground inset-shadow-highlight shadow-overlay relative isolate flex w-full flex-col gap-2.5 overflow-hidden rounded-2xl border border-[color-mix(in_srgb,var(--plan-accent)_28%,transparent)] bg-[radial-gradient(120%_90%_at_100%_0%,color-mix(in_srgb,var(--plan-accent)_20%,transparent),transparent_62%)] p-3.5 backdrop-blur-lg backdrop-saturate-[1.2] [--plan-accent-2:var(--primary)] [--plan-accent:var(--image-accent)] data-[tone=expiring]:[--plan-accent:var(--chart-5)] data-[tone=top]:[--plan-accent:var(--video-accent)]"
       aria-label={t(`${PREFIX}.label`)}
     >
       <div className="flex items-center gap-2.5">
         <span
-          className="grid size-9 flex-none place-items-center rounded-xl bg-gradient-to-br from-[var(--plan-accent-2)] to-[var(--plan-accent)] text-white shadow-[0_6px_16px_color-mix(in_srgb,var(--plan-accent)_38%,transparent)] [&_svg]:size-[1.1rem]"
+          className="text-night-foreground grid size-9 flex-none place-items-center rounded-xl bg-gradient-to-br from-[var(--plan-accent-2)] to-[var(--plan-accent)] shadow-[0_6px_16px_color-mix(in_srgb,var(--plan-accent)_38%,transparent)] [&_svg]:size-[1.1rem]"
           aria-hidden="true"
         >
           {isFree ? <Sparkles /> : <Crown />}
         </span>
         <div className="flex min-w-0 flex-1 flex-col leading-snug">
-          <small className="text-muted-foreground text-[0.7rem]">
+          <small className="text-muted-foreground text-caption">
             {t(`${PREFIX}.label`)}
           </small>
-          <strong className="truncate text-[0.92rem] font-bold">
+          <strong className="text-headline truncate font-bold">
             {isFree ? t(`${PREFIX}.freeTitle`) : planName}
           </strong>
         </div>
         {daysText ? (
-          <span className="flex-none rounded-full bg-[color-mix(in_srgb,var(--plan-accent)_14%,transparent)] px-2 py-0.5 text-[0.7rem] font-bold text-[var(--plan-accent)]">
+          <span className="text-caption flex-none rounded-full bg-[color-mix(in_srgb,var(--plan-accent)_14%,transparent)] px-2 py-0.5 font-bold text-[var(--plan-accent)]">
             {daysText}
           </span>
         ) : null}
@@ -104,7 +104,7 @@ const AppLayoutSidebarPlanCard: FC = () => {
         <Button
           type="button"
           onClick={() => openPricingFeature()}
-          className="ease-out-quint hover-capable:hover:-translate-y-px hover-capable:hover:brightness-110 hover-capable:[&:hover_svg]:-translate-x-0.5 hover-capable:[&:hover_svg]:-translate-y-0.5 h-11 w-full justify-between rounded-xl border-0 bg-gradient-to-r from-[var(--plan-accent-2)] to-[var(--plan-accent)] px-4 text-[0.82rem] font-bold text-white shadow-[inset_0_1px_oklch(1_0_0/28%),0_8px_22px_color-mix(in_srgb,var(--plan-accent)_32%,transparent)] transition-[transform,filter] duration-200 group-data-[tone=expiring]/plan:text-neutral-900 group-data-[tone=top]/plan:text-neutral-900 hover:bg-transparent active:scale-[0.97] motion-reduce:transition-none motion-reduce:hover:translate-y-0 motion-reduce:active:scale-100 [&_svg]:size-4 [&_svg]:transition-transform"
+          className="ease-out-quint hover-capable:hover:-translate-y-px hover-capable:hover:brightness-110 hover-capable:[&:hover_svg]:-translate-x-0.5 hover-capable:[&:hover_svg]:-translate-y-0.5 text-night-foreground text-subhead group-data-[tone=expiring]/plan:text-night group-data-[tone=top]/plan:text-night h-11 w-full justify-between rounded-xl border-0 bg-gradient-to-r from-[var(--plan-accent-2)] to-[var(--plan-accent)] px-4 font-bold shadow-[inset_0_1px_color-mix(in_oklch,var(--night-foreground)_28%,transparent),0_8px_22px_color-mix(in_srgb,var(--plan-accent)_32%,transparent)] transition-[transform,filter] duration-200 hover:bg-transparent active:scale-[0.97] motion-reduce:transition-none motion-reduce:hover:translate-y-0 motion-reduce:active:scale-100 [&_svg]:size-4 [&_svg]:transition-transform"
         >
           <span>{ctaLabel}</span>
           <ArrowUpLeft aria-hidden="true" />

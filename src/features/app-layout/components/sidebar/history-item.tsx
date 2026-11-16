@@ -37,7 +37,7 @@ export default function HistoryItem({ item, message }: HistoryItemProps) {
         data-sidebar-history-item
       >
         <IconTile
-          className="border-foreground/10 from-foreground/9 to-foreground/3 text-primary size-9 rounded-xl bg-linear-[145deg] shadow-[inset_0_1px_rgb(255_255_255/10%),0_6px_16px_rgb(0_0_0/14%)]"
+          className="border-foreground/10 from-foreground/9 to-foreground/3 text-primary inset-shadow-highlight shadow-raised size-9 rounded-xl bg-linear-[145deg]"
           aria-hidden="true"
         >
           <ItemIcon />

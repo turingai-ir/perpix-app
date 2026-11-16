@@ -51,7 +51,7 @@ export function FinanceToolbar({
           value={searchValue}
           placeholder={searchPlaceholder}
           aria-label={searchLabel}
-          className="h-12 rounded-[0.9rem] bg-[color-mix(in_oklab,var(--muted)_42%,var(--card))] ps-10 text-base md:text-sm"
+          className="h-12 rounded-xl bg-[color-mix(in_oklab,var(--muted)_42%,var(--card))] ps-10 text-base md:text-sm"
           onChange={(event) => onSearchChange(event.target.value)}
         />
       </div>
@@ -64,7 +64,7 @@ export function FinanceToolbar({
             variant="ghost"
             aria-pressed={activeFilter === filter.value}
             className={cn(
-              "min-h-11 flex-none rounded-[0.85rem] border border-transparent px-3.5",
+              "min-h-11 flex-none rounded-lg border border-transparent px-3.5",
               activeFilter === filter.value &&
                 "border-[color-mix(in_oklab,var(--finance-accent)_24%,transparent)] bg-(--finance-accent-soft) text-(--finance-accent)",
             )}

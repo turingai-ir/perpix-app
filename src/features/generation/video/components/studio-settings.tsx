@@ -69,7 +69,7 @@ export function VideoStudioSettings({
   };
   return (
     <div className="grid gap-2">
-      <div className="*:border-border *:bg-muted grid grid-cols-2 gap-2 *:min-w-0 *:rounded-xl *:border *:p-3 [&_button]:min-h-11 [&_button]:w-full [&_button]:text-[13px]">
+      <div className="*:border-border *:bg-muted [&_button]:text-subhead grid grid-cols-2 gap-2 *:min-w-0 *:rounded-xl *:border *:p-3 [&_button]:min-h-11 [&_button]:w-full">
         {quickFields
           .filter((name) => name !== "mode")
           .sort(

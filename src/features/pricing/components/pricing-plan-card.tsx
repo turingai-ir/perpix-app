@@ -23,10 +23,10 @@ type PricingPlanCardProps = {
 const CARD_CLASS = [
   "group/plan relative isolate flex w-full flex-col gap-4 overflow-hidden rounded-3xl border border-foreground/10 bg-foreground/4 p-5.5 text-foreground",
   "bg-[radial-gradient(110%_70%_at_100%_0%,color-mix(in_srgb,var(--primary)_10%,transparent),transparent_60%)]",
-  "shadow-[inset_0_1px_rgb(255_255_255/9%),0_18px_40px_rgb(0_0_0/22%)] transition-[transform,border-color] duration-200 ease-out-quint",
+  "inset-shadow-highlight shadow-overlay transition-[transform,border-color] duration-200 ease-out-quint",
   "hover-capable:hover:-translate-y-0.5 hover-capable:hover:border-primary/45",
-  "data-recommended:border-primary/55 data-recommended:bg-foreground/6 data-recommended:bg-[radial-gradient(120%_80%_at_100%_0%,color-mix(in_srgb,var(--accent-pink)_22%,transparent),transparent_62%)] data-recommended:shadow-[inset_0_1px_rgb(255_255_255/14%),0_0_0_1px_color-mix(in_srgb,var(--primary)_25%,transparent),0_22px_56px_color-mix(in_srgb,var(--accent-violet)_28%,transparent)]",
-  "data-current:border-accent-sky data-current:bg-foreground/7 data-current:bg-[radial-gradient(120%_80%_at_100%_0%,color-mix(in_srgb,var(--accent-sky)_20%,transparent),transparent_62%)] data-current:shadow-[inset_0_1px_rgb(255_255_255/14%),0_0_0_1px_color-mix(in_srgb,var(--accent-sky)_45%,transparent),0_22px_56px_color-mix(in_srgb,var(--accent-blue)_30%,transparent)]",
+  "data-recommended:border-primary/55 data-recommended:bg-foreground/6 data-recommended:bg-[radial-gradient(120%_80%_at_100%_0%,color-mix(in_srgb,var(--accent-pink)_22%,transparent),transparent_62%)] data-recommended:shadow-[inset_0_1px_color-mix(in_oklch,var(--night-foreground)_14%,transparent),0_0_0_1px_color-mix(in_srgb,var(--primary)_25%,transparent),0_22px_56px_color-mix(in_srgb,var(--accent-violet)_28%,transparent)]",
+  "data-current:border-accent-sky data-current:bg-foreground/7 data-current:bg-[radial-gradient(120%_80%_at_100%_0%,color-mix(in_srgb,var(--accent-sky)_20%,transparent),transparent_62%)] data-current:shadow-[inset_0_1px_color-mix(in_oklch,var(--night-foreground)_14%,transparent),0_0_0_1px_color-mix(in_srgb,var(--accent-sky)_45%,transparent),0_22px_56px_color-mix(in_srgb,var(--accent-blue)_30%,transparent)]",
   "data-locked:opacity-55 data-locked:shadow-none data-locked:hover:translate-y-0",
   "motion-reduce:transition-none motion-reduce:hover:translate-y-0",
 ].join(" ");
@@ -70,7 +70,7 @@ const PricingPlanCard: FC<PricingPlanCardProps> = ({
           {plan.display_name ?? plan.name}
         </h3>
         {plan.is_recommended ? (
-          <Badge className="from-accent-violet to-accent-pink h-auto border-0 bg-linear-120 px-2.5 py-1 font-bold text-white">
+          <Badge className="from-accent-violet to-accent-pink text-night-foreground h-auto border-0 bg-linear-120 px-2.5 py-1 font-bold">
             <Sparkles aria-hidden="true" />
             {t("features.pricing.recommended")}
           </Badge>

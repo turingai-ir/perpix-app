@@ -44,7 +44,7 @@ export function GalleryActions({
     }
   }
   return (
-    <div className="border-foreground/7 bg-background/36 flex flex-none gap-[0.1rem] rounded-[0.9rem] border p-0.5 transition-opacity duration-160 max-md:gap-0 max-md:border-0 max-md:bg-transparent">
+    <div className="border-foreground/7 bg-background/36 flex flex-none gap-[0.1rem] rounded-xl border p-0.5 transition-opacity duration-160 max-md:gap-0 max-md:border-0 max-md:bg-transparent">
       <Button
         variant="ghost"
         className={actionButton}
@@ -75,7 +75,7 @@ export function GalleryActions({
           <Trash2 />
         </DialogTrigger>
         <DialogContent
-          className="glass-blur border-glass-edge bg-glass-strong overflow-hidden rounded-3xl border bg-[linear-gradient(145deg,rgb(255_255_255/7%),transparent_45%)] p-5 shadow-[inset_0_1px_rgb(255_255_255/12%),0_32px_100px_rgb(0_0_0/42%)] [--glass-blur:28px] [--glass-saturate:150%]"
+          className="glass-blur border-glass-edge bg-glass-strong inset-shadow-highlight shadow-modal overflow-hidden rounded-3xl border bg-[linear-gradient(145deg,color-mix(in_oklch,var(--night-foreground)_7%,transparent),transparent_45%)] p-5 [--glass-blur:28px] [--glass-saturate:150%]"
           showCloseButton={false}
         >
           <DialogTitle>{t("pages.gallery.delete.title")}</DialogTitle>

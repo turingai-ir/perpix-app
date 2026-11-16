@@ -20,7 +20,7 @@ interface Props {
 }
 
 const viewerClass =
-  "fixed inset-0 isolate flex h-dvh max-h-dvh w-screen max-w-none translate-x-0 translate-y-0 flex-col gap-[clamp(10px,2vw,18px)] overflow-hidden rounded-none border-0 bg-[#06070a] bg-[radial-gradient(circle_at_50%_0%,rgb(130_79_255/13%),transparent_32rem),radial-gradient(circle_at_0%_75%,rgb(28_157_238/8%),transparent_28rem)] p-[max(12px,env(safe-area-inset-top))_max(12px,env(safe-area-inset-right))_max(12px,env(safe-area-inset-bottom))_max(12px,env(safe-area-inset-left))] text-[#f7f7fb] before:absolute before:inset-0 before:-z-10 before:bg-[linear-gradient(rgb(255_255_255/2.5%)_1px,transparent_1px),linear-gradient(90deg,rgb(255_255_255/2.5%)_1px,transparent_1px)] before:bg-size-[64px_64px] before:opacity-[0.18] before:mask-[radial-gradient(circle_at_center,black,transparent_82%)] before:content-[''] sm:max-w-none max-md:gap-2 max-md:px-2 rtl:translate-x-0 [&_a]:touch-manipulation [&_button]:touch-manipulation";
+  "fixed inset-0 isolate flex h-dvh max-h-dvh w-screen max-w-none translate-x-0 translate-y-0 flex-col gap-[clamp(10px,2vw,18px)] overflow-hidden rounded-none border-0 bg-night bg-[radial-gradient(circle_at_50%_0%,rgb(130_79_255/13%),transparent_32rem),radial-gradient(circle_at_0%_75%,rgb(28_157_238/8%),transparent_28rem)] p-[max(12px,env(safe-area-inset-top))_max(12px,env(safe-area-inset-right))_max(12px,env(safe-area-inset-bottom))_max(12px,env(safe-area-inset-left))] text-night-foreground before:absolute before:inset-0 before:-z-10 before:bg-[linear-gradient(color-mix(in_oklch,var(--night-foreground)_2.5%,transparent)_1px,transparent_1px),linear-gradient(90deg,color-mix(in_oklch,var(--night-foreground)_2.5%,transparent)_1px,transparent_1px)] before:bg-size-[64px_64px] before:opacity-[0.18] before:mask-[radial-gradient(circle_at_center,black,transparent_82%)] before:content-[''] sm:max-w-none max-md:gap-2 max-md:px-2 rtl:translate-x-0 [&_a]:touch-manipulation [&_button]:touch-manipulation";
 
 export function GalleryViewer({
   files,
@@ -90,7 +90,7 @@ export function GalleryViewer({
           mediaType={mediaType}
           onClose={onClose}
         />
-        <div className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden rounded-[clamp(20px,3vw,32px)] border border-white/7 bg-white/[1.5%] bg-[radial-gradient(circle_at_50%_35%,rgb(255_255_255/4%),transparent_54%)] shadow-[inset_0_1px_rgb(255_255_255/5%)] max-md:rounded-[1.25rem]">
+        <div className="border-night-foreground/7 bg-night-foreground/[1.5%] inset-shadow-highlight-sm relative flex min-h-0 flex-1 items-center justify-center overflow-hidden rounded-[clamp(20px,3vw,32px)] border bg-[radial-gradient(circle_at_50%_35%,color-mix(in_oklch,var(--night-foreground)_4%,transparent),transparent_54%)] max-md:rounded-2xl">
           <motion.div
             data-gallery-viewer-media
             data-dragging={swipe.isDragging}
@@ -121,7 +121,7 @@ export function GalleryViewer({
           onMove={move}
           onToggleZoom={() => setZoomed(!zoomed)}
         />
-        <p className="hidden text-center text-[0.6875rem] text-[rgb(244_244_245/45%)] md:block">
+        <p className="text-caption text-night-foreground/45 hidden text-center md:block">
           {t("pages.gallery.studio.viewerHint")}
         </p>
       </DialogContent>

@@ -99,7 +99,7 @@ export function ImageSettingsDialog({
       </Button>
       <Content
         className={cn(
-          "bg-popover/94 flex max-h-[min(820px,calc(100dvh-48px))] w-[calc(100vw-48px)] max-w-140 flex-col gap-0 overflow-hidden rounded-3xl border-[color-mix(in_srgb,var(--foreground)_14%,var(--border))] bg-[radial-gradient(circle_at_85%_-10%,color-mix(in_srgb,var(--primary)_13%,transparent),transparent_38%)] p-0 shadow-[inset_0_1px_color-mix(in_srgb,var(--foreground)_10%,transparent),0_28px_100px_rgb(0_0_0/52%)] backdrop-blur-xl backdrop-saturate-[145%] motion-reduce:animate-none motion-reduce:transition-none",
+          "bg-popover/94 flex max-h-[min(820px,calc(100dvh-48px))] w-[calc(100vw-48px)] max-w-140 flex-col gap-0 overflow-hidden rounded-3xl border-[color-mix(in_srgb,var(--foreground)_14%,var(--border))] bg-[radial-gradient(circle_at_85%_-10%,color-mix(in_srgb,var(--primary)_13%,transparent),transparent_38%)] p-0 shadow-[inset_0_1px_color-mix(in_srgb,var(--foreground)_10%,transparent),0_28px_100px_color-mix(in_oklch,var(--shadow-ink)_52%,transparent)] backdrop-blur-xl backdrop-saturate-[145%] motion-reduce:animate-none motion-reduce:transition-none",
           "data-[slot=drawer-content]:max-h-[90dvh] data-[slot=drawer-content]:w-full data-[slot=drawer-content]:max-w-none data-[slot=drawer-content]:rounded-t-3xl data-[slot=drawer-content]:rounded-b-none",
           "contrast-more:border-foreground",
         )}
@@ -120,7 +120,7 @@ export function ImageSettingsDialog({
           )}
         >
           <div className="flex items-center gap-3">
-            <span className="border-primary/28 bg-primary/12 text-primary grid size-11 flex-none place-items-center rounded-[14px] border shadow-[inset_0_1px_color-mix(in_srgb,var(--foreground)_10%,transparent),0_8px_24px_color-mix(in_srgb,var(--primary)_12%,transparent)] [&_svg]:size-5">
+            <span className="border-primary/28 bg-primary/12 text-primary grid size-11 flex-none place-items-center rounded-lg border shadow-[inset_0_1px_color-mix(in_srgb,var(--foreground)_10%,transparent),0_8px_24px_color-mix(in_srgb,var(--primary)_12%,transparent)] [&_svg]:size-5">
               <SlidersHorizontal aria-hidden="true" />
             </span>
             <div className="min-w-0 flex-1">
@@ -143,7 +143,7 @@ export function ImageSettingsDialog({
               <X aria-hidden="true" />
             </Button>
           </div>
-          <Description className="text-muted-foreground mt-4 text-[13px] leading-loose">
+          <Description className="text-muted-foreground text-subhead mt-4 leading-loose">
             {t("pages.generation.image.studio.settingsHelp")}
           </Description>
         </header>
@@ -156,7 +156,7 @@ export function ImageSettingsDialog({
             onProfessionalOpenChange={setProfessionalOpen}
           />
         </div>
-        <footer className="contrast-more:border-foreground flex-none border-t border-[color-mix(in_srgb,var(--foreground)_14%,var(--border))] bg-[color-mix(in_srgb,var(--muted)_42%,var(--popover))] px-5 pt-3 pb-[max(16px,env(safe-area-inset-bottom))] shadow-[0_-10px_28px_rgb(0_0_0/8%)] md:px-6 md:pt-4 md:pb-5">
+        <footer className="contrast-more:border-foreground shadow-overlay flex-none border-t border-[color-mix(in_srgb,var(--foreground)_14%,var(--border))] bg-[color-mix(in_srgb,var(--muted)_42%,var(--popover))] px-5 pt-3 pb-[max(16px,env(safe-area-inset-bottom))] md:px-6 md:pt-4 md:pb-5">
           <p className="text-muted-foreground mb-3 text-xs leading-relaxed">
             {t("pages.generation.image.studio.settings.liveHint")}
           </p>
