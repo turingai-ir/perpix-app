@@ -18,6 +18,7 @@ import { Input } from "@/shared/ui/input";
 import { useAppTranslate } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";
 import { formatLocalizedNumber } from "@/shared/utils";
+import { TopupDiscountHint } from "./topup-discount-hint";
 import {
   WalletChargeDescription,
   WalletChargeTitle,
@@ -27,6 +28,8 @@ const PRESET_AMOUNTS = [100, 500, 1_000, 5_000] as const;
 
 type TokenAmountStepProps = {
   balance: string;
+  /** The charge range the server allows, in micro-USD. */
+  limits: { minUsdmicro: number; maxUsdmicro: number };
   initialAmount: string;
   isError: boolean;
   isPending: boolean;
@@ -38,11 +41,22 @@ type TokenAmountStepProps = {
 
 export function TokenAmountStep(props: TokenAmountStepProps) {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
+  const minTokens = Math.ceil(props.limits.minUsdmicro / 1000);
+  const maxTokens = Math.floor(props.limits.maxUsdmicro / 1000);
+  const range = {
+    min: formatLocalizedNumber({ value: minTokens }),
+    max: formatLocalizedNumber({ value: maxTokens }),
+  };
   const schema = z.object({
-    amount: z.string().refine((value) => {
-      const amount = Number(value);
-      return Number.isInteger(amount) && amount >= 10 && amount <= 1_000_000;
-    }, t("pages.app.layout.sidebar.balanceCard.chargeWallet.amountError")),
+    amount: z.string().refine(
+      (value) => {
+        const amount = Number(value);
+        return (
+          Number.isInteger(amount) && amount >= minTokens && amount <= maxTokens
+        );
+      },
+      t("pages.app.layout.sidebar.balanceCard.chargeWallet.amountError", range),
+    ),
   });
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
@@ -116,14 +130,22 @@ export function TokenAmountStep(props: TokenAmountStepProps) {
               <p className="text-muted-foreground text-xs">
                 {t(
                   "pages.app.layout.sidebar.balanceCard.chargeWallet.amountHelper",
+                  range,
                 )}
               </p>
+              <TopupDiscountHint
+                amount={field.value}
+                minUsdmicro={props.limits.minUsdmicro}
+                maxUsdmicro={props.limits.maxUsdmicro}
+              />
               <FormMessage />
             </FormItem>
           )}
         />
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-          {PRESET_AMOUNTS.map((amount) => (
+          {PRESET_AMOUNTS.filter(
+            (amount) => amount >= minTokens && amount <= maxTokens,
+          ).map((amount) => (
             <Button
               key={amount}
               type="button"

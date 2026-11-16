@@ -13,6 +13,12 @@ const payment = {
   requires_review: false,
 };
 
+const topupPolicy = {
+  min_amount_usdmicro: 10_000,
+  max_amount_usdmicro: 1_000_000_000,
+  tiers: [{ from_amount_usdmicro: 0, discount_percent: 0 }],
+};
+
 test.beforeEach(async ({ context, page }) => {
   await context.routeWebSocket("**/*", (socket) => socket.close());
   await context.route("**/*", (route) => {
@@ -86,6 +92,83 @@ test.describe("Wallet checkout", () => {
     await page.getByRole("button", { name: "ادامهٔ پرداخت" }).click();
     await expect(page).toHaveURL(/\/mock-gateway$/);
     expect(gatewayVisits).toBe(1);
+  });
+
+  test("takes the charge limits from the server", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.route("**/api/v1/wallet/topup-policy", (route) =>
+      route.fulfill({
+        json: {
+          ...topupPolicy,
+          min_amount_usdmicro: 20_000,
+          max_amount_usdmicro: 2_000_000,
+        },
+      }),
+    );
+    await page.goto("/");
+    await page.getByRole("button", { name: "شارژ کیف پول" }).click();
+    const dialog = page.getByRole("dialog");
+    await expect(
+      dialog.getByText("حداقل ۲۰ و حداکثر ۲٬۰۰۰ توکن"),
+    ).toBeVisible();
+    await expect(
+      dialog.getByRole("button", { name: "۵۰۰ توکن" }),
+    ).toBeVisible();
+    await expect(
+      dialog.getByRole("button", { name: "۵٬۰۰۰ توکن" }),
+    ).toHaveCount(0);
+    await dialog.getByRole("textbox").fill("5");
+    await dialog.getByRole("button", { name: "دیدن مبلغ نهایی" }).click();
+    await expect(
+      dialog.getByText("یه عدد بین ۲۰ تا ۲٬۰۰۰ توکن وارد کن."),
+    ).toBeVisible();
+  });
+
+  test("shows what the discount is worth and what the next tier would give", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    const quoted: string[] = [];
+    await page.route("**/api/v1/wallet/topup-quote*", (route) => {
+      const amount =
+        new URL(route.request().url()).searchParams.get("amount_usdmicro") ??
+        "";
+      quoted.push(amount);
+      return route.fulfill({
+        json: {
+          amount_usdmicro: Number(amount),
+          discount_usdmicro: 20_000,
+          discount_irr: 53_900,
+          next_tier: { from_amount_usdmicro: 1_000_000, discount_irr: 134_750 },
+        },
+      });
+    });
+    await page.goto("/");
+    await page.getByRole("button", { name: "شارژ کیف پول" }).click();
+    const dialog = page.getByRole("dialog");
+    await dialog.getByRole("button", { name: "۵۰۰ توکن" }).click();
+    await expect(
+      dialog.getByText("با این شارژ ۵٬۳۹۰ تومان تخفیف می‌گیری"),
+    ).toBeVisible();
+    await expect(
+      dialog.getByText(
+        "با شارژ ۱٬۰۰۰ توکن یا بیشتر، تخفیفت می‌شه ۱۳٬۴۷۵ تومان",
+      ),
+    ).toBeVisible();
+    expect(quoted.at(-1)).toBe("500000");
+  });
+
+  test("says nothing about discounts when the amount has none", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/");
+    await page.getByRole("button", { name: "شارژ کیف پول" }).click();
+    const dialog = page.getByRole("dialog");
+    await dialog.getByRole("button", { name: "۵۰۰ توکن" }).click();
+    await expect(dialog.getByRole("textbox")).toHaveValue("500");
+    await page.waitForTimeout(700);
+    await expect(dialog.getByText("تخفیف")).toHaveCount(0);
   });
 
   test("submits typed formatted amounts as raw micro-units", async ({
@@ -319,6 +402,22 @@ async function mockAppApi(page: Page) {
           base_amount_usdmicro: "500000",
           tax_amount_usdmicro: "50000",
           total_amount_usdmicro: "550000",
+        },
+      });
+    }
+    if (path === "/api/v1/wallet/topup-policy") {
+      return route.fulfill({ json: topupPolicy });
+    }
+    if (path === "/api/v1/wallet/topup-quote") {
+      const amount = Number(
+        new URL(request.url()).searchParams.get("amount_usdmicro"),
+      );
+      return route.fulfill({
+        json: {
+          amount_usdmicro: amount,
+          discount_usdmicro: 0,
+          discount_irr: 0,
+          next_tier: null,
         },
       });
     }

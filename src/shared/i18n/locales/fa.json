@@ -680,8 +680,10 @@
             "chargeWallet": {
               "action": "پرداخت ({{amount}} ریال) ",
               "amountDescription": "بگو چند توکن می‌خوای؛ قبل از رفتن به درگاه، مبلغ دقیق رو می‌بینی.",
-              "amountError": "یه عدد بین ۱۰ تا ۱٬۰۰۰٬۰۰۰ توکن وارد کن.",
-              "amountHelper": "حداقل ۱۰ و حداکثر ۱٬۰۰۰٬۰۰۰ توکن",
+              "amountError": "یه عدد بین {{min}} تا {{max}} توکن وارد کن.",
+              "discountNow": "با این شارژ {{amount}} تومان تخفیف می‌گیری",
+              "discountNext": "با شارژ {{tokens}} توکن یا بیشتر، تخفیفت می‌شه {{amount}} تومان",
+              "amountHelper": "حداقل {{min}} و حداکثر {{max}} توکن",
               "amountLabel": "تعداد توکن",
               "close": "بستن فرایند افزایش موجودی",
               "currentBalance": "موجودی فعلی:",

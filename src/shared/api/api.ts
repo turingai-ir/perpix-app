@@ -394,6 +394,40 @@ export interface paths {
         readonly patch?: never;
         readonly trace?: never;
     };
+    readonly "/api/v1/wallet/topup-policy": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        /** Get the wallet charge range and tiers */
+        readonly get: operations["wallet_get_topup_policy"];
+        readonly put?: never;
+        readonly post?: never;
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
+    readonly "/api/v1/wallet/topup-quote": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        /** Quote the discount of a wallet charge */
+        readonly get: operations["wallet_get_topup_quote"];
+        readonly put?: never;
+        readonly post?: never;
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
     readonly "/api/v1/wallet/wallet": {
         readonly parameters: {
             readonly query?: never;
@@ -1267,7 +1301,7 @@ export interface components {
          * ApplicationErrorCode
          * @enum {integer}
          */
-        readonly ApplicationErrorCode: 900 | 901 | 902 | 999 | 1000 | 1100 | 1103 | 1104 | 1106 | 1107 | 1108 | 1200 | 1201 | 1202 | 1203 | 1204 | 1205 | 1206 | 1300 | 1301 | 1302 | 1303 | 1304 | 1305 | 1306 | 1307 | 1308 | 1309 | 1310 | 1400 | 1401 | 1500 | 1501 | 1502 | 1503 | 1504 | 1505 | 1506 | 1600 | 1601 | 1602 | 1603 | 1604 | 1605 | 1700 | 1701 | 1702 | 1800 | 1801 | 1802 | 1803 | 1804 | 1805 | 1806 | 1807 | 1808 | 1810 | 1811 | 1812 | 1813 | 1814 | 1815 | 1816;
+        readonly ApplicationErrorCode: 900 | 901 | 902 | 999 | 1000 | 1100 | 1103 | 1104 | 1106 | 1107 | 1108 | 1109 | 1200 | 1201 | 1202 | 1203 | 1204 | 1205 | 1206 | 1300 | 1301 | 1302 | 1303 | 1304 | 1305 | 1306 | 1307 | 1308 | 1309 | 1310 | 1400 | 1401 | 1500 | 1501 | 1502 | 1503 | 1504 | 1505 | 1506 | 1600 | 1601 | 1602 | 1603 | 1604 | 1605 | 1700 | 1701 | 1702 | 1800 | 1801 | 1802 | 1803 | 1804 | 1805 | 1806 | 1807 | 1808 | 1810 | 1811 | 1812 | 1813 | 1814 | 1815 | 1816;
         /** ApplicationErrorResponse */
         readonly ApplicationErrorResponse: {
             /**
@@ -1953,6 +1987,42 @@ export interface components {
          * @enum {string}
          */
         readonly SupportedCurrency: "IRR";
+        /** TopupNextTierResponse */
+        readonly TopupNextTierResponse: {
+            /** From Amount Usdmicro */
+            readonly from_amount_usdmicro: number;
+            /** Discount Irr */
+            readonly discount_irr: number | null;
+        };
+        /**
+         * TopupPolicyResponse
+         * @description What a customer may see of the top-up pricing: the charge range and the discount tiers.
+         */
+        readonly TopupPolicyResponse: {
+            /** Min Amount Usdmicro */
+            readonly min_amount_usdmicro: number;
+            /** Max Amount Usdmicro */
+            readonly max_amount_usdmicro: number;
+            /** Tiers */
+            readonly tiers: readonly components["schemas"]["TopupTierSchema"][];
+        };
+        /** TopupQuoteResponse */
+        readonly TopupQuoteResponse: {
+            /** Amount Usdmicro */
+            readonly amount_usdmicro: number;
+            /** Discount Usdmicro */
+            readonly discount_usdmicro: number;
+            /** Discount Irr */
+            readonly discount_irr: number | null;
+            readonly next_tier: components["schemas"]["TopupNextTierResponse"] | null;
+        };
+        /** TopupTierSchema */
+        readonly TopupTierSchema: {
+            /** From Amount Usdmicro */
+            readonly from_amount_usdmicro: number;
+            /** Discount Percent */
+            readonly discount_percent: number;
+        };
         /** UserChargeWalletRequest */
         readonly UserChargeWalletRequest: {
             /** Amount Usdmicro */
@@ -2179,6 +2249,10 @@ export type SchemaSubscriptionPlanListResponse = components['schemas']['Subscrip
 export type SchemaSubscriptionPlanResponse = components['schemas']['SubscriptionPlanResponse'];
 export type SchemaSubscriptionPurchaseRequest = components['schemas']['SubscriptionPurchaseRequest'];
 export type SchemaSupportedCurrency = components['schemas']['SupportedCurrency'];
+export type SchemaTopupNextTierResponse = components['schemas']['TopupNextTierResponse'];
+export type SchemaTopupPolicyResponse = components['schemas']['TopupPolicyResponse'];
+export type SchemaTopupQuoteResponse = components['schemas']['TopupQuoteResponse'];
+export type SchemaTopupTierSchema = components['schemas']['TopupTierSchema'];
 export type SchemaUserChargeWalletRequest = components['schemas']['UserChargeWalletRequest'];
 export type SchemaUserEditInfoRequest = components['schemas']['UserEditInfoRequest'];
 export type SchemaUserEditInfoResponse = components['schemas']['UserEditInfoResponse'];
@@ -3071,6 +3145,57 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["PaymentResponse"];
+                };
+            };
+            /** @description Validation Error */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    readonly wallet_get_topup_policy: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["TopupPolicyResponse"];
+                };
+            };
+        };
+    };
+    readonly wallet_get_topup_quote: {
+        readonly parameters: {
+            readonly query: {
+                readonly amount_usdmicro: number;
+            };
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["TopupQuoteResponse"];
                 };
             };
             /** @description Validation Error */
@@ -4147,7 +4272,7 @@ export const aiRegistryModelSupportedTypesEnumValues: ReadonlyArray<FlattenedDee
 export const aiTaskMessageStatusEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiTaskMessageStatusEnum"]> = ["PENDING", "IN_PROGRESS", "SUCCESS", "FAILED"];
 export const aiTaskRuleEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiTaskRuleEnum"]> = ["SYSTEM", "USER", "ASSISTANT", "TOOL", "FUNCTION", "INLINE"];
 export const aiTaskTypeEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiTaskTypeEnum"]> = ["TEXT", "IMAGE", "AUDIO", "VIDEO"];
-export const applicationErrorCodeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["ApplicationErrorCode"]> = [900, 901, 902, 999, 1000, 1100, 1103, 1104, 1106, 1107, 1108, 1200, 1201, 1202, 1203, 1204, 1205, 1206, 1300, 1301, 1302, 1303, 1304, 1305, 1306, 1307, 1308, 1309, 1310, 1400, 1401, 1500, 1501, 1502, 1503, 1504, 1505, 1506, 1600, 1601, 1602, 1603, 1604, 1605, 1700, 1701, 1702, 1800, 1801, 1802, 1803, 1804, 1805, 1806, 1807, 1808, 1810, 1811, 1812, 1813, 1814, 1815, 1816];
+export const applicationErrorCodeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["ApplicationErrorCode"]> = [900, 901, 902, 999, 1000, 1100, 1103, 1104, 1106, 1107, 1108, 1109, 1200, 1201, 1202, 1203, 1204, 1205, 1206, 1300, 1301, 1302, 1303, 1304, 1305, 1306, 1307, 1308, 1309, 1310, 1400, 1401, 1500, 1501, 1502, 1503, 1504, 1505, 1506, 1600, 1601, 1602, 1603, 1604, 1605, 1700, 1701, 1702, 1800, 1801, 1802, 1803, 1804, 1805, 1806, 1807, 1808, 1810, 1811, 1812, 1813, 1814, 1815, 1816];
 export const fileManagerMediaMetadataResponseKindValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["FileManagerMediaMetadataResponse"]["kind"]> = ["image", "video", "audio"];
 export const generationFailureActionEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["GenerationFailureActionEnum"]> = ["MODIFY_INPUT", "RETRY_LATER", "RETRY_NOW", "CONTACT_SUPPORT"];
 export const generationFailureReasonEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["GenerationFailureReasonEnum"]> = ["CONTENT_POLICY", "INVALID_INPUT", "RATE_LIMITED", "PROVIDER_UNAVAILABLE", "PROVIDER_TIMEOUT", "PROVIDER_OUT_OF_CREDIT", "PROVIDER_AUTH_FAILED", "PLATFORM_CONFIGURATION", "PROVIDER_FAILED", "INTERNAL", "OPERATOR"];
@@ -4235,6 +4360,7 @@ export const ApplicationErrorCodeMap = {
   1106: 1106,
   1107: 1107,
   1108: 1108,
+  1109: 1109,
   1200: 1200,
   1201: 1201,
   1202: 1202,

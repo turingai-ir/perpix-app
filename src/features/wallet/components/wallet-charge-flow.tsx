@@ -1,6 +1,8 @@
 import { useState } from "react";
 
 import { usePaymentRedirect } from "@/features/payment";
+import ErrorSection from "@/shared/components/error-section";
+import LoadingSection from "@/shared/components/loading-section";
 import { useAppTranslate } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";
 import { formatTokenAmount, parseTokenAmount } from "@/shared/utils";
@@ -8,7 +10,7 @@ import { formatTokenAmount, parseTokenAmount } from "@/shared/utils";
 import { CheckoutStepMotion } from "./checkout-step-motion";
 import { SubscriptionRequiredStep } from "./subscription-required-step";
 import { TokenAmountStep } from "./token-amount-step";
-import { useChargeWallet } from "../hooks/wallet-queries";
+import { useChargeWallet, useTopupPolicy } from "../hooks/wallet-queries";
 import { WalletChargeSurface } from "./wallet-charge-surface";
 import type { WalletChargeReason } from "../hooks/use-wallet-charge-dialog";
 
@@ -33,6 +35,7 @@ export function WalletChargeFlow({
   const chargeWalletState = useChargeWallet();
   const { openPaymentUrl } = usePaymentRedirect();
   const [amount, setAmount] = useState("");
+  const policy = useTopupPolicy(open && !requiresSubscription);
 
   const handleOpenChange = (nextOpen: boolean) => {
     onOpenChange(nextOpen);
@@ -60,24 +63,35 @@ export function WalletChargeFlow({
     }
   };
 
-  let content = (
-    <TokenAmountStep
-      balance={formatTokenAmount(balanceUsdmicro)}
-      initialAmount={amount}
-      isError={chargeWalletState.isError}
-      isPending={chargeWalletState.isPending}
-      notice={
-        reason
-          ? t(
-              `pages.app.layout.sidebar.balanceCard.chargeWallet.reasons.${reason}`,
-            )
-          : undefined
-      }
-      onRetry={chargeWalletState.reset}
-      onSubmit={createPayment}
-    />
+  let content = policy.isError ? (
+    <ErrorSection onRetry={() => void policy.refetch()} />
+  ) : (
+    <LoadingSection />
   );
   let stepKey = "amount";
+  if (policy.data) {
+    content = (
+      <TokenAmountStep
+        balance={formatTokenAmount(balanceUsdmicro)}
+        limits={{
+          minUsdmicro: policy.data.min_amount_usdmicro,
+          maxUsdmicro: policy.data.max_amount_usdmicro,
+        }}
+        initialAmount={amount}
+        isError={chargeWalletState.isError}
+        isPending={chargeWalletState.isPending}
+        notice={
+          reason
+            ? t(
+                `pages.app.layout.sidebar.balanceCard.chargeWallet.reasons.${reason}`,
+              )
+            : undefined
+        }
+        onRetry={chargeWalletState.reset}
+        onSubmit={createPayment}
+      />
+    );
+  }
   if (requiresSubscription) {
     stepKey = "subscription";
     content = (

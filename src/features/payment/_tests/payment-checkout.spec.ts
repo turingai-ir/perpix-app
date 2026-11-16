@@ -24,6 +24,15 @@ for (const delayedDetails of [false, true]) {
         },
       }),
     );
+    await page.route("**/api/v1/wallet/topup-policy", (route) =>
+      route.fulfill({
+        json: {
+          min_amount_usdmicro: 10_000,
+          max_amount_usdmicro: 1_000_000_000,
+          tiers: [{ from_amount_usdmicro: 0, discount_percent: 0 }],
+        },
+      }),
+    );
     await page.route("**/api/v1/user/subscription/active", (route) =>
       route.fulfill({ json: { plan: { uuid: "plan-1", is_default: false } } }),
     );
