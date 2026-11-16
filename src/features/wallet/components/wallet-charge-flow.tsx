@@ -1,7 +1,6 @@
 import { useState } from "react";
 
 import { usePaymentRedirect } from "@/features/payment";
-import { useActiveSubscription } from "@/features/pricing";
 import { useAppTranslate } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";
 import { formatTokenAmount, parseTokenAmount } from "@/shared/utils";
@@ -34,11 +33,6 @@ export function WalletChargeFlow({
   const chargeWalletState = useChargeWallet();
   const { openPaymentUrl } = usePaymentRedirect();
   const [amount, setAmount] = useState("");
-  const plan = useActiveSubscription(open).data?.plan;
-  const discountPlanName =
-    plan && (plan.wallet_topup_saving_irr ?? 0) > 0
-      ? (plan.display_name ?? plan.name)
-      : undefined;
 
   const handleOpenChange = (nextOpen: boolean) => {
     onOpenChange(nextOpen);
@@ -69,7 +63,6 @@ export function WalletChargeFlow({
   let content = (
     <TokenAmountStep
       balance={formatTokenAmount(balanceUsdmicro)}
-      discountPlanName={discountPlanName}
       initialAmount={amount}
       isError={chargeWalletState.isError}
       isPending={chargeWalletState.isPending}

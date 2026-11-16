@@ -16,12 +16,10 @@ const plan = {
   currency: "IRR",
   duration_days: 30,
   balance_gift_amount_usdmicro: 500000,
-  wallet_topup_discount_percent: 4,
-  wallet_topup_saving_irr: 107800,
   meta: { features: ["Feature line that must stay hidden"] },
 };
 
-test("plan card shows description, prices, gift credit and wallet top-up saving only", async ({
+test("plan card shows description, prices and gift credit only", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 375, height: 812 });
@@ -46,10 +44,7 @@ test("plan card shows description, prices, gift credit and wallet top-up saving 
   await expect(card).toContainText("قیمت قبل از تخفیف");
   await expect(card).toContainText("قیمت با تخفیف");
   await expect(card).toContainText("توکن هدیهٔ کیف پول");
-  await expect(card).toContainText(
-    "هر ۱٬۰۰۰ توکن شارژ کیف پول، ۱۰٬۷۸۰ تومان ارزون‌تر",
-  );
-  await expect(card).not.toContainText("٪ تخفیف روی");
+  await expect(card).not.toContainText("شارژ کیف پول،");
   await expect(card).toContainText("Plan description shown on the card");
   await expect(card).not.toContainText("Feature line that must stay hidden");
   await expect(card).not.toContainText("مدل");

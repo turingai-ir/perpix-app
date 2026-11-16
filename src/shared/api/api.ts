@@ -1763,10 +1763,6 @@ export interface components {
             readonly tax_amount: string;
             /** Total Amount */
             readonly total_amount: string;
-            /** Discount Amount Usdmicro */
-            readonly discount_amount_usdmicro: string;
-            /** Discount Amount */
-            readonly discount_amount: string;
         };
         /**
          * PaymentExecutionStatus
@@ -1919,14 +1915,10 @@ export interface components {
             readonly base_price_irr?: number | null;
             /** Discounted Price Irr */
             readonly discounted_price_irr?: number | null;
-            /** Wallet Topup Saving Irr */
-            readonly wallet_topup_saving_irr?: number | null;
             /** Duration Days */
             readonly duration_days: number;
             /** Balance Gift Amount Usdmicro */
             readonly balance_gift_amount_usdmicro: number | null;
-            /** Wallet Topup Discount Percent */
-            readonly wallet_topup_discount_percent: number;
             /** Meta */
             readonly meta: {
                 readonly [key: string]: unknown;

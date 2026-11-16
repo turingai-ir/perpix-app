@@ -1,10 +1,10 @@
 import { type FC, type ReactNode } from "react";
-import { Gift, Sparkles, WalletCards } from "lucide-react";
+import { Gift, Sparkles } from "lucide-react";
 
 import { useAppTranslate } from "@/shared/hooks";
 import { type SchemaSubscriptionPlanResponse } from "@/shared/api";
 import { APP_I18_KEYS } from "@/shared/i18n";
-import { formatTokenAmount, formatTomanAmount } from "@/shared/utils";
+import { formatTokenAmount } from "@/shared/utils";
 import PricingPlanPrice from "./pricing-plan-price";
 import { Badge } from "@/shared/ui/badge";
 import { cn } from "@/shared/lib/utils";
@@ -45,7 +45,6 @@ const PricingPlanCard: FC<PricingPlanCardProps> = ({
 }) => {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   const gift = plan.balance_gift_amount_usdmicro;
-  const topupSaving = plan.wallet_topup_saving_irr ?? 0;
   const hasDuration = Number.isFinite(plan.duration_days);
   const highlights = [
     gift
@@ -54,15 +53,6 @@ const PricingPlanCard: FC<PricingPlanCardProps> = ({
           Icon: Gift,
           text: t("features.pricing.giftBalance", {
             amount: formatTokenAmount(gift),
-          }),
-        }
-      : null,
-    topupSaving > 0
-      ? {
-          key: "topup-saving",
-          Icon: WalletCards,
-          text: t("features.pricing.walletTopupSaving", {
-            amount: formatTomanAmount(topupSaving),
           }),
         }
       : null,

@@ -7,7 +7,7 @@ import { formatTomanAmount } from "@/shared/utils";
 
 export type PaymentBreakdown = Pick<
   SchemaPaymentDetailsResponse,
-  "currency" | "base_amount" | "tax_amount" | "total_amount" | "discount_amount"
+  "currency" | "base_amount" | "tax_amount" | "total_amount"
 >;
 
 export const paymentCurrencyDisplay: Record<

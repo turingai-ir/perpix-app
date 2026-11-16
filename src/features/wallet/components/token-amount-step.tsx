@@ -1,12 +1,6 @@
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  AlertCircle,
-  BadgePercent,
-  Info,
-  LoaderCircle,
-  WalletCards,
-} from "lucide-react";
+import { AlertCircle, Info, LoaderCircle, WalletCards } from "lucide-react";
 import { NumericFormat } from "react-number-format";
 import z from "zod";
 
@@ -33,8 +27,6 @@ const PRESET_AMOUNTS = [100, 500, 1_000, 5_000] as const;
 
 type TokenAmountStepProps = {
   balance: string;
-  /** Name of the active plan, when it makes wallet top-ups cheaper. */
-  discountPlanName?: string;
   initialAmount: string;
   isError: boolean;
   isPending: boolean;
@@ -94,18 +86,6 @@ export function TokenAmountStep(props: TokenAmountStepProps) {
             {props.balance} {t("common.token")}
           </strong>
         </div>
-        {props.discountPlanName ? (
-          <p
-            data-wallet-charge-discount
-            className="text-accent-emerald flex items-center gap-2 text-sm font-semibold"
-          >
-            <BadgePercent aria-hidden="true" className="size-4 shrink-0" />
-            {t(
-              "pages.app.layout.sidebar.balanceCard.chargeWallet.planDiscount",
-              { plan: props.discountPlanName },
-            )}
-          </p>
-        ) : null}
         <FormField
           control={form.control}
           name="amount"
