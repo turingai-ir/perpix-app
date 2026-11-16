@@ -24,7 +24,7 @@ import {
   WalletChargeTitle,
 } from "./wallet-charge-surface";
 
-const PRESET_AMOUNTS = [100, 500, 1_000, 5_000] as const;
+const PRESET_AMOUNTS = [500, 2_000, 5_000, 10_000] as const;
 
 type TokenAmountStepProps = {
   balance: string;

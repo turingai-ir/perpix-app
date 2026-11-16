@@ -94,6 +94,21 @@ test.describe("Wallet checkout", () => {
     expect(gatewayVisits).toBe(1);
   });
 
+  test("suggests 500, 2,000, 5,000 and 10,000 tokens", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/");
+    await page.getByRole("button", { name: "شارژ کیف پول" }).click();
+    const presets = page
+      .getByRole("dialog")
+      .getByRole("button", { name: /^[۰-۹٬]+ توکن$/ });
+    await expect(presets).toHaveText([
+      "۵۰۰ توکن",
+      "۲٬۰۰۰ توکن",
+      "۵٬۰۰۰ توکن",
+      "۱۰٬۰۰۰ توکن",
+    ]);
+  });
+
   test("takes the charge limits from the server", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.route("**/api/v1/wallet/topup-policy", (route) =>
@@ -277,8 +292,8 @@ test.describe("Wallet checkout", () => {
     expect(bounds!.width).toBeLessThanOrEqual(375);
     expect(bounds!.y + bounds!.height).toBeLessThanOrEqual(813);
     await expect(page.getByLabel("تعداد توکن")).toHaveCSS("font-size", "16px");
-    await page.getByRole("button", { name: "۱۰۰ توکن" }).click();
-    await expect(page.getByLabel("تعداد توکن")).toHaveValue("100");
+    await page.getByRole("button", { name: "۲٬۰۰۰ توکن" }).click();
+    await expect(page.getByLabel("تعداد توکن")).toHaveValue("2,000");
   });
 
   test("closes the navigation before opening the wallet dialog on tablet", async ({
