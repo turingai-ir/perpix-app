@@ -2010,8 +2010,6 @@ export interface components {
         readonly TopupQuoteResponse: {
             /** Amount Usdmicro */
             readonly amount_usdmicro: number;
-            /** Discount Usdmicro */
-            readonly discount_usdmicro: number;
             /** Discount Irr */
             readonly discount_irr: number | null;
             readonly next_tier: components["schemas"]["TopupNextTierResponse"] | null;

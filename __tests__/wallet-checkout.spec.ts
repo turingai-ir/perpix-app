@@ -152,7 +152,6 @@ test.describe("Wallet checkout", () => {
       return route.fulfill({
         json: {
           amount_usdmicro: Number(amount),
-          discount_usdmicro: 20_000,
           discount_irr: 53_900,
           next_tier: { from_amount_usdmicro: 1_000_000, discount_irr: 134_750 },
         },
@@ -430,7 +429,6 @@ async function mockAppApi(page: Page) {
       return route.fulfill({
         json: {
           amount_usdmicro: amount,
-          discount_usdmicro: 0,
           discount_irr: 0,
           next_tier: null,
         },
