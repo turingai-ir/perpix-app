@@ -1301,7 +1301,7 @@ export interface components {
          * ApplicationErrorCode
          * @enum {integer}
          */
-        readonly ApplicationErrorCode: 900 | 901 | 902 | 999 | 1000 | 1100 | 1103 | 1104 | 1106 | 1107 | 1108 | 1109 | 1200 | 1201 | 1202 | 1203 | 1204 | 1205 | 1206 | 1300 | 1301 | 1302 | 1303 | 1304 | 1305 | 1306 | 1307 | 1308 | 1309 | 1310 | 1400 | 1401 | 1500 | 1501 | 1502 | 1503 | 1504 | 1505 | 1506 | 1600 | 1601 | 1602 | 1603 | 1604 | 1605 | 1700 | 1701 | 1702 | 1800 | 1801 | 1802 | 1803 | 1804 | 1805 | 1806 | 1807 | 1808 | 1810 | 1811 | 1812 | 1813 | 1814 | 1815 | 1816;
+        readonly ApplicationErrorCode: 900 | 901 | 902 | 999 | 1000 | 1100 | 1103 | 1104 | 1106 | 1107 | 1108 | 1109 | 1200 | 1201 | 1202 | 1203 | 1204 | 1205 | 1206 | 1300 | 1301 | 1302 | 1303 | 1304 | 1305 | 1306 | 1307 | 1308 | 1309 | 1310 | 1400 | 1401 | 1500 | 1501 | 1502 | 1503 | 1504 | 1505 | 1506 | 1507 | 1600 | 1601 | 1602 | 1603 | 1604 | 1605 | 1700 | 1701 | 1702 | 1800 | 1801 | 1802 | 1803 | 1804 | 1805 | 1806 | 1807 | 1808 | 1810 | 1811 | 1812 | 1813 | 1814 | 1815 | 1816;
         /** ApplicationErrorResponse */
         readonly ApplicationErrorResponse: {
             /**
@@ -1436,6 +1436,8 @@ export interface components {
             readonly height?: number | null;
             /** Duration Seconds */
             readonly duration_seconds?: number | null;
+            /** Has Audio */
+            readonly has_audio?: boolean | null;
         };
         /** FileManagerMultipartCompleteRequest */
         readonly FileManagerMultipartCompleteRequest: {
@@ -1855,6 +1857,17 @@ export interface components {
             readonly requires_review: boolean;
         };
         /**
+         * PlanSettings
+         * @description What one subscription plan allows, one key per area of the product, each with its own rules.
+         *
+         *     Stored as a single JSON object on the plan, so a new area or a new limit needs no migration: add a
+         *     section here (like `studio`) or a field in a section, each with a default. A key nobody defined is
+         *     rejected, so a typo made in the admin panel is not silently stored and ignored.
+         */
+        readonly PlanSettings: {
+            readonly studio?: components["schemas"]["StudioPlanSettings"];
+        };
+        /**
          * RegistrationChallengeRequest
          * @example {
          *       "phone_number": "+989123456789"
@@ -1912,6 +1925,21 @@ export interface components {
              */
             readonly next_step: "registration";
         };
+        /**
+         * StudioPlanSettings
+         * @description What one subscription plan allows in the studio; a new limit is a new field with a default here.
+         *
+         *     Stored as one JSON object on the plan, so a new limit needs no migration. A key nobody defined is
+         *     rejected, so a typo made in the admin panel is not silently stored and ignored.
+         */
+        readonly StudioPlanSettings: {
+            /**
+             * Caption Preset Limit
+             * @description How many caption presets of their own a user on this plan can keep.
+             * @default 0
+             */
+            readonly caption_preset_limit: number;
+        };
         /** SubscriptionPlanListResponse */
         readonly SubscriptionPlanListResponse: {
             /** Items */
@@ -1953,6 +1981,7 @@ export interface components {
             readonly duration_days: number;
             /** Balance Gift Amount Usdmicro */
             readonly balance_gift_amount_usdmicro: number | null;
+            readonly settings: components["schemas"]["PlanSettings"];
             /** Meta */
             readonly meta: {
                 readonly [key: string]: unknown;
@@ -2240,9 +2269,11 @@ export type SchemaPaymentFulfillmentStatus = components['schemas']['PaymentFulfi
 export type SchemaPaymentHistoryItemResponse = components['schemas']['PaymentHistoryItemResponse'];
 export type SchemaPaymentListResponse = components['schemas']['PaymentListResponse'];
 export type SchemaPaymentResponse = components['schemas']['PaymentResponse'];
+export type SchemaPlanSettings = components['schemas']['PlanSettings'];
 export type SchemaRegistrationChallengeRequest = components['schemas']['RegistrationChallengeRequest'];
 export type SchemaRegistrationRequest = components['schemas']['RegistrationRequest'];
 export type SchemaRegistrationStepResponse = components['schemas']['RegistrationStepResponse'];
+export type SchemaStudioPlanSettings = components['schemas']['StudioPlanSettings'];
 export type SchemaSubscriptionPlanListResponse = components['schemas']['SubscriptionPlanListResponse'];
 export type SchemaSubscriptionPlanResponse = components['schemas']['SubscriptionPlanResponse'];
 export type SchemaSubscriptionPurchaseRequest = components['schemas']['SubscriptionPurchaseRequest'];
@@ -4270,7 +4301,7 @@ export const aiRegistryModelSupportedTypesEnumValues: ReadonlyArray<FlattenedDee
 export const aiTaskMessageStatusEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiTaskMessageStatusEnum"]> = ["PENDING", "IN_PROGRESS", "SUCCESS", "FAILED"];
 export const aiTaskRuleEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiTaskRuleEnum"]> = ["SYSTEM", "USER", "ASSISTANT", "TOOL", "FUNCTION", "INLINE"];
 export const aiTaskTypeEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiTaskTypeEnum"]> = ["TEXT", "IMAGE", "AUDIO", "VIDEO"];
-export const applicationErrorCodeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["ApplicationErrorCode"]> = [900, 901, 902, 999, 1000, 1100, 1103, 1104, 1106, 1107, 1108, 1109, 1200, 1201, 1202, 1203, 1204, 1205, 1206, 1300, 1301, 1302, 1303, 1304, 1305, 1306, 1307, 1308, 1309, 1310, 1400, 1401, 1500, 1501, 1502, 1503, 1504, 1505, 1506, 1600, 1601, 1602, 1603, 1604, 1605, 1700, 1701, 1702, 1800, 1801, 1802, 1803, 1804, 1805, 1806, 1807, 1808, 1810, 1811, 1812, 1813, 1814, 1815, 1816];
+export const applicationErrorCodeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["ApplicationErrorCode"]> = [900, 901, 902, 999, 1000, 1100, 1103, 1104, 1106, 1107, 1108, 1109, 1200, 1201, 1202, 1203, 1204, 1205, 1206, 1300, 1301, 1302, 1303, 1304, 1305, 1306, 1307, 1308, 1309, 1310, 1400, 1401, 1500, 1501, 1502, 1503, 1504, 1505, 1506, 1507, 1600, 1601, 1602, 1603, 1604, 1605, 1700, 1701, 1702, 1800, 1801, 1802, 1803, 1804, 1805, 1806, 1807, 1808, 1810, 1811, 1812, 1813, 1814, 1815, 1816];
 export const fileManagerMediaMetadataResponseKindValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["FileManagerMediaMetadataResponse"]["kind"]> = ["image", "video", "audio"];
 export const generationFailureActionEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["GenerationFailureActionEnum"]> = ["MODIFY_INPUT", "RETRY_LATER", "RETRY_NOW", "CONTACT_SUPPORT"];
 export const generationFailureReasonEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["GenerationFailureReasonEnum"]> = ["CONTENT_POLICY", "INVALID_INPUT", "RATE_LIMITED", "PROVIDER_UNAVAILABLE", "PROVIDER_TIMEOUT", "PROVIDER_OUT_OF_CREDIT", "PROVIDER_AUTH_FAILED", "PLATFORM_CONFIGURATION", "PROVIDER_FAILED", "INTERNAL", "OPERATOR"];
@@ -4387,6 +4418,7 @@ export const ApplicationErrorCodeMap = {
   1504: 1504,
   1505: 1505,
   1506: 1506,
+  1507: 1507,
   1600: 1600,
   1601: 1601,
   1602: 1602,
