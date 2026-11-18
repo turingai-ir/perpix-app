@@ -61,7 +61,7 @@ FROM nginxinc/nginx-unprivileged:1.27-alpine AS runner
 USER nginx
 WORKDIR /usr/share/nginx/html
 
-COPY --chown=nginx:nginx nginx.conf /etc/nginx/conf.d/default.conf
+COPY --chown=nginx:nginx apps/app/nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=builder --chown=nginx:nginx /app/apps/app/dist .
 
 EXPOSE 8081
