@@ -1,0 +1,1588 @@
+{
+  "common": {
+    "addAudio": "افزودن صدا",
+    "addImage": "افزودن عکس",
+    "addVideo": "افزودن ویدیو",
+    "advancedSettings": "تنظیمات پیشرفته",
+    "aiProvider": "ارائه‌دهنده هوش مصنوعی",
+    "invalidField": "مقدار این فیلد معتبر نیست",
+    "and": "و",
+    "back": "بازگشت",
+    "cancel": "انصراف",
+    "chat": "چت",
+    "chooseModel": "انتخاب مدل",
+    "confirmDialog": {
+      "confirm": "تأیید",
+      "delete": "حذف",
+      "reasonLabel": "علت عملیات (اختیاری):",
+      "reasonPlaceholder": "توضیح مختصر در صورت نیاز..."
+    },
+    "table": {
+      "loading": "در حال بارگذاری داده‌ها...",
+      "error": "خطا در دریافت اطلاعات",
+      "forbiddenHint": "شما مجوزهای لازم برای مشاهده این بخش را ندارید.",
+      "retry": "تلاش دوباره",
+      "empty": "موردی برای نمایش وجود ندارد",
+      "showingItems": "نمایش {{from}} تا {{to}} از {{total}} مورد",
+      "perPage": "تعداد در صفحه:",
+      "pageOf": "صفحه {{current}} از {{total}}",
+      "prevPage": "صفحه قبل",
+      "nextPage": "صفحه بعد"
+    },
+    "coolTexts": {
+      "cooking": "درحال پخت و پز هستیم ..."
+    },
+    "day": "روز",
+    "download": "دانلود",
+    "dynamicConfig": {
+      "fields": {
+        "audio_reference_type": "نوع مرجع صوتی",
+        "copyright_detection": "تشخیص کپی‌رایت",
+        "delivery_method": "روش تحویل",
+        "duration": "مدت زمان",
+        "elements": "المان‌ها",
+        "enhance_prompt": "بهبود پرامپت",
+        "frame_images": "تصاویر فریم",
+        "generate_audio": "تولید صدا",
+        "character_orientation": "جهت‌گیری کاراکتر",
+        "image_search": "جستجوی تصویر",
+        "include_cost": "نمایش هزینه",
+        "input_video": "ویدیوی ورودی",
+        "keep_original_sound": "حفظ صدای اصلی",
+        "mode": "حالت تولید",
+        "multi_prompt": "پرامپت چندبخشی",
+        "n": "تعداد خروجی",
+        "negative_prompt": "پرامپت منفی",
+        "output_format": "فرمت خروجی",
+        "output_quality": "کیفیت خروجی",
+        "output_type": "نوع خروجی",
+        "prompt": "پرامپت",
+        "prompt_upsampling": "ارتقای پرامپت",
+        "raw": "حالت خام",
+        "reference_audios": "صداهای مرجع",
+        "reference_images": "تصاویر مرجع",
+        "reference_videos": "ویدیوی مرجع",
+        "rendering_speed": "سرعت رندر",
+        "resize_mode": "حالت تغییر اندازه",
+        "resolution": "رزولوشن",
+        "safety_check": "بررسی ایمنی",
+        "safety_mode": "حالت ایمنی",
+        "safety_tolerance": "تلرانس ایمنی",
+        "seed": "سید",
+        "size": "اندازه",
+        "supports_audio": "پشتیبانی از صدا",
+        "supports_edit": "پشتیبانی از ویرایش",
+        "supports_extend": "پشتیبانی از گسترش",
+        "supports_lipsync": "پشتیبانی از لیپ‌سینک",
+        "supports_mask": "پشتیبانی از ماسک",
+        "thinking": "سطح تفکر",
+        "ttl": "مدت نگهداری",
+        "upload_endpoint": "آدرس آپلود",
+        "web_search": "جستجوی وب"
+      },
+      "optionLabels": {
+        "mode": {
+          "audio_driven_video": "ویدیوی صوت‌محور",
+          "image_to_video": "عکس به ویدیو",
+          "motion_control": "کنترل حرکت",
+          "text_to_video": "متن به ویدیو",
+          "video_edit": "ویرایش ویدیو"
+        }
+      }
+    },
+    "emptyTitle": "بدون عنوان",
+    "error": "خطا",
+    "errorOnUploading": "خطایی هنگام آپلود فایل پیش آمده است",
+    "fetchErrors": {
+      "forbidden": "شما دسترسی لازم را ندارید",
+      "network": "خطای شبکه لطفا اتصال خود را بررسی کنید",
+      "offlineMutation": "شما آفلاین هستید. لطفا آنلاین شوید",
+      "serverError": "خطای داخلی رخ داده است بعدا امتحان کنید",
+      "timeout": "متاسفانه خطایی رخ داده است دوباره تلاش کنید"
+    },
+    "hour": "ساعت",
+    "image": "عکس",
+    "minute": "دقیقه",
+    "older": "قدیمی تر",
+    "seconds": "ثانیه",
+    "selectDuration": "انتخاب مدت زمان",
+    "selectSize": "انتخاب سایز",
+    "taskStatus": {
+      "canceled": "لغو شده",
+      "completed": "انجام شده",
+      "failed": "نا موفق",
+      "inProgress": "در حال انجام",
+      "pending": "در حال انجام"
+    },
+    "thisMonth": "این ماه",
+    "thisWeek": "این هفته",
+    "today": "امروز",
+    "token": "توکن",
+    "tomans": "تومان",
+    "upgradeRequired": "نیازمند ارتقا",
+    "uploaded": "آپلود شد",
+    "uploadErrors": {
+      "etagMissing": "آپلود فایل کامل نشد. لطفا دوباره تلاش کنید.",
+      "partFailed": "آپلود فایل کامل نشد. لطفا دوباره تلاش کنید."
+    },
+    "uploading": "در حال آپلود",
+    "video": "ویدیو",
+    "validationErrors": {
+      "duplicateFile": "این فایل از قبل موجود است",
+      "dynamicConfig": {
+        "invalidArray": "مقدار باید آرایه باشد",
+        "invalidEnum": "مقدار انتخاب‌شده معتبر نیست",
+        "invalidInteger": "مقدار باید عدد صحیح باشد",
+        "invalidNumber": "مقدار باید عدد باشد",
+        "invalidString": "مقدار باید متن باشد",
+        "maxItems": "حداکثر {{max}} آیتم مجاز است",
+        "maxLength": "حداکثر {{max}} کاراکتر مجاز است",
+        "maxNumber": "حداکثر مقدار {{max}} است",
+        "minItems": "حداقل {{min}} آیتم لازم است",
+        "minLength": "حداقل {{min}} کاراکتر لازم است",
+        "minNumber": "حداقل مقدار {{min}} است",
+        "required": "این فیلد الزامی است"
+      },
+      "email": "ایمیل نامعتبر است",
+      "equalCharacter": " {{name}} باید {{length}} کاراکتر باشد",
+      "imageDimensionsUnreadable": "امکان بررسی ابعاد عکس وجود ندارد",
+      "imageMaxSize": "حجم عکس باید کمتر از {{maxSize}} مگابایت باشد",
+      "imageTooSmall": "عکس خیلی کوچک است",
+      "invalidFileFormat": "فرمت فایل مجاز نمی باشد",
+      "max": "{{name}} حداکثر می می تواند {{max}} باشد",
+      "maxLength": "{{name}} باید کمتر از {{max}} کاراکتر باشد",
+      "maxSize": "حجم فایل باید کمتر از {{maxSizeMb}} مگابایت باشد",
+      "min": "{{name}} حداقل باید {{min}} باشد",
+      "minLength": "{{name}} باید بیشتر از {{min}} کاراکتر باشد",
+      "mobile": "شماره تلفن نامعتبر است",
+      "number": "{{name}} باید عدد باشد",
+      "onlyEnglishAndPersianCharacters": "{{name}} فقط حروف انگلیسی و فارسی مجاز است",
+      "password": "رمز عبور باید حداقل شامل هشت کاراکتر و حداقل یک حرف بزرگ و یک حرف کوچک انگلیسی باشد",
+      "passwordMatch": "رمز عبور با تکرار آن برابر نیست",
+      "required": "{{name}} الزامی است"
+    },
+    "yesterday": "دیروز"
+  },
+  "components": {
+    "custom": {
+      "errorBoundary": {
+        "fallbackMessage": "متاسفانه خطایی رخ داده است لطفا صفحه را رفرش کنید"
+      },
+      "errorSection": {
+        "description": "متاسفانه خطایی رخ داده است دوباره تلاش کنید",
+        "retry": "تلاش مجدد"
+      },
+      "multiImageUploadInput": {
+        "maxSize": "حجم عکس باید کمتر از {{maxSize}} مگابایت باشد"
+      }
+    },
+    "form": {
+      "rules": {
+        "incorrectRegex": "{{name}} نامعتبر است",
+        "maxLength": "{{name}} باید کمتر از {{max}} کاراکتر باشد",
+        "minLength": "{{name}} باید بیشتر از {{min}} کاراکتر باشد",
+        "phoneNumber": "شماره تلفن نامعتبر است",
+        "required": "{{name}} الزامی است"
+      }
+    }
+  },
+  "features": {
+    "auth": {
+      "validation": {
+        "phone": "شماره موبایل معتبر ایران وارد کنید.",
+        "otp": "کد تأیید باید ۶ رقم باشد.",
+        "passwordRequired": "رمز عبور را وارد کنید.",
+        "newPasswordLength": "رمز عبور باید بین ۸ تا ۱۲۸ کاراکتر باشد.",
+        "passwordMismatch": "رمز عبور با تکرار آن برابر نیست."
+      },
+      "failures": {
+        "invalidCredentials": "شماره یا رمز عبور معتبر نیست.",
+        "currentPasswordInvalid": "رمز عبور فعلی صحیح نیست.",
+        "challengeInvalid": "کد تأیید نامعتبر یا منقضی شده است. در صورت نیاز کد تازه درخواست کنید.",
+        "rateLimited": "تعداد درخواست‌ها زیاد است. {{seconds}} ثانیه بعد دوباره تلاش کنید.",
+        "rateLimitedUnknown": "تعداد درخواست‌ها زیاد است. کمی بعد دوباره تلاش کنید.",
+        "validation": "ورودی نامعتبر است.",
+        "forbidden": "شما دسترسی لازم را ندارید.",
+        "upgradeRequired": "برای این عملیات به اشتراک مناسب نیاز دارید.",
+        "conflict": "این درخواست قابل انجام نیست.",
+        "network": "ارتباط با سرور برقرار نشد. اتصال خود را بررسی کنید.",
+        "server": "خطای موقت رخ داد. دوباره تلاش کنید؛ نتیجهٔ عملیات قبلی نامعلوم است.",
+        "contract": "پاسخ نامعتبر از سرور دریافت شد.",
+        "aborted": "درخواست لغو شد."
+      },
+      "login": {
+        "title": "ورود",
+        "description": "به پر پیکسل ای آی خوش آمدید",
+        "phoneLabel": "شماره موبایل",
+        "phoneHint": "مثال: 09123456789",
+        "passwordLabel": "رمز عبور",
+        "submit": "ورود",
+        "forgotPassword": "فراموشی رمز عبور",
+        "createAccount": "ثبت‌نام",
+        "changePhone": "تغییر شماره موبایل"
+      },
+      "register": {
+        "title": "ثبت‌نام",
+        "description": "شمارهٔ موبایل خود را وارد کنید تا کد تأیید ارسال شود.",
+        "submit": "دریافت کد تأیید",
+        "haveAccount": "حساب دارید؟ وارد شوید"
+      },
+      "reset": {
+        "title": "بازیابی رمز عبور",
+        "description": "شمارهٔ موبایل خود را وارد کنید.",
+        "submit": "دریافت کد تأیید",
+        "backToLogin": "بازگشت به ورود"
+      },
+      "complete": {
+        "registrationTitle": "تأیید شماره و انتخاب رمز",
+        "registrationDescription": "کد تأیید برای شماره شما ارسال شد. کد و رمز عبور دلخواه خود را وارد کنید.",
+        "resetTitle": "انتخاب رمز عبور جدید",
+        "description": "اگر این شماره واجد شرایط باشد، کد تأیید ارسال می‌شود.",
+        "otpLabel": "کد تأیید",
+        "passwordLabel": "رمز عبور",
+        "newPasswordLabel": "رمز عبور جدید",
+        "confirmLabel": "تکرار رمز عبور",
+        "passwordHint": "بین ۸ تا ۱۲۸ کاراکتر",
+        "submitRegistration": "ثبت‌نام",
+        "submitReset": "تغییر رمز عبور",
+        "resend": "ارسال مجدد کد",
+        "resendIn": "ارسال مجدد کد تا {{seconds}} ثانیه دیگر",
+        "expiresIn": "اعتبار کد: {{seconds}} ثانیه",
+        "expired": "کد منقضی شد.",
+        "requestNew": "درخواست کد تازه",
+        "back": "تغییر شماره"
+      },
+      "toasts": {
+        "loggedIn": "با موفقیت وارد شدید",
+        "registered": "ثبت‌نام با موفقیت انجام شد",
+        "resetDone": "رمز عبور تغییر کرد. با رمز جدید وارد شوید.",
+        "codeResent": "اگر این شماره واجد شرایط باشد، کد تأیید ارسال می‌شود.",
+        "signOutUnconfirmed": "خروج از حساب روی سرور تأیید نشد.",
+        "signOutRetry": "تلاش مجدد",
+        "signedOutEverywhere": "از همهٔ دستگاه‌ها خارج شدید",
+        "passwordChanged": "رمز عبور تغییر کرد. دوباره وارد شوید.",
+        "sessionEnded": "نشست شما پایان یافت. دوباره وارد شوید."
+      },
+      "changePassword": {
+        "menu": "تغییر رمز عبور",
+        "title": "تغییر رمز عبور",
+        "description": "با تغییر رمز، از همهٔ دستگاه‌ها خارج می‌شوید.",
+        "currentLabel": "رمز عبور فعلی",
+        "newLabel": "رمز عبور جدید",
+        "confirmLabel": "تکرار رمز عبور جدید",
+        "submit": "تغییر رمز عبور",
+        "cancel": "انصراف"
+      },
+      "logoutAll": {
+        "menu": "خروج از همهٔ دستگاه‌ها"
+      },
+      "bootstrap": {
+        "loading": "در حال بررسی نشست…",
+        "unavailableTitle": "اتصال برقرار نشد",
+        "unavailableDescription": "بررسی نشست انجام نشد. اتصال خود را بررسی و دوباره تلاش کنید.",
+        "retry": "تلاش مجدد"
+      }
+    },
+    "users": {
+      "menuTitle": "کاربران",
+      "title": "مدیریت کاربران",
+      "description": "مشاهده، جست‌وجو و مدیریت حساب‌های کاربری و دسترسی‌ها",
+      "userDetail": "جزئیات کاربر",
+      "backToList": "بازگشت به لیست کاربران",
+      "columns": {
+        "user": "کاربر",
+        "uuid": "شناسه کاربری",
+        "role": "نقش / دسترسی‌ها",
+        "status": "وضعیت حساب",
+        "verified": "تأیید شماره",
+        "createdAt": "تاریخ عضویت",
+        "actions": "عملیات"
+      },
+      "roles": {
+        "user": "کاربر عادی",
+        "admin": "مدیر",
+        "superadmin": "مدیر ارشد"
+      },
+      "statuses": {
+        "active": "فعال",
+        "banned": "مسدود"
+      },
+      "verified": {
+        "yes": "تأیید شده",
+        "no": "تأیید نشده"
+      },
+      "filters": {
+        "searchPlaceholder": "جستجو با نام، شماره همراه یا شناسه...",
+        "allRoles": "همه نقش‌ها",
+        "allStatuses": "همه وضعیت‌ها",
+        "sortNewest": "جدیدترین ابتدا",
+        "sortOldest": "قدیمی‌ترین ابتدا",
+        "activeFiltersApplied": "فیلترها اعمال شده‌اند",
+        "reset": "پاک کردن همه فیلترها"
+      },
+      "profile": {
+        "title": "مشخصات حساب کاربری",
+        "name": "نام و نام خانوادگی",
+        "phone": "شماره همراه",
+        "email": "آدرس ایمیل",
+        "uuid": "شناسه کاربری (UUID)",
+        "walletUuid": "شناسه کیف پول پیش‌فرض",
+        "scopes": "دسترسی‌ها و مجوزها",
+        "createdAt": "تاریخ عضویت",
+        "updatedAt": "آخرین ویرایش"
+      },
+      "sessions": {
+        "title": "نشست‌های فعال و پیشین کاربر",
+        "subtitle": "مشاهده وضعیت دستگاه‌ها و ورودهای اخیر به حساب کاربری",
+        "uuid": "شناسه نشست",
+        "status": "وضعیت نشست",
+        "createdAt": "تاریخ شروع",
+        "expiresAt": "تاریخ انقضا",
+        "revokedAt": "تاریخ لغو",
+        "actions": "عملیات",
+        "active": "فعال",
+        "expired": "منقضی شده",
+        "revoked": "لغو شده",
+        "revokeOne": "قطع نشست",
+        "revokeAll": "قطع همه نشست‌ها",
+        "empty": "نشستی برای این کاربر ثبت نشده است."
+      },
+      "actions": {
+        "viewDetail": "جزئیات",
+        "ban": "مسدودسازی کاربر",
+        "unban": "رفع مسدودیت",
+        "revokeAllSessions": "قطع تمام نشست‌ها",
+        "hardDelete": "حذف دائمی",
+        "banSuccess": "کاربر با موفقیت مسدود شد.",
+        "banError": "مسدودسازی کاربر با خطا مواجه شد.",
+        "unbanSuccess": "مسدودیت کاربر با موفقیت رفع شد.",
+        "unbanError": "رفع مسدودیت کاربر با خطا مواجه شد.",
+        "revokeSessionSuccess": "نشست با موفقیت لغو شد.",
+        "revokeSessionError": "لغو نشست با خطا مواجه شد.",
+        "revokeAllSessionsSuccess": "تمام نشست‌های کاربر با موفقیت لغو شدند.",
+        "revokeAllSessionsError": "لغو نشست‌های کاربر با خطا مواجه شد.",
+        "deleteSuccess": "کاربر با موفقیت به طور دائمی حذف شد.",
+        "deleteError": "حذف کاربر با خطا مواجه شد."
+      },
+      "dialogs": {
+        "banTitle": "مسدودسازی حساب کاربر",
+        "banDescription": "با مسدودسازی، تمام نشست‌های کاربر بلافاصله باطل شده و امکان ورود مجدد به حساب غیرفعال خواهد شد.",
+        "banConfirm": "مسدود کردن کاربر",
+        "banReasonLabel": "دلیل مسدودسازی (اختیاری):",
+        "banReasonPlaceholder": "مثال: نقض قوانین استفاده از سرویس...",
+        "unbanTitle": "رفع مسدودیت کاربر",
+        "unbanDescription": "با رفع مسدودیت، کاربر مجدداً قادر به ورود به سامانه خواهد بود. اعتبار نشست‌های قبلی احیا نخواهد شد.",
+        "unbanConfirm": "رفع مسدودیت",
+        "unbanReasonLabel": "دلیل رفع مسدودیت (اختیاری):",
+        "revokeAllTitle": "قطع تمامی نشست‌های کاربر",
+        "revokeAllDescription": "با انجام این عملیات، کاربر از کلیه دستگاه‌ها و مرورگرها خارج خواهد شد اما حساب کاربری مسدود نمی‌شود.",
+        "revokeAllConfirm": "قطع تمام نشست‌ها",
+        "revokeReasonLabel": "علت قطع نشست‌ها (اختیاری):",
+        "revokeOneTitle": "قطع این نشست",
+        "revokeOneDescription": "دستگاه متصل به این نشست از حساب خارج خواهد شد.",
+        "revokeOneConfirm": "قطع نشست",
+        "deleteTitle": "حذف دائمی حساب کاربری",
+        "deleteDescription": "هشدار: این عملیات غیرقابل بازگشت است! تمام اطلاعات، فایل‌ها و سوابق این کاربر به صورت دائمی حذف خواهد شد. جهت تأیید، شماره همراه کاربر را وارد کنید.",
+        "deleteConfirm": "حذف دائمی کاربر",
+        "enterPhonePrompt": "جهت تأیید شماره همراه «{{phone}}» را در کادر زیر وارد کنید:"
+      }
+    },
+    "finance": {
+      "menuSection": "مدیریت مالی",
+      "payments": {
+        "menuTitle": "پرداخت‌ها",
+        "title": "لیست پرداخت‌ها",
+        "description": "مشاهده و پیگیری تمام تراکنش‌های پرداخت، وضعیت‌های بانکی و جزئیات مبالغ",
+        "detailTitle": "جزئیات پرداخت",
+        "detailSubtitle": "اطلاعات کامل درگاه، شناسه تراکنش بانکی و وضعیت پردازش",
+        "backToList": "بازگشت به لیست پرداخت‌ها",
+        "columns": {
+          "id": "شناسه پرداخت",
+          "user": "کاربر",
+          "target": "نوع هدف",
+          "amount": "مبلغ (ریال / میکرودلار)",
+          "financialStatus": "وضعیت مالی",
+          "fulfillmentStatus": "وضعیت تحویل",
+          "createdAt": "تاریخ ایجاد",
+          "actions": "عملیات"
+        },
+        "statusLabels": {
+          "SUCCEEDED": "پرداخت موفق",
+          "FAILED": "ناموفق",
+          "PENDING": "در انتظار پرداخت",
+          "PROCESSING": "در حال پردازش",
+          "CANCELED": "لغو شده",
+          "EXPIRED": "منقضی شده",
+          "REQUIRES_REVIEW": "نیازمند بررسی",
+          "REFUNDED": "مسترد شده"
+        },
+        "fulfillmentLabels": {
+          "FULFILLED": "تحویل شده",
+          "UNFULFILLED": "تحویل نشده",
+          "FAILED": "خطا در تحویل",
+          "PROCESSING": "در حال تحویل"
+        },
+        "targetLabels": {
+          "wallet_topup": "شارژ کیف پول",
+          "subscription": "خرید اشتراک"
+        },
+        "filters": {
+          "searchPlaceholder": "جستجو با شناسه پرداخت، کد پیگیری یا کاربر...",
+          "allFinancialStatuses": "همه وضعیت‌های مالی",
+          "allFulfillmentStatuses": "همه وضعیت‌های تحویل",
+          "allTargetTypes": "همه انواع هدف",
+          "activeFiltersApplied": "فیلترها اعمال شده‌اند",
+          "reset": "پاک کردن فیلترها"
+        },
+        "fields": {
+          "uuid": "شناسه پرداخت (UUID)",
+          "userUuid": "شناسه کاربر",
+          "provider": "درگاه پرداخت",
+          "trackId": "کد پیگیری درگاه",
+          "orderId": "شماره سفارش (Order ID)",
+          "targetType": "نوع تراکنش",
+          "amountUsd": "مبلغ دلاری",
+          "amountIrr": "مبلغ ریالی",
+          "financialStatus": "وضعیت پرداخت",
+          "fulfillmentStatus": "وضعیت تحویل سرویس",
+          "callbackUrl": "آدرس بازگشت (Callback)",
+          "createdAt": "زمان ایجاد",
+          "updatedAt": "آخرین بروزرسانی"
+        }
+      },
+      "wallets": {
+        "menuTitle": "کیف پول‌ها",
+        "title": "مدیریت کیف پول‌ها",
+        "description": "مشاهده موجودی کیف پول کاربران، وضعیت قفل و امکان شارژ دستی",
+        "detailTitle": "جزئیات کیف پول",
+        "detailSubtitle": "اطلاعات موجودی، سوابق تراکنش‌ها و تاریخچه شارژ",
+        "backToList": "بازگشت به لیست کیف پول‌ها",
+        "transactionsTitle": "سوابق تراکنش‌های این کیف پول",
+        "chargeButton": "شارژ کیف پول",
+        "columns": {
+          "id": "شناسه کیف پول",
+          "user": "کاربر",
+          "balance": "موجودی فعلی",
+          "status": "وضعیت",
+          "createdAt": "تاریخ ایجاد",
+          "actions": "عملیات"
+        },
+        "statuses": {
+          "locked": "قفل شده",
+          "unlocked": "فعال و آزاد"
+        },
+        "filters": {
+          "searchPlaceholder": "جستجو با شناسه کیف پول یا کاربر...",
+          "allStatuses": "همه وضعیت‌ها",
+          "activeFiltersApplied": "فیلترها اعمال شده‌اند",
+          "reset": "پاک کردن فیلترها"
+        },
+        "fields": {
+          "uuid": "شناسه کیف پول (UUID)",
+          "userUuid": "شناسه کاربر",
+          "balanceUsd": "موجودی دلاری",
+          "balanceMicro": "موجودی میکرودلار",
+          "isLocked": "وضعیت حساب",
+          "createdAt": "تاریخ ساخت",
+          "updatedAt": "آخرین تغییرات"
+        },
+        "chargeModal": {
+          "title": "شارژ دستی کیف پول",
+          "description": "مبلغ مورد نظر را به دلار وارد کنید. این مبلغ مستقیماً به موجودی کیف پول کاربر اضافه خواهد شد.",
+          "targetUser": "کاربر دریافت‌کننده:",
+          "amountLabel": "مبلغ شارژ (دلار آمریکا):",
+          "amountPlaceholder": "مثال: 10.00",
+          "microEquivalent": "معادل میکرودلار:",
+          "irrEquivalent": "تقریبی به ریال:",
+          "reasonLabel": "علت یا شماره ارجاع شارژ (اختیاری):",
+          "reasonPlaceholder": "مثال: هدیه ثبت‌نام، جبران اختلال سیستم...",
+          "confirmWarning": "این عملیات غیرقابل بازگشت است و مستقیماً موجودی کاربر را تغییر می‌دهد.",
+          "confirmCheckbox": "مبلغ و شناسه گیرنده را بررسی کرده و مسئولیت انجام شارژ را می‌پذیرم.",
+          "submit": "انجام شارژ کیف پول",
+          "cancel": "انصراف"
+        }
+      },
+      "transactions": {
+        "menuTitle": "تراکنش‌ها",
+        "title": "سوابق تراکنش‌ها",
+        "description": "رهگیری تمام تراکنش‌های سیستم، واریز، برداشت، مصرف سرویس و شارژ مدیر",
+        "columns": {
+          "id": "شناسه تراکنش",
+          "wallet": "کیف پول",
+          "user": "کاربر",
+          "type": "منبع تراکنش",
+          "direction": "جهت",
+          "amount": "مبلغ",
+          "balanceAfter": "موجودی پس از تراکنش",
+          "date": "زمان ثبت"
+        },
+        "directionLabels": {
+          "CREDIT": "افزایش اعتبار (واریز)",
+          "DEBIT": "کسر اعتبار (برداشت)"
+        },
+        "sourceLabels": {
+          "ADMIN_CHARGE": "شارژ دستی مدیر",
+          "PAYMENT": "درگاه پرداخت آنلاین",
+          "TASK_USAGE": "مصرف پردازش هوش مصنوعی",
+          "SUBSCRIPTION": "خرید بسته اشتراکی",
+          "REFUND": "استرداد وجه"
+        },
+        "filters": {
+          "searchPlaceholder": "جستجو با شناسه تراکنش، کاربر یا کیف پول...",
+          "allDirections": "همه جهت‌ها (واریز / برداشت)",
+          "allSources": "همه منابع تراکنش",
+          "activeFiltersApplied": "فیلترها اعمال شده‌اند",
+          "reset": "پاک کردن فیلترها"
+        }
+      },
+      "topupPolicy": {
+        "menuTitle": "تنظیمات شارژ کیف پول"
+      },
+      "exchangeRate": {
+        "menuTitle": "نرخ ارز و گزارش‌ها",
+        "title": "نرخ ارز و گزارش‌های مالی",
+        "description": "مشاهدهٔ آخرین نرخ برابری ارز، بروزرسانی دستی و شاخص‌های مالی سیستم",
+        "refreshButton": "بروزرسانی نرخ ارز",
+        "usdToIrr": "نرخ ۱ دلار آمریکا (USD)",
+        "active": "فعال",
+        "unitRatio": "واحد محاسباتی میکرودلار",
+        "lastUpdate": "آخرین استعلام و بروزرسانی",
+        "calculatorTitle": "تبدیل و محاسبه‌گر سریع ارز",
+        "amountUsd": "مبلغ به دلار (USD):"
+      },
+      "reports": {
+        "title": "گزارش‌های آماری مالی",
+        "description": "بررسی حجم و آمار تفکیکی پرداخت‌ها، تراکنش‌ها و موجودی سیستم",
+        "tabs": {
+          "payments": "گزارش پرداخت‌ها",
+          "wallets": "تراکنش‌های کیف پول",
+          "balances": "موجودی‌ها"
+        },
+        "paymentStatusesTitle": "تفکیک پرداخت‌ها بر اساس وضعیت",
+        "paymentDailyTitle": "روند روزانه پرداخت‌ها",
+        "walletSourcesTitle": "تفکیک تراکنش‌ها بر اساس منبع (Source)",
+        "walletDirectionsTitle": "تفکیک بر اساس جهت (واریز / برداشت)",
+        "walletDailyTitle": "روند روزانه فعالیت کیف پول‌ها",
+        "balancesTitle": "گزارش تجمیعی موجودی‌های سیستم"
+      },
+      "actions": {
+        "chargeSuccess": "کیف پول با موفقیت شارژ شد.",
+        "chargeError": "شارژ کیف پول با خطا مواجه شد.",
+        "rateRefreshSuccess": "نرخ ارز با موفقیت بروزرسانی شد.",
+        "rateRefreshError": "بروزرسانی نرخ ارز با خطا مواجه شد."
+      }
+    },
+    "subscriptions": {
+      "menuSection": "مدیریت اشتراک‌ها",
+      "menuTitle": "اشتراک‌ها",
+      "title": "مدیریت اشتراک کاربران",
+      "description": "مشاهده، فعال‌سازی، بررسی وضعیت و تاریخ انقضای اشتراک‌های کاربران",
+      "detailTitle": "جزئیات اشتراک",
+      "backToList": "بازگشت به لیست اشتراک‌ها",
+      "columns": {
+        "id": "شناسه اشتراک",
+        "user": "کاربر",
+        "plan": "پلن اشتراکی",
+        "status": "وضعیت",
+        "startedAt": "تاریخ شروع",
+        "expiresAt": "تاریخ انقضا"
+      },
+      "statusLabels": {
+        "active": "فعال",
+        "expired": "منقضی شده",
+        "scheduled": "زمان‌بندی‌شده",
+        "replaced": "جایگزین‌شده"
+      },
+      "filters": {
+        "searchPlaceholder": "جستجو با شناسه اشتراک یا کاربر...",
+        "allStatuses": "همه وضعیت‌ها",
+        "allPlans": "همه پلن‌ها",
+        "activeFiltersApplied": "فیلترها اعمال شده‌اند",
+        "reset": "پاک کردن همه فیلترها"
+      },
+      "fields": {
+        "uuid": "شناسه اشتراک (UUID)",
+        "user": "کاربر مشترک",
+        "plan": "پلن اشتراکی",
+        "startedAt": "تاریخ شروع",
+        "expiresAt": "تاریخ انقضا",
+        "createdAt": "تاریخ ثبت در سیستم"
+      },
+      "cards": {
+        "timingTitle": "وضعیت و زمان‌بندی",
+        "userPlanTitle": "مشخصات کاربر و پلن"
+      },
+      "activateModal": {
+        "title": "فعال‌سازی دستی اشتراک",
+        "description": "شناسه کاربر و پلن اشتراکی مورد نظر را جهت فعال‌سازی فوری وارد کنید.",
+        "userUuidLabel": "شناسه کاربری (User UUID):",
+        "planLabel": "انتخاب پلن اشتراکی:",
+        "selectPlan": "یک پلن را انتخاب کنید...",
+        "submit": "فعال‌سازی اشتراک"
+      },
+      "dialogs": {
+        "deactivateTitle": "غیرفعال‌سازی اشتراک کاربر",
+        "deactivateDescription": "با غیرفعال‌سازی، دسترسی کاربر به امکانات و مدل‌های این پلن قطع خواهد شد. آیا از این عملیات اطمینان دارید؟",
+        "deactivateConfirm": "غیرفعال‌سازی اشتراک"
+      },
+      "actions": {
+        "activateNew": "فعال‌سازی اشتراک کاربر",
+        "deactivate": "غیرفعال‌سازی",
+        "activateSuccess": "اشتراک کاربر با موفقیت فعال شد.",
+        "activateError": "فعال‌سازی اشتراک با خطا مواجه شد.",
+        "deactivateSuccess": "اشتراک کاربر با موفقیت غیرفعال شد.",
+        "deactivateError": "غیرفعال‌سازی اشتراک با خطا مواجه شد.",
+        "createPlanSuccess": "پلن جدید با موفقیت ایجاد شد.",
+        "createPlanError": "ایجاد پلن با خطا مواجه شد.",
+        "updatePlanSuccess": "پلن با موفقیت ویرایش شد.",
+        "updatePlanError": "ویرایش پلن با خطا مواجه شد."
+      },
+      "plans": {
+        "menuTitle": "پلن‌ها",
+        "title": "مدیریت پلن‌های اشتراکی",
+        "description": "تعریف و ویرایش پلن‌ها، قیمت‌گذاری، تعیین مدت اعتبار و سهمیه ابزارهای هوش مصنوعی",
+        "createNew": "افزودن پلن جدید",
+        "searchPlaceholder": "جستجو در نام و توضیحات پلن...",
+        "recommended": "پیشنهادی",
+        "default": "پیش‌فرض",
+        "active": "فعال",
+        "inactive": "غیرفعال",
+        "createTitle": "ایجاد پلن اشتراکی جدید",
+        "editTitle": "ویرایش پلن اشتراکی",
+        "formDescription": "مشخصات، قیمت‌ها، مدت زمان اعتبار و دسترسی‌های این پلن را تعیین کنید.",
+        "createSubmit": "ایجاد پلن",
+        "columns": {
+          "name": "نام و عنوان پلن",
+          "duration": "مدت اعتبار",
+          "prices": "قیمت ریالی",
+          "gift": "اعتبار هدیه",
+          "status": "وضعیت"
+        },
+        "fields": {
+          "name": "شناسه انگلیسی (slug):",
+          "displayName": "عنوان نمایشی فارسی:",
+          "description": "توضیحات پلن:",
+          "duration": "مدت اعتبار (روز):",
+          "basePrice": "قیمت پایه ($):",
+          "discountedPrice": "قیمت تخفیف‌خورده ($):",
+          "giftAmount": "اعتبار هدیه کیف پول دلاری ($):",
+          "scopes": "دسترسی‌ها و مجوزها (با کاما جدا کنید):",
+          "models": "مدل‌های مجاز (با کاما جدا کنید):",
+          "isActive": "پلن فعال است",
+          "isRecommended": "پیشنهاد ویژه (Recommended)",
+          "isDefault": "پلن پیش‌فرض"
+        }
+      },
+      "operations": {
+        "menuTitle": "سوابق عملیات",
+        "title": "سوابق عملیات و گزارش‌های اشتراک",
+        "description": "رهگیری تغییرات وضعیت، فعال‌سازی‌های مدیر و گزارش‌های تجمیعی پلن‌ها",
+        "reportsTitle": "گزارش‌های دوره‌ای اشتراک‌ها",
+        "tabs": {
+          "logs": "سوابق عملیات",
+          "reports": "گزارش‌های آماری"
+        },
+        "success": "موفق",
+        "failed": "ناموفق",
+        "columns": {
+          "operation": "نوع عملیات",
+          "status": "نتیجه",
+          "targetUser": "کاربر هدف",
+          "actor": "انجام‌دهنده (مدیر / سیستم)",
+          "date": "زمان ثبت"
+        }
+      },
+      "reports": {
+        "plansTitle": "توزیع اشتراک‌ها بر اساس پلن",
+        "expirationsTitle": "روند انقضای اشتراک‌ها"
+      }
+    },
+    "ai": {
+      "menuSection": "هوش مصنوعی",
+      "menuTitle": "هوش مصنوعی",
+      "tasks": {
+        "menuTitle": "وظایف",
+        "pageTitle": "مدیریت وظایف هوش مصنوعی",
+        "pageDesc": "مشاهده و بررسی صف وظایف پردازشی کاربران، پیام‌ها و گزارش‌های روزانه",
+        "detailTitle": "جزئیات وظیفه هوش مصنوعی",
+        "overview": "مشخصات وظیفه",
+        "user": "کاربر",
+        "type": "نوع پردازش",
+        "createdAt": "تاریخ ثبت",
+        "updatedAt": "آخرین بروزرسانی",
+        "messagesList": "پیام‌های این وظیفه",
+        "noMessages": "پیامی برای این وظیفه ثبت نشده است.",
+        "searchPlaceholder": "جستجو در وظایف...",
+        "empty": "وظیفه‌ای مطابق با این فیلترها یافت نشد.",
+        "messageResultTitle": "نتیجه اجرای پیام وظیفه",
+        "messageResultDesc": "مشاهده خروجی و متادیتای پردازش شده توسط هوش مصنوعی",
+        "taskStatus": "وضعیت وظیفه",
+        "modelUuid": "شناسه مدل",
+        "modelConfig": "پیکربندی مدل (AI Model Config)",
+        "noResult": "نتیجه‌ای برای این پیام یافت نشد.",
+        "tabs": {
+          "list": "لیست وظایف",
+          "reports": "گزارش‌های آماری"
+        },
+        "types": {
+          "all": "همه انواع وظایف"
+        },
+        "reports": {
+          "typesTitle": "توزیع وظایف بر اساس نوع محتوا",
+          "dailyTitle": "روند روزانه ثبت وظایف"
+        },
+        "columns": {
+          "uuid": "شناسه وظیفه",
+          "type": "نوع وظیفه",
+          "user": "کاربر",
+          "createdAt": "تاریخ ثبت",
+          "updatedAt": "آخرین بروزرسانی"
+        },
+        "messages": {
+          "uuid": "شناسه پیام",
+          "role": "نقش (Role)",
+          "content": "متن پیام",
+          "status": "وضعیت",
+          "createdAt": "زمان ارسال",
+          "checkResult": "بررسی نتیجه"
+        }
+      },
+      "gateway": {
+        "menuTitle": "درخواست‌ها",
+        "pageTitle": "درخواست‌های AI Gateway",
+        "pageDesc": "مدیریت و نظارت بر کلیه فراخوانی‌های Gateway به ارائه‌دهندگان هوش مصنوعی",
+        "detailTitle": "جزئیات درخواست AI Gateway",
+        "overview": "اطلاعات کلی درخواست",
+        "user": "کاربر",
+        "status": "وضعیت درخواست",
+        "externalTaskId": "شناسه وظیفه ارائه‌دهنده خارجی",
+        "statusCode": "کد وضعیت HTTP",
+        "retries": "تعداد تلاش‌های مجدد",
+        "createdAt": "زمان ایجاد",
+        "costs": "هزینه",
+        "modelConfig": "پیکربندی مدل (AI Model Config)",
+        "rawRequest": "بدنه درخواست ارسالی (Raw Request)",
+        "rawResponse": "پاسخ دریافتی ارائه‌دهنده (Raw Response)",
+        "refreshAction": "بروزرسانی وضعیت از ارائه‌دهنده",
+        "refreshSuccess": "وضعیت درخواست با موفقیت بروزرسانی شد.",
+        "refreshError": "بروزرسانی وضعیت درخواست ناموفق بود.",
+        "searchPlaceholder": "جستجو در درخواست‌ها...",
+        "empty": "درخواستی یافت نشد.",
+        "tabs": {
+          "list": "لیست درخواست‌ها",
+          "reports": "گزارش‌های Gateway"
+        },
+        "statuses": {
+          "all": "همه وضعیت‌ها"
+        },
+        "reports": {
+          "statuses": "بر اساس وضعیت",
+          "models": "بر اساس مدل",
+          "providers": "بر اساس ارائه‌دهنده",
+          "daily": "روند روزانه"
+        },
+        "columns": {
+          "uuid": "شناسه درخواست",
+          "status": "وضعیت",
+          "model": "مدل",
+          "provider": "ارائه‌دهنده",
+          "cost": "هزینه (میکرودلار)",
+          "retries": "تلاش مجدد",
+          "createdAt": "زمان ثبت"
+        }
+      },
+      "models": {
+        "menuTitle": "مدل‌ها",
+        "pageTitle": "مدل‌های هوش مصنوعی (AI Models)",
+        "pageDesc": "مدیریت رجیستری مدل‌های هوش مصنوعی، انواع ورودی/خروجی و اتصال به ارائه‌دهندگان",
+        "newModel": "مدل جدید",
+        "searchPlaceholder": "جستجو در مدل‌ها...",
+        "empty": "مدلی یافت نشد.",
+        "createTitle": "ایجاد مدل هوش مصنوعی جدید",
+        "editTitle": "ویرایش مدل هوش مصنوعی",
+        "formDesc": "مشخصات مدل، ورودی/خروجی‌های پشتیبانی‌شده و مالک مدل را تعیین کنید.",
+        "name": "نام شناسه (کد مدل)",
+        "displayName": "عنوان نمایشی",
+        "owner": "مالک مدل (Model Owner)",
+        "iconUrl": "آدرس آیکون",
+        "description": "توضیحات",
+        "supportedInputs": "ورودی‌های پشتیبانی‌شده",
+        "supportedOutputs": "خروجی‌های پشتیبانی‌شده",
+        "tags": "برچسب‌ها (با کاما جدا کنید)",
+        "isActive": "مدل فعال و آماده سرویس‌دهی باشد",
+        "linkProviderTitle": "اتصال ارائه‌دهنده به مدل",
+        "selectProvider": "انتخاب ارائه‌دهنده (AI Provider)",
+        "priority": "اولویت فراخوانی (Priority)",
+        "linkConfirm": "اتصال ارائه‌دهنده",
+        "createSuccess": "مدل هوش مصنوعی با موفقیت ایجاد شد.",
+        "createError": "ایجاد مدل ناموفق بود.",
+        "updateSuccess": "اطلاعات مدل با موفقیت بروزرسانی شد.",
+        "updateError": "بروزرسانی مدل ناموفق بود.",
+        "addProviderSuccess": "ارائه‌دهنده با موفقیت به مدل متصل شد.",
+        "addProviderError": "اتصال ارائه‌دهنده به مدل ناموفق بود.",
+        "updateProviderLinkSuccess": "تنظیمات اتصال ارائه‌دهنده بروزرسانی شد.",
+        "updateProviderLinkError": "بروزرسانی اتصال ارائه‌دهنده ناموفق بود.",
+        "columns": {
+          "name": "نام و عنوان مدل",
+          "types": "ورودی / خروجی",
+          "costRange": "دامنه هزینه",
+          "status": "وضعیت"
+        }
+      },
+      "providers": {
+        "menuTitle": "ارائه‌دهندگان",
+        "pageTitle": "ارائه‌دهندگان هوش مصنوعی (AI Providers)",
+        "pageDesc": "مدیریت کلیدهای API و اتصال به سرویس‌دهنده‌های بالادست مثل OpenAI، Google و Runware",
+        "newProvider": "افزودن ارائه‌دهنده",
+        "searchPlaceholder": "جستجو در ارائه‌دهندگان...",
+        "empty": "ارائه‌دهنده‌ای یافت نشد.",
+        "createTitle": "افزودن ارائه‌دهنده جدید",
+        "editTitle": "ویرایش ارائه‌دهنده هوش مصنوعی",
+        "formDesc": "تنظیمات اتصال، کلید API و محدودیت نرخ درخواست ارائه‌دهنده را وارد کنید.",
+        "name": "نوع سرویس ارائه‌دهنده",
+        "displayName": "عنوان نمایشی",
+        "baseApiUrl": "آدرس Base API",
+        "apiKey": "کلید API (API Key)",
+        "rateLimit": "محدودیت نرخ (بر دقیقه)",
+        "costMicro": "ارزش هر واحد به میکرودلار (usdmicro)",
+        "createSuccess": "ارائه‌دهنده با موفقیت ایجاد شد.",
+        "createError": "ایجاد ارائه‌دهنده ناموفق بود.",
+        "updateSuccess": "ارائه‌دهنده با موفقیت بروزرسانی شد.",
+        "updateError": "بروزرسانی ارائه‌دهنده ناموفق بود.",
+        "columns": {
+          "name": "نام ارائه‌دهنده",
+          "hasKey": "وضعیت کلید API",
+          "createdAt": "تاریخ ثبت",
+          "availability": "وضعیت مسیردهی"
+        },
+        "costMicroHint": "قیمت هر credit در KIE (مثلاً 5000) یا هر دلار در Runware (1000000). تغییرش فقط روی درخواست‌های بعدی اثر دارد.",
+        "costMicroInvalid": "باید بیشتر از صفر باشد؛ صفر یعنی ساخت رایگان.",
+        "reenable": "فعال‌سازی دستی",
+        "reenableHint": "معمولاً لازم نیست: با اولین درخواست موفق خودکار فعال می‌شود.",
+        "reenableSuccess": "ارائه‌دهنده دوباره در مسیردهی قرار گرفت.",
+        "reenableError": "فعال‌سازی دوباره ارائه‌دهنده ناموفق بود."
+      }
+    },
+    "studio": {
+      "menuSection": "استودیو",
+      "captionPresets": {
+        "menuTitle": "قالب‌های کپشن"
+      }
+    },
+    "files": {
+      "menuSection": "فایل‌ها",
+      "menuTitle": "فایل‌ها",
+      "pageTitle": "مدیریت فایل‌ها (File Manager)",
+      "pageDesc": "مشاهده، پیش‌نمایش، ویرایش مشخصات، و حذف تکی یا گروهی فایل‌های بارگذاری شده",
+      "detailTitle": "جزئیات فایل",
+      "overview": "مشخصات فنی فایل",
+      "download": "دانلود فایل",
+      "preview": "پیش‌نمایش محتوا",
+      "previewTitle": "پیش‌نمایش فایل",
+      "editTitle": "ویرایش اطلاعات فایل",
+      "fileName": "نام فایل",
+      "metaJson": "متادیتای JSON (اختیاری)",
+      "searchPlaceholder": "جستجو بر اساس نام فایل...",
+      "empty": "فایلی یافت نشد.",
+      "deleteConfirmTitle": "تأیید حذف فایل",
+      "bulkDeleteConfirmTitle": "تأیید حذف گروهی فایل‌ها",
+      "bulkDeleteConfirm": "حذف گروهی فایل‌ها",
+      "updateSuccess": "اطلاعات فایل با موفقیت ویرایش شد.",
+      "updateError": "ویرایش اطلاعات فایل ناموفق بود.",
+      "deleteSuccess": "فایل با موفقیت حذف شد.",
+      "deleteError": "حذف فایل ناموفق بود.",
+      "bulkDeleteSuccess": "فایل‌ها با موفقیت حذف شدند.",
+      "bulkDeleteError": "حذف گروهی فایل‌ها ناموفق بود.",
+      "tabs": {
+        "list": "لیست فایل‌ها",
+        "reports": "گزارش‌های فایل"
+      },
+      "access": {
+        "all": "همه دسترسی‌ها"
+      },
+      "reports": {
+        "typesTitle": "توزیع فایل‌ها بر اساس نوع محتوا (MIME Type)",
+        "dailyTitle": "روند روزانه آپلود فایل‌ها"
+      },
+      "columns": {
+        "name": "نام و فرمت فایل",
+        "size": "حجم فایل",
+        "access": "دسترسی",
+        "expiry": "وضعیت انقضا",
+        "user": "کاربر",
+        "createdAt": "تاریخ آپلود"
+      }
+    },
+    "security": {
+      "menuSection": "امنیت",
+      "menuTitle": "امنیت",
+      "status": {
+        "all": "همه وضعیت‌ها",
+        "active": "فعال",
+        "revoked": "لغو شده",
+        "expired": "منقضی شده"
+      },
+      "sessions": {
+        "menuTitle": "نشست‌ها",
+        "pageTitle": "مدیریت نشست‌های کاربران",
+        "pageDesc": "مشاهده کلیه نشست‌های فعال، منقضی یا لغو شده و قابلیت پایان دادن اجباری به نشست",
+        "searchPlaceholder": "شناسه کاربر (User UUID)...",
+        "empty": "نشستی یافت نشد.",
+        "user": "کاربر",
+        "uuid": "شناسه نشست",
+        "status": "وضعیت",
+        "createdAt": "تاریخ شروع",
+        "expiresAt": "زمان انقضا",
+        "revokedAt": "زمان لغو",
+        "revoke": "لغو نشست",
+        "revokeConfirmTitle": "تأیید لغو نشست کاربر",
+        "tabs": {
+          "list": "لیست نشست‌ها",
+          "reports": "گزارش نشست‌ها"
+        },
+        "reports": {
+          "dailyTitle": "آمار و روند ثبت نشست‌ها"
+        }
+      },
+      "tokens": {
+        "menuTitle": "توکن‌های API",
+        "pageTitle": "مدیریت توکن‌های API کاربران",
+        "pageDesc": "مشاهده و ابطال توکن‌های ماشین و اعتبارهای دسترسی ایجاد شده توسط کاربران",
+        "searchPlaceholder": "جستجو در نام یا شناسه توکن...",
+        "empty": "توکنی یافت نشد.",
+        "name": "نام توکن",
+        "user": "کاربر",
+        "scopes": "دسترسی‌ها (Scopes)",
+        "status": "وضعیت",
+        "createdAt": "تاریخ صدور",
+        "expiresAt": "تاریخ انقضا",
+        "revoke": "ابطال توکن",
+        "revokeConfirmTitle": "تأیید ابطال توکن API",
+        "tabs": {
+          "list": "لیست توکن‌ها",
+          "reports": "گزارش توکن‌ها"
+        },
+        "reports": {
+          "dailyTitle": "آمار و روند صدور توکن‌ها"
+        }
+      },
+      "audit": {
+        "menuTitle": "رویدادهای امنیتی",
+        "pageTitle": "رویدادهای امنیتی و ممیزی (Audit Log)",
+        "pageDesc": "ثبت دقیق کلیه اقدامات حساس، تغییرات وضعیت کاربران و نشست‌ها برای پیگیری‌های نظارتی",
+        "searchPlaceholder": "جستجو در نوع عملیات...",
+        "empty": "رویدادی یافت نشد.",
+        "action": "نوع عملیات",
+        "actor": "مجری عملیات (Actor)",
+        "targetUser": "کاربر هدف",
+        "resourceUuid": "شناسه منبع",
+        "reason": "توضیحات / دلیل",
+        "createdAt": "تاریخ و زمان"
+      }
+    },
+    "mediaUploader": {
+      "actions": {
+        "close": "بستن",
+        "upload": "آپلود"
+      },
+      "dialog": {
+        "description": "فایل‌های قبلی را انتخاب کنید یا فایل جدید آپلود کنید."
+      },
+      "emptyFiles": "فایلی برای نمایش وجود ندارد.",
+      "loadingMore": "در حال بارگذاری فایل‌ها...",
+      "newFile": {
+        "description": "پس از پایان آپلود، فایل به انتخاب‌ها اضافه می‌شود.",
+        "title": "آپلود فایل جدید"
+      },
+      "uploadStatus": "وضعیت آپلود",
+      "userFiles": "فایل‌های شما"
+    },
+    "pricing": {
+      "currentPrice": "قیمت",
+      "discountedPrice": "قیمت با تخفیف",
+      "discountPercent": "{{percent}}٪ تخفیف",
+      "description": "شما برای استفاده از امکانات پرپیکس نیاز دارید یکی از بسته های زیر را خریداری کنید",
+      "previousPrice": "قیمت قبل از تخفیف",
+      "priceUnavailable": "قیمت در دسترس نیست",
+      "plans": {
+        "basic": {
+          "action": "خرید",
+          "description": "مناسب برای همه",
+          "features": [
+            "نگه داری فایل ها تا ۷روز",
+            "دسترسی به تولید عکس",
+            "دسترسی به تولید ویدیو",
+            "تولید ۱۲۰ عکس یا ۴ ویدیو"
+          ],
+          "title": "پایه"
+        },
+        "economic": {
+          "action": "خرید",
+          "description": "مناسب برای کم مصرف ها",
+          "features": [
+            "نگه داری فایل ها تا ۷روز",
+            "دسترسی به تولید عکس",
+            "تولید ۷۰ عکس"
+          ],
+          "title": "اقتصادی"
+        },
+        "free": {
+          "title": "بدون اشتراک"
+        },
+        "pro": {
+          "action": "خرید",
+          "description": "مناسب برای حرفه ای ها",
+          "features": [
+            "نگه داری فایل ها تا ۷روز",
+            "دسترسی به تولید عکس",
+            "دسترسی به تولید ویدیو",
+            "تولید ۳۶۰ عکس یا ۲۰ ویدیو"
+          ],
+          "title": "حرفه ای"
+        }
+      },
+      "purchase": "خرید",
+      "title": "بسته ها"
+    },
+    "pwaInstall": {
+      "action": "نصب برنامه",
+      "ios": {
+        "description": "در آیفون نصب مستقیم از داخل مرورگر پشتیبانی نمی‌شود. با دو قدم زیر برنامه را به صفحه اصلی اضافه کنید.",
+        "steps": {
+          "addToHome": {
+            "description": "گزینه Add to Home Screen را بزنید و سپس Add را انتخاب کنید.",
+            "title": "Add to Home Screen را انتخاب کنید"
+          },
+          "share": {
+            "description": "در پایین Safari روی آیکن Share، همان مربع فلش‌دار، بزنید.",
+            "title": "منوی Share را باز کنید"
+          }
+        },
+        "title": "نصب روی آیفون"
+      }
+    }
+  },
+  "pages": {
+    "editor": {
+      "title": "ویرایشگر تصویر",
+      "smartTitle": "ویرایشگر هوشمند تصویر",
+      "uploaderDesc": "برای شروع، یک عکس را انتخاب کنید. می‌توانید آن را برش دهید، تغییر اندازه دهید یا فیلترهای مختلف اعمال کنید.",
+      "uploaderBtn": "انتخاب عکس از گالری یا دوربین",
+      "back": "بازگشت",
+      "changeImage": "تغییر عکس",
+      "cropImage": "برش تصویر",
+      "resizeImage": "تغییر اندازه",
+      "filters": "فیلترها",
+      "download": "دانلود",
+      "downloadSuccess": "تصویر با موفقیت دانلود شد",
+      "downloadError": "خطا در دانلود تصویر",
+      "widthPx": "عرض (پیکسل)",
+      "heightPx": "ارتفاع (پیکسل)",
+      "brightness": "روشنایی",
+      "contrast": "کنتراست",
+      "blur": "تاری",
+      "sepia": "سپیا",
+      "grayscale": "سیاه و سفید",
+      "filtersTitle": "فیلترهای تصویر",
+      "uploaderError": "لطفاً یک فایل تصویر انتخاب کنید",
+      "toggleGrid": "نمایش شبکه",
+      "toggleRuler": "نمایش خط‌کش",
+      "zoomIn": "بزرگنمایی",
+      "zoomOut": "کوچک‌نمایی",
+      "resetZoom": "بازنشانی زوم",
+      "uploaderSuccess": "تصویر با موفقیت ویرایش و ذخیره شد",
+      "saveOptions": "ذخیره تصویر",
+      "edit": "ویرایش",
+      "saveToGallery": "ذخیره در گالری (فایل‌ها)",
+      "saveToGallerySuccess": "تصویر با موفقیت در گالری ذخیره شد",
+      "saveToGalleryError": "خطا در ذخیره‌سازی تصویر در گالری",
+      "loadingImage": "در حال دریافت تصویر...",
+      "loadError": "خطا در دریافت تصویر از سرور",
+      "cropFree": "آزاد",
+      "categories": {
+        "manual": "تنظیمات دستی",
+        "color": "رنگی و پایه",
+        "cinematic": "هنری و سینمایی",
+        "atmosphere": "فصل‌ها و طبیعت"
+      },
+      "presets": {
+        "none": "بدون فیلتر",
+        "grayscale": "سیاه و سفید",
+        "sepia": "سپیا",
+        "vintage": "کلاسیک",
+        "warm": "گرم",
+        "cool": "سرد",
+        "vivid": "پویا",
+        "dramatic": "دراماتیک",
+        "cinematic": "سینمایی",
+        "cyberpunk": "سایبرپانک",
+        "golden": "طلایی",
+        "noir": "نوآر",
+        "matte": "مات",
+        "lomo": "لومو",
+        "retro": "رترو",
+        "rosy": "گلبهی",
+        "forest": "جنگلی",
+        "invert": "معکوس",
+        "fade": "محو",
+        "solarize": "سولاریزه",
+        "noise": "نویز",
+        "winter": "زمستانی"
+      }
+    },
+    "app": {
+      "layout": {
+        "chooseModel": {
+          "empty": "یافت نشد",
+          "searchBoxPlaceholder": "نام مدل"
+        },
+        "sidebar": {
+          "balanceCard": {
+            "actions": {
+              "addFunds": "افزودن اعتبار",
+              "label": "پیوندهای مالی",
+              "transactions": "مشاهده تراکنش‌ها"
+            },
+            "chargeWallet": {
+              "action": "پرداخت ({{amount}} ریال) ",
+              "description": "میزان توکن برای خریداری را وارد کنید و سپس از طریق درگاه پرداخت کنید",
+              "nonAction": "پرداخت",
+              "subscriptionRequiredAlert": {
+                "cta": "خرید اشتراک",
+                "description": "شما برای شارژ کیف پول باید ابتدا اشتراک خود را خریداری کنید.",
+                "title": "برای ادامه، ابتدا اشتراک را خریداری کنید"
+              },
+              "title": "افزایش موجودی کیف پول"
+            },
+            "title": "موجودی حساب"
+          },
+          "history": {
+            "emptyTitle": "بدون عنوان"
+          },
+          "menu": {
+            "home": {
+              "label": "صفحه اصلی"
+            },
+            "gallery": {
+              "label": "گالری"
+            },
+            "editor": {
+              "badge": "آزمایشی",
+              "label": "ویرایشگر تصویر"
+            },
+            "imageGeneration": {
+              "label": "تولید عکس"
+            },
+            "videoGeneration": {
+              "label": "تولید  ویدیو"
+            }
+          },
+          "toggle": {
+            "close": "بستن نوار کناری",
+            "menu": "منو",
+            "open": "باز کردن نوار کناری"
+          },
+          "user": {
+            "account": "حساب کاربری",
+            "logout": "خروج",
+            "noPlan": "بدون اشتراک",
+            "chatSupport": "پشتیبانی چت",
+            "telegramSupport": "پشتیبانی تلگرام",
+            "upgrade": "خرید اشتراک"
+          }
+        }
+      }
+    },
+    "gallery": {
+      "actions": {
+        "delete": "حذف",
+        "refresh": "بروزرسانی"
+      },
+      "delete": {
+        "deleting": "در حال حذف...",
+        "description": "فایل «{{fileName}}» حذف شود؟ این عملیات قابل بازگشت نیست.",
+        "error": "حذف فایل با خطا مواجه شد. دوباره تلاش کنید.",
+        "success": "فایل حذف شد",
+        "title": "حذف فایل"
+      },
+      "description": "همه فایل‌های آپلودشده و تولیدشده شما در یکجا",
+      "empty": {
+        "description": "بعد از آپلود یا تولید عکس، ویدیو یا صدا، فایل‌ها اینجا نمایش داده می‌شوند.",
+        "title": "هنوز فایلی ندارید"
+      },
+      "error": {
+        "description": "دریافت فایل‌ها با خطا مواجه شد. دوباره تلاش کنید.",
+        "title": "گالری بارگذاری نشد"
+      },
+      "filters": {
+        "all": "همه",
+        "audio": "صدا",
+        "image": "عکس",
+        "video": "ویدیو"
+      },
+      "loadingMore": "در حال بارگذاری فایل‌ها...",
+      "mediaTypes": {
+        "audio": "صدا",
+        "image": "عکس",
+        "video": "ویدیو"
+      },
+      "title": "گالری"
+    },
+    "auth": {
+      "login": {
+        "description": "به پر پیکسل ای آی خوش آمدید",
+        "enterPasswordForm": {
+          "password": {
+            "description": "رمز عبور خود را وارد کنید",
+            "label": "رمز عبور"
+          },
+          "submit": "ورود",
+          "successLoginToast": "با موفقیت وارد شدید"
+        },
+        "forgetPassword": "فراموشی رمز عبور",
+        "registrationPolicies": {
+          "agreementSuffix": "را مطالعه کرده‌اید و با آن‌ها موافقید.",
+          "description": "با ثبت‌نام در پرپیکس، اعلام می‌کنید که",
+          "privacy": "سیاست حریم خصوصی",
+          "separator": "و",
+          "terms": "شرایط استفاده"
+        },
+        "setPasswordForm": {
+          "confirmPassword": {
+            "description": "تکرار رمز عبور خود را وارد کنید",
+            "label": "تکرار رمز عبور"
+          },
+          "description": "در این مرحله شما رمز عبور برای خودو انتخاب می کنید",
+          "otp": {
+            "description": "کد فعال سازی را وارد کنید",
+            "label": "کد فعال سازی"
+          },
+          "password": {
+            "description": "رمز عبور خود را وارد کنید",
+            "label": "رمز عبور"
+          },
+          "resend": "ارسال مجدد کد فعال سازی",
+          "resendUntil": "ارسال مجدد کد فعال سازی در {{time}} دقیقه",
+          "submit": "ورود",
+          "successSetPasswordToast": "رمز عبور با موفقیت ثبت شد",
+          "title": "ایجاد رمز عبور"
+        },
+        "startForm": {
+          "mobile": {
+            "description": "شماره همراه تلفن خود را وارد کنید",
+            "label": "شماره تلفن"
+          },
+          "submit": "ادامه دادن"
+        },
+        "successSendOtp": "کد تایید با موفقیت برای شما ارسال گردید",
+        "title": "ورود"
+      }
+    },
+    "generation": {
+      "rules": {
+        "trigger": "راهنمای قوانین تولید",
+        "title": "قوانین مهم تولید",
+        "description": "برای جلوگیری از تأخیر یا مسدود شدن حساب، این نکات را پیش از ارسال درخواست بخوانید.",
+        "prohibitedContent": {
+          "title": "محتوای ممنوعه",
+          "description": "تولید محتوای +۱۸، جنسی، خشونت شدید، نفرت‌پراکنی، دیپ‌فیک بدون رضایت و نقض حقوق دیگران ممنوع است."
+        },
+        "tokenProcessing": {
+          "title": "وضعیت توکن و زمان پردازش",
+          "description": "بسته به ارائه‌دهنده، پاسخ به درخواست ممکن است تا ۷۲ ساعت طول بکشد. در این مدت توکن شما موقتاً رزرو می‌شود و اگر تولید ناموفق باشد، به حسابتان برمی‌گردد."
+        },
+        "fullTerms": "مشاهده قوانین کامل"
+      },
+      "modelTokenPrice": {
+        "ariaLabel": "نمایش بازه مصرف توکن مدل",
+        "empty": "بازه مصرف توکن برای این مدل ثبت نشده است.",
+        "loading": "در حال دریافت بازه مصرف توکن مدل...",
+        "range": "این مدل حداقل {{min}} و حداکثر {{max}} توکن مصرف می‌کند."
+      },
+      "image": {
+        "title": "تولید عکس",
+        "generationError": {
+          "action": "تلاش مجدد",
+          "content": "متاسفانه خطایی رخ داده است دوباره تلاش کنید",
+          "title": "تولید عکس ناموفق بود"
+        },
+        "generationLoading": {
+          "content": "در حال تولید عکس ..."
+        },
+        "promptBox": {
+          "edit": "ویرایش",
+          "generate": "تولید",
+          "promptTextArea": {
+            "placeholder": "شروع به تایپ کنید"
+          },
+          "referenceImages": {
+            "label": "عکس منبع"
+          }
+        },
+        "requirementsSection": {
+          "required": {
+            "image": "حداقل یک عکس به عنوان منبع وارد کنید",
+            "prompt": "حداقل ۵ کاراکتر برای دستور وارد کنید"
+          },
+          "title": "ورودی های لازم برای کار با {{modelName}}"
+        },
+        "typingAnimation": {
+          "words": [
+            "با هوش مصنوعی رویاهتو بساز 🚀",
+            "هرچی که نمیشه اینجا میشه ✨",
+            "تخیلتو تبدیل به تصویر کن 🎨",
+            "از ایده تا واقعیت، فقط یک کلیک ⚡"
+          ]
+        }
+      },
+      "video": {
+        "title": "تولید ویدیو",
+        "generationError": {
+          "action": "تلاش مجدد",
+          "content": "متاسفانه خطایی رخ داده است دوباره تلاش کنید",
+          "title": "تولید ویدیو ناموفق بود"
+        },
+        "generationLoading": {
+          "content": "درحال تولید ویدیو لطفا صبر کنید"
+        },
+        "promptBox": {
+          "exclusiveImageInputsHint": "لطفا یا تصاویر مرجع اضافه کنید یا تصاویر فریم",
+          "generate": "تولید",
+          "includeAudio": {
+            "label": "شامل صدا"
+          },
+          "promptTextArea": {
+            "placeholder": "شروع به تایپ کنید"
+          },
+          "referenceImages": {
+            "first": "عکس اول",
+            "last": "عکس آخر"
+          }
+        },
+        "requirementsSection": {
+          "required": {
+            "image": "حداقل یک عکس به عنوان منبع وارد کنید",
+            "prompt": "حداقل ۵ کاراکتر برای دستور وارد کنید"
+          },
+          "title": "ورودی های لازم برای کار با {{modelName}}"
+        },
+        "typingAnimation": {
+          "words": [
+            "🚀 ایده‌ات رو به ویدیویی دیدنی تبدیل کن",
+            "🎥 هر صحنه‌ای که توی ذهنت می‌چرخه، بساز",
+            "🪄 از یک تصویر ساده، یک ویدیوی کامل خلق کن",
+            "⚡ به تخیلت حرکت بده و زنده‌اش کن"
+          ]
+        }
+      }
+    },
+    "payment": {
+      "redirect": {
+        "autoRedirect": "انتقال خودکار تا {{seconds}} ثانیه دیگر",
+        "continue": "ادامه پرداخت",
+        "description": "مبلغ نهایی پرداخت را بررسی کنید و سپس به درگاه بروید.",
+        "baseAmount": "مبلغ پایه",
+        "taxAmount": "مالیات",
+        "finalAmount": "مبلغ نهایی",
+        "title": "تایید مبلغ پرداخت"
+      },
+      "result": {
+        "title": "نتیجه پرداخت",
+        "amount": "مبلغ تراکنش",
+        "return": "بازگشت به صفحه اصلی",
+        "retry": "تلاش دوباره برای پرداخت",
+        "trackingCode": "کد پیگیری",
+        "fulfillmentPending": "درخواست شما هنوز تکمیل نشده است.",
+        "states": {
+          "pending": {
+            "title": "در انتظار نتیجه پرداخت",
+            "description": "وضعیت پرداخت در حال بررسی است. این صفحه خودکار به‌روز می‌شود."
+          },
+          "processing": {
+            "title": "پرداخت انجام شد؛ در حال تکمیل درخواست",
+            "description": "پرداخت تأیید شده و تکمیل درخواست شما در حال انجام است."
+          },
+          "succeeded": {
+            "title": "پرداخت تکمیل شد",
+            "description": "درخواست شما با موفقیت تکمیل شد."
+          },
+          "failed": {
+            "title": "پرداخت ناموفق",
+            "description": "پرداخت کامل نشد. برای جزئیات، فهرست پرداخت‌ها را بررسی کنید."
+          },
+          "review": {
+            "title": "پرداخت نیاز به بررسی دارد",
+            "description": "پرداخت برای بررسی بیشتر ثبت شده است. کد پیگیری را نزد خود نگه دارید."
+          }
+        }
+      }
+    },
+    "profile": {
+      "payments": {
+        "title": "پرداخت‌ها",
+        "empty": "پرداختی برای نمایش وجود ندارد",
+        "details": "جزئیات مبلغ",
+        "trackingCode": "کد پیگیری",
+        "paymentStatus": "وضعیت پرداخت",
+        "fulfillmentStatus": "وضعیت تکمیل درخواست",
+        "amount": "مبلغ",
+        "baseAmount": "مبلغ پایه",
+        "taxAmount": "مالیات",
+        "totalAmount": "مبلغ کل",
+        "type": "نوع",
+        "date": "تاریخ",
+        "states": {
+          "pending": "در انتظار نتیجه",
+          "processing": "پرداخت شده؛ در حال اعمال",
+          "succeeded": "پرداخت و تحویل کامل",
+          "failed": "ناموفق",
+          "review": "نیازمند بررسی"
+        },
+        "fulfillment": {
+          "NOT_READY": "شروع نشده",
+          "PENDING": "در حال اعمال",
+          "SUCCEEDED": "اعمال شد",
+          "NEEDS_REVIEW": "نیازمند بررسی"
+        },
+        "targets": {
+          "wallet_topup": "شارژ کیف پول",
+          "subscription": "خرید اشتراک",
+          "other": "سایر"
+        }
+      },
+      "settings": {
+        "title": "ویرایش حساب کاربری",
+        "userInfo": {
+          "backToHome": "بازگشت به صفحه اصلی",
+          "form": {
+            "email": {
+              "label": "ایمیل"
+            },
+            "mobile": {
+              "description": "شماره همراه تلفن خود را وارد کنید",
+              "label": "شماره تلفن همراه"
+            },
+            "name": {
+              "description": "فقط شامل حروف انگلیسی و فارسی و حداکثر ۶۴ کاراکتر",
+              "label": "نام کامل"
+            },
+            "submit": "ویرایش اطلاعات",
+            "successSetPasswordToast": "اطلاعات کاربری با موفقیت بروزرسانی گردید"
+          }
+        }
+      },
+      "walletTransactions": {
+        "title": "تراکنش‌های کیف پول"
+      }
+    },
+    "root": {
+      "title": "پرپیکس",
+      "accessToSections": {
+        "action": "کلیک کنید",
+        "imageGeneration": {
+          "description": "دسترسی به آخرین مدل های تولید و ویرایش تصویر",
+          "title": "تولید عکس"
+        },
+        "userProfile": {
+          "description": "دسترسی به پروفایل کاربری و مشخصات شخصی",
+          "title": "حساب کاربری"
+        },
+        "videoGeneration": {
+          "description": "دسترسی به آخرین مدل های تولید ویدیو، هرآنچه میخواهید تصور کنید",
+          "title": "تولید ویدیو"
+        }
+      }
+    }
+  },
+  "adminLogin": {
+    "title": "ورود به پنل مدیریت",
+    "description": "برای ورود، شماره همراه و رمز عبور خود را وارد کنید.",
+    "phone": "شماره همراه",
+    "password": "رمز عبور",
+    "submit": "ورود",
+    "pending": "در حال ورود…",
+    "success": "با موفقیت وارد شدید.",
+    "invalidPhone": "شماره همراه معتبر وارد کنید.",
+    "requiredPassword": "رمز عبور را وارد کنید.",
+    "credentials": "شماره همراه یا رمز عبور اشتباه است.",
+    "rateLimited": "تعداد تلاش‌ها بیش از حد مجاز است. کمی بعد دوباره تلاش کنید.",
+    "network": "اتصال به سرور برقرار نشد. اینترنت خود را بررسی کنید.",
+    "failed": "ورود انجام نشد. دوباره تلاش کنید."
+  },
+  "overview": {
+    "title": "نمای کلی",
+    "brand": "پرپیکس",
+    "admin": "پنل مدیریت",
+    "description": "نبض کسب‌وکار و فعالیت کاربران، در یک نگاه",
+    "period": "بازه زمانی",
+    "days": "{{count}} روز گذشته",
+    "refresh": "بروزرسانی",
+    "logout": "خروج",
+    "users": "کاربران جدید",
+    "payments": "پرداخت‌های ثبت‌شده",
+    "tasks": "وظایف هوش مصنوعی",
+    "subscriptions": "اشتراک‌های ثبت‌شده",
+    "files": "فایل‌های بارگذاری‌شده",
+    "sessions": "نشست‌های ثبت‌شده",
+    "inPeriod": "در بازهٔ انتخاب‌شده",
+    "daily": "روند روزانه پرداخت‌ها",
+    "dailyHint": "تعداد پرداخت‌های ثبت‌شده در هر روز، با تمام وضعیت‌ها",
+    "statuses": "وضعیت درخواست‌های هوش مصنوعی",
+    "recent": "آخرین پرداخت‌ها",
+    "id": "شناسه",
+    "type": "نوع پرداخت",
+    "amount": "مبلغ",
+    "status": "وضعیت مالی",
+    "date": "تاریخ",
+    "rial": "ریال",
+    "footer": "گزارش‌ها بر اساس بازهٔ زمانی انتخاب‌شده نمایش داده می‌شوند.",
+    "loading": "در حال دریافت اطلاعات…",
+    "empty": "در این بازه اطلاعاتی ثبت نشده است.",
+    "error": "دریافت اطلاعات انجام نشد.",
+    "retry": "تلاش مجدد",
+    "sessionError": "بررسی نشست انجام نشد. اتصال خود را بررسی کنید.",
+    "accessError": "دسترسی مدیریت تأیید نشد. دسترسی حساب یا اتصال به سرور را بررسی کنید.",
+    "backLogin": "بازگشت به ورود",
+    "statusLabels": {
+      "SUCCEEDED": "موفق",
+      "FAILED": "ناموفق",
+      "PENDING": "در انتظار",
+      "PROCESSING": "در حال پردازش",
+      "CANCELED": "لغو شده",
+      "EXPIRED": "منقضی شده",
+      "REQUIRES_REVIEW": "نیازمند بررسی"
+    },
+    "targetLabels": {
+      "wallet_topup": "شارژ کیف پول",
+      "subscription": "اشتراک"
+    }
+  },
+  "navigation": {
+    "toggle": "باز و بسته کردن منو",
+    "menu": "منوها",
+    "main": "منوی اصلی",
+    "general": "عمومی",
+    "tools": "ابزارها"
+  },
+  "smsTest": {
+    "title": "تست پیامک",
+    "description": "ارسال پیامک آزمایشی برای بررسی عملکرد سرویس پیامک",
+    "formTitle": "ارسال پیامک آزمایشی",
+    "hint": "یک کد تصادفی شش‌رقمی با قالب پیامک تأیید ارسال می‌شود. این کد برای ورود یا بازیابی رمز عبور قابل استفاده نیست.",
+    "phone": "شماره همراه گیرنده",
+    "phoneHint": "شماره را با ۰۹ یا ‎+۹۸ وارد کنید.",
+    "invalidPhone": "شماره همراه معتبر ایران وارد کنید.",
+    "submit": "ارسال پیامک آزمایشی",
+    "pending": "در حال ثبت درخواست…",
+    "success": "درخواست پیامک برای {{phone}} در صف قرار گرفت. این وضعیت به معنی تحویل پیامک نیست.",
+    "wait": "{{count}} ثانیه تا تلاش مجدد.",
+    "budget": "حداکثر ۵ درخواست در دقیقه برای هر ادمین مجاز است. محدودیت ارسال به شمارهٔ گیرنده نیز اعمال می‌شود. هر بار ارسال، پیامک جدیدی را در صف قرار می‌دهد.",
+    "errors": {
+      "limited": "محدودیت ارسال پیامک اعمال شده است. کمی بعد دوباره تلاش کنید.",
+      "forbidden": "اجازهٔ ارسال پیامک ندارید یا نشست شما منقضی شده است.",
+      "invalid": "شمارهٔ همراه از طرف سرور پذیرفته نشد.",
+      "network": "پاسخ سرور دریافت نشد؛ وضعیت ثبت درخواست مشخص نیست.",
+      "server": "ثبت پیامک در صف تأیید نشد. دوباره تلاش کنید."
+    }
+  }
+}
