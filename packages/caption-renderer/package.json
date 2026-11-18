@@ -5,12 +5,21 @@
   "type": "module",
   "description": "How a caption looks at a moment in time. Shared by the app, which exports the video, and the admin panel, which previews the presets, so the two can never differ.",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./react": "./src/react.tsx"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
-    "typescript": "~6.0.3"
+    "typescript": "~6.0.3",
+    "@types/react": "^19"
+  },
+  "dependencies": {
+    "gsap": "^3.15.1",
+    "konva": "^10.9.1"
+  },
+  "peerDependencies": {
+    "react": "^19"
   }
 }

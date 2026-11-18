@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { Captions, Loader2 } from "lucide-react";
 import {
+  CAPTION_CONFIG_SCHEMA_VERSION,
+  normalizeCaptionConfig,
+  type CaptionConfig,
+} from "@perpix/caption-renderer";
+import {
   Dialog,
   DialogPopup,
   DialogHeader,
@@ -11,14 +16,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAppTranslate } from "@/hooks";
+import { CaptionTemplateEditor } from "./caption-template-editor";
 import { useCaptionPresetActions } from "../hooks/use-caption-preset-actions";
 import {
-  MAX_PRESET_CONFIG_BYTES,
   MAX_PRESET_NAME_LENGTH,
   MAX_SORT_ORDER,
-  formatConfig,
   parseConfigText,
-  parseSchemaVersion,
   parseSortOrder,
   type CaptionPreset,
 } from "../model/caption-preset";
@@ -30,8 +33,6 @@ interface CaptionPresetFormDialogProps {
   /** The sort order a new preset starts with: after the last one. */
   nextSortOrder?: number;
 }
-
-const kb = (bytes: number) => (bytes / 1024).toFixed(1);
 
 function CaptionPresetFormContent({
   initialPreset,
@@ -49,41 +50,23 @@ function CaptionPresetFormContent({
   const [sortOrder, setSortOrder] = useState(
     String(initialPreset?.sort_order ?? nextSortOrder),
   );
-  const [schemaVersion, setSchemaVersion] = useState(
-    String(initialPreset?.schema_version ?? 1),
-  );
   const [isActive, setIsActive] = useState(initialPreset?.is_active ?? true);
-  const [configText, setConfigText] = useState(
-    initialPreset ? formatConfig(initialPreset.config) : "{}",
+  const [look, setLook] = useState<CaptionConfig>(() =>
+    normalizeCaptionConfig(initialPreset?.config),
   );
 
   const { createPreset, updatePreset, isSaving } = useCaptionPresetActions();
 
-  const config = parseConfigText(configText);
+  // The stored config is the complete, normalised look, so a later version of
+  // the renderer never has to guess what a missing key meant.
+  const config = parseConfigText(JSON.stringify(look));
   const parsedSortOrder = parseSortOrder(sortOrder);
-  const parsedSchemaVersion = parseSchemaVersion(schemaVersion);
   const trimmedName = name.trim();
   const canSave =
     config.ok &&
     parsedSortOrder !== null &&
-    parsedSchemaVersion !== null &&
     trimmedName.length > 0 &&
     trimmedName.length <= MAX_PRESET_NAME_LENGTH;
-
-  const configError = config.ok
-    ? null
-    : config.reason === "invalid_json"
-      ? t("features.studio.captionPresets.form.configInvalid", {
-          defaultValue: "JSON معتبر نیست.",
-        })
-      : config.reason === "not_object"
-        ? t("features.studio.captionPresets.form.configNotObject", {
-            defaultValue:
-              "تنظیمات باید یک شیء JSON باشد، نه آرایه یا مقدار ساده.",
-          })
-        : t("features.studio.captionPresets.form.configTooLarge", {
-            defaultValue: "حجم تنظیمات از حد مجاز بیشتر است.",
-          });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -91,7 +74,7 @@ function CaptionPresetFormContent({
     const body = {
       name: trimmedName,
       config: config.value,
-      schema_version: parsedSchemaVersion,
+      schema_version: CAPTION_CONFIG_SCHEMA_VERSION,
       is_active: isActive,
       sort_order: parsedSortOrder,
     };
@@ -105,10 +88,6 @@ function CaptionPresetFormContent({
     } catch {
       // toast is handled in the hook
     }
-  };
-
-  const handleFormat = () => {
-    if (config.ok) setConfigText(formatConfig(config.value));
   };
 
   return (
@@ -156,76 +135,9 @@ function CaptionPresetFormContent({
             })}
           </p>
         </div>
-
-        <div className="space-y-1.5">
-          <label className="text-foreground text-xs font-semibold">
-            {t("features.studio.captionPresets.form.schemaVersion", {
-              defaultValue: "نسخهٔ قالب تنظیمات",
-            })}
-          </label>
-          <Input
-            type="number"
-            min={1}
-            step={1}
-            value={schemaVersion}
-            onChange={(e) => setSchemaVersion(e.target.value)}
-            dir="ltr"
-          />
-          <p className="text-muted-foreground text-xs">
-            {t("features.studio.captionPresets.form.schemaVersionHint", {
-              defaultValue:
-                "نسخهٔ قالب JSON که فرانت می‌فهمد؛ با تغییر ساختار بالا می‌رود.",
-            })}
-          </p>
-        </div>
       </div>
 
-      <div className="space-y-1.5">
-        <div className="flex items-center justify-between">
-          <label className="text-foreground text-xs font-semibold">
-            {t("features.studio.captionPresets.form.config", {
-              defaultValue: "تنظیمات ظاهر (JSON)",
-            })}
-          </label>
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            disabled={!config.ok}
-            onClick={handleFormat}
-            className="h-7 cursor-pointer px-2 text-xs"
-          >
-            {t("features.studio.captionPresets.form.format", {
-              defaultValue: "مرتب‌سازی JSON",
-            })}
-          </Button>
-        </div>
-        <textarea
-          className="border-border bg-background text-foreground focus:ring-ring w-full rounded border px-3 py-2 font-mono text-xs focus:ring-2 focus:ring-offset-2 focus:outline-none"
-          rows={14}
-          value={configText}
-          onChange={(e) => setConfigText(e.target.value)}
-          spellCheck={false}
-          dir="ltr"
-          aria-invalid={!config.ok}
-        />
-        <div className="flex items-center justify-between text-xs">
-          <span
-            className={
-              configError ? "text-destructive" : "text-muted-foreground"
-            }
-          >
-            {configError ??
-              t("features.studio.captionPresets.form.configHint", {
-                defaultValue:
-                  "بک‌اند این ساختار را تفسیر نمی‌کند؛ فقط نگه می‌دارد.",
-              })}
-          </span>
-          <span className="text-muted-foreground" dir="ltr">
-            {kb(config.bytes)} / {kb(MAX_PRESET_CONFIG_BYTES)} KB
-          </span>
-        </div>
-      </div>
+      <CaptionTemplateEditor config={look} onChange={setLook} />
 
       <label className="flex cursor-pointer items-center gap-2 text-xs font-medium">
         <input
@@ -279,7 +191,7 @@ export function CaptionPresetFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogPopup className="max-h-[90vh] max-w-2xl overflow-y-auto">
+      <DialogPopup className="max-h-[90vh] max-w-5xl overflow-y-auto">
         <DialogHeader>
           <div className="flex items-center gap-2">
             <Captions className="text-primary size-5" />

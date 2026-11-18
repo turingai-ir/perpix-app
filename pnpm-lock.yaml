@@ -442,7 +442,20 @@ importers:
         version: 8.3.5(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)
 
   packages/caption-renderer:
+    dependencies:
+      gsap:
+        specifier: ^3.15.1
+        version: 3.15.1
+      konva:
+        specifier: ^10.9.1
+        version: 10.9.1
+      react:
+        specifier: ^19
+        version: 19.3.1
     devDependencies:
+      '@types/react':
+        specifier: ^19
+        version: 19.3.0
       typescript:
         specifier: ~6.0.3
         version: 6.0.3
