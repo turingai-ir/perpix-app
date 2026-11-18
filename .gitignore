@@ -28,11 +28,11 @@ _output
 dev-dist
 
 # Playwright
-/test-results/
-/playwright-report/
-/blob-report/
-/playwright/.cache/
-/playwright/.auth/
+**/test-results/
+**/playwright-report/
+**/blob-report/
+**/playwright/.cache/
+**/playwright/.auth/
 
 
 
@@ -41,7 +41,7 @@ graphify-out
 
 # Local development tooling and generated artifacts
 /.artifacts/
-/deploy/test.env
+apps/app/deploy/test.env
 /.codex/skills/
 /.codex/higgsfield-video.png
 /.impeccable/
