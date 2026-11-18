@@ -8,8 +8,8 @@ services:
   perpix-app:
     image: perpix-app:latest
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ../..
+      dockerfile: apps/app/Dockerfile
       args:
         PNPM_VERSION: ${PNPM_VERSION:-11.4.0}
         PACKAGE_REGISTRY: ${PACKAGE_REGISTRY:-https://registry.npmmirror.com}

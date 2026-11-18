@@ -16,20 +16,25 @@ ENV NPM_CONFIG_REGISTRY=${PACKAGE_REGISTRY}
 
 RUN npm install --global --force "pnpm@${PNPM_VERSION}"
 
+# The build context is the repository root (see compose.yaml); install from every workspace manifest so the
+# lockfile stays valid, but only for the admin panel and the packages it uses.
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY apps/app/package.json apps/app/
+COPY apps/admin/package.json apps/admin/
+COPY packages/caption-renderer/package.json packages/caption-renderer/
 RUN --mount=type=cache,id=perpix-admin-pnpm-store,target=/pnpm/store \
     pnpm config set store-dir /pnpm/store && \
     pnpm config set registry "${PACKAGE_REGISTRY}" && \
-    pnpm install --frozen-lockfile
+    pnpm install --frozen-lockfile --filter perpix-admin-panel...
 
 COPY . .
 
 ENV NODE_ENV=production
 
-# Vite loads VITE_* values from /app/.env (copied above by `COPY . .`;
-# Komodo writes that file). No ARG/ENV needed.
+# Vite loads VITE_* values from apps/admin/.env (copied above by `COPY . .`;
+# Komodo writes that file next to this app's compose.yaml). No ARG/ENV needed.
 
-RUN pnpm build
+RUN pnpm --filter perpix-admin-panel build
 
 FROM caddy:2-alpine AS runner
 
@@ -42,8 +47,8 @@ ENV XDG_DATA_HOME=/tmp/data \
 
 WORKDIR /srv
 
-COPY --chown=nobody:nobody Caddyfile /etc/caddy/Caddyfile
-COPY --from=builder --chown=nobody:nobody /app/dist /srv
+COPY --chown=nobody:nobody apps/admin/Caddyfile /etc/caddy/Caddyfile
+COPY --from=builder --chown=nobody:nobody /app/apps/admin/dist /srv
 
 USER nobody
 

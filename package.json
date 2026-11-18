@@ -1,0 +1,16 @@
+{
+  "name": "perpix-web",
+  "private": true,
+  "packageManager": "pnpm@11.4.0",
+  "scripts": {
+    "dev": "turbo run dev",
+    "dev:app": "turbo run dev --filter=perpix-app",
+    "dev:admin": "turbo run dev --filter=perpix-admin-panel",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck"
+  },
+  "devDependencies": {
+    "turbo": "^2.11.13"
+  }
+}

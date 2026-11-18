@@ -8,8 +8,8 @@ services:
   perpix-admin-panel:
     image: perpix-admin-panel:latest
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ../..
+      dockerfile: apps/admin/Dockerfile
     ports:
       - "${PERPIX_ADMIN_PORT:-5175}:8080"
     read_only: true

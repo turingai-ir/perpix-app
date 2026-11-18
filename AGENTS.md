@@ -1,5 +1,12 @@
 # PerPix Frontend Agent Instructions
 
+## Repository Layout (monorepo)
+
+- This is a pnpm + Turborepo workspace: `apps/app` (the user app), `apps/admin` (the admin panel) and `packages/*` (code both use, such as `@perpix/caption-renderer`).
+- Every path below that says `package.json`, `src/`, `docs/` or `scripts/` means the one inside `apps/app` (or `apps/admin` when the task is about the admin panel).
+- Run commands from the repository root with `pnpm dev:app`, `pnpm dev:admin`, `pnpm build`, `pnpm lint`, `pnpm typecheck`, or inside one app with `pnpm --filter <name> <script>`.
+- Shared code goes in `packages/*` and is imported by its package name; never import across `apps/*`.
+
 ## Source of Truth
 
 - Follow the actual dependencies, versions and scripts in `package.json`.

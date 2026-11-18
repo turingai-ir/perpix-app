@@ -1,0 +1,16 @@
+{
+  "name": "@perpix/caption-renderer",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "How a caption looks at a moment in time. Shared by the app, which exports the video, and the admin panel, which previews the presets, so the two can never differ.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "~6.0.3"
+  }
+}

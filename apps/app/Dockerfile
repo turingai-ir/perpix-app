@@ -20,11 +20,16 @@ RUN corepack enable && \
     corepack prepare "pnpm@${PNPM_VERSION}" --activate || \
     npm install --global "pnpm@${PNPM_VERSION}"
 
+# The build context is the repository root (see compose.yaml); install from every workspace manifest so the
+# lockfile stays valid, but only for the app and the packages it uses.
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY apps/app/package.json apps/app/
+COPY apps/admin/package.json apps/admin/
+COPY packages/caption-renderer/package.json packages/caption-renderer/
 RUN --mount=type=cache,id=perpix-pnpm-store,target=/pnpm/store \
     pnpm config set store-dir /pnpm/store && \
     pnpm config set registry "${PACKAGE_REGISTRY}" && \
-    pnpm install --frozen-lockfile
+    pnpm install --frozen-lockfile --filter perpix-app...
 
 COPY . .
 
@@ -49,7 +54,7 @@ ENV VITE_OBJECT_STORAGE_PUBLIC_ENDPOINT=${VITE_OBJECT_STORAGE_PUBLIC_ENDPOINT} \
     VITE_APP_SENTRY_DSN=${VITE_APP_SENTRY_DSN} \
     VITE_APP_PERPIX_TAX_PERCENT=${VITE_APP_PERPIX_TAX_PERCENT}
 
-RUN pnpm build
+RUN pnpm --filter perpix-app build
 
 FROM nginxinc/nginx-unprivileged:1.27-alpine AS runner
 
@@ -57,7 +62,7 @@ USER nginx
 WORKDIR /usr/share/nginx/html
 
 COPY --chown=nginx:nginx nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=builder --chown=nginx:nginx /app/dist .
+COPY --from=builder --chown=nginx:nginx /app/apps/app/dist .
 
 EXPOSE 8081
 
