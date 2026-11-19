@@ -5,6 +5,7 @@ import {
   GalleryIcon,
   HomeIcon,
   ImageIcon,
+  StudioIcon,
   VideoIcon,
 } from "./menu-icons";
 import { IconTile } from "./sidebar-parts";
@@ -63,6 +64,14 @@ const AppLayoutSidebarNavigation: FC = () => {
       href: APP_ROUTES_KEY.generation.video.path,
       Icon: VideoIcon,
       tone: "video",
+    },
+    {
+      key: "studio",
+      label: t("pages.app.layout.sidebar.menu.studio.label"),
+      href: APP_ROUTES_KEY.studio.path,
+      Icon: StudioIcon,
+      tone: "video",
+      badge: t("pages.app.layout.sidebar.menu.studio.badge"),
     },
     {
       key: "gallery",
