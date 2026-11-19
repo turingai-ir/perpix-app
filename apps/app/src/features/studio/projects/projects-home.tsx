@@ -62,18 +62,27 @@ export const ProjectsHome: FC = () => {
     <StudioScreen
       title={t("features.studio.projects.title")}
       actions={
-        <Button
-          variant="ghost"
-          size="icon"
-          className="size-11 rounded-full"
-          aria-label={t("features.studio.shell.exit")}
-          onClick={() => navigate(APP_ROUTES_KEY.app.path)}
-        >
-          <X className="size-5" />
-        </Button>
+        <>
+          <Button
+            className="hidden min-h-10 gap-2 rounded-full px-5 lg:inline-flex"
+            onClick={startCreate}
+          >
+            <Plus className="size-4" aria-hidden />
+            {t("features.studio.projects.create")}
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-11 rounded-full lg:hidden"
+            aria-label={t("features.studio.shell.exit")}
+            onClick={() => navigate(APP_ROUTES_KEY.app.path)}
+          >
+            <X className="size-5" />
+          </Button>
+        </>
       }
       footer={
-        <div className="shrink-0 border-t px-4 py-3">
+        <div className="shrink-0 border-t px-4 py-3 lg:hidden">
           <Button
             size="lg"
             className="min-h-12 w-full gap-2 text-base"
@@ -86,7 +95,10 @@ export const ProjectsHome: FC = () => {
       }
     >
       {projects.isPending ? (
-        <ul className="flex flex-col gap-2" aria-hidden>
+        <ul
+          className="grid gap-2 lg:grid-cols-2 lg:gap-3 xl:grid-cols-3"
+          aria-hidden
+        >
           {Array.from({ length: 5 }, (_, index) => (
             <Skeleton key={index} className="h-[5.25rem] rounded-2xl" />
           ))}
@@ -102,7 +114,7 @@ export const ProjectsHome: FC = () => {
         </div>
       ) : (
         <>
-          <ul className="flex flex-col gap-2">
+          <ul className="grid gap-2 lg:grid-cols-2 lg:gap-3 xl:grid-cols-3">
             {projects.data.map((project) => (
               <ProjectCard
                 key={project.uuid}

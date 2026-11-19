@@ -23,7 +23,7 @@ export const PlayerBar: FC<PlayerBarProps> = ({
 }) => {
   const { t } = useAppTranslate();
   return (
-    <div className="flex shrink-0 items-center gap-3 border-t px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+    <div className="flex shrink-0 items-center gap-3 border-t px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:px-6">
       <Button
         size="icon"
         className="size-12 shrink-0 rounded-full"
@@ -47,7 +47,10 @@ export const PlayerBar: FC<PlayerBarProps> = ({
         className="accent-primary h-11 min-w-0 flex-1 cursor-pointer"
         dir="ltr"
       />
-      <span className="text-muted-foreground w-20 shrink-0 text-end text-xs tabular-nums">
+      <span
+        dir="ltr"
+        className="text-muted-foreground w-20 shrink-0 text-end text-xs tabular-nums lg:w-28 lg:text-sm"
+      >
         {formatDuration(timeMs)} / {formatDuration(durationMs)}
       </span>
     </div>

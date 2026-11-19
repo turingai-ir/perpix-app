@@ -28,7 +28,10 @@ export const TimelineStrip: FC<TimelineStripProps> = ({
   );
 
   return (
-    <div dir="ltr" className="relative mx-4 h-14 shrink-0">
+    <div
+      dir="ltr"
+      className="relative mx-4 my-2 h-14 shrink-0 lg:mx-6 lg:my-3 lg:h-20"
+    >
       {segments.map((segment, index) => (
         <button
           key={segment.clip.id}

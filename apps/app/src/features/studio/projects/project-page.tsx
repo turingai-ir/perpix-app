@@ -52,6 +52,7 @@ export const ProjectPage: FC = () => {
     <StudioScreen
       title={project.data?.title ?? t("features.studio.projects.title")}
       onBack={back}
+      width="narrow"
       actions={
         clips.length > 0 && (
           <Button
@@ -66,7 +67,7 @@ export const ProjectPage: FC = () => {
       }
       footer={
         project.data && (
-          <div className="shrink-0 border-t px-4 py-3">
+          <div className="shrink-0 border-t px-4 py-3 lg:hidden">
             <Button
               size="lg"
               className="min-h-12 w-full gap-2 text-base"
@@ -103,6 +104,15 @@ export const ProjectPage: FC = () => {
           <p className="text-muted-foreground max-w-64 text-xs">
             {t("features.studio.clips.limits")}
           </p>
+          <Button
+            size="lg"
+            className="mt-2 hidden min-h-12 gap-2 px-6 lg:inline-flex"
+            disabled={busy}
+            onClick={() => setPickerOpen(true)}
+          >
+            <Images className="size-5" aria-hidden />
+            {t("features.studio.clips.add")}
+          </Button>
         </div>
       ) : (
         <ul className="flex flex-col gap-2">
@@ -119,6 +129,21 @@ export const ProjectPage: FC = () => {
               onRemove={(item) => removeClip.mutate(item.id)}
             />
           ))}
+          <li className="hidden lg:block">
+            <Button
+              variant="outline"
+              className="min-h-14 w-full gap-2 border-dashed"
+              disabled={busy}
+              onClick={() => setPickerOpen(true)}
+            >
+              {busy ? (
+                <Loader2 className="size-5 animate-spin" aria-hidden />
+              ) : (
+                <Images className="size-5" aria-hidden />
+              )}
+              {t("features.studio.clips.add")}
+            </Button>
+          </li>
           {uploading.map((item) => (
             <li
               key={item.id}

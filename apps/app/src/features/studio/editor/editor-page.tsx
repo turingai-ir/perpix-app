@@ -165,6 +165,64 @@ export const EditorPage: FC = () => {
     commit(edit.clips);
   };
 
+  // Keyboard shortcuts, by physical key so they work on a Persian layout too. The handler is
+  // kept in a ref that is refreshed after each render, so the listener is added only once.
+  const keys = useRef<(event: KeyboardEvent) => void>(() => {});
+  useEffect(() => {
+    keys.current = (event) => {
+      const target = event.target as HTMLElement | null;
+      // Typing, or a focused button or link that Space would press, is left alone; the scrub bar is
+      // let keep its own arrow keys but shares the other shortcuts.
+      if (
+        target?.closest(
+          "textarea, select, [contenteditable='true'], input:not([type='range']), button, a",
+        )
+      )
+        return;
+      const onScrubBar = target?.matches("input[type='range']") ?? false;
+      const byCode: Record<string, EditAction> = {
+        KeyS: "split",
+        BracketLeft: "trimStart",
+        BracketRight: "trimEnd",
+        Delete: "remove",
+        Backspace: "remove",
+      };
+      if ((event.ctrlKey || event.metaKey) && event.code === "KeyZ") {
+        event.preventDefault();
+        if (canUndo) onAction("undo");
+        return;
+      }
+      if (event.ctrlKey || event.metaKey || event.altKey) return;
+      if (event.code === "Space") {
+        event.preventDefault();
+        player.toggle();
+      } else if (
+        !onScrubBar &&
+        (event.code === "ArrowLeft" || event.code === "ArrowRight")
+      ) {
+        event.preventDefault();
+        const step =
+          (event.shiftKey ? 5000 : 1000) *
+          (event.code === "ArrowLeft" ? -1 : 1);
+        player.seek(player.timeMs + step);
+      } else if (event.code === "Home" || event.code === "End") {
+        event.preventDefault();
+        player.seek(event.code === "Home" ? 0 : timeline.durationMs);
+      } else {
+        const action = byCode[event.code];
+        if (action && !disabled.has(action)) {
+          event.preventDefault();
+          onAction(action);
+        }
+      }
+    };
+  });
+  useEffect(() => {
+    const listener = (event: KeyboardEvent) => keys.current(event);
+    window.addEventListener("keydown", listener);
+    return () => window.removeEventListener("keydown", listener);
+  }, []);
+
   const back = async () => {
     player.pause();
     if (await autosave.flush()) {
@@ -184,11 +242,13 @@ export const EditorPage: FC = () => {
           />
         )
       }
-      className="flex flex-col overflow-hidden p-0"
+      layout="canvas"
       footer={
         timeline.durationMs > 0 && (
-          <div className="shrink-0 border-t pb-[max(0rem,env(safe-area-inset-bottom))]">
-            <EditTools disabled={disabled} onAction={onAction} />
+          <div className="shrink-0 pb-[max(0rem,env(safe-area-inset-bottom))]">
+            <div className="border-t lg:hidden">
+              <EditTools layout="row" disabled={disabled} onAction={onAction} />
+            </div>
             <PlayerBar
               timeMs={player.timeMs}
               durationMs={timeline.durationMs}
@@ -217,34 +277,71 @@ export const EditorPage: FC = () => {
           {t("features.studio.editor.noClips")}
         </p>
       ) : (
-        <>
-          <EditorStage
-            videoRef={player.videoRef}
-            words={words}
-            template={template}
-            timeMs={player.timeMs}
-            onToggle={player.toggle}
-            label={
-              player.playing
-                ? t("features.studio.editor.pause")
-                : t("features.studio.editor.play")
-            }
-          />
-          {pending && (
-            <p
-              role="status"
-              className="text-muted-foreground flex items-center justify-center gap-2 py-1 text-xs"
-            >
-              <Loader2 className="size-3.5 animate-spin" aria-hidden />
-              {t("features.studio.editor.subtitlesPending")}
-            </p>
-          )}
+        <div className="flex min-h-0 flex-1 flex-col">
+          <div className="flex min-h-0 flex-1">
+            <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+              <EditorStage
+                videoRef={player.videoRef}
+                words={words}
+                template={template}
+                timeMs={player.timeMs}
+                onToggle={player.toggle}
+                label={
+                  player.playing
+                    ? t("features.studio.editor.pause")
+                    : t("features.studio.editor.play")
+                }
+              />
+              {pending && (
+                <p
+                  role="status"
+                  className="text-muted-foreground flex items-center justify-center gap-2 py-1 text-xs"
+                >
+                  <Loader2 className="size-3.5 animate-spin" aria-hidden />
+                  {t("features.studio.editor.subtitlesPending")}
+                </p>
+              )}
+            </div>
+            <aside className="hidden w-80 shrink-0 flex-col gap-4 overflow-y-auto border-s p-5 lg:flex">
+              <h2 className="font-heading text-base font-semibold">
+                {t("features.studio.editor.tools.label")}
+              </h2>
+              <EditTools
+                layout="grid"
+                disabled={disabled}
+                onAction={onAction}
+              />
+              <p className="text-muted-foreground text-xs leading-6">
+                {t("features.studio.editor.tools.hint")}
+              </p>
+              <dl className="text-muted-foreground grid grid-cols-[auto_1fr] items-center gap-x-3 gap-y-1.5 text-xs">
+                <dt>
+                  <kbd
+                    dir="ltr"
+                    className="bg-muted rounded border px-1.5 py-0.5"
+                  >
+                    Space
+                  </kbd>
+                </dt>
+                <dd>{t("features.studio.editor.shortcuts.play")}</dd>
+                <dt>
+                  <kbd
+                    dir="ltr"
+                    className="bg-muted rounded border px-1.5 py-0.5"
+                  >
+                    ← →
+                  </kbd>
+                </dt>
+                <dd>{t("features.studio.editor.shortcuts.seek")}</dd>
+              </dl>
+            </aside>
+          </div>
           <TimelineStrip
             timeline={timeline}
             timeMs={player.timeMs}
             onSeek={player.seek}
           />
-        </>
+        </div>
       )}
     </StudioScreen>
   );

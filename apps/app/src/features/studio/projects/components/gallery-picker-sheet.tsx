@@ -86,6 +86,7 @@ export const GalleryPickerSheet: FC<GalleryPickerSheetProps> = ({
     <BottomSheet
       open={open}
       onOpenChange={onOpenChange}
+      size="lg"
       title={t("features.studio.gallery.title")}
       description={t("features.studio.gallery.description")}
     >
@@ -117,7 +118,7 @@ export const GalleryPickerSheet: FC<GalleryPickerSheetProps> = ({
         </p>
 
         {files.isPending ? (
-          <div className="grid grid-cols-2 gap-2" aria-hidden>
+          <div className="grid grid-cols-2 gap-2 lg:grid-cols-4" aria-hidden>
             {Array.from({ length: 4 }, (_, index) => (
               <Skeleton key={index} className="aspect-[9/12] rounded-xl" />
             ))}
@@ -130,7 +131,7 @@ export const GalleryPickerSheet: FC<GalleryPickerSheetProps> = ({
             {t("features.studio.gallery.empty")}
           </div>
         ) : (
-          <ul className="grid grid-cols-2 gap-2">
+          <ul className="grid grid-cols-2 gap-2 lg:grid-cols-4 lg:gap-3">
             {videos.map((video) => {
               const used = usedFileUuids.has(video.uuid);
               const previewUrl = previews[video.uuid]?.preview_url;
