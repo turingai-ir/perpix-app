@@ -33,7 +33,6 @@ import {
   AiProvidersListPage,
 } from "@/features/ai";
 import { FilesListPage, FileDetailPage } from "@/features/files";
-import { CaptionPresetsPage } from "@/features/studio";
 import {
   SessionsListPage,
   ApiTokensListPage,
@@ -132,7 +131,10 @@ export const router = createBrowserRouter([
           },
           {
             path: APP_ROUTES_KEY.studio.captionPresets.path,
-            element: <CaptionPresetsPage />,
+            // Loaded on demand: the caption renderer is heavy and only this page draws.
+            lazy: async () => ({
+              Component: (await import("@/features/studio")).CaptionPresetsPage,
+            }),
             handle: { title: APP_ROUTES_KEY.studio.captionPresets.meta.title },
           },
           {

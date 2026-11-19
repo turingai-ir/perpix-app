@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "sideEffects": false,
   "description": "How a caption looks at a moment in time. Shared by the app, which exports the video, and the admin panel, which previews the presets, so the two can never differ.",
   "exports": {
     ".": "./src/index.ts",
@@ -18,7 +19,6 @@
     "vitest": "^3.2.4"
   },
   "dependencies": {
-    "gsap": "^3.15.1",
     "konva": "^10.9.1"
   },
   "peerDependencies": {

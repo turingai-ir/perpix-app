@@ -1,4 +1,4 @@
-import gsap from "gsap";
+import { EASINGS } from "./easing";
 import type {
   Animator,
   CaptionTemplate,
@@ -8,20 +8,7 @@ import type {
 } from "./template";
 import type { CaptionPage, CaptionWord } from "./words";
 
-/**
- * Easings come from GSAP, but nothing here is played by it: every value is
- * computed from the time it is given. That lets the export render any frame, in
- * any order, and get the same picture as the preview.
- */
-const easings = new Map<EaseName, (progress: number) => number>();
-const ease = (name: EaseName) => {
-  let fn = easings.get(name);
-  if (!fn) {
-    fn = gsap.parseEase(name);
-    easings.set(name, fn);
-  }
-  return fn;
-};
+const ease = (name: EaseName) => EASINGS[name];
 
 const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
 const lerp = (from: number, to: number, progress: number) =>

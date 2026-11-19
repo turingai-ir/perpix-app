@@ -443,9 +443,6 @@ importers:
 
   packages/caption-renderer:
     dependencies:
-      gsap:
-        specifier: ^3.15.1
-        version: 3.15.1
       konva:
         specifier: ^10.9.1
         version: 10.9.1

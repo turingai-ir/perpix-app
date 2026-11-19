@@ -1,4 +1,4 @@
-import Konva from "konva";
+import { Ellipse, Group, Line, Rect, Star, Text, type Node, type Shape, type TextConfig } from "./konva";
 import { seeded } from "./animators";
 import { withAlpha } from "./colors";
 import type { Decoration } from "./template";
@@ -13,7 +13,7 @@ export interface WordGeometry {
   /** Frame height over 1080. */
   scale: number;
   /** Builds the text config of the word, to draw a coloured copy of it. */
-  textProps: () => Konva.TextConfig;
+  textProps: () => TextConfig;
   /** Whether the word's letters move on their own, which a copy of the word cannot follow. */
   hasChars: boolean;
   seedIndex: number;
@@ -22,7 +22,7 @@ export interface WordGeometry {
 export interface DecorationInstance {
   /** Under the text, or over it. */
   layer: "behind" | "above";
-  node: Konva.Node;
+  node: Node;
   /**
    * Shows the decoration for the moment. `on` says whether the word is in one
    * of the states the decoration was asked for; `progress` is how far the
@@ -35,7 +35,7 @@ const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
 
 /** A rectangle that appears by fading, or grows from the word's first letter. */
 const rectInstance = (
-  rect: Konva.Rect,
+  rect: Rect,
   full: number,
   rtl: boolean,
   reveal: Decoration["reveal"],
@@ -59,7 +59,7 @@ const rectInstance = (
 
 /** An outline that is drawn along its length, or fades in. */
 const outlineInstance = (
-  shape: Konva.Shape,
+  shape: Shape,
   length: number,
   reveal: Decoration["reveal"],
 ): DecorationInstance => {
@@ -92,9 +92,9 @@ export const makeDecoration = (
   switch (decoration.kind) {
     case "wipe": {
       if (g.hasChars) return null;
-      const overlay = new Konva.Text({ ...g.textProps(), fill: color });
+      const overlay = new Text({ ...g.textProps(), fill: color });
       let fraction = 0;
-      const clip = new Konva.Group({
+      const clip = new Group({
         clipFunc: (context) => {
           const covered = w * fraction;
           context.rect(rtl ? w - covered : 0, 0, covered, h);
@@ -114,7 +114,7 @@ export const makeDecoration = (
       if (g.hasChars) return null;
       const band = w * 0.6;
       const clear = withAlpha(color, 0);
-      const overlay = new Konva.Text({
+      const overlay = new Text({
         ...g.textProps(),
         fill: color,
         fillLinearGradientColorStops: [0, clear, 0.5, color, 1, clear],
@@ -137,7 +137,7 @@ export const makeDecoration = (
     }
     case "pill": {
       const full = w + 2 * size;
-      const rect = new Konva.Rect({
+      const rect = new Rect({
         x: -w / 2 - size,
         y: -h / 2 - size / 2,
         width: full,
@@ -150,7 +150,7 @@ export const makeDecoration = (
     }
     case "marker": {
       const full = w + 0.2 * h;
-      const rect = new Konva.Rect({
+      const rect = new Rect({
         x: -w / 2 - 0.1 * h,
         y: h * 0.02,
         width: full,
@@ -163,7 +163,7 @@ export const makeDecoration = (
     }
     case "underline": {
       const thickness = Math.max(1, size);
-      const rect = new Konva.Rect({
+      const rect = new Rect({
         x: -w / 2,
         y: h / 2 + thickness * 0.2,
         width: w,
@@ -176,7 +176,7 @@ export const makeDecoration = (
     }
     case "strike": {
       const thickness = Math.max(1, size);
-      const rect = new Konva.Rect({
+      const rect = new Rect({
         x: -w / 2,
         y: h * 0.06 - thickness / 2,
         width: w,
@@ -190,7 +190,7 @@ export const makeDecoration = (
     case "frame": {
       const padX = 0.18 * h;
       const padY = 0.08 * h;
-      const rect = new Konva.Rect({
+      const rect = new Rect({
         x: -w / 2 - padX,
         y: -h / 2 - padY,
         width: w + 2 * padX,
@@ -206,7 +206,7 @@ export const makeDecoration = (
     case "circle": {
       const rx = w / 2 + 0.3 * h;
       const ry = h / 2 + 0.12 * h;
-      const ellipse = new Konva.Ellipse({
+      const ellipse = new Ellipse({
         radiusX: rx,
         radiusY: ry,
         rotation: -3,
@@ -234,7 +234,7 @@ export const makeDecoration = (
             Math.sin(((x + w / 2) / period) * 2 * Math.PI) * amplitude,
         );
       }
-      const line = new Konva.Line({
+      const line = new Line({
         points,
         stroke: color,
         strokeWidth: thickness,
@@ -243,7 +243,7 @@ export const makeDecoration = (
         tension: 0.4,
       });
       let covered = 1;
-      const group = new Konva.Group({
+      const group = new Group({
         opacity: 0,
         clipFunc: (context) => {
           const span = (w + 2 * amplitude) * covered;
@@ -267,12 +267,12 @@ export const makeDecoration = (
     }
     case "sparkle": {
       const count = Math.max(1, Math.round(decoration.count));
-      const group = new Konva.Group({ opacity: 1 });
-      const stars: Konva.Star[] = [];
+      const group = new Group({ opacity: 1 });
+      const stars: Star[] = [];
       const seed = g.seedIndex * 13 + 5;
       for (let i = 0; i < count; i++) {
         const outer = h * (0.1 + 0.1 * (seeded(seed, i, 3) * 0.5 + 0.5));
-        const star = new Konva.Star({
+        const star = new Star({
           x: seeded(seed, i, 1) * (w / 2 + 0.3 * h),
           y: seeded(seed, i, 2) * h * 0.85,
           numPoints: 4,

@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import Konva from "konva";
+import { Layer, Rect, Stage } from "./konva";
 import { ensureCaptionFont } from "./fonts";
 import { CaptionRenderer } from "./renderer";
 import type { CaptionTemplate } from "./template";
@@ -29,17 +29,17 @@ export function CaptionPreview({
 }: CaptionPreviewProps) {
   const host = useRef<HTMLDivElement>(null);
   const renderer = useRef<CaptionRenderer | null>(null);
-  const stage = useRef<Konva.Stage | null>(null);
+  const stage = useRef<Stage | null>(null);
   const timeRef = useRef(timeMs);
 
   useEffect(() => {
     const element = host.current;
     if (!element) return;
-    const created = new Konva.Stage({ container: element, width, height });
-    const layer = new Konva.Layer();
+    const created = new Stage({ container: element, width, height });
+    const layer = new Layer();
     created.add(layer);
     layer.add(
-      new Konva.Rect({ width, height, fill: background, listening: false }),
+      new Rect({ width, height, fill: background, listening: false }),
     );
     stage.current = created;
     renderer.current = new CaptionRenderer(layer, template);

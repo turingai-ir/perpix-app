@@ -1,4 +1,4 @@
-import Konva from "konva";
+import { Blur, Group, Konva, Layer, Node, Rect, Text, type TextConfig } from "./konva";
 import {
   combine,
   emojiState,
@@ -57,8 +57,8 @@ const splitLetters = (text: string): string[] => {
 const REELS_SAFE = { top: 0.14, bottom: 0.35, side: 0.06 };
 
 interface PlacedChar {
-  group: Konva.Group;
-  text: Konva.Text;
+  group: Group;
+  text: Text;
   restX: number;
   width: number;
 }
@@ -67,9 +67,9 @@ interface PlacedWord {
   word: CaptionWord;
   role: string;
   roleStyle: RoleStyle;
-  wrap: Konva.Group;
+  wrap: Group;
   /** One text for the word, or one per letter when letters are animated. */
-  texts: Konva.Text[];
+  texts: Text[];
   chars: PlacedChar[];
   height: number;
   margin: number;
@@ -80,7 +80,7 @@ interface PlacedWord {
   width: number;
   gradient: boolean;
   decorations: Array<{ decoration: Decoration; item: DecorationInstance }>;
-  emoji: Konva.Text | null;
+  emoji: Text | null;
   restX: number;
   index: number;
 }
@@ -93,7 +93,7 @@ interface Bounds {
 }
 
 interface PlacedLine {
-  group: Konva.Group;
+  group: Group;
   restY: number;
   index: number;
   bounds: Bounds;
@@ -101,7 +101,7 @@ interface PlacedLine {
 
 interface Built {
   key: string;
-  block: Konva.Group;
+  block: Group;
   lines: PlacedLine[];
   words: PlacedWord[];
   fontSize: number;
@@ -110,7 +110,7 @@ interface Built {
   centerX: number;
   centerY: number;
   blockBounds: Bounds;
-  bars: Array<{ rect: Konva.Rect; full: number; rtl: boolean }>;
+  bars: Array<{ rect: Rect; full: number; rtl: boolean }>;
 }
 
 /**
@@ -119,7 +119,7 @@ interface Built {
  * exporting frame by frame all show the same picture.
  */
 export class CaptionRenderer {
-  private readonly group = new Konva.Group();
+  private readonly group = new Group();
   private pages: CaptionPage[] = [];
   private template: CaptionTemplate;
   private templateKey: string;
@@ -127,7 +127,7 @@ export class CaptionRenderer {
   private words: readonly CaptionWord[] = [];
 
   constructor(
-    private readonly layer: Konva.Layer,
+    private readonly layer: Layer,
     template: CaptionTemplate,
   ) {
     this.template = template;
@@ -203,10 +203,10 @@ export class CaptionRenderer {
       seedIndex: 0,
     };
     const block = evaluate(template, pageUnit, page, timeMs);
-    const blurred: Array<{ node: Konva.Node; bounds: Bounds; radius: number }> =
+    const blurred: Array<{ node: Node; bounds: Bounds; radius: number }> =
       [];
     const place = (
-      node: Konva.Node,
+      node: Node,
       restX: number,
       restY: number,
       tr: Transform,
@@ -303,7 +303,7 @@ export class CaptionRenderer {
       const rest = colored ?? base.fill.color;
       const strokeColor =
         state.strokeColor ?? placed.roleStyle.strokeColor ?? base.stroke.color;
-      const paint = (text: Konva.Text, tr: Transform) => {
+      const paint = (text: Text, tr: Transform) => {
         const mixed =
           tr.tint > 0 ? mixColors(rest, tr.tintColor, tr.tint) : rest;
         text.fillPriority(
@@ -379,7 +379,7 @@ export class CaptionRenderer {
     // the inside out, once every colour and position is final.
     for (const { node, bounds, radius } of blurred.reverse()) {
       node.cache({ ...bounds, pixelRatio: Konva.pixelRatio });
-      node.filters([Konva.Filters.Blur]);
+      node.filters([Blur]);
       node.blurRadius(radius);
     }
   }
@@ -421,7 +421,7 @@ export class CaptionRenderer {
       const roleStyle: RoleStyle =
         role === NORMAL_ROLE ? {} : (template.roles[role] ?? {});
       const wordRtl = isRtl(word.text);
-      const textProps = (content: string): Konva.TextConfig => {
+      const textProps = (content: string): TextConfig => {
         const italic = roleStyle.italic ?? base.font.italic;
         const weight = roleStyle.weight ?? base.font.weight;
         const upper = roleStyle.uppercase ?? base.text.uppercase;
@@ -441,7 +441,7 @@ export class CaptionRenderer {
       const strokeWidth = (roleStyle.strokeWidth ?? stroke) * scale;
       const gradientOn = base.fill.gradient.enabled;
       const makeText = (content: string) => {
-        const text = new Konva.Text({
+        const text = new Text({
           ...textProps(content),
           fill: base.fill.color,
           stroke: strokeWidth > 0 ? base.stroke.color : undefined,
@@ -473,8 +473,8 @@ export class CaptionRenderer {
         return text;
       };
 
-      const wrap = new Konva.Group();
-      const texts: Konva.Text[] = [];
+      const wrap = new Group();
+      const texts: Text[] = [];
       const chars: PlacedChar[] = [];
       let w: number;
       let h: number;
@@ -487,7 +487,7 @@ export class CaptionRenderer {
         let cursor = -w / 2;
         for (const piece of pieces) {
           const cw = piece.width();
-          const group = new Konva.Group();
+          const group = new Group();
           piece.position({ x: -cw / 2, y: -h / 2 });
           group.add(piece);
           chars.push({ group, text: piece, restX: cursor + cw / 2, width: cw });
@@ -520,17 +520,17 @@ export class CaptionRenderer {
       }
 
       for (const { item } of decorations) {
-        if (item.layer === "behind") wrap.add(item.node as Konva.Group);
+        if (item.layer === "behind") wrap.add(item.node as Group);
       }
       if (chars.length > 0) for (const char of chars) wrap.add(char.group);
       else for (const text of texts) wrap.add(text);
       for (const { item } of decorations) {
-        if (item.layer === "above") wrap.add(item.node as Konva.Group);
+        if (item.layer === "above") wrap.add(item.node as Group);
       }
 
-      let emojiNode: Konva.Text | null = null;
+      let emojiNode: Text | null = null;
       if (emoji.enabled && word.emoji) {
-        emojiNode = new Konva.Text({
+        emojiNode = new Text({
           text: word.emoji,
           fontSize: fontSize * emoji.size,
           lineHeight: 1,
@@ -615,11 +615,11 @@ export class CaptionRenderer {
       space * Math.max(0, items.length - 1);
     const blockWidth = Math.max(...rows.map(widthOf), 0);
     const blockHeight = rows.length * lineHeight;
-    const block = new Konva.Group();
+    const block = new Group();
 
     if (box.enabled) {
       block.add(
-        new Konva.Rect({
+        new Rect({
           x: -blockWidth / 2 - padding,
           y: -blockHeight / 2 - padding,
           width: blockWidth + 2 * padding,
@@ -636,7 +636,7 @@ export class CaptionRenderer {
       .filter((decoration) => decoration.kind === "progress")
       .map((decoration) => {
         const full = blockWidth + 2 * padding;
-        const rect = new Konva.Rect({
+        const rect = new Rect({
           x: -full / 2,
           y: blockHeight / 2 + padding + 14 * scale,
           width: 0,
@@ -649,7 +649,7 @@ export class CaptionRenderer {
       });
 
     const lines: PlacedLine[] = rows.map((items, index) => {
-      const lineGroup = new Konva.Group();
+      const lineGroup = new Group();
       const free = blockWidth - widthOf(items);
       const shift =
         base.text.align === "center"
