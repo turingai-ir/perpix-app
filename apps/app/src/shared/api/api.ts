@@ -534,9 +534,9 @@ export interface paths {
         readonly put?: never;
         /**
          * Request Transcript
-         * @description Make the subtitles of a file; this is the only step that costs money.
+         * @description Make the subtitles of a file; this is the only step that costs PerPix money, and it is free for the user.
          *
-         *     A file that already has a transcript being made or done gets that one back, free; it is never made twice.
+         *     The user is never charged and needs no balance, but still needs the studio scope and access to the model. A file that already has a transcript being made or done gets that one back; it is never made twice. A new one counts toward a daily limit per user (`MAX_TRANSCRIPTS_PER_DAY`), because PerPix pays for each.
          *     Read it again (`GET /{uuid}`) until it is no longer PROCESSING.
          */
         readonly post: operations["studio_request_transcript"];
@@ -1512,7 +1512,7 @@ export interface components {
          * ApplicationErrorCode
          * @enum {integer}
          */
-        readonly ApplicationErrorCode: 900 | 901 | 902 | 999 | 1000 | 1100 | 1103 | 1104 | 1106 | 1107 | 1108 | 1109 | 1200 | 1201 | 1202 | 1203 | 1204 | 1205 | 1206 | 1300 | 1301 | 1302 | 1303 | 1304 | 1305 | 1306 | 1307 | 1308 | 1309 | 1310 | 1400 | 1401 | 1500 | 1501 | 1502 | 1503 | 1504 | 1505 | 1506 | 1507 | 1600 | 1601 | 1602 | 1603 | 1604 | 1605 | 1700 | 1701 | 1702 | 1800 | 1801 | 1802 | 1803 | 1804 | 1805 | 1806 | 1807 | 1808 | 1810 | 1811 | 1812 | 1813 | 1814 | 1815 | 1816 | 1900 | 1901 | 1902 | 1903 | 1904 | 1906 | 1907;
+        readonly ApplicationErrorCode: 900 | 901 | 902 | 999 | 1000 | 1100 | 1103 | 1104 | 1106 | 1107 | 1108 | 1109 | 1200 | 1201 | 1202 | 1203 | 1204 | 1205 | 1206 | 1300 | 1301 | 1302 | 1303 | 1304 | 1305 | 1306 | 1307 | 1308 | 1309 | 1310 | 1400 | 1401 | 1500 | 1501 | 1502 | 1503 | 1504 | 1505 | 1506 | 1507 | 1600 | 1601 | 1602 | 1603 | 1604 | 1605 | 1700 | 1701 | 1702 | 1800 | 1801 | 1802 | 1803 | 1804 | 1805 | 1806 | 1807 | 1808 | 1810 | 1811 | 1812 | 1813 | 1814 | 1815 | 1816 | 1900 | 1901 | 1902 | 1903 | 1904 | 1906 | 1907 | 1908;
         /** ApplicationErrorResponse */
         readonly ApplicationErrorResponse: {
             /**
@@ -4313,6 +4313,15 @@ export interface operations {
                     readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
+            /** @description Too Many Requests */
+            readonly 429: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
         };
     };
     readonly studio_get_transcript: {
@@ -5571,7 +5580,7 @@ export const aiRegistryModelSupportedTypesEnumValues: ReadonlyArray<FlattenedDee
 export const aiTaskMessageStatusEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiTaskMessageStatusEnum"]> = ["PENDING", "IN_PROGRESS", "SUCCESS", "FAILED"];
 export const aiTaskRuleEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiTaskRuleEnum"]> = ["SYSTEM", "USER", "ASSISTANT", "TOOL", "FUNCTION", "INLINE"];
 export const aiTaskTypeEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiTaskTypeEnum"]> = ["TEXT", "IMAGE", "AUDIO", "VIDEO"];
-export const applicationErrorCodeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["ApplicationErrorCode"]> = [900, 901, 902, 999, 1000, 1100, 1103, 1104, 1106, 1107, 1108, 1109, 1200, 1201, 1202, 1203, 1204, 1205, 1206, 1300, 1301, 1302, 1303, 1304, 1305, 1306, 1307, 1308, 1309, 1310, 1400, 1401, 1500, 1501, 1502, 1503, 1504, 1505, 1506, 1507, 1600, 1601, 1602, 1603, 1604, 1605, 1700, 1701, 1702, 1800, 1801, 1802, 1803, 1804, 1805, 1806, 1807, 1808, 1810, 1811, 1812, 1813, 1814, 1815, 1816, 1900, 1901, 1902, 1903, 1904, 1906, 1907];
+export const applicationErrorCodeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["ApplicationErrorCode"]> = [900, 901, 902, 999, 1000, 1100, 1103, 1104, 1106, 1107, 1108, 1109, 1200, 1201, 1202, 1203, 1204, 1205, 1206, 1300, 1301, 1302, 1303, 1304, 1305, 1306, 1307, 1308, 1309, 1310, 1400, 1401, 1500, 1501, 1502, 1503, 1504, 1505, 1506, 1507, 1600, 1601, 1602, 1603, 1604, 1605, 1700, 1701, 1702, 1800, 1801, 1802, 1803, 1804, 1805, 1806, 1807, 1808, 1810, 1811, 1812, 1813, 1814, 1815, 1816, 1900, 1901, 1902, 1903, 1904, 1906, 1907, 1908];
 export const fileManagerMediaMetadataResponseKindValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["FileManagerMediaMetadataResponse"]["kind"]> = ["image", "video", "audio"];
 export const generationFailureActionEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["GenerationFailureActionEnum"]> = ["MODIFY_INPUT", "RETRY_LATER", "RETRY_NOW", "CONTACT_SUPPORT"];
 export const generationFailureReasonEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["GenerationFailureReasonEnum"]> = ["CONTENT_POLICY", "INVALID_INPUT", "RATE_LIMITED", "PROVIDER_UNAVAILABLE", "PROVIDER_TIMEOUT", "PROVIDER_OUT_OF_CREDIT", "PROVIDER_AUTH_FAILED", "PLATFORM_CONFIGURATION", "PROVIDER_FAILED", "INTERNAL", "OPERATOR"];
@@ -5724,6 +5733,7 @@ export const ApplicationErrorCodeMap = {
   1904: 1904,
   1906: 1906,
   1907: 1907,
+  1908: 1908,
 } as const;
 export type ApplicationErrorCodeKey = keyof typeof ApplicationErrorCodeMap;
 export type ApplicationErrorCodeValue = (typeof ApplicationErrorCodeMap)[ApplicationErrorCodeKey];
