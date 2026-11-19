@@ -135,3 +135,44 @@ describe("animator presets", () => {
     }
   });
 });
+
+describe("decoration kinds and palette", () => {
+  it("accepts the new kinds, clamps the count and keeps only colours in the palette", () => {
+    const template = normalizeTemplate({
+      version: 2,
+      base: {
+        fill: {
+          palette: [
+            "#fff",
+            "red",
+            5,
+            "#00ff00",
+            "#111",
+            "#222",
+            "#333",
+            "#444",
+          ],
+        },
+      },
+      decorations: [
+        { kind: "sparkle", count: 99 },
+        { kind: "circle" },
+        { kind: "nope" },
+      ],
+    });
+    expect(template.decorations.map((d) => d.kind)).toEqual([
+      "sparkle",
+      "circle",
+      "pill",
+    ]);
+    expect(template.decorations[0]?.count).toBe(12);
+    expect(template.base.fill.palette).toEqual([
+      "#fff",
+      "#00ff00",
+      "#111",
+      "#222",
+      "#333",
+      "#444",
+    ]);
+  });
+});

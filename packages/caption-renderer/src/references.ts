@@ -545,4 +545,143 @@ export const REFERENCE_TEMPLATES: Record<string, Reference> = {
       ANIMATOR_PRESETS.fade_out?.animator,
     ],
   }),
+  scribble: make("دایرهٔ دستی دور کلمهٔ کلیدی", {
+    states: { upcoming: {}, active: {}, spoken: {} },
+    roles: { key: { color: "#ffd400", scale: 1.1 } },
+    roleRules: [{ role: "key", when: "longest" }],
+    decorations: [
+      {
+        kind: "circle",
+        select: { roles: ["key"], states: ["active", "spoken"] },
+        color: "#ff4d6d",
+        size: 5,
+        reveal: "sweep",
+      },
+    ],
+    animators: [
+      ANIMATOR_PRESETS.pop_in?.animator,
+      ANIMATOR_PRESETS.fade_out?.animator,
+    ],
+  }),
+  sparkle_hype: make("جرقه و درخشش", {
+    states: { upcoming: {}, active: { color: "#ffe066" }, spoken: {} },
+    decorations: [
+      {
+        kind: "sparkle",
+        select: { states: ["active"] },
+        color: "#fff3a0",
+        count: 7,
+      },
+    ],
+    animators: [
+      ANIMATOR_PRESETS.pop_in?.animator,
+      ANIMATOR_PRESETS.glow_pulse?.animator,
+      ANIMATOR_PRESETS.fade_out?.animator,
+    ],
+  }),
+  rainbow: make("رنگین‌کمان", {
+    base: {
+      fill: {
+        palette: ["#ff4d6d", "#ffd400", "#2bff88", "#00e5ff", "#c084fc"],
+      },
+      stroke: { width: 8 },
+    },
+    layout: { wordsPerPage: 4 },
+    states: { upcoming: {}, active: {}, spoken: {} },
+    animators: [
+      ANIMATOR_PRESETS.word_drop?.animator,
+      ANIMATOR_PRESETS.fade_out?.animator,
+    ],
+  }),
+  shine_gold: make("طلایی براق", {
+    base: {
+      font: { weight: 900 },
+      fill: {
+        color: "#ffd24a",
+        gradient: { enabled: true, from: "#fff1a8", to: "#f5a300" },
+      },
+      stroke: { width: 7, color: "#3b2300" },
+    },
+    states: { upcoming: {}, active: {}, spoken: {} },
+    decorations: [
+      { kind: "shine", select: { states: ["active"] }, color: "#ffffff" },
+    ],
+    animators: [
+      ANIMATOR_PRESETS.zoom_punch?.animator,
+      ANIMATOR_PRESETS.fade_out?.animator,
+    ],
+  }),
+  progress_bar: make("نوار پیشرفت زیر کپشن", {
+    base: { stroke: { width: 0 }, shadow: { enabled: false } },
+    box: { enabled: true, opacity: 0.75, padding: 26, radius: 22 },
+    states: { upcoming: {}, active: { color: "#ffd400" }, spoken: {} },
+    decorations: [{ kind: "progress", color: "#ffd400", size: 6, radius: 3 }],
+    animators: [
+      ANIMATOR_PRESETS.fade_in?.animator,
+      ANIMATOR_PRESETS.fade_out?.animator,
+    ],
+  }),
+  squiggle_line: make("خط موجی", {
+    states: { upcoming: {}, active: {}, spoken: {} },
+    decorations: [
+      {
+        kind: "squiggle",
+        select: { states: ["active", "spoken"] },
+        color: "#ff4d6d",
+        size: 4,
+        reveal: "sweep",
+      },
+    ],
+    animators: [
+      ANIMATOR_PRESETS.fade_in?.animator,
+      ANIMATOR_PRESETS.fade_out?.animator,
+    ],
+  }),
+  frame_tech: make("قاب فناورانه", {
+    base: {
+      stroke: { width: 0 },
+      shadow: {
+        enabled: true,
+        color: "#00e5ff",
+        blur: 12,
+        offsetY: 0,
+        opacity: 0.6,
+      },
+    },
+    states: { upcoming: {}, active: { color: "#00e5ff" }, spoken: {} },
+    decorations: [
+      {
+        kind: "frame",
+        select: { states: ["active"] },
+        color: "#00e5ff",
+        size: 3,
+        radius: 6,
+        reveal: "sweep",
+      },
+    ],
+    animators: [
+      ANIMATOR_PRESETS.slide_side?.animator,
+      ANIMATOR_PRESETS.fade_out?.animator,
+    ],
+  }),
+  strike_spoken: make("خط‌خوردن کلمه‌های گفته‌شده", {
+    states: {
+      upcoming: {},
+      active: { color: "#ffd400" },
+      spoken: { opacity: 0.55 },
+    },
+    decorations: [
+      {
+        kind: "strike",
+        select: { states: ["spoken"] },
+        color: "#ff4d6d",
+        size: 5,
+        reveal: "sweep",
+      },
+    ],
+    animators: [
+      ANIMATOR_PRESETS.fade_in?.animator,
+      ANIMATOR_PRESETS.fade_out?.animator,
+    ],
+  }),
 };

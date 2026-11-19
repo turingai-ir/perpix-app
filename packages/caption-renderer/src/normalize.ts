@@ -11,6 +11,7 @@ import {
   FROM,
   MAX_ANIMATORS,
   MAX_DECORATIONS,
+  MAX_PALETTE,
   MAX_ROLES,
   MAX_ROLE_RULES,
   POSITIONS,
@@ -140,6 +141,7 @@ const decoration = (value: unknown): Decoration => {
     size: num(raw.size, d.size, 0, 80),
     radius: num(raw.radius, d.radius, 0, 80),
     reveal: pick(raw.reveal, REVEALS, d.reveal),
+    count: Math.round(num(raw.count, d.count, 1, 12)),
   };
 };
 
@@ -237,6 +239,10 @@ const normalizeV2 = (raw: Raw): CaptionTemplate => {
           from: color(gradient.from, d.base.fill.gradient.from),
           to: color(gradient.to, d.base.fill.gradient.to),
         },
+        palette: list(fill.palette, MAX_PALETTE).flatMap((c) => {
+          const parsed = optColor(c);
+          return parsed ? [parsed] : [];
+        }),
       },
       stroke: {
         width: num(stroke.width, d.base.stroke.width, 0, 40),

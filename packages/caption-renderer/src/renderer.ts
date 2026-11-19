@@ -8,8 +8,15 @@ import {
   type Transform,
   type Unit,
 } from "./animators";
+import { mixColors } from "./colors";
+import { makeDecoration, type DecorationInstance } from "./decorations";
 import { NORMAL_ROLE, roleOf } from "./roles";
-import type { CaptionTemplate, Decoration, RoleStyle } from "./template";
+import type {
+  CaptionTemplate,
+  Decoration,
+  RoleStyle,
+  WordStateName,
+} from "./template";
 import {
   buildPages,
   isRtl,
@@ -46,33 +53,8 @@ const splitLetters = (text: string): string[] => {
     : Array.from(text);
 };
 
-const channel = (hex: string, offset: number) => {
-  const full =
-    hex.length === 4 ? `#${[...hex.slice(1)].map((c) => c + c).join("")}` : hex;
-  return parseInt(full.slice(1 + offset * 2, 3 + offset * 2), 16);
-};
-
-/** `from` mixed toward `to` by `amount`, both as #rrggbb or #rgb. */
-const mixColors = (from: string, to: string, amount: number): string => {
-  const mixed = [0, 1, 2].map((i) =>
-    Math.round(channel(from, i) + (channel(to, i) - channel(from, i)) * amount)
-      .toString(16)
-      .padStart(2, "0"),
-  );
-  return `#${mixed.join("")}`;
-};
-
 /** Free space on a 9:16 frame that social apps cover with their own buttons and text. */
 const REELS_SAFE = { top: 0.14, bottom: 0.35, side: 0.06 };
-
-interface DecorationNode {
-  decoration: Decoration;
-  rect: Konva.Rect | null;
-  /** The wipe: the coloured copy of the word, drawn up to `fraction`. */
-  overlay: Konva.Text | null;
-  setFraction: (fraction: number) => void;
-  fullWidth: number;
-}
 
 interface PlacedChar {
   group: Konva.Group;
@@ -97,7 +79,7 @@ interface PlacedWord {
   bounds: Bounds;
   width: number;
   gradient: boolean;
-  decorations: DecorationNode[];
+  decorations: Array<{ decoration: Decoration; item: DecorationInstance }>;
   emoji: Konva.Text | null;
   restX: number;
   index: number;
@@ -128,6 +110,7 @@ interface Built {
   centerX: number;
   centerY: number;
   blockBounds: Bounds;
+  bars: Array<{ rect: Konva.Rect; full: number; rtl: boolean }>;
 }
 
 /**
@@ -242,6 +225,13 @@ export class CaptionRenderer {
     };
 
     place(built.block, built.centerX, built.centerY, block, built.blockBounds);
+    const span = Math.max(1, page.endMs - page.startMs);
+    for (const bar of built.bars) {
+      const covered =
+        bar.full * Math.min(1, Math.max(0, (timeMs - page.startMs) / span));
+      bar.rect.width(covered);
+      bar.rect.offsetX(bar.rtl ? covered - bar.full : 0);
+    }
 
     for (const line of built.lines) {
       const unit: Unit = {
@@ -300,7 +290,13 @@ export class CaptionRenderer {
       );
       placed.reveal.value = whole.reveal;
 
-      const colored = state.color ?? placed.roleStyle.color;
+      const palette = base.fill.palette;
+      const colored =
+        state.color ??
+        placed.roleStyle.color ??
+        (palette.length > 0
+          ? palette[placed.index % palette.length]
+          : undefined);
       const gradient = placed.gradient && colored === undefined;
       const rest = colored ?? base.fill.color;
       const strokeColor =
@@ -358,8 +354,14 @@ export class CaptionRenderer {
         for (const text of placed.texts) paint(text, whole);
       }
 
-      for (const node of placed.decorations) {
-        this.updateDecoration(node, placed, timeMs);
+      for (const { decoration, item } of placed.decorations) {
+        this.updateDecoration(
+          item,
+          decoration.kind,
+          decoration.select.states,
+          placed,
+          timeMs,
+        );
       }
       if (placed.emoji) {
         const emoji = emojiState(placed.word, timeMs);
@@ -381,37 +383,18 @@ export class CaptionRenderer {
   }
 
   private updateDecoration(
-    node: DecorationNode,
+    item: DecorationInstance,
+    kind: Decoration["kind"],
+    states: readonly WordStateName[],
     placed: PlacedWord,
     timeMs: number,
   ) {
-    const { decoration } = node;
-    const state = wordStateAt(placed.word, timeMs);
-    const on = decoration.select.states.includes(state);
+    const on = states.includes(wordStateAt(placed.word, timeMs));
+    const sweepsWord = kind === "wipe" || kind === "shine";
     const progress = on
-      ? stateProgress(
-          placed.word,
-          timeMs,
-          decoration.kind === "wipe" ? "wipe" : "quick",
-        )
+      ? stateProgress(placed.word, timeMs, sweepsWord ? "wipe" : "quick")
       : 0;
-    if (decoration.kind === "wipe") {
-      node.setFraction(on ? progress : 0);
-      return;
-    }
-    const rect = node.rect;
-    if (!rect) return;
-    if (decoration.reveal === "sweep") {
-      const rtl = isRtl(placed.word.text);
-      const covered = node.fullWidth * progress;
-      rect.width(covered);
-      rect.offsetX(rtl ? covered - node.fullWidth : 0);
-      rect.opacity(on ? 1 : 0);
-    } else {
-      rect.width(node.fullWidth);
-      rect.offsetX(0);
-      rect.opacity(on ? progress : 0);
-    }
+    item.apply(on, progress, timeMs);
   }
 
   private build(
@@ -517,94 +500,31 @@ export class CaptionRenderer {
         texts.push(text);
       }
 
-      const decorations: DecorationNode[] = [];
-      const behind: Konva.Rect[] = [];
-      const above: Konva.Group[] = [];
+      const decorations: PlacedWord["decorations"] = [];
       for (const decoration of template.decorations) {
         const { roles } = decoration.select;
         if (roles.length > 0 && !roles.includes(role)) continue;
-        const size = decoration.size * scale;
-        const radius = decoration.radius * scale;
-        if (decoration.kind === "wipe") {
-          // The coloured copy cannot follow single letters, so a word whose
-          // letters move on their own has no wipe.
-          if (chars.length > 0) continue;
-          const overlay = new Konva.Text({
-            ...textProps(word.text),
-            fill: decoration.color,
-          });
-          let fraction = 0;
-          const clip = new Konva.Group({
-            clipFunc: (context) => {
-              const covered = w * fraction;
-              context.rect(rtl ? w - covered : 0, 0, covered, h);
-            },
-          });
-          clip.position({ x: -w / 2, y: -h / 2 });
-          clip.add(overlay);
-          above.push(clip);
-          decorations.push({
-            decoration,
-            rect: null,
-            overlay,
-            fullWidth: w,
-            setFraction: (next) => {
-              fraction = next;
-            },
-          });
-          continue;
-        }
-        let rect: Konva.Rect;
-        let fullWidth: number;
-        if (decoration.kind === "pill") {
-          fullWidth = w + 2 * size;
-          rect = new Konva.Rect({
-            x: -w / 2 - size,
-            y: -h / 2 - size / 2,
-            width: fullWidth,
-            height: h + size,
-            cornerRadius: radius,
-            fill: decoration.color,
-            opacity: 0,
-          });
-        } else if (decoration.kind === "marker") {
-          fullWidth = w + 0.2 * h;
-          rect = new Konva.Rect({
-            x: -w / 2 - 0.1 * h,
-            y: h * 0.02,
-            width: fullWidth,
-            height: h * 0.42,
-            cornerRadius: radius,
-            fill: decoration.color,
-            opacity: 0,
-          });
-        } else {
-          const thickness = Math.max(1, size);
-          fullWidth = w;
-          rect = new Konva.Rect({
-            x: -w / 2,
-            y: h / 2 + thickness * 0.2,
-            width: fullWidth,
-            height: thickness,
-            cornerRadius: Math.min(radius, thickness / 2),
-            fill: decoration.color,
-            opacity: 0,
-          });
-        }
-        behind.push(rect);
-        decorations.push({
-          decoration,
-          rect,
-          overlay: null,
-          fullWidth,
-          setFraction: () => undefined,
+        const made = makeDecoration(decoration, {
+          startMs: word.startMs,
+          w,
+          h,
+          rtl,
+          scale,
+          textProps: () => textProps(word.text),
+          hasChars: chars.length > 0,
+          seedIndex: index,
         });
+        if (made) decorations.push({ decoration, item: made });
       }
 
-      for (const node of behind) wrap.add(node);
+      for (const { item } of decorations) {
+        if (item.layer === "behind") wrap.add(item.node as Konva.Group);
+      }
       if (chars.length > 0) for (const char of chars) wrap.add(char.group);
       else for (const text of texts) wrap.add(text);
-      for (const node of above) wrap.add(node);
+      for (const { item } of decorations) {
+        if (item.layer === "above") wrap.add(item.node as Konva.Group);
+      }
 
       let emojiNode: Konva.Text | null = null;
       if (emoji.enabled && word.emoji) {
@@ -709,6 +629,23 @@ export class CaptionRenderer {
       );
     }
 
+    // A bar under the caption that fills as the page goes by.
+    const bars: Built["bars"] = template.decorations
+      .filter((decoration) => decoration.kind === "progress")
+      .map((decoration) => {
+        const full = blockWidth + 2 * padding;
+        const rect = new Konva.Rect({
+          x: -full / 2,
+          y: blockHeight / 2 + padding + 14 * scale,
+          width: 0,
+          height: Math.max(2, decoration.size * scale),
+          cornerRadius: decoration.radius * scale,
+          fill: decoration.color,
+        });
+        block.add(rect);
+        return { rect, full, rtl };
+      });
+
     const lines: PlacedLine[] = rows.map((items, index) => {
       const lineGroup = new Konva.Group();
       const free = blockWidth - widthOf(items);
@@ -767,6 +704,7 @@ export class CaptionRenderer {
       lineCount: rows.length,
       centerX: width / 2,
       centerY,
+      bars,
       scale,
       blockBounds: {
         x: -blockWidth / 2 - padding - margin,

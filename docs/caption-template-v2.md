@@ -34,7 +34,7 @@
 ### ۲.۱ سبک پایه (`base`)
 - `font`: `family`، `size` (برای قاب ۱۰۸۰ پیکسلی، با مقیاس خودکار)، `weight` (۱۰۰ تا ۹۰۰)، `italic`.
 - `text`: `uppercase`، `align` (center، left، right)، `lineHeight`، `letterSpacing` (برای فارسی نادیده گرفته می‌شود).
-- `fill`: `color`، و `gradient` اختیاری `{ from, to }` از بالا به پایین کلمه.
+- `fill`: `color`، `gradient` اختیاری `{ from, to }` از بالا به پایین کلمه، و `palette` (تا ۶ رنگ که کلمه‌ها به‌نوبت می‌گیرند، وقتی کلمه رنگ خودش را ندارد).
 - `stroke`: `width`، `color`.
 - `shadow`: `enabled`، `color`، `blur`، `offsetX`، `offsetY`، `opacity`. سایه با جابه‌جایی صفر همان **glow** است.
 
@@ -89,10 +89,14 @@
 
 ### ۲.۶ دکوراسیون‌ها (`decorations`، حداکثر ۸)
 چیزی که پشت یا روی کلمه کشیده می‌شود:
-- `kind`: `pill` (قرص پشت کلمه)، `underline` (زیرخط)، `marker` (ماژیک روی نیمهٔ پایین)، `wipe` (پر شدن رنگ، کاراوکه).
+- `kind`:
+  - `pill` (قرص پشت کلمه)، `underline` (زیرخط)، `marker` (ماژیک روی نیمهٔ پایین)، `wipe` (پر شدن رنگ، کاراوکه).
+  - `frame` (قاب دور کلمه که کشیده می‌شود)، `circle` (دایرهٔ دستی دور کلمه)، `strike` (خط‌خوردن)، `squiggle` (خط موجی).
+  - `sparkle` (جرقه‌های تصادفی با seed، `count` تا ۱۲)، `shine` (نوار برق که روی حروف می‌گذرد).
+  - `progress` (نوار زیر کل کپشن که با گذر صفحه پر می‌شود؛ حالت و نقش ندارد).
 - `select`: `roles` و `states` مثل بالا (مثلاً `states: ["active"]`، یا `["active", "spoken"]` برای ماندن).
 - `color`، `size` (ضخامت زیرخط یا ماژیک، یا فاصلهٔ قرص)، `radius`.
-- `reveal`: `fade` یا `sweep` (از ابتدای کلمه، راست‌به‌چپ در فارسی). `wipe` همیشه `sweep` و با طول کلمه همگام است.
+- `reveal`: `fade` یا `sweep` (از ابتدای کلمه، راست‌به‌چپ در فارسی؛ برای `frame` و `circle` یعنی کشیده شدن خط). `wipe` و `shine` با طول کلمه همگام‌اند و `sparkle` و `progress` `reveal` ندارند.
 
 ### ۲.۷ ایموجی (`emoji`)
 کلمه‌ای که `word.emoji` دارد بالای خودش ایموجی می‌گیرد. `size` ضریب اندازهٔ قلم.

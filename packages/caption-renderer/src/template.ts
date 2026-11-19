@@ -5,6 +5,7 @@ export const MAX_ROLES = 7;
 export const MAX_ROLE_RULES = 8;
 export const MAX_ANIMATORS = 24;
 export const MAX_DECORATIONS = 8;
+export const MAX_PALETTE = 6;
 
 export const ANCHORS = ["top", "middle", "bottom"] as const;
 export type Anchor = (typeof ANCHORS)[number];
@@ -62,6 +63,13 @@ export const DECORATION_KINDS = [
   "underline",
   "marker",
   "wipe",
+  "frame",
+  "strike",
+  "squiggle",
+  "circle",
+  "sparkle",
+  "shine",
+  "progress",
 ] as const;
 export type DecorationKind = (typeof DECORATION_KINDS)[number];
 export const REVEALS = ["fade", "sweep"] as const;
@@ -112,6 +120,8 @@ export interface Decoration {
   size: number;
   radius: number;
   reveal: Reveal;
+  /** How many stars a `sparkle` throws. */
+  count: number;
 }
 
 /** What a role or a state changes about a word. Missing keys change nothing. */
@@ -155,6 +165,8 @@ export interface CaptionTemplate {
     fill: {
       color: string;
       gradient: { enabled: boolean; from: string; to: string };
+      /** Colours the words take in turn, when a word has no colour of its own. */
+      palette: string[];
     };
     stroke: { width: number; color: string };
     shadow: {
@@ -219,6 +231,7 @@ export const DEFAULT_DECORATION: Decoration = {
   size: 10,
   radius: 14,
   reveal: "fade",
+  count: 6,
 };
 
 export const DEFAULT_TEMPLATE: CaptionTemplate = {
@@ -234,6 +247,7 @@ export const DEFAULT_TEMPLATE: CaptionTemplate = {
     fill: {
       color: "#ffffff",
       gradient: { enabled: false, from: "#ffffff", to: "#9ad1ff" },
+      palette: [],
     },
     stroke: { width: 6, color: "#000000" },
     shadow: {

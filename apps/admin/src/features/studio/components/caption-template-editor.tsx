@@ -11,6 +11,7 @@ import {
   FROM,
   MAX_ANIMATORS,
   MAX_DECORATIONS,
+  MAX_PALETTE,
   MAX_ROLES,
   POSITIONS,
   PROPS,
@@ -381,6 +382,13 @@ const NAMES = {
     underline: "زیرخط",
     marker: "ماژیک",
     wipe: "پر شدن (کاراوکه)",
+    frame: "قاب دورِ کلمه",
+    strike: "خط‌خوردن",
+    squiggle: "خط موجی",
+    circle: "دایرهٔ دستی",
+    sparkle: "جرقه",
+    shine: "برق روی متن",
+    progress: "نوار پیشرفت (کل نمایش)",
   },
   reveal: { fade: "محو", sweep: "کشیده شدن" },
   when: { number: "عدد", longest: "بلندترین کلمه", last: "آخرین کلمه" },
@@ -672,6 +680,38 @@ export function CaptionTemplateEditor({
               </Field>
             </>
           )}
+          <Field label={label("palette", "رنگ‌های متناوب کلمه‌ها")}>
+            <span className="flex flex-wrap items-center justify-end gap-1">
+              {base.fill.palette.map((swatch, i) => (
+                <span key={i} className="flex items-center">
+                  <Color
+                    value={swatch}
+                    onChange={(v) =>
+                      edit((d) => void (d.base.fill.palette[i] = v))
+                    }
+                  />
+                  <IconButton
+                    label={label("remove", "حذف")}
+                    onClick={() =>
+                      edit((d) => void d.base.fill.palette.splice(i, 1))
+                    }
+                  >
+                    <Trash2 className="size-3" />
+                  </IconButton>
+                </span>
+              ))}
+              {base.fill.palette.length < MAX_PALETTE && (
+                <IconButton
+                  label={label("addColor", "رنگ جدید")}
+                  onClick={() =>
+                    edit((d) => void d.base.fill.palette.push("#ff4d6d"))
+                  }
+                >
+                  <Plus className="size-3.5" />
+                </IconButton>
+              )}
+            </span>
+          </Field>
           <Field label={label("strokeColor", "رنگ حاشیه")}>
             <Color
               value={base.stroke.color}
@@ -1446,7 +1486,9 @@ export function CaptionTemplateEditor({
                   }
                 />
               </Field>
-              {decoration.kind !== "wipe" && (
+              {!["wipe", "shine", "sparkle", "progress"].includes(
+                decoration.kind,
+              ) && (
                 <Field label={label("reveal", "ظاهر شدن")}>
                   <Choice
                     value={decoration.reveal}
@@ -1454,6 +1496,19 @@ export function CaptionTemplateEditor({
                     label={(o) => NAMES.reveal[o]}
                     onChange={(v) =>
                       setDecoration(index, (x) => void (x.reveal = v))
+                    }
+                  />
+                </Field>
+              )}
+              {decoration.kind === "sparkle" && (
+                <Field label={label("sparkleCount", "تعداد جرقه")}>
+                  <Slider
+                    value={decoration.count}
+                    min={1}
+                    max={12}
+                    step={1}
+                    onChange={(v) =>
+                      setDecoration(index, (x) => void (x.count = v))
                     }
                   />
                 </Field>
