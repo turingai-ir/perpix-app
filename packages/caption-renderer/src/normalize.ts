@@ -81,9 +81,16 @@ const range = (value: unknown, min: number, max: number): Range | null => {
 const PROP_LIMITS: Record<PropName, [number, number]> = {
   opacity: [0, 1],
   scale: [0, 4],
+  scaleX: [-4, 4],
+  scaleY: [-4, 4],
   x: [-5, 5],
   y: [-5, 5],
   rotate: [-360, 360],
+  skewX: [-60, 60],
+  blur: [0, 40],
+  reveal: [0, 1],
+  tint: [0, 1],
+  glow: [0, 2],
 };
 
 const animator = (value: unknown): Animator => {
@@ -112,6 +119,7 @@ const animator = (value: unknown): Animator => {
       y: num(jitter.y, 0, 0, 2),
       scale: num(jitter.scale, 0, 0, 1),
     },
+    tint: color(raw.tint, d.tint),
     seed: Math.round(num(raw.seed, d.seed, 0, 100000)),
     after: pick(raw.after, AFTER, d.after),
     periodMs: num(raw.periodMs, d.periodMs, 200, 10000),

@@ -26,6 +26,231 @@ const popActive = (scale: number, extra: Record<string, unknown> = {}) => ({
   ...extra,
 });
 
+interface AnimatorPreset {
+  title: string;
+  /** What it does, in a few words, for the editor's list. */
+  animator: Record<string, unknown>;
+}
+
+const word = { scope: "word" };
+const letter = { scope: "char" };
+const page = { scope: "page" };
+
+/** Ready-made animators the editor adds with one click. */
+export const ANIMATOR_PRESETS: Record<string, AnimatorPreset> = {
+  fade_in: {
+    title: "محو شدن (ورود)",
+    animator: {
+      select: page,
+      trigger: "enter",
+      durationMs: 200,
+      ease: "power3.out",
+      props: { opacity: [0, 1] },
+    },
+  },
+  fade_out: {
+    title: "محو شدن (خروج)",
+    animator: {
+      select: page,
+      trigger: "exit",
+      durationMs: 120,
+      ease: "linear",
+      props: { opacity: [1, 0] },
+    },
+  },
+  pop_in: {
+    title: "بالا آمدن با جهش",
+    animator: {
+      select: page,
+      trigger: "enter",
+      durationMs: 220,
+      ease: "back.out",
+      props: { opacity: [0, 1], scale: [0.6, 1] },
+    },
+  },
+  zoom_punch: {
+    title: "زوم ضربه‌ای",
+    animator: {
+      select: page,
+      trigger: "enter",
+      durationMs: 170,
+      ease: "power3.out",
+      props: { opacity: [0, 1], scale: [1.7, 1] },
+    },
+  },
+  blur_in: {
+    title: "ظاهر شدن از محو",
+    animator: {
+      select: page,
+      trigger: "enter",
+      durationMs: 320,
+      ease: "power2.out",
+      props: { opacity: [0, 1], blur: [18, 0] },
+    },
+  },
+  slide_side: {
+    title: "لغزیدن از کنار",
+    animator: {
+      select: page,
+      trigger: "enter",
+      durationMs: 260,
+      ease: "power3.out",
+      props: { opacity: [0, 1], x: [3, 0] },
+    },
+  },
+  skew_in: {
+    title: "کج وارد شدن",
+    animator: {
+      select: page,
+      trigger: "enter",
+      durationMs: 260,
+      ease: "power3.out",
+      props: { opacity: [0, 1], skewX: [-25, 0], x: [1.2, 0] },
+    },
+  },
+  float: {
+    title: "شناور ماندن",
+    animator: {
+      select: page,
+      trigger: "loop",
+      periodMs: 1800,
+      ease: "sine.inOut",
+      props: { y: [0, -0.1] },
+    },
+  },
+  word_drop: {
+    title: "افتادن کلمه‌ها",
+    animator: {
+      select: word,
+      trigger: "enter",
+      durationMs: 380,
+      staggerMs: 60,
+      ease: "bounce.out",
+      props: { opacity: [0, 1], y: [-1.2, 0] },
+    },
+  },
+  word_flip: {
+    title: "چرخش کلمه‌ها",
+    animator: {
+      select: word,
+      trigger: "enter",
+      durationMs: 300,
+      staggerMs: 90,
+      ease: "back.out",
+      props: { opacity: [0, 1], scaleX: [0, 1] },
+    },
+  },
+  word_reveal: {
+    title: "آشکار شدن کلمه (از اول)",
+    animator: {
+      select: word,
+      trigger: "enter",
+      from: "word",
+      durationMs: 260,
+      ease: "power2.out",
+      props: { reveal: [0, 1] },
+    },
+  },
+  word_tilt: {
+    title: "کج و تصادفی",
+    animator: {
+      select: word,
+      trigger: "enter",
+      durationMs: 200,
+      ease: "back.out",
+      props: { opacity: [0, 1], scale: [0.5, 1] },
+      jitter: { rotate: 7, x: 0, y: 0.06, scale: 0 },
+      seed: 11,
+    },
+  },
+  rubber: {
+    title: "کش آمدن هنگام گفتن",
+    animator: {
+      select: word,
+      trigger: "active",
+      durationMs: 320,
+      ease: "elastic.out",
+      props: { scaleX: [1, 1.25], scaleY: [1, 0.85] },
+    },
+  },
+  flash: {
+    title: "چشمک رنگی هنگام گفتن",
+    animator: {
+      select: word,
+      trigger: "active",
+      durationMs: 220,
+      ease: "power2.out",
+      props: { tint: [1, 0] },
+      tint: "#ffffff",
+    },
+  },
+  glow_pulse: {
+    title: "درخشش ضربانی کلمهٔ فعال",
+    animator: {
+      select: { scope: "word", states: ["active"] },
+      trigger: "loop",
+      periodMs: 600,
+      ease: "sine.inOut",
+      props: { glow: [0.4, 1] },
+      tint: "#ffe066",
+    },
+  },
+  shake: {
+    title: "لرزش کلمهٔ فعال",
+    animator: {
+      select: { scope: "word", states: ["active"] },
+      trigger: "loop",
+      periodMs: 90,
+      ease: "linear",
+      props: { x: [-0.04, 0.04], rotate: [-2, 2] },
+    },
+  },
+  letters_type: {
+    title: "حروف: تایپ (لاتین)",
+    animator: {
+      select: letter,
+      trigger: "enter",
+      durationMs: 10,
+      staggerMs: 45,
+      ease: "linear",
+      props: { opacity: [0, 1] },
+    },
+  },
+  letters_bounce: {
+    title: "حروف: جهش (لاتین)",
+    animator: {
+      select: letter,
+      trigger: "enter",
+      durationMs: 360,
+      staggerMs: 35,
+      ease: "bounce.out",
+      props: { opacity: [0, 1], y: [-0.9, 0] },
+    },
+  },
+  letters_wave: {
+    title: "حروف: موج (لاتین)",
+    animator: {
+      select: letter,
+      trigger: "loop",
+      periodMs: 900,
+      staggerMs: 70,
+      ease: "sine.inOut",
+      props: { y: [0, -0.16] },
+    },
+  },
+  letters_pop: {
+    title: "حروف: بزرگ شدن (لاتین)",
+    animator: {
+      select: letter,
+      trigger: "enter",
+      durationMs: 240,
+      staggerMs: 40,
+      ease: "back.out",
+      props: { opacity: [0, 1], scale: [0, 1] },
+    },
+  },
+};
+
 interface Reference {
   /** Shown in the editor's list. */
   title: string;
@@ -235,6 +460,89 @@ export const REFERENCE_TEMPLATES: Record<string, Reference> = {
         props: { y: [0, -0.12] },
       },
       FADE_OUT,
+    ],
+  }),
+  neon: make("نئون", {
+    base: {
+      fill: { color: "#ffffff" },
+      stroke: { width: 0 },
+      shadow: {
+        enabled: true,
+        color: "#ff4df0",
+        blur: 18,
+        offsetY: 0,
+        opacity: 0.9,
+      },
+    },
+    states: { upcoming: {}, active: { color: "#ffd1fb" }, spoken: {} },
+    animators: [
+      ANIMATOR_PRESETS.fade_in?.animator,
+      ANIMATOR_PRESETS.glow_pulse?.animator && {
+        ...ANIMATOR_PRESETS.glow_pulse.animator,
+        tint: "#ff4df0",
+      },
+      ANIMATOR_PRESETS.fade_out?.animator,
+    ],
+  }),
+  typewriter: make("ماشین‌تحریر (لاتین)", {
+    base: {
+      font: { family: "Courier New", size: 64, weight: 700 },
+      stroke: { width: 0 },
+    },
+    layout: { wordsPerPage: 5 },
+    states: { upcoming: {}, active: {}, spoken: {} },
+    animators: [
+      ANIMATOR_PRESETS.letters_type?.animator,
+      ANIMATOR_PRESETS.fade_out?.animator,
+    ],
+  }),
+  blur_rise: make("ظاهر شدن از محو", {
+    animators: [
+      {
+        select: page,
+        trigger: "enter",
+        durationMs: 340,
+        ease: "power3.out",
+        props: { opacity: [0, 1], blur: [20, 0], y: [0.4, 0] },
+      },
+      ANIMATOR_PRESETS.fade_out?.animator,
+    ],
+  }),
+  glitch: make("گلیچ", {
+    base: { font: { weight: 900 }, text: { uppercase: true } },
+    states: { upcoming: {}, active: { color: "#00ffd5" }, spoken: {} },
+    animators: [
+      ANIMATOR_PRESETS.skew_in?.animator,
+      ANIMATOR_PRESETS.shake?.animator,
+      ANIMATOR_PRESETS.flash?.animator && {
+        ...ANIMATOR_PRESETS.flash.animator,
+        tint: "#ff2d6f",
+      },
+      ANIMATOR_PRESETS.fade_out?.animator,
+    ],
+  }),
+  flip_words: make("چرخش کلمه‌ها", {
+    layout: { wordsPerPage: 4 },
+    animators: [
+      ANIMATOR_PRESETS.word_flip?.animator,
+      ANIMATOR_PRESETS.fade_out?.animator,
+    ],
+  }),
+  letter_bounce: make("حروف جهنده (لاتین)", {
+    base: { font: { weight: 900 }, text: { uppercase: true } },
+    layout: { wordsPerPage: 3 },
+    states: { upcoming: {}, active: { color: "#ffd400" }, spoken: {} },
+    animators: [
+      ANIMATOR_PRESETS.letters_bounce?.animator,
+      ANIMATOR_PRESETS.fade_out?.animator,
+    ],
+  }),
+  rubber_pop: make("کش‌دار", {
+    states: { upcoming: {}, active: { color: "#7dffb2" }, spoken: {} },
+    animators: [
+      ANIMATOR_PRESETS.word_drop?.animator,
+      ANIMATOR_PRESETS.rubber?.animator,
+      ANIMATOR_PRESETS.fade_out?.animator,
     ],
   }),
 };

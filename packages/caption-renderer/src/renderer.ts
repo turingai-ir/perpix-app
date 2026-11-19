@@ -1,9 +1,11 @@
 import Konva from "konva";
 import {
+  combine,
   emojiState,
   evaluate,
   stateProgress,
   wordStateAt,
+  type Transform,
   type Unit,
 } from "./animators";
 import { NORMAL_ROLE, roleOf } from "./roles";
@@ -20,6 +22,46 @@ import {
 const REFERENCE_HEIGHT = 1080;
 const SPACE_RATIO = 0.28;
 
+/** The letters of a word as the user sees them (a letter with its marks is one). */
+interface SegmenterLike {
+  segment(text: string): Iterable<{ segment: string }>;
+}
+
+const makeSegmenter = (): SegmenterLike | null => {
+  const ctor = (
+    Intl as unknown as {
+      Segmenter?: new (
+        locale?: string,
+        options?: { granularity: "grapheme" },
+      ) => SegmenterLike;
+    }
+  ).Segmenter;
+  return ctor ? new ctor(undefined, { granularity: "grapheme" }) : null;
+};
+
+const splitLetters = (text: string): string[] => {
+  const segmenter = makeSegmenter();
+  return segmenter
+    ? Array.from(segmenter.segment(text), (part) => part.segment)
+    : Array.from(text);
+};
+
+const channel = (hex: string, offset: number) => {
+  const full =
+    hex.length === 4 ? `#${[...hex.slice(1)].map((c) => c + c).join("")}` : hex;
+  return parseInt(full.slice(1 + offset * 2, 3 + offset * 2), 16);
+};
+
+/** `from` mixed toward `to` by `amount`, both as #rrggbb or #rgb. */
+const mixColors = (from: string, to: string, amount: number): string => {
+  const mixed = [0, 1, 2].map((i) =>
+    Math.round(channel(from, i) + (channel(to, i) - channel(from, i)) * amount)
+      .toString(16)
+      .padStart(2, "0"),
+  );
+  return `#${mixed.join("")}`;
+};
+
 /** Free space on a 9:16 frame that social apps cover with their own buttons and text. */
 const REELS_SAFE = { top: 0.14, bottom: 0.35, side: 0.06 };
 
@@ -32,12 +74,27 @@ interface DecorationNode {
   fullWidth: number;
 }
 
+interface PlacedChar {
+  group: Konva.Group;
+  text: Konva.Text;
+  restX: number;
+  width: number;
+}
+
 interface PlacedWord {
   word: CaptionWord;
   role: string;
   roleStyle: RoleStyle;
   wrap: Konva.Group;
-  base: Konva.Text;
+  /** One text for the word, or one per letter when letters are animated. */
+  texts: Konva.Text[];
+  chars: PlacedChar[];
+  height: number;
+  margin: number;
+  /** How much of the word is uncovered; read by the clip. */
+  reveal: { value: number };
+  /** Where a cached (blurred) word is drawn from, in its own space. */
+  bounds: Bounds;
   width: number;
   gradient: boolean;
   decorations: DecorationNode[];
@@ -46,10 +103,18 @@ interface PlacedWord {
   index: number;
 }
 
+interface Bounds {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
 interface PlacedLine {
   group: Konva.Group;
   restY: number;
   index: number;
+  bounds: Bounds;
 }
 
 interface Built {
@@ -59,8 +124,10 @@ interface Built {
   words: PlacedWord[];
   fontSize: number;
   lineCount: number;
+  scale: number;
   centerX: number;
   centerY: number;
+  blockBounds: Bounds;
 }
 
 /**
@@ -141,7 +208,8 @@ export class CaptionRenderer {
 
   private update(built: Built, page: CaptionPage, timeMs: number) {
     const { template } = this;
-    const { fontSize, lineCount } = built;
+    const { fontSize, lineCount, scale } = built;
+    const hasChars = template.animators.some((a) => a.select.scope === "char");
     const pageUnit: Unit = {
       scope: "page",
       index: 0,
@@ -150,14 +218,30 @@ export class CaptionRenderer {
       seedIndex: 0,
     };
     const block = evaluate(template, pageUnit, page, timeMs);
-    built.block.setAttrs({
-      x: built.centerX + block.x * fontSize,
-      y: built.centerY + block.y * fontSize,
-      scaleX: block.scale,
-      scaleY: block.scale,
-      rotation: block.rotate,
-      opacity: block.opacity,
-    });
+    const blurred: Array<{ node: Konva.Node; bounds: Bounds; radius: number }> =
+      [];
+    const place = (
+      node: Konva.Node,
+      restX: number,
+      restY: number,
+      tr: Transform,
+      bounds: Bounds,
+    ) => {
+      node.setAttrs({
+        x: restX + tr.x * fontSize,
+        y: restY + tr.y * fontSize,
+        scaleX: tr.scale * tr.scaleX,
+        scaleY: tr.scale * tr.scaleY,
+        rotation: tr.rotate,
+        skewX: Math.tan((tr.skewX * Math.PI) / 180),
+        opacity: tr.opacity,
+      });
+      if (tr.blur > 0.3)
+        blurred.push({ node, bounds, radius: tr.blur * scale });
+      else if (node.isCached()) node.clearCache();
+    };
+
+    place(built.block, built.centerX, built.centerY, block, built.blockBounds);
 
     for (const line of built.lines) {
       const unit: Unit = {
@@ -167,15 +251,13 @@ export class CaptionRenderer {
         role: NORMAL_ROLE,
         seedIndex: line.index,
       };
-      const next = evaluate(template, unit, page, timeMs);
-      line.group.setAttrs({
-        x: next.x * fontSize,
-        y: line.restY + next.y * fontSize,
-        scaleX: next.scale,
-        scaleY: next.scale,
-        rotation: next.rotate,
-        opacity: next.opacity,
-      });
+      place(
+        line.group,
+        0,
+        line.restY,
+        evaluate(template, unit, page, timeMs),
+        line.bounds,
+      );
     }
 
     const { base, states } = template;
@@ -190,21 +272,91 @@ export class CaptionRenderer {
       };
       const state = states[wordStateAt(placed.word, timeMs)];
       const motion = evaluate(template, unit, page, timeMs);
-      placed.wrap.setAttrs({
-        x: placed.restX + motion.x * fontSize,
-        y: motion.y * fontSize,
-        scaleX: motion.scale * (state.scale ?? 1),
-        scaleY: motion.scale * (state.scale ?? 1),
-        rotation: motion.rotate,
-        opacity: motion.opacity * (state.opacity ?? 1),
-      });
+      // A word with letters that are not animated separately gets the letter
+      // animators as a whole, so a template still plays on Persian words.
+      const whole =
+        hasChars && placed.chars.length === 0
+          ? combine(
+              motion,
+              evaluate(
+                template,
+                { ...unit, scope: "char", index: 0, count: 1 },
+                page,
+                timeMs,
+              ),
+            )
+          : motion;
+      const stateScale = state.scale ?? 1;
+      place(
+        placed.wrap,
+        placed.restX,
+        0,
+        {
+          ...whole,
+          scale: whole.scale * stateScale,
+          opacity: whole.opacity * (state.opacity ?? 1),
+        },
+        placed.bounds,
+      );
+      placed.reveal.value = whole.reveal;
+
       const colored = state.color ?? placed.roleStyle.color;
       const gradient = placed.gradient && colored === undefined;
-      placed.base.fillPriority(gradient ? "linear-gradient" : "color");
-      placed.base.fill(colored ?? base.fill.color);
+      const rest = colored ?? base.fill.color;
       const strokeColor =
         state.strokeColor ?? placed.roleStyle.strokeColor ?? base.stroke.color;
-      placed.base.stroke(strokeColor);
+      const paint = (text: Konva.Text, tr: Transform) => {
+        const mixed =
+          tr.tint > 0 ? mixColors(rest, tr.tintColor, tr.tint) : rest;
+        text.fillPriority(
+          gradient && tr.tint === 0 ? "linear-gradient" : "color",
+        );
+        text.fill(mixed);
+        text.stroke(strokeColor);
+        if (tr.glow > 0) {
+          text.setAttrs({
+            shadowEnabled: true,
+            shadowColor: tr.tintColor,
+            shadowBlur: tr.glow * 30 * scale,
+            shadowOffset: { x: 0, y: 0 },
+            shadowOpacity: 1,
+          });
+        } else {
+          text.setAttrs({
+            shadowEnabled: base.shadow.enabled,
+            shadowColor: base.shadow.color,
+            shadowBlur: base.shadow.blur * scale,
+            shadowOffset: {
+              x: base.shadow.offsetX * scale,
+              y: base.shadow.offsetY * scale,
+            },
+            shadowOpacity: base.shadow.opacity,
+          });
+        }
+      };
+
+      if (placed.chars.length > 0) {
+        placed.chars.forEach((char, i) => {
+          const charUnit: Unit = {
+            scope: "char",
+            index: i,
+            count: placed.chars.length,
+            role: placed.role,
+            word: placed.word,
+            seedIndex: placed.index * 64 + i,
+          };
+          const letter = evaluate(template, charUnit, page, timeMs);
+          paint(char.text, combine(whole, letter));
+          place(char.group, char.restX, 0, letter, {
+            x: -char.width / 2 - placed.margin,
+            y: -placed.height / 2 - placed.margin,
+            width: char.width + 2 * placed.margin,
+            height: placed.height + 2 * placed.margin,
+          });
+        });
+      } else {
+        for (const text of placed.texts) paint(text, whole);
+      }
 
       for (const node of placed.decorations) {
         this.updateDecoration(node, placed, timeMs);
@@ -217,6 +369,14 @@ export class CaptionRenderer {
           scaleY: emoji.scale,
         });
       }
+    }
+
+    // A cache is a picture of what is inside it, so blur is applied last, from
+    // the inside out, once every colour and position is final.
+    for (const { node, bounds, radius } of blurred.reverse()) {
+      node.cache({ ...bounds, pixelRatio: Konva.pixelRatio });
+      node.filters([Konva.Filters.Blur]);
+      node.blurRadius(radius);
     }
   }
 
@@ -269,73 +429,108 @@ export class CaptionRenderer {
     const rtl = page.words.some((word) => isRtl(word.text));
     const stroke = base.stroke.width;
 
+    const hasChars = template.animators.some((x) => x.select.scope === "char");
+    const margin = 60 * scale;
     const placed: PlacedWord[] = page.words.map((word, index) => {
       const role = roleOf(word, page, template);
       const roleStyle: RoleStyle =
         role === NORMAL_ROLE ? {} : (template.roles[role] ?? {});
-      const textProps = (): Konva.TextConfig => {
+      const wordRtl = isRtl(word.text);
+      const textProps = (content: string): Konva.TextConfig => {
         const italic = roleStyle.italic ?? base.font.italic;
         const weight = roleStyle.weight ?? base.font.weight;
         const upper = roleStyle.uppercase ?? base.text.uppercase;
         return {
-          text: upper ? word.text.toUpperCase() : word.text,
+          text: upper ? content.toUpperCase() : content,
           fontFamily: roleStyle.family ?? base.font.family,
           fontStyle: `${italic ? "italic " : ""}${weight}`,
           fontSize: fontSize * (roleStyle.scale ?? 1),
           lineHeight: 1,
           // The page's own direction must not leak into the canvas.
-          direction: isRtl(word.text) ? "rtl" : "ltr",
+          direction: wordRtl ? "rtl" : "ltr",
           // Letter spacing would break the joined letters of Arabic script.
           letterSpacing: rtl ? 0 : base.text.letterSpacing * scale,
           wrap: "none",
         };
       };
       const strokeWidth = (roleStyle.strokeWidth ?? stroke) * scale;
-      const text = new Konva.Text({
-        ...textProps(),
-        fill: base.fill.color,
-        stroke: strokeWidth > 0 ? base.stroke.color : undefined,
-        strokeWidth,
-        fillAfterStrokeEnabled: true,
-        lineJoin: "round",
-        shadowEnabled: base.shadow.enabled,
-        shadowColor: base.shadow.color,
-        shadowBlur: base.shadow.blur * scale,
-        shadowOffset: {
-          x: base.shadow.offsetX * scale,
-          y: base.shadow.offsetY * scale,
-        },
-        shadowOpacity: base.shadow.opacity,
-        shadowForStrokeEnabled: false,
-      });
-      const useGradient = base.fill.gradient.enabled;
-      if (useGradient) {
-        text.setAttrs({
-          fillLinearGradientStartPoint: { x: 0, y: 0 },
-          fillLinearGradientEndPoint: { x: 0, y: text.height() },
-          fillLinearGradientColorStops: [
-            0,
-            base.fill.gradient.from,
-            1,
-            base.fill.gradient.to,
-          ],
+      const gradientOn = base.fill.gradient.enabled;
+      const makeText = (content: string) => {
+        const text = new Konva.Text({
+          ...textProps(content),
+          fill: base.fill.color,
+          stroke: strokeWidth > 0 ? base.stroke.color : undefined,
+          strokeWidth,
+          fillAfterStrokeEnabled: true,
+          lineJoin: "round",
+          shadowEnabled: base.shadow.enabled,
+          shadowColor: base.shadow.color,
+          shadowBlur: base.shadow.blur * scale,
+          shadowOffset: {
+            x: base.shadow.offsetX * scale,
+            y: base.shadow.offsetY * scale,
+          },
+          shadowOpacity: base.shadow.opacity,
+          shadowForStrokeEnabled: false,
         });
-      }
+        if (gradientOn) {
+          text.setAttrs({
+            fillLinearGradientStartPoint: { x: 0, y: 0 },
+            fillLinearGradientEndPoint: { x: 0, y: text.height() },
+            fillLinearGradientColorStops: [
+              0,
+              base.fill.gradient.from,
+              1,
+              base.fill.gradient.to,
+            ],
+          });
+        }
+        return text;
+      };
+
       const wrap = new Konva.Group();
-      const w = text.width();
-      const h = text.height();
+      const texts: Konva.Text[] = [];
+      const chars: PlacedChar[] = [];
+      let w: number;
+      let h: number;
+      if (hasChars && !wordRtl) {
+        // Letters are placed one by one, which is safe for scripts whose
+        // letters do not join.
+        const pieces = splitLetters(word.text).map((piece) => makeText(piece));
+        w = pieces.reduce((sum, piece) => sum + piece.width(), 0);
+        h = pieces[0]?.height() ?? fontSize;
+        let cursor = -w / 2;
+        for (const piece of pieces) {
+          const cw = piece.width();
+          const group = new Konva.Group();
+          piece.position({ x: -cw / 2, y: -h / 2 });
+          group.add(piece);
+          chars.push({ group, text: piece, restX: cursor + cw / 2, width: cw });
+          texts.push(piece);
+          cursor += cw;
+        }
+      } else {
+        const text = makeText(word.text);
+        w = text.width();
+        h = text.height();
+        text.position({ x: -w / 2, y: -h / 2 });
+        texts.push(text);
+      }
 
       const decorations: DecorationNode[] = [];
-      const behind: Konva.Node[] = [];
-      const above: Konva.Node[] = [];
+      const behind: Konva.Rect[] = [];
+      const above: Konva.Group[] = [];
       for (const decoration of template.decorations) {
         const { roles } = decoration.select;
         if (roles.length > 0 && !roles.includes(role)) continue;
         const size = decoration.size * scale;
         const radius = decoration.radius * scale;
         if (decoration.kind === "wipe") {
+          // The coloured copy cannot follow single letters, so a word whose
+          // letters move on their own has no wipe.
+          if (chars.length > 0) continue;
           const overlay = new Konva.Text({
-            ...textProps(),
+            ...textProps(word.text),
             fill: decoration.color,
           });
           let fraction = 0;
@@ -406,10 +601,10 @@ export class CaptionRenderer {
         });
       }
 
-      text.position({ x: -w / 2, y: -h / 2 });
-      for (const node of behind) wrap.add(node as Konva.Rect);
-      wrap.add(text);
-      for (const node of above) wrap.add(node as Konva.Group);
+      for (const node of behind) wrap.add(node);
+      if (chars.length > 0) for (const char of chars) wrap.add(char.group);
+      else for (const text of texts) wrap.add(text);
+      for (const node of above) wrap.add(node);
 
       let emojiNode: Konva.Text | null = null;
       if (emoji.enabled && word.emoji) {
@@ -426,14 +621,47 @@ export class CaptionRenderer {
         emojiNode.position({ x: 0, y: -h / 2 - lineHeight * 0.55 });
         wrap.add(emojiNode);
       }
+
+      // Uncovers the word from its first letter; wide open when fully shown.
+      const reveal = { value: 1 };
+      const room = margin + 40 * scale;
+      wrap.clipFunc((context) => {
+        if (reveal.value >= 1) {
+          context.rect(
+            -w / 2 - room,
+            -h / 2 - room - lineHeight,
+            w + 2 * room,
+            h + 2 * room + lineHeight,
+          );
+          return;
+        }
+        const covered = w * Math.max(0, reveal.value);
+        context.rect(
+          wordRtl ? w / 2 - covered : -w / 2,
+          -h / 2 - room - lineHeight,
+          covered,
+          h + 2 * room + lineHeight,
+        );
+      });
+
       return {
         word,
         role,
         roleStyle,
         wrap,
-        base: text,
+        texts,
+        chars,
+        height: h,
+        reveal,
+        margin,
+        bounds: {
+          x: -w / 2 - margin,
+          y: -h / 2 - margin,
+          width: w + 2 * margin,
+          height: h + 2 * margin,
+        },
         width: w,
-        gradient: useGradient,
+        gradient: gradientOn,
         decorations,
         emoji: emojiNode,
         restX: 0,
@@ -502,17 +730,28 @@ export class CaptionRenderer {
           : cursor + item.width + space;
       }
       block.add(lineGroup);
-      return { group: lineGroup, restY, index };
+      const lineWidth = widthOf(items);
+      return {
+        group: lineGroup,
+        restY,
+        index,
+        bounds: {
+          x: -blockWidth / 2 - margin,
+          y: -lineHeight / 2 - margin,
+          width: Math.max(blockWidth, lineWidth) + 2 * margin,
+          height: lineHeight + 2 * margin,
+        },
+      };
     });
 
-    const margin = layout.offset * height;
+    const edge = layout.offset * height;
     const halfBox = blockHeight / 2 + padding;
     let centerY =
       layout.anchor === "top"
-        ? margin + halfBox
+        ? edge + halfBox
         : layout.anchor === "bottom"
-          ? height - margin - halfBox
-          : height / 2 + margin;
+          ? height - edge - halfBox
+          : height / 2 + edge;
     if (layout.safeZone === "reels") {
       const low = height * REELS_SAFE.top + halfBox;
       const high = height * (1 - REELS_SAFE.bottom) - halfBox;
@@ -528,6 +767,13 @@ export class CaptionRenderer {
       lineCount: rows.length,
       centerX: width / 2,
       centerY,
+      scale,
+      blockBounds: {
+        x: -blockWidth / 2 - padding - margin,
+        y: -halfBox - margin,
+        width: blockWidth + 2 * padding + 2 * margin,
+        height: 2 * halfBox + 2 * margin,
+      },
     };
   }
 }

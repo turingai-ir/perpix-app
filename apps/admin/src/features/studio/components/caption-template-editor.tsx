@@ -14,6 +14,7 @@ import {
   MAX_ROLES,
   POSITIONS,
   PROPS,
+  ANIMATOR_PRESETS,
   REFERENCE_TEMPLATES,
   REVEALS,
   RULE_WHEN,
@@ -340,7 +341,12 @@ const NAMES = {
   align: { center: "وسط", left: "چپ", right: "راست" },
   safeZone: { none: "بدون", reels: "ریلز و تیک‌تاک" },
   state: { upcoming: "هنوز نگفته", active: "در حال گفتن", spoken: "گفته‌شده" },
-  scope: { page: "کل نمایش", line: "هر خط", word: "هر کلمه" },
+  scope: {
+    page: "کل نمایش",
+    line: "هر خط",
+    word: "هر کلمه",
+    char: "هر حرف (لاتین)",
+  },
   position: {
     any: "همه",
     first: "اولی",
@@ -362,6 +368,13 @@ const NAMES = {
     x: "افقی",
     y: "عمودی",
     rotate: "چرخش",
+    scaleX: "مقیاس افقی (چرخش ورقی)",
+    scaleY: "مقیاس عمودی",
+    skewX: "کجی",
+    blur: "محو بودن (پیکسل)",
+    reveal: "آشکار شدن از اول کلمه",
+    tint: "ترکیب با رنگ ویژه",
+    glow: "درخشش",
   },
   kind: {
     pill: "قرص",
@@ -379,6 +392,13 @@ const PROP_DEFAULTS: Record<PropName, [number, number]> = {
   x: [0.3, 0],
   y: [0.3, 0],
   rotate: [-5, 0],
+  scaleX: [0, 1],
+  scaleY: [0, 1],
+  skewX: [-20, 0],
+  blur: [12, 0],
+  reveal: [0, 1],
+  tint: [1, 0],
+  glow: [1, 0],
 };
 
 const PROP_STEPS: Record<PropName, number> = {
@@ -387,6 +407,13 @@ const PROP_STEPS: Record<PropName, number> = {
   x: 0.05,
   y: 0.05,
   rotate: 1,
+  scaleX: 0.1,
+  scaleY: 0.1,
+  skewX: 1,
+  blur: 1,
+  reveal: 0.1,
+  tint: 0.1,
+  glow: 0.1,
 };
 
 const ROLE_NAMES = ["key", "accent", "soft", "alert", "brand", "dim", "pop"];
@@ -1252,6 +1279,16 @@ export function CaptionTemplateEditor({
                   </Field>
                 );
               })}
+              {(animator.props.tint || animator.props.glow) && (
+                <Field label={label("tintColor", "رنگ ترکیب / درخشش")}>
+                  <Color
+                    value={animator.tint}
+                    onChange={(v) =>
+                      setAnimator(index, (a) => void (a.tint = v))
+                    }
+                  />
+                </Field>
+              )}
               <Field label={label("jitterRotate", "چرخش تصادفی (درجه)")}>
                 <Slider
                   value={animator.jitter.rotate}
@@ -1292,6 +1329,23 @@ export function CaptionTemplateEditor({
               )}
             </Card>
           ))}
+          {template.animators.length < MAX_ANIMATORS && (
+            <Choice
+              value=""
+              options={["", ...Object.keys(ANIMATOR_PRESETS)]}
+              label={(o) =>
+                o === ""
+                  ? label("addPreset", "افزودن انیماتور آماده…")
+                  : (ANIMATOR_PRESETS[o]?.title ?? o)
+              }
+              onChange={(o) => {
+                const preset = ANIMATOR_PRESETS[o];
+                if (preset) {
+                  edit((d) => void d.animators.push(preset.animator as never));
+                }
+              }}
+            />
+          )}
           {template.animators.length < MAX_ANIMATORS && (
             <Button
               type="button"

@@ -231,3 +231,82 @@ describe("roleOf", () => {
     );
   });
 });
+
+describe("more props and letters", () => {
+  it("blur, reveal, tint, glow and skew animate and combine", () => {
+    const t = only({
+      select: { scope: "word" },
+      trigger: "enter",
+      durationMs: 100,
+      ease: "linear",
+      tint: "#ff0000",
+      props: {
+        blur: [10, 0],
+        reveal: [0, 1],
+        tint: [1, 0],
+        glow: [1, 0],
+        skewX: [20, 0],
+        scaleX: [0, 1],
+      },
+    });
+    const half = evaluate(t, wordUnit(0), page, 50);
+    expect(half.blur).toBeCloseTo(5);
+    expect(half.reveal).toBeCloseTo(0.5);
+    expect(half.tint).toBeCloseTo(0.5);
+    expect(half.tintColor).toBe("#ff0000");
+    expect(half.glow).toBeCloseTo(0.5);
+    expect(half.skewX).toBeCloseTo(10);
+    expect(half.scaleX).toBeCloseTo(0.5);
+    const done = evaluate(t, wordUnit(0), page, 400);
+    expect(done).toMatchObject({
+      blur: 0,
+      reveal: 1,
+      tint: 0,
+      glow: 0,
+      skewX: 0,
+      scaleX: 1,
+    });
+  });
+
+  it("letters are their own scope, staggered within the word", () => {
+    const t = only({
+      select: { scope: "char" },
+      trigger: "enter",
+      durationMs: 10,
+      staggerMs: 100,
+      ease: "linear",
+      props: { opacity: [0, 1] },
+    });
+    const letter = (index: number): Unit => ({
+      scope: "char",
+      index,
+      count: 5,
+      role: "normal",
+      word: words[0],
+      seedIndex: index,
+    });
+    expect(evaluate(t, letter(0), page, 20).opacity).toBe(1);
+    expect(evaluate(t, letter(3), page, 20).opacity).toBe(0);
+    expect(evaluate(t, wordUnit(0), page, 20).opacity).toBe(1);
+  });
+
+  it("a letter can follow the state of its word", () => {
+    const t = only({
+      select: { scope: "char" },
+      trigger: "active",
+      durationMs: 10,
+      ease: "linear",
+      props: { scale: [1, 2] },
+    });
+    const letter: Unit = {
+      scope: "char",
+      index: 0,
+      count: 3,
+      role: "normal",
+      word: words[0],
+      seedIndex: 0,
+    };
+    expect(evaluate(t, letter, page, 100).scale).toBe(2);
+    expect(evaluate(t, letter, page, 450).scale).toBe(1);
+  });
+});

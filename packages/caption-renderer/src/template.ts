@@ -16,7 +16,7 @@ export type SafeZone = (typeof SAFE_ZONES)[number];
 export const WORD_STATES = ["upcoming", "active", "spoken"] as const;
 export type WordStateName = (typeof WORD_STATES)[number];
 
-export const SCOPES = ["page", "line", "word"] as const;
+export const SCOPES = ["page", "line", "word", "char"] as const;
 export type Scope = (typeof SCOPES)[number];
 export const POSITIONS = ["any", "first", "last", "odd", "even"] as const;
 export type Position = (typeof POSITIONS)[number];
@@ -41,7 +41,20 @@ export const EASES = [
 ] as const;
 export type EaseName = (typeof EASES)[number];
 
-export const PROPS = ["opacity", "scale", "x", "y", "rotate"] as const;
+export const PROPS = [
+  "opacity",
+  "scale",
+  "scaleX",
+  "scaleY",
+  "x",
+  "y",
+  "rotate",
+  "skewX",
+  "blur",
+  "reveal",
+  "tint",
+  "glow",
+] as const;
 export type PropName = (typeof PROPS)[number];
 
 export const DECORATION_KINDS = [
@@ -76,9 +89,16 @@ export interface Animator {
   delayMs: number;
   staggerMs: number;
   ease: EaseName;
-  /** Each is [from, to]. Opacity and scale multiply; x and y (in font sizes) and rotate (degrees) add. */
+  /**
+   * Each is [from, to]. Opacity, scale, scaleX, scaleY and reveal multiply; x
+   * and y (in font sizes), rotate and skewX (degrees), blur (px) and glow add;
+   * tint (0 to 1) mixes the text colour toward `tint`.
+   * `reveal` (0 to 1) uncovers a word from its start and applies to words only.
+   */
   props: Partial<Record<PropName, Range>>;
   jitter: { rotate: number; x: number; y: number; scale: number };
+  /** The colour `tint` mixes toward and the colour of `glow`. */
+  tint: string;
   seed: number;
   after: After;
   periodMs: number;
@@ -186,6 +206,7 @@ export const DEFAULT_ANIMATOR: Animator = {
   ease: "power3.out",
   props: { opacity: [0, 1] },
   jitter: { rotate: 0, x: 0, y: 0, scale: 0 },
+  tint: "#ffffff",
   seed: 1,
   after: "revert",
   periodMs: 1200,

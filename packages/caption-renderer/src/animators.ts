@@ -38,29 +38,65 @@ export const seeded = (seed: number, index: number, salt = 0): number => {
 export interface Transform {
   opacity: number;
   scale: number;
+  scaleX: number;
+  scaleY: number;
   /** In font sizes. */
   x: number;
   y: number;
   /** In degrees. */
   rotate: number;
+  skewX: number;
+  /** In px for a 1080-high frame. */
+  blur: number;
+  /** How much of a word is uncovered, from its start. */
+  reveal: number;
+  /** How far the text colour is mixed toward `tintColor`. */
+  tint: number;
+  tintColor: string;
+  glow: number;
 }
 
 export const identity = (): Transform => ({
   opacity: 1,
   scale: 1,
+  scaleX: 1,
+  scaleY: 1,
   x: 0,
   y: 0,
   rotate: 0,
+  skewX: 0,
+  blur: 0,
+  reveal: 1,
+  tint: 0,
+  tintColor: "#ffffff",
+  glow: 0,
+});
+
+/** Two transforms applied one after the other, such as a word's and its letter's. */
+export const combine = (a: Transform, b: Transform): Transform => ({
+  opacity: a.opacity * b.opacity,
+  scale: a.scale * b.scale,
+  scaleX: a.scaleX * b.scaleX,
+  scaleY: a.scaleY * b.scaleY,
+  x: a.x + b.x,
+  y: a.y + b.y,
+  rotate: a.rotate + b.rotate,
+  skewX: a.skewX + b.skewX,
+  blur: a.blur + b.blur,
+  reveal: a.reveal * b.reveal,
+  tint: Math.max(a.tint, b.tint),
+  tintColor: b.tint > a.tint ? b.tintColor : a.tintColor,
+  glow: a.glow + b.glow,
 });
 
 /** What an animator needs to know about the thing it moves. */
 export interface Unit {
-  scope: "page" | "line" | "word";
+  scope: "page" | "line" | "word" | "char";
   /** Position within the page (words) or the block (lines). */
   index: number;
   count: number;
   role: string;
-  /** The word, for a word. */
+  /** The word, for a word or one of its letters. */
   word?: CaptionWord;
   /** Seeds a word's jitter; unique within the page. */
   seedIndex: number;
@@ -164,7 +200,12 @@ export const evaluate = (
 ): Transform => {
   const result = identity();
   for (const animator of template.animators) {
-    if (animator.trigger === "active" && unit.scope !== "word") continue;
+    if (
+      animator.trigger === "active" &&
+      unit.scope !== "word" &&
+      unit.scope !== "char"
+    )
+      continue;
     // The state the selector asks about is the word's, not the animator's own.
     const select =
       animator.trigger === "active"
@@ -175,14 +216,25 @@ export const evaluate = (
     if (!step) continue;
     const eased = ease(animator.ease)(step.progress);
     const { props, jitter, seed } = animator;
-    if (props.opacity)
-      result.opacity *= lerp(props.opacity[0], props.opacity[1], eased);
-    if (props.scale)
-      result.scale *= lerp(props.scale[0], props.scale[1], eased);
-    if (props.x) result.x += lerp(props.x[0], props.x[1], eased);
-    if (props.y) result.y += lerp(props.y[0], props.y[1], eased);
-    if (props.rotate)
-      result.rotate += lerp(props.rotate[0], props.rotate[1], eased);
+    const at = (range: [number, number]) => lerp(range[0], range[1], eased);
+    if (props.opacity) result.opacity *= at(props.opacity);
+    if (props.scale) result.scale *= at(props.scale);
+    if (props.scaleX) result.scaleX *= at(props.scaleX);
+    if (props.scaleY) result.scaleY *= at(props.scaleY);
+    if (props.x) result.x += at(props.x);
+    if (props.y) result.y += at(props.y);
+    if (props.rotate) result.rotate += at(props.rotate);
+    if (props.skewX) result.skewX += at(props.skewX);
+    if (props.blur) result.blur += at(props.blur);
+    if (props.reveal) result.reveal *= at(props.reveal);
+    if (props.glow) result.glow += at(props.glow);
+    if (props.tint) {
+      const amount = at(props.tint);
+      if (amount >= result.tint) {
+        result.tint = amount;
+        result.tintColor = animator.tint;
+      }
+    }
     if (step.engaged) {
       const i = unit.seedIndex;
       result.rotate += jitter.rotate * seeded(seed, i, 1);

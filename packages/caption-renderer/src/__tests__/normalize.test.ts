@@ -119,3 +119,19 @@ describe("migration from version 1", () => {
     expect(template.states.active.color).toBe("#123456");
   });
 });
+
+describe("animator presets", () => {
+  it("every preset survives normalisation unchanged in meaning", async () => {
+    const { ANIMATOR_PRESETS } = await import("../references");
+    for (const [key, preset] of Object.entries(ANIMATOR_PRESETS)) {
+      const template = normalizeTemplate({
+        version: 2,
+        animators: [preset.animator],
+      });
+      const [animator] = template.animators;
+      expect(animator, key).toBeDefined();
+      expect(Object.keys(animator?.props ?? {}).length, key).toBeGreaterThan(0);
+      expect(normalizeTemplate(template), key).toEqual(template);
+    }
+  });
+});
