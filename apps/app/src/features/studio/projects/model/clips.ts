@@ -46,13 +46,14 @@ export const writeClips = (
 
 export const VIDEO_TYPES = ["video/mp4", "video/quicktime", "video/webm"];
 
-/** The length of a video on this device, read before it is uploaded. */
-export const readVideoDuration = (file: File): Promise<number> =>
+/** The length of a video, read from its file on this device or from its address, in milliseconds. */
+export const readVideoDuration = (source: File | string): Promise<number> =>
   new Promise((resolve, reject) => {
     const video = document.createElement("video");
-    const url = URL.createObjectURL(file);
+    const url =
+      typeof source === "string" ? source : URL.createObjectURL(source);
     const done = () => {
-      URL.revokeObjectURL(url);
+      if (typeof source !== "string") URL.revokeObjectURL(url);
       video.removeAttribute("src");
       video.load();
     };

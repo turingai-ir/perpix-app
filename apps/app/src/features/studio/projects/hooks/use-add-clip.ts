@@ -14,10 +14,21 @@ import { editProject, getProject } from "../services/projects";
 import { projectKey, projectsKey } from "./use-projects";
 import { useRequestTranscript } from "./use-transcripts";
 
+/** A video from the user's gallery, as the picker hands it over. */
+export interface GalleryVideo {
+  uuid: string;
+  name: string;
+  /** From the gallery's own record when it has one. */
+  durationMs?: number;
+  /** An address to read the length from when the gallery does not know it. */
+  previewUrl?: string;
+}
+
 /**
- * Adds a video to the project: reads its length, uploads it, saves it as the
- * project's next clip, and asks for its subtitles. Each step reports its own
- * failure, and a file that is already uploaded is never uploaded twice.
+ * Puts a video of the user's gallery into the project as its next clip and
+ * asks for its subtitles. A video from the device is uploaded to the gallery
+ * first and then added the same way, so the project only ever uses files that
+ * live in the gallery.
  */
 export function useAddClip(projectUuid: string) {
   const { t } = useAppTranslate();
@@ -29,49 +40,77 @@ export function useAddClip(projectUuid: string) {
   const transcript = useRequestTranscript();
   const [busy, setBusy] = useState(false);
 
-  const add = async (file: File) => {
-    setBusy(true);
-    try {
-      const duration = await readVideoDuration(file).catch(() => {
-        throw new Error(t("features.studio.clips.unreadable"));
-      });
-      const fileUuid = await requestUpload(file);
-      const current = await getProject(projectUuid);
-      const clips = readClips(current.document);
-      const next = [
+  const addToProject = async (video: GalleryVideo, durationMs: number) => {
+    const current = await getProject(projectUuid);
+    const clips = readClips(current.document);
+    await editProject(projectUuid, {
+      document: writeClips(current.document, [
         ...clips,
         {
           id: crypto.randomUUID(),
-          file_uuid: fileUuid,
-          name: file.name.replace(/\.[^.]+$/, ""),
-          duration_ms: duration,
+          file_uuid: video.uuid,
+          name: video.name,
+          duration_ms: durationMs,
           source_in_ms: 0,
-          source_out_ms: duration,
+          source_out_ms: durationMs,
         },
-      ];
-      await editProject(projectUuid, {
-        document: writeClips(current.document, next),
-        addFiles: [{ file_uuid: fileUuid, role: "SOURCE" }],
-      });
-      await Promise.all([
-        client.invalidateQueries({ queryKey: projectKey(projectUuid) }),
-        client.invalidateQueries({ queryKey: projectsKey }),
-      ]);
-      transcript.mutate(fileUuid);
+      ]),
+      addFiles: [{ file_uuid: video.uuid, role: "SOURCE" }],
+    });
+    await Promise.all([
+      client.invalidateQueries({ queryKey: projectKey(projectUuid) }),
+      client.invalidateQueries({ queryKey: projectsKey }),
+    ]);
+    transcript.mutate(video.uuid);
+  };
+
+  const run = async (task: () => Promise<void>) => {
+    setBusy(true);
+    try {
+      await task();
     } catch (error) {
       const key = projectErrorKey(error);
-      toast.error(
+      const message =
         error instanceof Error &&
-          key === "features.studio.projects.errors.generic"
+        key === "features.studio.projects.errors.generic"
           ? error.message
           : key
             ? t(key)
-            : "",
-      );
+            : "";
+      if (message) toast.error(message);
     } finally {
       setBusy(false);
     }
   };
 
-  return { add, busy, pendingUploads };
+  const unreadable = () => new Error(t("features.studio.clips.unreadable"));
+
+  /** A video already in the gallery. */
+  const addFromGallery = (video: GalleryVideo) =>
+    run(async () => {
+      const durationMs =
+        video.durationMs ??
+        (video.previewUrl
+          ? await readVideoDuration(video.previewUrl).catch(() => {
+              throw unreadable();
+            })
+          : null);
+      if (durationMs === null) throw unreadable();
+      await addToProject(video, durationMs);
+    });
+
+  /** A video from the device: into the gallery first, then into the project. */
+  const uploadToGallery = (file: File) =>
+    run(async () => {
+      const durationMs = await readVideoDuration(file).catch(() => {
+        throw unreadable();
+      });
+      const uuid = await requestUpload(file);
+      await addToProject(
+        { uuid, name: file.name.replace(/\.[^.]+$/, "") },
+        durationMs,
+      );
+    });
+
+  return { addFromGallery, uploadToGallery, busy, pendingUploads };
 }

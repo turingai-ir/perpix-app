@@ -1,9 +1,11 @@
+import { readFileSync } from "node:fs";
 import { expect, test, type Page } from "@playwright/test";
 
 import { mockAuthenticatedSession } from "../../../../__tests__/support/auth-session";
 
 test.use({ viewport: { width: 390, height: 844 }, hasTouch: true });
 
+const VIDEO = readFileSync("src/features/studio/_tests/clip.webm");
 const FUTURE = () =>
   new Date(Date.now() + 5 * 86_400_000 - 3_600_000).toISOString();
 const NOW = () => new Date().toISOString();
@@ -11,7 +13,11 @@ const NOW = () => new Date().toISOString();
 type Status = "PROCESSING" | "COMPLETED" | "FAILED";
 
 /** An in-memory backend for one project, a file upload and its transcript. */
-async function mockBackend(page: Page, transcriptStatuses: Status[]) {
+async function mockBackend(
+  page: Page,
+  transcriptStatuses: Status[],
+  { galleryHasVideo = true }: { galleryHasVideo?: boolean } = {},
+) {
   const project = {
     uuid: "p1",
     title: "پروژه",
@@ -22,7 +28,14 @@ async function mockBackend(page: Page, transcriptStatuses: Status[]) {
     >,
     files: [] as Array<{ file_uuid: string; role: string }>,
   };
-  const state = { saves: [] as unknown[], transcriptPosts: 0, reads: 0 };
+  const state = {
+    saves: [] as unknown[],
+    transcriptPosts: 0,
+    reads: 0,
+    uploads: 0,
+    order: [] as string[],
+  };
+  let inGallery = galleryHasVideo;
   let transcript: { status: Status } | null = null;
 
   await mockAuthenticatedSession(page);
@@ -73,8 +86,47 @@ async function mockBackend(page: Page, transcriptStatuses: Status[]) {
     expire_at: FUTURE(),
   });
 
-  await page.route("**/api/v1/file-manager/simple-upload", (route) =>
-    route.fulfill({ json: { uuid: "f1" } }),
+  await page.route("**/api/v1/file-manager/simple-upload", (route) => {
+    state.uploads += 1;
+    state.order.push("upload");
+    inGallery = true;
+    return route.fulfill({ json: { uuid: "f1" } });
+  });
+  await page.route("**/api/v1/file-manager/user-files**", (route) =>
+    route.fulfill({
+      json: {
+        files: inGallery
+          ? [
+              {
+                uuid: "f1",
+                file_name: "holiday.webm",
+                file_size: 5_000_000,
+                content_type: "video/webm",
+                is_public: false,
+                media_metadata: { kind: "video", duration_seconds: 2 },
+              },
+            ]
+          : [],
+        has_next: false,
+      },
+    }),
+  );
+  await page.route("**/api/v1/file-manager/files/presigned-urls", (route) =>
+    route.fulfill({
+      json: {
+        files: [
+          {
+            file_uuid: "f1",
+            preview_url: "http://localhost:5173/__media/f1.webm",
+            download_url: "http://localhost:5173/__media/f1.webm",
+            expire_at: FUTURE(),
+          },
+        ],
+      },
+    }),
+  );
+  await page.route("**/__media/f1.webm", (route) =>
+    route.fulfill({ status: 200, contentType: "video/webm", body: VIDEO }),
   );
   await page.route("**/api/v1/studio/projects/p1", async (route) => {
     const request = route.request();
@@ -84,6 +136,7 @@ async function mockBackend(page: Page, transcriptStatuses: Status[]) {
         files: Array<{ file_uuid: string; role: string }>;
       };
       state.saves.push(body);
+      state.order.push("save");
       project.document = body.document;
       project.files = body.files;
       project.revision += 1;
@@ -111,22 +164,36 @@ async function mockBackend(page: Page, transcriptStatuses: Status[]) {
   return { state };
 }
 
-const addVideo = (page: Page) =>
-  page
-    .getByTestId("clip-input")
-    .setInputFiles("src/features/studio/_tests/clip.webm");
+const pickFromGallery = async (page: Page) => {
+  await page.getByRole("button", { name: "افزودن ویدیو از گالری" }).click();
+  await page.getByRole("button", { name: /holiday\.webm/ }).click();
+};
 
-test("an empty project explains what to add and its limits", async ({
+test("an empty project sends the user to the gallery and shows the limits", async ({
   page,
 }) => {
   await mockBackend(page, ["PROCESSING"]);
   await page.goto("/studio/p1");
 
-  await expect(page.getByText("ویدیو اضافه کن")).toBeVisible();
-  await expect(page.getByText(/تا ۱۰۰ مگابایت/)).toBeVisible();
+  await expect(page.getByText(/از گالری‌ات انتخاب کن/)).toBeVisible();
+  await expect(page.getByText(/تا ۱۰۰ مگابایت/).first()).toBeVisible();
+  await expect(page.getByTestId("clip-input")).toHaveCount(0);
 });
 
-test("a video is uploaded, saved as a clip, and its subtitles are polled until ready", async ({
+test("the picker lists the gallery's videos with their length and size", async ({
+  page,
+}) => {
+  await mockBackend(page, ["PROCESSING"]);
+  await page.goto("/studio/p1");
+  await page.getByRole("button", { name: "افزودن ویدیو از گالری" }).click();
+
+  const card = page.getByRole("button", { name: /holiday\.webm/ });
+  await expect(card).toBeVisible();
+  await expect(card).toContainText("۰:۰۲");
+  await expect(card).toContainText("۴٫۸ مگابایت");
+});
+
+test("a gallery video becomes a clip and its subtitles are polled until ready", async ({
   page,
 }) => {
   const { state } = await mockBackend(page, [
@@ -135,15 +202,16 @@ test("a video is uploaded, saved as a clip, and its subtitles are polled until r
     "COMPLETED",
   ]);
   await page.goto("/studio/p1");
-  await addVideo(page);
+  await pickFromGallery(page);
 
-  await expect(page.getByText("clip", { exact: true })).toBeVisible();
-  await expect(page.getByText("۰:۰۲")).toBeVisible();
+  await expect(page.getByText("holiday", { exact: true })).toBeVisible();
+  await expect(page.getByText("۰:۰۲").first()).toBeVisible();
   await expect(page.getByText("زیرنویس در حال ساخت")).toBeVisible();
   await expect(page.getByText("زیرنویس آماده")).toBeVisible({
     timeout: 15_000,
   });
 
+  expect(state.uploads).toBe(0);
   expect(state.transcriptPosts).toBe(1);
   expect(state.saves).toHaveLength(1);
   expect(state.saves[0]).toMatchObject({
@@ -156,7 +224,7 @@ test("a video is uploaded, saved as a clip, and its subtitles are polled until r
           clips: [
             {
               file_uuid: "f1",
-              name: "clip",
+              name: "holiday",
               duration_ms: 2000,
               source_in_ms: 0,
               source_out_ms: 2000,
@@ -168,10 +236,45 @@ test("a video is uploaded, saved as a clip, and its subtitles are polled until r
   });
 });
 
+test("a video from the device goes to the gallery first and is then added to the project", async ({
+  page,
+}) => {
+  const { state } = await mockBackend(page, ["PROCESSING"], {
+    galleryHasVideo: false,
+  });
+  await page.goto("/studio/p1");
+  await page.getByRole("button", { name: "افزودن ویدیو از گالری" }).click();
+  await expect(page.getByText(/ویدیویی نیست/)).toBeVisible();
+
+  await page
+    .getByTestId("gallery-upload-input")
+    .setInputFiles("src/features/studio/_tests/clip.webm");
+
+  await expect(page.getByText("clip", { exact: true })).toBeVisible();
+  expect(state.uploads).toBe(1);
+  expect(state.order).toEqual(["upload", "save"]);
+  expect(state.transcriptPosts).toBe(1);
+});
+
+test("a gallery video already in the project cannot be added twice", async ({
+  page,
+}) => {
+  const { state } = await mockBackend(page, ["COMPLETED"]);
+  await page.goto("/studio/p1");
+  await pickFromGallery(page);
+  await expect(page.getByText("زیرنویس آماده")).toBeVisible();
+
+  await page.getByRole("button", { name: "افزودن ویدیو از گالری" }).click();
+  const card = page.getByRole("button", { name: /holiday\.webm/ });
+  await expect(card).toBeDisabled();
+  await expect(page.getByText("توی پروژه‌ست")).toBeVisible();
+  expect(state.saves).toHaveLength(1);
+});
+
 test("a failed subtitle can be retried", async ({ page }) => {
   const { state } = await mockBackend(page, ["FAILED"]);
   await page.goto("/studio/p1");
-  await addVideo(page);
+  await pickFromGallery(page);
 
   await expect(page.getByText("ساخت زیرنویس نشد")).toBeVisible();
   await page.getByRole("button", { name: "دوباره" }).click();
@@ -181,13 +284,13 @@ test("a failed subtitle can be retried", async ({ page }) => {
 test("removing a clip takes its file out of the project", async ({ page }) => {
   const { state } = await mockBackend(page, ["COMPLETED"]);
   await page.goto("/studio/p1");
-  await addVideo(page);
+  await pickFromGallery(page);
   await expect(page.getByText("زیرنویس آماده")).toBeVisible();
 
-  await page.getByRole("button", { name: "حذف «clip»" }).click();
+  await page.getByRole("button", { name: "حذف «holiday»" }).click();
 
-  await expect(page.getByText("clip", { exact: true })).toHaveCount(0);
-  await expect(page.getByText("ویدیو اضافه کن")).toBeVisible();
+  await expect(page.getByText("holiday", { exact: true })).toHaveCount(0);
+  await expect(page.getByText(/از گالری‌ات انتخاب کن/)).toBeVisible();
   expect(state.saves.at(-1)).toMatchObject({
     files: [],
     document: { tracks: [{ kind: "video", clips: [] }] },

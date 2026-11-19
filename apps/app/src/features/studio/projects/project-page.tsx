@@ -1,6 +1,6 @@
-import { useRef, type ChangeEvent, type FC } from "react";
+import { useMemo, useState, type FC } from "react";
 import { useNavigate, useParams } from "react-router";
-import { Camera, FolderUp, Loader2, Film, Play } from "lucide-react";
+import { Images, Loader2, Film, Play } from "lucide-react";
 
 import { Button } from "@/shared/ui/button";
 import { Skeleton } from "@/shared/ui/skeleton";
@@ -10,11 +10,12 @@ import { FileManagerUploadStatus } from "@/features/file-manager";
 import { APP_ROUTES_KEY, studioEditPath } from "@/app/router/routes";
 import { StudioScreen } from "../shell/studio-screen";
 import { ClipCard } from "./components/clip-card";
+import { GalleryPickerSheet } from "./components/gallery-picker-sheet";
 import { useAddClip } from "./hooks/use-add-clip";
 import { useRemoveClip } from "./hooks/use-remove-clip";
 import { useProject } from "./hooks/use-projects";
 import { useRequestTranscript, useTranscripts } from "./hooks/use-transcripts";
-import { readClips, VIDEO_TYPES } from "./model/clips";
+import { readClips } from "./model/clips";
 import { isMissing } from "./model/project-error";
 
 /** A project's screen: its videos in order, each with the state of its subtitles. */
@@ -23,23 +24,25 @@ export const ProjectPage: FC = () => {
   const navigate = useNavigate();
   const { projectUuid = "" } = useParams();
   const project = useProject(projectUuid);
-  const { add, busy, pendingUploads } = useAddClip(projectUuid);
+  const { addFromGallery, uploadToGallery, busy, pendingUploads } =
+    useAddClip(projectUuid);
+  const [pickerOpen, setPickerOpen] = useState(false);
   const removeClip = useRemoveClip(projectUuid);
   const requestTranscript = useRequestTranscript();
-  const pickRef = useRef<HTMLInputElement>(null);
-  const cameraRef = useRef<HTMLInputElement>(null);
 
-  const clips = project.data ? readClips(project.data.document) : [];
+  const clips = useMemo(
+    () => (project.data ? readClips(project.data.document) : []),
+    [project.data],
+  );
   const transcripts = useTranscripts([
     ...new Set(clips.map((clip) => clip.file_uuid)),
   ]);
   const back = () => navigate(APP_ROUTES_KEY.studio.path, { replace: true });
 
-  const onPick = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    event.target.value = "";
-    if (file) void add(file);
-  };
+  const used = useMemo(
+    () => new Set(clips.map((clip) => clip.file_uuid)),
+    [clips],
+  );
 
   const uploading = [...pendingUploads.values()].filter(
     (item) => item.status === FileManagerUploadStatus.UPLOADING,
@@ -63,46 +66,20 @@ export const ProjectPage: FC = () => {
       }
       footer={
         project.data && (
-          <div className="flex shrink-0 gap-2 border-t px-4 py-3">
+          <div className="shrink-0 border-t px-4 py-3">
             <Button
               size="lg"
-              className="min-h-12 flex-1 gap-2 text-base"
+              className="min-h-12 w-full gap-2 text-base"
               disabled={busy}
-              onClick={() => pickRef.current?.click()}
+              onClick={() => setPickerOpen(true)}
             >
               {busy ? (
                 <Loader2 className="size-5 animate-spin" aria-hidden />
               ) : (
-                <FolderUp className="size-5" aria-hidden />
+                <Images className="size-5" aria-hidden />
               )}
               {t("features.studio.clips.add")}
             </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="min-h-12 gap-2"
-              disabled={busy}
-              aria-label={t("features.studio.clips.record")}
-              onClick={() => cameraRef.current?.click()}
-            >
-              <Camera className="size-5" aria-hidden />
-            </Button>
-            <input
-              ref={pickRef}
-              type="file"
-              accept={VIDEO_TYPES.join(",")}
-              className="hidden"
-              data-testid="clip-input"
-              onChange={onPick}
-            />
-            <input
-              ref={cameraRef}
-              type="file"
-              accept="video/*"
-              capture="environment"
-              className="hidden"
-              onChange={onPick}
-            />
           </div>
         )
       }
@@ -155,6 +132,18 @@ export const ProjectPage: FC = () => {
           ))}
         </ul>
       )}
+      <GalleryPickerSheet
+        open={pickerOpen}
+        onOpenChange={setPickerOpen}
+        usedFileUuids={used}
+        busy={busy}
+        uploads={pendingUploads}
+        onPick={(video) => {
+          setPickerOpen(false);
+          void addFromGallery(video);
+        }}
+        onUpload={(file) => void uploadToGallery(file)}
+      />
     </StudioScreen>
   );
 };
