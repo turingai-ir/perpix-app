@@ -70,14 +70,18 @@ export const router = createBrowserRouter([
             children: [
               {
                 index: true,
-                lazy: lazyPage(() => import("@/pages/(app)/generation/image/page")),
+                lazy: lazyPage(
+                  () => import("@/pages/(app)/generation/image/page"),
+                ),
                 handle: {
                   title: APP_ROUTES_KEY.generation.image.meta.title,
                 },
               },
               {
                 path: APP_ROUTES_KEY.generation.image.history.path,
-                lazy: lazyPage(() => import("@/pages/(app)/generation/image/page")),
+                lazy: lazyPage(
+                  () => import("@/pages/(app)/generation/image/page"),
+                ),
                 handle: {
                   title: APP_ROUTES_KEY.generation.image.history.meta.title,
                 },
@@ -89,14 +93,18 @@ export const router = createBrowserRouter([
             children: [
               {
                 index: true,
-                lazy: lazyPage(() => import("@/pages/(app)/generation/video/page")),
+                lazy: lazyPage(
+                  () => import("@/pages/(app)/generation/video/page"),
+                ),
                 handle: {
                   title: APP_ROUTES_KEY.generation.video.meta.title,
                 },
               },
               {
                 path: APP_ROUTES_KEY.generation.video.history.path,
-                lazy: lazyPage(() => import("@/pages/(app)/generation/video/page")),
+                lazy: lazyPage(
+                  () => import("@/pages/(app)/generation/video/page"),
+                ),
                 handle: {
                   title: APP_ROUTES_KEY.generation.video.history.meta.title,
                 },
@@ -127,7 +135,9 @@ export const router = createBrowserRouter([
               },
               {
                 path: APP_ROUTES_KEY.profile.walletTransactions.path,
-                lazy: lazyPage(() => import("@/pages/profile/wallet-transactions/page")),
+                lazy: lazyPage(
+                  () => import("@/pages/profile/wallet-transactions/page"),
+                ),
                 handle: {
                   title: APP_ROUTES_KEY.profile.walletTransactions.meta.title,
                 },

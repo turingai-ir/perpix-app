@@ -1,4 +1,4 @@
-import { PaymentResultPage } from "@/features/payment";
+import { PaymentResultPage } from "@/features/payment/components/payment-result-page";
 import { useActiveSubscription } from "@/features/pricing";
 import { WalletNextStep } from "@/features/wallet";
 

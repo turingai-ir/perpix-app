@@ -107,7 +107,27 @@ export default defineConfig(({ mode }) => {
                 // Cache the React runtime separately and keep legacy entries within budget.
                 name: "react-vendor",
                 test: /node_modules[\\/]react(?:-dom|-router)?[\\/]/,
+                priority: 30,
+              },
+              {
+                name: "ui-vendor",
+                test: /node_modules[\\/](?:@base-ui|@radix-ui|motion|framer-motion|motion-dom|lucide-react|vaul)[\\/]/,
+                priority: 25,
+              },
+              {
+                name: "framework-vendor",
+                test: /node_modules[\\/](?:@tanstack|jotai|jotai-immer|immer|i18next|react-i18next|dayjs|jalali-plugin-dayjs)[\\/]/,
                 priority: 20,
+              },
+              {
+                name: "locale-fa",
+                test: /[\\/]locales[\\/]fa\.json$/,
+                priority: 20,
+              },
+              {
+                name: "app-shell",
+                test: /[\\/]src[\\/]features[\\/]app-layout[\\/]/,
+                priority: 15,
               },
             ],
           },

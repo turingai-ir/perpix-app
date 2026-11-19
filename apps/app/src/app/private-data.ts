@@ -2,10 +2,8 @@ import { queryClient } from "@/shared/lib/react-query";
 
 import { clearPaymentSession } from "@/features/payment";
 import { onSessionEnded } from "@/features/auth/session";
-import {
-  clearUploadSession,
-  pendingUploadsGroupedAtom,
-} from "@/features/file-manager";
+import { clearUploadSession } from "@/features/file-manager/services/upload-session";
+import { pendingUploadsGroupedAtom } from "@/features/file-manager/hooks/upload-state";
 import { jotaiStore } from "@/shared/lib/jotai-store";
 
 /**

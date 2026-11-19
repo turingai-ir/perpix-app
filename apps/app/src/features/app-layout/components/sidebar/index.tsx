@@ -1,5 +1,5 @@
 import { useImmerAtom } from "jotai-immer";
-import { type CSSProperties, type FC, type RefObject } from "react";
+import { Suspense, type CSSProperties, type FC, type RefObject } from "react";
 
 import appLayoutAtom from "../../model/app-layout-state";
 
@@ -53,18 +53,20 @@ const AppLayoutSidebar: FC<{
     />
   );
 
-  const walletChargeFlow = (
-    <WalletChargeFlow
-      balanceUsdmicro={balanceUsdmicro}
-      open={isWalletChargeOpen}
-      onOpenChange={setWalletChargeOpen}
-      reason={walletChargeReason}
-      requiresSubscription={
-        activeSubscriptionState.data?.plan.is_default === true
-      }
-      onOpenPricing={openPricingFeature}
-    />
-  );
+  const walletChargeFlow = isWalletChargeOpen ? (
+    <Suspense fallback={null}>
+      <WalletChargeFlow
+        balanceUsdmicro={balanceUsdmicro}
+        open={isWalletChargeOpen}
+        onOpenChange={setWalletChargeOpen}
+        reason={walletChargeReason}
+        requiresSubscription={
+          activeSubscriptionState.data?.plan.is_default === true
+        }
+        onOpenPricing={openPricingFeature}
+      />
+    </Suspense>
+  ) : null;
 
   if (breakpoints.lg) {
     return (
