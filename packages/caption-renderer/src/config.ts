@@ -16,8 +16,16 @@ export const EXITS = ["none", "fade"] as const;
 export type Exit = (typeof EXITS)[number];
 
 /** What the word being spoken does. `wipe` fills it as it is said, like karaoke. */
-export const WORD_EFFECTS = ["none", "color", "pop", "wipe"] as const;
+export const WORD_EFFECTS = ["none", "color", "pop", "wipe", "box"] as const;
 export type WordEffect = (typeof WORD_EFFECTS)[number];
+
+/** How a word arrives when the caption's entrance is `words`. */
+export const WORD_ENTRANCES = ["fade", "pop", "slide-up"] as const;
+export type WordEntrance = (typeof WORD_ENTRANCES)[number];
+
+/** Which words are drawn as key words besides the ones marked by hand. */
+export const AUTO_EMPHASIS = ["none", "longest", "numbers"] as const;
+export type AutoEmphasis = (typeof AUTO_EMPHASIS)[number];
 
 export const ANCHORS = ["top", "middle", "bottom"] as const;
 export type Anchor = (typeof ANCHORS)[number];
@@ -48,7 +56,23 @@ export interface CaptionConfig {
     maxWidth: number;
   };
   colors: { text: string; active: string; stroke: string };
+  /** A colour fade down each word, used instead of the plain text colour. */
+  gradient: { enabled: boolean; from: string; to: string };
   strokeWidth: number;
+  /** Key words: marked in the transcript, or picked by the `auto` rule. */
+  emphasis: {
+    auto: AutoEmphasis;
+    color: string;
+    /** An empty family keeps the caption's own. */
+    family: string;
+    weight: number;
+    italic: boolean;
+    uppercase: boolean;
+    scale: number;
+  };
+  /** The pill that follows the spoken word with the `box` effect. */
+  highlight: { color: string; padding: number; radius: number };
+  emoji: { enabled: boolean; size: number };
   box: {
     enabled: boolean;
     color: string;
@@ -69,6 +93,7 @@ export interface CaptionConfig {
     entranceMs: number;
     exit: Exit;
     exitMs: number;
+    wordEntrance: WordEntrance;
     wordEffect: WordEffect;
     /** How big the spoken word gets with the `pop` effect. */
     wordScale: number;
@@ -88,7 +113,19 @@ export const DEFAULT_CAPTION_CONFIG: CaptionConfig = {
   },
   layout: { anchor: "bottom", offset: 0.12, maxWidth: 0.86 },
   colors: { text: "#ffffff", active: "#ffd400", stroke: "#000000" },
+  gradient: { enabled: false, from: "#ffffff", to: "#9ad1ff" },
   strokeWidth: 6,
+  emphasis: {
+    auto: "none",
+    color: "#ff4d6d",
+    family: "",
+    weight: 900,
+    italic: false,
+    uppercase: false,
+    scale: 1.25,
+  },
+  highlight: { color: "#7c3aed", padding: 10, radius: 14 },
+  emoji: { enabled: true, size: 0.9 },
   box: {
     enabled: false,
     color: "#000000",
@@ -109,6 +146,7 @@ export const DEFAULT_CAPTION_CONFIG: CaptionConfig = {
     entranceMs: 220,
     exit: "fade",
     exitMs: 120,
+    wordEntrance: "pop",
     wordEffect: "color",
     wordScale: 1.15,
     spokenStays: false,
@@ -163,6 +201,10 @@ export const normalizeCaptionConfig = (raw: unknown): CaptionConfig => {
   const box = section(root.box);
   const shadow = section(root.shadow);
   const animation = section(root.animation);
+  const gradient = section(root.gradient);
+  const emphasis = section(root.emphasis);
+  const highlight = section(root.highlight);
+  const emoji = section(root.emoji);
   return {
     font: {
       family: family(font.family, d.font.family),
@@ -175,7 +217,9 @@ export const normalizeCaptionConfig = (raw: unknown): CaptionConfig => {
       align: pick(text.align, ALIGNS, d.text.align),
       lineHeight: num(text.lineHeight, d.text.lineHeight, 0.8, 2.5),
       letterSpacing: num(text.letterSpacing, d.text.letterSpacing, -5, 30),
-      wordsPerPage: Math.round(num(text.wordsPerPage, d.text.wordsPerPage, 1, 12)),
+      wordsPerPage: Math.round(
+        num(text.wordsPerPage, d.text.wordsPerPage, 1, 12),
+      ),
     },
     layout: {
       anchor: pick(layout.anchor, ANCHORS, d.layout.anchor),
@@ -187,7 +231,35 @@ export const normalizeCaptionConfig = (raw: unknown): CaptionConfig => {
       active: color(colors.active, d.colors.active),
       stroke: color(colors.stroke, d.colors.stroke),
     },
+    gradient: {
+      enabled: bool(gradient.enabled, d.gradient.enabled),
+      from: color(gradient.from, d.gradient.from),
+      to: color(gradient.to, d.gradient.to),
+    },
     strokeWidth: num(root.strokeWidth, d.strokeWidth, 0, 40),
+    emphasis: {
+      auto: pick(emphasis.auto, AUTO_EMPHASIS, d.emphasis.auto),
+      color: color(emphasis.color, d.emphasis.color),
+      family:
+        emphasis.family === ""
+          ? ""
+          : family(emphasis.family, d.emphasis.family),
+      weight:
+        Math.round(num(emphasis.weight, d.emphasis.weight, 100, 900) / 100) *
+        100,
+      italic: bool(emphasis.italic, d.emphasis.italic),
+      uppercase: bool(emphasis.uppercase, d.emphasis.uppercase),
+      scale: num(emphasis.scale, d.emphasis.scale, 0.8, 2),
+    },
+    highlight: {
+      color: color(highlight.color, d.highlight.color),
+      padding: num(highlight.padding, d.highlight.padding, 0, 60),
+      radius: num(highlight.radius, d.highlight.radius, 0, 60),
+    },
+    emoji: {
+      enabled: bool(emoji.enabled, d.emoji.enabled),
+      size: num(emoji.size, d.emoji.size, 0.4, 2),
+    },
     box: {
       enabled: bool(box.enabled, d.box.enabled),
       color: color(box.color, d.box.color),
@@ -208,6 +280,11 @@ export const normalizeCaptionConfig = (raw: unknown): CaptionConfig => {
       entranceMs: num(animation.entranceMs, d.animation.entranceMs, 0, 2000),
       exit: pick(animation.exit, EXITS, d.animation.exit),
       exitMs: num(animation.exitMs, d.animation.exitMs, 0, 2000),
+      wordEntrance: pick(
+        animation.wordEntrance,
+        WORD_ENTRANCES,
+        d.animation.wordEntrance,
+      ),
       wordEffect: pick(
         animation.wordEffect,
         WORD_EFFECTS,

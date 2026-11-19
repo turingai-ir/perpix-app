@@ -3,6 +3,10 @@ export interface CaptionWord {
   text: string;
   startMs: number;
   endMs: number;
+  /** Marked as a key word, to be drawn in the template's emphasis style. */
+  emphasis?: boolean;
+  /** An emoji shown over the word while it is on screen. */
+  emoji?: string;
 }
 
 /** The words that are on screen together. */

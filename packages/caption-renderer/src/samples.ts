@@ -1,90 +1,100 @@
 import type { CaptionConfig } from "./config";
 import type { CaptionWord } from "./words";
 
-const spoken = (sentence: string, startMs: number, perWordMs = 380): CaptionWord[] =>
+const spoken = (
+  sentence: string,
+  startMs: number,
+  perWordMs = 380,
+): CaptionWord[] =>
   sentence.split(" ").map((text, index) => ({
     text,
     startMs: startMs + index * perWordMs,
     endMs: startMs + (index + 1) * perWordMs - 40,
   }));
 
+/** Marks words of a sample as key words and gives some an emoji. */
+const marked = (
+  words: CaptionWord[],
+  marks: Record<number, Partial<CaptionWord>>,
+): CaptionWord[] => words.map((word, index) => ({ ...word, ...marks[index] }));
+
 /** Sample words for previewing a look, in Persian and in English. */
 export const SAMPLE_WORDS: Record<"fa" | "en", CaptionWord[]> = {
-  fa: [
-    ...spoken("سلام به همه، امروز می‌خواهیم زیرنویس بسازیم", 300),
-    ...spoken("خیلی ساده و سریع", 4000),
-  ],
-  en: [
-    ...spoken("Hello everyone, today we are making captions", 300),
-    ...spoken("simple and really fast", 4000),
-  ],
+  fa: marked(
+    [
+      ...spoken("سلام به همه، امروز می‌خواهیم زیرنویس بسازیم", 300),
+      ...spoken("خیلی ساده و سریع", 4000),
+    ],
+    {
+      0: { emoji: "👋" },
+      5: { emphasis: true },
+      9: { emphasis: true, emoji: "🚀" },
+    },
+  ),
+  en: marked(
+    [
+      ...spoken("Hello everyone, today we are making captions", 300),
+      ...spoken("simple and really fast", 4000),
+    ],
+    {
+      0: { emoji: "👋" },
+      5: { emphasis: true },
+      9: { emphasis: true, emoji: "🚀" },
+    },
+  ),
 };
 
 export const sampleDurationMs = (words: readonly CaptionWord[]): number =>
   (words[words.length - 1]?.endMs ?? 0) + 600;
 
-/** Starting points for a new template; each is a partial config. */
-export const STARTER_TEMPLATES: Record<string, Partial<CaptionConfig>> = {
+type DeepPartial<T> = { [K in keyof T]?: DeepPartial<T[K]> };
+
+/** Starting points for a new template; each only says what differs from the default. */
+export const STARTER_TEMPLATES: Record<string, DeepPartial<CaptionConfig>> = {
   karaoke: {
-    colors: { text: "#ffffff", active: "#ffd400", stroke: "#000000" },
     animation: {
       entrance: "fade",
       entranceMs: 120,
-      exit: "fade",
-      exitMs: 100,
       wordEffect: "wipe",
-      wordScale: 1,
       spokenStays: true,
     },
   },
   pop: {
-    text: {
-      uppercase: false,
-      align: "center",
-      lineHeight: 1.2,
-      letterSpacing: 0,
-      wordsPerPage: 3,
+    text: { wordsPerPage: 3, lineHeight: 1.2 },
+    animation: { entrance: "pop", wordEffect: "pop", wordScale: 1.25 },
+  },
+  highlighter: {
+    text: { wordsPerPage: 4 },
+    strokeWidth: 0,
+    shadow: { enabled: false },
+    colors: { text: "#ffffff", active: "#ffffff" },
+    highlight: { color: "#7c3aed", padding: 12, radius: 16 },
+    emphasis: { auto: "longest", color: "#ffd400", scale: 1.2, weight: 900 },
+    animation: { entrance: "words", wordEntrance: "pop", wordEffect: "box" },
+  },
+  key_words: {
+    text: { wordsPerPage: 5 },
+    emphasis: {
+      auto: "longest",
+      color: "#ff4d6d",
+      scale: 1.35,
+      weight: 900,
+      uppercase: true,
     },
-    animation: {
-      entrance: "pop",
-      entranceMs: 200,
-      exit: "none",
-      exitMs: 0,
-      wordEffect: "pop",
-      wordScale: 1.25,
-      spokenStays: false,
-    },
+    animation: { entrance: "slide-up", wordEffect: "none" },
+  },
+  gradient: {
+    gradient: { enabled: true, from: "#ffffff", to: "#7dd3fc" },
+    animation: { entrance: "zoom", wordEffect: "pop", wordScale: 1.12 },
   },
   boxed: {
-    box: { enabled: true, color: "#000000", opacity: 0.7, padding: 28, radius: 24 },
+    box: { enabled: true, opacity: 0.7, padding: 28, radius: 24 },
     strokeWidth: 0,
-    shadow: { enabled: false, color: "#000000", blur: 0, offsetX: 0, offsetY: 0, opacity: 0 },
-    animation: {
-      entrance: "slide-up",
-      entranceMs: 250,
-      exit: "fade",
-      exitMs: 150,
-      wordEffect: "color",
-      wordScale: 1,
-      spokenStays: false,
-    },
+    shadow: { enabled: false },
+    animation: { entrance: "slide-up", entranceMs: 250, wordEffect: "color" },
   },
   word_by_word: {
-    text: {
-      uppercase: true,
-      align: "center",
-      lineHeight: 1.2,
-      letterSpacing: 1,
-      wordsPerPage: 5,
-    },
-    animation: {
-      entrance: "words",
-      entranceMs: 0,
-      exit: "none",
-      exitMs: 0,
-      wordEffect: "color",
-      wordScale: 1,
-      spokenStays: false,
-    },
+    text: { uppercase: true, wordsPerPage: 5, letterSpacing: 1 },
+    animation: { entrance: "words", wordEntrance: "slide-up", exit: "none" },
   },
 };

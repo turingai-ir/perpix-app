@@ -3,11 +3,13 @@ import { Pause, Play } from "lucide-react";
 import {
   ALIGNS,
   ANCHORS,
+  AUTO_EMPHASIS,
   ENTRANCES,
   EXITS,
   SAMPLE_WORDS,
   STARTER_TEMPLATES,
   WORD_EFFECTS,
+  WORD_ENTRANCES,
   normalizeCaptionConfig,
   sampleDurationMs,
   type CaptionConfig,
@@ -216,19 +218,45 @@ export function CaptionTemplateEditor({
       color: "تغییر رنگ",
       pop: "بزرگ شدن",
       wipe: "پر شدن (کاراوکه)",
+      box: "قرص هایلایت",
     },
     anchor: { top: "بالا", middle: "وسط", bottom: "پایین" },
     align: { center: "وسط", left: "چپ", right: "راست" },
+    wordEntrance: {
+      fade: "محو شدن",
+      pop: "بالا آمدن (pop)",
+      "slide-up": "لغزیدن از پایین",
+    },
+    autoEmphasis: {
+      none: "فقط کلمه‌های علامت‌خورده",
+      longest: "بلندترین کلمهٔ هر نمایش",
+      numbers: "عددها",
+    },
     starter: {
       karaoke: "کاراوکه",
       pop: "پاپ",
+      highlighter: "هایلایتر",
+      key_words: "کلمات کلیدی درشت",
+      gradient: "گرادیان",
       boxed: "جعبه‌ای",
       word_by_word: "کلمه به کلمه",
     },
   } as const;
 
   const size = FRAMES[frame];
-  const { font, text, layout, colors, box, shadow, animation } = config;
+  const {
+    font,
+    text,
+    layout,
+    colors,
+    box,
+    shadow,
+    animation,
+    emphasis,
+    gradient,
+    highlight,
+    emoji,
+  } = config;
 
   return (
     <div className="grid gap-4 lg:grid-cols-[auto_1fr]">
@@ -326,72 +354,163 @@ export function CaptionTemplateEditor({
             />
           </Field>
           <Field label={label("fontSize", "اندازه")}>
-            <Slider value={font.size} min={24} max={160} step={1} onChange={(size) => patch("font", { size })} />
+            <Slider
+              value={font.size}
+              min={24}
+              max={160}
+              step={1}
+              onChange={(size) => patch("font", { size })}
+            />
           </Field>
           <Field label={label("fontWeight", "ضخامت")}>
-            <Slider value={font.weight} min={300} max={900} step={100} onChange={(weight) => patch("font", { weight })} />
+            <Slider
+              value={font.weight}
+              min={300}
+              max={900}
+              step={100}
+              onChange={(weight) => patch("font", { weight })}
+            />
           </Field>
           <Field label={label("italic", "کج")}>
-            <Check value={font.italic} onChange={(italic) => patch("font", { italic })} />
+            <Check
+              value={font.italic}
+              onChange={(italic) => patch("font", { italic })}
+            />
           </Field>
           <Field label={label("uppercase", "حروف بزرگ (لاتین)")}>
-            <Check value={text.uppercase} onChange={(uppercase) => patch("text", { uppercase })} />
+            <Check
+              value={text.uppercase}
+              onChange={(uppercase) => patch("text", { uppercase })}
+            />
           </Field>
           <Field label={label("wordsPerPage", "تعداد کلمه در هر نمایش")}>
-            <Slider value={text.wordsPerPage} min={1} max={10} step={1} onChange={(wordsPerPage) => patch("text", { wordsPerPage })} />
+            <Slider
+              value={text.wordsPerPage}
+              min={1}
+              max={10}
+              step={1}
+              onChange={(wordsPerPage) => patch("text", { wordsPerPage })}
+            />
           </Field>
           <Field label={label("lineHeight", "فاصلهٔ خطوط")}>
-            <Slider value={text.lineHeight} min={0.9} max={2} step={0.05} onChange={(lineHeight) => patch("text", { lineHeight })} />
+            <Slider
+              value={text.lineHeight}
+              min={0.9}
+              max={2}
+              step={0.05}
+              onChange={(lineHeight) => patch("text", { lineHeight })}
+            />
           </Field>
           <Field label={label("align", "چینش")}>
-            <Choice value={text.align} options={ALIGNS} label={(o) => names.align[o]} onChange={(align) => patch("text", { align })} />
+            <Choice
+              value={text.align}
+              options={ALIGNS}
+              label={(o) => names.align[o]}
+              onChange={(align) => patch("text", { align })}
+            />
           </Field>
         </Group>
 
         <Group title={label("position", "جایگاه")}>
           <Field label={label("anchor", "محل")}>
-            <Choice value={layout.anchor} options={ANCHORS} label={(o) => names.anchor[o]} onChange={(anchor) => patch("layout", { anchor })} />
+            <Choice
+              value={layout.anchor}
+              options={ANCHORS}
+              label={(o) => names.anchor[o]}
+              onChange={(anchor) => patch("layout", { anchor })}
+            />
           </Field>
           <Field label={label("offset", "فاصله از لبه")}>
-            <Slider value={layout.offset} min={0} max={0.4} step={0.01} onChange={(offset) => patch("layout", { offset })} />
+            <Slider
+              value={layout.offset}
+              min={0}
+              max={0.4}
+              step={0.01}
+              onChange={(offset) => patch("layout", { offset })}
+            />
           </Field>
           <Field label={label("maxWidth", "بیشترین پهنا")}>
-            <Slider value={layout.maxWidth} min={0.4} max={1} step={0.02} onChange={(maxWidth) => patch("layout", { maxWidth })} />
+            <Slider
+              value={layout.maxWidth}
+              min={0.4}
+              max={1}
+              step={0.02}
+              onChange={(maxWidth) => patch("layout", { maxWidth })}
+            />
           </Field>
         </Group>
 
         <Group title={label("colors", "رنگ و حاشیه")}>
           <Field label={label("textColor", "رنگ متن")}>
-            <Color value={colors.text} onChange={(value) => patch("colors", { text: value })} />
+            <Color
+              value={colors.text}
+              onChange={(value) => patch("colors", { text: value })}
+            />
           </Field>
           <Field label={label("activeColor", "رنگ کلمهٔ در حال گفتن")}>
-            <Color value={colors.active} onChange={(value) => patch("colors", { active: value })} />
+            <Color
+              value={colors.active}
+              onChange={(value) => patch("colors", { active: value })}
+            />
           </Field>
           <Field label={label("strokeColor", "رنگ حاشیه")}>
-            <Color value={colors.stroke} onChange={(value) => patch("colors", { stroke: value })} />
+            <Color
+              value={colors.stroke}
+              onChange={(value) => patch("colors", { stroke: value })}
+            />
           </Field>
           <Field label={label("strokeWidth", "ضخامت حاشیه")}>
-            <Slider value={config.strokeWidth} min={0} max={20} step={1} onChange={(strokeWidth) => onChange({ ...config, strokeWidth })} />
+            <Slider
+              value={config.strokeWidth}
+              min={0}
+              max={20}
+              step={1}
+              onChange={(strokeWidth) => onChange({ ...config, strokeWidth })}
+            />
           </Field>
         </Group>
 
         <Group title={label("box", "پس‌زمینهٔ متن")}>
           <Field label={label("boxEnabled", "نمایش جعبه")}>
-            <Check value={box.enabled} onChange={(enabled) => patch("box", { enabled })} />
+            <Check
+              value={box.enabled}
+              onChange={(enabled) => patch("box", { enabled })}
+            />
           </Field>
           {box.enabled && (
             <>
               <Field label={label("boxColor", "رنگ")}>
-                <Color value={box.color} onChange={(value) => patch("box", { color: value })} />
+                <Color
+                  value={box.color}
+                  onChange={(value) => patch("box", { color: value })}
+                />
               </Field>
               <Field label={label("boxOpacity", "شفافیت")}>
-                <Slider value={box.opacity} min={0} max={1} step={0.05} onChange={(opacity) => patch("box", { opacity })} />
+                <Slider
+                  value={box.opacity}
+                  min={0}
+                  max={1}
+                  step={0.05}
+                  onChange={(opacity) => patch("box", { opacity })}
+                />
               </Field>
               <Field label={label("boxPadding", "فاصلهٔ داخلی")}>
-                <Slider value={box.padding} min={0} max={80} step={1} onChange={(padding) => patch("box", { padding })} />
+                <Slider
+                  value={box.padding}
+                  min={0}
+                  max={80}
+                  step={1}
+                  onChange={(padding) => patch("box", { padding })}
+                />
               </Field>
               <Field label={label("boxRadius", "گردی گوشه")}>
-                <Slider value={box.radius} min={0} max={80} step={1} onChange={(radius) => patch("box", { radius })} />
+                <Slider
+                  value={box.radius}
+                  min={0}
+                  max={80}
+                  step={1}
+                  onChange={(radius) => patch("box", { radius })}
+                />
               </Field>
             </>
           )}
@@ -399,21 +518,134 @@ export function CaptionTemplateEditor({
 
         <Group title={label("shadow", "سایه")}>
           <Field label={label("shadowEnabled", "نمایش سایه")}>
-            <Check value={shadow.enabled} onChange={(enabled) => patch("shadow", { enabled })} />
+            <Check
+              value={shadow.enabled}
+              onChange={(enabled) => patch("shadow", { enabled })}
+            />
           </Field>
           {shadow.enabled && (
             <>
               <Field label={label("shadowColor", "رنگ")}>
-                <Color value={shadow.color} onChange={(value) => patch("shadow", { color: value })} />
+                <Color
+                  value={shadow.color}
+                  onChange={(value) => patch("shadow", { color: value })}
+                />
               </Field>
               <Field label={label("shadowBlur", "محو بودن")}>
-                <Slider value={shadow.blur} min={0} max={40} step={1} onChange={(blur) => patch("shadow", { blur })} />
+                <Slider
+                  value={shadow.blur}
+                  min={0}
+                  max={40}
+                  step={1}
+                  onChange={(blur) => patch("shadow", { blur })}
+                />
               </Field>
               <Field label={label("shadowOffsetY", "جابه‌جایی عمودی")}>
-                <Slider value={shadow.offsetY} min={-20} max={20} step={1} onChange={(offsetY) => patch("shadow", { offsetY })} />
+                <Slider
+                  value={shadow.offsetY}
+                  min={-20}
+                  max={20}
+                  step={1}
+                  onChange={(offsetY) => patch("shadow", { offsetY })}
+                />
               </Field>
               <Field label={label("shadowOpacity", "شفافیت")}>
-                <Slider value={shadow.opacity} min={0} max={1} step={0.05} onChange={(opacity) => patch("shadow", { opacity })} />
+                <Slider
+                  value={shadow.opacity}
+                  min={0}
+                  max={1}
+                  step={0.05}
+                  onChange={(opacity) => patch("shadow", { opacity })}
+                />
+              </Field>
+            </>
+          )}
+        </Group>
+
+        <Group title={label("emphasis", "کلمات کلیدی (درشت‌کردن بعضی کلمات)")}>
+          <Field label={label("emphasisAuto", "کدام کلمه‌ها")}>
+            <Choice
+              value={emphasis.auto}
+              options={AUTO_EMPHASIS}
+              label={(o) => names.autoEmphasis[o]}
+              onChange={(auto) => patch("emphasis", { auto })}
+            />
+          </Field>
+          <Field label={label("emphasisColor", "رنگ")}>
+            <Color
+              value={emphasis.color}
+              onChange={(value) => patch("emphasis", { color: value })}
+            />
+          </Field>
+          <Field label={label("emphasisScale", "اندازه نسبت به بقیه")}>
+            <Slider
+              value={emphasis.scale}
+              min={0.8}
+              max={2}
+              step={0.05}
+              onChange={(scale) => patch("emphasis", { scale })}
+            />
+          </Field>
+          <Field label={label("emphasisWeight", "ضخامت")}>
+            <Slider
+              value={emphasis.weight}
+              min={300}
+              max={900}
+              step={100}
+              onChange={(weight) => patch("emphasis", { weight })}
+            />
+          </Field>
+          <Field label={label("emphasisItalic", "کج")}>
+            <Check
+              value={emphasis.italic}
+              onChange={(italic) => patch("emphasis", { italic })}
+            />
+          </Field>
+          <Field label={label("emphasisUppercase", "حروف بزرگ (لاتین)")}>
+            <Check
+              value={emphasis.uppercase}
+              onChange={(uppercase) => patch("emphasis", { uppercase })}
+            />
+          </Field>
+          <Field label={label("emoji", "نمایش ایموجی کلمه‌ها")}>
+            <Check
+              value={emoji.enabled}
+              onChange={(enabled) => patch("emoji", { enabled })}
+            />
+          </Field>
+          {emoji.enabled && (
+            <Field label={label("emojiSize", "اندازهٔ ایموجی")}>
+              <Slider
+                value={emoji.size}
+                min={0.4}
+                max={2}
+                step={0.05}
+                onChange={(size) => patch("emoji", { size })}
+              />
+            </Field>
+          )}
+        </Group>
+
+        <Group title={label("gradientTitle", "گرادیان روی متن")}>
+          <Field label={label("gradientEnabled", "فعال")}>
+            <Check
+              value={gradient.enabled}
+              onChange={(enabled) => patch("gradient", { enabled })}
+            />
+          </Field>
+          {gradient.enabled && (
+            <>
+              <Field label={label("gradientFrom", "رنگ بالا")}>
+                <Color
+                  value={gradient.from}
+                  onChange={(value) => patch("gradient", { from: value })}
+                />
+              </Field>
+              <Field label={label("gradientTo", "رنگ پایین")}>
+                <Color
+                  value={gradient.to}
+                  onChange={(value) => patch("gradient", { to: value })}
+                />
               </Field>
             </>
           )}
@@ -421,25 +653,95 @@ export function CaptionTemplateEditor({
 
         <Group title={label("animation", "انیمیشن")}>
           <Field label={label("entrance", "ورود")}>
-            <Choice value={animation.entrance} options={ENTRANCES} label={(o) => names.entrance[o]} onChange={(entrance) => patch("animation", { entrance })} />
+            <Choice
+              value={animation.entrance}
+              options={ENTRANCES}
+              label={(o) => names.entrance[o]}
+              onChange={(entrance) => patch("animation", { entrance })}
+            />
           </Field>
           <Field label={label("entranceMs", "مدت ورود (میلی‌ثانیه)")}>
-            <Slider value={animation.entranceMs} min={0} max={800} step={10} onChange={(entranceMs) => patch("animation", { entranceMs })} />
+            <Slider
+              value={animation.entranceMs}
+              min={0}
+              max={800}
+              step={10}
+              onChange={(entranceMs) => patch("animation", { entranceMs })}
+            />
           </Field>
           <Field label={label("exit", "خروج")}>
-            <Choice value={animation.exit} options={EXITS} label={(o) => names.exit[o]} onChange={(exit) => patch("animation", { exit })} />
+            <Choice
+              value={animation.exit}
+              options={EXITS}
+              label={(o) => names.exit[o]}
+              onChange={(exit) => patch("animation", { exit })}
+            />
           </Field>
           <Field label={label("wordEffect", "اثر روی کلمهٔ در حال گفتن")}>
-            <Choice value={animation.wordEffect} options={WORD_EFFECTS} label={(o) => names.wordEffect[o]} onChange={(wordEffect) => patch("animation", { wordEffect })} />
+            <Choice
+              value={animation.wordEffect}
+              options={WORD_EFFECTS}
+              label={(o) => names.wordEffect[o]}
+              onChange={(wordEffect) => patch("animation", { wordEffect })}
+            />
           </Field>
+          {animation.entrance === "words" && (
+            <Field label={label("wordEntrance", "ظاهر شدن هر کلمه")}>
+              <Choice
+                value={animation.wordEntrance}
+                options={WORD_ENTRANCES}
+                label={(o) => names.wordEntrance[o]}
+                onChange={(wordEntrance) =>
+                  patch("animation", { wordEntrance })
+                }
+              />
+            </Field>
+          )}
+          {animation.wordEffect === "box" && (
+            <>
+              <Field label={label("highlightColor", "رنگ قرص")}>
+                <Color
+                  value={highlight.color}
+                  onChange={(value) => patch("highlight", { color: value })}
+                />
+              </Field>
+              <Field label={label("highlightPadding", "فاصلهٔ داخلی قرص")}>
+                <Slider
+                  value={highlight.padding}
+                  min={0}
+                  max={40}
+                  step={1}
+                  onChange={(padding) => patch("highlight", { padding })}
+                />
+              </Field>
+              <Field label={label("highlightRadius", "گردی قرص")}>
+                <Slider
+                  value={highlight.radius}
+                  min={0}
+                  max={40}
+                  step={1}
+                  onChange={(radius) => patch("highlight", { radius })}
+                />
+              </Field>
+            </>
+          )}
           {animation.wordEffect === "pop" && (
             <Field label={label("wordScale", "اندازهٔ بزرگ شدن")}>
-              <Slider value={animation.wordScale} min={1} max={1.6} step={0.05} onChange={(wordScale) => patch("animation", { wordScale })} />
+              <Slider
+                value={animation.wordScale}
+                min={1}
+                max={1.6}
+                step={0.05}
+                onChange={(wordScale) => patch("animation", { wordScale })}
+              />
             </Field>
           )}
           {animation.wordEffect !== "none" && (
             <Field label={label("spokenStays", "کلمهٔ گفته‌شده رنگی بماند")}>
-              <Check value={animation.spokenStays} onChange={(spokenStays) => patch("animation", { spokenStays })} />
+              <Check
+                value={animation.spokenStays}
+                onChange={(spokenStays) => patch("animation", { spokenStays })}
+              />
             </Field>
           )}
         </Group>

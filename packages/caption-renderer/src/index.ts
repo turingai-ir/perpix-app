@@ -4,3 +4,4 @@ export * from "./animation";
 export * from "./renderer";
 export * from "./fonts";
 export * from "./samples";
+export * from "./emphasis";

@@ -1,5 +1,6 @@
 import Konva from "konva";
-import { blockState, wordState } from "./animation";
+import { blockState, emojiState, wordState } from "./animation";
+import { isEmphasized } from "./emphasis";
 import type { CaptionConfig } from "./config";
 import {
   buildPages,
@@ -19,6 +20,13 @@ interface PlacedWord {
   base: Konva.Text;
   overlay: Konva.Text | null;
   width: number;
+  /** The colour at rest: the text colour, or the key-word colour. */
+  rest: string;
+  gradient: boolean;
+  pill: Konva.Rect | null;
+  emoji: Konva.Text | null;
+  restY: number;
+  lineHeight: number;
   /** Reads the wipe progress the clip is drawn with. */
   setWipe: (fraction: number) => void;
 }
@@ -96,12 +104,24 @@ export class CaptionRenderer {
     for (const placed of words) {
       const next = wordState(this.config, placed.word, timeMs);
       placed.wrap.setAttrs({
+        y: placed.restY + next.dy * placed.lineHeight,
         scaleX: next.scale,
         scaleY: next.scale,
         opacity: next.opacity,
       });
-      placed.base.fill(next.active ? colors.active : colors.text);
+      const useGradient = placed.gradient && !next.active;
+      placed.base.fillPriority(useGradient ? "linear-gradient" : "color");
+      placed.base.fill(next.active ? colors.active : placed.rest);
       placed.setWipe(next.wipe);
+      placed.pill?.opacity(next.pill);
+      if (placed.emoji) {
+        const emoji = emojiState(placed.word, timeMs);
+        placed.emoji.setAttrs({
+          opacity: emoji.opacity,
+          scaleX: emoji.scale,
+          scaleY: emoji.scale,
+        });
+      }
     }
     this.group.visible(true);
     this.layer.batchDraw();
@@ -128,7 +148,8 @@ export class CaptionRenderer {
     width: number,
     height: number,
   ): Built {
-    const { font, text, layout, colors, box, shadow, strokeWidth } = this.config;
+    const { font, text, layout, colors, box, shadow, strokeWidth } =
+      this.config;
     const scale = height / REFERENCE_HEIGHT;
     const fontSize = font.size * scale;
     const lineHeight = fontSize * text.lineHeight;
@@ -137,11 +158,17 @@ export class CaptionRenderer {
     const fontStyle = `${font.italic ? "italic " : ""}${font.weight}`;
     const stroke = strokeWidth * scale;
 
-    const textProps = (content: string): Konva.TextConfig => ({
-      text: text.uppercase ? content.toUpperCase() : content,
-      fontFamily: font.family,
-      fontStyle,
-      fontSize,
+    const { emphasis, gradient, highlight, emoji } = this.config;
+    const textProps = (content: string, key: boolean): Konva.TextConfig => ({
+      text:
+        text.uppercase || (key && emphasis.uppercase)
+          ? content.toUpperCase()
+          : content,
+      fontFamily: key && emphasis.family ? emphasis.family : font.family,
+      fontStyle: key
+        ? `${emphasis.italic ? "italic " : ""}${emphasis.weight}`
+        : fontStyle,
+      fontSize: key ? fontSize * emphasis.scale : fontSize,
       lineHeight: 1,
       // Letter spacing would break the joined letters of Arabic script.
       letterSpacing: rtl ? 0 : text.letterSpacing * scale,
@@ -149,9 +176,11 @@ export class CaptionRenderer {
     });
 
     const placed: PlacedWord[] = page.words.map((word) => {
+      const key = isEmphasized(word, page, this.config);
+      const rest = key ? emphasis.color : colors.text;
       const base = new Konva.Text({
-        ...textProps(word.text),
-        fill: colors.text,
+        ...textProps(word.text, key),
+        fill: rest,
         stroke: stroke > 0 ? colors.stroke : undefined,
         strokeWidth: stroke,
         fillAfterStrokeEnabled: true,
@@ -163,12 +192,38 @@ export class CaptionRenderer {
         shadowOpacity: shadow.opacity,
         shadowForStrokeEnabled: false,
       });
+      const useGradient = gradient.enabled && !key;
+      if (useGradient) {
+        base.setAttrs({
+          fillLinearGradientStartPoint: { x: 0, y: 0 },
+          fillLinearGradientEndPoint: { x: 0, y: base.height() },
+          fillLinearGradientColorStops: [0, gradient.from, 1, gradient.to],
+          fillPriority: "linear-gradient",
+        });
+      }
       const wrap = new Konva.Group();
+      let pill: Konva.Rect | null = null;
+      if (this.config.animation.wordEffect === "box") {
+        const pad = highlight.padding * scale;
+        pill = new Konva.Rect({
+          x: -pad,
+          y: -pad / 2,
+          width: base.width() + 2 * pad,
+          height: base.height() + pad,
+          cornerRadius: highlight.radius * scale,
+          fill: highlight.color,
+          opacity: 0,
+        });
+        wrap.add(pill);
+      }
       wrap.add(base);
       let overlay: Konva.Text | null = null;
       let setWipe = (fraction: number) => void fraction;
       if (this.config.animation.wordEffect === "wipe") {
-        overlay = new Konva.Text({ ...textProps(word.text), fill: colors.active });
+        overlay = new Konva.Text({
+          ...textProps(word.text, key),
+          fill: colors.active,
+        });
         let fraction = 0;
         const clip = new Konva.Group({
           clipFunc: (context) => {
@@ -184,7 +239,30 @@ export class CaptionRenderer {
           fraction = next;
         };
       }
-      return { word, wrap, base, overlay, width: base.width(), setWipe };
+      let emojiNode: Konva.Text | null = null;
+      if (emoji.enabled && word.emoji) {
+        emojiNode = new Konva.Text({
+          text: word.emoji,
+          fontSize: fontSize * emoji.size,
+          lineHeight: 1,
+          opacity: 0,
+        });
+        wrap.add(emojiNode);
+      }
+      return {
+        word,
+        wrap,
+        base,
+        overlay,
+        width: base.width(),
+        rest,
+        gradient: useGradient,
+        pill,
+        emoji: emojiNode,
+        restY: 0,
+        lineHeight,
+        setWipe,
+      };
     });
 
     // Greedy line breaking on the measured widths.
@@ -239,12 +317,25 @@ export class CaptionRenderer {
         const cx = left - blockWidth / 2 + item.width / 2;
         const h = item.base.height();
         item.base.position({ x: -item.width / 2, y: -h / 2 });
+        item.pill?.position({
+          x: -item.width / 2 - highlight.padding * scale,
+          y: -h / 2 - (highlight.padding * scale) / 2,
+        });
+        if (item.emoji) {
+          const { emoji: node } = item;
+          // Scaling happens around the emoji's own centre.
+          node.offset({ x: node.width() / 2, y: node.height() / 2 });
+          node.position({ x: 0, y: -h / 2 - lineHeight * 0.55 });
+        }
+        item.restY = y;
         // The clip group holds the overlay at its own origin, so the clip
         // rectangle is measured from the word's top-left corner.
         item.overlay?.getParent()?.position({ x: -item.width / 2, y: -h / 2 });
         item.wrap.position({ x: cx, y });
         block.add(item.wrap);
-        cursor = rtl ? cursor - item.width - space : cursor + item.width + space;
+        cursor = rtl
+          ? cursor - item.width - space
+          : cursor + item.width + space;
       }
     });
 
