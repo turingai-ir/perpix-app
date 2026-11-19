@@ -41,31 +41,52 @@ export const createProject = async (title: string) => {
   return projectSchema.parse(data);
 };
 
+type Edit = {
+  title?: string;
+  document?: Record<string, unknown>;
+  /** Files to add to the live ones the project already has. */
+  addFiles?: Array<{
+    file_uuid: string;
+    role: "SOURCE" | "EXPORT" | "THUMBNAIL";
+  }>;
+  /** Files to drop, by uuid. */
+  dropFiles?: string[];
+};
+
 /**
- * A save replaces the whole project, so a rename reads the latest first and
- * sends it back from that revision. If someone saved in between, the backend
- * refuses with a conflict and nothing is lost.
+ * A save replaces the whole project, so every change reads the latest first
+ * and sends it back from that revision. If someone saved in between, the
+ * backend refuses with a conflict and nothing is lost.
  */
-export const renameProject = async (uuid: string, title: string) => {
+export const editProject = async (uuid: string, edit: Edit) => {
   const current = await getProject(uuid);
+  const kept = current.files
+    // An expired file cannot be sent back; the backend only accepts live ones.
+    .filter(
+      (file) => file.available && !edit.dropFiles?.includes(file.file_uuid),
+    )
+    .map(({ file_uuid, role }) => ({ file_uuid, role }));
+  const added = (edit.addFiles ?? []).filter(
+    (file) => !kept.some((item) => item.file_uuid === file.file_uuid),
+  );
   const { data } = await apiClient.PUT(
     "/api/v1/studio/projects/{project_uuid}",
     {
       params: { path: { project_uuid: uuid } },
       body: {
-        title,
-        document: current.document,
+        title: edit.title ?? current.title,
+        document: edit.document ?? current.document,
         schema_version: current.schema_version,
         revision: current.revision,
-        // An expired file cannot be sent back; the backend only accepts live ones.
-        files: current.files
-          .filter((file) => file.available)
-          .map(({ file_uuid, role }) => ({ file_uuid, role })),
+        files: [...kept, ...added],
       },
     },
   );
   return projectSchema.parse(data);
 };
+
+export const renameProject = (uuid: string, title: string) =>
+  editProject(uuid, { title });
 
 /** A project that is already gone is as good as deleted. */
 export const deleteProject = async (uuid: string): Promise<void> => {
