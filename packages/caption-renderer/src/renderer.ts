@@ -1,4 +1,13 @@
-import { Blur, Group, Konva, Layer, Node, Rect, Text, type TextConfig } from "./konva";
+import {
+  Blur,
+  Group,
+  Konva,
+  Layer,
+  Node,
+  Rect,
+  Text,
+  type TextConfig,
+} from "./konva";
 import {
   combine,
   emojiState,
@@ -203,8 +212,7 @@ export class CaptionRenderer {
       seedIndex: 0,
     };
     const block = evaluate(template, pageUnit, page, timeMs);
-    const blurred: Array<{ node: Node; bounds: Bounds; radius: number }> =
-      [];
+    const blurred: Array<{ node: Node; bounds: Bounds; radius: number }> = [];
     const place = (
       node: Node,
       restX: number,

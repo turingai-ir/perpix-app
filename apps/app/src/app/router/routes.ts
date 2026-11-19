@@ -94,6 +94,12 @@ export const APP_ROUTES_KEY = {
         title: "pages.studio.title",
       },
     },
+    edit: {
+      path: "/studio/:projectUuid/edit",
+      meta: {
+        title: "pages.studio.title",
+      },
+    },
     styles: {
       path: "/studio/styles",
       meta: {
@@ -111,3 +117,6 @@ export const APP_ROUTES_KEY = {
 
 export const studioProjectPath = (projectUuid: string): string =>
   `${APP_ROUTES_KEY.studio.path}/${projectUuid}`;
+
+export const studioEditPath = (projectUuid: string): string =>
+  `${APP_ROUTES_KEY.studio.path}/${projectUuid}/edit`;

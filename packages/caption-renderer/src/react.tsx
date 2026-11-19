@@ -12,8 +12,8 @@ interface CaptionPreviewProps {
   /** Pixel size of the frame; the look scales with its height. */
   width: number;
   height: number;
-  /** Painted behind the caption so a light or dark look can be judged. */
-  background?: string;
+  /** Painted behind the caption so a light or dark look can be judged; `null` leaves it transparent, to lay over a video. */
+  background?: string | null;
   className?: string;
 }
 
@@ -38,9 +38,11 @@ export function CaptionPreview({
     const created = new Stage({ container: element, width, height });
     const layer = new Layer();
     created.add(layer);
-    layer.add(
-      new Rect({ width, height, fill: background, listening: false }),
-    );
+    if (background !== null) {
+      layer.add(
+        new Rect({ width, height, fill: background, listening: false }),
+      );
+    }
     stage.current = created;
     renderer.current = new CaptionRenderer(layer, template);
     return () => {

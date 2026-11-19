@@ -20,3 +20,11 @@ export const requestTranscript = async (fileUuid: string) => {
   });
   return transcriptSchema.parse(data);
 };
+
+export const getTranscript = async (uuid: string, signal?: AbortSignal) => {
+  const { data } = await apiClient.GET(
+    "/api/v1/studio/transcripts/{transcript_uuid}",
+    { params: { path: { transcript_uuid: uuid } }, signal },
+  );
+  return transcriptSchema.parse(data);
+};

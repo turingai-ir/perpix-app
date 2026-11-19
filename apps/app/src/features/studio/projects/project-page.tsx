@@ -1,13 +1,13 @@
 import { useRef, type ChangeEvent, type FC } from "react";
 import { useNavigate, useParams } from "react-router";
-import { Camera, FolderUp, Loader2, Film } from "lucide-react";
+import { Camera, FolderUp, Loader2, Film, Play } from "lucide-react";
 
 import { Button } from "@/shared/ui/button";
 import { Skeleton } from "@/shared/ui/skeleton";
 import ErrorSection from "@/shared/components/error-section";
 import { useAppTranslate } from "@/shared/hooks";
 import { FileManagerUploadStatus } from "@/features/file-manager";
-import { APP_ROUTES_KEY } from "@/app/router/routes";
+import { APP_ROUTES_KEY, studioEditPath } from "@/app/router/routes";
 import { StudioScreen } from "../shell/studio-screen";
 import { ClipCard } from "./components/clip-card";
 import { useAddClip } from "./hooks/use-add-clip";
@@ -49,6 +49,18 @@ export const ProjectPage: FC = () => {
     <StudioScreen
       title={project.data?.title ?? t("features.studio.projects.title")}
       onBack={back}
+      actions={
+        clips.length > 0 && (
+          <Button
+            size="sm"
+            className="min-h-11 gap-2 rounded-full px-4"
+            onClick={() => navigate(studioEditPath(projectUuid))}
+          >
+            <Play className="size-4" aria-hidden />
+            {t("features.studio.editor.open")}
+          </Button>
+        )
+      }
       footer={
         project.data && (
           <div className="flex shrink-0 gap-2 border-t px-4 py-3">

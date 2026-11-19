@@ -195,6 +195,11 @@ export const router = createBrowserRouter([
             ],
           },
           {
+            path: APP_ROUTES_KEY.studio.edit.path,
+            lazy: lazyPage(() => import("@/pages/studio/edit/page")),
+            handle: { title: APP_ROUTES_KEY.studio.edit.meta.title },
+          },
+          {
             path: APP_ROUTES_KEY.studio.project.path,
             lazy: lazyPage(() => import("@/pages/studio/project/page")),
             handle: { title: APP_ROUTES_KEY.studio.project.meta.title },
