@@ -377,6 +377,217 @@ export interface paths {
         readonly patch?: never;
         readonly trace?: never;
     };
+    readonly "/api/v1/studio/caption-presets": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        /**
+         * List Caption Presets
+         * @description The presets to pick from: the admin's visible ones and the user's own, with the plan's limit.
+         */
+        readonly get: operations["studio_list_caption_presets"];
+        readonly put?: never;
+        readonly post?: never;
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
+    readonly "/api/v1/studio/caption-presets/mine": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly get?: never;
+        readonly put?: never;
+        /**
+         * Create Caption Preset
+         * @description Save a preset of the user's own, if the plan has room.
+         */
+        readonly post: operations["studio_create_caption_preset"];
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
+    readonly "/api/v1/studio/caption-presets/{preset_uuid}/copy": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path: {
+                readonly preset_uuid: string;
+            };
+            readonly cookie?: never;
+        };
+        readonly get?: never;
+        readonly put?: never;
+        /**
+         * Copy Caption Preset
+         * @description Save a copy of a visible admin preset as the user's own; later changes to the original do not reach it.
+         */
+        readonly post: operations["studio_copy_caption_preset"];
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
+    readonly "/api/v1/studio/caption-presets/mine/{preset_uuid}": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path: {
+                readonly preset_uuid: string;
+            };
+            readonly cookie?: never;
+        };
+        readonly get?: never;
+        /**
+         * Update Caption Preset
+         * @description Replace one of the user's own presets; this works even when the plan now allows fewer.
+         */
+        readonly put: operations["studio_update_caption_preset"];
+        readonly post?: never;
+        /**
+         * Delete Caption Preset
+         * @description Remove one of the user's own presets, freeing a place under the plan's limit.
+         */
+        readonly delete: operations["studio_delete_caption_preset"];
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
+    readonly "/api/v1/studio/projects": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        /**
+         * List Projects
+         * @description The user's live projects, the most recently changed first.
+         */
+        readonly get: operations["studio_list_projects"];
+        readonly put?: never;
+        /**
+         * Create Project
+         * @description Start a project. It ends with the common lifetime of user content, whatever is saved later.
+         */
+        readonly post: operations["studio_create_project"];
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
+    readonly "/api/v1/studio/projects/{project_uuid}": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path: {
+                readonly project_uuid: string;
+            };
+            readonly cookie?: never;
+        };
+        /**
+         * Get Project
+         * @description The whole project; each file and chat says whether it is still available.
+         */
+        readonly get: operations["studio_get_project"];
+        /**
+         * Save Project
+         * @description Replace the project, from the `revision` the caller last read; a save from an older revision is a 409.
+         */
+        readonly put: operations["studio_save_project"];
+        readonly post?: never;
+        /**
+         * Delete Project
+         * @description Remove the project; the files and chats it used are the user's and stay.
+         */
+        readonly delete: operations["studio_delete_project"];
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
+    readonly "/api/v1/studio/transcripts": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        /**
+         * List Transcripts
+         * @description The transcripts of these files, without words: what a project needs to know when it opens.
+         */
+        readonly get: operations["studio_list_transcripts"];
+        readonly put?: never;
+        /**
+         * Request Transcript
+         * @description Make the subtitles of a file; this is the only step that costs money.
+         *
+         *     A file that already has a transcript being made or done gets that one back, free; it is never made twice.
+         *     Read it again (`GET /{uuid}`) until it is no longer PROCESSING.
+         */
+        readonly post: operations["studio_request_transcript"];
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
+    readonly "/api/v1/studio/transcripts/{transcript_uuid}": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path: {
+                readonly transcript_uuid: string;
+            };
+            readonly cookie?: never;
+        };
+        /** Get Transcript */
+        readonly get: operations["studio_get_transcript"];
+        readonly put?: never;
+        readonly post?: never;
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
+    readonly "/api/v1/studio/transcripts/{transcript_uuid}/subtitles/{export_format}": {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path: {
+                readonly transcript_uuid: string;
+                readonly export_format: string;
+            };
+            readonly cookie?: never;
+        };
+        /**
+         * Export Subtitles
+         * @description The subtitles as a file, SRT or WebVTT, made from the stored words; free, once the transcript is done.
+         */
+        readonly get: operations["studio_export_subtitles"];
+        readonly put?: never;
+        readonly post?: never;
+        readonly delete?: never;
+        readonly options?: never;
+        readonly head?: never;
+        readonly patch?: never;
+        readonly trace?: never;
+    };
     readonly "/api/v1/wallet/charge": {
         readonly parameters: {
             readonly query?: never;
@@ -1301,7 +1512,7 @@ export interface components {
          * ApplicationErrorCode
          * @enum {integer}
          */
-        readonly ApplicationErrorCode: 900 | 901 | 902 | 999 | 1000 | 1100 | 1103 | 1104 | 1106 | 1107 | 1108 | 1109 | 1200 | 1201 | 1202 | 1203 | 1204 | 1205 | 1206 | 1300 | 1301 | 1302 | 1303 | 1304 | 1305 | 1306 | 1307 | 1308 | 1309 | 1310 | 1400 | 1401 | 1500 | 1501 | 1502 | 1503 | 1504 | 1505 | 1506 | 1507 | 1600 | 1601 | 1602 | 1603 | 1604 | 1605 | 1700 | 1701 | 1702 | 1800 | 1801 | 1802 | 1803 | 1804 | 1805 | 1806 | 1807 | 1808 | 1810 | 1811 | 1812 | 1813 | 1814 | 1815 | 1816;
+        readonly ApplicationErrorCode: 900 | 901 | 902 | 999 | 1000 | 1100 | 1103 | 1104 | 1106 | 1107 | 1108 | 1109 | 1200 | 1201 | 1202 | 1203 | 1204 | 1205 | 1206 | 1300 | 1301 | 1302 | 1303 | 1304 | 1305 | 1306 | 1307 | 1308 | 1309 | 1310 | 1400 | 1401 | 1500 | 1501 | 1502 | 1503 | 1504 | 1505 | 1506 | 1507 | 1600 | 1601 | 1602 | 1603 | 1604 | 1605 | 1700 | 1701 | 1702 | 1800 | 1801 | 1802 | 1803 | 1804 | 1805 | 1806 | 1807 | 1808 | 1810 | 1811 | 1812 | 1813 | 1814 | 1815 | 1816 | 1900 | 1901 | 1902 | 1903 | 1904 | 1906 | 1907;
         /** ApplicationErrorResponse */
         readonly ApplicationErrorResponse: {
             /**
@@ -1346,6 +1557,38 @@ export interface components {
             /** File */
             readonly file?: string | null;
         };
+        /** CaptionPresetResponse */
+        readonly CaptionPresetResponse: {
+            /**
+             * Uuid
+             * Format: uuid
+             */
+            readonly uuid: string;
+            /** Name */
+            readonly name: string;
+            /** Config */
+            readonly config: {
+                readonly [key: string]: unknown;
+            };
+            /** Schema Version */
+            readonly schema_version: number;
+            /** Is Active */
+            readonly is_active: boolean;
+            /** Sort Order */
+            readonly sort_order: number;
+            /** Source Preset Uuid */
+            readonly source_preset_uuid: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            readonly created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            readonly updated_at: string;
+        };
         /** ChallengeResponse */
         readonly ChallengeResponse: {
             /**
@@ -1363,6 +1606,14 @@ export interface components {
              * Format: date-time
              */
             readonly resend_available_at: string;
+        };
+        /** CopyCaptionPresetRequest */
+        readonly CopyCaptionPresetRequest: {
+            /**
+             * Name
+             * @description The copy's name; the original's when left out.
+             */
+            readonly name?: string | null;
         };
         /**
          * CreateApiTokenRequest
@@ -1867,6 +2118,115 @@ export interface components {
         readonly PlanSettings: {
             readonly studio?: components["schemas"]["StudioPlanSettings"];
         };
+        /** ProjectFileRequest */
+        readonly ProjectFileRequest: {
+            /**
+             * File Uuid
+             * Format: uuid
+             */
+            readonly file_uuid: string;
+            /**
+             * @description SOURCE: a clip the project is made of. EXPORT: the rendered video (MP4 only). THUMBNAIL: a cover.
+             * @default SOURCE
+             */
+            readonly role: components["schemas"]["StudioProjectFileRole"];
+        };
+        /** ProjectFileResponse */
+        readonly ProjectFileResponse: {
+            /**
+             * File Uuid
+             * Format: uuid
+             */
+            readonly file_uuid: string;
+            readonly role: components["schemas"]["StudioProjectFileRole"];
+            /**
+             * Available
+             * @description False once the file has expired or been deleted.
+             */
+            readonly available: boolean;
+            /** Content Type */
+            readonly content_type: string | null;
+            /**
+             * Expire At
+             * @description When the file itself ends, which can be sooner than the project.
+             */
+            readonly expire_at: string | null;
+        };
+        /** ProjectListResponse */
+        readonly ProjectListResponse: {
+            /**
+             * Items
+             * @description The most recently changed first, without documents.
+             */
+            readonly items: readonly components["schemas"]["ProjectSummaryResponse"][];
+            /** Has Next */
+            readonly has_next: boolean;
+        };
+        /** ProjectResponse */
+        readonly ProjectResponse: {
+            /**
+             * Uuid
+             * Format: uuid
+             */
+            readonly uuid: string;
+            /** Title */
+            readonly title: string;
+            /** Document */
+            readonly document: {
+                readonly [key: string]: unknown;
+            };
+            /** Schema Version */
+            readonly schema_version: number;
+            /** Revision */
+            readonly revision: number;
+            /**
+             * Expire At
+             * Format: date-time
+             * @description When the project ends; saving never moves it.
+             */
+            readonly expire_at: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            readonly created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            readonly updated_at: string;
+            /** Files */
+            readonly files: readonly components["schemas"]["ProjectFileResponse"][];
+        };
+        /** ProjectSummaryResponse */
+        readonly ProjectSummaryResponse: {
+            /**
+             * Uuid
+             * Format: uuid
+             */
+            readonly uuid: string;
+            /** Title */
+            readonly title: string;
+            /** Schema Version */
+            readonly schema_version: number;
+            /** Revision */
+            readonly revision: number;
+            /**
+             * Expire At
+             * Format: date-time
+             */
+            readonly expire_at: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            readonly created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            readonly updated_at: string;
+        };
         /**
          * RegistrationChallengeRequest
          * @example {
@@ -1925,6 +2285,59 @@ export interface components {
              */
             readonly next_step: "registration";
         };
+        /** RequestTranscriptRequest */
+        readonly RequestTranscriptRequest: {
+            /**
+             * File Uuid
+             * Format: uuid
+             * @description A video or recording the user owns, still alive.
+             */
+            readonly file_uuid: string;
+        };
+        /** SaveCaptionPresetRequest */
+        readonly SaveCaptionPresetRequest: {
+            /**
+             * Name
+             * @description Shown to the user.
+             */
+            readonly name: string;
+            /**
+             * Config
+             * @description The look of the caption, in the frontend's own format; the backend only keeps it.
+             */
+            readonly config: {
+                readonly [key: string]: unknown;
+            };
+            /**
+             * Schema Version
+             * @description Which version of the frontend's format `config` is in.
+             * @default 1
+             */
+            readonly schema_version: number;
+        };
+        /** SaveProjectRequest */
+        readonly SaveProjectRequest: {
+            /** Title */
+            readonly title: string;
+            /**
+             * Document
+             * @description The whole project in the frontend's own format; the backend only keeps it.
+             */
+            readonly document: {
+                readonly [key: string]: unknown;
+            };
+            /**
+             * Schema Version
+             * @description Which version of the frontend's format `document` is in.
+             * @default 1
+             */
+            readonly schema_version: number;
+            /**
+             * Files
+             * @description The files the project uses. Each must be the user's own and still alive.
+             */
+            readonly files?: readonly components["schemas"]["ProjectFileRequest"][];
+        };
         /**
          * StudioPlanSettings
          * @description What one subscription plan allows in the studio; a new limit is a new field with a default here.
@@ -1940,6 +2353,16 @@ export interface components {
              */
             readonly caption_preset_limit: number;
         };
+        /**
+         * StudioProjectFileRole
+         * @enum {string}
+         */
+        readonly StudioProjectFileRole: "SOURCE" | "EXPORT" | "THUMBNAIL";
+        /**
+         * StudioTranscriptStatus
+         * @enum {string}
+         */
+        readonly StudioTranscriptStatus: "PROCESSING" | "COMPLETED" | "FAILED";
         /** SubscriptionPlanListResponse */
         readonly SubscriptionPlanListResponse: {
             /** Items */
@@ -2049,6 +2472,151 @@ export interface components {
             readonly from_amount_usdmicro: number;
             /** Discount Percent */
             readonly discount_percent: number;
+        };
+        /**
+         * TranscriptExportFormat
+         * @enum {string}
+         */
+        readonly TranscriptExportFormat: "srt" | "vtt";
+        /** TranscriptListResponse */
+        readonly TranscriptListResponse: {
+            /**
+             * Items
+             * @description One per file that has a transcript: its current one, else its newest failed attempt.
+             */
+            readonly items: readonly components["schemas"]["TranscriptSummaryResponse"][];
+        };
+        /** TranscriptResponse */
+        readonly TranscriptResponse: {
+            /**
+             * Uuid
+             * Format: uuid
+             */
+            readonly uuid: string;
+            /**
+             * File Uuid
+             * Format: uuid
+             */
+            readonly file_uuid: string;
+            /** @description PROCESSING while it is being made (read again soon), then COMPLETED or FAILED. */
+            readonly status: components["schemas"]["StudioTranscriptStatus"];
+            /**
+             * Words
+             * @description Empty until COMPLETED.
+             */
+            readonly words: readonly components["schemas"]["TranscriptWordResponse"][];
+            /** Text */
+            readonly text: string;
+            /** Language */
+            readonly language: string | null;
+            /** Duration Ms */
+            readonly duration_ms: number | null;
+            /**
+             * Failure Message
+             * @description Why it failed, when it did.
+             */
+            readonly failure_message: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            readonly created_at: string;
+            /**
+             * Expire At
+             * Format: date-time
+             * @description When the transcript ends, with the content it belongs to.
+             */
+            readonly expire_at: string;
+        };
+        /** TranscriptSummaryResponse */
+        readonly TranscriptSummaryResponse: {
+            /**
+             * Uuid
+             * Format: uuid
+             */
+            readonly uuid: string;
+            /**
+             * File Uuid
+             * Format: uuid
+             */
+            readonly file_uuid: string;
+            readonly status: components["schemas"]["StudioTranscriptStatus"];
+            /** Language */
+            readonly language: string | null;
+            /** Duration Ms */
+            readonly duration_ms: number | null;
+            /** Failure Message */
+            readonly failure_message: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            readonly created_at: string;
+            /**
+             * Expire At
+             * Format: date-time
+             */
+            readonly expire_at: string;
+        };
+        /** TranscriptWordResponse */
+        readonly TranscriptWordResponse: {
+            /** Text */
+            readonly text: string;
+            /**
+             * Start Ms
+             * @description Milliseconds from the start of the file.
+             */
+            readonly start_ms: number;
+            /** End Ms */
+            readonly end_ms: number;
+            /** Speaker */
+            readonly speaker: string | null;
+        };
+        /** UpdateProjectRequest */
+        readonly UpdateProjectRequest: {
+            /** Title */
+            readonly title: string;
+            /**
+             * Document
+             * @description The whole project in the frontend's own format; the backend only keeps it.
+             */
+            readonly document: {
+                readonly [key: string]: unknown;
+            };
+            /**
+             * Schema Version
+             * @description Which version of the frontend's format `document` is in.
+             * @default 1
+             */
+            readonly schema_version: number;
+            /**
+             * Files
+             * @description The files the project uses. Each must be the user's own and still alive.
+             */
+            readonly files?: readonly components["schemas"]["ProjectFileRequest"][];
+            /**
+             * Revision
+             * @description The revision this save was made from; a save from an older one is refused with 409.
+             */
+            readonly revision: number;
+        };
+        /** UserCaptionPresetsResponse */
+        readonly UserCaptionPresetsResponse: {
+            /**
+             * System
+             * @description The admin's presets offered to everyone, in order.
+             */
+            readonly system: readonly components["schemas"]["CaptionPresetResponse"][];
+            /**
+             * Mine
+             * @description The presets this user saved, oldest first.
+             */
+            readonly mine: readonly components["schemas"]["CaptionPresetResponse"][];
+            /**
+             * Mine Limit
+             * @description How many presets of their own the user's plan lets them keep.
+             */
+            readonly mine_limit: number;
         };
         /** UserChargeWalletRequest */
         readonly UserChargeWalletRequest: {
@@ -2234,7 +2802,9 @@ export type SchemaAuthStartRequest = components['schemas']['AuthStartRequest'];
 export type SchemaAuthStartResponse = components['schemas']['AuthStartResponse'];
 export type SchemaBodyFileManagerReplaceFile = components['schemas']['Body_file_manager_replace_file'];
 export type SchemaBodyFileManagerSimpleUpload = components['schemas']['Body_file_manager_simple_upload'];
+export type SchemaCaptionPresetResponse = components['schemas']['CaptionPresetResponse'];
 export type SchemaChallengeResponse = components['schemas']['ChallengeResponse'];
+export type SchemaCopyCaptionPresetRequest = components['schemas']['CopyCaptionPresetRequest'];
 export type SchemaCreateApiTokenRequest = components['schemas']['CreateApiTokenRequest'];
 export type SchemaCreatedApiTokenResponse = components['schemas']['CreatedApiTokenResponse'];
 export type SchemaCsrfResponse = components['schemas']['CsrfResponse'];
@@ -2270,10 +2840,20 @@ export type SchemaPaymentHistoryItemResponse = components['schemas']['PaymentHis
 export type SchemaPaymentListResponse = components['schemas']['PaymentListResponse'];
 export type SchemaPaymentResponse = components['schemas']['PaymentResponse'];
 export type SchemaPlanSettings = components['schemas']['PlanSettings'];
+export type SchemaProjectFileRequest = components['schemas']['ProjectFileRequest'];
+export type SchemaProjectFileResponse = components['schemas']['ProjectFileResponse'];
+export type SchemaProjectListResponse = components['schemas']['ProjectListResponse'];
+export type SchemaProjectResponse = components['schemas']['ProjectResponse'];
+export type SchemaProjectSummaryResponse = components['schemas']['ProjectSummaryResponse'];
 export type SchemaRegistrationChallengeRequest = components['schemas']['RegistrationChallengeRequest'];
 export type SchemaRegistrationRequest = components['schemas']['RegistrationRequest'];
 export type SchemaRegistrationStepResponse = components['schemas']['RegistrationStepResponse'];
+export type SchemaRequestTranscriptRequest = components['schemas']['RequestTranscriptRequest'];
+export type SchemaSaveCaptionPresetRequest = components['schemas']['SaveCaptionPresetRequest'];
+export type SchemaSaveProjectRequest = components['schemas']['SaveProjectRequest'];
 export type SchemaStudioPlanSettings = components['schemas']['StudioPlanSettings'];
+export type SchemaStudioProjectFileRole = components['schemas']['StudioProjectFileRole'];
+export type SchemaStudioTranscriptStatus = components['schemas']['StudioTranscriptStatus'];
 export type SchemaSubscriptionPlanListResponse = components['schemas']['SubscriptionPlanListResponse'];
 export type SchemaSubscriptionPlanResponse = components['schemas']['SubscriptionPlanResponse'];
 export type SchemaSubscriptionPurchaseRequest = components['schemas']['SubscriptionPurchaseRequest'];
@@ -2282,6 +2862,13 @@ export type SchemaTopupNextTierResponse = components['schemas']['TopupNextTierRe
 export type SchemaTopupPolicyResponse = components['schemas']['TopupPolicyResponse'];
 export type SchemaTopupQuoteResponse = components['schemas']['TopupQuoteResponse'];
 export type SchemaTopupTierSchema = components['schemas']['TopupTierSchema'];
+export type SchemaTranscriptExportFormat = components['schemas']['TranscriptExportFormat'];
+export type SchemaTranscriptListResponse = components['schemas']['TranscriptListResponse'];
+export type SchemaTranscriptResponse = components['schemas']['TranscriptResponse'];
+export type SchemaTranscriptSummaryResponse = components['schemas']['TranscriptSummaryResponse'];
+export type SchemaTranscriptWordResponse = components['schemas']['TranscriptWordResponse'];
+export type SchemaUpdateProjectRequest = components['schemas']['UpdateProjectRequest'];
+export type SchemaUserCaptionPresetsResponse = components['schemas']['UserCaptionPresetsResponse'];
 export type SchemaUserChargeWalletRequest = components['schemas']['UserChargeWalletRequest'];
 export type SchemaUserEditInfoRequest = components['schemas']['UserEditInfoRequest'];
 export type SchemaUserEditInfoResponse = components['schemas']['UserEditInfoResponse'];
@@ -3150,6 +3737,689 @@ export interface operations {
                 };
                 content: {
                     readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    readonly studio_list_caption_presets: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["UserCaptionPresetsResponse"];
+                };
+            };
+            /** @description Upgrade Required */
+            readonly 426: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+        };
+    };
+    readonly studio_create_caption_preset: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody: {
+            readonly content: {
+                readonly "application/json": components["schemas"]["SaveCaptionPresetRequest"];
+            };
+        };
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["CaptionPresetResponse"];
+                };
+            };
+            /** @description Conflict */
+            readonly 409: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Upgrade Required */
+            readonly 426: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+        };
+    };
+    readonly studio_copy_caption_preset: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path: {
+                readonly preset_uuid: string;
+            };
+            readonly cookie?: never;
+        };
+        readonly requestBody: {
+            readonly content: {
+                readonly "application/json": components["schemas"]["CopyCaptionPresetRequest"];
+            };
+        };
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["CaptionPresetResponse"];
+                };
+            };
+            /** @description Not Found */
+            readonly 404: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+            /** @description Conflict */
+            readonly 409: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Upgrade Required */
+            readonly 426: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+        };
+    };
+    readonly studio_update_caption_preset: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path: {
+                readonly preset_uuid: string;
+            };
+            readonly cookie?: never;
+        };
+        readonly requestBody: {
+            readonly content: {
+                readonly "application/json": components["schemas"]["SaveCaptionPresetRequest"];
+            };
+        };
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["CaptionPresetResponse"];
+                };
+            };
+            /** @description Not Found */
+            readonly 404: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Upgrade Required */
+            readonly 426: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+        };
+    };
+    readonly studio_delete_caption_preset: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path: {
+                readonly preset_uuid: string;
+            };
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 204: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            readonly 404: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Upgrade Required */
+            readonly 426: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+        };
+    };
+    readonly studio_list_projects: {
+        readonly parameters: {
+            readonly query?: {
+                readonly limit?: number;
+                readonly offset?: number;
+            };
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ProjectListResponse"];
+                };
+            };
+            /** @description Validation Error */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Upgrade Required */
+            readonly 426: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+        };
+    };
+    readonly studio_create_project: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody: {
+            readonly content: {
+                readonly "application/json": components["schemas"]["SaveProjectRequest"];
+            };
+        };
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ProjectResponse"];
+                };
+            };
+            /** @description Unprocessable Content */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+            /** @description Upgrade Required */
+            readonly 426: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+        };
+    };
+    readonly studio_get_project: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path: {
+                readonly project_uuid: string;
+            };
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ProjectResponse"];
+                };
+            };
+            /** @description Not Found */
+            readonly 404: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Upgrade Required */
+            readonly 426: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+        };
+    };
+    readonly studio_save_project: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path: {
+                readonly project_uuid: string;
+            };
+            readonly cookie?: never;
+        };
+        readonly requestBody: {
+            readonly content: {
+                readonly "application/json": components["schemas"]["UpdateProjectRequest"];
+            };
+        };
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ProjectResponse"];
+                };
+            };
+            /** @description Not Found */
+            readonly 404: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+            /** @description Conflict */
+            readonly 409: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Content */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+            /** @description Upgrade Required */
+            readonly 426: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+        };
+    };
+    readonly studio_delete_project: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path: {
+                readonly project_uuid: string;
+            };
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 204: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            readonly 404: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Upgrade Required */
+            readonly 426: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+        };
+    };
+    readonly studio_list_transcripts: {
+        readonly parameters: {
+            readonly query: {
+                readonly file_uuid: readonly string[];
+            };
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["TranscriptListResponse"];
+                };
+            };
+            /** @description Validation Error */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Upgrade Required */
+            readonly 426: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+        };
+    };
+    readonly studio_request_transcript: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path?: never;
+            readonly cookie?: never;
+        };
+        readonly requestBody: {
+            readonly content: {
+                readonly "application/json": components["schemas"]["RequestTranscriptRequest"];
+            };
+        };
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["TranscriptResponse"];
+                };
+            };
+            /** @description Conflict */
+            readonly 409: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Content */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+            /** @description Upgrade Required */
+            readonly 426: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+        };
+    };
+    readonly studio_get_transcript: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path: {
+                readonly transcript_uuid: string;
+            };
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["TranscriptResponse"];
+                };
+            };
+            /** @description Not Found */
+            readonly 404: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Upgrade Required */
+            readonly 426: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+        };
+    };
+    readonly studio_export_subtitles: {
+        readonly parameters: {
+            readonly query?: never;
+            readonly header?: never;
+            readonly path: {
+                readonly transcript_uuid: string;
+                readonly export_format: components["schemas"]["TranscriptExportFormat"];
+            };
+            readonly cookie?: never;
+        };
+        readonly requestBody?: never;
+        readonly responses: {
+            /** @description Successful Response */
+            readonly 200: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "text/vtt": unknown;
+                    readonly "application/x-subrip": unknown;
+                };
+            };
+            /** @description Not Found */
+            readonly 404: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+            /** @description Conflict */
+            readonly 409: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            readonly 422: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Upgrade Required */
+            readonly 426: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
                 };
             };
         };
@@ -4301,7 +5571,7 @@ export const aiRegistryModelSupportedTypesEnumValues: ReadonlyArray<FlattenedDee
 export const aiTaskMessageStatusEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiTaskMessageStatusEnum"]> = ["PENDING", "IN_PROGRESS", "SUCCESS", "FAILED"];
 export const aiTaskRuleEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiTaskRuleEnum"]> = ["SYSTEM", "USER", "ASSISTANT", "TOOL", "FUNCTION", "INLINE"];
 export const aiTaskTypeEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["AiTaskTypeEnum"]> = ["TEXT", "IMAGE", "AUDIO", "VIDEO"];
-export const applicationErrorCodeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["ApplicationErrorCode"]> = [900, 901, 902, 999, 1000, 1100, 1103, 1104, 1106, 1107, 1108, 1109, 1200, 1201, 1202, 1203, 1204, 1205, 1206, 1300, 1301, 1302, 1303, 1304, 1305, 1306, 1307, 1308, 1309, 1310, 1400, 1401, 1500, 1501, 1502, 1503, 1504, 1505, 1506, 1507, 1600, 1601, 1602, 1603, 1604, 1605, 1700, 1701, 1702, 1800, 1801, 1802, 1803, 1804, 1805, 1806, 1807, 1808, 1810, 1811, 1812, 1813, 1814, 1815, 1816];
+export const applicationErrorCodeValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["ApplicationErrorCode"]> = [900, 901, 902, 999, 1000, 1100, 1103, 1104, 1106, 1107, 1108, 1109, 1200, 1201, 1202, 1203, 1204, 1205, 1206, 1300, 1301, 1302, 1303, 1304, 1305, 1306, 1307, 1308, 1309, 1310, 1400, 1401, 1500, 1501, 1502, 1503, 1504, 1505, 1506, 1507, 1600, 1601, 1602, 1603, 1604, 1605, 1700, 1701, 1702, 1800, 1801, 1802, 1803, 1804, 1805, 1806, 1807, 1808, 1810, 1811, 1812, 1813, 1814, 1815, 1816, 1900, 1901, 1902, 1903, 1904, 1906, 1907];
 export const fileManagerMediaMetadataResponseKindValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["FileManagerMediaMetadataResponse"]["kind"]> = ["image", "video", "audio"];
 export const generationFailureActionEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["GenerationFailureActionEnum"]> = ["MODIFY_INPUT", "RETRY_LATER", "RETRY_NOW", "CONTACT_SUPPORT"];
 export const generationFailureReasonEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["GenerationFailureReasonEnum"]> = ["CONTENT_POLICY", "INVALID_INPUT", "RATE_LIMITED", "PROVIDER_UNAVAILABLE", "PROVIDER_TIMEOUT", "PROVIDER_OUT_OF_CREDIT", "PROVIDER_AUTH_FAILED", "PLATFORM_CONFIGURATION", "PROVIDER_FAILED", "INTERNAL", "OPERATOR"];
@@ -4311,7 +5581,10 @@ export const paymentExecutionStatusValues: ReadonlyArray<FlattenedDeepRequired<c
 export const paymentFinancialStatusValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaymentFinancialStatus"]> = ["PENDING", "SUCCEEDED", "CLOSED"];
 export const paymentFulfillmentStatusValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaymentFulfillmentStatus"]> = ["NOT_READY", "PENDING", "SUCCEEDED", "NEEDS_REVIEW"];
 export const registrationStepResponseNext_stepValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["RegistrationStepResponse"]["next_step"]> = ["registration"];
+export const studioProjectFileRoleValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["StudioProjectFileRole"]> = ["SOURCE", "EXPORT", "THUMBNAIL"];
+export const studioTranscriptStatusValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["StudioTranscriptStatus"]> = ["PROCESSING", "COMPLETED", "FAILED"];
 export const supportedCurrencyValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["SupportedCurrency"]> = ["IRR"];
+export const transcriptExportFormatValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["TranscriptExportFormat"]> = ["srt", "vtt"];
 export const walletOperationSourceEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["WalletOperationSourceEnum"]> = ["admin", "ai_gateway_request", "ai_task_message", "subscription"];
 export const walletTransactionTypeEnumValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["WalletTransactionTypeEnum"]> = ["DEPOSIT", "WITHDRAW", "REFUND"];
 
@@ -4444,6 +5717,13 @@ export const ApplicationErrorCodeMap = {
   1814: 1814,
   1815: 1815,
   1816: 1816,
+  1900: 1900,
+  1901: 1901,
+  1902: 1902,
+  1903: 1903,
+  1904: 1904,
+  1906: 1906,
+  1907: 1907,
 } as const;
 export type ApplicationErrorCodeKey = keyof typeof ApplicationErrorCodeMap;
 export type ApplicationErrorCodeValue = (typeof ApplicationErrorCodeMap)[ApplicationErrorCodeKey];
@@ -4509,11 +5789,34 @@ export const PaymentFulfillmentStatusMap = {
 export type PaymentFulfillmentStatusKey = keyof typeof PaymentFulfillmentStatusMap;
 export type PaymentFulfillmentStatusValue = (typeof PaymentFulfillmentStatusMap)[PaymentFulfillmentStatusKey];
 
+export const StudioProjectFileRoleMap = {
+  "SOURCE": "SOURCE",
+  "EXPORT": "EXPORT",
+  "THUMBNAIL": "THUMBNAIL",
+} as const;
+export type StudioProjectFileRoleKey = keyof typeof StudioProjectFileRoleMap;
+export type StudioProjectFileRoleValue = (typeof StudioProjectFileRoleMap)[StudioProjectFileRoleKey];
+
+export const StudioTranscriptStatusMap = {
+  "PROCESSING": "PROCESSING",
+  "COMPLETED": "COMPLETED",
+  "FAILED": "FAILED",
+} as const;
+export type StudioTranscriptStatusKey = keyof typeof StudioTranscriptStatusMap;
+export type StudioTranscriptStatusValue = (typeof StudioTranscriptStatusMap)[StudioTranscriptStatusKey];
+
 export const SupportedCurrencyMap = {
   "IRR": "IRR",
 } as const;
 export type SupportedCurrencyKey = keyof typeof SupportedCurrencyMap;
 export type SupportedCurrencyValue = (typeof SupportedCurrencyMap)[SupportedCurrencyKey];
+
+export const TranscriptExportFormatMap = {
+  "srt": "srt",
+  "vtt": "vtt",
+} as const;
+export type TranscriptExportFormatKey = keyof typeof TranscriptExportFormatMap;
+export type TranscriptExportFormatValue = (typeof TranscriptExportFormatMap)[TranscriptExportFormatKey];
 
 export const WalletOperationSourceEnumMap = {
   "admin": "admin",
