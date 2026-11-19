@@ -3,8 +3,10 @@ export interface CaptionWord {
   text: string;
   startMs: number;
   endMs: number;
-  /** Marked as a key word, to be drawn in the template's emphasis style. */
+  /** Marked as a key word; the same as `role: "key"`. */
   emphasis?: boolean;
+  /** The role this word is drawn in, set by hand or by a model; it beats the template's rules. */
+  role?: string;
   /** An emoji shown over the word while it is on screen. */
   emoji?: string;
 }
@@ -16,8 +18,8 @@ export interface CaptionPage {
   endMs: number;
 }
 
-/** A pause this long ends a page even if it has room for more words. */
-const PAUSE_MS = 700;
+/** A pause this long ends a page by default, even if it has room for more words. */
+export const DEFAULT_PAUSE_MS = 700;
 /** How long a page lingers after its last word, unless the next page comes first. */
 const HOLD_MS = 250;
 
@@ -25,6 +27,7 @@ const HOLD_MS = 250;
 export const buildPages = (
   words: readonly CaptionWord[],
   wordsPerPage: number,
+  pauseMs: number = DEFAULT_PAUSE_MS,
 ): CaptionPage[] => {
   const pages: CaptionPage[] = [];
   let current: CaptionWord[] = [];
@@ -40,7 +43,7 @@ export const buildPages = (
     const previous = current[current.length - 1];
     if (
       current.length >= wordsPerPage ||
-      (previous && word.startMs - previous.endMs > PAUSE_MS)
+      (previous && word.startMs - previous.endMs > pauseMs)
     ) {
       flush();
     }

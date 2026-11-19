@@ -2,11 +2,11 @@ import { useEffect, useRef } from "react";
 import Konva from "konva";
 import { ensureCaptionFont } from "./fonts";
 import { CaptionRenderer } from "./renderer";
-import type { CaptionConfig } from "./config";
+import type { CaptionTemplate } from "./template";
 import type { CaptionWord } from "./words";
 
 interface CaptionPreviewProps {
-  config: CaptionConfig;
+  template: CaptionTemplate;
   words: readonly CaptionWord[];
   timeMs: number;
   /** Pixel size of the frame; the look scales with its height. */
@@ -19,7 +19,7 @@ interface CaptionPreviewProps {
 
 /** The caption at one moment, drawn with the same renderer the export uses. */
 export function CaptionPreview({
-  config,
+  template,
   words,
   timeMs,
   width,
@@ -41,7 +41,7 @@ export function CaptionPreview({
       new Konva.Rect({ width, height, fill: background, listening: false }),
     );
     stage.current = created;
-    renderer.current = new CaptionRenderer(layer, config);
+    renderer.current = new CaptionRenderer(layer, template);
     return () => {
       renderer.current?.destroy();
       created.destroy();
@@ -54,7 +54,7 @@ export function CaptionPreview({
 
   useEffect(() => {
     let cancelled = false;
-    void ensureCaptionFont(config).then(() => {
+    void ensureCaptionFont(template).then(() => {
       if (cancelled) return;
       // A font that arrives late changes every measurement.
       renderer.current?.invalidate();
@@ -64,13 +64,17 @@ export function CaptionPreview({
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [config.font.family, config.font.weight, config.font.italic]);
+  }, [
+    template.base.font.family,
+    template.base.font.weight,
+    template.base.font.italic,
+  ]);
 
   useEffect(() => {
-    renderer.current?.setConfig(config);
+    renderer.current?.setTemplate(template);
     renderer.current?.setWords(words);
     renderer.current?.render(timeMs, width, height);
-  }, [config, words, timeMs, width, height, background]);
+  }, [template, words, timeMs, width, height, background]);
 
   return <div ref={host} className={className} style={{ width, height }} />;
 }

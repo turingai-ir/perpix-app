@@ -1,7 +1,13 @@
 import Konva from "konva";
-import { blockState, emojiState, wordState } from "./animation";
-import { isEmphasized } from "./emphasis";
-import type { CaptionConfig } from "./config";
+import {
+  emojiState,
+  evaluate,
+  stateProgress,
+  wordStateAt,
+  type Unit,
+} from "./animators";
+import { NORMAL_ROLE, roleOf } from "./roles";
+import type { CaptionTemplate, Decoration, RoleStyle } from "./template";
 import {
   buildPages,
   isRtl,
@@ -14,28 +20,45 @@ import {
 const REFERENCE_HEIGHT = 1080;
 const SPACE_RATIO = 0.28;
 
+/** Free space on a 9:16 frame that social apps cover with their own buttons and text. */
+const REELS_SAFE = { top: 0.14, bottom: 0.35, side: 0.06 };
+
+interface DecorationNode {
+  decoration: Decoration;
+  rect: Konva.Rect | null;
+  /** The wipe: the coloured copy of the word, drawn up to `fraction`. */
+  overlay: Konva.Text | null;
+  setFraction: (fraction: number) => void;
+  fullWidth: number;
+}
+
 interface PlacedWord {
   word: CaptionWord;
+  role: string;
+  roleStyle: RoleStyle;
   wrap: Konva.Group;
   base: Konva.Text;
-  overlay: Konva.Text | null;
   width: number;
-  /** The colour at rest: the text colour, or the key-word colour. */
-  rest: string;
   gradient: boolean;
-  pill: Konva.Rect | null;
+  decorations: DecorationNode[];
   emoji: Konva.Text | null;
+  restX: number;
+  index: number;
+}
+
+interface PlacedLine {
+  group: Konva.Group;
   restY: number;
-  lineHeight: number;
-  /** Reads the wipe progress the clip is drawn with. */
-  setWipe: (fraction: number) => void;
+  index: number;
 }
 
 interface Built {
   key: string;
   block: Konva.Group;
+  lines: PlacedLine[];
   words: PlacedWord[];
-  /** Where the block's centre is, in frame pixels. */
+  fontSize: number;
+  lineCount: number;
   centerX: number;
   centerY: number;
 }
@@ -48,32 +71,32 @@ interface Built {
 export class CaptionRenderer {
   private readonly group = new Konva.Group();
   private pages: CaptionPage[] = [];
-  private config: CaptionConfig;
-  private configKey: string;
+  private template: CaptionTemplate;
+  private templateKey: string;
   private built: Built | null = null;
   private words: readonly CaptionWord[] = [];
 
   constructor(
     private readonly layer: Konva.Layer,
-    config: CaptionConfig,
+    template: CaptionTemplate,
   ) {
-    this.config = config;
-    this.configKey = JSON.stringify(config);
+    this.template = template;
+    this.templateKey = JSON.stringify(template);
     this.layer.add(this.group);
   }
 
-  setConfig(config: CaptionConfig) {
-    const key = JSON.stringify(config);
-    if (key === this.configKey) return;
-    this.config = config;
-    this.configKey = key;
-    this.pages = buildPages(this.words, config.text.wordsPerPage);
+  setTemplate(template: CaptionTemplate) {
+    const key = JSON.stringify(template);
+    if (key === this.templateKey) return;
+    this.template = template;
+    this.templateKey = key;
+    this.paginate();
     this.dropBuilt();
   }
 
   setWords(words: readonly CaptionWord[]) {
     this.words = words;
-    this.pages = buildPages(words, this.config.text.wordsPerPage);
+    this.paginate();
     this.dropBuilt();
   }
 
@@ -85,44 +108,13 @@ export class CaptionRenderer {
       this.layer.batchDraw();
       return;
     }
-    const key = `${hit.index}|${width}x${height}|${this.configKey}`;
+    const key = `${hit.index}|${width}x${height}|${this.templateKey}`;
     if (!this.built || this.built.key !== key) {
       this.dropBuilt();
       this.built = this.build(hit.page, key, width, height);
       this.group.add(this.built.block);
     }
-    const { block, words, centerX, centerY } = this.built;
-    const state = blockState(this.config, hit.page, timeMs);
-    block.setAttrs({
-      x: centerX,
-      y: centerY + state.dy * height,
-      scaleX: state.scale,
-      scaleY: state.scale,
-      opacity: state.opacity,
-    });
-    const { colors } = this.config;
-    for (const placed of words) {
-      const next = wordState(this.config, placed.word, timeMs);
-      placed.wrap.setAttrs({
-        y: placed.restY + next.dy * placed.lineHeight,
-        scaleX: next.scale,
-        scaleY: next.scale,
-        opacity: next.opacity,
-      });
-      const useGradient = placed.gradient && !next.active;
-      placed.base.fillPriority(useGradient ? "linear-gradient" : "color");
-      placed.base.fill(next.active ? colors.active : placed.rest);
-      placed.setWipe(next.wipe);
-      placed.pill?.opacity(next.pill);
-      if (placed.emoji) {
-        const emoji = emojiState(placed.word, timeMs);
-        placed.emoji.setAttrs({
-          opacity: emoji.opacity,
-          scaleX: emoji.scale,
-          scaleY: emoji.scale,
-        });
-      }
-    }
+    this.update(this.built, hit.page, timeMs);
     this.group.visible(true);
     this.layer.batchDraw();
   }
@@ -137,9 +129,129 @@ export class CaptionRenderer {
     this.built = null;
   }
 
+  private paginate() {
+    const { wordsPerPage, pauseMs } = this.template.layout;
+    this.pages = buildPages(this.words, wordsPerPage, pauseMs);
+  }
+
   private dropBuilt() {
     this.built?.block.destroy();
     this.built = null;
+  }
+
+  private update(built: Built, page: CaptionPage, timeMs: number) {
+    const { template } = this;
+    const { fontSize, lineCount } = built;
+    const pageUnit: Unit = {
+      scope: "page",
+      index: 0,
+      count: 1,
+      role: NORMAL_ROLE,
+      seedIndex: 0,
+    };
+    const block = evaluate(template, pageUnit, page, timeMs);
+    built.block.setAttrs({
+      x: built.centerX + block.x * fontSize,
+      y: built.centerY + block.y * fontSize,
+      scaleX: block.scale,
+      scaleY: block.scale,
+      rotation: block.rotate,
+      opacity: block.opacity,
+    });
+
+    for (const line of built.lines) {
+      const unit: Unit = {
+        scope: "line",
+        index: line.index,
+        count: lineCount,
+        role: NORMAL_ROLE,
+        seedIndex: line.index,
+      };
+      const next = evaluate(template, unit, page, timeMs);
+      line.group.setAttrs({
+        x: next.x * fontSize,
+        y: line.restY + next.y * fontSize,
+        scaleX: next.scale,
+        scaleY: next.scale,
+        rotation: next.rotate,
+        opacity: next.opacity,
+      });
+    }
+
+    const { base, states } = template;
+    for (const placed of built.words) {
+      const unit: Unit = {
+        scope: "word",
+        index: placed.index,
+        count: built.words.length,
+        role: placed.role,
+        word: placed.word,
+        seedIndex: placed.index,
+      };
+      const state = states[wordStateAt(placed.word, timeMs)];
+      const motion = evaluate(template, unit, page, timeMs);
+      placed.wrap.setAttrs({
+        x: placed.restX + motion.x * fontSize,
+        y: motion.y * fontSize,
+        scaleX: motion.scale * (state.scale ?? 1),
+        scaleY: motion.scale * (state.scale ?? 1),
+        rotation: motion.rotate,
+        opacity: motion.opacity * (state.opacity ?? 1),
+      });
+      const colored = state.color ?? placed.roleStyle.color;
+      const gradient = placed.gradient && colored === undefined;
+      placed.base.fillPriority(gradient ? "linear-gradient" : "color");
+      placed.base.fill(colored ?? base.fill.color);
+      const strokeColor =
+        state.strokeColor ?? placed.roleStyle.strokeColor ?? base.stroke.color;
+      placed.base.stroke(strokeColor);
+
+      for (const node of placed.decorations) {
+        this.updateDecoration(node, placed, timeMs);
+      }
+      if (placed.emoji) {
+        const emoji = emojiState(placed.word, timeMs);
+        placed.emoji.setAttrs({
+          opacity: emoji.opacity,
+          scaleX: emoji.scale,
+          scaleY: emoji.scale,
+        });
+      }
+    }
+  }
+
+  private updateDecoration(
+    node: DecorationNode,
+    placed: PlacedWord,
+    timeMs: number,
+  ) {
+    const { decoration } = node;
+    const state = wordStateAt(placed.word, timeMs);
+    const on = decoration.select.states.includes(state);
+    const progress = on
+      ? stateProgress(
+          placed.word,
+          timeMs,
+          decoration.kind === "wipe" ? "wipe" : "quick",
+        )
+      : 0;
+    if (decoration.kind === "wipe") {
+      node.setFraction(on ? progress : 0);
+      return;
+    }
+    const rect = node.rect;
+    if (!rect) return;
+    if (decoration.reveal === "sweep") {
+      const rtl = isRtl(placed.word.text);
+      const covered = node.fullWidth * progress;
+      rect.width(covered);
+      rect.offsetX(rtl ? covered - node.fullWidth : 0);
+      rect.opacity(on ? 1 : 0);
+    } else {
+      rect.width(node.fullWidth);
+      rect.offsetX(0);
+      rect.opacity(on ? progress : 0);
+    }
   }
 
   private build(
@@ -148,97 +260,157 @@ export class CaptionRenderer {
     width: number,
     height: number,
   ): Built {
-    const { font, text, layout, colors, box, shadow, strokeWidth } =
-      this.config;
+    const { template } = this;
+    const { base, layout, box, emoji } = template;
     const scale = height / REFERENCE_HEIGHT;
-    const fontSize = font.size * scale;
-    const lineHeight = fontSize * text.lineHeight;
+    const fontSize = base.font.size * scale;
+    const lineHeight = fontSize * base.text.lineHeight;
     const padding = box.enabled ? box.padding * scale : 0;
     const rtl = page.words.some((word) => isRtl(word.text));
-    const fontStyle = `${font.italic ? "italic " : ""}${font.weight}`;
-    const stroke = strokeWidth * scale;
+    const stroke = base.stroke.width;
 
-    const { emphasis, gradient, highlight, emoji } = this.config;
-    const textProps = (content: string, key: boolean): Konva.TextConfig => ({
-      text:
-        text.uppercase || (key && emphasis.uppercase)
-          ? content.toUpperCase()
-          : content,
-      fontFamily: key && emphasis.family ? emphasis.family : font.family,
-      fontStyle: key
-        ? `${emphasis.italic ? "italic " : ""}${emphasis.weight}`
-        : fontStyle,
-      fontSize: key ? fontSize * emphasis.scale : fontSize,
-      lineHeight: 1,
-      // Letter spacing would break the joined letters of Arabic script.
-      letterSpacing: rtl ? 0 : text.letterSpacing * scale,
-      wrap: "none",
-    });
-
-    const placed: PlacedWord[] = page.words.map((word) => {
-      const key = isEmphasized(word, page, this.config);
-      const rest = key ? emphasis.color : colors.text;
-      const base = new Konva.Text({
-        ...textProps(word.text, key),
-        fill: rest,
-        stroke: stroke > 0 ? colors.stroke : undefined,
-        strokeWidth: stroke,
+    const placed: PlacedWord[] = page.words.map((word, index) => {
+      const role = roleOf(word, page, template);
+      const roleStyle: RoleStyle =
+        role === NORMAL_ROLE ? {} : (template.roles[role] ?? {});
+      const textProps = (): Konva.TextConfig => {
+        const italic = roleStyle.italic ?? base.font.italic;
+        const weight = roleStyle.weight ?? base.font.weight;
+        const upper = roleStyle.uppercase ?? base.text.uppercase;
+        return {
+          text: upper ? word.text.toUpperCase() : word.text,
+          fontFamily: roleStyle.family ?? base.font.family,
+          fontStyle: `${italic ? "italic " : ""}${weight}`,
+          fontSize: fontSize * (roleStyle.scale ?? 1),
+          lineHeight: 1,
+          // The page's own direction must not leak into the canvas.
+          direction: isRtl(word.text) ? "rtl" : "ltr",
+          // Letter spacing would break the joined letters of Arabic script.
+          letterSpacing: rtl ? 0 : base.text.letterSpacing * scale,
+          wrap: "none",
+        };
+      };
+      const strokeWidth = (roleStyle.strokeWidth ?? stroke) * scale;
+      const text = new Konva.Text({
+        ...textProps(),
+        fill: base.fill.color,
+        stroke: strokeWidth > 0 ? base.stroke.color : undefined,
+        strokeWidth,
         fillAfterStrokeEnabled: true,
         lineJoin: "round",
-        shadowEnabled: shadow.enabled,
-        shadowColor: shadow.color,
-        shadowBlur: shadow.blur * scale,
-        shadowOffset: { x: shadow.offsetX * scale, y: shadow.offsetY * scale },
-        shadowOpacity: shadow.opacity,
+        shadowEnabled: base.shadow.enabled,
+        shadowColor: base.shadow.color,
+        shadowBlur: base.shadow.blur * scale,
+        shadowOffset: {
+          x: base.shadow.offsetX * scale,
+          y: base.shadow.offsetY * scale,
+        },
+        shadowOpacity: base.shadow.opacity,
         shadowForStrokeEnabled: false,
       });
-      const useGradient = gradient.enabled && !key;
+      const useGradient = base.fill.gradient.enabled;
       if (useGradient) {
-        base.setAttrs({
+        text.setAttrs({
           fillLinearGradientStartPoint: { x: 0, y: 0 },
-          fillLinearGradientEndPoint: { x: 0, y: base.height() },
-          fillLinearGradientColorStops: [0, gradient.from, 1, gradient.to],
-          fillPriority: "linear-gradient",
+          fillLinearGradientEndPoint: { x: 0, y: text.height() },
+          fillLinearGradientColorStops: [
+            0,
+            base.fill.gradient.from,
+            1,
+            base.fill.gradient.to,
+          ],
         });
       }
       const wrap = new Konva.Group();
-      let pill: Konva.Rect | null = null;
-      if (this.config.animation.wordEffect === "box") {
-        const pad = highlight.padding * scale;
-        pill = new Konva.Rect({
-          x: -pad,
-          y: -pad / 2,
-          width: base.width() + 2 * pad,
-          height: base.height() + pad,
-          cornerRadius: highlight.radius * scale,
-          fill: highlight.color,
-          opacity: 0,
+      const w = text.width();
+      const h = text.height();
+
+      const decorations: DecorationNode[] = [];
+      const behind: Konva.Node[] = [];
+      const above: Konva.Node[] = [];
+      for (const decoration of template.decorations) {
+        const { roles } = decoration.select;
+        if (roles.length > 0 && !roles.includes(role)) continue;
+        const size = decoration.size * scale;
+        const radius = decoration.radius * scale;
+        if (decoration.kind === "wipe") {
+          const overlay = new Konva.Text({
+            ...textProps(),
+            fill: decoration.color,
+          });
+          let fraction = 0;
+          const clip = new Konva.Group({
+            clipFunc: (context) => {
+              const covered = w * fraction;
+              context.rect(rtl ? w - covered : 0, 0, covered, h);
+            },
+          });
+          clip.position({ x: -w / 2, y: -h / 2 });
+          clip.add(overlay);
+          above.push(clip);
+          decorations.push({
+            decoration,
+            rect: null,
+            overlay,
+            fullWidth: w,
+            setFraction: (next) => {
+              fraction = next;
+            },
+          });
+          continue;
+        }
+        let rect: Konva.Rect;
+        let fullWidth: number;
+        if (decoration.kind === "pill") {
+          fullWidth = w + 2 * size;
+          rect = new Konva.Rect({
+            x: -w / 2 - size,
+            y: -h / 2 - size / 2,
+            width: fullWidth,
+            height: h + size,
+            cornerRadius: radius,
+            fill: decoration.color,
+            opacity: 0,
+          });
+        } else if (decoration.kind === "marker") {
+          fullWidth = w + 0.2 * h;
+          rect = new Konva.Rect({
+            x: -w / 2 - 0.1 * h,
+            y: h * 0.02,
+            width: fullWidth,
+            height: h * 0.42,
+            cornerRadius: radius,
+            fill: decoration.color,
+            opacity: 0,
+          });
+        } else {
+          const thickness = Math.max(1, size);
+          fullWidth = w;
+          rect = new Konva.Rect({
+            x: -w / 2,
+            y: h / 2 + thickness * 0.2,
+            width: fullWidth,
+            height: thickness,
+            cornerRadius: Math.min(radius, thickness / 2),
+            fill: decoration.color,
+            opacity: 0,
+          });
+        }
+        behind.push(rect);
+        decorations.push({
+          decoration,
+          rect,
+          overlay: null,
+          fullWidth,
+          setFraction: () => undefined,
         });
-        wrap.add(pill);
       }
-      wrap.add(base);
-      let overlay: Konva.Text | null = null;
-      let setWipe = (fraction: number) => void fraction;
-      if (this.config.animation.wordEffect === "wipe") {
-        overlay = new Konva.Text({
-          ...textProps(word.text, key),
-          fill: colors.active,
-        });
-        let fraction = 0;
-        const clip = new Konva.Group({
-          clipFunc: (context) => {
-            const w = base.width();
-            const h = base.height();
-            const covered = w * fraction;
-            context.rect(rtl ? w - covered : 0, 0, covered, h);
-          },
-        });
-        clip.add(overlay);
-        wrap.add(clip);
-        setWipe = (next: number) => {
-          fraction = next;
-        };
-      }
+
+      text.position({ x: -w / 2, y: -h / 2 });
+      for (const node of behind) wrap.add(node as Konva.Rect);
+      wrap.add(text);
+      for (const node of above) wrap.add(node as Konva.Group);
+
       let emojiNode: Konva.Text | null = null;
       if (emoji.enabled && word.emoji) {
         emojiNode = new Konva.Text({
@@ -247,47 +419,52 @@ export class CaptionRenderer {
           lineHeight: 1,
           opacity: 0,
         });
+        emojiNode.offset({
+          x: emojiNode.width() / 2,
+          y: emojiNode.height() / 2,
+        });
+        emojiNode.position({ x: 0, y: -h / 2 - lineHeight * 0.55 });
         wrap.add(emojiNode);
       }
       return {
         word,
+        role,
+        roleStyle,
         wrap,
-        base,
-        overlay,
-        width: base.width(),
-        rest,
+        base: text,
+        width: w,
         gradient: useGradient,
-        pill,
+        decorations,
         emoji: emojiNode,
-        restY: 0,
-        lineHeight,
-        setWipe,
+        restX: 0,
+        index,
       };
     });
 
     // Greedy line breaking on the measured widths.
     const space = fontSize * SPACE_RATIO;
-    const limit = width * layout.maxWidth - 2 * padding;
-    const lines: PlacedWord[][] = [];
-    let line: PlacedWord[] = [];
-    let lineWidth = 0;
+    const sideRoom = layout.safeZone === "reels" ? 1 - 2 * REELS_SAFE.side : 1;
+    const limit = width * Math.min(layout.maxWidth, sideRoom) - 2 * padding;
+    const rows: PlacedWord[][] = [];
+    let row: PlacedWord[] = [];
+    let rowWidth = 0;
     for (const item of placed) {
-      const next = line.length ? lineWidth + space + item.width : item.width;
-      if (line.length && next > limit) {
-        lines.push(line);
-        line = [];
-        lineWidth = 0;
+      const next = row.length ? rowWidth + space + item.width : item.width;
+      if (row.length && next > limit) {
+        rows.push(row);
+        row = [];
+        rowWidth = 0;
       }
-      lineWidth = line.length ? lineWidth + space + item.width : item.width;
-      line.push(item);
+      rowWidth = row.length ? rowWidth + space + item.width : item.width;
+      row.push(item);
     }
-    if (line.length) lines.push(line);
+    if (row.length) rows.push(row);
 
     const widthOf = (items: PlacedWord[]) =>
       items.reduce((sum, item) => sum + item.width, 0) +
       space * Math.max(0, items.length - 1);
-    const blockWidth = Math.max(...lines.map(widthOf), 0);
-    const blockHeight = lines.length * lineHeight;
+    const blockWidth = Math.max(...rows.map(widthOf), 0);
+    const blockHeight = rows.length * lineHeight;
     const block = new Konva.Group();
 
     if (box.enabled) {
@@ -304,49 +481,53 @@ export class CaptionRenderer {
       );
     }
 
-    lines.forEach((items, row) => {
-      const lw = widthOf(items);
-      const free = blockWidth - lw;
+    const lines: PlacedLine[] = rows.map((items, index) => {
+      const lineGroup = new Konva.Group();
+      const free = blockWidth - widthOf(items);
       const shift =
-        text.align === "center" ? free / 2 : text.align === "left" ? 0 : free;
+        base.text.align === "center"
+          ? free / 2
+          : base.text.align === "left"
+            ? 0
+            : free;
       // Right-to-left text starts at the right edge of the line.
       let cursor = rtl ? blockWidth - shift : shift;
-      const y = -blockHeight / 2 + row * lineHeight + lineHeight / 2;
+      const restY = -blockHeight / 2 + index * lineHeight + lineHeight / 2;
       for (const item of items) {
         const left = rtl ? cursor - item.width : cursor;
-        const cx = left - blockWidth / 2 + item.width / 2;
-        const h = item.base.height();
-        item.base.position({ x: -item.width / 2, y: -h / 2 });
-        item.pill?.position({
-          x: -item.width / 2 - highlight.padding * scale,
-          y: -h / 2 - (highlight.padding * scale) / 2,
-        });
-        if (item.emoji) {
-          const { emoji: node } = item;
-          // Scaling happens around the emoji's own centre.
-          node.offset({ x: node.width() / 2, y: node.height() / 2 });
-          node.position({ x: 0, y: -h / 2 - lineHeight * 0.55 });
-        }
-        item.restY = y;
-        // The clip group holds the overlay at its own origin, so the clip
-        // rectangle is measured from the word's top-left corner.
-        item.overlay?.getParent()?.position({ x: -item.width / 2, y: -h / 2 });
-        item.wrap.position({ x: cx, y });
-        block.add(item.wrap);
+        item.restX = left - blockWidth / 2 + item.width / 2;
+        lineGroup.add(item.wrap);
         cursor = rtl
           ? cursor - item.width - space
           : cursor + item.width + space;
       }
+      block.add(lineGroup);
+      return { group: lineGroup, restY, index };
     });
 
-    const middle = height / 2;
     const margin = layout.offset * height;
-    const centerY =
+    const halfBox = blockHeight / 2 + padding;
+    let centerY =
       layout.anchor === "top"
-        ? margin + blockHeight / 2 + padding
+        ? margin + halfBox
         : layout.anchor === "bottom"
-          ? height - margin - blockHeight / 2 - padding
-          : middle + margin;
-    return { key, block, words: placed, centerX: width / 2, centerY };
+          ? height - margin - halfBox
+          : height / 2 + margin;
+    if (layout.safeZone === "reels") {
+      const low = height * REELS_SAFE.top + halfBox;
+      const high = height * (1 - REELS_SAFE.bottom) - halfBox;
+      centerY =
+        high >= low ? Math.min(high, Math.max(low, centerY)) : (low + high) / 2;
+    }
+    return {
+      key,
+      block,
+      lines,
+      words: placed,
+      fontSize,
+      lineCount: rows.length,
+      centerX: width / 2,
+      centerY,
+    };
   }
 }

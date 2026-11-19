@@ -2,8 +2,8 @@ import { useState } from "react";
 import { Captions, Loader2 } from "lucide-react";
 import {
   CAPTION_CONFIG_SCHEMA_VERSION,
-  normalizeCaptionConfig,
-  type CaptionConfig,
+  normalizeTemplate,
+  type CaptionTemplate,
 } from "@perpix/caption-renderer";
 import {
   Dialog,
@@ -51,8 +51,8 @@ function CaptionPresetFormContent({
     String(initialPreset?.sort_order ?? nextSortOrder),
   );
   const [isActive, setIsActive] = useState(initialPreset?.is_active ?? true);
-  const [look, setLook] = useState<CaptionConfig>(() =>
-    normalizeCaptionConfig(initialPreset?.config),
+  const [look, setLook] = useState<CaptionTemplate>(() =>
+    normalizeTemplate(initialPreset?.config),
   );
 
   const { createPreset, updatePreset, isSaving } = useCaptionPresetActions();
@@ -137,7 +137,7 @@ function CaptionPresetFormContent({
         </div>
       </div>
 
-      <CaptionTemplateEditor config={look} onChange={setLook} />
+      <CaptionTemplateEditor template={look} onChange={setLook} />
 
       <label className="flex cursor-pointer items-center gap-2 text-xs font-medium">
         <input
