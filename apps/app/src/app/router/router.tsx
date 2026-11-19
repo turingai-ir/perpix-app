@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, type ComponentType } from "react";
 import {
   createBrowserRouter,
   redirect,
@@ -20,10 +20,6 @@ import PaymentsPage from "@/pages/profile/payments/page";
 import WalletTransactionsPage from "@/pages/profile/wallet-transactions/page";
 import DesignPreviewPage from "@/pages/design-preview/page";
 import EditorPage from "@/pages/editor/page";
-import StudioLayout from "@/pages/studio/layout";
-import StudioTabsLayout from "@/pages/studio/tabs-layout";
-import StudioHomePage from "@/pages/studio/page";
-import StudioStylesPage from "@/pages/studio/styles/page";
 import LoginPage from "@/pages/auth/login/page";
 import PaymentResultPage from "@/pages/payment/result/page";
 import {
@@ -34,6 +30,12 @@ import {
 import { ErrorFallbackPage } from "@/shared/components/error-boundary";
 import LoadingSection from "@/shared/components/loading-section";
 import { captureError } from "@/shared/lib/observability";
+
+/** A route that loads its page on demand, so the studio stays out of the entry bundle. */
+const lazyPage =
+  (load: () => Promise<{ default: ComponentType }>) => async () => ({
+    Component: (await load()).default,
+  });
 
 const requireSession = async ({ request }: LoaderFunctionArgs) => {
   if ((await bootstrapSession()) === "anonymous") {
@@ -174,23 +176,28 @@ export const router = createBrowserRouter([
       },
       {
         path: APP_ROUTES_KEY.studio.path,
-        Component: StudioLayout,
+        lazy: lazyPage(() => import("@/pages/studio/layout")),
         loader: requireSession,
         children: [
           {
-            Component: StudioTabsLayout,
+            lazy: lazyPage(() => import("@/pages/studio/tabs-layout")),
             children: [
               {
                 index: true,
-                Component: StudioHomePage,
+                lazy: lazyPage(() => import("@/pages/studio/page")),
                 handle: { title: APP_ROUTES_KEY.studio.meta.title },
               },
               {
                 path: "styles",
-                Component: StudioStylesPage,
+                lazy: lazyPage(() => import("@/pages/studio/styles/page")),
                 handle: { title: APP_ROUTES_KEY.studio.styles.meta.title },
               },
             ],
+          },
+          {
+            path: APP_ROUTES_KEY.studio.project.path,
+            lazy: lazyPage(() => import("@/pages/studio/project/page")),
+            handle: { title: APP_ROUTES_KEY.studio.project.meta.title },
           },
         ],
       },
