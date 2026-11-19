@@ -1,37 +1,23 @@
-import { useEffect, type ComponentType } from "react";
+import type { ComponentType } from "react";
 import {
   createBrowserRouter,
   redirect,
-  useRouteError,
   type LoaderFunctionArgs,
 } from "react-router";
 
 import { APP_ROUTES_KEY } from "./routes";
+import { RouteErrorFallback } from "./route-error-fallback";
 
 import RootLayout from "@/pages/(root)/layout";
 import { AppLayout } from "@/features/app-layout";
-import HomePage from "@/pages/(app)/page";
-import GalleryPage from "@/pages/(app)/gallery/page";
-import ImageGenerationPage from "@/pages/(app)/generation/image/page";
-import VideoGenerationPage from "@/pages/(app)/generation/video/page";
-import ProfileLayout from "@/pages/profile/layout";
-import SettingsPage from "@/pages/profile/settings/page";
-import PaymentsPage from "@/pages/profile/payments/page";
-import WalletTransactionsPage from "@/pages/profile/wallet-transactions/page";
-import DesignPreviewPage from "@/pages/design-preview/page";
-import EditorPage from "@/pages/editor/page";
-import LoginPage from "@/pages/auth/login/page";
-import PaymentResultPage from "@/pages/payment/result/page";
 import {
   bootstrapSession,
   getLoginPath,
   getPostLoginPath,
 } from "@/features/auth";
-import { ErrorFallbackPage } from "@/shared/components/error-boundary";
 import LoadingSection from "@/shared/components/loading-section";
-import { captureError } from "@/shared/lib/observability";
 
-/** A route that loads its page on demand, so the studio stays out of the entry bundle. */
+/** A route that loads its page on demand, keeping non-initial bundles lean. */
 const lazyPage =
   (load: () => Promise<{ default: ComponentType }>) => async () => ({
     Component: (await load()).default,
@@ -67,14 +53,14 @@ export const router = createBrowserRouter([
         children: [
           {
             index: true,
-            Component: HomePage,
+            lazy: lazyPage(() => import("@/pages/(app)/page")),
             handle: {
               title: APP_ROUTES_KEY.app.meta.title,
             },
           },
           {
             path: APP_ROUTES_KEY.gallery.path,
-            Component: GalleryPage,
+            lazy: lazyPage(() => import("@/pages/(app)/gallery/page")),
             handle: {
               title: APP_ROUTES_KEY.gallery.meta.title,
             },
@@ -84,14 +70,14 @@ export const router = createBrowserRouter([
             children: [
               {
                 index: true,
-                Component: ImageGenerationPage,
+                lazy: lazyPage(() => import("@/pages/(app)/generation/image/page")),
                 handle: {
                   title: APP_ROUTES_KEY.generation.image.meta.title,
                 },
               },
               {
                 path: APP_ROUTES_KEY.generation.image.history.path,
-                Component: ImageGenerationPage,
+                lazy: lazyPage(() => import("@/pages/(app)/generation/image/page")),
                 handle: {
                   title: APP_ROUTES_KEY.generation.image.history.meta.title,
                 },
@@ -103,14 +89,14 @@ export const router = createBrowserRouter([
             children: [
               {
                 index: true,
-                Component: VideoGenerationPage,
+                lazy: lazyPage(() => import("@/pages/(app)/generation/video/page")),
                 handle: {
                   title: APP_ROUTES_KEY.generation.video.meta.title,
                 },
               },
               {
                 path: APP_ROUTES_KEY.generation.video.history.path,
-                Component: VideoGenerationPage,
+                lazy: lazyPage(() => import("@/pages/(app)/generation/video/page")),
                 handle: {
                   title: APP_ROUTES_KEY.generation.video.history.meta.title,
                 },
@@ -119,7 +105,7 @@ export const router = createBrowserRouter([
           },
           {
             path: APP_ROUTES_KEY.profile.root.path,
-            Component: ProfileLayout,
+            lazy: lazyPage(() => import("@/pages/profile/layout")),
             children: [
               {
                 index: true,
@@ -127,21 +113,21 @@ export const router = createBrowserRouter([
               },
               {
                 path: APP_ROUTES_KEY.profile.settings.path,
-                Component: SettingsPage,
+                lazy: lazyPage(() => import("@/pages/profile/settings/page")),
                 handle: {
                   title: APP_ROUTES_KEY.profile.settings.meta.title,
                 },
               },
               {
                 path: APP_ROUTES_KEY.profile.payments.path,
-                Component: PaymentsPage,
+                lazy: lazyPage(() => import("@/pages/profile/payments/page")),
                 handle: {
                   title: APP_ROUTES_KEY.profile.payments.meta.title,
                 },
               },
               {
                 path: APP_ROUTES_KEY.profile.walletTransactions.path,
-                Component: WalletTransactionsPage,
+                lazy: lazyPage(() => import("@/pages/profile/wallet-transactions/page")),
                 handle: {
                   title: APP_ROUTES_KEY.profile.walletTransactions.meta.title,
                 },
@@ -152,7 +138,7 @@ export const router = createBrowserRouter([
       },
       {
         path: APP_ROUTES_KEY.designPreview.path,
-        Component: DesignPreviewPage,
+        lazy: lazyPage(() => import("@/pages/design-preview/page")),
         handle: {
           title: APP_ROUTES_KEY.designPreview.meta.title,
         },
@@ -162,11 +148,11 @@ export const router = createBrowserRouter([
         children: [
           {
             index: true,
-            Component: EditorPage,
+            lazy: lazyPage(() => import("@/pages/editor/page")),
           },
           {
             path: ":fileUuid",
-            Component: EditorPage,
+            lazy: lazyPage(() => import("@/pages/editor/page")),
           },
         ],
         loader: requireSession,
@@ -208,7 +194,7 @@ export const router = createBrowserRouter([
       },
       {
         path: APP_ROUTES_KEY.auth.login.path,
-        Component: LoginPage,
+        lazy: lazyPage(() => import("@/pages/auth/login/page")),
         loader: redirectIfAuthenticated,
         handle: {
           title: APP_ROUTES_KEY.auth.login.meta.title,
@@ -217,7 +203,7 @@ export const router = createBrowserRouter([
       {
         path: APP_ROUTES_KEY.payment.result.path,
         loader: requireSession,
-        Component: PaymentResultPage,
+        lazy: lazyPage(() => import("@/pages/payment/result/page")),
         handle: {
           title: APP_ROUTES_KEY.payment.result.meta.title,
         },
@@ -229,13 +215,3 @@ export const router = createBrowserRouter([
     ],
   },
 ]);
-
-function RouteErrorFallback() {
-  const error = useRouteError();
-
-  useEffect(() => {
-    captureError(error);
-  }, [error]);
-
-  return <ErrorFallbackPage />;
-}

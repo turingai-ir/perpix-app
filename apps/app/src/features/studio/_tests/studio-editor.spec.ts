@@ -31,33 +31,45 @@ async function openEditor(page: Page, status: "COMPLETED" | "PROCESSING") {
       route.fulfill({ contentType: "text/event-stream", body: "" }),
     );
   }
-  await page.route("**/api/v1/studio/projects/p1", (route) =>
-    route.fulfill({
+  const project = {
+    revision: 1,
+    document: {
+      tracks: [
+        {
+          kind: "video",
+          clips: [
+            {
+              id: "c1",
+              file_uuid: "f1",
+              name: "clip",
+              duration_ms: 2000,
+              source_in_ms: 0,
+              source_out_ms: 2000,
+            },
+          ],
+        },
+      ],
+    } as Record<string, unknown>,
+  };
+  const saves: Array<{ document: Record<string, unknown>; revision: number }> =
+    [];
+  await page.route("**/api/v1/studio/projects/p1", (route) => {
+    if (route.request().method() === "PUT") {
+      const body = route.request().postDataJSON() as (typeof saves)[number];
+      saves.push(body);
+      project.document = body.document;
+      project.revision += 1;
+    }
+    return route.fulfill({
       json: {
         uuid: "p1",
         title: "پروژه",
         schema_version: 1,
-        revision: 1,
+        revision: project.revision,
         expire_at: FUTURE(),
         created_at: NOW(),
         updated_at: NOW(),
-        document: {
-          tracks: [
-            {
-              kind: "video",
-              clips: [
-                {
-                  id: "c1",
-                  file_uuid: "f1",
-                  name: "clip",
-                  duration_ms: 2000,
-                  source_in_ms: 0,
-                  source_out_ms: 2000,
-                },
-              ],
-            },
-          ],
-        },
+        document: project.document,
         files: [
           {
             file_uuid: "f1",
@@ -68,8 +80,8 @@ async function openEditor(page: Page, status: "COMPLETED" | "PROCESSING") {
           },
         ],
       },
-    }),
-  );
+    });
+  });
   await page.route("**/api/v1/file-manager/files/presigned-urls", (route) =>
     route.fulfill({
       json: {
@@ -133,6 +145,7 @@ async function openEditor(page: Page, status: "COMPLETED" | "PROCESSING") {
     route.fulfill({ json: { system: [], mine: [], mine_limit: 0 } }),
   );
   await page.goto("/studio/p1/edit");
+  return { saves };
 }
 
 /** How many pixels of the caption canvas are painted. */
@@ -214,9 +227,124 @@ test("while the subtitles are still being made the editor says so and plays with
 }) => {
   await openEditor(page, "PROCESSING");
 
-  await expect(page.getByRole("status")).toContainText(
-    "زیرنویس هنوز در حال ساخته",
-  );
+  await expect(
+    page.getByRole("status").filter({ hasText: "زیرنویس هنوز در حال ساخته" }),
+  ).toBeVisible();
   await seekTo(page, 500);
   await expect.poll(() => captionPixels(page)).toBe(0);
+});
+
+const clipsOf = (save: { document: Record<string, unknown> }) =>
+  (
+    (save.document.tracks as Array<{ kind: string; clips: unknown[] }>).find(
+      (track) => track.kind === "video",
+    )?.clips ?? []
+  ).map((clip) => {
+    const { source_in_ms: from, source_out_ms: to } = clip as {
+      source_in_ms: number;
+      source_out_ms: number;
+    };
+    return [from, to];
+  });
+
+const ready = async (page: Page) => {
+  await expect(page.getByTestId("stage-video")).toHaveAttribute(
+    "src",
+    /f1\.webm/,
+  );
+};
+
+test("splitting at the playhead makes two clips and saves them by itself", async ({
+  page,
+}) => {
+  const { saves } = await openEditor(page, "COMPLETED");
+  await ready(page);
+  await expect(page.getByTestId("timeline-clip")).toHaveCount(1);
+
+  await seekTo(page, 1000);
+  await page.getByRole("button", { name: "جدا کردن" }).click();
+
+  await expect(page.getByTestId("timeline-clip")).toHaveCount(2);
+  await expect.poll(() => saves.length, { timeout: 8000 }).toBe(1);
+  expect(clipsOf(saves[0])).toEqual([
+    [0, 1000],
+    [1000, 2000],
+  ]);
+  await expect(
+    page.getByRole("status").filter({ hasText: "ذخیره شد" }),
+  ).toBeVisible();
+});
+
+test("a cut too close to the end of a clip is not offered", async ({
+  page,
+}) => {
+  await openEditor(page, "COMPLETED");
+  await ready(page);
+
+  await seekTo(page, 100);
+  await expect(page.getByRole("button", { name: "جدا کردن" })).toBeDisabled();
+  await seekTo(page, 1000);
+  await expect(page.getByRole("button", { name: "جدا کردن" })).toBeEnabled();
+});
+
+test("trimming the end shortens the project and undo brings it back", async ({
+  page,
+}) => {
+  const { saves } = await openEditor(page, "COMPLETED");
+  await ready(page);
+
+  await seekTo(page, 1200);
+  await page.getByRole("button", { name: "حذف بعد" }).click();
+  await expect(page.getByText("۰:۰۱", { exact: false }).first()).toBeVisible();
+  await expect.poll(() => saves.length, { timeout: 8000 }).toBe(1);
+  expect(clipsOf(saves[0])).toEqual([[0, 1200]]);
+
+  await page.getByRole("button", { name: "برگرداندن" }).click();
+  await expect.poll(() => saves.length, { timeout: 8000 }).toBe(2);
+  expect(clipsOf(saves[1])).toEqual([[0, 2000]]);
+  await expect(page.getByRole("button", { name: "برگرداندن" })).toBeDisabled();
+});
+
+test("a split half can be removed and the one left plays on", async ({
+  page,
+}) => {
+  const { saves } = await openEditor(page, "COMPLETED");
+  await ready(page);
+
+  await seekTo(page, 1000);
+  await page.getByRole("button", { name: "جدا کردن" }).click();
+  await page.getByRole("button", { name: "حذف کلیپ" }).click();
+
+  await expect(page.getByTestId("timeline-clip")).toHaveCount(1);
+  await expect.poll(() => saves.length, { timeout: 8000 }).toBeGreaterThan(0);
+  expect(clipsOf(saves.at(-1)!)).toEqual([[0, 1000]]);
+});
+
+test("a split half moves later and the order is saved", async ({ page }) => {
+  const { saves } = await openEditor(page, "COMPLETED");
+  await ready(page);
+
+  await seekTo(page, 1000);
+  await page.getByRole("button", { name: "جدا کردن" }).click();
+  await seekTo(page, 100);
+  await page.getByRole("button", { name: "عقب‌تر" }).click();
+
+  await expect.poll(() => saves.length, { timeout: 8000 }).toBeGreaterThan(0);
+  expect(clipsOf(saves.at(-1)!)).toEqual([
+    [1000, 2000],
+    [0, 1000],
+  ]);
+});
+
+test("leaving saves the last edit first", async ({ page }) => {
+  const { saves } = await openEditor(page, "COMPLETED");
+  await ready(page);
+
+  await seekTo(page, 1000);
+  await page.getByRole("button", { name: "جدا کردن" }).click();
+  await page.getByRole("button", { name: "برگشت" }).click();
+
+  await expect(page).toHaveURL(/\/studio\/p1$/);
+  expect(saves).toHaveLength(1);
+  expect(clipsOf(saves[0])).toHaveLength(2);
 });

@@ -122,5 +122,11 @@ export function usePlayer(
     setPlayingState(true);
   }, [timeline, timeMs, enter]);
 
-  return { videoRef, timeMs, playing, seek, toggle };
+  const pause = useCallback(() => {
+    videoRef.current?.pause();
+    playingRef.current = false;
+    setPlaying(false);
+  }, []);
+
+  return { videoRef, timeMs, playing, seek, toggle, pause };
 }
