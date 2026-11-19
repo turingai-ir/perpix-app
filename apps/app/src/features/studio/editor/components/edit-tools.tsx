@@ -54,7 +54,7 @@ export const EditTools: FC<EditToolsProps> = ({ disabled, onAction }) => {
           disabled={disabled.has(action)}
           onClick={() => onAction(action)}
           className={cn(
-            "focus-visible:ring-ring flex min-h-14 min-w-[3.1rem] flex-1 cursor-pointer flex-col items-center justify-center gap-1 rounded-xl px-0.5 text-[0.7rem] font-medium transition-[background-color,transform] focus-visible:ring-2 focus-visible:outline-none active:scale-95 disabled:pointer-events-none disabled:opacity-35",
+            "focus-visible:ring-ring text-caption flex min-h-14 min-w-[3.1rem] flex-1 cursor-pointer flex-col items-center justify-center gap-1 rounded-xl px-0.5 font-medium transition-[background-color,transform] focus-visible:ring-2 focus-visible:outline-none active:scale-95 disabled:pointer-events-none disabled:opacity-35",
             danger ? "text-destructive" : "text-foreground",
             "hover-capable:hover:bg-muted",
           )}
