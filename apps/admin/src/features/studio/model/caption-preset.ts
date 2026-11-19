@@ -42,10 +42,6 @@ export const parseConfigText = (text: string): ConfigParse => {
   return { ok: true, value: parsed as Record<string, unknown>, bytes };
 };
 
-/** The text of a config as the form edits it. */
-export const formatConfig = (config: Readonly<Record<string, unknown>>) =>
-  JSON.stringify(config, null, 2);
-
 const wholeNumber = (text: string): number | null =>
   /^\d+$/.test(text.trim()) ? Number(text) : null;
 
@@ -53,10 +49,4 @@ const wholeNumber = (text: string): number | null =>
 export const parseSortOrder = (text: string): number | null => {
   const value = wholeNumber(text);
   return value !== null && value <= MAX_SORT_ORDER ? value : null;
-};
-
-/** A whole number from 1, or null when the text is not one. */
-export const parseSchemaVersion = (text: string): number | null => {
-  const value = wholeNumber(text);
-  return value !== null && value >= 1 ? value : null;
 };

@@ -167,6 +167,11 @@ describe("decoration kinds and palette", () => {
     ]);
     expect(template.decorations[0]?.count).toBe(12);
     // Only the first six entries are read, and the ones that are not colours are dropped.
-    expect(template.base.fill.palette).toEqual(["#fff", "#00ff00", "#111", "#222"]);
+    expect(template.base.fill.palette).toEqual([
+      "#fff",
+      "#00ff00",
+      "#111",
+      "#222",
+    ]);
   });
 });

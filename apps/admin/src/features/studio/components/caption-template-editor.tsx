@@ -427,28 +427,21 @@ const PROP_STEPS: Record<PropName, number> = {
 const ROLE_NAMES = ["key", "accent", "soft", "alert", "brand", "dim", "pop"];
 
 /**
- * Builds a caption template with controls and shows it on sample words, drawn
- * by the renderer the user's app exports with, so what is seen here is what
- * users get.
+ * The live preview and its playback. Time ticks about sixty times a second, so
+ * it lives here and not in the editor, whose controls would otherwise redraw
+ * with every frame.
  */
-export function CaptionTemplateEditor({
-  template,
-  onChange,
-}: CaptionTemplateEditorProps) {
-  const { t } = useAppTranslate();
-  const label = (key: string, fallback: string) =>
-    t(`features.studio.captionEditor.${key}`, { defaultValue: fallback });
-
+function PreviewPane({ template }: { template: CaptionTemplate }) {
   const [language, setLanguage] = useState<"fa" | "en">("fa");
   const [frame, setFrame] = useState<Frame>("portrait");
   const [dark, setDark] = useState(true);
   const [playing, setPlaying] = useState(true);
   const [timeMs, setTimeMs] = useState(0);
-  const [jsonDraft, setJsonDraft] = useState<string | null>(null);
 
   const words = SAMPLE_WORDS[language];
   const duration = useMemo(() => sampleDurationMs(words), [words]);
   const last = useRef(0);
+  const size = FRAMES[frame];
 
   useEffect(() => {
     if (!playing) return;
@@ -464,6 +457,81 @@ export function CaptionTemplateEditor({
     return () => cancelAnimationFrame(handle);
   }, [playing, duration]);
 
+  return (
+    <div className="space-y-3 lg:sticky lg:top-0 lg:self-start">
+      <div className="mx-auto" style={{ width: size.width }}>
+        <CaptionPreview
+          template={template}
+          words={words}
+          timeMs={timeMs}
+          width={size.width}
+          height={size.height}
+          background={dark ? "#1f2937" : "#e5e7eb"}
+          className="overflow-hidden rounded-lg border"
+        />
+      </div>
+      <div className="flex items-center gap-2" dir="ltr">
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          className="size-8 cursor-pointer p-0"
+          onClick={() => setPlaying((p) => !p)}
+          aria-label={playing ? "pause" : "play"}
+        >
+          {playing ? <Pause className="size-4" /> : <Play className="size-4" />}
+        </Button>
+        <input
+          type="range"
+          min={0}
+          max={duration}
+          value={Math.round(timeMs)}
+          onChange={(e) => {
+            setPlaying(false);
+            setTimeMs(Number(e.target.value));
+          }}
+          className="flex-1"
+        />
+      </div>
+      <div className="flex flex-wrap justify-center gap-2">
+        <Choice
+          value={frame}
+          options={["portrait", "landscape"] as const}
+          label={(o) => (o === "portrait" ? "9:16" : "16:9")}
+          onChange={setFrame}
+        />
+        <Choice
+          value={language}
+          options={["fa", "en"] as const}
+          label={(o) => (o === "fa" ? "فارسی" : "English")}
+          onChange={setLanguage}
+        />
+        <Choice
+          value={dark ? "dark" : "light"}
+          options={["dark", "light"] as const}
+          label={(o) => (o === "dark" ? "پس‌زمینه تیره" : "پس‌زمینه روشن")}
+          onChange={(o) => setDark(o === "dark")}
+        />
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Builds a caption template with controls and shows it on sample words, drawn
+ * by the renderer the user's app exports with, so what is seen here is what
+ * users get.
+ */
+export function CaptionTemplateEditor({
+  template,
+  onChange,
+}: CaptionTemplateEditorProps) {
+  const { t } = useAppTranslate();
+  const label = (key: string, fallback: string) =>
+    t(`features.studio.captionEditor.${key}`, { defaultValue: fallback });
+
+  const [jsonDraft, setJsonDraft] = useState<string | null>(null);
+
   /** Applies a change to a copy and keeps the result valid. */
   const edit = (change: (draft: CaptionTemplate) => void) => {
     const draft = structuredClone(template);
@@ -471,7 +539,6 @@ export function CaptionTemplateEditor({
     onChange(normalizeTemplate(draft));
   };
 
-  const size = FRAMES[frame];
   const { base, layout, box, states, roles, roleRules, emoji } = template;
   const roleNames = Object.keys(roles);
   const roleOptions = ["normal", ...roleNames];
@@ -505,66 +572,7 @@ export function CaptionTemplateEditor({
 
   return (
     <div className="grid gap-4 lg:grid-cols-[auto_1fr]">
-      <div className="space-y-3 lg:sticky lg:top-0 lg:self-start">
-        <div className="mx-auto" style={{ width: size.width }}>
-          <CaptionPreview
-            template={template}
-            words={words}
-            timeMs={timeMs}
-            width={size.width}
-            height={size.height}
-            background={dark ? "#1f2937" : "#e5e7eb"}
-            className="overflow-hidden rounded-lg border"
-          />
-        </div>
-        <div className="flex items-center gap-2" dir="ltr">
-          <Button
-            type="button"
-            size="sm"
-            variant="outline"
-            className="size-8 cursor-pointer p-0"
-            onClick={() => setPlaying((p) => !p)}
-            aria-label={playing ? "pause" : "play"}
-          >
-            {playing ? (
-              <Pause className="size-4" />
-            ) : (
-              <Play className="size-4" />
-            )}
-          </Button>
-          <input
-            type="range"
-            min={0}
-            max={duration}
-            value={Math.round(timeMs)}
-            onChange={(e) => {
-              setPlaying(false);
-              setTimeMs(Number(e.target.value));
-            }}
-            className="flex-1"
-          />
-        </div>
-        <div className="flex flex-wrap justify-center gap-2">
-          <Choice
-            value={frame}
-            options={["portrait", "landscape"] as const}
-            label={(o) => (o === "portrait" ? "9:16" : "16:9")}
-            onChange={setFrame}
-          />
-          <Choice
-            value={language}
-            options={["fa", "en"] as const}
-            label={(o) => (o === "fa" ? "فارسی" : "English")}
-            onChange={setLanguage}
-          />
-          <Choice
-            value={dark ? "dark" : "light"}
-            options={["dark", "light"] as const}
-            label={(o) => (o === "dark" ? "پس‌زمینه تیره" : "پس‌زمینه روشن")}
-            onChange={(o) => setDark(o === "dark")}
-          />
-        </div>
-      </div>
+      <PreviewPane template={template} />
 
       <div className="space-y-3">
         <Group title={label("starter", "شروع از قالب مرجع")}>

@@ -136,6 +136,7 @@ export class CaptionRenderer {
   }
 
   setTemplate(template: CaptionTemplate) {
+    if (template === this.template) return;
     const key = JSON.stringify(template);
     if (key === this.templateKey) return;
     this.template = template;
@@ -145,6 +146,7 @@ export class CaptionRenderer {
   }
 
   setWords(words: readonly CaptionWord[]) {
+    if (words === this.words) return;
     this.words = words;
     this.paginate();
     this.dropBuilt();

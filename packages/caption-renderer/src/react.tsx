@@ -30,6 +30,7 @@ export function CaptionPreview({
   const host = useRef<HTMLDivElement>(null);
   const renderer = useRef<CaptionRenderer | null>(null);
   const stage = useRef<Konva.Stage | null>(null);
+  const timeRef = useRef(timeMs);
 
   useEffect(() => {
     const element = host.current;
@@ -58,7 +59,7 @@ export function CaptionPreview({
       if (cancelled) return;
       // A font that arrives late changes every measurement.
       renderer.current?.invalidate();
-      renderer.current?.render(timeMs, width, height);
+      renderer.current?.render(timeRef.current, width, height);
     });
     return () => {
       cancelled = true;
@@ -70,11 +71,18 @@ export function CaptionPreview({
     template.base.font.italic,
   ]);
 
+  // Each input has its own effect, so a new moment only redraws and never
+  // rebuilds the laid-out words, which is the costly part.
   useEffect(() => {
     renderer.current?.setTemplate(template);
     renderer.current?.setWords(words);
+    renderer.current?.render(timeRef.current, width, height);
+  }, [template, words, width, height, background]);
+
+  useEffect(() => {
+    timeRef.current = timeMs;
     renderer.current?.render(timeMs, width, height);
-  }, [template, words, timeMs, width, height, background]);
+  }, [timeMs, width, height]);
 
   return <div ref={host} className={className} style={{ width, height }} />;
 }
