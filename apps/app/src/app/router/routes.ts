@@ -83,6 +83,18 @@ export const APP_ROUTES_KEY = {
       },
     },
   },
+  studio: {
+    path: "/studio",
+    meta: {
+      title: "pages.studio.title",
+    },
+    styles: {
+      path: "/studio/styles",
+      meta: {
+        title: "pages.studio.styles.title",
+      },
+    },
+  },
   editor: {
     path: "/editor",
     meta: {

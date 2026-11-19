@@ -20,6 +20,10 @@ import PaymentsPage from "@/pages/profile/payments/page";
 import WalletTransactionsPage from "@/pages/profile/wallet-transactions/page";
 import DesignPreviewPage from "@/pages/design-preview/page";
 import EditorPage from "@/pages/editor/page";
+import StudioLayout from "@/pages/studio/layout";
+import StudioTabsLayout from "@/pages/studio/tabs-layout";
+import StudioHomePage from "@/pages/studio/page";
+import StudioStylesPage from "@/pages/studio/styles/page";
 import LoginPage from "@/pages/auth/login/page";
 import PaymentResultPage from "@/pages/payment/result/page";
 import {
@@ -167,6 +171,28 @@ export const router = createBrowserRouter([
         handle: {
           title: APP_ROUTES_KEY.editor.meta.title,
         },
+      },
+      {
+        path: APP_ROUTES_KEY.studio.path,
+        Component: StudioLayout,
+        loader: requireSession,
+        children: [
+          {
+            Component: StudioTabsLayout,
+            children: [
+              {
+                index: true,
+                Component: StudioHomePage,
+                handle: { title: APP_ROUTES_KEY.studio.meta.title },
+              },
+              {
+                path: "styles",
+                Component: StudioStylesPage,
+                handle: { title: APP_ROUTES_KEY.studio.styles.meta.title },
+              },
+            ],
+          },
+        ],
       },
       {
         path: APP_ROUTES_KEY.auth.login.path,
