@@ -12,6 +12,7 @@ import {
   deleteProject,
   renameProject,
 } from "../services/projects";
+import { removeLocalProjectVideos } from "../services/local-video";
 import { projectRootKey, projectsKey } from "./use-projects";
 
 type Pages = InfiniteData<{ items: ProjectSummary[]; has_next: boolean }>;
@@ -66,6 +67,10 @@ export function useProjectActions() {
       context?.saved.forEach(([key, data]) => client.setQueryData(key, data));
       onError(error);
     },
+    onSuccess: (_, uuid) =>
+      removeLocalProjectVideos(uuid).catch(() => {
+        toast.error(t("features.studio.localVideo.cleanup"));
+      }),
     onSettled: refresh,
   });
 

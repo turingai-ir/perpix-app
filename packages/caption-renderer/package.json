@@ -7,7 +7,8 @@
   "description": "How a caption looks at a moment in time. Shared by the app, which exports the video, and the admin panel, which previews the presets, so the two can never differ.",
   "exports": {
     ".": "./src/index.ts",
-    "./react": "./src/react.tsx"
+    "./react": "./src/react.tsx",
+    "./offscreen": "./src/offscreen.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit",

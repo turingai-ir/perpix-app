@@ -1,22 +1,52 @@
-import type { FC } from "react";
-import { Captions } from "lucide-react";
+import { useMemo, useState, type FC } from "react";
 
 import { useAppTranslate } from "@/shared/hooks";
 import { StudioScreen } from "../shell/studio-screen";
+import { PresetGallery } from "./components/preset-gallery";
+import { StyleSample } from "./components/style-sample";
+import { usePresets } from "./hooks/use-presets";
+import { styleFromPreset } from "./model/caption-style";
 
-/** The caption styles tab. Phase 0 is the empty shell; the gallery arrives in phase 4. */
 export const StylesHome: FC = () => {
   const { t } = useAppTranslate();
+  const presets = usePresets();
+  const [selectedUuid, setSelectedUuid] = useState<string | null>(null);
+  const { system = [], mine = [], mine_limit } = presets.data ?? {};
+  const selected =
+    [...system, ...mine].find((preset) => preset.uuid === selectedUuid) ??
+    system[0] ??
+    mine[0];
+  const template = useMemo(
+    () => selected && styleFromPreset(selected).config,
+    [selected],
+  );
 
   return (
     <StudioScreen
       title={t("features.studio.styles.title")}
-      className="flex flex-col items-center justify-center gap-3 text-center"
+      className="gap-section flex flex-col"
     >
-      <Captions className="text-muted-foreground size-12" aria-hidden />
-      <p className="text-muted-foreground max-w-64 text-sm">
-        {t("features.studio.styles.empty")}
-      </p>
+      {template && <StyleSample template={template} />}
+      <PresetGallery
+        system={system}
+        mine={mine}
+        selectedUuid={selected?.uuid ?? null}
+        onSelect={(preset) => setSelectedUuid(preset.uuid)}
+        pending={presets.isPending}
+        onRetry={
+          presets.isError && !presets.data
+            ? () => void presets.refetch()
+            : undefined
+        }
+      />
+      {mine_limit !== undefined && (
+        <p className="text-muted-foreground text-footnote">
+          {t("features.studio.styles.quota", {
+            count: mine.length.toLocaleString("fa-IR"),
+            limit: mine_limit.toLocaleString("fa-IR"),
+          })}
+        </p>
+      )}
     </StudioScreen>
   );
 };

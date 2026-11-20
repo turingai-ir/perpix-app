@@ -1,24 +1,28 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   normalizeTemplate,
   REFERENCE_TEMPLATES,
-  type CaptionTemplate,
 } from "@perpix/caption-renderer";
 import { usePresets } from "../../styles/hooks/use-presets";
+import {
+  readCaptionStyle,
+  type CaptionStyle,
+} from "../../styles/model/caption-style";
 
-/**
- * The look the captions are drawn in. Until the user can choose (phase 4) it
- * is the first preset the admin offers, or the built-in classic look while
- * there is none or the list has not loaded.
- */
-export function useCaptionTemplate(): CaptionTemplate {
+export function useCaptionTemplate(
+  document: Record<string, unknown> | undefined,
+) {
+  const [style, setStyle] = useState<CaptionStyle | null>();
+  if (style === undefined && document) setStyle(readCaptionStyle(document));
   const presets = usePresets();
   const first = presets.data?.system.find((preset) => preset.is_active);
-  return useMemo(
+  const template = useMemo(
     () =>
-      first
+      style?.config ??
+      (first
         ? normalizeTemplate(first.config)
-        : REFERENCE_TEMPLATES.classic.template,
-    [first],
+        : REFERENCE_TEMPLATES.classic.template),
+    [style, first],
   );
+  return { style, setStyle, template };
 }

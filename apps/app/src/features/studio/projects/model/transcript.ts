@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { SchemaStudioTranscriptLanguage } from "@/shared/api";
 
 export const transcriptSummarySchema = z.object({
   uuid: z.string(),
@@ -31,3 +32,9 @@ export type Transcript = z.infer<typeof transcriptSchema>;
 
 /** How often a transcript that is still being made is read again. */
 export const TRANSCRIPT_POLL_MS = 3_000;
+
+export const SPEECH_LANGUAGES = [
+  "auto",
+  "en",
+  "fa",
+] as const satisfies readonly SchemaStudioTranscriptLanguage[];

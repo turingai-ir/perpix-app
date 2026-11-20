@@ -56,6 +56,9 @@ export interface SourceWord {
   end_ms: number;
 }
 
+export const wordOverlapsClip = (word: SourceWord, clip: Clip): boolean =>
+  word.end_ms > clip.source_in_ms && word.start_ms < clip.source_out_ms;
+
 /**
  * The words of every clip on the timeline's clock. A word is kept for the
  * part of it that falls inside the clip, so a cut never leaves a stray word,
@@ -68,11 +71,7 @@ export const timelineWords = (
   timeline.segments
     .flatMap(({ clip, startMs }) =>
       (wordsByFile.get(clip.file_uuid) ?? []).flatMap((word) => {
-        if (
-          word.end_ms <= clip.source_in_ms ||
-          word.start_ms >= clip.source_out_ms
-        )
-          return [];
+        if (!wordOverlapsClip(word, clip)) return [];
         const from = Math.max(word.start_ms, clip.source_in_ms);
         const to = Math.min(word.end_ms, clip.source_out_ms);
         return [

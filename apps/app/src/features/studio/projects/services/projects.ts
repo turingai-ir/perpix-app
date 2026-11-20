@@ -4,6 +4,7 @@ import {
   projectListSchema,
   projectSchema,
   PROJECT_SCHEMA_VERSION,
+  type Project,
 } from "../model/project";
 import { isMissing } from "../model/project-error";
 
@@ -58,8 +59,11 @@ type Edit = {
  * and sends it back from that revision. If someone saved in between, the
  * backend refuses with a conflict and nothing is lost.
  */
-export const editProject = async (uuid: string, edit: Edit) => {
-  const current = await getProject(uuid);
+export const editProject = async (uuid: string, edit: Edit) =>
+  saveProjectEdit(await getProject(uuid), edit);
+
+/** Save an editor draft against the revision it was based on. */
+export const saveProjectEdit = async (current: Project, edit: Edit) => {
   const kept = current.files
     // An expired file cannot be sent back; the backend only accepts live ones.
     .filter(
@@ -72,7 +76,7 @@ export const editProject = async (uuid: string, edit: Edit) => {
   const { data } = await apiClient.PUT(
     "/api/v1/studio/projects/{project_uuid}",
     {
-      params: { path: { project_uuid: uuid } },
+      params: { path: { project_uuid: current.uuid } },
       body: {
         title: edit.title ?? current.title,
         document: edit.document ?? current.document,

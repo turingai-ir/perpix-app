@@ -10,11 +10,16 @@ import { FileManagerUploadStatus } from "@/features/file-manager";
 import { APP_ROUTES_KEY, studioEditPath } from "@/app/router/routes";
 import { StudioScreen } from "../shell/studio-screen";
 import { ClipCard } from "./components/clip-card";
+import { TranscriptLanguageSheet } from "./components/transcript-language-sheet";
 import { GalleryPickerSheet } from "./components/gallery-picker-sheet";
 import { useAddClip } from "./hooks/use-add-clip";
 import { useRemoveClip } from "./hooks/use-remove-clip";
 import { useProject } from "./hooks/use-projects";
-import { useRequestTranscript, useTranscripts } from "./hooks/use-transcripts";
+import {
+  usePendingTranscriptFiles,
+  useRequestTranscript,
+  useTranscripts,
+} from "./hooks/use-transcripts";
 import { readClips } from "./model/clips";
 import { isMissing } from "./model/project-error";
 
@@ -24,11 +29,22 @@ export const ProjectPage: FC = () => {
   const navigate = useNavigate();
   const { projectUuid = "" } = useParams();
   const project = useProject(projectUuid);
-  const { addFromGallery, uploadToGallery, busy, pendingUploads } =
-    useAddClip(projectUuid);
+  const {
+    addFromGallery,
+    addLocalVideo,
+    busy,
+    preparingLocal,
+    pendingUploads,
+  } = useAddClip(projectUuid);
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [languageTarget, setLanguageTarget] = useState<{
+    fileUuid: string;
+    replaceUuid?: string;
+  }>();
+
   const removeClip = useRemoveClip(projectUuid);
   const requestTranscript = useRequestTranscript();
+  const pendingTranscriptFiles = usePendingTranscriptFiles();
 
   const clips = useMemo(
     () => (project.data ? readClips(project.data.document) : []),
@@ -40,7 +56,12 @@ export const ProjectPage: FC = () => {
   const back = () => navigate(APP_ROUTES_KEY.studio.path, { replace: true });
 
   const used = useMemo(
-    () => new Set(clips.map((clip) => clip.file_uuid)),
+    () =>
+      new Set(
+        clips
+          .filter((clip) => !clip.local_source)
+          .map((clip) => clip.file_uuid),
+      ),
     [clips],
   );
 
@@ -124,8 +145,19 @@ export const ProjectPage: FC = () => {
               transcript={transcripts.data?.find(
                 (item) => item.file_uuid === clip.file_uuid,
               )}
-              retrying={requestTranscript.isPending}
-              onRetry={(item) => requestTranscript.mutate(item.file_uuid)}
+              requesting={pendingTranscriptFiles.includes(clip.file_uuid)}
+              loadingStatus={transcripts.isPending}
+              onReloadStatus={
+                transcripts.isError
+                  ? () => void transcripts.refetch()
+                  : undefined
+              }
+              onRetry={(item) =>
+                requestTranscript.mutate({ file_uuid: item.file_uuid })
+              }
+              onChooseLanguage={(replaceUuid) =>
+                setLanguageTarget({ fileUuid: clip.file_uuid, replaceUuid })
+              }
               onRemove={(item) => removeClip.mutate(item.id)}
             />
           ))}
@@ -157,17 +189,36 @@ export const ProjectPage: FC = () => {
           ))}
         </ul>
       )}
+      {preparingLocal && uploading.length === 0 && (
+        <p
+          role="status"
+          className="text-muted-foreground mt-3 text-center text-sm"
+        >
+          {t("features.studio.localVideo.preparing")}
+        </p>
+      )}
+      {languageTarget && (
+        <TranscriptLanguageSheet
+          replacing={!!languageTarget.replaceUuid}
+          onClose={() => setLanguageTarget(undefined)}
+          onSubmit={(language) => {
+            requestTranscript.mutate({
+              file_uuid: languageTarget.fileUuid,
+              language,
+              replace_transcript_uuid: languageTarget.replaceUuid,
+            });
+            setLanguageTarget(undefined);
+          }}
+        />
+      )}
       <GalleryPickerSheet
         open={pickerOpen}
         onOpenChange={setPickerOpen}
         usedFileUuids={used}
         busy={busy}
         uploads={pendingUploads}
-        onPick={(video) => {
-          setPickerOpen(false);
-          void addFromGallery(video);
-        }}
-        onUpload={(file) => void uploadToGallery(file)}
+        onPick={(video, language) => void addFromGallery(video, language)}
+        onUpload={(file, language) => void addLocalVideo(file, language)}
       />
     </StudioScreen>
   );

@@ -31,8 +31,19 @@ export function usePlayer(
       const video = videoRef.current;
       const segment = timeline.segments[index];
       const url = segment && urlFor(segment.clip.file_uuid);
-      if (!video || !segment || !url) return;
+      if (!video || !segment) return;
       indexRef.current = index;
+      video.onloadedmetadata = null;
+      if (!url) {
+        video.pause();
+        if (video.hasAttribute("src")) {
+          video.removeAttribute("src");
+          video.load();
+        }
+        settling.current = false;
+        setPlayingState(false);
+        return;
+      }
       const target = (segment.clip.source_in_ms + offsetMs) / 1000;
       const start = () => {
         video.currentTime = target;
@@ -40,10 +51,11 @@ export function usePlayer(
         if (play) void video.play().catch(() => setPlayingState(false));
       };
       settling.current = true;
-      if (video.dataset.file !== segment.clip.file_uuid) {
-        video.dataset.file = segment.clip.file_uuid;
-        video.addEventListener("loadedmetadata", start, { once: true });
+      if (video.getAttribute("src") !== url) {
+        video.onloadedmetadata = start;
         video.src = url;
+      } else if (video.readyState < HTMLMediaElement.HAVE_METADATA) {
+        video.onloadedmetadata = start;
       } else {
         start();
       }
@@ -51,11 +63,20 @@ export function usePlayer(
     [timeline, urlFor],
   );
 
-  // The first frame is shown as soon as the first clip's address is known.
-  const firstUrl = urlFor(timeline.segments[0]?.clip.file_uuid ?? "");
+  // Show the frame when a file preview loads or a local source is reattached.
   useEffect(() => {
-    if (firstUrl && !videoRef.current?.dataset.file) enter(0, 0, false);
-  }, [firstUrl, enter]);
+    const spot = locate(timeline, timeMs);
+    const segment = spot && timeline.segments[spot.index];
+    if (!spot || !segment || !videoRef.current) return;
+    const url = urlFor(segment.clip.file_uuid);
+    if (videoRef.current.getAttribute("src") !== (url ?? null)) {
+      enter(
+        spot.index,
+        spot.sourceMs - segment.clip.source_in_ms,
+        playingRef.current,
+      );
+    }
+  }, [enter, timeline, timeMs, urlFor]);
 
   // While playing, follow the video's own clock once per frame.
   useEffect(() => {
@@ -113,14 +134,17 @@ export function usePlayer(
       setPlayingState(false);
       return;
     }
-    if (timeMs >= timeline.durationMs - END_SLACK_MS) {
+    const restart = timeMs >= timeline.durationMs - END_SLACK_MS;
+    const segment = timeline.segments[restart ? 0 : indexRef.current];
+    if (!segment || !urlFor(segment.clip.file_uuid)) return;
+    if (restart) {
       setTimeMs(0);
       enter(0, 0, true);
     } else {
       void video.play().catch(() => setPlayingState(false));
     }
     setPlayingState(true);
-  }, [timeline, timeMs, enter]);
+  }, [timeline, timeMs, enter, urlFor]);
 
   const pause = useCallback(() => {
     videoRef.current?.pause();

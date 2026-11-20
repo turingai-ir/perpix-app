@@ -1,16 +1,20 @@
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import type { SchemaStudioTranscriptLanguage } from "@/shared/api";
 import { useAppTranslate } from "@/shared/hooks";
+import { sessionStore } from "@/features/auth/session";
 import { useFileManager } from "@/features/file-manager";
 import { projectErrorKey } from "../model/project-error";
 import {
   readClips,
   readVideoDuration,
-  VIDEO_TYPES,
   writeClips,
+  type Clip,
 } from "../model/clips";
-import { editProject, getProject } from "../services/projects";
+import { getProject, saveProjectEdit } from "../services/projects";
+import { extractLocalAudio } from "../services/local-audio";
+import { removeLocalVideo, saveLocalVideo } from "../services/local-video";
 import { projectKey, projectsKey } from "./use-projects";
 import { useRequestTranscript } from "./use-transcripts";
 
@@ -25,47 +29,55 @@ export interface GalleryVideo {
 }
 
 /**
- * Puts a video of the user's gallery into the project as its next clip and
- * asks for its subtitles. A video from the device is uploaded to the gallery
- * first and then added the same way, so the project only ever uses files that
- * live in the gallery.
+ * Adds a gallery video or a device video with an uploaded audio track.
  */
 export function useAddClip(projectUuid: string) {
   const { t } = useAppTranslate();
   const client = useQueryClient();
   const { requestUpload, pendingUploads } = useFileManager(
     `studio:${projectUuid}`,
-    { allowedFileTypes: VIDEO_TYPES },
+    { allowedFileTypes: ["audio/mpeg"] },
   );
   const transcript = useRequestTranscript();
   const [busy, setBusy] = useState(false);
+  const [preparingLocal, setPreparingLocal] = useState(false);
 
-  const addToProject = async (video: GalleryVideo, durationMs: number) => {
+  const addToProject = async (
+    clip: Clip,
+    language: SchemaStudioTranscriptLanguage,
+  ) => {
     const current = await getProject(projectUuid);
     const clips = readClips(current.document);
-    await editProject(projectUuid, {
-      document: writeClips(current.document, [
-        ...clips,
-        {
-          id: crypto.randomUUID(),
-          file_uuid: video.uuid,
-          name: video.name,
-          duration_ms: durationMs,
-          source_in_ms: 0,
-          source_out_ms: durationMs,
-        },
-      ]),
-      addFiles: [{ file_uuid: video.uuid, role: "SOURCE" }],
+    await saveProjectEdit(current, {
+      document: writeClips(current.document, [...clips, clip]),
+      addFiles: [{ file_uuid: clip.file_uuid, role: "SOURCE" }],
+    });
+    transcript.mutate({
+      file_uuid: clip.file_uuid,
+      ...(language !== "auto" && { language }),
     });
     await Promise.all([
       client.invalidateQueries({ queryKey: projectKey(projectUuid) }),
       client.invalidateQueries({ queryKey: projectsKey }),
     ]);
-    transcript.mutate(video.uuid);
   };
 
-  const run = async (task: () => Promise<void>) => {
+  const newClip = (
+    fileUuid: string,
+    name: string,
+    durationMs: number,
+  ): Clip => ({
+    id: crypto.randomUUID(),
+    file_uuid: fileUuid,
+    name,
+    duration_ms: durationMs,
+    source_in_ms: 0,
+    source_out_ms: durationMs,
+  });
+
+  const run = async (task: () => Promise<void>, local = false) => {
     setBusy(true);
+    setPreparingLocal(local);
     try {
       await task();
     } catch (error) {
@@ -79,6 +91,7 @@ export function useAddClip(projectUuid: string) {
             : "";
       if (message) toast.error(message);
     } finally {
+      setPreparingLocal(false);
       setBusy(false);
     }
   };
@@ -86,7 +99,10 @@ export function useAddClip(projectUuid: string) {
   const unreadable = () => new Error(t("features.studio.clips.unreadable"));
 
   /** A video already in the gallery. */
-  const addFromGallery = (video: GalleryVideo) =>
+  const addFromGallery = (
+    video: GalleryVideo,
+    language: SchemaStudioTranscriptLanguage,
+  ) =>
     run(async () => {
       const durationMs =
         video.durationMs ??
@@ -96,21 +112,65 @@ export function useAddClip(projectUuid: string) {
             })
           : null);
       if (durationMs === null) throw unreadable();
-      await addToProject(video, durationMs);
+      await addToProject(newClip(video.uuid, video.name, durationMs), language);
     });
 
-  /** A video from the device: into the gallery first, then into the project. */
-  const uploadToGallery = (file: File) =>
+  const addLocalVideo = (
+    file: File,
+    language: SchemaStudioTranscriptLanguage,
+  ) =>
     run(async () => {
+      const cycle = sessionStore.getCycle();
       const durationMs = await readVideoDuration(file).catch(() => {
         throw unreadable();
       });
-      const uuid = await requestUpload(file);
-      await addToProject(
-        { uuid, name: file.name.replace(/\.[^.]+$/, "") },
-        durationMs,
-      );
-    });
+      const encoded = await extractLocalAudio(file);
+      if (!encoded.ok)
+        throw new Error(t(`features.studio.localVideo.${encoded.reason}`));
+      if (cycle !== sessionStore.getCycle()) return;
 
-  return { addFromGallery, uploadToGallery, busy, pendingUploads };
+      const id = crypto.randomUUID();
+      await saveLocalVideo(projectUuid, id, file).catch((error: unknown) => {
+        throw new Error(t("features.studio.localVideo.storage"), {
+          cause: error,
+        });
+      });
+      const name = file.name.replace(/\.[^.]+$/, "");
+      let uuid: string | undefined;
+      try {
+        if (cycle !== sessionStore.getCycle()) return;
+        setPreparingLocal(false);
+        uuid = await requestUpload(
+          new File([encoded.audio], `${name}.mp3`, { type: "audio/mpeg" }),
+        );
+        if (cycle !== sessionStore.getCycle()) return;
+      } finally {
+        if (cycle !== sessionStore.getCycle() || !uuid) {
+          await removeLocalVideo(projectUuid, id).catch(() => {
+            toast.error(t("features.studio.localVideo.cleanup"));
+          });
+        }
+      }
+      await addToProject(
+        {
+          ...newClip(uuid, name, durationMs),
+          local_source: {
+            id,
+            fingerprint: encoded.fingerprint,
+            size: file.size,
+            content_type: file.type,
+            audio_start_ms: encoded.audioStartMs,
+          },
+        },
+        language,
+      );
+    }, true);
+
+  return {
+    addFromGallery,
+    addLocalVideo,
+    busy,
+    preparingLocal,
+    pendingUploads,
+  };
 }

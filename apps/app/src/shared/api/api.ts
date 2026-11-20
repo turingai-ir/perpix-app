@@ -536,7 +536,7 @@ export interface paths {
          * Request Transcript
          * @description Make the subtitles of a file; this is the only step that costs PerPix money, and it is free for the user.
          *
-         *     The user is never charged and needs no balance, but still needs the studio scope and access to the model. A file that already has a transcript being made or done gets that one back; it is never made twice. A new one counts toward a daily limit per user (`MAX_TRANSCRIPTS_PER_DAY`), because PerPix pays for each.
+         *     The user is never charged and needs no balance, but still needs the studio scope and access to the model. A request reuses the current transcript unless it explicitly names it for replacement. A running transcript is always reused. A new attempt counts toward a daily limit per user (`MAX_TRANSCRIPTS_PER_DAY`), because PerPix pays for each.
          *     Read it again (`GET /{uuid}`) until it is no longer PROCESSING.
          */
         readonly post: operations["studio_request_transcript"];
@@ -2293,6 +2293,13 @@ export interface components {
              * @description A video or recording the user owns, still alive.
              */
             readonly file_uuid: string;
+            /** @description Spoken language hint. An omitted or null value uses automatic detection. */
+            readonly language?: components["schemas"]["StudioTranscriptLanguage"] | null;
+            /**
+             * Replace Transcript Uuid
+             * @description Rebuild only when this UUID is the current completed transcript of the file.
+             */
+            readonly replace_transcript_uuid?: string | null;
         };
         /** SaveCaptionPresetRequest */
         readonly SaveCaptionPresetRequest: {
@@ -2358,6 +2365,11 @@ export interface components {
          * @enum {string}
          */
         readonly StudioProjectFileRole: "SOURCE" | "EXPORT" | "THUMBNAIL";
+        /**
+         * StudioTranscriptLanguage
+         * @enum {string}
+         */
+        readonly StudioTranscriptLanguage: "auto" | "en" | "fa";
         /**
          * StudioTranscriptStatus
          * @enum {string}
@@ -2853,6 +2865,7 @@ export type SchemaSaveCaptionPresetRequest = components['schemas']['SaveCaptionP
 export type SchemaSaveProjectRequest = components['schemas']['SaveProjectRequest'];
 export type SchemaStudioPlanSettings = components['schemas']['StudioPlanSettings'];
 export type SchemaStudioProjectFileRole = components['schemas']['StudioProjectFileRole'];
+export type SchemaStudioTranscriptLanguage = components['schemas']['StudioTranscriptLanguage'];
 export type SchemaStudioTranscriptStatus = components['schemas']['StudioTranscriptStatus'];
 export type SchemaSubscriptionPlanListResponse = components['schemas']['SubscriptionPlanListResponse'];
 export type SchemaSubscriptionPlanResponse = components['schemas']['SubscriptionPlanResponse'];
@@ -4286,6 +4299,15 @@ export interface operations {
                     readonly "application/json": components["schemas"]["TranscriptResponse"];
                 };
             };
+            /** @description Not Found */
+            readonly 404: {
+                headers: {
+                    readonly [name: string]: unknown;
+                };
+                content: {
+                    readonly "application/json": components["schemas"]["ApplicationErrorResponse"];
+                };
+            };
             /** @description Conflict */
             readonly 409: {
                 headers: {
@@ -5591,6 +5613,7 @@ export const paymentFinancialStatusValues: ReadonlyArray<FlattenedDeepRequired<c
 export const paymentFulfillmentStatusValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["PaymentFulfillmentStatus"]> = ["NOT_READY", "PENDING", "SUCCEEDED", "NEEDS_REVIEW"];
 export const registrationStepResponseNext_stepValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["RegistrationStepResponse"]["next_step"]> = ["registration"];
 export const studioProjectFileRoleValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["StudioProjectFileRole"]> = ["SOURCE", "EXPORT", "THUMBNAIL"];
+export const studioTranscriptLanguageValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["StudioTranscriptLanguage"]> = ["auto", "en", "fa"];
 export const studioTranscriptStatusValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["StudioTranscriptStatus"]> = ["PROCESSING", "COMPLETED", "FAILED"];
 export const supportedCurrencyValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["SupportedCurrency"]> = ["IRR"];
 export const transcriptExportFormatValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["TranscriptExportFormat"]> = ["srt", "vtt"];
@@ -5806,6 +5829,14 @@ export const StudioProjectFileRoleMap = {
 } as const;
 export type StudioProjectFileRoleKey = keyof typeof StudioProjectFileRoleMap;
 export type StudioProjectFileRoleValue = (typeof StudioProjectFileRoleMap)[StudioProjectFileRoleKey];
+
+export const StudioTranscriptLanguageMap = {
+  "auto": "auto",
+  "en": "en",
+  "fa": "fa",
+} as const;
+export type StudioTranscriptLanguageKey = keyof typeof StudioTranscriptLanguageMap;
+export type StudioTranscriptLanguageValue = (typeof StudioTranscriptLanguageMap)[StudioTranscriptLanguageKey];
 
 export const StudioTranscriptStatusMap = {
   "PROCESSING": "PROCESSING",

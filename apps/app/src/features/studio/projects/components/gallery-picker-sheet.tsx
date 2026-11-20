@@ -1,5 +1,6 @@
-import { useMemo, useRef, type ChangeEvent, type FC } from "react";
+import { useMemo, useRef, useState, type ChangeEvent, type FC } from "react";
 import { Check, Film, Loader2, Upload } from "lucide-react";
+import type { SchemaStudioTranscriptLanguage } from "@/shared/api";
 
 import { Button } from "@/shared/ui/button";
 import { Skeleton } from "@/shared/ui/skeleton";
@@ -15,6 +16,7 @@ import {
 import { BottomSheet } from "../../ui/bottom-sheet";
 import type { GalleryVideo } from "../hooks/use-add-clip";
 import { formatDuration, VIDEO_TYPES } from "../model/clips";
+import { SPEECH_LANGUAGES } from "../model/transcript";
 
 interface GalleryPickerSheetProps {
   open: boolean;
@@ -23,16 +25,18 @@ interface GalleryPickerSheetProps {
   usedFileUuids: ReadonlySet<string>;
   busy: boolean;
   uploads: ReadonlyMap<string, PendingFile>;
-  onPick: (video: GalleryVideo) => void;
-  onUpload: (file: File) => void;
+  onPick: (
+    video: GalleryVideo,
+    language: SchemaStudioTranscriptLanguage,
+  ) => void;
+  onUpload: (file: File, language: SchemaStudioTranscriptLanguage) => void;
 }
 
 const megabytes = (bytes: number) =>
   `${(bytes / 1_048_576).toLocaleString("fa-IR", { maximumFractionDigits: 1 })} مگابایت`;
 
 /**
- * Where a video comes from: the user's PerPix gallery. A video on the device
- * is uploaded to the gallery from here and then used like any other.
+ * Choose an existing gallery video or import a video that stays on this device.
  */
 export const GalleryPickerSheet: FC<GalleryPickerSheetProps> = ({
   open,
@@ -45,6 +49,8 @@ export const GalleryPickerSheet: FC<GalleryPickerSheetProps> = ({
 }) => {
   const { t } = useAppTranslate();
   const input = useRef<HTMLInputElement>(null);
+  const [language, setLanguage] =
+    useState<SchemaStudioTranscriptLanguage>("auto");
 
   const { getUserFilesState: files } = useInfiniteUserFiles({
     contentTypes: VIDEO_TYPES,
@@ -74,23 +80,52 @@ export const GalleryPickerSheet: FC<GalleryPickerSheetProps> = ({
     (item) => item.status === FileManagerUploadStatus.UPLOADING,
   );
 
+  const changeOpen = (next: boolean) => {
+    if (!next) setLanguage("auto");
+    onOpenChange(next);
+  };
+
   const onChoose = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     event.target.value = "";
     if (!file) return;
-    onOpenChange(false);
-    onUpload(file);
+    changeOpen(false);
+    onUpload(file, language);
   };
 
   return (
     <BottomSheet
       open={open}
-      onOpenChange={onOpenChange}
+      onOpenChange={changeOpen}
       size="lg"
       title={t("features.studio.gallery.title")}
       description={t("features.studio.gallery.description")}
     >
       <div className="flex min-h-[50dvh] flex-col gap-3">
+        <label
+          htmlFor="studio-import-language"
+          className="text-body flex items-center justify-between gap-3"
+        >
+          {t("features.studio.clips.language.title")}
+          <select
+            id="studio-import-language"
+            className="bg-background text-body rounded-control border px-3 py-2"
+            disabled={busy}
+            value={language}
+            onChange={(event) => {
+              const selected = SPEECH_LANGUAGES.find(
+                (value) => value === event.target.value,
+              );
+              if (selected) setLanguage(selected);
+            }}
+          >
+            {SPEECH_LANGUAGES.map((value) => (
+              <option key={value} value={value}>
+                {t(`features.studio.clips.language.${value}`)}
+              </option>
+            ))}
+          </select>
+        </label>
         <Button
           variant="outline"
           size="lg"
@@ -141,16 +176,20 @@ export const GalleryPickerSheet: FC<GalleryPickerSheetProps> = ({
                   <button
                     type="button"
                     disabled={used || busy}
-                    onClick={() =>
-                      onPick({
-                        uuid: video.uuid,
-                        name: video.file_name.replace(/\.[^.]+$/, ""),
-                        durationMs: seconds
-                          ? Math.round(seconds * 1000)
-                          : undefined,
-                        previewUrl,
-                      })
-                    }
+                    onClick={() => {
+                      changeOpen(false);
+                      onPick(
+                        {
+                          uuid: video.uuid,
+                          name: video.file_name.replace(/\.[^.]+$/, ""),
+                          durationMs: seconds
+                            ? Math.round(seconds * 1000)
+                            : undefined,
+                          previewUrl,
+                        },
+                        language,
+                      );
+                    }}
                     className={cn(
                       "bg-card focus-visible:ring-ring relative flex w-full cursor-pointer flex-col overflow-hidden rounded-xl border text-start transition-transform focus-visible:ring-2 focus-visible:outline-none active:scale-[0.98] disabled:cursor-default disabled:opacity-60 disabled:active:scale-100",
                     )}

@@ -1,4 +1,4 @@
-import { apiClient } from "@/shared/api";
+import { apiClient, type SchemaRequestTranscriptRequest } from "@/shared/api";
 import { transcriptListSchema, transcriptSchema } from "../model/transcript";
 
 /** One per file: its current transcript, else its newest failed attempt. */
@@ -13,10 +13,12 @@ export const listTranscripts = async (
   return transcriptListSchema.parse(data).items;
 };
 
-/** Asks for a transcript; for a file that already has one, this returns it. */
-export const requestTranscript = async (fileUuid: string) => {
+/** Reuses the current transcript unless its completed UUID was selected for a rebuild. */
+export const requestTranscript = async (
+  body: SchemaRequestTranscriptRequest,
+) => {
   const { data } = await apiClient.POST("/api/v1/studio/transcripts", {
-    body: { file_uuid: fileUuid },
+    body,
   });
   return transcriptSchema.parse(data);
 };

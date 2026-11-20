@@ -7,9 +7,22 @@ const VIDEO = readFileSync("src/features/studio/_tests/clip.webm");
 const FUTURE = () => new Date(Date.now() + 5 * 86_400_000).toISOString();
 const NOW = () => new Date().toISOString();
 
+export const seekTo = (page: Page, ms: number) =>
+  page
+    .getByRole("slider", { name: "جابه‌جایی در ویدیو" })
+    .evaluate((input: HTMLInputElement, value) => {
+      const setter = Object.getOwnPropertyDescriptor(
+        HTMLInputElement.prototype,
+        "value",
+      )?.set;
+      setter?.call(input, String(value));
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+    }, ms);
+
 export async function openEditor(
   page: Page,
   status: "COMPLETED" | "PROCESSING",
+  beforeOpen?: (page: Page) => Promise<void>,
 ) {
   await mockAuthenticatedSession(page);
   await page.route("**/api/v1/user/me", (route) =>
@@ -54,9 +67,23 @@ export async function openEditor(
   };
   const saves: Array<{ document: Record<string, unknown>; revision: number }> =
     [];
+  let failNextSave = false;
   await page.route("**/api/v1/studio/projects/p1", (route) => {
     if (route.request().method() === "PUT") {
+      if (failNextSave) {
+        failNextSave = false;
+        return route.fulfill({
+          status: 503,
+          json: { detail: "Service unavailable" },
+        });
+      }
       const body = route.request().postDataJSON() as (typeof saves)[number];
+      if (body.revision !== project.revision) {
+        return route.fulfill({
+          status: 409,
+          json: { status_code: 1903, detail: "Project revision conflict" },
+        });
+      }
       saves.push(body);
       project.document = body.document;
       project.revision += 1;
@@ -145,6 +172,13 @@ export async function openEditor(
   await page.route("**/api/v1/studio/caption-presets", (route) =>
     route.fulfill({ json: { system: [], mine: [], mine_limit: 0 } }),
   );
+  await beforeOpen?.(page);
   await page.goto("/studio/p1/edit");
-  return { saves };
+  return {
+    saves,
+    changeServerRevision: () => project.revision++,
+    failNextSave: () => {
+      failNextSave = true;
+    },
+  };
 }

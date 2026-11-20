@@ -1,5 +1,14 @@
 import { z } from "zod";
 
+const localSourceSchema = z.object({
+  id: z.uuid(),
+  fingerprint: z.string(),
+  size: z.number().int().positive(),
+  content_type: z.string(),
+  audio_start_ms: z.number().int().nonnegative(),
+});
+export type LocalVideoSource = z.infer<typeof localSourceSchema>;
+
 /** One video in the project: which file, which part of it, and its name for the user. */
 export const clipSchema = z.object({
   id: z.string(),
@@ -8,6 +17,8 @@ export const clipSchema = z.object({
   duration_ms: z.number().nonnegative(),
   source_in_ms: z.number().nonnegative(),
   source_out_ms: z.number().nonnegative(),
+  /** Local video for playback. In this case file_uuid refers to the uploaded audio. */
+  local_source: localSourceSchema.optional(),
 });
 export type Clip = z.infer<typeof clipSchema>;
 

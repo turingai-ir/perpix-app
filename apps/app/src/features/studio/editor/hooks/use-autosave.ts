@@ -3,47 +3,84 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useAppTranslate } from "@/shared/hooks";
 import { writeClips, type Clip } from "../../projects/model/clips";
-import { projectsKey } from "../../projects/hooks/use-projects";
+import { projectKey, projectsKey } from "../../projects/hooks/use-projects";
+import type { Project } from "../../projects/model/project";
 import { projectErrorKey } from "../../projects/model/project-error";
-import { editProject, getProject } from "../../projects/services/projects";
+import { saveProjectEdit } from "../../projects/services/projects";
+import type { CaptionStyle } from "../../styles/model/caption-style";
+import {
+  writeCaptionCorrections,
+  type CaptionCorrections,
+} from "../model/caption-corrections";
 
 const SAVE_DELAY_MS = 800;
 
-export type SaveState = "saved" | "pending" | "saving" | "failed";
+export type SaveState = "saved" | "pending" | "saving" | "failed" | "conflict";
+
+interface EditorDraft {
+  clips: Clip[];
+  corrections: CaptionCorrections;
+  style: CaptionStyle | null;
+}
+
+const isSameDraft = (a: EditorDraft, b: EditorDraft) =>
+  a.clips === b.clips && a.corrections === b.corrections && a.style === b.style;
 
 /**
- * Saves the clips shortly after the last edit. Edits made while a save is in
+ * Saves the draft shortly after the last edit. Edits made while a save is in
  * flight are saved right after it, so the server always ends with the latest
  * and never an older one. `flush` saves at once, for when the user leaves, and says whether
  * everything is saved.
  */
-export function useAutosave(projectUuid: string, clips: Clip[] | undefined) {
+export function useAutosave(
+  project: Project | undefined,
+  draft: EditorDraft | undefined,
+) {
   const client = useQueryClient();
   const { t } = useAppTranslate();
   const [state, setState] = useState<SaveState>("saved");
-  const latest = useRef(clips);
-  const savedSerial = useRef<string | null>(null);
+  const latest = useRef(draft);
+  const saved = useRef<{ project: Project; draft: EditorDraft } | null>(null);
   const running = useRef<Promise<boolean> | null>(null);
+  const conflicted = useRef(false);
 
   const save = useCallback((): Promise<boolean> => {
+    if (conflicted.current) return Promise.resolve(false);
     if (running.current) return running.current;
     const run = async () => {
+      let base = saved.current;
       while (
+        base &&
         latest.current &&
-        JSON.stringify(latest.current) !== savedSerial.current
+        !isSameDraft(latest.current, base.draft)
       ) {
         const sending = latest.current;
         setState("saving");
         try {
-          const current = await getProject(projectUuid);
-          await editProject(projectUuid, {
-            document: writeClips(current.document, sending),
-          });
-          savedSerial.current = JSON.stringify(sending);
+          let document = base.project.document;
+          if (base.draft.clips !== sending.clips) {
+            document = writeClips(document, sending.clips);
+          }
+          if (base.draft.corrections !== sending.corrections) {
+            document = writeCaptionCorrections(document, sending.corrections);
+          }
+          if (base.draft.style !== sending.style) {
+            document = { ...document, caption_style: sending.style };
+          }
+          const updated = await saveProjectEdit(base.project, { document });
+          base = { project: updated, draft: sending };
+          saved.current = base;
+          client.setQueryData<Project>(projectKey(updated.uuid), (cached) =>
+            cached && cached.revision > updated.revision ? cached : updated,
+          );
         } catch (error) {
-          setState("failed");
           const key = projectErrorKey(error);
-          if (key) toast.error(t(key));
+          conflicted.current =
+            key === "features.studio.projects.errors.conflict";
+          setState(conflicted.current ? "conflict" : "failed");
+          if (conflicted.current) {
+            toast.error(t("features.studio.editor.save.conflictDetail"));
+          } else if (key) toast.error(t(key));
           return false;
         }
       }
@@ -55,17 +92,16 @@ export function useAutosave(projectUuid: string, clips: Clip[] | undefined) {
       running.current = null;
     });
     return running.current;
-  }, [client, projectUuid, t]);
+  }, [client, t]);
 
   useEffect(() => {
-    latest.current = clips;
-    if (clips === undefined) return;
-    // The first clips seen are what is already saved.
-    if (savedSerial.current === null) {
-      savedSerial.current = JSON.stringify(clips);
+    latest.current = draft;
+    if (!project || !draft || conflicted.current) return;
+    if (saved.current === null) {
+      saved.current = { project, draft };
       return;
     }
-    if (JSON.stringify(clips) === savedSerial.current) {
+    if (isSameDraft(draft, saved.current.draft)) {
       // An undo back to what is saved leaves nothing to save.
       setState((previous) => (previous === "pending" ? "saved" : previous));
       return;
@@ -73,7 +109,7 @@ export function useAutosave(projectUuid: string, clips: Clip[] | undefined) {
     setState("pending");
     const timer = window.setTimeout(() => void save(), SAVE_DELAY_MS);
     return () => window.clearTimeout(timer);
-  }, [clips, save]);
+  }, [project, draft, save]);
 
   return { state, flush: save };
 }

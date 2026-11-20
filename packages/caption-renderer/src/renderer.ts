@@ -18,6 +18,7 @@ import {
   type Unit,
 } from "./animators";
 import { mixColors } from "./colors";
+import { captionDirection, visualWordOrder } from "./caption-bidi";
 import { makeDecoration, type DecorationInstance } from "./decorations";
 import { NORMAL_ROLE, roleOf } from "./roles";
 import type {
@@ -419,7 +420,8 @@ export class CaptionRenderer {
     const fontSize = base.font.size * scale;
     const lineHeight = fontSize * base.text.lineHeight;
     const padding = box.enabled ? box.padding * scale : 0;
-    const rtl = page.words.some((word) => isRtl(word.text));
+    const direction = captionDirection(page.words.map((word) => word.text));
+    const rtl = direction === "rtl";
     const stroke = base.stroke.width;
 
     const hasChars = template.animators.some((x) => x.select.scope === "char");
@@ -442,7 +444,7 @@ export class CaptionRenderer {
           // The page's own direction must not leak into the canvas.
           direction: wordRtl ? "rtl" : "ltr",
           // Letter spacing would break the joined letters of Arabic script.
-          letterSpacing: rtl ? 0 : base.text.letterSpacing * scale,
+          letterSpacing: wordRtl ? 0 : base.text.letterSpacing * scale,
           wrap: "none",
         };
       };
@@ -665,16 +667,14 @@ export class CaptionRenderer {
           : base.text.align === "left"
             ? 0
             : free;
-      // Right-to-left text starts at the right edge of the line.
-      let cursor = rtl ? blockWidth - shift : shift;
+      let cursor = rtl ? free - shift : shift;
       const restY = -blockHeight / 2 + index * lineHeight + lineHeight / 2;
-      for (const item of items) {
-        const left = rtl ? cursor - item.width : cursor;
-        item.restX = left - blockWidth / 2 + item.width / 2;
+      const order = visualWordOrder(items.map(({ word }) => word.text), direction);
+      for (const wordIndex of order) {
+        const item = items[wordIndex];
+        item.restX = cursor - blockWidth / 2 + item.width / 2;
         lineGroup.add(item.wrap);
-        cursor = rtl
-          ? cursor - item.width - space
-          : cursor + item.width + space;
+        cursor += item.width + space;
       }
       block.add(lineGroup);
       const lineWidth = widthOf(items);
