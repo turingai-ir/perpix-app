@@ -55,6 +55,20 @@
       "skillPath": "skills/explain-interface/SKILL.md",
       "computedHash": ""
     },
+    "glassmorphism": {
+      "source": "iart-ai/web-animation-skills",
+      "commit": "ed3a045192679b24d32090ee7a983871311ababd",
+      "sourceType": "github",
+      "skillPath": "skills/glassmorphism/SKILL.md",
+      "computedHash": "52c31c76c1ce3c52485ed43c3dc36796c833972a0f916215392c2b611209a2dc"
+    },
+    "gsap-web": {
+      "source": "iart-ai/web-animation-skills",
+      "commit": "ed3a045192679b24d32090ee7a983871311ababd",
+      "sourceType": "github",
+      "skillPath": "skills/gsap-web/SKILL.md",
+      "computedHash": "acd6638268c8bf2d9b0eb935472659dfbc0f072a5237d486e462235b32045177"
+    },
     "interface-review": {
       "source": "jakubkrehel/skills",
       "sourceType": "github",

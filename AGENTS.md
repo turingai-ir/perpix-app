@@ -34,8 +34,14 @@
 - Treat `src/shared/api/api.ts` as a large generated file. Never read it completely; search for the exact symbol, type or endpoint and inspect only the relevant section.
 - Do not edit `src/shared/api/api.ts` manually unless explicitly requested.
 - Never read `src/shared/i18n/locales/fa.json` completely. Search for the exact translation key and inspect only nearby entries.
-- Use `ui-ux-pro-max` only for new pages, complete redesigns or explicit design-system work.
-- Do not load `ui-ux-pro-max` for text changes, bug fixes or minor styling.
+## UI skills
+
+Choose the skills relevant to the component or review from `.agents/skills/`.
+
+- **Shared components and themes** — Use `better-ui` for surfaces and component states, `glassmorphism` for translucent surfaces, and `better-colors` for semantic tokens. In Storybook, inspect the same component in light and dark themes over its intended backdrops. Provide a solid surface when transparency is reduced or blur is unavailable.
+- **Interaction and motion** — Use `animate` for interaction design and `gsap-web` for coordinated timelines. Use the workspace GSAP imports and scope cleanup to the component with `useGSAP`. Storybook is the preview for shared components. Standalone CDN demos in the skill are examples. Respect reduced motion and keep controls usable throughout the transition.
+- **Performance review** — Use `review-animations` to evaluate transitions. Profile representative interactions on a mobile viewport, especially large blurred surfaces and scroll effects. Use `vercel-react-best-practices` for React rendering issues.
+- **Accessibility** — Use `better-accessibility` for keyboard operation, focus management, accessible names and state announcements. Use `better-colors` to measure contrast against the rendered backdrop. Exercise RTL and responsive states with `perpix-responsive-qa`.
 
 ## Styling
 
