@@ -12,7 +12,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/shared/ui/form";
-import { Muted } from "@/shared/ui/typography";
+import { Muted } from "@perpix/ui/components/typography";
 
 interface AuthFieldProps {
   name: string;

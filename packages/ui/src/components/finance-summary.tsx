@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 import type { LucideIcon } from "lucide-react";
 
-import { cn } from "@/shared/lib/utils";
+import { cn } from "../lib/utils";
 
 const TONE_ICON_CLASS = {
   positive: "",
@@ -17,10 +17,19 @@ type FinanceSummaryItem = {
   tone: "positive" | "neutral" | "negative";
 };
 
-export function FinanceSummary({ items }: { items: FinanceSummaryItem[] }) {
+export function FinanceSummary({
+  items,
+  className,
+}: {
+  items: readonly FinanceSummaryItem[];
+  className?: string;
+}) {
   return (
     <section
-      className="relative z-3 mt-3.5 grid gap-3 sm:-mt-7 sm:grid-cols-3 sm:px-6"
+      className={cn(
+        "relative z-3 mt-3.5 grid gap-3 sm:-mt-7 sm:grid-cols-3 sm:px-6",
+        className,
+      )}
       aria-label={items[0]?.label}
     >
       {items.map(({ label, value, unit, icon: Icon, tone }, index) => (
@@ -31,7 +40,7 @@ export function FinanceSummary({ items }: { items: FinanceSummaryItem[] }) {
         >
           <span
             className={cn(
-              "grid size-11 flex-none place-items-center rounded-xl bg-(--finance-accent-soft) text-(--finance-accent) [&_svg]:size-5",
+              "grid size-11 flex-none place-items-center rounded-xl bg-[var(--finance-accent-soft,color-mix(in_oklab,var(--primary)_16%,transparent))] text-[color:var(--finance-accent,var(--primary))] [&_svg]:size-5",
               TONE_ICON_CLASS[tone],
             )}
             aria-hidden="true"

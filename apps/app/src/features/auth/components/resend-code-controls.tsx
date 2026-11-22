@@ -10,7 +10,7 @@ import {
 } from "../hooks/use-auth-mutations";
 
 import { Button } from "@/shared/ui/button";
-import { Muted } from "@/shared/ui/typography";
+import { Muted } from "@perpix/ui/components/typography";
 import { useAppTranslate } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";
 

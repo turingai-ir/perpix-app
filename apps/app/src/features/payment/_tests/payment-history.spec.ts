@@ -94,9 +94,9 @@ for (const taxAmount of ["2010", "0"]) {
     await expect(
       table.getByText("در حال اعمال", { exact: true }),
     ).toBeVisible();
-    await expect(page.locator(".finance-summary")).toContainText(
-      "۹٬۰۰۷٬۱۹۹٬۲۵۴٬۷۴۰٬۹۹۳ تومان",
-    );
+    await expect(
+      page.getByRole("region", { name: "مجموع پرداخت موفق" }),
+    ).toContainText("۹٬۰۰۷٬۱۹۹٬۲۵۴٬۷۴۰٬۹۹۳ تومان");
     const beforeReconnect = walletRequests;
     const cells = table
       .getByRole("row")

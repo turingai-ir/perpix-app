@@ -1,7 +1,7 @@
 import { CircleAlert, CircleCheckBig, Hourglass } from "lucide-react";
 
 import { getPaymentViewStatus } from "@/features/payment";
-import { FinanceSummary } from "@/shared/components/finance/finance-summary";
+import { FinanceSummary } from "@perpix/ui/components/finance-summary";
 import type { SchemaPaymentHistoryItemResponse } from "@/shared/api";
 import { useAppTranslate } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";

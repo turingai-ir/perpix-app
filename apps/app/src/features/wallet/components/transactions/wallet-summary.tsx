@@ -1,6 +1,6 @@
 import { ArrowDownToLine, ArrowUpFromLine, RotateCcw } from "lucide-react";
 
-import { FinanceSummary } from "@/shared/components/finance/finance-summary";
+import { FinanceSummary } from "@perpix/ui/components/finance-summary";
 import {
   WalletTransactionTypeEnumMap,
   type SchemaWalletTransactionResponse,

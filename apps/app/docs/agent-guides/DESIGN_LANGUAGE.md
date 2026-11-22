@@ -7,7 +7,7 @@ alpha modifiers for soft fills (`bg-destructive/10`, `ring-foreground/10`). `src
 Audience: coding agents first, humans second. Every rule is meant to be checkable (lint, test or grep).
 
 Status tags: **[exists]** implemented in tokens/code · **[new]** defined here, component or lint still to be added.
-Tokens live in `src/app/styles/tokens.css` (values) and `theme.css` (Tailwind utilities). Do not invent pixel values.
+Tokens live in `packages/ui/src/styles/tokens.css` (values) and `theme.css` (Tailwind utilities). Do not invent pixel values.
 
 ## 0. How an agent must decide
 
@@ -29,7 +29,7 @@ Tokens live in `src/app/styles/tokens.css` (values) and `theme.css` (Tailwind ut
 Three layers, one direction of dependency: **palette (primitive) → tokens (semantic) → components**.
 Components use only semantic tokens. OKLCH only. No `#hex`, no Tailwind palette colours (`slate-400`, `violet-300`...), no `white`/`black`.
 
-### 2.1 Palette: `src/app/styles/palette.css`
+### 2.1 Palette: `packages/ui/src/styles/palette.css`
 Eight 12-step ramps: `neutral`, `violet`, `magenta`, `blue`, `cyan`, `green`, `amber`, `red`. Step meaning is identical in every ramp
 and in both themes (each ramp is redefined under `.dark`, so semantics are written once):
 
@@ -43,7 +43,7 @@ and in both themes (each ramp is redefined under `.dark`, so semantics are writt
 
 Change a colour by editing its **step**, never by adding a literal elsewhere. Components never reference `--violet-9` etc. directly.
 
-### 2.2 Semantic tokens: `src/app/styles/tokens.css` (mapped in `theme.css`)
+### 2.2 Semantic tokens: `packages/ui/src/styles/tokens.css` (mapped in `theme.css`)
 
 | Role | Tokens |
 |---|---|

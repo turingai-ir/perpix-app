@@ -1,6 +1,6 @@
 import type { FC, ReactNode } from "react";
 
-import { Muted } from "@/shared/ui/typography";
+import { Muted } from "@perpix/ui/components/typography";
 
 export const GalleryState: FC<{
   description: string;

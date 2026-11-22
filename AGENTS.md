@@ -39,10 +39,11 @@
 
 ## Styling
 
-- Use shadcn components from `@/shared/ui` (base-nova) first, then shared components in `@/shared/components`, then Tailwind utilities. No new `*.css` / `*.module.css` for regular UI.
-- Colors come from semantic tokens (`background`, `foreground`, `card`, `muted`, `primary`, `border`, `destructive`, brand/accent tokens in `src/app/styles/tokens.css`); no `#hex` in components. New colors are added to `tokens.css` and mapped in `theme.css` first.
+- Build reusable PerPix UI in `packages/ui/src/components` and import it from `@perpix/ui/components/*`. Use the shadcn workspace configuration with project-owned components. Pass data, localized labels, and callbacks through props. Keep API clients, stores, routing and business logic in the consuming app.
+- Accept `className` and merge it with defaults using `cn` from `@perpix/ui/lib/utils`. Use logical spacing and alignment for RTL.
+- Use semantic colors from `packages/ui/src/styles/tokens.css` and map new tokens in the adjacent `theme.css`. Each app imports `@perpix/ui/globals.css` and can override tokens locally.
 - Mobile-first (`sm:`/`md:`/`lg:`); coarse-pointer sizes are handled inside `shared/ui` (`pointer-coarse:`), do not hand-size touch targets.
-- Shared keyframes live in `src/app/styles/theme.css` (`--animate-*`). The only allowed CSS Modules are animated art scenes (list and rules: `docs/agent-guides/FRONTEND_ARCHITECTURE_FULL.md` §3).
+- Shared keyframes live in `packages/ui/src/styles/theme.css` (`--animate-*`). The only allowed CSS Modules are animated art scenes (list and rules: `docs/agent-guides/FRONTEND_ARCHITECTURE_FULL.md` §3).
 - Tests select by role, text or `data-*` hooks, never by styling classes.
 - Design language (Apple HIG as reference): `docs/agent-guides/DESIGN_LANGUAGE.md`. Read it before new pages, redesigns or any change that picks a font size, radius, shadow or colour. Pick a role, never a pixel value; do not add `text-[..px]`, `rounded-[..]`, `#hex` or `transition-all`.
 

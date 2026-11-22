@@ -1,9 +1,9 @@
 import * as React from "react";
 
-import { cn } from "@/shared/lib/utils";
+import { cn } from "../lib/utils";
 
 const Heading1 = React.forwardRef<
-  HTMLDivElement,
+  HTMLHeadingElement,
   React.HTMLAttributes<HTMLHeadingElement>
 >(({ className, children, ...props }, ref) => (
   <h1
@@ -21,7 +21,7 @@ const Heading1 = React.forwardRef<
 Heading1.displayName = "Heading1";
 
 const Heading2 = React.forwardRef<
-  HTMLDivElement,
+  HTMLHeadingElement,
   React.HTMLAttributes<HTMLHeadingElement>
 >(({ className, children, ...props }, ref) => (
   <h2
@@ -39,7 +39,7 @@ const Heading2 = React.forwardRef<
 Heading2.displayName = "Heading2";
 
 const Heading3 = React.forwardRef<
-  HTMLDivElement,
+  HTMLHeadingElement,
   React.HTMLAttributes<HTMLHeadingElement>
 >(({ className, children, ...props }, ref) => (
   <h3
@@ -57,7 +57,7 @@ const Heading3 = React.forwardRef<
 Heading3.displayName = "Heading3";
 
 const Heading4 = React.forwardRef<
-  HTMLDivElement,
+  HTMLHeadingElement,
   React.HTMLAttributes<HTMLHeadingElement>
 >(({ className, children, ...props }, ref) => (
   <h4
@@ -75,7 +75,7 @@ const Heading4 = React.forwardRef<
 Heading4.displayName = "Heading4";
 
 const Heading5 = React.forwardRef<
-  HTMLDivElement,
+  HTMLHeadingElement,
   React.HTMLAttributes<HTMLHeadingElement>
 >(({ className, children, ...props }, ref) => (
   <h5
@@ -93,7 +93,7 @@ const Heading5 = React.forwardRef<
 Heading5.displayName = "Heading5";
 
 const Paragraph = React.forwardRef<
-  HTMLDivElement,
+  HTMLParagraphElement,
   React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, children, ...props }, ref) => (
   <p
@@ -108,7 +108,7 @@ const Paragraph = React.forwardRef<
 Paragraph.displayName = "Paragraph";
 
 const Muted = React.forwardRef<
-  HTMLDivElement,
+  HTMLParagraphElement,
   React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, children, ...props }, ref) => (
   <p

@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/shared/ui/card";
-import { Heading2, Paragraph } from "@/shared/ui/typography";
+import { Heading2, Paragraph } from "@perpix/ui/components/typography";
 import { AuthReaction } from "./auth-reaction";
 
 interface AuthCardProps {
