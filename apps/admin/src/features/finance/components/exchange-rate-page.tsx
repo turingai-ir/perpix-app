@@ -26,7 +26,7 @@ import {
   TableRow,
   TableHead,
   TableCell,
-} from "@perpix/ui/components/table";
+} from "@/components/ui/table";
 import { useAppTranslate } from "@/hooks";
 import type { components } from "@/services/api/api";
 import { UsdmicroAmount } from "@/components/custom/usdmicro-amount";

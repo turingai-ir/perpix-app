@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 import type { LucideIcon } from "lucide-react";
 
-import { cn } from "../lib/utils";
+import { cn } from "@perpix/ui/lib/utils";
 
 const TONE_ICON_CLASS = {
   positive: "",

@@ -82,6 +82,14 @@
   /* Glass: the card colour at partial opacity; edge and highlight derive from the neutral ramp. */
   --glass-surface: color-mix(in oklch, var(--card) 90%, transparent);
   --glass-surface-strong: var(--card);
+  /* Glass (glass / glass-flat / glass-tinted utilities): the card colour at partial opacity over a
+     small fixed blur, a hairline edge, a lit top line and a soft shadow. Never animated. */
+  --liquid-fill: color-mix(in oklch, var(--card) 38%, transparent);
+  --liquid-fill-flat: color-mix(in oklch, var(--card) 90%, transparent);
+  --glass-blur: 20px;
+  --liquid-tint: var(--violet-brand);
+  --liquid-tint-foreground: var(--night-foreground);
+  --liquid-scrim: color-mix(in oklch, var(--night) 22%, transparent);
   --glass-border: color-mix(in oklch, var(--neutral-9) 36%, transparent);
   --glass-highlight: oklch(1 0 0 / 76%);
   --glass-shadow: 0 24px 64px -32px color-mix(in oklch, var(--shadow-ink) 30%, transparent);
@@ -122,9 +130,13 @@
   --highlight: inset 0 1px 0 color-mix(in oklch, var(--night-foreground) 12%, transparent);
   --highlight-lg: inset 0 1px 0 color-mix(in oklch, var(--night-foreground) 18%, transparent);
 
-  /* Motion durations: press/hover, enter, page/portal. Easing: --ease-out-quint (theme.css). */
+  /* Motion budget (mobile-first, CSS only): tap feedback, overlay enter/exit, sheet slide, page.
+     Exits are shorter than enters. Easing roles live in theme.css (ease-enter|exit|spring). */
+  --duration-tap: 100ms;
   --duration-press: 150ms;
+  --duration-exit: 160ms;
   --duration-enter: 260ms;
+  --duration-sheet: 320ms;
   --duration-page: 380ms;
 
   color-scheme: light;
@@ -150,9 +162,18 @@
   --glass-highlight: oklch(0.94 0.02 295 / 12%);
   --glass-shadow: 0 24px 64px -32px color-mix(in oklch, var(--shadow-ink) 72%, transparent);
   --glass-surface: color-mix(in oklch, var(--card) 88%, transparent);
+  --liquid-scrim: color-mix(in oklch, var(--night) 55%, transparent);
   --image-accent-soft: color-mix(in srgb, var(--image-accent) 16%, transparent);
   --video-accent-soft: color-mix(in srgb, var(--video-accent) 14%, transparent);
   --selection: var(--violet-7);
   --shadow-ink: oklch(0.04 0.01 285);
   color-scheme: dark;
+}
+
+/* Touch devices: a smaller blur radius halves backdrop sampling cost on mobile GPUs. */
+@media (pointer: coarse) {
+  :root,
+  .dark {
+    --glass-blur: 12px;
+  }
 }

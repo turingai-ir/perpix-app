@@ -16,7 +16,7 @@ const twMerge = extendTailwindMerge({
         "footnote",
         "caption",
       ],
-      radius: ["control", "card", "overlay"],
+      radius: ["control", "card", "overlay", "panel"],
       shadow: ["raised", "overlay", "modal"],
       "inset-shadow": ["highlight-sm", "highlight", "highlight-lg"],
       spacing: ["inset-sm", "inset", "inset-lg", "group", "block", "section"],

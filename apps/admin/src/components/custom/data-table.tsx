@@ -6,7 +6,7 @@ import {
   TableRow,
   TableHead,
   TableCell,
-} from "@perpix/ui/components/table";
+} from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import {

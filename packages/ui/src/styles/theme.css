@@ -117,6 +117,8 @@
   --radius-control: var(--radius-lg);
   --radius-card: var(--radius-xl);
   --radius-overlay: var(--radius-2xl);
+  /* Glass panels (dialog, sheet): one step rounder than cards; moderate for B2C and B2B alike. */
+  --radius-panel: var(--radius-2xl);
 
   --shadow-raised: var(--elevation-raised);
   --shadow-overlay: var(--elevation-overlay);
@@ -137,11 +139,176 @@
 /* Glass surface tokens and accessibility variants shared by page layouts. */
 @custom-variant reduced-transparency (@media (prefers-reduced-transparency: reduce));
 
+/*
+ * Liquid Glass. Use ONLY on floating layers (menu, popover, dialog, sheet, toolbar over content);
+ * cards and lists stay solid. glass = blurred backdrop; glass-flat = same look without backdrop
+ * filter (over playing video or a canvas being dragged). Both fall back to a solid surface for
+ * reduced transparency, increased contrast and forced colours. A `data-canvas-busy` ancestor turns
+ * every glass layer flat while the studio plays, scrubs or drags.
+ */
+@utility glass-flat {
+  background-color: var(--liquid-fill-flat);
+  border: 1px solid var(--color-glass-edge);
+  box-shadow: var(--highlight), var(--elevation-raised);
+  color: var(--foreground);
+
+  @media (prefers-reduced-transparency: reduce) {
+    background-color: var(--card);
+  }
+  @media (prefers-contrast: more) {
+    background-color: var(--card);
+    border-color: var(--foreground);
+  }
+  @media (forced-colors: active) {
+    background: Canvas;
+    color: CanvasText;
+    border-color: CanvasText;
+    box-shadow: none;
+  }
+}
+@utility glass {
+  @apply glass-flat;
+  @supports (backdrop-filter: blur(1px)) {
+    background-color: var(--liquid-fill);
+    backdrop-filter: blur(var(--glass-blur));
+  }
+  @media (prefers-reduced-transparency: reduce), (prefers-contrast: more), (forced-colors: active) {
+    background-color: var(--card);
+    backdrop-filter: none;
+  }
+  [data-canvas-busy] & {
+    background-color: var(--liquid-fill-flat);
+    backdrop-filter: none;
+  }
+}
+/* Tinted glass for the primary action; glass-tint-{colour} swaps the tint (e.g. destructive). */
+@utility glass-tinted {
+  @apply glass;
+  background-color: var(--glass-tint, var(--liquid-tint));
+  border-color: transparent;
+  color: var(--liquid-tint-foreground);
+  @supports (backdrop-filter: blur(1px)) {
+    background-color: var(--glass-tint, var(--liquid-tint));
+  }
+  @media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+    background-color: var(--glass-tint, var(--liquid-tint));
+  }
+}
+@utility glass-tint-* {
+  --glass-tint: --value(--color-*);
+}
+/* Dimming layer behind modal glass (dialog, sheet). */
+@utility glass-scrim {
+  background-color: var(--liquid-scrim);
+}
+
+/*
+ * Overlay motion for Base UI popups (CSS transitions on data-starting-style / data-ending-style; no JS).
+ * motion-fade: backdrops. motion-pop: menu, popover, tooltip, dialog (scales from the anchor via
+ * Base UI's --transform-origin). motion-sheet: slides from its data-side with the spring curve.
+ * Exits are shorter and accelerate. Reduced motion keeps a short fade so state change stays visible.
+ */
+@utility motion-fade {
+  transition: opacity var(--duration-enter) var(--ease-enter);
+  &[data-starting-style],
+  &[data-ending-style] {
+    opacity: 0;
+  }
+  &[data-ending-style] {
+    transition-duration: var(--duration-exit);
+    transition-timing-function: var(--ease-exit);
+  }
+}
+@utility motion-pop {
+  transform-origin: var(--transform-origin, center);
+  transition:
+    opacity var(--duration-enter) var(--ease-enter),
+    transform var(--duration-enter) var(--ease-enter);
+  &[data-starting-style],
+  &[data-ending-style] {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  &[data-ending-style] {
+    transition-duration: var(--duration-exit);
+    transition-timing-function: var(--ease-exit);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    transition-property: opacity;
+    &[data-starting-style],
+    &[data-ending-style] {
+      transform: none;
+    }
+  }
+}
+@utility motion-sheet {
+  --sheet-from: translateY(100%);
+  transition: transform var(--duration-sheet) var(--ease-spring);
+  &[data-side="top"] {
+    --sheet-from: translateY(-100%);
+  }
+  &[data-side="inline-end"] {
+    --sheet-from: translateX(100%);
+  }
+  &[data-side="inline-start"] {
+    --sheet-from: translateX(-100%);
+  }
+  &:dir(rtl)[data-side="inline-end"] {
+    --sheet-from: translateX(-100%);
+  }
+  &:dir(rtl)[data-side="inline-start"] {
+    --sheet-from: translateX(100%);
+  }
+  &[data-starting-style],
+  &[data-ending-style] {
+    transform: var(--sheet-from);
+  }
+  &[data-ending-style] {
+    transition-duration: var(--duration-exit);
+    transition-timing-function: var(--ease-exit);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    transition: opacity var(--duration-exit) linear;
+    &[data-starting-style],
+    &[data-ending-style] {
+      transform: none;
+      opacity: 0;
+    }
+  }
+}
+
+/* Focus ring: an outline (not a box-shadow) so it survives forced-colours mode. */
+@utility focus-ring {
+  &:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+}
+
+/* Tap feedback for buttons and tappable rows: a short press-in, no bounce; off for reduced motion. */
+@utility pressable {
+  transition: transform var(--duration-tap) var(--ease-enter);
+  &:active {
+    transform: scale(0.97);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+    &:active {
+      transform: none;
+    }
+  }
+}
+
 @theme inline {
   --color-glass: color-mix(in srgb, var(--card) 76%, transparent);
   --color-glass-strong: color-mix(in srgb, var(--card) 88%, transparent);
   --color-glass-edge: color-mix(in srgb, var(--foreground) 13%, transparent);
   --ease-out-quint: cubic-bezier(0.23, 1, 0.32, 1);
+  /* Easing roles: enter decelerates, exit accelerates, spring settles with a ~3% overshoot
+     (sheets, drawers). linear() is ignored by old engines, which keep the cubic fallback. */
+  --ease-enter: var(--ease-out-quint);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  --ease-spring: var(--spring-curve, var(--ease-out-quint));
   --animate-card-arrival: card-arrival 260ms var(--ease-out-quint) both;
 
   @keyframes card-arrival {
@@ -259,5 +426,14 @@
     50% {
       transform: translateY(-10px);
     }
+  }
+}
+
+@supports (transition-timing-function: linear(0, 1)) {
+  :root {
+    --spring-curve: linear(
+      0, 0.04 1.6%, 0.17 3.8%, 0.39 7%, 0.66 11.2%, 0.86 15.6%, 0.97 20.4%, 1.02 25.6%,
+      1.03 30.8%, 1.02 38%, 1.005 50%, 1
+    );
   }
 }

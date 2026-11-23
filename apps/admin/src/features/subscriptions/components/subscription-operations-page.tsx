@@ -31,7 +31,7 @@ import {
   TableRow,
   TableHead,
   TableCell,
-} from "@perpix/ui/components/table";
+} from "@/components/ui/table";
 import { useAppTranslate } from "@/hooks";
 import type { AdminReportBucket, AdminSort } from "../model/types";
 import { UsdmicroAmount } from "@/components/custom/usdmicro-amount";

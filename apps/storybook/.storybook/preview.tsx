@@ -19,15 +19,18 @@ const preview: Preview = {
   initialGlobals: { theme: "light", direction: "rtl" },
   parameters: { layout: "fullscreen" },
   decorators: [
-    (Story, { globals }) => (
-      <main
-        lang="fa"
-        dir={globals.direction}
-        className={globals.theme + " story-preview"}
-      >
-        <Story />
-      </main>
-    ),
+    (Story, { globals }) => {
+      /* Theme and direction live on <html> (as in the apps) so portalled popups inherit them. */
+      const root = document.documentElement;
+      root.classList.toggle("dark", globals.theme === "dark");
+      root.dir = globals.direction;
+      root.lang = "fa";
+      return (
+        <main className="story-preview">
+          <Story />
+        </main>
+      );
+    },
   ],
 };
 

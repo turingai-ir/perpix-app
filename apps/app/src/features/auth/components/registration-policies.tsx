@@ -1,6 +1,6 @@
 import type { FC } from "react";
 
-import { Muted } from "@perpix/ui/components/typography";
+import { Muted } from "@/shared/ui/typography";
 import { useAppTranslate } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";
 

@@ -8,8 +8,7 @@ for (const app of ["app", "admin"]) {
       new URL(`../../../apps/${app}/package.json`, import.meta.url),
     );
     for (const entry of [
-      "components/typography",
-      "components/finance-summary",
+      "components/glass-surface",
       "globals.css",
     ]) {
       assert.ok(

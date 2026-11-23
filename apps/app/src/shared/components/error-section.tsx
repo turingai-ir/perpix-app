@@ -1,6 +1,6 @@
 import type { FC, PropsWithChildren } from "react";
 
-import { Muted } from "@perpix/ui/components/typography";
+import { Muted } from "@/shared/ui/typography";
 import { Button } from "@/shared/ui/button";
 import { useAppTranslate } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";

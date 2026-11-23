@@ -6,7 +6,7 @@ import { getLoginPath } from "../model/auth-navigation";
 import { retryBootstrap } from "../services/session-manager";
 
 import { Button } from "@/shared/ui/button";
-import { Heading2, Paragraph } from "@perpix/ui/components/typography";
+import { Heading2, Paragraph } from "@/shared/ui/typography";
 import { useAppTranslate } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";
 
