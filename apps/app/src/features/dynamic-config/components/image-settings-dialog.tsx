@@ -78,7 +78,7 @@ export function ImageSettingsDialog({
         type="button"
         variant="outline"
         disabled={disabled}
-        className="bg-muted/35 aria-expanded:border-primary min-h-11 gap-2 rounded-xl aria-expanded:bg-[color-mix(in_srgb,var(--primary)_10%,var(--card))]"
+        className="min-h-11 gap-2 rounded-xl bg-muted/35 aria-expanded:border-primary aria-expanded:bg-[color-mix(in_srgb,var(--primary)_10%,var(--card))]"
         aria-expanded={open}
         onClick={() => setOpen(true)}
       >
@@ -87,7 +87,7 @@ export function ImageSettingsDialog({
         {settings.changed.length > 0 && (
           <Badge
             variant="outline"
-            className="border-primary/28 text-foreground h-auto rounded-md bg-[color-mix(in_srgb,var(--primary)_18%,var(--card))] px-1.5 py-0.5"
+            className="h-auto rounded-md border-primary/28 bg-[color-mix(in_srgb,var(--primary)_18%,var(--card))] px-1.5 py-0.5 text-foreground"
             aria-label={t(
               "pages.generation.image.studio.settings.changedCount",
               { count: settings.changed.length },
@@ -99,7 +99,7 @@ export function ImageSettingsDialog({
       </Button>
       <Content
         className={cn(
-          "bg-popover/94 flex max-h-[min(820px,calc(100dvh-48px))] w-[calc(100vw-48px)] max-w-140 flex-col gap-0 overflow-hidden rounded-3xl border-[color-mix(in_srgb,var(--foreground)_14%,var(--border))] bg-[radial-gradient(circle_at_85%_-10%,color-mix(in_srgb,var(--primary)_13%,transparent),transparent_38%)] p-0 shadow-[inset_0_1px_color-mix(in_srgb,var(--foreground)_10%,transparent),0_28px_100px_color-mix(in_oklch,var(--shadow-ink)_52%,transparent)] backdrop-blur-xl backdrop-saturate-[145%] motion-reduce:animate-none motion-reduce:transition-none",
+          "flex max-h-[min(820px,calc(100dvh-48px))] w-[calc(100vw-48px)] max-w-140 flex-col gap-0 overflow-hidden rounded-3xl border-[color-mix(in_srgb,var(--foreground)_14%,var(--border))] bg-popover/94 bg-[radial-gradient(circle_at_85%_-10%,color-mix(in_srgb,var(--primary)_13%,transparent),transparent_38%)] p-0 shadow-[inset_0_1px_color-mix(in_srgb,var(--foreground)_10%,transparent),0_28px_100px_color-mix(in_oklch,var(--shadow-ink)_52%,transparent)] backdrop-blur-xl backdrop-saturate-[145%] motion-reduce:animate-none motion-reduce:transition-none",
           "data-[slot=drawer-content]:max-h-[90dvh] data-[slot=drawer-content]:w-full data-[slot=drawer-content]:max-w-none data-[slot=drawer-content]:rounded-t-3xl data-[slot=drawer-content]:rounded-b-none",
           "contrast-more:border-foreground",
         )}
@@ -115,12 +115,12 @@ export function ImageSettingsDialog({
       >
         <header
           className={cn(
-            "from-foreground/4 flex-none border-b bg-linear-to-b to-transparent px-5 py-4 md:px-6 md:pt-6 md:pb-5",
+            "flex-none border-b bg-linear-to-b from-foreground/4 to-transparent px-5 py-4 md:px-6 md:pt-6 md:pb-5",
             SETTINGS_BORDER_CLASS,
           )}
         >
           <div className="flex items-center gap-3">
-            <span className="border-primary/28 bg-primary/12 text-primary grid size-11 flex-none place-items-center rounded-lg border shadow-[inset_0_1px_color-mix(in_srgb,var(--foreground)_10%,transparent),0_8px_24px_color-mix(in_srgb,var(--primary)_12%,transparent)] [&_svg]:size-5">
+            <span className="grid size-11 flex-none place-items-center rounded-lg border border-primary/28 bg-primary/12 text-primary shadow-[inset_0_1px_color-mix(in_srgb,var(--foreground)_10%,transparent),0_8px_24px_color-mix(in_srgb,var(--primary)_12%,transparent)] [&_svg]:size-5">
               <SlidersHorizontal aria-hidden="true" />
             </span>
             <div className="min-w-0 flex-1">
@@ -128,7 +128,7 @@ export function ImageSettingsDialog({
                 {title}
               </Title>
               {modelName && (
-                <p className="text-muted-foreground text-start text-xs leading-loose wrap-anywhere">
+                <p className="text-start text-xs leading-loose wrap-anywhere text-muted-foreground">
                   <bdi dir="ltr">{modelName}</bdi>
                 </p>
               )}
@@ -143,7 +143,7 @@ export function ImageSettingsDialog({
               <X aria-hidden="true" />
             </Button>
           </div>
-          <Description className="text-muted-foreground text-subhead mt-4 leading-loose">
+          <Description className="mt-4 text-subhead leading-loose text-muted-foreground">
             {t("pages.generation.image.studio.settingsHelp")}
           </Description>
         </header>
@@ -156,8 +156,8 @@ export function ImageSettingsDialog({
             onProfessionalOpenChange={setProfessionalOpen}
           />
         </div>
-        <footer className="contrast-more:border-foreground shadow-overlay flex-none border-t border-[color-mix(in_srgb,var(--foreground)_14%,var(--border))] bg-[color-mix(in_srgb,var(--muted)_42%,var(--popover))] px-5 pt-3 pb-[max(16px,env(safe-area-inset-bottom))] md:px-6 md:pt-4 md:pb-5">
-          <p className="text-muted-foreground mb-3 text-xs leading-relaxed">
+        <footer className="flex-none border-t border-[color-mix(in_srgb,var(--foreground)_14%,var(--border))] bg-[color-mix(in_srgb,var(--muted)_42%,var(--popover))] px-5 pt-3 pb-[max(16px,env(safe-area-inset-bottom))] shadow-overlay contrast-more:border-foreground md:px-6 md:pt-4 md:pb-5">
+          <p className="mb-3 text-xs leading-relaxed text-muted-foreground">
             {t("pages.generation.image.studio.settings.liveHint")}
           </p>
           <div className="flex items-center justify-between gap-3 [&_button]:min-h-11 [&_button]:rounded-xl">

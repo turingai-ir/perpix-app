@@ -42,7 +42,7 @@ export function FilePreviewDialog({
       <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Eye className="text-primary size-5" />
+            <Eye className="size-5 text-primary" />
             {t("features.files.previewTitle", {
               defaultValue: "پیش‌نمایش فایل",
             })}
@@ -54,23 +54,23 @@ export function FilePreviewDialog({
 
         {isLoading ? (
           <div className="space-y-4 py-8">
-            <div className="bg-muted h-64 w-full animate-pulse rounded-lg" />
-            <div className="bg-muted h-8 w-1/3 animate-pulse rounded-lg" />
+            <div className="h-64 w-full animate-pulse rounded-lg bg-muted" />
+            <div className="h-8 w-1/3 animate-pulse rounded-lg bg-muted" />
           </div>
         ) : error ? (
-          <div className="border-destructive/20 bg-destructive/10 text-destructive rounded-lg border p-4 text-sm">
+          <div className="rounded-lg border border-destructive/20 bg-destructive/10 p-4 text-sm text-destructive">
             {error instanceof Error
               ? error.message
               : "خطا در دریافت لینک پیش‌نمایش فایل"}
           </div>
         ) : !presignedUrls ? (
-          <div className="text-muted-foreground py-8 text-center text-sm">
+          <div className="py-8 text-center text-sm text-muted-foreground">
             لینکی برای پیش‌نمایش فایل دریافت نشد.
           </div>
         ) : (
           <div className="space-y-4 py-2">
             {/* Media Content */}
-            <div className="bg-muted/30 flex min-h-[250px] items-center justify-center rounded-xl border p-4">
+            <div className="flex min-h-[250px] items-center justify-center rounded-xl border bg-muted/30 p-4">
               {isImage ? (
                 <img
                   src={presignedUrls.preview_url}
@@ -101,8 +101,8 @@ export function FilePreviewDialog({
                 />
               ) : (
                 <div className="space-y-3 py-6 text-center">
-                  <File className="text-muted-foreground mx-auto size-14" />
-                  <p className="text-muted-foreground text-sm">
+                  <File className="mx-auto size-14 text-muted-foreground" />
+                  <p className="text-sm text-muted-foreground">
                     پیش‌نمایش مستقیم برای فرمت ({activeContentType || "عمومی"})
                     در مرورگر امکان‌پذیر نیست.
                   </p>
@@ -111,12 +111,12 @@ export function FilePreviewDialog({
             </div>
 
             {/* Actions & Expiry Info */}
-            <div className="bg-card flex flex-col gap-3 rounded-lg border p-3 sm:flex-row sm:items-center sm:justify-between">
-              <div className="text-muted-foreground flex items-center gap-2 text-xs">
+            <div className="flex flex-col gap-3 rounded-lg border bg-card p-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
                 <Clock className="size-3.5" />
                 <span>
                   اعتبار لینک تا:{" "}
-                  <strong className="text-foreground font-mono" dir="ltr">
+                  <strong className="font-mono text-foreground" dir="ltr">
                     {new Date(presignedUrls.expire_at).toLocaleTimeString(
                       "fa-IR",
                     )}

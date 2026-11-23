@@ -27,7 +27,7 @@ const AppLayoutSidebarContent: FC<AppLayoutSidebarContentProps> = ({
       >
         <AppLayoutSidebarNavigation />
         <div
-          className="via-primary/25 mx-2 -my-1 h-px bg-linear-to-r from-transparent to-transparent"
+          className="mx-2 -my-1 h-px bg-linear-to-r from-transparent via-primary/25 to-transparent"
           aria-hidden="true"
         />
         <AppLayoutSidebarWallet

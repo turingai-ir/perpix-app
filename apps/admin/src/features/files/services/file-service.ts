@@ -14,7 +14,11 @@ import type {
 export class FileActionError extends Error {
   constructor(
     readonly kind:
-      "forbidden" | "not_found" | "validation" | "network" | "server",
+      | "forbidden"
+      | "not_found"
+      | "validation"
+      | "network"
+      | "server",
     message?: string,
   ) {
     super(message || kind);
@@ -35,10 +39,7 @@ function handleFetchError(error: unknown): never {
       throw new FileActionError("not_found", "فایل مورد نظر یافت نشد.");
     }
     if (status === 422) {
-      throw new FileActionError(
-        "validation",
-        "اطلاعات ارسالی فایل معتبر نیست.",
-      );
+      throw new FileActionError("validation", "اطلاعات ارسالی فایل معتبر نیست.");
     }
   }
   if (error instanceof FileActionError) {

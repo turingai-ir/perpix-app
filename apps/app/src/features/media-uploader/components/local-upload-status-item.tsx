@@ -26,15 +26,15 @@ export const LocalUploadStatusItem: FC<{
       {isUploading ? (
         <LoaderCircle
           aria-hidden="true"
-          className="text-muted-foreground h-4 w-4 shrink-0 motion-safe:animate-spin"
+          className="h-4 w-4 shrink-0 text-muted-foreground motion-safe:animate-spin"
         />
       ) : isError ? (
         <AlertCircle
           aria-hidden="true"
-          className="text-destructive h-4 w-4 shrink-0"
+          className="h-4 w-4 shrink-0 text-destructive"
         />
       ) : (
-        <Check aria-hidden="true" className="text-primary h-4 w-4 shrink-0" />
+        <Check aria-hidden="true" className="h-4 w-4 shrink-0 text-primary" />
       )}
       <span
         className="min-w-0 flex-1 truncate text-xs"
@@ -47,8 +47,8 @@ export const LocalUploadStatusItem: FC<{
         role="status"
         aria-live="polite"
         className={cn(
-          "text-muted-foreground text-xs",
-          isError && "text-destructive order-last basis-full wrap-break-word",
+          "text-xs text-muted-foreground",
+          isError && "order-last basis-full wrap-break-word text-destructive",
         )}
       >
         {isUploading
@@ -62,7 +62,7 @@ export const LocalUploadStatusItem: FC<{
       item.errorKey !== "features.fileManager.errors.unknownUpload" ? (
         <button
           type="button"
-          className="focus-visible:ring-ring flex min-h-11 shrink-0 items-center rounded-md px-2 text-xs underline underline-offset-2 outline-none focus-visible:ring-2"
+          className="flex min-h-11 shrink-0 items-center rounded-md px-2 text-xs underline underline-offset-2 outline-none focus-visible:ring-2 focus-visible:ring-ring"
           onClick={() => onRetry(item.file)}
         >
           {t("features.fileManager.facts.retry")}

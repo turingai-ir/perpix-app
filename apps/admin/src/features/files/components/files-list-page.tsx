@@ -178,7 +178,7 @@ export function FilesListPage() {
     if (contentType?.includes("pdf") || contentType?.startsWith("text/")) {
       return <FileText className="size-4 text-blue-500" />;
     }
-    return <File className="text-muted-foreground size-4" />;
+    return <File className="size-4 text-muted-foreground" />;
   };
 
   const columns: DataTableColumn<FilesRowItem>[] = useMemo(
@@ -190,7 +190,7 @@ export function FilesListPage() {
             type="checkbox"
             checked={isAllCurrentPageSelected}
             onChange={toggleSelectAll}
-            className="text-primary focus:ring-primary size-4 rounded border-gray-300"
+            className="size-4 rounded border-gray-300 text-primary focus:ring-primary"
             aria-label="انتخاب همه فایل‌های این صفحه"
           />
         ),
@@ -199,7 +199,7 @@ export function FilesListPage() {
             type="checkbox"
             checked={selectedFileUuids.includes(item.uuid)}
             onChange={() => toggleSelectOne(item.uuid)}
-            className="text-primary focus:ring-primary size-4 rounded border-gray-300"
+            className="size-4 rounded border-gray-300 text-primary focus:ring-primary"
             aria-label={`انتخاب فایل ${item.file_name}`}
           />
         ),
@@ -215,12 +215,12 @@ export function FilesListPage() {
             <div className="max-w-xs space-y-0.5 truncate">
               <Link
                 to={`/files/${item.uuid}`}
-                className="text-foreground hover:text-primary block truncate text-xs font-semibold"
+                className="block truncate text-xs font-semibold text-foreground hover:text-primary"
                 title={item.file_name}
               >
                 {item.file_name}
               </Link>
-              <code className="text-muted-foreground block font-mono text-[11px]">
+              <code className="block font-mono text-[11px] text-muted-foreground">
                 {item.content_type}
               </code>
             </div>
@@ -255,7 +255,7 @@ export function FilesListPage() {
           ) : (
             <Badge
               variant="secondary"
-              className="text-muted-foreground gap-1 text-[10px]"
+              className="gap-1 text-[10px] text-muted-foreground"
             >
               <Lock className="size-2.5" />
               خصوصی
@@ -270,14 +270,14 @@ export function FilesListPage() {
         cell: (item) =>
           item.expire_at ? (
             <span
-              className="text-muted-foreground flex items-center gap-1 text-[11px]"
+              className="flex items-center gap-1 text-[11px] text-muted-foreground"
               dir="ltr"
             >
               <Clock className="size-3" />
               {new Date(item.expire_at).toLocaleDateString("fa-IR")}
             </span>
           ) : (
-            <span className="text-muted-foreground text-xs">دائمی</span>
+            <span className="text-xs text-muted-foreground">دائمی</span>
           ),
       },
       {
@@ -288,7 +288,7 @@ export function FilesListPage() {
         cell: (item) => (
           <Link
             to={`/users/${item.user_uuid}`}
-            className="text-muted-foreground hover:text-foreground font-mono text-xs"
+            className="font-mono text-xs text-muted-foreground hover:text-foreground"
           >
             {item.user_uuid.slice(0, 8)}...
           </Link>
@@ -300,7 +300,7 @@ export function FilesListPage() {
           defaultValue: "تاریخ آپلود",
         }),
         cell: (item) => (
-          <span className="text-muted-foreground text-xs" dir="ltr">
+          <span className="text-xs text-muted-foreground" dir="ltr">
             {new Date(item.created_at).toLocaleString("fa-IR")}
           </span>
         ),
@@ -331,7 +331,7 @@ export function FilesListPage() {
             <Button
               variant="ghost"
               size="sm"
-              className="text-destructive hover:bg-destructive/10 h-8 gap-1 text-xs"
+              className="h-8 gap-1 text-xs text-destructive hover:bg-destructive/10"
               onClick={() => handleDeleteClick(item)}
             >
               <Trash2 className="size-3.5" />
@@ -360,7 +360,7 @@ export function FilesListPage() {
     <div className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-8 sm:py-8">
       {/* Header */}
       <div>
-        <div className="text-muted-foreground mb-1.5 flex items-center gap-2 text-xs">
+        <div className="mb-1.5 flex items-center gap-2 text-xs text-muted-foreground">
           <File className="size-4" />
           <span>{t("overview.admin", { defaultValue: "پنل مدیریت" })}</span>
           <span>/</span>
@@ -370,12 +370,12 @@ export function FilesListPage() {
         </div>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-foreground text-xl font-bold tracking-tight sm:text-2xl">
+            <h1 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
               {t("features.files.pageTitle", {
                 defaultValue: "مدیریت فایل‌ها (File Manager)",
               })}
             </h1>
-            <p className="text-muted-foreground mt-1 text-xs sm:text-sm">
+            <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
               {t("features.files.pageDesc", {
                 defaultValue:
                   "مشاهده، پیش‌نمایش، ویرایش مشخصات، و حذف تکی یا گروهی فایل‌های بارگذاری شده",
@@ -386,7 +386,7 @@ export function FilesListPage() {
       </div>
 
       {/* Tabs */}
-      <div className="border-border bg-card flex w-fit items-center gap-2 rounded-xl border p-1">
+      <div className="flex w-fit items-center gap-2 rounded-xl border border-border bg-card p-1">
         <Button
           variant={activeTab === "list" ? "default" : "ghost"}
           size="sm"
@@ -413,8 +413,8 @@ export function FilesListPage() {
         <div className="space-y-4">
           {/* Bulk Action Bar */}
           {selectedFileUuids.length > 0 && (
-            <div className="border-destructive/30 bg-destructive/10 flex items-center justify-between rounded-xl border p-3">
-              <span className="text-destructive text-xs font-semibold">
+            <div className="flex items-center justify-between rounded-xl border border-destructive/30 bg-destructive/10 p-3">
+              <span className="text-xs font-semibold text-destructive">
                 {selectedFileUuids.length} فایل انتخاب شده است.
               </span>
               <Button
@@ -430,7 +430,7 @@ export function FilesListPage() {
           )}
 
           {/* Filters Bar */}
-          <div className="bg-card flex flex-col gap-3 rounded-xl border p-4 shadow-sm sm:flex-row sm:items-center">
+          <div className="flex flex-col gap-3 rounded-xl border bg-card p-4 shadow-sm sm:flex-row sm:items-center">
             <div className="w-full sm:w-72">
               <SearchInput
                 value={search || ""}
@@ -532,11 +532,11 @@ export function FilesListPage() {
               </CardHeader>
               <CardContent>
                 {isReportsLoading ? (
-                  <p className="text-muted-foreground text-xs">
+                  <p className="text-xs text-muted-foreground">
                     در حال دریافت گزارش...
                   </p>
                 ) : contentTypesReport.length === 0 ? (
-                  <p className="text-muted-foreground text-xs">
+                  <p className="text-xs text-muted-foreground">
                     داده‌ای یافت نشد.
                   </p>
                 ) : (
@@ -575,11 +575,11 @@ export function FilesListPage() {
               </CardHeader>
               <CardContent>
                 {isReportsLoading ? (
-                  <p className="text-muted-foreground text-xs">
+                  <p className="text-xs text-muted-foreground">
                     در حال دریافت گزارش...
                   </p>
                 ) : dailyReport.length === 0 ? (
-                  <p className="text-muted-foreground text-xs">
+                  <p className="text-xs text-muted-foreground">
                     داده‌ای یافت نشد.
                   </p>
                 ) : (
@@ -593,7 +593,7 @@ export function FilesListPage() {
                             className="flex items-center justify-between rounded-lg border p-2.5 text-xs"
                           >
                             <span
-                              className="text-muted-foreground font-mono"
+                              className="font-mono text-muted-foreground"
                               dir="ltr"
                             >
                               {b.key}

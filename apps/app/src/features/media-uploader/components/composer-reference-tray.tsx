@@ -49,7 +49,7 @@ export const ComposerReferenceTray: FC<Props> = ({
 
   return (
     <div
-      className="border-border/60 flex w-full min-w-0 flex-col gap-2 border-t pt-3"
+      className="flex w-full min-w-0 flex-col gap-2 border-t border-border/60 pt-3"
       data-media-dock={isVideoDock || undefined}
       data-media-type={previewType}
     >
@@ -71,7 +71,7 @@ export const ComposerReferenceTray: FC<Props> = ({
         </div>
         <button
           type="button"
-          className="text-primary hover:bg-primary/10 focus-visible:ring-primary/50 inline-flex min-h-11 items-center gap-1.5 rounded-lg px-3 text-xs font-medium outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex min-h-11 items-center gap-1.5 rounded-lg px-3 text-xs font-medium text-primary outline-none hover:bg-primary/10 focus-visible:ring-2 focus-visible:ring-primary/50 disabled:cursor-not-allowed disabled:opacity-50"
           disabled={disabled || isFull}
           onClick={onAdd}
         >

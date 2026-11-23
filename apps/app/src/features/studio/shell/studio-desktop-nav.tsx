@@ -16,10 +16,10 @@ export const StudioDesktopNav: FC = () => {
   return (
     <nav
       aria-label={t("features.studio.shell.tabs.label")}
-      className="bg-background/95 hidden h-14 shrink-0 items-center gap-6 border-b px-6 backdrop-blur lg:flex"
+      className="hidden h-14 shrink-0 items-center gap-6 border-b bg-background/95 px-6 backdrop-blur lg:flex"
     >
-      <span className="font-heading flex items-center gap-2 text-base font-semibold">
-        <Clapperboard className="text-primary size-5" aria-hidden />
+      <span className="flex items-center gap-2 font-heading text-base font-semibold">
+        <Clapperboard className="size-5 text-primary" aria-hidden />
         {t("features.studio.shell.brand")}
       </span>
       <div className="flex items-center gap-1">
@@ -31,10 +31,10 @@ export const StudioDesktopNav: FC = () => {
             replace
             className={({ isActive }) =>
               cn(
-                "focus-visible:ring-ring flex min-h-10 cursor-pointer items-center gap-2 rounded-full px-4 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none",
+                "flex min-h-10 cursor-pointer items-center gap-2 rounded-full px-4 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
                 isActive
                   ? "bg-primary/15 text-primary"
-                  : "text-muted-foreground hover-capable:hover:bg-muted hover-capable:hover:text-foreground",
+                  : "hover-capable:hover:bg-muted hover-capable:hover:text-foreground text-muted-foreground",
               )
             }
           >

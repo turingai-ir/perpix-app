@@ -68,7 +68,8 @@ export function usePricing() {
       resolvePlanTiers(
         planItems as readonly SchemaSubscriptionPlanResponse[],
         activeSubscriptionState.data as
-          SchemaUserSubscriptionResponse | undefined,
+          | SchemaUserSubscriptionResponse
+          | undefined,
       ),
     [activeSubscriptionState.data, planItems],
   );

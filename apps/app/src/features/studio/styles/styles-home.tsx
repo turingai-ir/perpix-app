@@ -24,7 +24,7 @@ export const StylesHome: FC = () => {
   return (
     <StudioScreen
       title={t("features.studio.styles.title")}
-      className="gap-section flex flex-col"
+      className="flex flex-col gap-section"
     >
       {template && <StyleSample template={template} />}
       <PresetGallery
@@ -40,7 +40,7 @@ export const StylesHome: FC = () => {
         }
       />
       {mine_limit !== undefined && (
-        <p className="text-muted-foreground text-footnote">
+        <p className="text-footnote text-muted-foreground">
           {t("features.studio.styles.quota", {
             count: mine.length.toLocaleString("fa-IR"),
             limit: mine_limit.toLocaleString("fa-IR"),

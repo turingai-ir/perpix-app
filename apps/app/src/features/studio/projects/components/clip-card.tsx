@@ -29,7 +29,7 @@ const SubtitleStatus: FC<{
 
   if (!requesting && transcript?.status === "COMPLETED") {
     return (
-      <span className="text-success flex items-center gap-1 text-xs">
+      <span className="flex items-center gap-1 text-xs text-success">
         <Check className="size-3.5" aria-hidden />
         {t("features.studio.clips.subtitle.ready")}
       </span>
@@ -38,7 +38,7 @@ const SubtitleStatus: FC<{
   const processing = requesting || transcript?.status === "PROCESSING";
   if (processing || loadingStatus) {
     return (
-      <span className="text-muted-foreground flex items-center gap-1 text-xs">
+      <span className="flex items-center gap-1 text-xs text-muted-foreground">
         <Loader2 className="size-3.5 animate-spin" aria-hidden />
         {t(
           processing
@@ -58,7 +58,7 @@ const SubtitleStatus: FC<{
   return (
     <span className="flex items-center gap-1 text-xs">
       {(failed || onReloadStatus) && (
-        <AlertCircle className="text-destructive size-3.5" aria-hidden />
+        <AlertCircle className="size-3.5 text-destructive" aria-hidden />
       )}
       {t(`features.studio.clips.subtitle.${status}`)}
       <Button
@@ -87,13 +87,13 @@ export const ClipCard: FC<ClipCardProps> = ({
 }) => {
   const { t } = useAppTranslate();
   return (
-    <li className="bg-card flex items-center gap-3 rounded-2xl border p-3">
-      <span className="bg-muted text-muted-foreground flex size-10 shrink-0 items-center justify-center rounded-lg text-sm font-semibold">
+    <li className="flex items-center gap-3 rounded-2xl border bg-card p-3">
+      <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted text-sm font-semibold text-muted-foreground">
         {(index + 1).toLocaleString("fa-IR")}
       </span>
       <span className="flex min-w-0 flex-1 flex-col gap-1">
         <span className="truncate text-sm font-semibold">{clip.name}</span>
-        <span className="text-muted-foreground flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
+        <span className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
           <span>{formatDuration(clip.duration_ms)}</span>
           <SubtitleStatus
             transcript={transcript}

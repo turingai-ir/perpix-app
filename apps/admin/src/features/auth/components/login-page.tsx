@@ -62,19 +62,19 @@ export function LoginPage() {
   return (
     <main
       dir="rtl"
-      className="bg-background text-foreground flex min-h-svh items-center justify-center p-6"
+      className="flex min-h-svh items-center justify-center bg-background p-6 text-foreground"
     >
       <section
         aria-labelledby="login-title"
-        className="border-border bg-card w-full max-w-sm rounded-2xl border p-7 shadow-sm sm:p-9"
+        className="w-full max-w-sm rounded-2xl border border-border bg-card p-7 shadow-sm sm:p-9"
       >
-        <div className="bg-primary/10 text-primary mb-6 flex size-12 items-center justify-center rounded-2xl">
+        <div className="mb-6 flex size-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
           <ShieldCheck aria-hidden="true" className="size-6" />
         </div>
         <h1 id="login-title" className="text-2xl font-bold">
           {t("adminLogin.title")}
         </h1>
-        <p className="text-muted-foreground mt-3 mb-8 text-sm leading-7">
+        <p className="mt-3 mb-8 text-sm leading-7 text-muted-foreground">
           {t("adminLogin.description")}
         </p>
         <form
@@ -108,7 +108,7 @@ export function LoginPage() {
             {errors.phone_number && (
               <p
                 id="phone-error"
-                className="text-destructive text-xs"
+                className="text-xs text-destructive"
                 role="alert"
               >
                 {errors.phone_number.message}
@@ -133,7 +133,7 @@ export function LoginPage() {
             {errors.password && (
               <p
                 id="password-error"
-                className="text-destructive text-xs"
+                className="text-xs text-destructive"
                 role="alert"
               >
                 {errors.password.message}
@@ -141,7 +141,7 @@ export function LoginPage() {
             )}
           </div>
           {login.isError && (
-            <p role="alert" className="text-destructive text-sm leading-6">
+            <p role="alert" className="text-sm leading-6 text-destructive">
               {t(`adminLogin.${errorKey}`)}
             </p>
           )}

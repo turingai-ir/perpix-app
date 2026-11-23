@@ -20,7 +20,7 @@ export function IdentityHero({ user }: IdentityHeroProps) {
 
   return (
     <section
-      className="text-night-foreground after:border-night-foreground/13 relative isolate overflow-hidden rounded-4xl bg-[linear-gradient(115deg,oklch(0.18_0.08_285),oklch(0.23_0.1_300)_52%,oklch(0.31_0.1_315))] shadow-[0_24px_60px_-38px_oklch(0.35_0.15_295)] after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:border after:content-['']"
+      className="relative isolate overflow-hidden rounded-4xl bg-[linear-gradient(115deg,oklch(0.18_0.08_285),oklch(0.23_0.1_300)_52%,oklch(0.31_0.1_315))] text-night-foreground shadow-[0_24px_60px_-38px_oklch(0.35_0.15_295)] after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:border after:border-night-foreground/13 after:content-['']"
       aria-labelledby="settings-title"
     >
       <div
@@ -37,26 +37,26 @@ export function IdentityHero({ user }: IdentityHeroProps) {
       />
       <div className="relative z-10 grid min-h-80 items-center gap-8 px-6 py-9 sm:px-10 lg:grid-cols-[1fr_360px] lg:px-14 lg:py-10 xl:grid-cols-[1fr_440px]">
         <div>
-          <span className="border-night-foreground/20 bg-night-foreground/10 text-night-foreground supports-[not(backdrop-filter:blur(1px))]:bg-night-foreground/20 inline-flex items-center gap-2 rounded-full border px-3.5 py-2 text-xs font-bold backdrop-blur-md">
+          <span className="inline-flex items-center gap-2 rounded-full border border-night-foreground/20 bg-night-foreground/10 px-3.5 py-2 text-xs font-bold text-night-foreground backdrop-blur-md supports-[not(backdrop-filter:blur(1px))]:bg-night-foreground/20">
             <Sparkles aria-hidden="true" className="size-4" />{" "}
             {t("pages.profile.settings.heroKicker")}
           </span>
           <h1
             id="settings-title"
-            className="text-night-foreground mt-5 text-3xl leading-tight font-black tracking-tight sm:text-4xl"
+            className="mt-5 text-3xl leading-tight font-black tracking-tight text-night-foreground sm:text-4xl"
           >
             {t("pages.profile.settings.heroTitle")}
           </h1>
-          <p className="text-night-foreground/70 mt-4 max-w-md text-sm leading-8 sm:text-base">
+          <p className="mt-4 max-w-md text-sm leading-8 text-night-foreground/70 sm:text-base">
             {t("pages.profile.settings.heroDescription")}
           </p>
-          <div className="text-night-foreground/90 mt-7 flex items-center gap-3 text-sm">
-            <span className="border-night-foreground/30 bg-night-foreground/15 flex size-9 items-center justify-center rounded-full border font-bold backdrop-blur-sm">
+          <div className="mt-7 flex items-center gap-3 text-sm text-night-foreground/90">
+            <span className="flex size-9 items-center justify-center rounded-full border border-night-foreground/30 bg-night-foreground/15 font-bold backdrop-blur-sm">
               {displayName.charAt(0)}
             </span>
             <span className="min-w-0 truncate font-medium">{displayName}</span>
             {user.is_verified && (
-              <span className="border-accent-emerald/32 text-accent-emerald inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs">
+              <span className="inline-flex items-center gap-1 rounded-full border border-accent-emerald/32 px-2.5 py-1 text-xs text-accent-emerald">
                 <BadgeCheck aria-hidden="true" className="size-4" />
                 {t("pages.profile.settings.verified")}
               </span>

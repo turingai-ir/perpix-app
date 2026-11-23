@@ -3,7 +3,13 @@ import type { UseFormProps } from "react-hook-form";
 import type { ControlElement, UISchemaElement } from "@jsonforms/core";
 
 export type JsonSchemaType =
-  "string" | "integer" | "number" | "boolean" | "array" | "object" | "null";
+  | "string"
+  | "integer"
+  | "number"
+  | "boolean"
+  | "array"
+  | "object"
+  | "null";
 
 export type JsonConfigUiField = {
   widget?: string | null;

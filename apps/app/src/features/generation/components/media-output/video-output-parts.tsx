@@ -21,7 +21,7 @@ export const VideoOutputTitle: FC<ComponentProps<"span">> = ({
 }) => (
   <span
     className={cn(
-      "text-foreground [&_svg]:text-primary flex items-center gap-2.5 text-sm font-bold [&_svg]:size-[18px]",
+      "flex items-center gap-2.5 text-sm font-bold text-foreground [&_svg]:size-[18px] [&_svg]:text-primary",
       className,
     )}
     {...props}
@@ -34,7 +34,7 @@ export const VideoOutputBadge: FC<ComponentProps<"span">> = ({
 }) => (
   <span
     className={cn(
-      "text-muted-foreground inline-flex items-center gap-1.5 text-xs [&_svg]:size-3.5",
+      "inline-flex items-center gap-1.5 text-xs text-muted-foreground [&_svg]:size-3.5",
       className,
     )}
     {...props}
@@ -54,7 +54,7 @@ export const VideoOutputScreen: FC<VideoOutputScreenProps> = ({
 }) => (
   <div
     className={cn(
-      "bg-night flex items-center justify-center [&_video]:block [&_video]:w-full [&_video]:object-contain",
+      "flex items-center justify-center bg-night [&_video]:block [&_video]:w-full [&_video]:object-contain",
       inDialog
         ? "[&_video]:max-h-[calc(100dvh-16rem)] sm:[&_video]:max-h-[calc(100dvh-13rem)]"
         : "min-h-40 [&_video]:max-h-[min(55dvh,32rem)]",
@@ -71,7 +71,7 @@ export const VideoOutputFooter: FC<ComponentProps<"div">> = ({
 }) => (
   <div
     className={cn(
-      "border-border flex flex-wrap items-center gap-3 border-t px-3.5 py-3 sm:px-5 sm:py-4",
+      "flex flex-wrap items-center gap-3 border-t border-border px-3.5 py-3 sm:px-5 sm:py-4",
       className,
     )}
     {...props}
@@ -84,7 +84,7 @@ export const VideoOutputHint: FC<ComponentProps<"p">> = ({
 }) => (
   <p
     className={cn(
-      "text-muted-foreground m-0 flex-[1_1_160px] text-xs leading-[1.8]",
+      "m-0 flex-[1_1_160px] text-xs leading-[1.8] text-muted-foreground",
       className,
     )}
     {...props}

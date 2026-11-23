@@ -46,7 +46,9 @@ export function makeBinaryTransform(target: "File" | "Blob" = "File") {
  * stays the precise union of the (now non-circular) members.
  */
 export function makeJsonCycleTransform() {
-  const UNKNOWN = ts.factory.createKeywordTypeNode(ts.SyntaxKind.UnknownKeyword);
+  const UNKNOWN = ts.factory.createKeywordTypeNode(
+    ts.SyntaxKind.UnknownKeyword,
+  );
 
   return function transform(
     _schema: unknown,

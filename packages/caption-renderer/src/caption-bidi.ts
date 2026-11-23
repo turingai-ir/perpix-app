@@ -31,7 +31,9 @@ export function visualWordOrder(
   let nextIndex = 0;
   for (let index = 0; index < words.length; index++) {
     const text = words[index];
-    const direction = firstLetterDirection(text) ?? (/\p{Number}/u.test(text) ? "ltr" : undefined);
+    const direction =
+      firstLetterDirection(text) ??
+      (/\p{Number}/u.test(text) ? "ltr" : undefined);
     if (!direction) continue;
     const neutral = previous === direction ? direction : base;
     while (nextIndex < index) append(nextIndex++, neutral);

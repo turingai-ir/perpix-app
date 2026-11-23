@@ -63,7 +63,7 @@ export const MediaFilePickerDialog: FC<MediaFilePickerDialogProps> = (
       <DialogContent
         className={
           presentation === "video-dock"
-            ? "border-night-foreground/15 bg-night/94 flex max-h-[min(720px,calc(100dvh-2rem))] w-[calc(100vw-2rem)] max-w-3xl grid-rows-none flex-col overflow-hidden p-0 shadow-2xl backdrop-blur-2xl sm:max-w-3xl"
+            ? "flex max-h-[min(720px,calc(100dvh-2rem))] w-[calc(100vw-2rem)] max-w-3xl grid-rows-none flex-col overflow-hidden border-night-foreground/15 bg-night/94 p-0 shadow-2xl backdrop-blur-2xl sm:max-w-3xl"
             : "flex max-h-[min(720px,calc(100dvh-2rem))] w-[calc(100vw-2rem)] max-w-3xl grid-rows-none flex-col overflow-hidden p-0 sm:max-w-3xl"
         }
         showCloseButton={!isUploading}
@@ -93,7 +93,7 @@ export const MediaFilePickerDialog: FC<MediaFilePickerDialogProps> = (
 
           {localItems.length > 0 && (
             <div className="flex shrink-0 flex-col gap-2">
-              <span className="text-muted-foreground text-xs font-medium">
+              <span className="text-xs font-medium text-muted-foreground">
                 {t("features.mediaUploader.uploadStatus")}
               </span>
               <div className="flex flex-wrap gap-2">
@@ -130,9 +130,9 @@ export const MediaFilePickerDialog: FC<MediaFilePickerDialogProps> = (
           />
         </div>
 
-        <div className="bg-muted/40 flex shrink-0 flex-wrap items-center justify-between gap-2 border-t p-4">
+        <div className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-t bg-muted/40 p-4">
           {maxItems !== undefined && (
-            <span className="text-muted-foreground text-xs" aria-live="polite">
+            <span className="text-xs text-muted-foreground" aria-live="polite">
               {t("features.mediaUploader.composer.count", {
                 count: selectedIds.length + uploadingCount + stagedIds.length,
                 max: maxItems,

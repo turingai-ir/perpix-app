@@ -1,7 +1,10 @@
 import { z } from "zod";
 
 export type AuthStatus =
-  "initializing" | "authenticated" | "anonymous" | "unavailable";
+  | "initializing"
+  | "authenticated"
+  | "anonymous"
+  | "unavailable";
 
 export const challengeSchema = z.object({
   challenge_id: z.uuid(),

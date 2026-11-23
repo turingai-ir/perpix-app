@@ -118,7 +118,7 @@ export const GalleryPage: FC = () => {
         </div>
       ) : null}
       {!userFilesState.hasNextPage && files.length > 0 ? (
-        <p className="text-muted-foreground py-8 text-center text-xs">
+        <p className="py-8 text-center text-xs text-muted-foreground">
           {t("pages.gallery.studio.end")}
         </p>
       ) : null}

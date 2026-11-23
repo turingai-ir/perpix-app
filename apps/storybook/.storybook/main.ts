@@ -1,7 +1,8 @@
 import type { StorybookConfig } from "@storybook/react-vite";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import tailwindcss from "@tailwindcss/vite";
+import { mergeConfig } from "vite";
+import { createViteConfig } from "@perpix/tooling/vite";
 
 const config: StorybookConfig = {
   framework: "@storybook/react-vite",
@@ -22,8 +23,7 @@ const config: StorybookConfig = {
         "@perpix/ui > tailwind-merge",
       ],
     };
-    config.plugins = [...(config.plugins ?? []), tailwindcss()];
-    return config;
+    return mergeConfig(config, createViteConfig({ react: false }));
   },
 };
 

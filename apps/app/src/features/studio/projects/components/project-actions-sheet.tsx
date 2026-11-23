@@ -30,7 +30,7 @@ const Actions: FC<ActionsProps> = ({
   if (confirming) {
     return (
       <div className="flex flex-col gap-3">
-        <p className="text-muted-foreground text-sm">
+        <p className="text-sm text-muted-foreground">
           {t("features.studio.projects.actions.deleteWarning")}
         </p>
         <Button
@@ -68,7 +68,7 @@ const Actions: FC<ActionsProps> = ({
       </Button>
       <Button
         variant="ghost"
-        className="text-destructive hover:text-destructive min-h-12 justify-start gap-3 text-base"
+        className="min-h-12 justify-start gap-3 text-base text-destructive hover:text-destructive"
         onClick={() => setConfirming(true)}
       >
         <Trash2 className="size-5" aria-hidden />

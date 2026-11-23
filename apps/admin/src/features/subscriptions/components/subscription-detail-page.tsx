@@ -170,10 +170,10 @@ export function SubscriptionDetailPage() {
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             {/* Status & Timing Card */}
             <Card className="border-border shadow-xs">
-              <CardHeader className="border-border border-b pb-3">
+              <CardHeader className="border-b border-border pb-3">
                 <CardTitle className="flex items-center justify-between text-base font-semibold">
                   <span className="flex items-center gap-2">
-                    <Clock className="text-primary size-4" />
+                    <Clock className="size-4 text-primary" />
                     {t("features.subscriptions.cards.timingTitle", {
                       defaultValue: "وضعیت و زمان‌بندی",
                     })}
@@ -183,20 +183,20 @@ export function SubscriptionDetailPage() {
               </CardHeader>
               <CardContent className="space-y-4 pt-4">
                 <div className="space-y-1">
-                  <span className="text-muted-foreground flex items-center gap-1 text-xs">
+                  <span className="flex items-center gap-1 text-xs text-muted-foreground">
                     {t("features.subscriptions.fields.uuid", {
                       defaultValue: "شناسه اشتراک (UUID)",
                     })}
                   </span>
                   <div className="flex items-center gap-2">
-                    <code className="bg-muted text-foreground rounded px-2 py-1 font-mono text-xs break-all">
+                    <code className="rounded bg-muted px-2 py-1 font-mono text-xs break-all text-foreground">
                       {subscription.uuid}
                     </code>
                     <button
                       type="button"
                       onClick={() => handleCopy("uuid", subscription.uuid)}
                       aria-label="کپی شناسه"
-                      className="text-muted-foreground hover:text-foreground hover:bg-muted cursor-pointer rounded p-1 transition-colors"
+                      className="cursor-pointer rounded p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                     >
                       {copiedField === "uuid" ? (
                         <Check className="size-3.5 text-emerald-600" />
@@ -207,21 +207,21 @@ export function SubscriptionDetailPage() {
                   </div>
                 </div>
 
-                <div className="border-border grid grid-cols-2 gap-4 border-t pt-2">
+                <div className="grid grid-cols-2 gap-4 border-t border-border pt-2">
                   <div className="space-y-1">
-                    <span className="text-muted-foreground flex items-center gap-1 text-xs">
+                    <span className="flex items-center gap-1 text-xs text-muted-foreground">
                       <Calendar className="size-3" />
                       {t("features.subscriptions.fields.startedAt", {
                         defaultValue: "تاریخ شروع",
                       })}
                     </span>
-                    <p className="text-foreground text-sm font-medium">
+                    <p className="text-sm font-medium text-foreground">
                       {formatDate(subscription.started_at)}
                     </p>
                   </div>
 
                   <div className="space-y-1">
-                    <span className="text-muted-foreground flex items-center gap-1 text-xs">
+                    <span className="flex items-center gap-1 text-xs text-muted-foreground">
                       <Clock className="size-3" />
                       {t("features.subscriptions.fields.expiresAt", {
                         defaultValue: "تاریخ انقضا",
@@ -238,13 +238,13 @@ export function SubscriptionDetailPage() {
                   </div>
                 </div>
 
-                <div className="border-border space-y-1 border-t pt-2">
-                  <span className="text-muted-foreground text-xs">
+                <div className="space-y-1 border-t border-border pt-2">
+                  <span className="text-xs text-muted-foreground">
                     {t("features.subscriptions.fields.createdAt", {
                       defaultValue: "تاریخ ثبت در سیستم",
                     })}
                   </span>
-                  <p className="text-muted-foreground text-xs">
+                  <p className="text-xs text-muted-foreground">
                     {formatDate(subscription.created_at)}
                   </p>
                 </div>
@@ -253,9 +253,9 @@ export function SubscriptionDetailPage() {
 
             {/* User & Plan Info Card */}
             <Card className="border-border shadow-xs">
-              <CardHeader className="border-border border-b pb-3">
+              <CardHeader className="border-b border-border pb-3">
                 <CardTitle className="flex items-center gap-2 text-base font-semibold">
-                  <Package className="text-primary size-4" />
+                  <Package className="size-4 text-primary" />
                   {t("features.subscriptions.cards.userPlanTitle", {
                     defaultValue: "مشخصات کاربر و پلن",
                   })}
@@ -263,7 +263,7 @@ export function SubscriptionDetailPage() {
               </CardHeader>
               <CardContent className="space-y-4 pt-4">
                 <div className="space-y-1">
-                  <span className="text-muted-foreground flex items-center gap-1 text-xs">
+                  <span className="flex items-center gap-1 text-xs text-muted-foreground">
                     <User className="size-3" />
                     {t("features.subscriptions.fields.user", {
                       defaultValue: "کاربر مشترک",
@@ -272,7 +272,7 @@ export function SubscriptionDetailPage() {
                   <div className="flex items-center gap-2">
                     <Link
                       to={`/users/${subscription.user_uuid}`}
-                      className="text-primary font-mono text-sm hover:underline"
+                      className="font-mono text-sm text-primary hover:underline"
                     >
                       {subscription.user_uuid}
                     </Link>
@@ -282,7 +282,7 @@ export function SubscriptionDetailPage() {
                         handleCopy("user_uuid", subscription.user_uuid)
                       }
                       aria-label="کپی شناسه کاربر"
-                      className="text-muted-foreground hover:text-foreground hover:bg-muted cursor-pointer rounded p-1 transition-colors"
+                      className="cursor-pointer rounded p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                     >
                       {copiedField === "user_uuid" ? (
                         <Check className="size-3.5 text-emerald-600" />
@@ -293,8 +293,8 @@ export function SubscriptionDetailPage() {
                   </div>
                 </div>
 
-                <div className="border-border space-y-1 border-t pt-2">
-                  <span className="text-muted-foreground flex items-center gap-1 text-xs">
+                <div className="space-y-1 border-t border-border pt-2">
+                  <span className="flex items-center gap-1 text-xs text-muted-foreground">
                     <Sparkles className="size-3" />
                     {t("features.subscriptions.fields.plan", {
                       defaultValue: "پلن اشتراکی",
@@ -302,16 +302,16 @@ export function SubscriptionDetailPage() {
                   </span>
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-foreground text-sm font-bold">
+                      <p className="text-sm font-bold text-foreground">
                         {subscription.plan_name || "بدون عنوان"}
                       </p>
-                      <code className="text-muted-foreground font-mono text-xs">
+                      <code className="font-mono text-xs text-muted-foreground">
                         {subscription.plan_uuid}
                       </code>
                     </div>
                     <Link
                       to="/subscription-plans"
-                      className="text-primary text-xs hover:underline"
+                      className="text-xs text-primary hover:underline"
                     >
                       مشاهده پلن‌ها
                     </Link>

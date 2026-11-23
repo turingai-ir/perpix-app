@@ -7,11 +7,19 @@
     "dev:app": "turbo run dev --filter=perpix-app",
     "dev:admin": "turbo run dev --filter=perpix-admin-panel",
     "build": "turbo run build",
-    "lint": "turbo run lint",
+    "lint": "oxlint .",
     "typecheck": "turbo run typecheck",
-    "storybook": "pnpm --filter perpix-storybook dev"
+    "storybook": "pnpm --filter perpix-storybook dev",
+    "lint:fix": "oxlint --fix .",
+    "format": "oxfmt --write .",
+    "format:check": "oxfmt --check .",
+    "test:tooling": "pnpm --filter @perpix/tooling test"
   },
   "devDependencies": {
-    "turbo": "^2.11.13"
+    "turbo": "^2.11.13",
+    "@perpix/tooling": "workspace:*",
+    "oxlint": "catalog:",
+    "oxfmt": "catalog:",
+    "tsrs": "catalog:"
   }
 }

@@ -75,7 +75,7 @@ function FileEditForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-4 py-2 text-sm">
       <div>
-        <label className="text-foreground mb-1 block text-xs font-semibold">
+        <label className="mb-1 block text-xs font-semibold text-foreground">
           {t("features.files.fileName", { defaultValue: "نام فایل" })} *
         </label>
         <Input
@@ -88,7 +88,7 @@ function FileEditForm({
       </div>
 
       <div>
-        <label className="text-foreground mb-1 block text-xs font-semibold">
+        <label className="mb-1 block text-xs font-semibold text-foreground">
           {t("features.files.metaJson", {
             defaultValue: "متادیتای JSON (اختیاری)",
           })}
@@ -100,12 +100,12 @@ function FileEditForm({
             setMetaJson(e.target.value);
             setJsonError(null);
           }}
-          className="bg-background focus:ring-ring w-full rounded-md border p-2.5 font-mono text-xs focus:ring-2 focus:outline-none"
+          className="w-full rounded-md border bg-background p-2.5 font-mono text-xs focus:ring-2 focus:ring-ring focus:outline-none"
           dir="ltr"
           placeholder="{}"
         />
         {jsonError && (
-          <span className="text-destructive mt-1 block text-xs">
+          <span className="mt-1 block text-xs text-destructive">
             {jsonError}
           </span>
         )}
@@ -138,7 +138,7 @@ export function FileEditDialog({
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Edit className="text-primary size-5" />
+            <Edit className="size-5 text-primary" />
             {t("features.files.editTitle", {
               defaultValue: "ویرایش اطلاعات فایل",
             })}

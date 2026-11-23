@@ -28,13 +28,13 @@ export function PaginationFooter({
 
   return (
     <nav
-      className="border-border flex flex-col items-stretch justify-between gap-3 border-t px-4 py-3 sm:flex-row sm:items-center"
+      className="flex flex-col items-stretch justify-between gap-3 border-t border-border px-4 py-3 sm:flex-row sm:items-center"
       aria-label={t("pages.profile.finance.range", {
         from: formatLocalizedNumber({ value: from }),
         to: formatLocalizedNumber({ value: to }),
       })}
     >
-      <div className="text-muted-foreground text-sm">
+      <div className="text-sm text-muted-foreground">
         {t("pages.profile.finance.range", {
           from: formatLocalizedNumber({ value: from }),
           to: formatLocalizedNumber({ value: to }),

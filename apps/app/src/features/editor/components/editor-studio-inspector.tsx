@@ -20,17 +20,17 @@ export function EditorStudioInspector(props: Props) {
 
   return (
     <aside
-      className="border-foreground/13 bg-card/62 col-start-1 row-start-3 flex min-h-0 min-w-0 flex-col overflow-y-auto border-0 px-4.25 py-3.5 backdrop-blur-xl max-md:max-h-65 min-[701px]:col-start-3 min-[701px]:row-start-1 min-[701px]:border-s md:px-5 md:pt-6 md:pb-4.5"
+      className="col-start-1 row-start-3 flex min-h-0 min-w-0 flex-col overflow-y-auto border-0 border-foreground/13 bg-card/62 px-4.25 py-3.5 backdrop-blur-xl max-md:max-h-65 min-[701px]:col-start-3 min-[701px]:row-start-1 min-[701px]:border-s md:px-5 md:pt-6 md:pb-4.5"
       aria-label={title}
     >
       <div>
-        <span className="text-muted-foreground text-caption hidden tracking-[0.2em] [direction:ltr] md:block">
+        <span className="hidden text-caption tracking-[0.2em] text-muted-foreground [direction:ltr] md:block">
           PERPIX / STUDIO
         </span>
-        <h2 className="md:text-title-2 mt-1.5 mb-px text-base font-extrabold md:mt-3 md:mb-1.5">
+        <h2 className="mt-1.5 mb-px text-base font-extrabold md:mt-3 md:mb-1.5 md:text-title-2">
           {title}
         </h2>
-        <p className="text-muted-foreground text-caption m-0 leading-loose md:text-xs">
+        <p className="m-0 text-caption leading-loose text-muted-foreground md:text-xs">
           {hint}
         </p>
       </div>
@@ -41,8 +41,8 @@ export function EditorStudioInspector(props: Props) {
       )}
       {props.tool === "text" && <EditorOverlayControls editor={props.editor} />}
       {props.tool === "export" && <EditorExportPanel {...props} />}
-      <div className="text-muted-foreground text-caption mt-auto hidden items-center gap-2 pt-6.5 md:flex">
-        <span className="bg-accent-emerald inline-block size-1.75 rounded-full shadow-[0_0_12px_var(--accent-emerald)]" />
+      <div className="mt-auto hidden items-center gap-2 pt-6.5 text-caption text-muted-foreground md:flex">
+        <span className="inline-block size-1.75 rounded-full bg-accent-emerald shadow-[0_0_12px_var(--accent-emerald)]" />
         {t("pages.editor.studio.ready")}
       </div>
     </aside>

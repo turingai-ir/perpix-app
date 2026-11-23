@@ -38,7 +38,7 @@ export function WalletHero() {
         </span>
         <Button
           type="button"
-          className="bg-night-foreground text-night shadow-raised hover:bg-night-foreground/90 h-11 rounded-xl px-4"
+          className="h-11 rounded-xl bg-night-foreground px-4 text-night shadow-raised hover:bg-night-foreground/90"
           disabled={!walletState.isSuccess}
           onClick={() => setChargeOpen(true)}
         >

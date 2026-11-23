@@ -31,7 +31,7 @@ export function DashboardSectionHeader({
         </p>
         <h2
           id={titleId}
-          className="text-foreground mt-1 text-lg font-semibold tracking-tight"
+          className="mt-1 text-lg font-semibold tracking-tight text-foreground"
         >
           {title}
         </h2>

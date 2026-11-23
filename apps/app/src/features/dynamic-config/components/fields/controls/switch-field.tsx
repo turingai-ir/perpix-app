@@ -62,7 +62,7 @@ export const DynamicConfigSwitchField: FC<{
               viewportClassName="overflow-x-auto"
               orientation="horizontal"
             >
-              <div className="bg-muted/50 border-input dark:bg-input/20 inline-flex h-9 w-max items-center gap-1 rounded-lg border p-1">
+              <div className="inline-flex h-9 w-max items-center gap-1 rounded-lg border border-input bg-muted/50 p-1 dark:bg-input/20">
                 {options.map((option) => {
                   const optionStr = String(option);
                   const isSelected = currentValue === optionStr;
@@ -75,7 +75,7 @@ export const DynamicConfigSwitchField: FC<{
                       size="xs"
                       className={`h-7 shrink-0 rounded-md px-3 text-xs transition-[color,background-color,border-color,box-shadow,opacity,transform] ${
                         isSelected
-                          ? "bg-background text-foreground dark:bg-muted font-semibold shadow-xs"
+                          ? "bg-background font-semibold text-foreground shadow-xs dark:bg-muted"
                           : "text-muted-foreground hover:text-foreground"
                       }`}
                       disabled={disabled}

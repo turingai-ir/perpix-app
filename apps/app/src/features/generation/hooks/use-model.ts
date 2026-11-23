@@ -50,7 +50,8 @@ export const useModel = (
   });
 
   const models = modelsListState.data as
-    Array<SchemaAiRegistryModelSummary> | undefined;
+    | Array<SchemaAiRegistryModelSummary>
+    | undefined;
   const selectedModelSummary = models?.find(
     (model) => model.uuid === currentSelectedModel,
   );

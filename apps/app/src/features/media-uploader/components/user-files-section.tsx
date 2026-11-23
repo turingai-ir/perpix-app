@@ -52,7 +52,7 @@ export const UserFilesSection: FC<UserFilesSectionProps> = ({
   return (
     <div className="flex shrink-0 flex-col gap-2">
       <div className="flex shrink-0 items-center justify-between gap-2">
-        <span className="text-muted-foreground text-xs font-medium">
+        <span className="text-xs font-medium text-muted-foreground">
           {t("features.mediaUploader.userFiles")}
         </span>
         <Button
@@ -85,7 +85,7 @@ export const UserFilesSection: FC<UserFilesSectionProps> = ({
             {isError && (
               <div
                 role="alert"
-                className="text-destructive flex items-center gap-2 p-3 text-sm"
+                className="flex items-center gap-2 p-3 text-sm text-destructive"
               >
                 <AlertCircle aria-hidden="true" className="size-5 shrink-0" />
                 <span>
@@ -98,7 +98,7 @@ export const UserFilesSection: FC<UserFilesSectionProps> = ({
               </div>
             )}
             {userFiles.length === 0 && !isError ? (
-              <div className="text-muted-foreground flex min-h-40 items-center justify-center p-4 text-center text-sm">
+              <div className="flex min-h-40 items-center justify-center p-4 text-center text-sm text-muted-foreground">
                 {t("features.mediaUploader.emptyFiles")}
               </div>
             ) : (
@@ -118,7 +118,7 @@ export const UserFilesSection: FC<UserFilesSectionProps> = ({
             {(hasMore || isFetchingMore) && !isError && (
               <div
                 ref={loadMoreRef}
-                className="text-muted-foreground flex min-h-12 items-center justify-center p-3 text-xs"
+                className="flex min-h-12 items-center justify-center p-3 text-xs text-muted-foreground"
               >
                 {isFetchingMore ? t("features.mediaUploader.loadingMore") : ""}
               </div>

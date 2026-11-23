@@ -25,6 +25,8 @@ RUN corepack enable && \
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/app/package.json apps/app/
 COPY apps/admin/package.json apps/admin/
+COPY packages/tooling/package.json packages/tooling/
+COPY apps/storybook/package.json apps/storybook/
 COPY packages/ui/package.json packages/ui/
 COPY packages/caption-renderer/package.json packages/caption-renderer/
 RUN --mount=type=cache,id=perpix-pnpm-store,target=/pnpm/store \

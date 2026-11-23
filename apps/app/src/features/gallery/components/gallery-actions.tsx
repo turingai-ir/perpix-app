@@ -44,7 +44,7 @@ export function GalleryActions({
     }
   }
   return (
-    <div className="border-foreground/7 bg-background/36 flex flex-none gap-[0.1rem] rounded-xl border p-0.5 transition-opacity duration-160 max-md:gap-0 max-md:border-0 max-md:bg-transparent">
+    <div className="flex flex-none gap-[0.1rem] rounded-xl border border-foreground/7 bg-background/36 p-0.5 transition-opacity duration-160 max-md:gap-0 max-md:border-0 max-md:bg-transparent">
       <Button
         variant="ghost"
         className={actionButton}
@@ -75,7 +75,7 @@ export function GalleryActions({
           <Trash2 />
         </DialogTrigger>
         <DialogContent
-          className="glass-blur border-glass-edge bg-glass-strong inset-shadow-highlight shadow-modal overflow-hidden rounded-3xl border bg-[linear-gradient(145deg,color-mix(in_oklch,var(--night-foreground)_7%,transparent),transparent_45%)] p-5 [--glass-blur:28px] [--glass-saturate:150%]"
+          className="glass-blur overflow-hidden rounded-3xl border border-glass-edge bg-glass-strong bg-[linear-gradient(145deg,color-mix(in_oklch,var(--night-foreground)_7%,transparent),transparent_45%)] p-5 shadow-modal inset-shadow-highlight [--glass-blur:28px] [--glass-saturate:150%]"
           showCloseButton={false}
         >
           <DialogTitle>{t("pages.gallery.delete.title")}</DialogTitle>
@@ -84,7 +84,7 @@ export function GalleryActions({
               fileName: file.file_name || t("common.emptyTitle"),
             })}
           </DialogDescription>
-          <DialogFooter className="bg-background/42 -mx-5 -mb-5 rounded-none px-5 py-4">
+          <DialogFooter className="-mx-5 -mb-5 rounded-none bg-background/42 px-5 py-4">
             <DialogClose
               render={
                 <Button

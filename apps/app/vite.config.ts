@@ -2,10 +2,8 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import react from "@vitejs/plugin-react";
-import tailwindcss from "@tailwindcss/vite";
-import { defineConfig, loadEnv } from "vite";
-import legacy from "@vitejs/plugin-legacy";
+import { defineConfig, loadEnv, mergeConfig, type UserConfig } from "vite";
+import { createViteConfig } from "@perpix/tooling/vite";
 import { frontendQaGuard } from "./scripts/frontend-qa-guard.ts";
 
 const srcPath = fileURLToPath(new URL("./src", import.meta.url));
@@ -24,7 +22,7 @@ export default defineConfig(({ mode }) => {
     ? "http://127.0.0.1:9"
     : loadEnv(mode, process.cwd(), "VITE_").VITE_PERPIX_API_URL;
 
-  return {
+  return mergeConfig(createViteConfig(), {
     envDir: frontendQa ? false : undefined,
     cacheDir: frontendQa
       ? path.resolve(process.cwd(), ".qa-cache/vite")
@@ -32,12 +30,7 @@ export default defineConfig(({ mode }) => {
     define: {
       __APP_RELEASE__: JSON.stringify(appRelease),
     },
-    plugins: [
-      react(),
-      tailwindcss(),
-      legacy({}),
-      ...(frontendQa ? [frontendQaGuard()] : []),
-    ],
+    plugins: frontendQa ? [frontendQaGuard()] : [],
     server: {
       host: "localhost",
       port: 5173,
@@ -104,7 +97,7 @@ export default defineConfig(({ mode }) => {
           codeSplitting: {
             groups: [
               {
-                // Cache the React runtime separately and keep legacy entries within budget.
+                // Cache the React runtime separately.
                 name: "react-vendor",
                 test: /node_modules[\\/]react(?:-dom|-router)?[\\/]/,
                 priority: 30,
@@ -139,5 +132,5 @@ export default defineConfig(({ mode }) => {
         "@": path.resolve(srcPath),
       },
     },
-  };
+  } satisfies UserConfig);
 });

@@ -61,7 +61,7 @@ export function ModelIcon({
         />
       ) : (
         <span
-          className="text-foreground z-1 font-sans text-xl leading-none font-extrabold"
+          className="z-1 font-sans text-xl leading-none font-extrabold text-foreground"
           aria-hidden="true"
         >
           {getModelMark(name)}

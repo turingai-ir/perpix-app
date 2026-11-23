@@ -36,9 +36,9 @@ export function CaptionBulkCorrection({
   };
 
   return (
-    <div className="gap-block flex flex-col">
-      <form className="gap-group flex flex-col" onSubmit={search}>
-        <label className="gap-group flex flex-col">
+    <div className="flex flex-col gap-block">
+      <form className="flex flex-col gap-group" onSubmit={search}>
+        <label className="flex flex-col gap-group">
           {t(`${LABEL}.findPhrase`)}
           <Input
             dir="auto"
@@ -49,7 +49,7 @@ export function CaptionBulkCorrection({
             }}
           />
         </label>
-        <label className="gap-group flex flex-col">
+        <label className="flex flex-col gap-group">
           {t(`${LABEL}.replacement`)}
           <Input
             dir="auto"
@@ -62,13 +62,13 @@ export function CaptionBulkCorrection({
         </Button>
       </form>
       {matches?.length === 0 && (
-        <p role="status" className="text-muted-foreground text-body">
+        <p role="status" className="text-body text-muted-foreground">
           {t(`${LABEL}.noMatches`)}
         </p>
       )}
       {matches && matches.length > 0 && (
         <>
-          <p role="status" className="text-muted-foreground text-footnote">
+          <p role="status" className="text-footnote text-muted-foreground">
             {t(`${LABEL}.selectedMatches`, {
               selected: (matches.length - excluded.size).toLocaleString(
                 "fa-IR",
@@ -76,7 +76,7 @@ export function CaptionBulkCorrection({
               total: matches.length.toLocaleString("fa-IR"),
             })}
           </p>
-          <ul className="gap-group flex flex-col">
+          <ul className="flex flex-col gap-group">
             {matches.slice(first, first + MATCHES_PER_PAGE).map((match) => (
               <li key={match.key}>
                 <label
@@ -84,11 +84,11 @@ export function CaptionBulkCorrection({
                     phrase: match.phrase,
                     time: formatDuration(match.timelineMs),
                   })}
-                  className="gap-group rounded-control p-inset-sm flex cursor-pointer items-center border"
+                  className="flex cursor-pointer items-center gap-group rounded-control border p-inset-sm"
                 >
                   <input
                     type="checkbox"
-                    className="accent-primary size-4 shrink-0"
+                    className="size-4 shrink-0 accent-primary"
                     checked={!excluded.has(match.key)}
                     onChange={(event) => {
                       const next = new Set(excluded);
@@ -98,14 +98,14 @@ export function CaptionBulkCorrection({
                     }}
                   />
                   <span className="min-w-0">
-                    <span dir="auto" className="text-body block wrap-anywhere">
+                    <span dir="auto" className="block text-body wrap-anywhere">
                       {match.before} <strong>{match.phrase}</strong>{" "}
                       {match.after}
                     </span>
                     {replacement.trim() && !excluded.has(match.key) && (
                       <span
                         dir="auto"
-                        className="text-foreground text-body block wrap-anywhere"
+                        className="block text-body wrap-anywhere text-foreground"
                       >
                         {match.before}{" "}
                         <strong>
@@ -114,7 +114,7 @@ export function CaptionBulkCorrection({
                         {match.after}
                       </span>
                     )}
-                    <span className="text-muted-foreground text-footnote block wrap-anywhere">
+                    <span className="block text-footnote wrap-anywhere text-muted-foreground">
                       <bdi>{match.clipName}</bdi> ·{" "}
                       <bdi>{formatDuration(match.timelineMs)}</bdi>
                     </span>

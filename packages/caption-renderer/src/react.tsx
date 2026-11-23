@@ -52,7 +52,7 @@ export function CaptionPreview({
       stage.current = null;
     };
     // The stage is rebuilt only when its size or backdrop changes.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [width, height, background]);
 
   useEffect(() => {
@@ -66,7 +66,7 @@ export function CaptionPreview({
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [
     template.base.font.family,
     template.base.font.weight,

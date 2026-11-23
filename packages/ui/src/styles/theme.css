@@ -175,7 +175,9 @@
     background-color: var(--liquid-fill);
     backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   }
-  @media (prefers-reduced-transparency: reduce), (prefers-contrast: more), (forced-colors: active) {
+  @media (prefers-reduced-transparency: reduce),
+    (prefers-contrast: more),
+    (forced-colors: active) {
     background-color: var(--card);
     backdrop-filter: none;
   }
@@ -335,7 +337,8 @@
 @theme inline {
   --animate-float: float 6s ease-in-out infinite;
   --animate-rise: rise 320ms var(--ease-out-quint) backwards;
-  --animate-message-arrival: message-arrival 500ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-message-arrival: message-arrival 500ms cubic-bezier(0.16, 1, 0.3, 1)
+    both;
   --animate-ambient-field: ambient-field 18s linear infinite alternate;
   --animate-intro-enter: intro-enter 380ms var(--ease-out-quint) both;
   --animate-portal-enter: portal-enter 360ms var(--ease-out-quint) both;
@@ -403,7 +406,6 @@
     }
   }
 
-
   @keyframes electric-flash {
     0%,
     2%,
@@ -441,8 +443,18 @@
 @supports (transition-timing-function: linear(0, 1)) {
   :root {
     --spring-curve: linear(
-      0, 0.04 1.6%, 0.17 3.8%, 0.39 7%, 0.66 11.2%, 0.86 15.6%, 0.97 20.4%, 1.02 25.6%,
-      1.03 30.8%, 1.02 38%, 1.005 50%, 1
+      0,
+      0.04 1.6%,
+      0.17 3.8%,
+      0.39 7%,
+      0.66 11.2%,
+      0.86 15.6%,
+      0.97 20.4%,
+      1.02 25.6%,
+      1.03 30.8%,
+      1.02 38%,
+      1.005 50%,
+      1
     );
   }
 }

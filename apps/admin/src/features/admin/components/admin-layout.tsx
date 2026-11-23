@@ -190,8 +190,8 @@ export function AdminLayout() {
   const logout = useMutation({ mutationFn: signOut, networkMode: "always" });
 
   return (
-    <div dir="rtl" className="bg-muted/30 text-foreground min-h-svh lg:flex">
-      <header className="border-border bg-card flex items-center justify-between border-b p-4 lg:hidden">
+    <div dir="rtl" className="min-h-svh bg-muted/30 text-foreground lg:flex">
+      <header className="flex items-center justify-between border-b border-border bg-card p-4 lg:hidden">
         <span className="font-bold">{t("overview.brand")}</span>
         <Button
           variant="outline"
@@ -206,15 +206,15 @@ export function AdminLayout() {
       </header>
       <aside
         id="admin-sidebar"
-        className={`border-border bg-card top-0 flex-col border-b p-5 lg:sticky lg:flex lg:h-svh lg:w-64 lg:shrink-0 lg:overflow-y-auto lg:border-b-0 lg:border-l ${open ? "flex" : "hidden"}`}
+        className={`top-0 flex-col border-b border-border bg-card p-5 lg:sticky lg:flex lg:h-svh lg:w-64 lg:shrink-0 lg:overflow-y-auto lg:border-b-0 lg:border-l ${open ? "flex" : "hidden"}`}
       >
         <div className="mb-6 flex items-center gap-3">
-          <span className="bg-primary text-primary-foreground flex size-10 items-center justify-center rounded-xl shadow-xs">
+          <span className="flex size-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-xs">
             <ShieldCheck aria-hidden="true" className="size-5" />
           </span>
           <div>
             <p className="font-bold">{t("overview.brand")}</p>
-            <p className="text-muted-foreground mt-0.5 text-xs">
+            <p className="mt-0.5 text-xs text-muted-foreground">
               {t("overview.admin")}
             </p>
           </div>
@@ -224,7 +224,7 @@ export function AdminLayout() {
           {navGroups.map((group, groupIdx) => (
             <div key={groupIdx} className="space-y-1.5">
               {group.sectionKey && (
-                <p className="text-muted-foreground px-3 text-[11px] font-semibold tracking-wider uppercase">
+                <p className="px-3 text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
                   {t(group.sectionKey, { defaultValue: group.sectionKey })}
                 </p>
               )}
@@ -235,7 +235,7 @@ export function AdminLayout() {
                     to={path}
                     onClick={() => setOpen(false)}
                     className={({ isActive }) =>
-                      `flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors ${isActive ? "bg-primary/10 text-primary font-semibold" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`
+                      `flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors ${isActive ? "bg-primary/10 font-semibold text-primary" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`
                     }
                   >
                     <Icon aria-hidden="true" className="size-4.5 shrink-0" />
@@ -247,10 +247,10 @@ export function AdminLayout() {
           ))}
         </nav>
 
-        <div className="border-border mt-6 border-t pt-4 lg:mt-auto">
+        <div className="mt-6 border-t border-border pt-4 lg:mt-auto">
           <Button
             variant="ghost"
-            className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 w-full cursor-pointer justify-start"
+            className="w-full cursor-pointer justify-start text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
             disabled={logout.isPending}
             onClick={() => logout.mutate()}
           >

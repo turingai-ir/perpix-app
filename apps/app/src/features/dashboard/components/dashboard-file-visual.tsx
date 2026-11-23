@@ -36,7 +36,7 @@ export function DashboardFileVisual({
   const MediaIcon = file.content_type.startsWith("video/") ? Film : AudioLines;
   return (
     <div className="flex h-full w-full items-center justify-center bg-linear-to-br from-(--image-accent-soft) to-(--video-accent-soft)">
-      <MediaIcon className="text-muted-foreground h-8 w-8" />
+      <MediaIcon className="h-8 w-8 text-muted-foreground" />
     </div>
   );
 }

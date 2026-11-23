@@ -16,7 +16,7 @@ import type { MediaPreviewType } from "../model/types";
 export const EmptyMediaPreview: FC<{ previewType?: MediaPreviewType }> = ({
   previewType = "image",
 }) => (
-  <div className="text-muted-foreground flex flex-col items-center justify-center gap-1">
+  <div className="flex flex-col items-center justify-center gap-1 text-muted-foreground">
     {previewType === "video" ? (
       <Video className="h-6 w-6 opacity-40" />
     ) : previewType === "audio" ? (
@@ -53,12 +53,12 @@ export const DeleteButton: FC<{
       type="button"
       aria-label={label ?? t("features.mediaUploader.actions.remove")}
       className={cn(
-        "focus-visible:ring-night-foreground absolute top-1 right-1 z-20 flex size-8 cursor-pointer items-center justify-center rounded-full outline-none after:absolute after:-inset-1.5 after:content-[''] focus-visible:ring-2",
+        "absolute top-1 right-1 z-20 flex size-8 cursor-pointer items-center justify-center rounded-full outline-none after:absolute after:-inset-1.5 after:content-[''] focus-visible:ring-2 focus-visible:ring-night-foreground",
         variant === "strong" ? "bg-destructive" : "bg-destructive/80",
       )}
       onClick={onClick}
     >
-      <X aria-hidden="true" className="text-background size-4" />
+      <X aria-hidden="true" className="size-4 text-background" />
     </button>
   );
 };

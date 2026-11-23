@@ -13,9 +13,9 @@ export const GalleryFallback: FC<{ mediaType: GalleryMediaType }> = ({
   return (
     <div
       aria-hidden="true"
-      className="text-muted-foreground from-primary/10 flex h-full w-full items-center justify-center bg-radial to-transparent"
+      className="flex h-full w-full items-center justify-center bg-radial from-primary/10 to-transparent text-muted-foreground"
     >
-      <span className="bg-background/70 border-border/60 grid size-16 place-items-center rounded-2xl border">
+      <span className="grid size-16 place-items-center rounded-2xl border border-border/60 bg-background/70">
         <Icon className="size-7" />
       </span>
     </div>

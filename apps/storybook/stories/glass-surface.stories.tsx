@@ -5,7 +5,9 @@ const meta = {
   title: "Components/GlassSurface",
   component: GlassSurface,
   args: { intensity: "soft" },
-  argTypes: { intensity: { control: "inline-radio", options: ["soft", "flat"] } },
+  argTypes: {
+    intensity: { control: "inline-radio", options: ["soft", "flat"] },
+  },
   decorators: [
     (Story) => (
       <div className="grid min-h-svh place-items-center bg-(image:--brand-gradient) p-inset-lg">

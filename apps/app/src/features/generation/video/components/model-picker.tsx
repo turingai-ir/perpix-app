@@ -66,7 +66,7 @@ export function VideoModelPicker({
       <DialogTrigger
         type="button"
         disabled={disabled}
-        className="border-border bg-muted hover-capable:hover:bg-accent flex min-h-18 w-full cursor-pointer items-center gap-3 rounded-xl border px-3.5 py-3 text-start transition-[background-color,border-color] duration-150 disabled:cursor-wait disabled:opacity-55 motion-reduce:transition-none [&>svg:last-child]:ms-auto [&>svg:last-child]:flex-none"
+        className="hover-capable:hover:bg-accent flex min-h-18 w-full cursor-pointer items-center gap-3 rounded-xl border border-border bg-muted px-3.5 py-3 text-start transition-[background-color,border-color] duration-150 disabled:cursor-wait disabled:opacity-55 motion-reduce:transition-none [&>svg:last-child]:ms-auto [&>svg:last-child]:flex-none"
         aria-label={`${t("common.chooseModel")} ${name}`}
       >
         <ModelIcon
@@ -76,7 +76,7 @@ export function VideoModelPicker({
           modelId={current?.name}
         />
         <span className="flex min-w-0 flex-1 flex-col items-start gap-0.5">
-          <small className="text-muted-foreground text-xs leading-normal">
+          <small className="text-xs leading-normal text-muted-foreground">
             {t("pages.generation.video.studio.model")}
           </small>
           <strong
@@ -92,23 +92,23 @@ export function VideoModelPicker({
         <DialogOverlay />
         <DialogPrimitive.Popup
           data-slot="dialog-content"
-          className="border-border bg-popover text-popover-foreground [&_:is(button,input):focus-visible]:outline-ring inset-shadow-highlight shadow-modal fixed top-1/2 left-1/2 z-50 flex max-h-[min(720px,86dvh)] w-[min(720px,calc(100%-32px))] max-w-180 -translate-x-1/2 -translate-y-1/2 flex-col gap-4.5 overflow-hidden rounded-3xl border bg-[radial-gradient(circle_at_85%_-10%,var(--ambient-brand),transparent_42%)] p-6.5 text-sm backdrop-blur-xl backdrop-saturate-135 outline-none max-[600px]:top-auto max-[600px]:bottom-0 max-[600px]:left-0 max-[600px]:max-h-[90dvh] max-[600px]:w-full max-[600px]:max-w-full max-[600px]:translate-x-0 max-[600px]:translate-y-0 max-[600px]:rounded-b-none max-[600px]:px-4.5 max-[600px]:pt-5 max-[600px]:pb-[max(20px,env(safe-area-inset-bottom))] [&_:is(button,input):focus-visible]:outline-2 [&_:is(button,input):focus-visible]:outline-offset-3"
+          className="fixed top-1/2 left-1/2 z-50 flex max-h-[min(720px,86dvh)] w-[min(720px,calc(100%-32px))] max-w-180 -translate-x-1/2 -translate-y-1/2 flex-col gap-4.5 overflow-hidden rounded-3xl border border-border bg-popover bg-[radial-gradient(circle_at_85%_-10%,var(--ambient-brand),transparent_42%)] p-6.5 text-sm text-popover-foreground shadow-modal inset-shadow-highlight backdrop-blur-xl backdrop-saturate-135 outline-none max-[600px]:top-auto max-[600px]:bottom-0 max-[600px]:left-0 max-[600px]:max-h-[90dvh] max-[600px]:w-full max-[600px]:max-w-full max-[600px]:translate-x-0 max-[600px]:translate-y-0 max-[600px]:rounded-b-none max-[600px]:px-4.5 max-[600px]:pt-5 max-[600px]:pb-[max(20px,env(safe-area-inset-bottom))] [&_:is(button,input):focus-visible]:outline-2 [&_:is(button,input):focus-visible]:outline-offset-3 [&_:is(button,input):focus-visible]:outline-ring"
         >
           <div className="flex items-center justify-between gap-3">
             <div>
               <DialogTitle>{t("common.chooseModel")}</DialogTitle>
-              <DialogDescription className="text-muted-foreground mt-1 leading-relaxed">
+              <DialogDescription className="mt-1 leading-relaxed text-muted-foreground">
                 {t("pages.generation.video.studio.modelHint")}
               </DialogDescription>
             </div>
             <DialogClose
-              className="border-border bg-muted grid size-11 min-w-11 cursor-pointer place-items-center rounded-full border"
+              className="grid size-11 min-w-11 cursor-pointer place-items-center rounded-full border border-border bg-muted"
               aria-label={t("common.close")}
             >
               <X size={20} />
             </DialogClose>
           </div>
-          <label className="border-border bg-background/40 text-muted-foreground [&_input]:text-foreground inset-shadow-highlight-sm flex min-h-13 items-center gap-2.5 rounded-2xl border px-4 backdrop-blur-lg [&_input]:h-11.5 [&_input]:w-full [&_input]:min-w-0 [&_input]:bg-transparent [&_input]:text-base">
+          <label className="flex min-h-13 items-center gap-2.5 rounded-2xl border border-border bg-background/40 px-4 text-muted-foreground inset-shadow-highlight-sm backdrop-blur-lg [&_input]:h-11.5 [&_input]:w-full [&_input]:min-w-0 [&_input]:bg-transparent [&_input]:text-base [&_input]:text-foreground">
             <Search size={18} aria-hidden="true" />
             <input
               type="search"
@@ -125,7 +125,7 @@ export function VideoModelPicker({
                 <button
                   type="button"
                   key={item.uuid}
-                  className="border-border bg-card ease-out-quint aria-pressed:border-primary/50 aria-pressed:bg-accent hover-capable:hover:-translate-y-0.5 hover-capable:hover:border-primary/30 hover-capable:hover:bg-accent/60 relative grid min-h-37 w-full cursor-pointer grid-cols-[auto_minmax(0,1fr)] items-start gap-3.5 rounded-2xl border p-4 text-start transition-[translate,scale,border-color,background-color,box-shadow] duration-150 active:scale-[0.96] motion-reduce:transition-none max-[720px]:min-h-30"
+                  className="hover-capable:hover:-translate-y-0.5 hover-capable:hover:border-primary/30 hover-capable:hover:bg-accent/60 relative grid min-h-37 w-full cursor-pointer grid-cols-[auto_minmax(0,1fr)] items-start gap-3.5 rounded-2xl border border-border bg-card p-4 text-start transition-[translate,scale,border-color,background-color,box-shadow] duration-150 ease-out-quint active:scale-[0.96] aria-pressed:border-primary/50 aria-pressed:bg-accent motion-reduce:transition-none max-[720px]:min-h-30"
                   aria-label={modelName}
                   aria-pressed={item.uuid === model.currentModel}
                   onClick={() => {
@@ -150,18 +150,18 @@ export function VideoModelPicker({
                         {modelName}
                       </strong>
                     </span>
-                    <span className="text-muted-foreground line-clamp-2 text-xs leading-relaxed">
+                    <span className="line-clamp-2 text-xs leading-relaxed text-muted-foreground">
                       {getModelDescription(modelName, t)}
                     </span>
                     {!isModelAllowed(item, model.allowedModelNames) && (
-                      <small className="text-accent-gold flex max-w-full items-center gap-1 truncate text-xs">
+                      <small className="flex max-w-full items-center gap-1 truncate text-xs text-accent-gold">
                         <LockKeyhole size={12} />
                         {t("common.upgradeRequired")}
                       </small>
                     )}
                   </span>
                   {item.uuid === model.currentModel && (
-                    <span className="border-primary/30 bg-primary/20 text-primary absolute end-2.5 top-2.5 grid size-6.5 place-items-center rounded-full border">
+                    <span className="absolute end-2.5 top-2.5 grid size-6.5 place-items-center rounded-full border border-primary/30 bg-primary/20 text-primary">
                       <Check size={15} strokeWidth={2.4} aria-hidden="true" />
                     </span>
                   )}
@@ -171,7 +171,7 @@ export function VideoModelPicker({
             {!matches.length && (
               <p
                 role="status"
-                className="text-muted-foreground col-span-full px-3 py-8 text-center"
+                className="col-span-full px-3 py-8 text-center text-muted-foreground"
               >
                 {t("pages.generation.video.studio.noSearchResults")}
               </p>

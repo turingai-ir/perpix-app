@@ -89,10 +89,10 @@ export function AiProvidersListPage() {
         }),
         cell: (item) => (
           <div className="space-y-0.5">
-            <span className="text-foreground block text-xs font-bold">
+            <span className="block text-xs font-bold text-foreground">
               {item.display_name || item.name}
             </span>
-            <code className="text-muted-foreground font-mono text-[11px]">
+            <code className="font-mono text-[11px] text-muted-foreground">
               {item.name}
             </code>
           </div>
@@ -113,7 +113,7 @@ export function AiProvidersListPage() {
               تنظیم شده
             </Badge>
           ) : (
-            <Badge variant="secondary" className="text-muted-foreground gap-1">
+            <Badge variant="secondary" className="gap-1 text-muted-foreground">
               <XCircle className="size-3" />
               تنظیم نشده
             </Badge>
@@ -139,7 +139,7 @@ export function AiProvidersListPage() {
           defaultValue: "تاریخ ثبت",
         }),
         cell: (item) => (
-          <span className="text-muted-foreground text-xs" dir="ltr">
+          <span className="text-xs text-muted-foreground" dir="ltr">
             {new Date(item.created_at).toLocaleString("fa-IR")}
           </span>
         ),
@@ -189,7 +189,7 @@ export function AiProvidersListPage() {
     <div className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-8 sm:py-8">
       {/* Header */}
       <div>
-        <div className="text-muted-foreground mb-1.5 flex items-center gap-2 text-xs">
+        <div className="mb-1.5 flex items-center gap-2 text-xs text-muted-foreground">
           <Server aria-hidden="true" className="size-4" />
           <span>{t("overview.admin", { defaultValue: "پنل مدیریت" })}</span>
           <span>/</span>
@@ -199,12 +199,12 @@ export function AiProvidersListPage() {
         </div>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-foreground text-xl font-bold tracking-tight sm:text-2xl">
+            <h1 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
               {t("features.ai.providers.pageTitle", {
                 defaultValue: "ارائه‌دهندگان هوش مصنوعی (AI Providers)",
               })}
             </h1>
-            <p className="text-muted-foreground mt-1 text-xs sm:text-sm">
+            <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
               {t("features.ai.providers.pageDesc", {
                 defaultValue:
                   "مدیریت کلیدهای API و اتصال به سرویس‌دهنده‌های بالادست مثل OpenAI، Google و Runware",
@@ -224,7 +224,7 @@ export function AiProvidersListPage() {
       </div>
 
       {/* Filters */}
-      <div className="bg-card flex flex-col gap-3 rounded-xl border p-4 shadow-sm sm:flex-row sm:items-center">
+      <div className="flex flex-col gap-3 rounded-xl border bg-card p-4 shadow-sm sm:flex-row sm:items-center">
         <div className="w-full sm:w-72">
           <SearchInput
             value={search || ""}

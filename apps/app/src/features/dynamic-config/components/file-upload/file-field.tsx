@@ -245,7 +245,7 @@ export const DynamicConfigFileField: FC<{
         className={
           presentation === "composer" || presentation === "video-dock"
             ? "sr-only"
-            : "text-muted-foreground text-sm font-normal"
+            : "text-sm font-normal text-muted-foreground"
         }
       >
         {label}

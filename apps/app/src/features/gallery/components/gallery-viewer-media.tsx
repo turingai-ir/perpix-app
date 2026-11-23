@@ -18,7 +18,7 @@ export function GalleryViewerMedia({ url, name, mediaType, zoomed }: Props) {
   const [attempt, setAttempt] = useState(0);
   if (!url || failed)
     return (
-      <div className="text-muted-foreground flex flex-col items-center gap-4">
+      <div className="flex flex-col items-center gap-4 text-muted-foreground">
         <ImageOff className="size-10" />
         <p>{t("pages.gallery.studio.previewError")}</p>
         {url && (
@@ -48,7 +48,7 @@ export function GalleryViewerMedia({ url, name, mediaType, zoomed }: Props) {
           draggable={false}
           onError={() => setFailed(true)}
           className={cn(
-            "ease-out-quint block size-full max-w-none origin-center scale-100 object-contain transition-transform duration-240 select-none [-webkit-user-drag:none] motion-reduce:duration-[0.01ms]",
+            "block size-full max-w-none origin-center scale-100 object-contain transition-transform duration-240 ease-out-quint select-none [-webkit-user-drag:none] motion-reduce:duration-[0.01ms]",
             zoomed && "scale-200 cursor-zoom-out",
           )}
         />
@@ -58,7 +58,7 @@ export function GalleryViewerMedia({ url, name, mediaType, zoomed }: Props) {
 
   if (mediaType === "video")
     return (
-      // eslint-disable-next-line jsx-a11y/media-has-caption -- User uploads have no caption tracks.
+      // oxlint-disable-next-line jsx-a11y/media-has-caption -- User uploads have no caption tracks.
       <video
         key={attempt}
         src={url}
@@ -71,7 +71,7 @@ export function GalleryViewerMedia({ url, name, mediaType, zoomed }: Props) {
     );
 
   return (
-    // eslint-disable-next-line jsx-a11y/media-has-caption -- User uploads have no caption tracks.
+    // oxlint-disable-next-line jsx-a11y/media-has-caption -- User uploads have no caption tracks.
     <audio
       key={attempt}
       src={url}

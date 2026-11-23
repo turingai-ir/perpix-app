@@ -237,14 +237,14 @@ function AiProviderFormContent({
           }
         >
           <div className="flex items-center justify-between gap-2">
-            <span className="text-foreground text-xs font-semibold">
+            <span className="text-xs font-semibold text-foreground">
               {t("features.ai.providers.columns.availability", {
                 defaultValue: "وضعیت مسیردهی",
               })}
             </span>
             <Badge variant={availability.variant}>{availability.label}</Badge>
           </div>
-          <p className="text-muted-foreground text-[11px] leading-5">
+          <p className="text-[11px] leading-5 text-muted-foreground">
             {availability.hint}
           </p>
           {initialProvider?.unavailable_reason && (
@@ -266,7 +266,7 @@ function AiProviderFormContent({
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label className="text-foreground mb-1 block text-xs font-semibold">
+          <label className="mb-1 block text-xs font-semibold text-foreground">
             {t("features.ai.providers.name", {
               defaultValue: "نوع سرویس‌دهنده",
             })}
@@ -287,7 +287,7 @@ function AiProviderFormContent({
         </div>
 
         <div>
-          <label className="text-foreground mb-1 block text-xs font-semibold">
+          <label className="mb-1 block text-xs font-semibold text-foreground">
             {t("features.ai.providers.displayName", {
               defaultValue: "نام نمایشی",
             })}
@@ -301,7 +301,7 @@ function AiProviderFormContent({
       </div>
 
       <div>
-        <label className="text-foreground mb-1 block text-xs font-semibold">
+        <label className="mb-1 block text-xs font-semibold text-foreground">
           {t("features.ai.providers.baseApiUrl", {
             defaultValue: "آدرس Base API URL (اختیاری)",
           })}
@@ -315,7 +315,7 @@ function AiProviderFormContent({
       </div>
 
       <div className="space-y-2">
-        <label className="text-foreground block text-xs font-semibold">
+        <label className="block text-xs font-semibold text-foreground">
           {multiKey
             ? t("features.ai.providers.apiKeys", {
                 defaultValue: "کلیدهای دسترسی (API Key)",
@@ -324,13 +324,13 @@ function AiProviderFormContent({
                 defaultValue: "کلید دسترسی (API Key)",
               })}
         </label>
-        <p className="text-muted-foreground text-[11px] leading-5">
+        <p className="text-[11px] leading-5 text-muted-foreground">
           {multiKey
             ? "کلیدها به ترتیب همین فهرست امتحان می‌شوند. اگر ارائه‌دهنده کلیدی را به‌خاطر موجودی یا اعتبار رد کند، درخواست به کلید بعدی می‌رود. مقدار کلیدهای ثبت‌شده نمایش داده نمی‌شود؛ برای حفظ مقدار، خالی بگذارید."
             : "این ارائه‌دهنده فقط یک کلید می‌پذیرد. مقدار کلید ثبت‌شده نمایش داده نمی‌شود؛ برای حفظ آن خالی بگذارید."}
         </p>
         {isEditing && !initialProvider?.has_api_key && (
-          <span className="text-destructive block text-[11px]">
+          <span className="block text-[11px] text-destructive">
             هیچ کلیدی ثبت نشده است؛ درخواست به این ارائه‌دهنده کار نمی‌کند.
           </span>
         )}
@@ -343,7 +343,7 @@ function AiProviderFormContent({
               data-testid="provider-key-row"
             >
               <div className="flex items-center justify-between gap-2">
-                <span className="text-muted-foreground text-[11px]">
+                <span className="text-[11px] text-muted-foreground">
                   {multiKey ? `کلید ${index + 1}` : "کلید"}
                 </span>
                 <div className="flex items-center gap-1">
@@ -383,7 +383,7 @@ function AiProviderFormContent({
                         type="button"
                         variant="ghost"
                         size="sm"
-                        className="text-destructive size-7 p-0"
+                        className="size-7 p-0 text-destructive"
                         aria-label="حذف کلید"
                         onClick={() => removeKey(key.rowId)}
                       >
@@ -436,7 +436,7 @@ function AiProviderFormContent({
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label className="text-foreground mb-1 block text-xs font-semibold">
+          <label className="mb-1 block text-xs font-semibold text-foreground">
             {t("features.ai.providers.rateLimit", {
               defaultValue: "سقف درخواست در دقیقه (Rate Limit)",
             })}
@@ -451,7 +451,7 @@ function AiProviderFormContent({
         </div>
 
         <div>
-          <label className="text-foreground mb-1 block text-xs font-semibold">
+          <label className="mb-1 block text-xs font-semibold text-foreground">
             {t("features.ai.providers.costMicro", {
               defaultValue: "ارزش هر واحد به میکرودلار (usdmicro)",
             })}
@@ -469,8 +469,8 @@ function AiProviderFormContent({
           <span
             className={
               costIsValid
-                ? "text-muted-foreground mt-1 block text-[11px] leading-5"
-                : "text-destructive mt-1 block text-[11px] leading-5"
+                ? "mt-1 block text-[11px] leading-5 text-muted-foreground"
+                : "mt-1 block text-[11px] leading-5 text-destructive"
             }
           >
             {costIsValid
@@ -483,7 +483,7 @@ function AiProviderFormContent({
                 })}
           </span>
           {costIsValid && costValue !== "" && (
-            <span className="text-muted-foreground block text-[11px] tabular-nums">
+            <span className="block text-[11px] text-muted-foreground tabular-nums">
               هر واحد ارائه‌دهنده {tokenHint(costValue)}
             </span>
           )}
@@ -575,7 +575,7 @@ export function AiProviderFormDialog({
           />
         )}
         {open && isEditing && !provider && (
-          <p className="text-muted-foreground py-6 text-center text-sm">
+          <p className="py-6 text-center text-sm text-muted-foreground">
             {error
               ? t("features.ai.providers.loadError", {
                   defaultValue:

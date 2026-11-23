@@ -41,22 +41,22 @@ export default function AppLayoutSidebarHistory() {
 
   return (
     <section
-      className="border-foreground/8 bg-sidebar-accent/42 inset-shadow-highlight-sm shadow-overlay relative overflow-hidden rounded-3xl border p-2"
+      className="relative overflow-hidden rounded-3xl border border-foreground/8 bg-sidebar-accent/42 p-2 shadow-overlay inset-shadow-highlight-sm"
       aria-labelledby="sidebar-history-heading"
     >
       <header className="flex items-center justify-between px-2 pt-2 pb-3">
         <h2
           id="sidebar-history-heading"
-          className="text-sidebar-foreground/90 flex items-center gap-2 text-xs font-bold tracking-tight"
+          className="flex items-center gap-2 text-xs font-bold tracking-tight text-sidebar-foreground/90"
         >
           <Sparkles
             aria-hidden="true"
-            className="text-primary size-3.5 drop-shadow-[0_0_0.4rem_var(--primary)]"
+            className="size-3.5 text-primary drop-shadow-[0_0_0.4rem_var(--primary)]"
           />
           {t("pages.app.layout.sidebar.history.title")}
         </h2>
         <span
-          className="border-foreground/8 bg-foreground/4 text-sidebar-foreground/55 min-w-6 rounded-full border px-1.5 py-0.5 text-center text-xs leading-tight"
+          className="min-w-6 rounded-full border border-foreground/8 bg-foreground/4 px-1.5 py-0.5 text-center text-xs leading-tight text-sidebar-foreground/55"
           aria-hidden="true"
         >
           {total}
@@ -78,7 +78,7 @@ export default function AppLayoutSidebarHistory() {
       </ul>
       {isLoading && <LoadingSection />}
       {!isLoading && !isError && !hasItems && (
-        <p className="text-sidebar-foreground/65 px-2 py-3 text-center text-xs leading-loose">
+        <p className="px-2 py-3 text-center text-xs leading-loose text-sidebar-foreground/65">
           {t("pages.app.layout.sidebar.history.empty")}
         </p>
       )}
@@ -90,11 +90,11 @@ export default function AppLayoutSidebarHistory() {
         />
       )}
       {hasItems && (hasNextPage || isFetchNextPageError) && (
-        <div className="border-foreground/8 mt-2 border-t pt-2">
+        <div className="mt-2 border-t border-foreground/8 pt-2">
           {isFetchNextPageError && (
             <p
               role="alert"
-              className="text-destructive mb-2 text-xs leading-relaxed"
+              className="mb-2 text-xs leading-relaxed text-destructive"
             >
               {t("pages.app.layout.sidebar.history.loadError")}
             </p>
@@ -103,7 +103,7 @@ export default function AppLayoutSidebarHistory() {
             type="button"
             variant="outline"
             size="lg"
-            className="border-primary/25 from-primary/13 text-sidebar-foreground w-full gap-2.5 rounded-xl bg-linear-110 to-(--video-accent-soft) text-xs font-semibold aria-disabled:cursor-wait aria-disabled:opacity-65"
+            className="w-full gap-2.5 rounded-xl border-primary/25 bg-linear-110 from-primary/13 to-(--video-accent-soft) text-xs font-semibold text-sidebar-foreground aria-disabled:cursor-wait aria-disabled:opacity-65"
             aria-controls="sidebar-history-list"
             aria-disabled={isFetchingNextPage}
             onClick={(event) => {
@@ -111,7 +111,7 @@ export default function AppLayoutSidebarHistory() {
               if (!isFetchingNextPage) void fetchNextPage();
             }}
           >
-            <IconTile className="bg-primary/10 text-primary size-6 rounded-full border-0">
+            <IconTile className="size-6 rounded-full border-0 bg-primary/10 text-primary">
               <ButtonIcon
                 aria-hidden="true"
                 className={

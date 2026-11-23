@@ -55,10 +55,10 @@ export function ImageReferenceInput({
     >
       {hasReference ? (
         <div
-          className="border-primary/20 bg-primary/8 text-foreground flex min-h-11 flex-wrap items-center gap-2 rounded-xl border px-3 py-2 text-xs"
+          className="flex min-h-11 flex-wrap items-center gap-2 rounded-xl border border-primary/20 bg-primary/8 px-3 py-2 text-xs text-foreground"
           role="status"
         >
-          <Images className="text-primary size-4" aria-hidden="true" />
+          <Images className="size-4 text-primary" aria-hidden="true" />
           <strong>
             {t("pages.generation.image.studio.reference.contextActive")}
           </strong>

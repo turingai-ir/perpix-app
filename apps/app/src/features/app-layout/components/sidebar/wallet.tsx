@@ -20,26 +20,26 @@ function AppLayoutSidebarWallet({
 
   return (
     <section
-      className="border-primary/20 from-foreground/9 to-foreground/3 text-foreground after:bg-primary/13 inset-shadow-highlight-lg shadow-overlay relative overflow-hidden rounded-3xl border bg-linear-135 to-60% p-4 backdrop-blur-lg after:pointer-events-none after:absolute after:start-1/5 after:-end-1/4 after:-bottom-4/5 after:h-36 after:rounded-full after:blur-[34px] after:content-['']"
+      className="relative overflow-hidden rounded-3xl border border-primary/20 bg-linear-135 from-foreground/9 to-foreground/3 to-60% p-4 text-foreground shadow-overlay inset-shadow-highlight-lg backdrop-blur-lg after:pointer-events-none after:absolute after:start-1/5 after:-end-1/4 after:-bottom-4/5 after:h-36 after:rounded-full after:bg-primary/13 after:blur-[34px] after:content-['']"
       aria-label={t("pages.app.layout.sidebar.balanceCard.title")}
     >
       <div className="flex items-center justify-between gap-3">
-        <span className="text-muted-foreground text-xs font-semibold">
+        <span className="text-xs font-semibold text-muted-foreground">
           {t("pages.app.layout.sidebar.balanceCard.title")}
         </span>
-        <IconTile className="border-primary/20 bg-primary/10 text-primary [&_.icon-accent]:stroke-accent-sky size-8 rounded-lg">
+        <IconTile className="size-8 rounded-lg border-primary/20 bg-primary/10 text-primary [&_.icon-accent]:stroke-accent-sky">
           <CreditIcon />
         </IconTile>
       </div>
       <div className="mt-2 mb-4 flex items-baseline gap-1.5 text-3xl leading-tight font-bold tracking-tighter tabular-nums">
         <span dir="ltr">{formatTokenAmount(balanceUsdmicro)}</span>
-        <small className="text-muted-foreground text-xs font-medium tracking-normal">
+        <small className="text-xs font-medium tracking-normal text-muted-foreground">
           {t("common.token")}
         </small>
       </div>
       <Button
         variant="outline"
-        className="border-primary/25 from-primary/20 to-primary/8 text-foreground hover-capable:hover:bg-primary/15 hover-capable:hover:[&_svg]:-translate-x-0.5 hover-capable:hover:[&_svg]:-translate-y-0.5 relative z-1 w-full justify-between gap-2 rounded-xl bg-linear-110 px-3 text-xs font-bold [&_svg]:transition-transform motion-reduce:[&_svg]:transition-none"
+        className="hover-capable:hover:bg-primary/15 hover-capable:hover:[&_svg]:-translate-x-0.5 hover-capable:hover:[&_svg]:-translate-y-0.5 relative z-1 w-full justify-between gap-2 rounded-xl border-primary/25 bg-linear-110 from-primary/20 to-primary/8 px-3 text-xs font-bold text-foreground [&_svg]:transition-transform motion-reduce:[&_svg]:transition-none"
         onClick={onOpenWalletCharge}
       >
         <span>

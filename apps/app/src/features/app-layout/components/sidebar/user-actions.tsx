@@ -22,12 +22,12 @@ const AppLayoutSidebarUserActions: FC = () => {
         className={cn(
           buttonVariants({ variant: "ghost", size: "lg" }),
           GLASS_PRESS_CLASS,
-          "border-foreground/10 bg-foreground/4 text-sidebar-foreground/85 w-full justify-start gap-3 rounded-2xl border text-xs font-semibold",
+          "w-full justify-start gap-3 rounded-2xl border border-foreground/10 bg-foreground/4 text-xs font-semibold text-sidebar-foreground/85",
         )}
       >
         <FaTelegramPlane
           aria-hidden="true"
-          className="text-accent-sky size-4"
+          className="size-4 text-accent-sky"
         />
         {t("pages.app.layout.sidebar.user.telegramSupport")}
       </a>

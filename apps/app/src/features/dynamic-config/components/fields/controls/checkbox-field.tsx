@@ -41,7 +41,7 @@ export const DynamicConfigCheckboxField: FC<{
       <FormItem className={isStacked ? "w-full" : "w-full md:w-auto"}>
         <div
           className={cn(
-            "border-input flex min-h-8 items-center gap-2 rounded-lg border px-2.5",
+            "flex min-h-8 items-center gap-2 rounded-lg border border-input px-2.5",
             "w-full",
           )}
         >

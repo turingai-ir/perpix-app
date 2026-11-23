@@ -65,11 +65,11 @@ export function VideoReferenceBoard({
             data-required={meta.required || undefined}
             data-media-type={previewType}
           >
-            <h3 className="[&_svg]:text-muted-foreground col-start-1 flex items-center gap-1.5 text-xs font-semibold [&_svg]:flex-none">
+            <h3 className="col-start-1 flex items-center gap-1.5 text-xs font-semibold [&_svg]:flex-none [&_svg]:text-muted-foreground">
               <Paperclip size={16} aria-hidden="true" />
               {label}
             </h3>
-            <div className="text-muted-foreground group-data-[required=true]/ref:[&>span:first-child]:text-primary col-start-2 flex flex-wrap items-center justify-end gap-x-2 gap-y-1 text-xs tabular-nums">
+            <div className="col-start-2 flex flex-wrap items-center justify-end gap-x-2 gap-y-1 text-xs text-muted-foreground tabular-nums group-data-[required=true]/ref:[&>span:first-child]:text-primary">
               <span>
                 {t(
                   `pages.generation.video.studio.${meta.required ? "required" : "optional"}`,
@@ -102,14 +102,14 @@ export function VideoReferenceBoard({
               />
             </div>
             {meta.hint && (
-              <p className="text-muted-foreground col-span-full text-xs leading-relaxed">
+              <p className="col-span-full text-xs leading-relaxed text-muted-foreground">
                 {meta.hint}
               </p>
             )}
             {error?.message && (
               <p
                 role="alert"
-                className="text-destructive col-span-full text-xs leading-relaxed"
+                className="col-span-full text-xs leading-relaxed text-destructive"
               >
                 {String(error.message)}
               </p>

@@ -40,12 +40,12 @@ export function ReportBucketList({
         {isLoading ? (
           <p
             role="status"
-            className="text-muted-foreground py-6 text-center text-xs"
+            className="py-6 text-center text-xs text-muted-foreground"
           >
             در حال دریافت آمار...
           </p>
         ) : rows.length === 0 ? (
-          <p className="text-muted-foreground py-6 text-center text-xs">
+          <p className="py-6 text-center text-xs text-muted-foreground">
             داده‌ای برای نمایش موجود نیست.
           </p>
         ) : (
@@ -57,7 +57,7 @@ export function ReportBucketList({
               >
                 <span
                   aria-hidden="true"
-                  className="bg-primary/10 absolute inset-y-0 start-0"
+                  className="absolute inset-y-0 start-0 bg-primary/10"
                   style={{ width: `${(bucket.count / max) * 100}%` }}
                 />
                 <span className="relative font-mono" dir="ltr">

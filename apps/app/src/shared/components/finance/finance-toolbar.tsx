@@ -36,14 +36,14 @@ export function FinanceToolbar({
   const hasFilters = searchValue.length > 0 || activeFilter !== "all";
 
   return (
-    <div className="border-border grid grid-cols-1 gap-3 border-b px-4 pb-4 sm:px-6 sm:pb-5 md:grid-cols-[minmax(16rem,1fr)_auto] md:items-center">
+    <div className="grid grid-cols-1 gap-3 border-b border-border px-4 pb-4 sm:px-6 sm:pb-5 md:grid-cols-[minmax(16rem,1fr)_auto] md:items-center">
       <div className="relative">
         <label className="sr-only" htmlFor="finance-history-search">
           {searchLabel}
         </label>
         <Search
           aria-hidden="true"
-          className="text-muted-foreground pointer-events-none absolute top-1/2 right-3.5 z-1 size-4 -translate-y-1/2"
+          className="pointer-events-none absolute top-1/2 right-3.5 z-1 size-4 -translate-y-1/2 text-muted-foreground"
         />
         <Input
           id="finance-history-search"
@@ -75,7 +75,7 @@ export function FinanceToolbar({
         ))}
       </fieldset>
       <div
-        className="text-muted-foreground flex min-h-9 items-center justify-between gap-3 text-xs md:col-span-full"
+        className="flex min-h-9 items-center justify-between gap-3 text-xs text-muted-foreground md:col-span-full"
         role="status"
       >
         <span>{resultLabel}</span>

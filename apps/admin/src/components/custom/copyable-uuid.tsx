@@ -31,7 +31,7 @@ export function CopyableUuid({
     <span
       dir="ltr"
       className={cn(
-        "text-muted-foreground inline-flex items-center gap-1 font-mono text-[11px]",
+        "inline-flex items-center gap-1 font-mono text-[11px] text-muted-foreground",
         className,
       )}
     >
@@ -43,7 +43,7 @@ export function CopyableUuid({
         onClick={copy}
         aria-label="کپی شناسه"
         title="کپی شناسه"
-        className="hover:text-foreground hover:bg-muted rounded p-0.5 transition-colors"
+        className="rounded p-0.5 transition-colors hover:bg-muted hover:text-foreground"
       >
         {copied ? (
           <Check className="size-3.5 text-emerald-600" />

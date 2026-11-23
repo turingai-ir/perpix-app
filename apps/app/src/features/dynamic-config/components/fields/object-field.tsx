@@ -16,8 +16,8 @@ export const DynamicConfigObjectField: FC<
     renderField: RenderDynamicConfigField;
   }
 > = ({ disabled, dynamicForm, fieldName, label, property, renderField }) => (
-  <div className="border-input flex w-full flex-col gap-3 rounded-lg border p-3">
-    <span className="text-muted-foreground text-sm font-normal">{label}</span>
+  <div className="flex w-full flex-col gap-3 rounded-lg border border-input p-3">
+    <span className="text-sm font-normal text-muted-foreground">{label}</span>
     <DynamicConfigObjectFields
       dynamicForm={dynamicForm}
       fieldName={fieldName}

@@ -14,7 +14,7 @@ export function PaymentBreakdown({ payment }: { payment: Breakdown }) {
     },
   ] as const;
   return (
-    <dl className="bg-muted/30 space-y-4 rounded-lg border p-4">
+    <dl className="space-y-4 rounded-lg border bg-muted/30 p-4">
       {rows.map(({ label, amount }, index) => (
         <div key={label} className="flex items-center justify-between gap-4">
           <dt className="font-medium">{t(label)}</dt>

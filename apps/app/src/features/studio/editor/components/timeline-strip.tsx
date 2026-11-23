@@ -45,7 +45,7 @@ export const TimelineStrip: FC<TimelineStripProps> = ({
             width: percent(segment.endMs - segment.startMs),
           }}
           className={cn(
-            "border-background absolute inset-y-0 cursor-pointer overflow-hidden border-s-2 px-1.5 text-start text-xs transition-colors first:rounded-s-lg last:rounded-e-lg focus-visible:ring-2 focus-visible:outline-none",
+            "absolute inset-y-0 cursor-pointer overflow-hidden border-s-2 border-background px-1.5 text-start text-xs transition-colors first:rounded-s-lg last:rounded-e-lg focus-visible:ring-2 focus-visible:outline-none",
             index === current
               ? "bg-primary/30 text-foreground"
               : "bg-muted text-muted-foreground",
@@ -56,7 +56,7 @@ export const TimelineStrip: FC<TimelineStripProps> = ({
       ))}
       <div
         aria-hidden
-        className="bg-foreground pointer-events-none absolute -top-1 -bottom-1 w-0.5 rounded-full"
+        className="pointer-events-none absolute -top-1 -bottom-1 w-0.5 rounded-full bg-foreground"
         style={{ left: percent(Math.min(timeMs, durationMs)) }}
       />
     </div>

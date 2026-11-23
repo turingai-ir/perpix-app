@@ -14,10 +14,10 @@ export function DashboardMetricCard({
 }: DashboardMetricCardProps) {
   return (
     <div className={METRIC_CARD_CLASS}>
-      <div className="border-foreground/8 bg-foreground/4 inset-shadow-highlight-sm mb-5 grid size-10.5 place-items-center rounded-lg border">
+      <div className="mb-5 grid size-10.5 place-items-center rounded-lg border border-foreground/8 bg-foreground/4 inset-shadow-highlight-sm">
         {icon}
       </div>
-      <p className="text-muted-foreground text-xs">{label}</p>
+      <p className="text-xs text-muted-foreground">{label}</p>
       {children}
     </div>
   );

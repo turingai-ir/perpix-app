@@ -807,9 +807,7 @@ test("explains both creation choices without asking for a prompt", async ({
   await expect(page.locator("#dashboard-creative-prompt")).toHaveCount(0);
   await expect(
     page
-      .getByText(
-        "فقط با ورود به ابزار، چیزی ساخته نمی‌شه و اعتباری مصرف نمی‌کنی",
-      )
+      .getByText("فقط با ورود به ابزار، چیزی ساخته نمی‌شه و اعتباری مصرف نمی‌کنی")
       .first(),
   ).toBeVisible();
 });
@@ -926,9 +924,7 @@ test("keeps the image creation turn and composer in view", async ({ page }) => {
   await page.getByRole("button", { name: "بزرگ‌کردن و ویرایش پرامپت" }).click();
   const expandedPrompt = page.getByRole("dialog").getByRole("textbox");
   await expect(expandedPrompt).toHaveValue(/شهر آینده‌نگر/);
-  await expandedPrompt.fill(
-    "یک شهر آینده‌نگر در شب، سبک سینمایی و باران نئونی",
-  );
+  await expandedPrompt.fill("یک شهر آینده‌نگر در شب، سبک سینمایی و باران نئونی");
   await page.getByRole("button", { name: "اعمال تغییرات پرامپت" }).click();
 
   await page.getByRole("button", { name: "ساخت تصویر" }).click();

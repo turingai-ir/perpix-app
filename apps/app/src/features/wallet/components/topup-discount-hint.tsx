@@ -47,7 +47,7 @@ export function TopupDiscountHint({
   return (
     <div
       aria-live="polite"
-      className="text-accent-emerald flex flex-col gap-1 text-sm font-semibold"
+      className="flex flex-col gap-1 text-sm font-semibold text-accent-emerald"
     >
       {saving > 0 ? (
         <p className="flex items-center gap-2">
@@ -56,7 +56,7 @@ export function TopupDiscountHint({
         </p>
       ) : null}
       {showNext ? (
-        <p className="text-muted-foreground font-medium">
+        <p className="font-medium text-muted-foreground">
           {t(`${KEY}.discountNext`, {
             tokens: formatLocalizedNumber({
               value: next.from_amount_usdmicro / 1000,

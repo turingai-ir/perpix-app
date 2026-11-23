@@ -16,11 +16,14 @@ function DialogClose(props: DialogPrimitive.Close.Props) {
   return <DialogPrimitive.Close data-slot="dialog-close" {...props} />;
 }
 
-function DialogOverlay({ className, ...props }: DialogPrimitive.Backdrop.Props) {
+function DialogOverlay({
+  className,
+  ...props
+}: DialogPrimitive.Backdrop.Props) {
   return (
     <DialogPrimitive.Backdrop
       data-slot="dialog-overlay"
-      className={cn("glass-scrim motion-fade fixed inset-0 z-50", className)}
+      className={cn("fixed inset-0 z-50 glass-scrim motion-fade", className)}
       {...props}
     />
   );
@@ -31,14 +34,19 @@ type DialogContentProps = DialogPrimitive.Popup.Props & {
   closeLabel?: string;
 };
 
-function DialogContent({ className, children, closeLabel, ...props }: DialogContentProps) {
+function DialogContent({
+  className,
+  children,
+  closeLabel,
+  ...props
+}: DialogContentProps) {
   return (
     <DialogPrimitive.Portal>
       <DialogOverlay />
       <DialogPrimitive.Popup
         data-slot="dialog-content"
         className={cn(
-          "glass motion-pop fixed start-1/2 top-1/2 z-50 grid w-[calc(100%-2rem)] max-w-sm -translate-1/2 gap-section rounded-panel p-inset-lg outline-none rtl:translate-x-1/2",
+          "fixed start-1/2 top-1/2 z-50 grid w-[calc(100%-2rem)] max-w-sm motion-pop -translate-1/2 gap-section rounded-panel glass p-inset-lg outline-none rtl:translate-x-1/2",
           className,
         )}
         {...props}
@@ -48,7 +56,13 @@ function DialogContent({ className, children, closeLabel, ...props }: DialogCont
           <DialogPrimitive.Close
             data-slot="dialog-close"
             aria-label={closeLabel}
-            render={<Button variant="glass" size="icon-sm" className="absolute end-3 top-3" />}
+            render={
+              <Button
+                variant="glass"
+                size="icon-sm"
+                className="absolute end-3 top-3"
+              />
+            }
           >
             <XIcon aria-hidden />
           </DialogPrimitive.Close>
@@ -59,7 +73,13 @@ function DialogContent({ className, children, closeLabel, ...props }: DialogCont
 }
 
 function DialogHeader({ className, ...props }: ComponentProps<"div">) {
-  return <div data-slot="dialog-header" className={cn("flex flex-col gap-group pe-8", className)} {...props} />;
+  return (
+    <div
+      data-slot="dialog-header"
+      className={cn("flex flex-col gap-group pe-8", className)}
+      {...props}
+    />
+  );
 }
 
 function DialogFooter({ className, ...props }: ComponentProps<"div">) {
@@ -73,10 +93,19 @@ function DialogFooter({ className, ...props }: ComponentProps<"div">) {
 }
 
 function DialogTitle({ className, ...props }: DialogPrimitive.Title.Props) {
-  return <DialogPrimitive.Title data-slot="dialog-title" className={cn("text-title-3 font-semibold", className)} {...props} />;
+  return (
+    <DialogPrimitive.Title
+      data-slot="dialog-title"
+      className={cn("text-title-3 font-semibold", className)}
+      {...props}
+    />
+  );
 }
 
-function DialogDescription({ className, ...props }: DialogPrimitive.Description.Props) {
+function DialogDescription({
+  className,
+  ...props
+}: DialogPrimitive.Description.Props) {
   return (
     <DialogPrimitive.Description
       data-slot="dialog-description"

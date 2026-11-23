@@ -45,9 +45,5 @@
       "purpose": "maskable"
     }
   ],
-  "categories": [
-    "photo",
-    "graphics",
-    "productivity"
-  ]
+  "categories": ["photo", "graphics", "productivity"]
 }

@@ -64,7 +64,7 @@ export const PersonalInfoForm: FC<PersonalInfoFormProps> = ({
           >
             {t("pages.profile.settings.personalInfo")}
           </h2>
-          <p className="text-muted-foreground mt-2 text-sm leading-7">
+          <p className="mt-2 text-sm leading-7 text-muted-foreground">
             {t("pages.profile.settings.personalInfoHint")}
           </p>
         </div>
@@ -83,7 +83,7 @@ export const PersonalInfoForm: FC<PersonalInfoFormProps> = ({
                   <div className="group/wrap relative">
                     <UserRound
                       aria-hidden="true"
-                      className="text-muted-foreground pointer-events-none absolute top-1/2 right-3.5 z-1 size-4 -translate-y-1/2 group-has-[input[dir=ltr]]/wrap:right-auto group-has-[input[dir=ltr]]/wrap:left-3.5"
+                      className="pointer-events-none absolute top-1/2 right-3.5 z-1 size-4 -translate-y-1/2 text-muted-foreground group-has-[input[dir=ltr]]/wrap:right-auto group-has-[input[dir=ltr]]/wrap:left-3.5"
                     />
                     <FormControl>
                       <Input
@@ -108,7 +108,7 @@ export const PersonalInfoForm: FC<PersonalInfoFormProps> = ({
                   <div className="group/wrap relative">
                     <Mail
                       aria-hidden="true"
-                      className="text-muted-foreground pointer-events-none absolute top-1/2 right-3.5 z-1 size-4 -translate-y-1/2 group-has-[input[dir=ltr]]/wrap:right-auto group-has-[input[dir=ltr]]/wrap:left-3.5"
+                      className="pointer-events-none absolute top-1/2 right-3.5 z-1 size-4 -translate-y-1/2 text-muted-foreground group-has-[input[dir=ltr]]/wrap:right-auto group-has-[input[dir=ltr]]/wrap:left-3.5"
                     />
                     <FormControl>
                       <Input
@@ -137,7 +137,7 @@ export const PersonalInfoForm: FC<PersonalInfoFormProps> = ({
                   <div className="group/wrap relative">
                     <Phone
                       aria-hidden="true"
-                      className="text-muted-foreground pointer-events-none absolute top-1/2 right-3.5 z-1 size-4 -translate-y-1/2 group-has-[input[dir=ltr]]/wrap:right-auto group-has-[input[dir=ltr]]/wrap:left-3.5"
+                      className="pointer-events-none absolute top-1/2 right-3.5 z-1 size-4 -translate-y-1/2 text-muted-foreground group-has-[input[dir=ltr]]/wrap:right-auto group-has-[input[dir=ltr]]/wrap:left-3.5"
                     />
                     <FormControl>
                       <Input
@@ -150,15 +150,15 @@ export const PersonalInfoForm: FC<PersonalInfoFormProps> = ({
                       />
                     </FormControl>
                   </div>
-                  <p className="text-muted-foreground text-xs leading-6">
+                  <p className="text-xs leading-6 text-muted-foreground">
                     {t("pages.profile.settings.mobileReadOnly")}
                   </p>
                 </FormItem>
               )}
             />
           </div>
-          <div className="border-border/70 flex flex-col gap-4 border-t pt-6 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-muted-foreground flex items-center gap-2 text-xs">
+          <div className="flex flex-col gap-4 border-t border-border/70 pt-6 sm:flex-row sm:items-center sm:justify-between">
+            <p className="flex items-center gap-2 text-xs text-muted-foreground">
               <LockKeyhole aria-hidden="true" className="size-4" />
               {t("pages.profile.settings.secureNote")}
             </p>

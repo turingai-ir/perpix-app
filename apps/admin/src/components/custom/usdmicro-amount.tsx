@@ -32,13 +32,13 @@ export function UsdmicroAmount({
   const amount = (
     <span className={cn("tabular-nums", amountClassName)}>
       {formatUsdmicro(value)}{" "}
-      <span className="text-muted-foreground text-[0.85em] font-normal">
+      <span className="text-[0.85em] font-normal text-muted-foreground">
         {USDMICRO_UNIT_LABEL}
       </span>
     </span>
   );
   const tokens = (
-    <span className="text-muted-foreground text-[11px] font-normal tabular-nums">
+    <span className="text-[11px] font-normal text-muted-foreground tabular-nums">
       {tokenHint(value)}
     </span>
   );
@@ -77,7 +77,7 @@ export function UsdmicroInputHint({
 }) {
   const amount = value.trim() === "" ? null : parseUsdmicro(value);
   return (
-    <p className={cn("text-muted-foreground text-[11px]", className)}>
+    <p className={cn("text-[11px] text-muted-foreground", className)}>
       {amount === null
         ? `مبلغ را به ${USDMICRO_UNIT_LABEL} (عدد صحیح) وارد کنید؛ هر توکن = ۱٬۰۰۰ ${USDMICRO_UNIT_LABEL}`
         : `${formatUsdmicro(amount)} ${USDMICRO_UNIT_LABEL} ${tokenHint(amount)}`}
@@ -100,12 +100,12 @@ export function BalanceChange({
     >
       <span className="text-muted-foreground">
         {formatUsdmicro(before)} →{" "}
-        <span className="text-foreground font-semibold">
+        <span className="font-semibold text-foreground">
           {formatUsdmicro(after)}
         </span>{" "}
         {USDMICRO_UNIT_LABEL}
       </span>
-      <span className="text-muted-foreground text-[11px]">
+      <span className="text-[11px] text-muted-foreground">
         ≈ {formatTokensFromUsdmicro(before)} → {formatTokensFromUsdmicro(after)}{" "}
         توکن
       </span>

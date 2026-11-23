@@ -44,12 +44,12 @@ export const PlayerBar: FC<PlayerBarProps> = ({
         value={Math.min(timeMs, durationMs)}
         onChange={(event) => onSeek(Number(event.target.value))}
         aria-label={t("features.studio.editor.seek")}
-        className="accent-primary h-11 min-w-0 flex-1 cursor-pointer"
+        className="h-11 min-w-0 flex-1 cursor-pointer accent-primary"
         dir="ltr"
       />
       <span
         dir="ltr"
-        className="text-muted-foreground w-20 shrink-0 text-end text-xs tabular-nums lg:w-28 lg:text-sm"
+        className="w-20 shrink-0 text-end text-xs text-muted-foreground tabular-nums lg:w-28 lg:text-sm"
       >
         {formatDuration(timeMs)} / {formatDuration(durationMs)}
       </span>

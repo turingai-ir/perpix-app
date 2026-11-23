@@ -27,12 +27,12 @@ export function GenerationHistoryError({
       role="alert"
       aria-labelledby={titleId}
       aria-busy={isRetrying}
-      className="border-border bg-background/90 mx-auto flex max-h-full min-h-0 w-full max-w-2xl flex-col gap-4 overflow-y-auto rounded-2xl border p-5"
+      className="mx-auto flex max-h-full min-h-0 w-full max-w-2xl flex-col gap-4 overflow-y-auto rounded-2xl border border-border bg-background/90 p-5"
     >
       <h2 id={titleId} className="text-lg font-semibold">
         {t(`pages.generation.historyError.${kind}.title`)}
       </h2>
-      <p className="text-muted-foreground text-sm leading-7">
+      <p className="text-sm leading-7 text-muted-foreground">
         {t(`pages.generation.historyError.${kind}.description`)}
       </p>
       <div className="flex flex-wrap gap-3">

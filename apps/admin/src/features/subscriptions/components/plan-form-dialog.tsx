@@ -166,7 +166,7 @@ function PlanFormContent({
     <form onSubmit={handleSubmit} className="space-y-4 py-2">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
-          <label className="text-foreground text-xs font-semibold">
+          <label className="text-xs font-semibold text-foreground">
             {t("features.subscriptions.plans.fields.name", {
               defaultValue: "نام سیستمی پلن",
             })}{" "}
@@ -183,7 +183,7 @@ function PlanFormContent({
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-foreground text-xs font-semibold">
+          <label className="text-xs font-semibold text-foreground">
             {t("features.subscriptions.plans.fields.displayName", {
               defaultValue: "نام نمایشی پلن",
             })}
@@ -197,7 +197,7 @@ function PlanFormContent({
       </div>
 
       <div className="space-y-1.5">
-        <label className="text-foreground text-xs font-semibold">
+        <label className="text-xs font-semibold text-foreground">
           {t("features.subscriptions.plans.fields.description", {
             defaultValue: "توضیحات پلن",
           })}
@@ -211,7 +211,7 @@ function PlanFormContent({
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
-          <label className="text-foreground text-xs font-semibold">
+          <label className="text-xs font-semibold text-foreground">
             {t("features.subscriptions.plans.fields.durationDays", {
               defaultValue: "مدت اعتبار (روز)",
             })}{" "}
@@ -229,7 +229,7 @@ function PlanFormContent({
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-foreground text-xs font-semibold">
+          <label className="text-xs font-semibold text-foreground">
             {t("features.subscriptions.plans.fields.giftAmountUsd", {
               defaultValue: "مبلغ هدیه کیف پول (میکرودلار)",
             })}
@@ -244,7 +244,7 @@ function PlanFormContent({
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
-          <label className="text-foreground text-xs font-semibold">
+          <label className="text-xs font-semibold text-foreground">
             {t("features.subscriptions.plans.fields.basePriceUsd", {
               defaultValue: "قیمت پایه (میکرودلار)",
             })}
@@ -257,7 +257,7 @@ function PlanFormContent({
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-foreground text-xs font-semibold">
+          <label className="text-xs font-semibold text-foreground">
             {t("features.subscriptions.plans.fields.discountedPriceUsd", {
               defaultValue: "قیمت با تخفیف (میکرودلار)",
             })}
@@ -271,7 +271,7 @@ function PlanFormContent({
       </div>
 
       <div className="space-y-1.5">
-        <label className="text-foreground text-xs font-semibold">
+        <label className="text-xs font-semibold text-foreground">
           {t("features.subscriptions.plans.fields.scopes", {
             defaultValue: "دسترسی‌ها (با کاما جدا کنید)",
           })}
@@ -285,13 +285,13 @@ function PlanFormContent({
       </div>
 
       <div className="space-y-1.5">
-        <label className="text-foreground text-xs font-semibold">
+        <label className="text-xs font-semibold text-foreground">
           {t("features.subscriptions.plans.fields.allowedModels", {
             defaultValue: "مدل‌های مجاز (با کاما جدا کنید)",
           })}
         </label>
         <textarea
-          className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring w-full rounded border px-3 py-2 text-sm focus:ring-2 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+          className="w-full rounded border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
           rows={3}
           value={allowedModelsStr}
           onChange={(e) => setAllowedModelsStr(e.target.value)}
@@ -300,14 +300,14 @@ function PlanFormContent({
         />
       </div>
 
-      <section className="border-border space-y-3 rounded-lg border p-3">
+      <section className="space-y-3 rounded-lg border border-border p-3">
         <div>
-          <h3 className="text-foreground text-sm font-bold">
+          <h3 className="text-sm font-bold text-foreground">
             {t("features.subscriptions.plans.settings.title", {
               defaultValue: "تنظیمات",
             })}
           </h3>
-          <p className="text-muted-foreground text-xs">
+          <p className="text-xs text-muted-foreground">
             {t("features.subscriptions.plans.settings.description", {
               defaultValue:
                 "محدودیت‌ها و امکانات هر بخش از محصول برای کاربران این پلن.",
@@ -315,8 +315,8 @@ function PlanFormContent({
           </p>
         </div>
 
-        <div className="bg-muted/30 space-y-3 rounded-md p-3">
-          <h4 className="text-foreground text-xs font-bold">
+        <div className="space-y-3 rounded-md bg-muted/30 p-3">
+          <h4 className="text-xs font-bold text-foreground">
             {t("features.subscriptions.plans.settings.studio.title", {
               defaultValue: "استودیو",
             })}
@@ -334,7 +334,7 @@ function PlanFormContent({
                   ).join(", "),
                 )
               }
-              className="text-primary focus:ring-primary size-4 rounded"
+              className="size-4 rounded text-primary focus:ring-primary"
             />
             <span>
               {t("features.subscriptions.plans.settings.studio.enabled", {
@@ -342,12 +342,12 @@ function PlanFormContent({
               })}
             </span>
           </label>
-          <p className="text-muted-foreground text-xs" dir="ltr">
+          <p className="text-xs text-muted-foreground" dir="ltr">
             studio:read, studio:write
           </p>
 
           <div className="space-y-1.5">
-            <label className="text-foreground text-xs font-semibold">
+            <label className="text-xs font-semibold text-foreground">
               {t(
                 "features.subscriptions.plans.settings.studio.captionPresetLimit",
                 {
@@ -364,7 +364,7 @@ function PlanFormContent({
               onChange={(e) => setCaptionPresetLimit(e.target.value)}
               dir="ltr"
             />
-            <p className="text-muted-foreground text-xs">
+            <p className="text-xs text-muted-foreground">
               {t(
                 "features.subscriptions.plans.settings.studio.captionPresetLimitHint",
                 {
@@ -384,7 +384,7 @@ function PlanFormContent({
               type="checkbox"
               checked={isActive}
               onChange={(e) => setIsActive(e.target.checked)}
-              className="text-primary focus:ring-primary size-4 rounded"
+              className="size-4 rounded text-primary focus:ring-primary"
             />
             <span>
               {t("features.subscriptions.plans.fields.isActive", {
@@ -398,7 +398,7 @@ function PlanFormContent({
               type="checkbox"
               checked={isRecommended}
               onChange={(e) => setIsRecommended(e.target.checked)}
-              className="text-primary focus:ring-primary size-4 rounded"
+              className="size-4 rounded text-primary focus:ring-primary"
             />
             <span>
               {t("features.subscriptions.plans.fields.isRecommended", {
@@ -413,7 +413,7 @@ function PlanFormContent({
                 type="checkbox"
                 checked={isDefault}
                 onChange={(e) => setIsDefault(e.target.checked)}
-                className="text-primary focus:ring-primary size-4 rounded"
+                className="size-4 rounded text-primary focus:ring-primary"
               />
               <span>
                 {t("features.subscriptions.plans.fields.isDefault", {
@@ -466,7 +466,7 @@ export function PlanFormDialog({
       <DialogPopup className="max-h-[90vh] max-w-xl overflow-y-auto">
         <DialogHeader>
           <div className="flex items-center gap-2">
-            <Sparkles className="text-primary size-5" />
+            <Sparkles className="size-5 text-primary" />
             <DialogTitle>
               {isEdit
                 ? t("features.subscriptions.plans.editTitle", {

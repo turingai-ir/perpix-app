@@ -33,20 +33,20 @@ export function GallerySortSelect({
       >
         <SelectTrigger
           aria-label={t("pages.gallery.studio.sort")}
-          className="border-foreground/10 bg-background/64 text-foreground focus-visible:border-ring text-subhead h-12 w-full justify-between rounded-2xl border px-[0.85rem] outline-none focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_20%,transparent)] data-[size=default]:h-12 max-md:min-w-0 max-md:text-base"
+          className="h-12 w-full justify-between rounded-2xl border border-foreground/10 bg-background/64 px-[0.85rem] text-subhead text-foreground outline-none focus-visible:border-ring focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_20%,transparent)] data-[size=default]:h-12 max-md:min-w-0 max-md:text-base"
         >
           <SelectValue />
         </SelectTrigger>
         <SelectContent
           alignItemWithTrigger={false}
           align="start"
-          className="border-glass-edge bg-glass-strong inset-shadow-highlight shadow-modal min-w-(--anchor-width) rounded-2xl border bg-[linear-gradient(135deg,color-mix(in_oklch,var(--night-foreground)_10%,transparent),transparent_46%)] p-[0.3rem]"
+          className="min-w-(--anchor-width) rounded-2xl border border-glass-edge bg-glass-strong bg-[linear-gradient(135deg,color-mix(in_oklch,var(--night-foreground)_10%,transparent),transparent_46%)] p-[0.3rem] shadow-modal inset-shadow-highlight"
         >
           {items.map((item) => (
             <SelectItem
               key={item.value}
               value={item.value}
-              className="data-selected:bg-primary/16 data-selected:text-foreground text-subhead min-h-10 rounded-lg ps-3 pe-9 max-md:min-h-11 max-md:text-base"
+              className="min-h-10 rounded-lg ps-3 pe-9 text-subhead max-md:min-h-11 max-md:text-base data-selected:bg-primary/16 data-selected:text-foreground"
             >
               {item.label}
             </SelectItem>

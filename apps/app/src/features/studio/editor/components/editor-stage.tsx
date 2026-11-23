@@ -29,13 +29,13 @@ export const EditorStage: FC<EditorStageProps> = ({
   const { width, height } = useElementSize(frame);
 
   return (
-    <div className="bg-night flex min-h-0 flex-1 items-center justify-center p-2">
+    <div className="flex min-h-0 flex-1 items-center justify-center bg-night p-2">
       <div
         ref={frame}
-        className="bg-night relative aspect-[9/16] h-full max-w-full overflow-hidden rounded-xl"
+        className="relative aspect-[9/16] h-full max-w-full overflow-hidden rounded-xl bg-night"
       >
         {/* The caption is drawn on the canvas below, and the words are in the transcript list. */}
-        {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+        {/* oxlint-disable-next-line jsx-a11y/media-has-caption */}
         <video
           ref={videoRef}
           className="absolute inset-0 size-full object-contain"

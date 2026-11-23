@@ -45,7 +45,7 @@ const AudioPreviewButton: FC<{ file?: File; src?: string }> = ({
 
   return (
     <div className="flex h-full w-full items-center justify-center">
-      {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+      {/* oxlint-disable-next-line jsx-a11y/media-has-caption */}
       <audio
         ref={audioRef}
         src={audioSrc}
@@ -56,7 +56,7 @@ const AudioPreviewButton: FC<{ file?: File; src?: string }> = ({
       />
       <button
         type="button"
-        className="bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:ring-ring/50 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full transition-colors outline-none focus-visible:ring-3 disabled:pointer-events-none disabled:opacity-50"
+        className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-primary text-primary-foreground transition-colors outline-none hover:bg-primary/90 focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50"
         aria-label={isPlaying ? "Pause audio" : "Play audio"}
         disabled={!audioSrc}
         onClick={handleTogglePlayback}

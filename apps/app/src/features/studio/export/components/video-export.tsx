@@ -56,20 +56,20 @@ export function VideoExport({
         }}
         title={t("features.studio.export.title")}
       >
-        <div className="gap-group flex flex-col">
+        <div className="flex flex-col gap-group">
           {loading || (project && !job.options && !issue) ? (
-            <p role="status" className="text-muted-foreground text-body">
+            <p role="status" className="text-body text-muted-foreground">
               {t("features.studio.export.checking")}
             </p>
           ) : null}
           {issue && (
-            <p role="status" className="text-muted-foreground text-body">
+            <p role="status" className="text-body text-muted-foreground">
               {t(`features.studio.export.${issue}`)}
             </p>
           )}
           {project && !!job.options?.length && (
-            <fieldset className="gap-group flex flex-col" disabled={busy}>
-              <legend className="text-headline mb-2 font-medium">
+            <fieldset className="flex flex-col gap-group" disabled={busy}>
+              <legend className="mb-2 text-headline font-medium">
                 {t("features.studio.export.quality")}
               </legend>
               {job.options.map(({ profile, format, issue: reason, slow }) => (
@@ -80,7 +80,7 @@ export function VideoExport({
                     resolution: number.format(profile.width),
                     fps: number.format(profile.fps),
                   })}
-                  className="rounded-card flex items-start gap-3 border p-3"
+                  className="flex items-start gap-3 rounded-card border p-3"
                 >
                   <input
                     id={`studio-export-${profile.id}`}
@@ -92,13 +92,13 @@ export function VideoExport({
                     onChange={() => job.select(profile.id)}
                   />
                   <span>
-                    <span className="text-body block">
+                    <span className="block text-body">
                       {t("features.studio.export.profile", {
                         resolution: number.format(profile.width),
                         fps: number.format(profile.fps),
                       })}
                     </span>
-                    <span className="text-muted-foreground text-footnote block">
+                    <span className="block text-footnote text-muted-foreground">
                       {format
                         ? t("features.studio.export.size", {
                             format: format.toUpperCase(),
@@ -112,7 +112,7 @@ export function VideoExport({
                           )}
                     </span>
                     {slow && (
-                      <span className="text-muted-foreground text-footnote block">
+                      <span className="block text-footnote text-muted-foreground">
                         {t("features.studio.export.slow")}
                       </span>
                     )}
@@ -122,7 +122,7 @@ export function VideoExport({
             </fieldset>
           )}
           {captionsPending && (
-            <p role="status" className="text-muted-foreground text-footnote">
+            <p role="status" className="text-footnote text-muted-foreground">
               {t("features.studio.export.captionsPending")}
             </p>
           )}
@@ -147,9 +147,9 @@ export function VideoExport({
             </Button>
           )}
           {job.result && (
-            <div className="gap-group flex flex-wrap items-center justify-center">
+            <div className="flex flex-wrap items-center justify-center gap-group">
               <a
-                className="text-primary text-body underline"
+                className="text-body text-primary underline"
                 href={job.result.url}
                 download={job.result.file.name}
               >
@@ -169,7 +169,7 @@ export function VideoExport({
             </div>
           )}
           {job.shareFailed && (
-            <p role="status" className="text-muted-foreground text-footnote">
+            <p role="status" className="text-footnote text-muted-foreground">
               {t("features.studio.export.shareFailed")}
             </p>
           )}

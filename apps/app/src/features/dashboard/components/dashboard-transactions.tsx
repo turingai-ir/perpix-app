@@ -66,22 +66,22 @@ export function DashboardTransactions({
                 className={DATA_ROW_CLASS}
               >
                 <span className={cn(DATA_ICON_CLASS, "size-9 rounded-md")}>
-                  <Icon className="text-foreground/80 size-4" />
+                  <Icon className="size-4 text-foreground/80" />
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="text-foreground/90 block text-sm">
+                  <span className="block text-sm text-foreground/90">
                     {t(
                       `pages.root.dashboard.transactions.types.${transaction.type.toLowerCase()}`,
                     )}
                   </span>
-                  <span className="text-muted-foreground text-xs">
+                  <span className="text-xs text-muted-foreground">
                     {dayjs(transaction.created_at)
                       .calendar("jalali")
                       .locale("fa")
                       .format("YYYY/MM/DD")}
                   </span>
                 </span>
-                <span dir="ltr" className="text-foreground text-sm font-medium">
+                <span dir="ltr" className="text-sm font-medium text-foreground">
                   {amount}
                 </span>
               </div>

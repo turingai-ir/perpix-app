@@ -137,7 +137,7 @@ export function WalletsListPage() {
         cell: (item) => {
           const isCopied = copiedId === item.uuid;
           return (
-            <div className="text-muted-foreground flex items-center gap-1.5 font-mono text-xs">
+            <div className="flex items-center gap-1.5 font-mono text-xs text-muted-foreground">
               <span title={item.uuid}>
                 {item.uuid.slice(0, 8)}…{item.uuid.slice(-4)}
               </span>
@@ -145,7 +145,7 @@ export function WalletsListPage() {
                 type="button"
                 onClick={() => handleCopy(item.uuid)}
                 aria-label="کپی شناسه کیف پول"
-                className="text-muted-foreground hover:text-foreground hover:bg-muted rounded p-1 transition-colors"
+                className="rounded p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
               >
                 {isCopied ? (
                   <Check className="size-3.5 text-emerald-600" />
@@ -165,7 +165,7 @@ export function WalletsListPage() {
         cell: (item) => (
           <Link
             to={`/users/${item.user_uuid}`}
-            className="text-primary font-mono text-xs hover:underline"
+            className="font-mono text-xs text-primary hover:underline"
             title={item.user_uuid}
           >
             {item.user_uuid.slice(0, 8)}…
@@ -178,7 +178,7 @@ export function WalletsListPage() {
           defaultValue: "نام کیف پول",
         }),
         cell: (item) => (
-          <span className="text-foreground text-sm font-medium">
+          <span className="text-sm font-medium text-foreground">
             {item.name ||
               t("common.defaultWallet", { defaultValue: "کیف پول اصلی" })}
           </span>
@@ -230,7 +230,7 @@ export function WalletsListPage() {
           ) : (
             <Badge
               variant="outline"
-              className="text-muted-foreground gap-1 text-xs"
+              className="gap-1 text-xs text-muted-foreground"
             >
               <Unlock className="size-3" />
               {t("features.finance.wallets.unlocked", { defaultValue: "آزاد" })}
@@ -243,7 +243,7 @@ export function WalletsListPage() {
           defaultValue: "تاریخ ساخت",
         }),
         cell: (item) => (
-          <span className="text-muted-foreground text-xs whitespace-nowrap">
+          <span className="text-xs whitespace-nowrap text-muted-foreground">
             {formatDate(item.created_at)}
           </span>
         ),
@@ -289,7 +289,7 @@ export function WalletsListPage() {
     <div className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-8 sm:py-8">
       {/* Header */}
       <div>
-        <div className="text-muted-foreground mb-1.5 flex items-center gap-2 text-xs">
+        <div className="mb-1.5 flex items-center gap-2 text-xs text-muted-foreground">
           <Wallet aria-hidden="true" className="size-4" />
           <span>{t("overview.admin", { defaultValue: "پنل مدیریت" })}</span>
           <span>/</span>
@@ -297,7 +297,7 @@ export function WalletsListPage() {
             {t("features.finance.menuTitle", { defaultValue: "مالی" })}
           </span>
           <span>/</span>
-          <span className="text-foreground font-medium">
+          <span className="font-medium text-foreground">
             {t("features.finance.wallets.title", {
               defaultValue: "کیف پول‌ها",
             })}
@@ -308,7 +308,7 @@ export function WalletsListPage() {
             defaultValue: "مدیریت کیف پول‌ها",
           })}
         </h1>
-        <p className="text-muted-foreground mt-1 text-sm">
+        <p className="mt-1 text-sm text-muted-foreground">
           {t("features.finance.wallets.description", {
             defaultValue: "مشاهده موجودی، شارژ دستی و نظارت بر کیف پول کاربران",
           })}
@@ -316,7 +316,7 @@ export function WalletsListPage() {
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="border-border bg-card rounded-2xl border p-4 shadow-xs">
+      <div className="rounded-2xl border border-border bg-card p-4 shadow-xs">
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           <div className="lg:col-span-2">
             <SearchInput
@@ -400,7 +400,7 @@ export function WalletsListPage() {
 
           {selectedWallet && (
             <div className="space-y-4 py-2">
-              <div className="border-border bg-muted/40 space-y-2 rounded-xl border p-3 text-xs">
+              <div className="space-y-2 rounded-xl border border-border bg-muted/40 p-3 text-xs">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">شناسه کیف پول:</span>
                   <span dir="ltr" className="font-mono font-medium">
@@ -427,7 +427,7 @@ export function WalletsListPage() {
               <div className="space-y-1.5">
                 <label
                   htmlFor="charge-amount"
-                  className="text-foreground text-xs font-medium"
+                  className="text-xs font-medium text-foreground"
                 >
                   {t("features.finance.wallets.amountLabel", {
                     defaultValue: "مبلغ شارژ (میکرودلار):",
@@ -446,7 +446,7 @@ export function WalletsListPage() {
               <div className="space-y-1.5">
                 <label
                   htmlFor="charge-reason"
-                  className="text-foreground text-xs font-medium"
+                  className="text-xs font-medium text-foreground"
                 >
                   {t("features.finance.wallets.reasonLabel", {
                     defaultValue: "علت یا شماره پیگیری (اختیاری):",
@@ -468,7 +468,7 @@ export function WalletsListPage() {
                   type="checkbox"
                   checked={isConfirmed}
                   onChange={(e) => setIsConfirmed(e.target.checked)}
-                  className="border-border mt-0.5 rounded"
+                  className="mt-0.5 rounded border-border"
                   disabled={isCharging}
                 />
                 <label

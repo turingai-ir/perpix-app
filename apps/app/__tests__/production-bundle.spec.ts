@@ -76,7 +76,7 @@ test("production JavaScript chunks stay within the default 500 kB budget", async
   });
   expect(chunks.length).toBeGreaterThan(0);
   expect(warningLimit).toBe(500);
-  expect(chunks.some((chunk) => chunk.file.includes("-legacy-"))).toBe(true);
+  expect(chunks.some((chunk) => chunk.file.includes("-legacy-"))).toBe(false);
   expect(
     chunks.some((chunk) => /react-vendor-(?!legacy-)/.test(chunk.file)),
   ).toBe(true);

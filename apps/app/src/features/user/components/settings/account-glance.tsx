@@ -65,12 +65,12 @@ export function AccountGlance() {
             <Wallet aria-hidden="true" className="size-5" />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-muted-foreground text-xs">
+            <p className="text-xs text-muted-foreground">
               {t("pages.profile.settings.walletBalance")}
             </p>
             <p className="mt-1 truncate text-xl font-bold">
               {walletValue}{" "}
-              <span className="text-muted-foreground text-sm font-normal">
+              <span className="text-sm font-normal text-muted-foreground">
                 {wallet.isSuccess ? t("pages.profile.settings.token") : ""}
               </span>
             </p>
@@ -81,14 +81,14 @@ export function AccountGlance() {
             <Crown aria-hidden="true" className="size-5" />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-muted-foreground text-xs">
+            <p className="text-xs text-muted-foreground">
               {t("pages.profile.settings.activePlan")}
             </p>
             <p className="mt-1 truncate text-base font-bold">{planValue}</p>
           </div>
         </div>
       </div>
-      <div className="border-border/70 mt-6 grid gap-1 border-t pt-4">
+      <div className="mt-6 grid gap-1 border-t border-border/70 pt-4">
         <Link
           className={QUICK_LINK_CLASS}
           to={APP_ROUTES_KEY.profile.walletTransactions.path}

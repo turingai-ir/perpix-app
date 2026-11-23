@@ -26,7 +26,7 @@ export function ChatMessage({
 
   return (
     <div className="flex flex-col items-start gap-1">
-      <div className="bg-accent w-full rounded-xl px-3 py-2.5 leading-7 wrap-anywhere">
+      <div className="w-full rounded-xl bg-accent px-3 py-2.5 leading-7 wrap-anywhere">
         {message}
       </div>
       {showCopy ? (

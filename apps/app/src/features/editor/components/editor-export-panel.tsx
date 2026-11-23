@@ -65,7 +65,7 @@ export function EditorExportPanel(props: EditorExportPanelProps) {
           />
         </div>
       )}
-      <div className="border-foreground/13 text-muted-foreground [&_strong]:text-foreground flex items-center justify-between gap-2.5 border-y py-3.5 text-xs [&_strong]:font-mono">
+      <div className="flex items-center justify-between gap-2.5 border-y border-foreground/13 py-3.5 text-xs text-muted-foreground [&_strong]:font-mono [&_strong]:text-foreground">
         <span>{t("pages.editor.studio.dimensions")}</span>
         <strong dir="ltr">
           {props.outputWidth ?? Math.round(outputWidth)} ×{" "}

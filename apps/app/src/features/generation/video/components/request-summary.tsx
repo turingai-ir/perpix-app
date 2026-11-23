@@ -36,11 +36,11 @@ export function VideoRequestSummary({
           ))}
         </div>
       ) : null}
-      <div className="border-primary/10 bg-muted/75 max-w-full rounded-2xl rounded-se-md border px-4 py-3">
+      <div className="max-w-full rounded-2xl rounded-se-md border border-primary/10 bg-muted/75 px-4 py-3">
         <p
           id={promptId}
           dir="auto"
-          className={`sm:text-headline text-start text-sm leading-7 wrap-anywhere whitespace-pre-wrap ${isLong && !expanded ? "line-clamp-4" : ""}`}
+          className={`text-start text-sm leading-7 wrap-anywhere whitespace-pre-wrap sm:text-headline ${isLong && !expanded ? "line-clamp-4" : ""}`}
         >
           {prompt}
         </p>
@@ -48,7 +48,7 @@ export function VideoRequestSummary({
           <Button
             type="button"
             variant="ghost"
-            className="text-primary mt-2 min-h-11"
+            className="mt-2 min-h-11 text-primary"
             aria-expanded={expanded}
             aria-controls={promptId}
             onClick={() => setExpanded(!expanded)}

@@ -64,7 +64,7 @@ const AccountWidgetPanel: FC<PanelProps> = ({ widget, onClose }) => {
 
   return (
     <div
-      className="group/panel *:animate-rise flex flex-col gap-3.5 *:motion-reduce:animate-none [&>:nth-child(2)]:[animation-delay:70ms] [&>:nth-child(3)]:[animation-delay:140ms] [&>:nth-child(4)]:[animation-delay:210ms]"
+      className="group/panel flex flex-col gap-3.5 *:animate-rise *:motion-reduce:animate-none [&>:nth-child(2)]:[animation-delay:70ms] [&>:nth-child(3)]:[animation-delay:140ms] [&>:nth-child(4)]:[animation-delay:210ms]"
       data-tone={tone}
     >
       <AccountBlock className="flex items-center gap-4">
@@ -84,14 +84,14 @@ const AccountWidgetPanel: FC<PanelProps> = ({ widget, onClose }) => {
             {isFree ? t(`${PREFIX}.freePlan`) : planName}
           </strong>
           {!isFree && daysLeft !== null ? (
-            <b className="text-night-foreground text-sm font-extrabold">
+            <b className="text-sm font-extrabold text-night-foreground">
               {t(`${PREFIX}.daysLeft`, {
                 days: daysLeft.toLocaleString("fa-IR"),
               })}
             </b>
           ) : null}
           {!isFree && tiers?.expiresAt ? (
-            <span className="text-night-foreground/75 text-xs">
+            <span className="text-xs text-night-foreground/75">
               {t(`${PREFIX}.expiresOn`, { date: formatDate(tiers.expiresAt) })}
             </span>
           ) : null}
@@ -104,7 +104,7 @@ const AccountWidgetPanel: FC<PanelProps> = ({ widget, onClose }) => {
           <p className="flex items-baseline gap-1.5 tabular-nums">
             <Coins
               aria-hidden="true"
-              className="text-accent-gold size-5 self-center"
+              className="size-5 self-center text-accent-gold"
             />
             <strong className="text-title-1 font-extrabold tracking-tight">
               {widget.balanceText ?? t(`${PREFIX}.balanceUnavailable`)}
@@ -113,7 +113,7 @@ const AccountWidgetPanel: FC<PanelProps> = ({ widget, onClose }) => {
           </p>
           {runwayText ? (
             <em
-              className="text-accent-rose data-low:text-accent-gold text-xs font-bold not-italic"
+              className="text-xs font-bold text-accent-rose not-italic data-low:text-accent-gold"
               data-low={needsCharge || undefined}
             >
               {runwayText}
@@ -123,7 +123,7 @@ const AccountWidgetPanel: FC<PanelProps> = ({ widget, onClose }) => {
         <Button
           type="button"
           size="lg"
-          className="hover-capable:hover:brightness-110 data-primary:from-accent-orange data-primary:to-accent-gold data-primary:text-on-accent bg-night-foreground/12 text-night-foreground inset-shadow-highlight-lg flex-none rounded-full px-4 text-sm font-extrabold data-primary:bg-linear-to-br motion-reduce:transition-none"
+          className="hover-capable:hover:brightness-110 flex-none rounded-full bg-night-foreground/12 px-4 text-sm font-extrabold text-night-foreground inset-shadow-highlight-lg data-primary:bg-linear-to-br data-primary:from-accent-orange data-primary:to-accent-gold data-primary:text-on-accent motion-reduce:transition-none"
           data-primary={needsCharge || undefined}
           onClick={run(() => openWalletCharge())}
         >
@@ -137,7 +137,7 @@ const AccountWidgetPanel: FC<PanelProps> = ({ widget, onClose }) => {
         <Button
           type="button"
           size="lg"
-          className="from-accent-violet to-accent-pink hover-capable:hover:brightness-110 group-data-[tone=expiring]/panel:from-accent-orange group-data-[tone=expiring]/panel:to-accent-gold group-data-[tone=expiring]/panel:text-on-accent text-night-foreground h-12 w-full justify-between rounded-xl bg-linear-to-br px-4 text-sm font-extrabold shadow-[inset_0_1px_color-mix(in_oklch,var(--night-foreground)_28%,transparent),0_8px_22px_rgb(143_107_242/35%)] motion-reduce:transition-none"
+          className="hover-capable:hover:brightness-110 h-12 w-full justify-between rounded-xl bg-linear-to-br from-accent-violet to-accent-pink px-4 text-sm font-extrabold text-night-foreground shadow-[inset_0_1px_color-mix(in_oklch,var(--night-foreground)_28%,transparent),0_8px_22px_rgb(143_107_242/35%)] group-data-[tone=expiring]/panel:from-accent-orange group-data-[tone=expiring]/panel:to-accent-gold group-data-[tone=expiring]/panel:text-on-accent motion-reduce:transition-none"
           onClick={run(() => openPricingFeature())}
         >
           <span>{ctaLabel}</span>

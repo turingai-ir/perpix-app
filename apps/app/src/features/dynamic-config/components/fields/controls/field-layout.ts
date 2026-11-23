@@ -9,7 +9,7 @@ export function getFieldLayoutClasses(layout: FieldLayout) {
     control: isStacked ? "w-full" : "w-full md:min-w-32",
     input: isStacked ? "w-full" : "w-full md:w-32",
     hint: cn(
-      "text-muted-foreground/60 text-[0.7rem] leading-snug",
+      "text-[0.7rem] leading-snug text-muted-foreground/60",
       !isStacked && "md:basis-full",
     ),
     isStacked,

@@ -1,5 +1,12 @@
 export type CropRatioId =
-  "free" | "1:1" | "3:4" | "4:5" | "16:9" | "4:3" | "9:16" | "1.91:1";
+  | "free"
+  | "1:1"
+  | "3:4"
+  | "4:5"
+  | "16:9"
+  | "4:3"
+  | "9:16"
+  | "1.91:1";
 
 export interface CropRatioOption {
   id: CropRatioId;

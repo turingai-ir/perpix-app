@@ -70,13 +70,13 @@ const PricingPlanCard: FC<PricingPlanCardProps> = ({
           {plan.display_name ?? plan.name}
         </h3>
         {plan.is_recommended ? (
-          <Badge className="from-accent-violet to-accent-pink text-night-foreground h-auto border-0 bg-linear-120 px-2.5 py-1 font-bold">
+          <Badge className="h-auto border-0 bg-linear-120 from-accent-violet to-accent-pink px-2.5 py-1 font-bold text-night-foreground">
             <Sparkles aria-hidden="true" />
             {t("features.pricing.recommended")}
           </Badge>
         ) : null}
         {isCurrent ? (
-          <Badge className="bg-accent-sky text-on-accent h-auto border-0 px-2.5 py-1 font-bold">
+          <Badge className="h-auto border-0 bg-accent-sky px-2.5 py-1 font-bold text-on-accent">
             {t("features.pricing.currentPlan")}
             {daysLeft !== null
               ? ` · ${t("features.pricing.daysLeft", { days: daysLeft.toLocaleString("fa-IR") })}`
@@ -86,7 +86,7 @@ const PricingPlanCard: FC<PricingPlanCardProps> = ({
       </div>
 
       {level ? (
-        <small className="text-muted-foreground -mt-1.5 text-xs font-semibold">
+        <small className="-mt-1.5 text-xs font-semibold text-muted-foreground">
           {t("features.pricing.level", {
             level: level.position.toLocaleString("fa-IR"),
             total: level.total.toLocaleString("fa-IR"),
@@ -95,7 +95,7 @@ const PricingPlanCard: FC<PricingPlanCardProps> = ({
       ) : null}
 
       {plan.description ? (
-        <p className="text-muted-foreground m-0 text-sm leading-loose">
+        <p className="m-0 text-sm leading-loose text-muted-foreground">
           {plan.description}
         </p>
       ) : null}
@@ -108,19 +108,19 @@ const PricingPlanCard: FC<PricingPlanCardProps> = ({
           durationDays={hasDuration ? plan.duration_days : undefined}
         />
       ) : (
-        <p className="text-muted-foreground m-0 text-sm">
+        <p className="m-0 text-sm text-muted-foreground">
           {t("features.pricing.priceUnavailable")}
         </p>
       )}
 
       {highlights.length > 0 ? (
-        <ul className="border-foreground/8 m-0 flex list-none flex-col gap-2 border-y p-0 py-3.5">
+        <ul className="m-0 flex list-none flex-col gap-2 border-y border-foreground/8 p-0 py-3.5">
           {highlights.map(({ key, Icon, text }) => (
             <li
               key={key}
               className={cn(
                 LIST_ITEM_CLASS,
-                "text-foreground/90 [&_svg]:text-primary font-semibold",
+                "font-semibold text-foreground/90 [&_svg]:text-primary",
               )}
             >
               <Icon aria-hidden="true" />

@@ -13,7 +13,7 @@ export function StyleSample({ template }: { template: CaptionTemplate }) {
       ref={frame}
       role="img"
       aria-label={t("features.studio.styles.preview")}
-      className="bg-night rounded-card aspect-video w-full max-w-sm overflow-hidden"
+      className="aspect-video w-full max-w-sm overflow-hidden rounded-card bg-night"
     >
       {width > 0 && height > 0 && (
         <CaptionPreview

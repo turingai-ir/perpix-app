@@ -58,7 +58,7 @@ export function ExpandedPromptEditor({
           aria-label={textareaProps["aria-label"] ?? textareaLabel}
           onChange={(event) => onChange(event.target.value)}
           className={cn(
-            "placeholder:text-muted-foreground block min-h-14 w-full resize-none overflow-hidden border-none bg-transparent px-1 py-2 text-base leading-7 wrap-anywhere outline-none disabled:cursor-not-allowed disabled:opacity-50",
+            "block min-h-14 w-full resize-none overflow-hidden border-none bg-transparent px-1 py-2 text-base leading-7 wrap-anywhere outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50",
             className,
           )}
           placeholder={placeholder}
@@ -96,7 +96,7 @@ export function ExpandedPromptEditor({
                   type="button"
                   variant="ghost"
                   size="icon-lg"
-                  className="hover:bg-muted absolute end-0 top-0 rounded-full"
+                  className="absolute end-0 top-0 rounded-full hover:bg-muted"
                   aria-label={t(
                     "pages.generation.image.studio.closePromptEditor",
                   )}
@@ -111,7 +111,7 @@ export function ExpandedPromptEditor({
             aria-label={textareaLabel}
             onChange={(event) => setDraft(event.target.value)}
             placeholder={placeholder}
-            className="border-border bg-muted/20 focus-visible:border-primary min-h-0 flex-1 resize-none rounded-xl border p-4 text-base leading-8 outline-none focus-visible:ring-2"
+            className="min-h-0 flex-1 resize-none rounded-xl border border-border bg-muted/20 p-4 text-base leading-8 outline-none focus-visible:border-primary focus-visible:ring-2"
           />
           <DialogFooter className="bg-transparent p-0 pt-4">
             <Button

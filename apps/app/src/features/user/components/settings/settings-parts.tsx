@@ -22,7 +22,7 @@ export const SettingsEyebrow: FC<ComponentProps<"p">> = ({
 }) => (
   <p
     className={cn(
-      "text-primary text-caption font-extrabold tracking-widest uppercase",
+      "text-caption font-extrabold tracking-widest text-primary uppercase",
       className,
     )}
     {...props}
@@ -35,7 +35,7 @@ export const SettingsIconBox: FC<ComponentProps<"div">> = ({
 }) => (
   <div
     className={cn(
-      "border-primary/20 bg-primary/13 text-primary inset-shadow-highlight grid size-11 flex-none place-items-center rounded-xl border",
+      "grid size-11 flex-none place-items-center rounded-xl border border-primary/20 bg-primary/13 text-primary inset-shadow-highlight",
       className,
     )}
     {...props}

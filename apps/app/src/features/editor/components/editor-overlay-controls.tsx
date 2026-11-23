@@ -107,7 +107,7 @@ export function EditorOverlayControls({
           onBlur={() => editor.commitEdits()}
         />
       </div>
-      <label className="text-foreground/85 flex items-center justify-between text-xs [&_input]:h-9.5 [&_input]:w-12 [&_input]:cursor-pointer [&_input]:border-0 [&_input]:bg-transparent">
+      <label className="flex items-center justify-between text-xs text-foreground/85 [&_input]:h-9.5 [&_input]:w-12 [&_input]:cursor-pointer [&_input]:border-0 [&_input]:bg-transparent">
         {t("pages.editor.studio.textColor")}
         <input
           type="color"

@@ -47,11 +47,11 @@ export function VideoStudioFooter({
   if (failed) status = t("pages.generation.video.studio.loadError");
   if (offline) status = t("pages.generation.video.studio.offline");
   return (
-    <footer className="border-border bg-muted/40 grid grid-cols-[minmax(0,1fr)_auto] gap-2.5 border-t px-4 pt-3 pb-[max(12px,env(safe-area-inset-bottom))] max-[600px]:px-3.5">
+    <footer className="grid grid-cols-[minmax(0,1fr)_auto] gap-2.5 border-t border-border bg-muted/40 px-4 pt-3 pb-[max(12px,env(safe-area-inset-bottom))] max-[600px]:px-3.5">
       {status && (
         <div
           role="status"
-          className="text-primary col-span-full m-0 flex flex-wrap items-center gap-2 text-xs leading-relaxed"
+          className="col-span-full m-0 flex flex-wrap items-center gap-2 text-xs leading-relaxed text-primary"
         >
           {offline && <WifiOff aria-hidden="true" size={16} />}
           {status}
@@ -72,7 +72,7 @@ export function VideoStudioFooter({
         </div>
       )}
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-x-1.5 gap-y-1 text-xs">
-        <span className="text-muted-foreground flex items-center gap-1.5">
+        <span className="flex items-center gap-1.5 text-muted-foreground">
           <Coins aria-hidden="true" size={16} />
           {t("pages.generation.video.studio.cost")}
         </span>
@@ -84,11 +84,11 @@ export function VideoStudioFooter({
               })
             : t("pages.generation.modelTokenPrice.empty")}
         </strong>
-        <p className="text-muted-foreground basis-full text-xs leading-normal">
+        <p className="basis-full text-xs leading-normal text-muted-foreground">
           {t("pages.generation.video.studio.costHint")}
         </p>
       </div>
-      <div className="[&>button[type=submit]]:text-subhead flex flex-none items-center gap-1 [&>button:not([type=submit])]:min-h-11 [&>button:not([type=submit])]:min-w-11 [&>button[type=submit]]:min-h-12 [&>button[type=submit]]:min-w-32 [&>button[type=submit]]:rounded-md [&>button[type=submit]]:px-2.5 max-[700px]:[&>button[type=submit]]:flex-1">
+      <div className="flex flex-none items-center gap-1 [&>button:not([type=submit])]:min-h-11 [&>button:not([type=submit])]:min-w-11 [&>button[type=submit]]:min-h-12 [&>button[type=submit]]:min-w-32 [&>button[type=submit]]:rounded-md [&>button[type=submit]]:px-2.5 [&>button[type=submit]]:text-subhead max-[700px]:[&>button[type=submit]]:flex-1">
         <GenerationRulesDialog />
         <PromptSubmitButton
           dynamicForm={studio.dynamicForm}

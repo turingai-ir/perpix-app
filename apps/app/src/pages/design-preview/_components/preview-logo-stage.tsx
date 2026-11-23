@@ -16,24 +16,24 @@ const PreviewLogoStage: FC = () => {
         aria-hidden="true"
       />
       <div
-        className="border-foreground/15 shadow-primary/10 absolute aspect-square w-[82%] rounded-full border shadow-[inset_0_0_70px]"
+        className="absolute aspect-square w-[82%] rounded-full border border-foreground/15 shadow-[inset_0_0_70px] shadow-primary/10"
         aria-hidden="true"
       />
       <img
         src="/android-chrome-512x512.png"
         alt={t("pages.designPreview.logoAlt")}
-        className="animate-float relative z-[2] w-[58%] rounded-[28%] mix-blend-screen drop-shadow-[0_28px_50px_color-mix(in_srgb,var(--primary)_25%,transparent)] motion-reduce:animate-none"
+        className="relative z-[2] w-[58%] animate-float rounded-[28%] mix-blend-screen drop-shadow-[0_28px_50px_color-mix(in_srgb,var(--primary)_25%,transparent)] motion-reduce:animate-none"
       />
-      <span className="border-foreground/10 bg-card/80 text-foreground/80 text-caption shadow-night/35 absolute top-[17%] right-0 z-[3] flex min-h-9 items-center gap-2 rounded-xl border px-2.5 shadow-[0_18px_60px] backdrop-blur-lg sm:right-[2%] sm:min-h-10 sm:px-3.5 sm:text-xs">
-        <i aria-hidden="true" className="bg-image-accent size-2 rounded-full" />
+      <span className="absolute top-[17%] right-0 z-[3] flex min-h-9 items-center gap-2 rounded-xl border border-foreground/10 bg-card/80 px-2.5 text-caption text-foreground/80 shadow-[0_18px_60px] shadow-night/35 backdrop-blur-lg sm:right-[2%] sm:min-h-10 sm:px-3.5 sm:text-xs">
+        <i aria-hidden="true" className="size-2 rounded-full bg-image-accent" />
         {t("pages.designPreview.hero.modelOne")}
       </span>
-      <span className="border-foreground/10 bg-card/80 text-foreground/80 text-caption shadow-night/35 absolute bottom-[20%] left-0 z-[3] flex min-h-9 items-center gap-2 rounded-xl border px-2.5 shadow-[0_18px_60px] backdrop-blur-lg sm:min-h-10 sm:px-3.5 sm:text-xs">
-        <i aria-hidden="true" className="bg-video-accent size-2 rounded-full" />
+      <span className="absolute bottom-[20%] left-0 z-[3] flex min-h-9 items-center gap-2 rounded-xl border border-foreground/10 bg-card/80 px-2.5 text-caption text-foreground/80 shadow-[0_18px_60px] shadow-night/35 backdrop-blur-lg sm:min-h-10 sm:px-3.5 sm:text-xs">
+        <i aria-hidden="true" className="size-2 rounded-full bg-video-accent" />
         {t("pages.designPreview.hero.modelTwo")}
       </span>
-      <span className="border-foreground/10 bg-card/80 text-foreground/80 text-caption shadow-night/35 absolute right-[18%] bottom-[8%] z-[3] flex min-h-9 items-center gap-2 rounded-xl border px-2.5 shadow-[0_18px_60px] backdrop-blur-lg sm:min-h-10 sm:px-3.5 sm:text-xs">
-        <i aria-hidden="true" className="bg-primary size-2 rounded-full" />
+      <span className="absolute right-[18%] bottom-[8%] z-[3] flex min-h-9 items-center gap-2 rounded-xl border border-foreground/10 bg-card/80 px-2.5 text-caption text-foreground/80 shadow-[0_18px_60px] shadow-night/35 backdrop-blur-lg sm:min-h-10 sm:px-3.5 sm:text-xs">
+        <i aria-hidden="true" className="size-2 rounded-full bg-primary" />
         {t("pages.designPreview.hero.modelThree")}
       </span>
     </div>

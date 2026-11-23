@@ -61,20 +61,20 @@ export function ResolutionPicker({
                       role="combobox"
                       aria-expanded={open}
                       disabled={disabled}
-                      className="bg-muted/40 h-11 min-w-24 gap-2 rounded-xl px-3"
+                      className="h-11 min-w-24 gap-2 rounded-xl bg-muted/40 px-3"
                     />
                   }
                 >
                   <Gem
                     aria-hidden="true"
-                    className="text-muted-foreground size-4"
+                    className="size-4 text-muted-foreground"
                   />
                   <bdi dir="ltr" className="font-semibold">
                     {value}
                   </bdi>
                   <ChevronDown
                     aria-hidden="true"
-                    className="text-muted-foreground ms-auto size-4"
+                    className="ms-auto size-4 text-muted-foreground"
                   />
                 </PopoverTrigger>
               </FormControl>
@@ -82,7 +82,7 @@ export function ResolutionPicker({
                 side="top"
                 align="center"
                 sideOffset={10}
-                className="border-border w-[min(300px,calc(100vw-2rem))] rounded-2xl border p-3 shadow-2xl"
+                className="w-[min(300px,calc(100vw-2rem))] rounded-2xl border border-border p-3 shadow-2xl"
               >
                 <p className="px-1 pb-3 text-sm font-semibold">{label}</p>
                 <div className="flex max-h-[min(480px,calc(100dvh-10rem))] [scrollbar-width:none] flex-col gap-1 overflow-y-auto overscroll-contain [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
@@ -94,7 +94,7 @@ export function ResolutionPicker({
                         key={optionValue}
                         type="button"
                         aria-pressed={selected}
-                        className="hover:bg-muted data-[selected=true]:bg-muted focus-visible:ring-ring flex min-h-15 items-center gap-3 rounded-xl px-3 text-start outline-none focus-visible:ring-2"
+                        className="flex min-h-15 items-center gap-3 rounded-xl px-3 text-start outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring data-[selected=true]:bg-muted"
                         data-selected={selected}
                         onClick={() => {
                           field.onChange(option);
@@ -105,14 +105,14 @@ export function ResolutionPicker({
                           <bdi dir="ltr" className="block font-semibold">
                             {optionValue}
                           </bdi>
-                          <span className="text-muted-foreground block text-xs leading-5">
+                          <span className="block text-xs leading-5 text-muted-foreground">
                             {resolutionHint(optionValue, t)}
                           </span>
                         </span>
                         {selected && (
                           <Check
                             aria-hidden="true"
-                            className="text-primary size-4 shrink-0"
+                            className="size-4 shrink-0 text-primary"
                           />
                         )}
                       </button>

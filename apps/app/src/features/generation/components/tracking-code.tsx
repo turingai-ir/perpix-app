@@ -20,7 +20,7 @@ export const TrackingCode: FC<{ code: string }> = ({ code }) => {
   };
 
   return (
-    <div className="text-muted-foreground flex items-center gap-1 text-xs">
+    <div className="flex items-center gap-1 text-xs text-muted-foreground">
       <span>{t("common.generationFailure.trackingCode")}</span>
       <bdi className="font-mono" data-tracking-code={code}>
         {code.slice(0, 8)}

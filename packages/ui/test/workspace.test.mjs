@@ -7,10 +7,7 @@ for (const app of ["app", "admin"]) {
     const require = createRequire(
       new URL(`../../../apps/${app}/package.json`, import.meta.url),
     );
-    for (const entry of [
-      "components/glass-surface",
-      "globals.css",
-    ]) {
+    for (const entry of ["components/glass-surface", "globals.css"]) {
       assert.ok(
         require.resolve(`@perpix/ui/${entry}`).includes("/packages/ui/src/"),
       );

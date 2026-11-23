@@ -56,7 +56,7 @@ export function DashboardFiles({
             >
               <div
                 className={cn(
-                  "bg-night aspect-[4/3] overflow-hidden",
+                  "aspect-[4/3] overflow-hidden bg-night",
                   index === 0 && "sm:aspect-[2/1]",
                 )}
               >
@@ -65,10 +65,10 @@ export function DashboardFiles({
                   preview={file.uuid ? previews[file.uuid] : undefined}
                 />
               </div>
-              <div className="from-night/94 via-night/40 pointer-events-none absolute inset-x-0 bottom-0 h-[68%] bg-linear-to-t to-transparent" />
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[68%] bg-linear-to-t from-night/94 via-night/40 to-transparent" />
               <div className="absolute inset-x-0 bottom-0 flex min-w-0 items-center gap-2 p-3 sm:p-4">
-                <Images className="text-accent-pink size-4 shrink-0" />
-                <span className="text-night-foreground truncate text-xs font-medium sm:text-sm">
+                <Images className="size-4 shrink-0 text-accent-pink" />
+                <span className="truncate text-xs font-medium text-night-foreground sm:text-sm">
                   {file.file_name || t("common.emptyTitle")}
                 </span>
               </div>

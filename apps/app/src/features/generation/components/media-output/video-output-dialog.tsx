@@ -70,7 +70,7 @@ export function VideoOutputDialog({
       <VideoOutputScreen inDialog unavailable={!previewUrl || hasMediaError}>
         {previewUrl && !hasMediaError ? (
           // Generated video responses do not provide caption tracks.
-          // eslint-disable-next-line jsx-a11y/media-has-caption
+          // oxlint-disable-next-line jsx-a11y/media-has-caption
           <video
             key={mediaKey}
             onError={onMediaError}

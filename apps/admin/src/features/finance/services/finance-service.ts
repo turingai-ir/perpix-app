@@ -9,7 +9,11 @@ import {
 export class FinanceActionError extends Error {
   constructor(
     readonly kind:
-      "forbidden" | "not_found" | "validation" | "network" | "server",
+      | "forbidden"
+      | "not_found"
+      | "validation"
+      | "network"
+      | "server",
     message?: string,
   ) {
     super(message || kind);

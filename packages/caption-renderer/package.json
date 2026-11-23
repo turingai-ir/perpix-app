@@ -11,13 +11,20 @@
     "./offscreen": "./src/offscreen.ts"
   },
   "scripts": {
-    "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "vitest run"
+    "typecheck": "tsrs -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "lint": "oxlint .",
+    "lint:fix": "oxlint --fix .",
+    "format": "oxfmt --write .",
+    "format:check": "oxfmt --check ."
   },
   "devDependencies": {
-    "typescript": "~6.0.3",
     "@types/react": "^19",
-    "vitest": "^3.2.4"
+    "vitest": "catalog:",
+    "@perpix/tooling": "workspace:*",
+    "oxlint": "catalog:",
+    "oxfmt": "catalog:",
+    "tsrs": "catalog:"
   },
   "dependencies": {
     "konva": "^10.9.1"

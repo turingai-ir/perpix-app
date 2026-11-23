@@ -29,9 +29,7 @@ async function mockHistory(page: Page, options: HistoryOptions = {}) {
       task_type: taskType,
       created_at: new Date(Date.UTC(2026, 9, 22 - index)).toISOString(),
       updated_at: new Date(Date.UTC(2026, 9, 22 - index)).toISOString(),
-      messages: [
-        { message: `پروژهٔ ${index + 1} · ${taskType}`, role: "USER" },
-      ],
+      messages: [{ message: `پروژهٔ ${index + 1} · ${taskType}`, role: "USER" }],
     }));
     await route.fulfill({
       json: {

@@ -69,7 +69,7 @@ export function VideoStudioSettings({
   };
   return (
     <div className="grid gap-2">
-      <div className="*:border-border *:bg-muted [&_button]:text-subhead grid grid-cols-2 gap-2 *:min-w-0 *:rounded-xl *:border *:p-3 [&_button]:min-h-11 [&_button]:w-full">
+      <div className="grid grid-cols-2 gap-2 *:min-w-0 *:rounded-xl *:border *:border-border *:bg-muted *:p-3 [&_button]:min-h-11 [&_button]:w-full [&_button]:text-subhead">
         {quickFields
           .filter((name) => name !== "mode")
           .sort(
@@ -80,8 +80,8 @@ export function VideoStudioSettings({
           .map(renderField)}
       </div>
       {advanced.length > 0 && (
-        <details ref={advancedRef} className="group/adv border-border border-t">
-          <summary className="text-muted-foreground focus-visible:outline-ring flex min-h-11 cursor-pointer list-none items-center gap-2 text-xs after:ms-auto after:text-xl after:content-['+'] group-open/adv:after:content-['−'] focus-visible:outline-2 focus-visible:outline-offset-3 [&::-webkit-details-marker]:hidden">
+        <details ref={advancedRef} className="group/adv border-t border-border">
+          <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 text-xs text-muted-foreground after:ms-auto after:text-xl after:content-['+'] group-open/adv:after:content-['−'] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-ring [&::-webkit-details-marker]:hidden">
             <SlidersHorizontal size={16} aria-hidden="true" />
             {t("pages.generation.video.studio.advanced")}
           </summary>

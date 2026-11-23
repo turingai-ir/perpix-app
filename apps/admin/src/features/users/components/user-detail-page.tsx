@@ -152,7 +152,7 @@ export function UserDetailPage() {
       cell: (session) => {
         const isCopied = copiedField === session.uuid;
         return (
-          <div className="text-muted-foreground flex items-center gap-1.5 font-mono text-xs">
+          <div className="flex items-center gap-1.5 font-mono text-xs text-muted-foreground">
             <span title={session.uuid}>
               {session.uuid.slice(0, 8)}…{session.uuid.slice(-4)}
             </span>
@@ -160,7 +160,7 @@ export function UserDetailPage() {
               type="button"
               onClick={() => handleCopy(session.uuid, session.uuid)}
               aria-label="کپی شناسه نشست"
-              className="text-muted-foreground hover:text-foreground hover:bg-muted rounded p-1 transition-colors"
+              className="rounded p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
             >
               {isCopied ? (
                 <Check className="size-3 text-emerald-600" />
@@ -213,7 +213,7 @@ export function UserDetailPage() {
         defaultValue: "تاریخ شروع",
       }),
       cell: (session) => (
-        <span className="text-muted-foreground text-xs">
+        <span className="text-xs text-muted-foreground">
           {formatDate(session.created_at)}
         </span>
       ),
@@ -224,7 +224,7 @@ export function UserDetailPage() {
         defaultValue: "تاریخ انقضا",
       }),
       cell: (session) => (
-        <span className="text-muted-foreground text-xs">
+        <span className="text-xs text-muted-foreground">
           {formatDate(session.expires_at)}
         </span>
       ),
@@ -235,7 +235,7 @@ export function UserDetailPage() {
         defaultValue: "تاریخ لغو",
       }),
       cell: (session) => (
-        <span className="text-muted-foreground text-xs">
+        <span className="text-xs text-muted-foreground">
           {formatDate(session.revoked_at)}
         </span>
       ),
@@ -252,13 +252,13 @@ export function UserDetailPage() {
         const isActive = !isRevoked && !isExpired;
 
         if (!isActive)
-          return <span className="text-muted-foreground text-xs">—</span>;
+          return <span className="text-xs text-muted-foreground">—</span>;
 
         return (
           <Button
             variant="outline"
             size="sm"
-            className="text-destructive hover:bg-destructive/10 border-destructive/30 gap-1 text-xs"
+            className="gap-1 border-destructive/30 text-xs text-destructive hover:bg-destructive/10"
             onClick={() => setSessionToRevoke(session.uuid)}
           >
             <LogOut className="size-3.5" />
@@ -335,7 +335,7 @@ export function UserDetailPage() {
             ) : (
               <Badge
                 variant="outline"
-                className="text-muted-foreground border-border"
+                className="border-border text-muted-foreground"
               >
                 {t("features.users.verified.no", {
                   defaultValue: "تأیید نشده",
@@ -398,7 +398,7 @@ export function UserDetailPage() {
             <Button
               variant="outline"
               size="sm"
-              className="text-foreground hover:bg-muted gap-1.5"
+              className="gap-1.5 text-foreground hover:bg-muted"
               onClick={() => setRevokeAllDialogOpen(true)}
             >
               <LogOut className="size-3.5" />
@@ -426,9 +426,9 @@ export function UserDetailPage() {
         <div className="space-y-6">
           {/* User Profile Card */}
           <Card>
-            <CardHeader className="border-border/60 border-b pb-4">
+            <CardHeader className="border-b border-border/60 pb-4">
               <CardTitle className="flex items-center gap-2 text-base font-semibold">
-                <User className="text-primary size-4" />
+                <User className="size-4 text-primary" />
                 {t("features.users.profile.title", {
                   defaultValue: "مشخصات حساب کاربری",
                 })}
@@ -438,33 +438,33 @@ export function UserDetailPage() {
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {/* Full Name */}
                 <div className="space-y-1">
-                  <span className="text-muted-foreground text-xs">
+                  <span className="text-xs text-muted-foreground">
                     {t("features.users.profile.name", {
                       defaultValue: "نام و نام خانوادگی",
                     })}
                   </span>
-                  <p className="text-foreground text-sm font-semibold">
+                  <p className="text-sm font-semibold text-foreground">
                     {user.name || "—"}
                   </p>
                 </div>
 
                 {/* Phone */}
                 <div className="space-y-1">
-                  <span className="text-muted-foreground flex items-center gap-1 text-xs">
+                  <span className="flex items-center gap-1 text-xs text-muted-foreground">
                     <Phone className="size-3" />
                     {t("features.users.profile.phone", {
                       defaultValue: "شماره همراه",
                     })}
                   </span>
                   <div className="flex items-center gap-2">
-                    <p dir="ltr" className="text-foreground font-mono text-sm">
+                    <p dir="ltr" className="font-mono text-sm text-foreground">
                       {user.phone_number}
                     </p>
                     <button
                       type="button"
                       onClick={() => handleCopy("phone", user.phone_number)}
                       aria-label="کپی شماره همراه"
-                      className="text-muted-foreground hover:text-foreground hover:bg-muted rounded p-1 transition-colors"
+                      className="rounded p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                     >
                       {copiedField === "phone" ? (
                         <Check className="size-3 text-emerald-600" />
@@ -477,7 +477,7 @@ export function UserDetailPage() {
 
                 {/* Email */}
                 <div className="space-y-1">
-                  <span className="text-muted-foreground flex items-center gap-1 text-xs">
+                  <span className="flex items-center gap-1 text-xs text-muted-foreground">
                     <Mail className="size-3" />
                     {t("features.users.profile.email", {
                       defaultValue: "آدرس ایمیل",
@@ -485,7 +485,7 @@ export function UserDetailPage() {
                   </span>
                   <p
                     dir="ltr"
-                    className="text-foreground text-right font-mono text-sm"
+                    className="text-right font-mono text-sm text-foreground"
                   >
                     {user.email || "—"}
                   </p>
@@ -493,7 +493,7 @@ export function UserDetailPage() {
 
                 {/* User UUID */}
                 <div className="space-y-1 sm:col-span-2 lg:col-span-1">
-                  <span className="text-muted-foreground flex items-center gap-1 text-xs">
+                  <span className="flex items-center gap-1 text-xs text-muted-foreground">
                     <KeyRound className="size-3" />
                     {t("features.users.profile.uuid", {
                       defaultValue: "شناسه کاربری (UUID)",
@@ -502,7 +502,7 @@ export function UserDetailPage() {
                   <div className="flex items-center gap-2">
                     <p
                       dir="ltr"
-                      className="text-foreground max-w-[220px] truncate font-mono text-xs"
+                      className="max-w-[220px] truncate font-mono text-xs text-foreground"
                     >
                       {user.user_uuid}
                     </p>
@@ -510,7 +510,7 @@ export function UserDetailPage() {
                       type="button"
                       onClick={() => handleCopy("user_uuid", user.user_uuid)}
                       aria-label="کپی شناسه کاربری"
-                      className="text-muted-foreground hover:text-foreground hover:bg-muted rounded p-1 transition-colors"
+                      className="rounded p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                     >
                       {copiedField === "user_uuid" ? (
                         <Check className="size-3 text-emerald-600" />
@@ -523,7 +523,7 @@ export function UserDetailPage() {
 
                 {/* Default Wallet UUID */}
                 <div className="space-y-1 sm:col-span-2 lg:col-span-1">
-                  <span className="text-muted-foreground flex items-center gap-1 text-xs">
+                  <span className="flex items-center gap-1 text-xs text-muted-foreground">
                     <Wallet className="size-3" />
                     {t("features.users.profile.walletUuid", {
                       defaultValue: "شناسه کیف پول پیش‌فرض",
@@ -533,7 +533,7 @@ export function UserDetailPage() {
                     <div className="flex items-center gap-2">
                       <p
                         dir="ltr"
-                        className="text-foreground max-w-[220px] truncate font-mono text-xs"
+                        className="max-w-[220px] truncate font-mono text-xs text-foreground"
                       >
                         {user.default_wallet_uuid}
                       </p>
@@ -543,7 +543,7 @@ export function UserDetailPage() {
                           handleCopy("wallet", user.default_wallet_uuid!)
                         }
                         aria-label="کپی شناسه کیف پول"
-                        className="text-muted-foreground hover:text-foreground hover:bg-muted rounded p-1 transition-colors"
+                        className="rounded p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                       >
                         {copiedField === "wallet" ? (
                           <Check className="size-3 text-emerald-600" />
@@ -553,13 +553,13 @@ export function UserDetailPage() {
                       </button>
                     </div>
                   ) : (
-                    <p className="text-muted-foreground text-sm">—</p>
+                    <p className="text-sm text-muted-foreground">—</p>
                   )}
                 </div>
 
                 {/* Scopes */}
                 <div className="space-y-1 sm:col-span-2 lg:col-span-1">
-                  <span className="text-muted-foreground flex items-center gap-1 text-xs">
+                  <span className="flex items-center gap-1 text-xs text-muted-foreground">
                     <Shield className="size-3" />
                     {t("features.users.profile.scopes", {
                       defaultValue: "دسترسی‌ها و مجوزها",
@@ -577,33 +577,33 @@ export function UserDetailPage() {
                         </Badge>
                       ))
                     ) : (
-                      <span className="text-muted-foreground text-sm">—</span>
+                      <span className="text-sm text-muted-foreground">—</span>
                     )}
                   </div>
                 </div>
 
                 {/* Created At */}
                 <div className="space-y-1">
-                  <span className="text-muted-foreground flex items-center gap-1 text-xs">
+                  <span className="flex items-center gap-1 text-xs text-muted-foreground">
                     <Calendar className="size-3" />
                     {t("features.users.profile.createdAt", {
                       defaultValue: "تاریخ عضویت",
                     })}
                   </span>
-                  <p className="text-foreground text-sm">
+                  <p className="text-sm text-foreground">
                     {formatDate(user.created_at)}
                   </p>
                 </div>
 
                 {/* Updated At */}
                 <div className="space-y-1">
-                  <span className="text-muted-foreground flex items-center gap-1 text-xs">
+                  <span className="flex items-center gap-1 text-xs text-muted-foreground">
                     <Clock className="size-3" />
                     {t("features.users.profile.updatedAt", {
                       defaultValue: "آخرین ویرایش",
                     })}
                   </span>
-                  <p className="text-foreground text-sm">
+                  <p className="text-sm text-foreground">
                     {formatDate(user.updated_at)}
                   </p>
                 </div>
@@ -616,12 +616,12 @@ export function UserDetailPage() {
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="flex items-center gap-2 text-lg font-semibold">
-                  <Laptop className="text-primary size-4" />
+                  <Laptop className="size-4 text-primary" />
                   {t("features.users.sessions.title", {
                     defaultValue: "نشست‌های فعال و پیشین کاربر",
                   })}
                 </h2>
-                <p className="text-muted-foreground mt-0.5 text-xs">
+                <p className="mt-0.5 text-xs text-muted-foreground">
                   {t("features.users.sessions.subtitle", {
                     defaultValue:
                       "مشاهده وضعیت دستگاه‌ها و ورودهای اخیر به حساب کاربری",
@@ -633,7 +633,7 @@ export function UserDetailPage() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="text-destructive border-destructive/30 hover:bg-destructive/10 gap-1.5 text-xs"
+                  className="gap-1.5 border-destructive/30 text-xs text-destructive hover:bg-destructive/10"
                   onClick={() => setRevokeAllDialogOpen(true)}
                 >
                   <LogOut className="size-3.5" />

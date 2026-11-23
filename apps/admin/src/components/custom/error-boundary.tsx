@@ -38,7 +38,7 @@ function ErrorFallbackPage() {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
 
   return (
-    <main className="bg-background text-foreground flex min-h-svh items-center justify-center px-4 text-center">
+    <main className="flex min-h-svh items-center justify-center bg-background px-4 text-center text-foreground">
       <p className="text-base leading-7 font-medium sm:text-lg">
         {t("components.custom.errorBoundary.fallbackMessage")}
       </p>

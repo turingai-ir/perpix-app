@@ -669,7 +669,10 @@ export class CaptionRenderer {
             : free;
       let cursor = rtl ? free - shift : shift;
       const restY = -blockHeight / 2 + index * lineHeight + lineHeight / 2;
-      const order = visualWordOrder(items.map(({ word }) => word.text), direction);
+      const order = visualWordOrder(
+        items.map(({ word }) => word.text),
+        direction,
+      );
       for (const wordIndex of order) {
         const item = items[wordIndex];
         item.restX = cursor - blockWidth / 2 + item.width / 2;

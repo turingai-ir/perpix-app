@@ -116,11 +116,11 @@ export function PlansListPage() {
         }),
         cell: (item) => (
           <div className="space-y-0.5">
-            <span className="text-foreground block text-sm font-bold">
+            <span className="block text-sm font-bold text-foreground">
               {item.display_name || item.name}
             </span>
             <div className="flex items-center gap-2">
-              <code className="text-muted-foreground font-mono text-xs">
+              <code className="font-mono text-xs text-muted-foreground">
                 {item.name}
               </code>
               {item.is_recommended && (
@@ -137,7 +137,7 @@ export function PlansListPage() {
               {item.is_default && (
                 <Badge
                   variant="outline"
-                  className="text-primary border-primary/30 px-1.5 py-0 text-[10px]"
+                  className="border-primary/30 px-1.5 py-0 text-[10px] text-primary"
                 >
                   {t("features.subscriptions.plans.default", {
                     defaultValue: "پیش‌فرض",
@@ -173,7 +173,7 @@ export function PlansListPage() {
                 </span>
                 {item.base_price_irr &&
                   item.base_price_irr !== item.discounted_price_irr && (
-                    <span className="text-muted-foreground text-[11px] line-through">
+                    <span className="text-[11px] text-muted-foreground line-through">
                       {faNumber(item.base_price_irr)}
                     </span>
                   )}
@@ -200,7 +200,7 @@ export function PlansListPage() {
               className="text-xs"
             />
           ) : (
-            <span className="text-muted-foreground text-xs">—</span>
+            <span className="text-xs text-muted-foreground">—</span>
           ),
       },
       {
@@ -217,7 +217,7 @@ export function PlansListPage() {
               })}
             </span>
           ) : (
-            <span className="text-muted-foreground text-xs">—</span>
+            <span className="text-xs text-muted-foreground">—</span>
           ),
       },
       {
@@ -265,11 +265,11 @@ export function PlansListPage() {
               disabled={isUpdatingPlan}
               onClick={() => handleToggleActive(item)}
               aria-label="تغییر وضعیت فعال‌بودن"
-              className="text-muted-foreground hover:text-foreground h-8 cursor-pointer gap-1.5 px-2.5 text-xs"
+              className="h-8 cursor-pointer gap-1.5 px-2.5 text-xs text-muted-foreground hover:text-foreground"
             >
               {item.is_active ? (
                 <>
-                  <XCircle className="text-destructive size-3.5" />
+                  <XCircle className="size-3.5 text-destructive" />
                   غیرفعال‌سازی
                 </>
               ) : (
@@ -290,7 +290,7 @@ export function PlansListPage() {
     <div className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-8 sm:py-8">
       {/* Header */}
       <div>
-        <div className="text-muted-foreground mb-1.5 flex items-center gap-2 text-xs">
+        <div className="mb-1.5 flex items-center gap-2 text-xs text-muted-foreground">
           <Package aria-hidden="true" className="size-4" />
           <span>{t("overview.admin", { defaultValue: "پنل مدیریت" })}</span>
           <span>/</span>
@@ -313,7 +313,7 @@ export function PlansListPage() {
                 defaultValue: "مدیریت پلن‌های اشتراکی",
               })}
             </h1>
-            <p className="text-muted-foreground mt-1 text-sm">
+            <p className="mt-1 text-sm text-muted-foreground">
               {t("features.subscriptions.plans.description", {
                 defaultValue:
                   "تعریف و ویرایش پلن‌ها، قیمت‌گذاری، تعیین مدت اعتبار و سهمیه ابزارهای هوش مصنوعی",
@@ -334,7 +334,7 @@ export function PlansListPage() {
       </div>
 
       {/* Filter Bar */}
-      <div className="border-border bg-card space-y-4 rounded-xl border p-4 shadow-2xs">
+      <div className="space-y-4 rounded-xl border border-border bg-card p-4 shadow-2xs">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           {/* Search */}
           <div>
@@ -401,8 +401,8 @@ export function PlansListPage() {
 
         {/* Active Filters and Reset */}
         {hasActiveFilters && (
-          <div className="border-border flex items-center justify-between border-t pt-3">
-            <span className="text-muted-foreground text-xs">
+          <div className="flex items-center justify-between border-t border-border pt-3">
+            <span className="text-xs text-muted-foreground">
               {t("features.subscriptions.filters.activeFiltersApplied", {
                 defaultValue: "فیلترها اعمال شده‌اند",
               })}
@@ -411,7 +411,7 @@ export function PlansListPage() {
               variant="ghost"
               size="sm"
               onClick={resetFilters}
-              className="text-muted-foreground hover:text-foreground h-8 cursor-pointer gap-1.5 text-xs"
+              className="h-8 cursor-pointer gap-1.5 text-xs text-muted-foreground hover:text-foreground"
             >
               <RotateCcw className="size-3.5" />
               {t("features.subscriptions.filters.reset", {

@@ -82,7 +82,8 @@ const clipsOf = (save: { document: Record<string, unknown> }) =>
   (
     (
       save.document.tracks as
-        Array<{ kind: string; clips: unknown[] }> | undefined
+        | Array<{ kind: string; clips: unknown[] }>
+        | undefined
     )?.find((track) => track.kind === "video")?.clips ?? []
   ).map((clip) => {
     const { source_in_ms: from, source_out_ms: to } = clip as {

@@ -69,22 +69,22 @@ export function DashboardActivity({
             return (
               <Link key={task.uuid} to={path} className={DATA_ROW_CLASS}>
                 <span className={cn(DATA_ICON_CLASS, "size-10 rounded-xl")}>
-                  <MediaIcon className="text-foreground/80 size-4" />
+                  <MediaIcon className="size-4 text-foreground/80" />
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="text-foreground block text-sm font-medium">
+                  <span className="block text-sm font-medium text-foreground">
                     {isVideo
                       ? t("pages.root.dashboard.activity.video")
                       : t("pages.root.dashboard.activity.image")}
                   </span>
-                  <span className="text-muted-foreground mt-0.5 block text-xs">
+                  <span className="mt-0.5 block text-xs text-muted-foreground">
                     {dayjs(task.created_at)
                       .calendar("jalali")
                       .locale("fa")
                       .format("YYYY/MM/DD · HH:mm")}
                   </span>
                 </span>
-                <span className="text-muted-foreground flex items-center gap-1.5 text-xs">
+                <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
                   <Icon className={`h-4 w-4 ${className}`} />
                   {t(`common.taskStatus.${getStatusTranslationKey(status)}`)}
                 </span>

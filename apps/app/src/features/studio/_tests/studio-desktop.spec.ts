@@ -66,9 +66,7 @@ test("a large screen gets a top bar instead of the phone's bottom tabs", async (
   await expect(nav.getByRole("link", { name: "قالب‌ها" })).toBeVisible();
   const box = await nav.boundingBox();
   expect(box!.y).toBeLessThan(5);
-  await expect(page.getByRole("button", { name: "پروژهٔ جدید" })).toHaveCount(
-    1,
-  );
+  await expect(page.getByRole("button", { name: "پروژهٔ جدید" })).toHaveCount(1);
 });
 
 test("projects lie in a grid, several to a row, not one long column", async ({

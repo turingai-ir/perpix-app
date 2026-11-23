@@ -58,7 +58,7 @@ export const ChatBubble: FC<ChatBubbleProps> = ({
             showCopy={sender === "user" && copyMessage}
           />
         ) : message ? (
-          <div className="bg-accent rounded-xl p-3">{message}</div>
+          <div className="rounded-xl bg-accent p-3">{message}</div>
         ) : null}
         {images?.length ? (
           <div

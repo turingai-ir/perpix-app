@@ -179,7 +179,7 @@ function ImageEditorWorkspace({
             <EditorBeforeAfter before={compareBefore} after={preview} />
           ) : null}
           <div
-            className="text-foreground/27 text-caption pointer-events-none absolute bottom-5 left-5.5 hidden font-extrabold tracking-[0.3em] [direction:ltr] min-[701px]:block"
+            className="pointer-events-none absolute bottom-5 left-5.5 hidden text-caption font-extrabold tracking-[0.3em] text-foreground/27 [direction:ltr] min-[701px]:block"
             aria-hidden="true"
           >
             PERPIX <span className="text-primary">•</span> STUDIO
@@ -198,12 +198,12 @@ function ImageEditorWorkspace({
         />
       </div>
       <div
-        className="border-foreground/13 bg-background text-muted-foreground text-caption hidden h-7.5 flex-none items-center gap-2 border-t px-4.5 min-[701px]:flex"
+        className="hidden h-7.5 flex-none items-center gap-2 border-t border-foreground/13 bg-background px-4.5 text-caption text-muted-foreground min-[701px]:flex"
         aria-live="polite"
       >
-        <span className="bg-accent-emerald inline-block size-1.75 rounded-full shadow-[0_0_12px_var(--accent-emerald)]" />
+        <span className="inline-block size-1.75 rounded-full bg-accent-emerald shadow-[0_0_12px_var(--accent-emerald)]" />
         {t("pages.editor.studio.ready")}
-        <span className="text-foreground/75 ms-auto font-mono" dir="ltr">
+        <span className="ms-auto font-mono text-foreground/75" dir="ltr">
           {effectiveOutputWidth ?? Math.round(naturalWidth)} ×{" "}
           {Math.round(
             ((effectiveOutputWidth ?? naturalWidth) * naturalHeight) /

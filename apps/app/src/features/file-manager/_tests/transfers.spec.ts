@@ -342,9 +342,7 @@ test("file picker recovers from an initial load error", async ({ page }) => {
   });
   await page.getByRole("button", { name: "Choose file" }).click();
   const dialog = page.getByRole("dialog");
-  await expect(dialog.getByRole("alert")).toContainText(
-    "فایل‌ها بارگذاری نشدن",
-  );
+  await expect(dialog.getByRole("alert")).toContainText("فایل‌ها بارگذاری نشدن");
   fail = false;
   await dialog.getByRole("button", { name: "تازه‌کردن فهرست" }).click();
   await expect(

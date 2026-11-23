@@ -55,7 +55,7 @@ export function AiTaskDetailPage() {
           defaultValue: "شناسه پیام",
         }),
         cell: (item) => (
-          <code className="text-muted-foreground font-mono text-xs">
+          <code className="font-mono text-xs text-muted-foreground">
             {item.uuid.slice(0, 8)}...
           </code>
         ),
@@ -103,7 +103,7 @@ export function AiTaskDetailPage() {
           defaultValue: "زمان ارسال",
         }),
         cell: (item) => (
-          <span className="text-muted-foreground text-xs" dir="ltr">
+          <span className="text-xs text-muted-foreground" dir="ltr">
             {new Date(item.created_at).toLocaleString("fa-IR")}
           </span>
         ),
@@ -164,7 +164,7 @@ export function AiTaskDetailPage() {
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-base font-bold">
-                <Bot className="text-primary size-4" />
+                <Bot className="size-4 text-primary" />
                 {t("features.ai.tasks.overview", {
                   defaultValue: "مشخصات وظیفه",
                 })}
@@ -173,7 +173,7 @@ export function AiTaskDetailPage() {
             <CardContent>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
                 <div className="space-y-1">
-                  <span className="text-muted-foreground flex items-center gap-1.5 text-xs">
+                  <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
                     <User className="size-3.5" />
                     {t("features.ai.tasks.user", { defaultValue: "کاربر" })}
                   </span>
@@ -181,7 +181,7 @@ export function AiTaskDetailPage() {
                     {task?.user_uuid ? (
                       <Link
                         to={`/users/${task.user_uuid}`}
-                        className="text-primary font-mono text-xs font-medium hover:underline"
+                        className="font-mono text-xs font-medium text-primary hover:underline"
                       >
                         {task.user_uuid}
                       </Link>
@@ -192,7 +192,7 @@ export function AiTaskDetailPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <span className="text-muted-foreground flex items-center gap-1.5 text-xs">
+                  <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
                     <Bot className="size-3.5" />
                     {t("features.ai.tasks.type", {
                       defaultValue: "نوع پردازش",
@@ -204,7 +204,7 @@ export function AiTaskDetailPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <span className="text-muted-foreground flex items-center gap-1.5 text-xs">
+                  <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
                     <Calendar className="size-3.5" />
                     {t("features.ai.tasks.createdAt", {
                       defaultValue: "تاریخ ثبت",
@@ -218,7 +218,7 @@ export function AiTaskDetailPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <span className="text-muted-foreground flex items-center gap-1.5 text-xs">
+                  <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
                     <Calendar className="size-3.5" />
                     {t("features.ai.tasks.updatedAt", {
                       defaultValue: "آخرین بروزرسانی",
@@ -238,7 +238,7 @@ export function AiTaskDetailPage() {
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-base font-bold">
-                <MessageSquare className="text-primary size-4" />
+                <MessageSquare className="size-4 text-primary" />
                 {t("features.ai.tasks.messagesList", {
                   defaultValue: "پیام‌های این وظیفه",
                 })}

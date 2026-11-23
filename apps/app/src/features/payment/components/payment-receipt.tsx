@@ -32,7 +32,7 @@ export function PaymentReceipt(props: PaymentReceiptProps) {
   const Icon = stateStyle.icon;
 
   return (
-    <main className="bg-background flex min-h-dvh items-center justify-center px-4 py-8">
+    <main className="flex min-h-dvh items-center justify-center bg-background px-4 py-8">
       <motion.section
         initial={{
           opacity: 0,
@@ -59,13 +59,13 @@ export function PaymentReceipt(props: PaymentReceiptProps) {
           <h1 className="text-2xl font-bold tracking-[-0.02em] sm:text-3xl">
             {props.title}
           </h1>
-          <p className="text-muted-foreground mx-auto mt-3 max-w-md leading-7">
+          <p className="mx-auto mt-3 max-w-md leading-7 text-muted-foreground">
             {props.description}
           </p>
         </div>
-        <div className="bg-card mb-6 rounded-2xl border p-5 shadow-sm">
+        <div className="mb-6 rounded-2xl border bg-card p-5 shadow-sm">
           <div className="flex flex-col gap-2 border-b pb-4 sm:flex-row sm:items-center sm:justify-between">
-            <span className="text-muted-foreground text-sm">
+            <span className="text-sm text-muted-foreground">
               {props.trackingLabel}
             </span>
             <bdi
@@ -85,7 +85,7 @@ export function PaymentReceipt(props: PaymentReceiptProps) {
                   className={
                     index === props.rows.length - 1
                       ? "font-medium"
-                      : "text-muted-foreground text-sm"
+                      : "text-sm text-muted-foreground"
                   }
                 >
                   {row.label}

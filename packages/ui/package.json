@@ -26,11 +26,18 @@
   },
   "devDependencies": {
     "@types/react": "^19.3.0",
-    "typescript": "~6.0.3",
-    "@types/react-dom": "^19.3.0"
+    "@types/react-dom": "^19.3.0",
+    "@perpix/tooling": "workspace:*",
+    "oxlint": "catalog:",
+    "oxfmt": "catalog:",
+    "tsrs": "catalog:"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit",
-    "test": "node --test test/*.test.mjs"
+    "typecheck": "tsrs --noEmit",
+    "test": "node --test test/*.test.mjs",
+    "lint": "oxlint .",
+    "lint:fix": "oxlint --fix .",
+    "format": "oxfmt --write .",
+    "format:check": "oxfmt --check ."
   }
 }

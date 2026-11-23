@@ -99,9 +99,7 @@ test("shows account data and saves editable profile fields", async ({
   );
   await identityCard.click();
   await expect(identityCard).toHaveAttribute("data-side", "back");
-  await expect(
-    page.getByLabel("وضعیت حساب").getByText("حرفه‌ای"),
-  ).toBeVisible();
+  await expect(page.getByLabel("وضعیت حساب").getByText("حرفه‌ای")).toBeVisible();
   await expect(
     page.getByLabel("وضعیت حساب").getByText("۱۲ توکن"),
   ).toBeVisible();

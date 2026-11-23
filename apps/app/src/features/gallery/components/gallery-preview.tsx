@@ -23,7 +23,7 @@ export function GalleryPreview({
   if (mediaType === "audio" || failed)
     return <GalleryFallback mediaType={mediaType} />;
   const className = cn(
-    "size-full transition-[transform,filter] duration-240 ease-out-quint group-hover:scale-[1.025] group-hover:saturate-[1.05] hover-capable:group-focus-within:scale-[1.025] hover-capable:group-focus-within:saturate-[1.05] motion-reduce:duration-[0.01ms] motion-reduce:group-hover:transform-none",
+    "hover-capable:group-focus-within:scale-[1.025] hover-capable:group-focus-within:saturate-[1.05] size-full transition-[transform,filter] duration-240 ease-out-quint group-hover:scale-[1.025] group-hover:saturate-[1.05] motion-reduce:duration-[0.01ms] motion-reduce:group-hover:transform-none",
     compact ? "object-cover" : "object-contain p-2",
   );
   if (mediaType === "video") {

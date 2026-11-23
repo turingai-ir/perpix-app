@@ -38,8 +38,8 @@ export function CaptionStyleSheet({
         if (!open) onClose();
       }}
     >
-      <div className="gap-section flex flex-col lg:grid lg:grid-cols-2">
-        <div className="gap-block flex flex-col">
+      <div className="flex flex-col gap-section lg:grid lg:grid-cols-2">
+        <div className="flex flex-col gap-block">
           <StyleSample template={draft.config} />
           <PresetGallery
             system={presets.data?.system ?? []}
@@ -54,7 +54,7 @@ export function CaptionStyleSheet({
             }
           />
         </div>
-        <div className="gap-block flex flex-col">
+        <div className="flex flex-col gap-block">
           <CaptionStyleControls
             template={draft.config}
             onChange={(config) =>

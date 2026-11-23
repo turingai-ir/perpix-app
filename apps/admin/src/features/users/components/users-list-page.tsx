@@ -105,20 +105,20 @@ export function UsersListPage() {
         header: t("features.users.columns.user", { defaultValue: "کاربر" }),
         cell: (user) => (
           <div className="flex min-w-[160px] flex-col gap-1">
-            <span className="text-foreground font-semibold">
+            <span className="font-semibold text-foreground">
               {user.name ||
                 t("common.emptyTitle", { defaultValue: "بدون نام" })}
             </span>
             <span
               dir="ltr"
-              className="text-muted-foreground text-right font-mono text-xs"
+              className="text-right font-mono text-xs text-muted-foreground"
             >
               {user.phone_number}
             </span>
             {user.email && (
               <span
                 dir="ltr"
-                className="text-muted-foreground/80 max-w-[200px] truncate text-right text-[11px]"
+                className="max-w-[200px] truncate text-right text-[11px] text-muted-foreground/80"
               >
                 {user.email}
               </span>
@@ -134,7 +134,7 @@ export function UsersListPage() {
         cell: (user) => {
           const isCopied = copiedId === user.user_uuid;
           return (
-            <div className="text-muted-foreground flex items-center gap-1.5 font-mono text-xs">
+            <div className="flex items-center gap-1.5 font-mono text-xs text-muted-foreground">
               <span title={user.user_uuid}>
                 {user.user_uuid.slice(0, 8)}…{user.user_uuid.slice(-4)}
               </span>
@@ -142,7 +142,7 @@ export function UsersListPage() {
                 type="button"
                 onClick={() => handleCopy(user.user_uuid)}
                 aria-label="کپی شناسه"
-                className="text-muted-foreground hover:text-foreground hover:bg-muted rounded p-1 transition-colors"
+                className="rounded p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
               >
                 {isCopied ? (
                   <Check className="size-3.5 text-emerald-600" />
@@ -228,7 +228,7 @@ export function UsersListPage() {
           ) : (
             <Badge
               variant="outline"
-              className="text-muted-foreground border-border"
+              className="border-border text-muted-foreground"
             >
               {t("features.users.verified.no", { defaultValue: "تأیید نشده" })}
             </Badge>
@@ -240,7 +240,7 @@ export function UsersListPage() {
           defaultValue: "تاریخ عضویت",
         }),
         cell: (user) => (
-          <span className="text-muted-foreground text-xs whitespace-nowrap">
+          <span className="text-xs whitespace-nowrap text-muted-foreground">
             {formatDate(user.created_at)}
           </span>
         ),
@@ -272,21 +272,20 @@ export function UsersListPage() {
       {/* Header */}
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <div className="text-muted-foreground mb-1.5 flex items-center gap-2 text-xs">
+          <div className="mb-1.5 flex items-center gap-2 text-xs text-muted-foreground">
             <Users aria-hidden="true" className="size-4" />
             <span>{t("overview.admin", { defaultValue: "پنل مدیریت" })}</span>
             <span>/</span>
-            <span className="text-foreground font-medium">
+            <span className="font-medium text-foreground">
               {t("features.users.title", { defaultValue: "کاربران" })}
             </span>
           </div>
           <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
             {t("features.users.title", { defaultValue: "مدیریت کاربران" })}
           </h1>
-          <p className="text-muted-foreground mt-1 text-sm">
+          <p className="mt-1 text-sm text-muted-foreground">
             {t("features.users.description", {
-              defaultValue:
-                "مشاهده، جست‌وجو و مدیریت حساب‌های کاربری و دسترسی‌ها",
+              defaultValue: "مشاهده، جست‌وجو و مدیریت حساب‌های کاربری و دسترسی‌ها",
             })}
           </p>
         </div>
@@ -335,7 +334,7 @@ export function UsersListPage() {
       )}
 
       {/* Filter and Search Bar */}
-      <div className="border-border bg-card space-y-3 rounded-2xl border p-4 shadow-xs">
+      <div className="space-y-3 rounded-2xl border border-border bg-card p-4 shadow-xs">
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
           {/* Search */}
           <div className="lg:col-span-2">
@@ -422,7 +421,7 @@ export function UsersListPage() {
 
         {/* Active Filters Clear Button */}
         {hasActiveFilters && (
-          <div className="border-border/60 flex items-center justify-between border-t pt-2.5 text-xs">
+          <div className="flex items-center justify-between border-t border-border/60 pt-2.5 text-xs">
             <span className="text-muted-foreground">
               {t("features.users.filters.activeFiltersApplied", {
                 defaultValue: "فیلترها اعمال شده‌اند",
@@ -432,7 +431,7 @@ export function UsersListPage() {
               variant="ghost"
               size="sm"
               onClick={resetFilters}
-              className="text-muted-foreground hover:text-foreground h-7 gap-1 text-xs"
+              className="h-7 gap-1 text-xs text-muted-foreground hover:text-foreground"
             >
               <RotateCcw className="size-3" />
               {t("features.users.filters.reset", {

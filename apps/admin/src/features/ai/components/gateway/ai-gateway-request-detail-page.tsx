@@ -28,7 +28,7 @@ function Field({
 }) {
   return (
     <div className="space-y-1">
-      <span className="text-muted-foreground block text-xs">{label}</span>
+      <span className="block text-xs text-muted-foreground">{label}</span>
       <div className="text-xs">{children}</div>
     </div>
   );
@@ -78,7 +78,7 @@ export function AiGatewayRequestDetailPage() {
           <Card className="md:col-span-2">
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-base font-bold">
-                <Cpu className="text-primary size-4" />
+                <Cpu className="size-4 text-primary" />
                 {t("features.ai.gateway.overview", {
                   defaultValue: "اطلاعات کلی درخواست",
                 })}
@@ -94,7 +94,7 @@ export function AiGatewayRequestDetailPage() {
                   {generation?.user_uuid ? (
                     <Link
                       to={`/users/${generation.user_uuid}`}
-                      className="text-primary inline-flex items-center gap-1.5 font-mono font-semibold hover:underline"
+                      className="inline-flex items-center gap-1.5 font-mono font-semibold text-primary hover:underline"
                     >
                       <User className="size-3.5" />
                       {generation.user_uuid}
@@ -200,8 +200,8 @@ export function AiGatewayRequestDetailPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="bg-muted/30 rounded-lg border p-3">
-                  <span className="text-muted-foreground block text-xs">
+                <div className="rounded-lg border bg-muted/30 p-3">
+                  <span className="block text-xs text-muted-foreground">
                     هزینه واقعی (Actual Cost):
                   </span>
                   <UsdmicroAmount
@@ -209,8 +209,8 @@ export function AiGatewayRequestDetailPage() {
                     amountClassName="text-lg font-bold text-emerald-600"
                   />
                 </div>
-                <div className="bg-muted/30 rounded-lg border p-3">
-                  <span className="text-muted-foreground block text-xs">
+                <div className="rounded-lg border bg-muted/30 p-3">
+                  <span className="block text-xs text-muted-foreground">
                     هزینه تخمینی (Estimated Cost):
                   </span>
                   <UsdmicroAmount

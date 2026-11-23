@@ -9,7 +9,11 @@ import type { SaveCaptionPresetBody } from "../model/caption-preset";
 export class CaptionPresetActionError extends Error {
   constructor(
     readonly kind:
-      "forbidden" | "not_found" | "validation" | "network" | "server",
+      | "forbidden"
+      | "not_found"
+      | "validation"
+      | "network"
+      | "server",
     message?: string,
   ) {
     super(message || kind);

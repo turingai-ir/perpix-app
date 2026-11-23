@@ -57,7 +57,7 @@ export default function LoginShell({
           />
           <span>{t("pages.auth.login.visual.brand")}</span>
         </div>
-        <span className="text-muted-foreground max-md:text-caption text-xs max-[390px]:hidden">
+        <span className="text-xs text-muted-foreground max-[390px]:hidden max-md:text-caption">
           {t("pages.auth.login.visual.studio")}
         </span>
       </header>
@@ -78,10 +78,10 @@ export default function LoginShell({
                 {t("pages.auth.login.visual.titleAccent")}
               </span>
             </h1>
-            <p className="text-muted-foreground text-headline mt-4.5 max-w-105 leading-loose max-md:hidden">
+            <p className="mt-4.5 max-w-105 text-headline leading-loose text-muted-foreground max-md:hidden">
               {t("pages.auth.login.visual.description")}
             </p>
-            <div className="text-foreground/85 [&_svg]:text-primary mt-6 flex items-center gap-5.5 text-xs max-md:hidden [&_span]:inline-flex [&_span]:items-center [&_span]:gap-2">
+            <div className="mt-6 flex items-center gap-5.5 text-xs text-foreground/85 max-md:hidden [&_span]:inline-flex [&_span]:items-center [&_span]:gap-2 [&_svg]:text-primary">
               <span>
                 <Aperture size={16} aria-hidden="true" />
                 {t("pages.auth.login.visual.image")}
@@ -97,28 +97,28 @@ export default function LoginShell({
           className={FORM_SECTION_CLASS}
           aria-label={t("pages.auth.login.title")}
         >
-          <div className="text-muted-foreground text-caption mb-7.5 flex items-center gap-2.5 font-bold tracking-wide">
+          <div className="mb-7.5 flex items-center gap-2.5 text-caption font-bold tracking-wide text-muted-foreground">
             <span
-              className="bg-primary size-2 flex-none rounded-full shadow-[0_0_0_4px_color-mix(in_srgb,var(--primary)_14%,transparent),0_0_16px_var(--primary)]"
+              className="size-2 flex-none rounded-full bg-primary shadow-[0_0_0_4px_color-mix(in_srgb,var(--primary)_14%,transparent),0_0_16px_var(--primary)]"
               aria-hidden="true"
             />
             <span>{t("pages.auth.login.visual.entryLabel")}</span>
             <span
-              className="border-primary/30 text-foreground/85 text-caption ms-auto rounded-lg border px-2 py-1.5 font-sans leading-none font-bold tracking-widest"
+              className="ms-auto rounded-lg border border-primary/30 px-2 py-1.5 font-sans text-caption leading-none font-bold tracking-widest text-foreground/85"
               aria-hidden="true"
             >
               P/01
             </span>
           </div>
           <div className={FORMS_CLASS}>{children}</div>
-          <div className="border-foreground/11 mt-7 flex items-start gap-2.5 border-t pt-4">
+          <div className="mt-7 flex items-start gap-2.5 border-t border-foreground/11 pt-4">
             <span
-              className="text-primary text-xl leading-tight"
+              className="text-xl leading-tight text-primary"
               aria-hidden="true"
             >
               ✳
             </span>
-            <p className="text-muted-foreground m-0 text-right text-xs leading-loose">
+            <p className="m-0 text-right text-xs leading-loose text-muted-foreground">
               {t("pages.auth.login.visual.note")}
             </p>
           </div>
@@ -126,7 +126,7 @@ export default function LoginShell({
       </div>
       <footer
         className={cn(
-          "text-muted-foreground max-md:text-caption flex items-center justify-between gap-4 border-t border-(--glass-border) pt-4.5 text-xs",
+          "flex items-center justify-between gap-4 border-t border-(--glass-border) pt-4.5 text-xs text-muted-foreground max-md:text-caption",
         )}
       >
         <span>{t("pages.auth.login.visual.footer")}</span>

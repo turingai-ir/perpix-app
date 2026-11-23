@@ -57,7 +57,7 @@ const controlClass =
 function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
     <label className="flex items-center justify-between gap-3 text-xs">
-      <span className="text-foreground font-medium">{label}</span>
+      <span className="font-medium text-foreground">{label}</span>
       {children}
     </label>
   );
@@ -65,8 +65,8 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
 
 function Group({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <fieldset className="border-border space-y-2 rounded border p-3">
-      <legend className="text-muted-foreground px-1 text-xs font-semibold">
+    <fieldset className="space-y-2 rounded border border-border p-3">
+      <legend className="px-1 text-xs font-semibold text-muted-foreground">
         {title}
       </legend>
       {children}
@@ -98,7 +98,7 @@ function Slider({
         onChange={(e) => onChange(Number(e.target.value))}
         className="w-28"
       />
-      <span className="text-muted-foreground w-10 text-end tabular-nums">
+      <span className="w-10 text-end text-muted-foreground tabular-nums">
         {value}
       </span>
     </span>
@@ -303,7 +303,7 @@ function Card({
   children: ReactNode;
 }) {
   return (
-    <div className="border-border space-y-2 rounded border p-2.5">
+    <div className="space-y-2 rounded border border-border p-2.5">
       <div className="flex items-center justify-between">
         <span className="text-xs font-semibold">{title}</span>
         <span className="flex gap-1">{actions}</span>
@@ -1030,7 +1030,7 @@ export function CaptionTemplateEditor({
           )}
           {roleNames.length > 0 && (
             <>
-              <p className="text-muted-foreground text-xs">
+              <p className="text-xs text-muted-foreground">
                 {label(
                   "rulesHint",
                   "کلمه‌ها به‌ترتیب قاعده‌ها نقش می‌گیرند؛ کلمه‌ای که دستی علامت خورده نقش خودش را دارد.",
@@ -1545,11 +1545,11 @@ export function CaptionTemplateEditor({
         </Group>
 
         <details className="text-xs">
-          <summary className="text-muted-foreground cursor-pointer">
+          <summary className="cursor-pointer text-muted-foreground">
             {label("advanced", "پیشرفته: JSON")}
           </summary>
           <textarea
-            className="border-border bg-background mt-2 w-full rounded border p-2 font-mono text-xs"
+            className="mt-2 w-full rounded border border-border bg-background p-2 font-mono text-xs"
             rows={12}
             dir="ltr"
             spellCheck={false}

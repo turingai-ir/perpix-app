@@ -35,7 +35,7 @@ export function FinanceSummary({
       {items.map(({ label, value, unit, icon: Icon, tone }, index) => (
         <article
           key={label}
-          className="animate-finance-rise bg-card/86 not-supports-[backdrop-filter:blur(1px)]:bg-card inset-shadow-highlight-lg shadow-modal flex min-h-22 min-w-0 items-center gap-3.5 rounded-2xl p-4 outline outline-[color-mix(in_oklab,var(--border)_72%,transparent)] backdrop-blur-xl backdrop-saturate-[118%] [animation-delay:calc((var(--finance-order)+1)*70ms)] motion-reduce:animate-none contrast-more:outline-2 sm:min-h-25"
+          className="flex min-h-22 min-w-0 animate-finance-rise items-center gap-3.5 rounded-2xl bg-card/86 p-4 shadow-modal inset-shadow-highlight-lg outline outline-[color-mix(in_oklab,var(--border)_72%,transparent)] backdrop-blur-xl backdrop-saturate-[118%] [animation-delay:calc((var(--finance-order)+1)*70ms)] not-supports-[backdrop-filter:blur(1px)]:bg-card motion-reduce:animate-none contrast-more:outline-2 sm:min-h-25"
           style={{ "--finance-order": index } as CSSProperties}
         >
           <span
@@ -48,11 +48,11 @@ export function FinanceSummary({
             <Icon />
           </span>
           <span className="flex min-w-0 flex-col gap-1.5">
-            <span className="text-muted-foreground text-xs">{label}</span>
+            <span className="text-xs text-muted-foreground">{label}</span>
             <strong className="flex min-w-0 items-baseline gap-1.5 text-xl tabular-nums">
               <bdi className="wrap-anywhere">{value}</bdi>
               {unit ? (
-                <small className="text-muted-foreground text-xs font-medium whitespace-nowrap">
+                <small className="text-xs font-medium whitespace-nowrap text-muted-foreground">
                   {" "}
                   {unit}
                 </small>

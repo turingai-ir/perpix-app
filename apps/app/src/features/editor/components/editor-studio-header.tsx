@@ -31,7 +31,7 @@ export function EditorStudioHeader(props: Props) {
 
   return (
     <header
-      className="border-foreground/13 bg-card/75 z-2 flex h-14.75 flex-none items-center justify-between gap-3.5 border-b px-2.5 backdrop-blur-xl min-[701px]:h-17.5 min-[701px]:px-5.5"
+      className="z-2 flex h-14.75 flex-none items-center justify-between gap-3.5 border-b border-foreground/13 bg-card/75 px-2.5 backdrop-blur-xl min-[701px]:h-17.5 min-[701px]:px-5.5"
       aria-label={t("pages.editor.studio.topMenu")}
     >
       <div className="flex min-w-0 items-center gap-1 min-[701px]:gap-2.5">
@@ -45,14 +45,14 @@ export function EditorStudioHeader(props: Props) {
           <ArrowRight size={19} />
         </button>
         <span
-          className="from-primary to-primary/60 text-primary-foreground grid size-8 place-items-center rounded-md bg-linear-145 font-black shadow-[0_8px_28px_color-mix(in_srgb,var(--primary)_29%,transparent)] max-[400px]:hidden"
+          className="grid size-8 place-items-center rounded-md bg-linear-145 from-primary to-primary/60 font-black text-primary-foreground shadow-[0_8px_28px_color-mix(in_srgb,var(--primary)_29%,transparent)] max-[400px]:hidden"
           aria-hidden="true"
         >
           P
         </span>
         <span className="hidden flex-col text-left leading-tight [direction:ltr] min-[701px]:flex">
           <strong className="text-headline">PerPix</strong>
-          <small className="text-muted-foreground text-caption">
+          <small className="text-caption text-muted-foreground">
             {t("pages.editor.studio.eyebrow")}
           </small>
         </span>

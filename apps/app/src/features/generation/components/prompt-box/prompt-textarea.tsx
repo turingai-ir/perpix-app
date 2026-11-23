@@ -50,12 +50,12 @@ export const PromptTextarea: FC<{
         ) : label ? (
           <>
             <div className="space-y-1">
-              <FormLabel className="text-foreground flex items-center gap-2 text-sm font-semibold">
-                <Sparkles aria-hidden="true" className="text-primary size-4" />
+              <FormLabel className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                <Sparkles aria-hidden="true" className="size-4 text-primary" />
                 {label}
               </FormLabel>
               {hint && (
-                <FormDescription className="text-muted-foreground text-xs leading-6">
+                <FormDescription className="text-xs leading-6 text-muted-foreground">
                   {hint}
                 </FormDescription>
               )}
@@ -67,7 +67,7 @@ export const PromptTextarea: FC<{
                 rows={4}
                 wrap="soft"
                 disabled={disabled}
-                className="border-border bg-muted/20 placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/30 block min-h-28 w-full resize-y rounded-xl border px-3 py-2.5 text-base leading-7 wrap-anywhere outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className="block min-h-28 w-full resize-y rounded-xl border border-border bg-muted/20 px-3 py-2.5 text-base leading-7 wrap-anywhere outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30 disabled:cursor-not-allowed disabled:opacity-50"
                 placeholder={placeholder}
               />
             </FormControl>

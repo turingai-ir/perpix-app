@@ -85,7 +85,7 @@ export function CaptionPresetsPage() {
         defaultValue: "نام قالب",
       }),
       cell: (item) => (
-        <span className="text-foreground text-sm font-bold">{item.name}</span>
+        <span className="text-sm font-bold text-foreground">{item.name}</span>
       ),
     },
     {
@@ -140,11 +140,11 @@ export function CaptionPresetsPage() {
             size="sm"
             disabled={isSaving}
             onClick={() => void handleToggleActive(item)}
-            className="text-muted-foreground hover:text-foreground h-8 cursor-pointer gap-1.5 px-2.5 text-xs"
+            className="h-8 cursor-pointer gap-1.5 px-2.5 text-xs text-muted-foreground hover:text-foreground"
           >
             {item.is_active ? (
               <>
-                <XCircle className="text-destructive size-3.5" />
+                <XCircle className="size-3.5 text-destructive" />
                 مخفی کردن
               </>
             ) : (
@@ -159,7 +159,7 @@ export function CaptionPresetsPage() {
             size="sm"
             onClick={() => setDeleting(item)}
             aria-label="حذف قالب"
-            className="text-destructive h-8 cursor-pointer px-2.5"
+            className="h-8 cursor-pointer px-2.5 text-destructive"
           >
             <Trash2 className="size-3.5" />
           </Button>
@@ -171,7 +171,7 @@ export function CaptionPresetsPage() {
   return (
     <div className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-8 sm:py-8">
       <div>
-        <div className="text-muted-foreground mb-1.5 flex items-center gap-2 text-xs">
+        <div className="mb-1.5 flex items-center gap-2 text-xs text-muted-foreground">
           <Captions aria-hidden="true" className="size-4" />
           <span>{t("overview.admin", { defaultValue: "پنل مدیریت" })}</span>
           <span>/</span>
@@ -192,7 +192,7 @@ export function CaptionPresetsPage() {
                 defaultValue: "قالب‌های کپشن استودیو",
               })}
             </h1>
-            <p className="text-muted-foreground mt-1 text-sm">
+            <p className="mt-1 text-sm text-muted-foreground">
               {t("features.studio.captionPresets.description", {
                 defaultValue:
                   "قالب‌هایی که به همهٔ کاربران استودیو پیشنهاد می‌شوند. کاربر از آن‌ها کپی می‌گیرد و تغییر یا حذف قالب ادمین روی کپی‌های او اثری ندارد.",

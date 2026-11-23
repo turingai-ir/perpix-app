@@ -104,12 +104,12 @@ export const GalleryPickerSheet: FC<GalleryPickerSheetProps> = ({
       <div className="flex min-h-[50dvh] flex-col gap-3">
         <label
           htmlFor="studio-import-language"
-          className="text-body flex items-center justify-between gap-3"
+          className="flex items-center justify-between gap-3 text-body"
         >
           {t("features.studio.clips.language.title")}
           <select
             id="studio-import-language"
-            className="bg-background text-body rounded-control border px-3 py-2"
+            className="rounded-control border bg-background px-3 py-2 text-body"
             disabled={busy}
             value={language}
             onChange={(event) => {
@@ -148,7 +148,7 @@ export const GalleryPickerSheet: FC<GalleryPickerSheetProps> = ({
           data-testid="gallery-upload-input"
           onChange={onChoose}
         />
-        <p className="text-muted-foreground text-center text-xs">
+        <p className="text-center text-xs text-muted-foreground">
           {t("features.studio.clips.limits")}
         </p>
 
@@ -161,7 +161,7 @@ export const GalleryPickerSheet: FC<GalleryPickerSheetProps> = ({
         ) : files.isError ? (
           <ErrorSection onRetry={() => void files.refetch()} />
         ) : videos.length === 0 ? (
-          <div className="text-muted-foreground flex flex-1 flex-col items-center justify-center gap-2 py-8 text-center text-sm">
+          <div className="flex flex-1 flex-col items-center justify-center gap-2 py-8 text-center text-sm text-muted-foreground">
             <Film className="size-10" aria-hidden />
             {t("features.studio.gallery.empty")}
           </div>
@@ -191,10 +191,10 @@ export const GalleryPickerSheet: FC<GalleryPickerSheetProps> = ({
                       );
                     }}
                     className={cn(
-                      "bg-card focus-visible:ring-ring relative flex w-full cursor-pointer flex-col overflow-hidden rounded-xl border text-start transition-transform focus-visible:ring-2 focus-visible:outline-none active:scale-[0.98] disabled:cursor-default disabled:opacity-60 disabled:active:scale-100",
+                      "relative flex w-full cursor-pointer flex-col overflow-hidden rounded-xl border bg-card text-start transition-transform focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none active:scale-[0.98] disabled:cursor-default disabled:opacity-60 disabled:active:scale-100",
                     )}
                   >
-                    <span className="bg-muted relative block aspect-[9/12] w-full">
+                    <span className="relative block aspect-[9/12] w-full bg-muted">
                       {previewUrl ? (
                         // A still of the video: only its metadata and first frame are fetched.
                         <video
@@ -207,14 +207,14 @@ export const GalleryPickerSheet: FC<GalleryPickerSheetProps> = ({
                       ) : (
                         <span className="flex size-full items-center justify-center">
                           <Film
-                            className="text-muted-foreground size-8"
+                            className="size-8 text-muted-foreground"
                             aria-hidden
                           />
                         </span>
                       )}
                       {used && (
-                        <span className="bg-night/60 absolute inset-0 flex items-center justify-center">
-                          <span className="bg-primary text-primary-foreground flex items-center gap-1 rounded-full px-2 py-1 text-xs">
+                        <span className="absolute inset-0 flex items-center justify-center bg-night/60">
+                          <span className="flex items-center gap-1 rounded-full bg-primary px-2 py-1 text-xs text-primary-foreground">
                             <Check className="size-3.5" aria-hidden />
                             {t("features.studio.gallery.inProject")}
                           </span>
@@ -225,7 +225,7 @@ export const GalleryPickerSheet: FC<GalleryPickerSheetProps> = ({
                       <span className="truncate text-xs font-semibold">
                         {video.file_name}
                       </span>
-                      <span className="text-muted-foreground text-xs">
+                      <span className="text-xs text-muted-foreground">
                         {seconds ? `${formatDuration(seconds * 1000)} · ` : ""}
                         {megabytes(video.file_size)}
                       </span>
@@ -238,7 +238,7 @@ export const GalleryPickerSheet: FC<GalleryPickerSheetProps> = ({
         )}
         <div ref={sentinel} className="flex h-8 items-center justify-center">
           {files.isFetchingNextPage && (
-            <Loader2 className="text-muted-foreground size-5 animate-spin" />
+            <Loader2 className="size-5 animate-spin text-muted-foreground" />
           )}
         </div>
       </div>

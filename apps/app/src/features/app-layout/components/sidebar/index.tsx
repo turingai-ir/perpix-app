@@ -77,7 +77,7 @@ const AppLayoutSidebar: FC<{
           aria-hidden={!appLayoutState.isSidebarOpen}
           className={cn(
             SIDEBAR_SHELL_CLASS,
-            "text-sidebar-foreground relative flex h-full min-h-0 w-(--sidebar-width) flex-col border-e transition-[transform,opacity] duration-300 ease-in-out motion-reduce:transition-none",
+            "relative flex h-full min-h-0 w-(--sidebar-width) flex-col border-e text-sidebar-foreground transition-[transform,opacity] duration-300 ease-in-out motion-reduce:transition-none",
             appLayoutState.isSidebarOpen
               ? "translate-x-0 opacity-100"
               : "translate-x-full opacity-0",

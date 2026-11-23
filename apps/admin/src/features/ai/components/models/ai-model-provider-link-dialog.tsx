@@ -126,7 +126,7 @@ export function AiModelProviderLinkDialog({
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Icon className="text-primary size-5" />
+            <Icon className="size-5 text-primary" />
             {isEditing
               ? t("features.ai.models.editProviderTitle", {
                   defaultValue: "ویرایش اتصال ارائه‌دهنده",
@@ -137,21 +137,21 @@ export function AiModelProviderLinkDialog({
           </DialogTitle>
           <DialogDescription>
             مدل{" "}
-            <strong className="text-foreground font-mono">{modelName}</strong>
+            <strong className="font-mono text-foreground">{modelName}</strong>
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4 py-2 text-sm">
           {!isEditing && (
             <div>
-              <label className="text-foreground mb-1 block text-xs font-semibold">
+              <label className="mb-1 block text-xs font-semibold text-foreground">
                 {t("features.ai.models.selectProvider", {
                   defaultValue: "ارائه‌دهنده (AI Provider)",
                 })}{" "}
                 *
               </label>
               {availableProviders.length === 0 ? (
-                <p className="text-muted-foreground text-xs">
+                <p className="text-xs text-muted-foreground">
                   همهٔ ارائه‌دهندگان موجود قبلاً به این مدل متصل شده‌اند.
                 </p>
               ) : (
@@ -174,7 +174,7 @@ export function AiModelProviderLinkDialog({
           )}
 
           <div>
-            <label className="text-foreground mb-1 block text-xs font-semibold">
+            <label className="mb-1 block text-xs font-semibold text-foreground">
               {t("features.ai.models.workflowModes", {
                 defaultValue: "حالت‌های Workflow",
               })}
@@ -216,9 +216,9 @@ export function AiModelProviderLinkDialog({
                 placeholder="text_to_image, image_to_image"
               />
             )}
-            <span className="text-muted-foreground mt-1 block text-[11px]">
-              فقط حالت‌های روشن درخواست می‌گیرند. خالی یعنی همهٔ حالت‌ها
-              خاموش‌اند و هر درخواست برای این اتصال رد می‌شود.
+            <span className="mt-1 block text-[11px] text-muted-foreground">
+              فقط حالت‌های روشن درخواست می‌گیرند. خالی یعنی همهٔ حالت‌ها خاموش‌اند و
+              هر درخواست برای این اتصال رد می‌شود.
             </span>
           </div>
 
@@ -244,7 +244,7 @@ export function AiModelProviderLinkDialog({
               id="link-active-toggle"
               checked={isActive}
               onChange={(e) => setIsActive(e.target.checked)}
-              className="text-primary focus:ring-primary size-4 rounded border-gray-300"
+              className="size-4 rounded border-gray-300 text-primary focus:ring-primary"
             />
             <label
               htmlFor="link-active-toggle"

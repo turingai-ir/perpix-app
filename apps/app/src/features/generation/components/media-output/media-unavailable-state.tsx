@@ -72,7 +72,7 @@ export function MediaUnavailableState({
       ) : (
         <span
           className={cn(
-            "bg-background/75 flex size-10 shrink-0 items-center justify-center rounded-xl",
+            "flex size-10 shrink-0 items-center justify-center rounded-xl bg-background/75",
             compact && "size-7 rounded-lg",
           )}
         >
@@ -81,7 +81,7 @@ export function MediaUnavailableState({
           ) : (
             <TriangleAlert
               aria-hidden="true"
-              className="text-destructive size-5"
+              className="size-5 text-destructive"
             />
           )}
         </span>
@@ -95,7 +95,7 @@ export function MediaUnavailableState({
         {compact ? compactTitle : title}
       </p>
       {!compact && (
-        <p className="text-muted-foreground max-w-xs text-sm leading-6">
+        <p className="max-w-xs text-sm leading-6 text-muted-foreground">
           {t(descriptionKey)}
         </p>
       )}

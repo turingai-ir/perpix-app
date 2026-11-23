@@ -27,7 +27,8 @@ export function useAccountWidget() {
 
   const transactions = (
     transactionsState.data as unknown as
-      SchemaGetWalletTransactionsResponse | undefined
+      | SchemaGetWalletTransactionsResponse
+      | undefined
   )?.transactions;
   const activity = useMemo(
     () => (transactions ? summarizeActivity(transactions) : null),

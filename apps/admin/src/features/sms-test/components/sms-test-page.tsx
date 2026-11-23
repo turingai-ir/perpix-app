@@ -47,21 +47,21 @@ export function SmsTestPage() {
     <main className="mx-auto max-w-5xl space-y-7 px-5 py-8 sm:px-8 sm:py-10">
       <div>
         <h1 className="text-3xl font-bold">{t("smsTest.title")}</h1>
-        <p className="text-muted-foreground mt-3 text-sm leading-7">
+        <p className="mt-3 text-sm leading-7 text-muted-foreground">
           {t("smsTest.description")}
         </p>
       </div>
       <section
         aria-labelledby="sms-form-title"
-        className="border-border bg-card max-w-xl rounded-2xl border p-6 sm:p-8"
+        className="max-w-xl rounded-2xl border border-border bg-card p-6 sm:p-8"
       >
-        <div className="bg-primary/10 text-primary mb-5 flex size-12 items-center justify-center rounded-xl">
+        <div className="mb-5 flex size-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
           <MessageSquareText aria-hidden="true" />
         </div>
         <h2 id="sms-form-title" className="text-lg font-semibold">
           {t("smsTest.formTitle")}
         </h2>
-        <p className="text-muted-foreground mt-3 mb-7 text-sm leading-7">
+        <p className="mt-3 mb-7 text-sm leading-7 text-muted-foreground">
           {t("smsTest.hint")}
         </p>
         <form
@@ -88,24 +88,24 @@ export function SmsTestPage() {
               aria-describedby={
                 errors.phone_number ? "sms-phone-error" : "sms-phone-hint"
               }
-              className="border-input bg-background focus-visible:ring-ring h-12 w-full rounded-xl border px-4 text-sm outline-none focus-visible:ring-2 disabled:opacity-50"
+              className="h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
               {...register("phone_number")}
             />
-            <p id="sms-phone-hint" className="text-muted-foreground text-xs">
+            <p id="sms-phone-hint" className="text-xs text-muted-foreground">
               {t("smsTest.phoneHint")}
             </p>
             {errors.phone_number && (
               <p
                 id="sms-phone-error"
                 role="alert"
-                className="text-destructive text-sm"
+                className="text-sm text-destructive"
               >
                 {errors.phone_number.message}
               </p>
             )}
           </div>
           {sms.isError && (
-            <p role="alert" className="text-destructive text-sm leading-7">
+            <p role="alert" className="text-sm leading-7 text-destructive">
               {t(`smsTest.errors.${kind}`)}
               {sms.seconds > 0 && (
                 <span> {t("smsTest.wait", { count: sms.seconds })}</span>
@@ -135,7 +135,7 @@ export function SmsTestPage() {
           </Button>
         </form>
       </section>
-      <p className="text-muted-foreground max-w-xl text-xs leading-7">
+      <p className="max-w-xl text-xs leading-7 text-muted-foreground">
         {t("smsTest.budget")}
       </p>
     </main>

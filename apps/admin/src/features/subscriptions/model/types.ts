@@ -27,7 +27,10 @@ export type AdminPageAdminReportBucket =
 export type AdminSort = components["schemas"]["AdminSort"];
 
 export type SubscriptionStatus =
-  "active" | "expired" | "replaced" | "scheduled";
+  | "active"
+  | "expired"
+  | "replaced"
+  | "scheduled";
 
 export interface SubscriptionsFilterParams {
   offset?: number;

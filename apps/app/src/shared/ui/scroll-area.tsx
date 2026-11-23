@@ -21,7 +21,7 @@ function ScrollArea({
       <ScrollAreaPrimitive.Viewport
         data-slot="scroll-area-viewport"
         className={cn(
-          "focus-visible:ring-ring/50 size-full min-w-0 [scrollbar-width:none] rounded-[inherit] transition-[color,box-shadow] outline-none [-ms-overflow-style:none] focus-visible:ring-[3px] focus-visible:outline-1 [&::-webkit-scrollbar]:hidden",
+          "size-full min-w-0 [scrollbar-width:none] rounded-[inherit] transition-[color,box-shadow] outline-none [-ms-overflow-style:none] focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1 [&::-webkit-scrollbar]:hidden",
           viewportClassName,
         )}
       >
@@ -56,7 +56,7 @@ function ScrollBar({
     >
       <ScrollAreaPrimitive.Thumb
         data-slot="scroll-area-thumb"
-        className="bg-primary/35 hover:bg-primary/55 relative flex-1 rounded-full transition-colors"
+        className="relative flex-1 rounded-full bg-primary/35 transition-colors hover:bg-primary/55"
       />
     </ScrollAreaPrimitive.Scrollbar>
   );

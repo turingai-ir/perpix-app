@@ -24,7 +24,7 @@ export function JsonObjectField({
     <div>
       <label
         htmlFor={id}
-        className="text-foreground mb-1 block text-xs font-semibold"
+        className="mb-1 block text-xs font-semibold text-foreground"
       >
         {label}
       </label>
@@ -37,17 +37,17 @@ export function JsonObjectField({
         onChange={(e) => onChange(e.target.value)}
         aria-invalid={!parsed.ok}
         className={cn(
-          "border-input bg-card text-foreground focus-visible:border-ring focus-visible:ring-ring/50 w-full rounded-lg border px-3 py-2 font-mono text-xs shadow-xs focus-visible:ring-3 focus-visible:outline-none",
+          "w-full rounded-lg border border-input bg-card px-3 py-2 font-mono text-xs text-foreground shadow-xs focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none",
           !parsed.ok && "border-destructive",
         )}
       />
       {!parsed.ok ? (
-        <span className="text-destructive mt-1 block text-[11px]" dir="ltr">
+        <span className="mt-1 block text-[11px] text-destructive" dir="ltr">
           {parsed.error}
         </span>
       ) : (
         hint && (
-          <span className="text-muted-foreground mt-1 block text-[11px]">
+          <span className="mt-1 block text-[11px] text-muted-foreground">
             {hint}
           </span>
         )

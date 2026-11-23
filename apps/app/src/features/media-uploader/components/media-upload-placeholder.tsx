@@ -35,15 +35,15 @@ export const MediaUploadPlaceholder: FC<MediaUploadPlaceholderProps> = ({
     <button
       type="button"
       className={cn(
-        "border-muted-foreground/30 bg-background group flex shrink-0 items-center justify-center gap-2 border border-dashed transition-colors select-none",
+        "group flex shrink-0 items-center justify-center gap-2 border border-dashed border-muted-foreground/30 bg-background transition-colors select-none",
         presentation === "composer"
-          ? "bg-primary/8 size-11 rounded-xl"
+          ? "size-11 rounded-xl bg-primary/8"
           : presentation === "video-dock"
             ? "h-24 w-full justify-start rounded-2xl px-4 text-start"
             : "h-24 w-24 flex-col rounded-lg",
         disabled
           ? "cursor-not-allowed opacity-50"
-          : "hover:border-primary/50 cursor-pointer",
+          : "cursor-pointer hover:border-primary/50",
       )}
       disabled={disabled}
       onClick={onClick}
@@ -52,16 +52,16 @@ export const MediaUploadPlaceholder: FC<MediaUploadPlaceholderProps> = ({
     >
       <div
         className={cn(
-          "bg-muted rounded-full p-2 transition-colors",
+          "rounded-full bg-muted p-2 transition-colors",
           !disabled && "group-hover:bg-primary/10",
         )}
       >
         {presentation === "video-dock" ? (
-          <MediaIcon className="text-primary h-5 w-5" aria-hidden="true" />
+          <MediaIcon className="h-5 w-5 text-primary" aria-hidden="true" />
         ) : (
           <Plus
             className={cn(
-              "text-muted-foreground h-5 w-5",
+              "h-5 w-5 text-muted-foreground",
               !disabled && "group-hover:text-primary",
             )}
           />
@@ -69,7 +69,7 @@ export const MediaUploadPlaceholder: FC<MediaUploadPlaceholderProps> = ({
       </div>
       <span
         className={cn(
-          "text-muted-foreground max-w-27.5 px-2 text-center text-xs font-medium whitespace-normal",
+          "max-w-27.5 px-2 text-center text-xs font-medium whitespace-normal text-muted-foreground",
           presentation === "composer" && "sr-only",
           presentation === "video-dock" && "max-w-none px-0 text-start text-sm",
           !disabled && "group-hover:text-primary",

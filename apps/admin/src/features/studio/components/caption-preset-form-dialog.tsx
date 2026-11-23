@@ -93,7 +93,7 @@ function CaptionPresetFormContent({
   return (
     <form onSubmit={handleSubmit} className="space-y-4 py-2">
       <div className="space-y-1.5">
-        <label className="text-foreground text-xs font-semibold">
+        <label className="text-xs font-semibold text-foreground">
           {t("features.studio.captionPresets.form.name", {
             defaultValue: "نام قالب",
           })}{" "}
@@ -106,7 +106,7 @@ function CaptionPresetFormContent({
           placeholder="کارائوکه زرد"
           required
         />
-        <p className="text-muted-foreground text-xs">
+        <p className="text-xs text-muted-foreground">
           {t("features.studio.captionPresets.form.nameHint", {
             defaultValue: "این نام به کاربر نشان داده می‌شود.",
           })}
@@ -115,7 +115,7 @@ function CaptionPresetFormContent({
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
-          <label className="text-foreground text-xs font-semibold">
+          <label className="text-xs font-semibold text-foreground">
             {t("features.studio.captionPresets.form.sortOrder", {
               defaultValue: "ترتیب نمایش",
             })}
@@ -129,7 +129,7 @@ function CaptionPresetFormContent({
             onChange={(e) => setSortOrder(e.target.value)}
             dir="ltr"
           />
-          <p className="text-muted-foreground text-xs">
+          <p className="text-xs text-muted-foreground">
             {t("features.studio.captionPresets.form.sortOrderHint", {
               defaultValue: "عدد کمتر زودتر نمایش داده می‌شود.",
             })}
@@ -144,7 +144,7 @@ function CaptionPresetFormContent({
           type="checkbox"
           checked={isActive}
           onChange={(e) => setIsActive(e.target.checked)}
-          className="text-primary focus:ring-primary size-4 rounded"
+          className="size-4 rounded text-primary focus:ring-primary"
         />
         <span>
           {t("features.studio.captionPresets.form.isActive", {
@@ -194,7 +194,7 @@ export function CaptionPresetFormDialog({
       <DialogPopup className="max-h-[90vh] max-w-5xl overflow-y-auto">
         <DialogHeader>
           <div className="flex items-center gap-2">
-            <Captions className="text-primary size-5" />
+            <Captions className="size-5 text-primary" />
             <DialogTitle>
               {isEdit
                 ? t("features.studio.captionPresets.form.editTitle", {

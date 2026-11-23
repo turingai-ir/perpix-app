@@ -18,7 +18,16 @@
   }
 
   /* Taps fire immediately (no double-tap zoom delay); chrome text is not selectable by long-press. */
-  :where(a, button, [role="button"], [role="tab"], [role="menuitem"], [role="option"], label, summary) {
+  :where(
+    a,
+    button,
+    [role="button"],
+    [role="tab"],
+    [role="menuitem"],
+    [role="option"],
+    label,
+    summary
+  ) {
     touch-action: manipulation;
     -webkit-user-select: none;
     user-select: none;

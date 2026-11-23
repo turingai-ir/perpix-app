@@ -13,7 +13,7 @@ export function GalleryOrbit() {
       {rings.map((ring) => (
         <div
           key={ring}
-          className={`bg-primary/4 absolute rounded-[32%] border border-[color-mix(in_oklch,var(--primary)_34%,var(--border))] ${ring}`}
+          className={`absolute rounded-[32%] border border-[color-mix(in_oklch,var(--primary)_34%,var(--border))] bg-primary/4 ${ring}`}
         />
       ))}
     </div>

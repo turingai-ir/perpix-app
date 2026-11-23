@@ -68,7 +68,7 @@ export function AspectRatioPicker({
                       role="combobox"
                       aria-expanded={open}
                       disabled={disabled}
-                      className="bg-muted/40 h-11 min-w-24 gap-2 rounded-xl px-3"
+                      className="h-11 min-w-24 gap-2 rounded-xl bg-muted/40 px-3"
                     />
                   }
                 >
@@ -78,7 +78,7 @@ export function AspectRatioPicker({
                   </bdi>
                   <ChevronDown
                     aria-hidden="true"
-                    className="text-muted-foreground ms-auto size-4"
+                    className="ms-auto size-4 text-muted-foreground"
                   />
                 </PopoverTrigger>
               </FormControl>
@@ -87,7 +87,7 @@ export function AspectRatioPicker({
                 align="center"
                 sideOffset={10}
                 collisionPadding={8}
-                className="border-border max-h-(--available-height) w-[min(220px,calc(100vw-2rem))] overflow-hidden rounded-2xl border p-3 shadow-2xl"
+                className="max-h-(--available-height) w-[min(220px,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-border p-3 shadow-2xl"
               >
                 <p className="shrink-0 px-1 pb-3 text-sm font-semibold">
                   {label}
@@ -101,14 +101,14 @@ export function AspectRatioPicker({
                         key={optionValue}
                         type="button"
                         aria-pressed={selected}
-                        className="hover:bg-muted data-[selected=true]:bg-muted focus-visible:ring-ring flex min-h-14 items-center gap-3 rounded-xl px-3 text-start outline-none focus-visible:ring-2"
+                        className="flex min-h-14 items-center gap-3 rounded-xl px-3 text-start outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring data-[selected=true]:bg-muted"
                         data-selected={selected || undefined}
                         onClick={() => {
                           field.onChange(option);
                           setOpen(false);
                         }}
                       >
-                        <span className="text-muted-foreground grid size-8 shrink-0 place-items-center">
+                        <span className="grid size-8 shrink-0 place-items-center text-muted-foreground">
                           <RatioShape ratio={optionValue} large />
                         </span>
                         <bdi dir="ltr" className="font-medium">
@@ -117,7 +117,7 @@ export function AspectRatioPicker({
                         {selected && (
                           <Check
                             aria-hidden="true"
-                            className="text-primary ms-auto size-4"
+                            className="ms-auto size-4 text-primary"
                           />
                         )}
                       </button>

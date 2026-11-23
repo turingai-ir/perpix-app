@@ -1,0 +1,33 @@
+{
+  "name": "@perpix/tooling",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./oxlint": "./oxlint.mjs",
+    "./oxfmt": "./oxfmt.mjs",
+    "./format-source": "./format-source.mjs",
+    "./vite": {
+      "types": "./vite.d.mts",
+      "default": "./vite.mjs"
+    }
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "lint": "oxlint .",
+    "format": "oxfmt --write .",
+    "format:check": "oxfmt --check ."
+  },
+  "dependencies": {
+    "oxlint": "catalog:",
+    "oxfmt": "catalog:",
+    "vite": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "@tailwindcss/vite": "catalog:",
+    "@oxc-node/core": "catalog:",
+    "tsrs": "catalog:"
+  },
+  "bin": {
+    "perpix-ts": "./run-typescript.mjs"
+  }
+}

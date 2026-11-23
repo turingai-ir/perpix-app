@@ -20,11 +20,11 @@ export function CaptionStyleControls({
       : color;
 
   return (
-    <fieldset className="gap-group flex flex-col">
-      <legend className="text-headline mb-2 font-semibold">
+    <fieldset className="flex flex-col gap-group">
+      <legend className="mb-2 text-headline font-semibold">
         {t("features.studio.styles.adjust")}
       </legend>
-      <label className="gap-group flex items-center justify-between">
+      <label className="flex items-center justify-between gap-group">
         <span className="text-body">{t("features.studio.styles.color")}</span>
         <Input
           type="color"
@@ -35,7 +35,7 @@ export function CaptionStyleControls({
           }
         />
       </label>
-      <label className="gap-group flex flex-col">
+      <label className="flex flex-col gap-group">
         <span className="text-body">{t("features.studio.styles.size")}</span>
         <Input
           type="range"
@@ -61,7 +61,7 @@ export function CaptionStyleControls({
       <div
         role="group"
         aria-label={t("features.studio.styles.position")}
-        className="gap-group flex flex-wrap"
+        className="flex flex-wrap gap-group"
       >
         {ANCHORS.map((anchor) => (
           <Button

@@ -93,7 +93,7 @@ const AccountWidgetContent: FC = () => {
               <strong className="group-data-[empty]/trigger:text-accent-rose group-data-[low]/trigger:text-accent-gold">
                 <Coins
                   aria-hidden="true"
-                  className="text-accent-gold group-data-[empty]/trigger:text-accent-rose group-data-[low]/trigger:text-accent-gold size-4"
+                  className="size-4 text-accent-gold group-data-[empty]/trigger:text-accent-rose group-data-[low]/trigger:text-accent-gold"
                 />
                 {balance}
                 <AccountUnit>{t(`${PREFIX}.token`)}</AccountUnit>
@@ -114,7 +114,7 @@ const AccountWidgetContent: FC = () => {
             ) : null}
           </span>
           <ChevronDown
-            className="ease-out-quint text-night-foreground/65 size-4 flex-none transition-[rotate] duration-200 group-data-popup-open/trigger:rotate-180 motion-reduce:transition-none"
+            className="size-4 flex-none text-night-foreground/65 transition-[rotate] duration-200 ease-out-quint group-data-popup-open/trigger:rotate-180 motion-reduce:transition-none"
             aria-hidden="true"
           />
         </PopoverTrigger>
@@ -122,7 +122,7 @@ const AccountWidgetContent: FC = () => {
           align="center"
           sideOffset={10}
           collisionPadding={12}
-          className="border-night-foreground/14 text-night-foreground/95 inset-shadow-highlight shadow-modal w-84 max-w-[calc(100vw-1.5rem)] gap-0 rounded-3xl border bg-[radial-gradient(120%_70%_at_100%_0%,rgb(143_107_242/28%),transparent_62%),rgb(24_20_38/82%)] p-4 ring-0 backdrop-blur-xl backdrop-saturate-150"
+          className="w-84 max-w-[calc(100vw-1.5rem)] gap-0 rounded-3xl border border-night-foreground/14 bg-[radial-gradient(120%_70%_at_100%_0%,rgb(143_107_242/28%),transparent_62%),rgb(24_20_38/82%)] p-4 text-night-foreground/95 shadow-modal ring-0 inset-shadow-highlight backdrop-blur-xl backdrop-saturate-150"
           aria-label={t(`${PREFIX}.label`)}
         >
           <AccountWidgetPanel widget={widget} onClose={() => setOpen(false)} />

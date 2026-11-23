@@ -72,7 +72,7 @@ export function TokenAmountStep(props: TokenAmountStepProps) {
         onSubmit={form.handleSubmit(({ amount }) => props.onSubmit(amount))}
       >
         <header className="pe-12">
-          <div className="bg-primary/12 text-primary mb-4 flex size-11 items-center justify-center rounded-2xl">
+          <div className="mb-4 flex size-11 items-center justify-center rounded-2xl bg-primary/12 text-primary">
             <WalletCards aria-hidden="true" className="size-5" />
           </div>
           <WalletChargeTitle className="text-xl font-semibold">
@@ -90,7 +90,7 @@ export function TokenAmountStep(props: TokenAmountStepProps) {
             <AlertDescription>{props.notice}</AlertDescription>
           </Alert>
         ) : null}
-        <div className="bg-muted/30 rounded-2xl border px-4 py-3 text-sm">
+        <div className="rounded-2xl border bg-muted/30 px-4 py-3 text-sm">
           <span className="text-muted-foreground">
             {t(
               "pages.app.layout.sidebar.balanceCard.chargeWallet.currentBalance",
@@ -127,7 +127,7 @@ export function TokenAmountStep(props: TokenAmountStepProps) {
                   valueIsNumericString
                 />
               </FormControl>
-              <p className="text-muted-foreground text-xs">
+              <p className="text-xs text-muted-foreground">
                 {t(
                   "pages.app.layout.sidebar.balanceCard.chargeWallet.amountHelper",
                   range,
@@ -166,7 +166,7 @@ export function TokenAmountStep(props: TokenAmountStepProps) {
         {props.isError ? (
           <div
             role="alert"
-            className="border-destructive/30 bg-destructive/10 text-destructive flex gap-3 rounded-xl border p-3"
+            className="flex gap-3 rounded-xl border border-destructive/30 bg-destructive/10 p-3 text-destructive"
           >
             <AlertCircle
               aria-hidden="true"

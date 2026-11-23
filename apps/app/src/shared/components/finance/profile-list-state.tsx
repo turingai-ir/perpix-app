@@ -32,7 +32,7 @@ type ProfileListEmptyProps = {
 export function ProfileListEmpty({ title }: ProfileListEmptyProps) {
   return (
     <div
-      className="text-muted-foreground flex min-h-64 items-center justify-center px-6 text-center text-sm"
+      className="flex min-h-64 items-center justify-center px-6 text-center text-sm text-muted-foreground"
       role="status"
     >
       {title}

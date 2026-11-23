@@ -89,10 +89,7 @@ export interface Unit {
   seedIndex: number;
 }
 
-export const wordStateAt = (
-  word: CaptionWord,
-  timeMs: number,
-): WordStateName =>
+export const wordStateAt = (word: CaptionWord, timeMs: number): WordStateName =>
   timeMs < word.startMs
     ? "upcoming"
     : timeMs >= word.endMs

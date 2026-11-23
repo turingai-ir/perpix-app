@@ -14,7 +14,10 @@ function PopoverClose(props: PopoverPrimitive.Close.Props) {
 }
 
 type PopoverContentProps = PopoverPrimitive.Popup.Props &
-  Pick<PopoverPrimitive.Positioner.Props, "side" | "align" | "sideOffset" | "alignOffset">;
+  Pick<
+    PopoverPrimitive.Positioner.Props,
+    "side" | "align" | "sideOffset" | "alignOffset"
+  >;
 
 function PopoverContent({
   className,
@@ -37,7 +40,7 @@ function PopoverContent({
         <PopoverPrimitive.Popup
           data-slot="popover-content"
           className={cn(
-            "glass motion-pop relative w-72 max-w-(--available-width) rounded-overlay p-inset outline-none",
+            "relative w-72 max-w-(--available-width) motion-pop rounded-overlay glass p-inset outline-none",
             className,
           )}
           {...props}
@@ -48,10 +51,19 @@ function PopoverContent({
 }
 
 function PopoverTitle({ className, ...props }: PopoverPrimitive.Title.Props) {
-  return <PopoverPrimitive.Title data-slot="popover-title" className={cn("text-headline font-semibold", className)} {...props} />;
+  return (
+    <PopoverPrimitive.Title
+      data-slot="popover-title"
+      className={cn("text-headline font-semibold", className)}
+      {...props}
+    />
+  );
 }
 
-function PopoverDescription({ className, ...props }: PopoverPrimitive.Description.Props) {
+function PopoverDescription({
+  className,
+  ...props
+}: PopoverPrimitive.Description.Props) {
   return (
     <PopoverPrimitive.Description
       data-slot="popover-description"
@@ -61,4 +73,11 @@ function PopoverDescription({ className, ...props }: PopoverPrimitive.Descriptio
   );
 }
 
-export { Popover, PopoverClose, PopoverContent, PopoverDescription, PopoverTitle, PopoverTrigger };
+export {
+  Popover,
+  PopoverClose,
+  PopoverContent,
+  PopoverDescription,
+  PopoverTitle,
+  PopoverTrigger,
+};

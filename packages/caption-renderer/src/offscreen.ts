@@ -11,7 +11,9 @@ export function offscreenCaptions(
   height: number,
 ) {
   Konva.Util.createCanvasElement = () =>
-    Object.assign(new OffscreenCanvas(1, 1), { style: {} }) as unknown as HTMLCanvasElement;
+    Object.assign(new OffscreenCanvas(1, 1), {
+      style: {},
+    }) as unknown as HTMLCanvasElement;
   Konva.pixelRatio = 1;
   Konva.autoDrawEnabled = false;
   const layer = new Layer({ listening: false });

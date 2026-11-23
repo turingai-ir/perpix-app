@@ -107,7 +107,7 @@ export function AiModelDetailPage() {
               {model.description && (
                 <div className="sm:col-span-2 lg:col-span-4">
                   <Field label="توضیحات">
-                    <p className="text-muted-foreground text-xs leading-6">
+                    <p className="text-xs leading-6 text-muted-foreground">
                       {model.description}
                     </p>
                   </Field>
@@ -151,7 +151,7 @@ function Field({
 }) {
   return (
     <div className="space-y-1.5">
-      <span className="text-muted-foreground block text-[11px] font-semibold">
+      <span className="block text-[11px] font-semibold text-muted-foreground">
         {label}
       </span>
       {children}

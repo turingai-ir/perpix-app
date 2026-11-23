@@ -24,7 +24,7 @@ export function GalleryViewerHeader({
       <div className="min-w-0">
         <DialogTitle
           dir="auto"
-          className="text-night-foreground text-headline max-w-[min(64vw,46rem)] overflow-hidden leading-normal font-[650] text-ellipsis whitespace-nowrap"
+          className="max-w-[min(64vw,46rem)] overflow-hidden text-headline leading-normal font-[650] text-ellipsis whitespace-nowrap text-night-foreground"
         >
           {name}
         </DialogTitle>
@@ -34,7 +34,7 @@ export function GalleryViewerHeader({
       </div>
       <Button
         variant="outline"
-        className="border-night-foreground/12 bg-night-foreground/6 text-night-foreground size-11 flex-none rounded-full"
+        className="size-11 flex-none rounded-full border-night-foreground/12 bg-night-foreground/6 text-night-foreground"
         aria-label={t("pages.gallery.studio.close")}
         onClick={onClose}
       >

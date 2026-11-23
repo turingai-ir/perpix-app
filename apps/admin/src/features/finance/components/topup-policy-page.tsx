@@ -40,10 +40,10 @@ function Field({
 }) {
   return (
     <div className="space-y-1.5">
-      <label className="text-foreground text-xs font-semibold">{label}</label>
+      <label className="text-xs font-semibold text-foreground">{label}</label>
       {children}
       {hint ? (
-        <p className="text-muted-foreground text-[11px]">{hint}</p>
+        <p className="text-[11px] text-muted-foreground">{hint}</p>
       ) : null}
     </div>
   );
@@ -66,7 +66,7 @@ function PolicyForm({ initial }: { initial: TopupPolicyForm }) {
       }}
     >
       <Card>
-        <CardHeader className="border-border/60 border-b pb-4">
+        <CardHeader className="border-b border-border/60 pb-4">
           <CardTitle className="text-base font-semibold">
             {t("features.finance.topupPolicy.limitsTitle", {
               defaultValue: "سود و بازهٔ مجاز شارژ",
@@ -112,13 +112,13 @@ function PolicyForm({ initial }: { initial: TopupPolicyForm }) {
       </Card>
 
       <Card>
-        <CardHeader className="border-border/60 border-b pb-4">
+        <CardHeader className="border-b border-border/60 pb-4">
           <CardTitle className="text-base font-semibold">
             {t("features.finance.topupPolicy.tiersTitle", {
               defaultValue: "لیگ‌های تخفیف",
             })}
           </CardTitle>
-          <p className="text-muted-foreground text-xs leading-relaxed">
+          <p className="text-xs leading-relaxed text-muted-foreground">
             {t("features.finance.topupPolicy.tiersHint", {
               defaultValue:
                 "تخفیف هر لیگ درصدی از خودِ سود ماست: با سود ۲۰٪ و تخفیف ۲۵٪، سود ما ۱۵٪ می‌شود. تخفیف ۱۰۰٪ یعنی هیچ سودی گرفته نمی‌شود.",
@@ -135,7 +135,7 @@ function PolicyForm({ initial }: { initial: TopupPolicyForm }) {
       </Card>
 
       {errors.length > 0 ? (
-        <ul className="text-destructive space-y-1 text-xs" role="alert">
+        <ul className="space-y-1 text-xs text-destructive" role="alert">
           {errors.map((error) => (
             <li key={error}>{ERROR_TEXT[error]}</li>
           ))}
@@ -167,7 +167,7 @@ export function TopupPolicyPage() {
       ]}
       title={
         <div className="flex items-center gap-2">
-          <Percent className="text-primary size-6" />
+          <Percent className="size-6 text-primary" />
           <span>
             {t("features.finance.topupPolicy.menuTitle", {
               defaultValue: "تنظیمات شارژ کیف پول",

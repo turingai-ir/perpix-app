@@ -76,7 +76,7 @@ export function GenerationManualActions({
           <AlertTriangle className="size-4 text-amber-600" />
           نیاز به بررسی دستی
         </CardTitle>
-        {hint && <p className="text-muted-foreground text-xs">{hint}</p>}
+        {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
       </CardHeader>
       <CardContent className="flex flex-col gap-2">
         <Button

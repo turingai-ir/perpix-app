@@ -63,8 +63,8 @@ export function CaptionWordSheet({
       {bulk ? (
         <CaptionBulkCorrection onFind={onFind} onApply={onApplyMatches} />
       ) : (
-        <div className="gap-block flex flex-col">
-          <div className="gap-group flex flex-wrap">
+        <div className="flex flex-col gap-block">
+          <div className="flex flex-wrap gap-group">
             {words.slice(first, first + WORDS_PER_PAGE).map((word) => (
               <Button
                 key={word.key}
@@ -79,7 +79,7 @@ export function CaptionWordSheet({
             ))}
           </div>
           {words.length > WORDS_PER_PAGE && (
-            <div className="gap-group flex justify-between">
+            <div className="flex justify-between gap-group">
               <Button
                 variant="ghost"
                 disabled={page === 0}
@@ -133,7 +133,7 @@ function WordForm({
   };
 
   return (
-    <form className="gap-group flex flex-col" onSubmit={submit}>
+    <form className="flex flex-col gap-group" onSubmit={submit}>
       <Input
         aria-label={t(`${LABEL}.word`)}
         aria-invalid={invalid}
@@ -147,7 +147,7 @@ function WordForm({
         enterKeyHint="done"
       />
       {invalid && (
-        <p role="alert" className="text-destructive text-footnote">
+        <p role="alert" className="text-footnote text-destructive">
           {t(`${LABEL}.empty`)}
         </p>
       )}

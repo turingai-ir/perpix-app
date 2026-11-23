@@ -34,9 +34,9 @@ export function PersonalPresetForm({
   return (
     <form
       onSubmit={(event) => void submit(event)}
-      className="gap-group flex flex-col"
+      className="flex flex-col gap-group"
     >
-      <p className="text-muted-foreground text-footnote">
+      <p className="text-footnote text-muted-foreground">
         {t("features.studio.styles.quota", {
           count: count.toLocaleString("fa-IR"),
           limit: limit.toLocaleString("fa-IR"),
@@ -65,7 +65,7 @@ export function PersonalPresetForm({
         )}
       </Button>
       {error ? (
-        <p role="alert" className="text-destructive text-footnote">
+        <p role="alert" className="text-footnote text-destructive">
           {t(
             error === "limit"
               ? "features.studio.styles.limitReached"
@@ -74,7 +74,7 @@ export function PersonalPresetForm({
         </p>
       ) : (
         atLimit && (
-          <p role="status" className="text-muted-foreground text-footnote">
+          <p role="status" className="text-footnote text-muted-foreground">
             {t("features.studio.styles.limitReached")}
           </p>
         )

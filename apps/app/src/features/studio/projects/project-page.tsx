@@ -110,7 +110,7 @@ export const ProjectPage: FC = () => {
         <Skeleton className="h-20 w-full" aria-hidden />
       ) : project.isError ? (
         isMissing(project.error) ? (
-          <p className="text-muted-foreground py-10 text-center text-sm">
+          <p className="py-10 text-center text-sm text-muted-foreground">
             {t("features.studio.projects.errors.missing")}
           </p>
         ) : (
@@ -118,11 +118,11 @@ export const ProjectPage: FC = () => {
         )
       ) : clips.length === 0 && uploading.length === 0 ? (
         <div className="flex h-full min-h-64 flex-col items-center justify-center gap-3 text-center">
-          <Film className="text-muted-foreground size-12" aria-hidden />
-          <p className="text-muted-foreground max-w-64 text-sm">
+          <Film className="size-12 text-muted-foreground" aria-hidden />
+          <p className="max-w-64 text-sm text-muted-foreground">
             {t("features.studio.clips.empty")}
           </p>
-          <p className="text-muted-foreground max-w-64 text-xs">
+          <p className="max-w-64 text-xs text-muted-foreground">
             {t("features.studio.clips.limits")}
           </p>
           <Button
@@ -179,7 +179,7 @@ export const ProjectPage: FC = () => {
           {uploading.map((item) => (
             <li
               key={item.id}
-              className="bg-card text-muted-foreground flex items-center gap-3 rounded-2xl border p-3 text-sm"
+              className="flex items-center gap-3 rounded-2xl border bg-card p-3 text-sm text-muted-foreground"
             >
               <Loader2 className="size-5 animate-spin" aria-hidden />
               <span className="truncate">
@@ -192,7 +192,7 @@ export const ProjectPage: FC = () => {
       {preparingLocal && uploading.length === 0 && (
         <p
           role="status"
-          className="text-muted-foreground mt-3 text-center text-sm"
+          className="mt-3 text-center text-sm text-muted-foreground"
         >
           {t("features.studio.localVideo.preparing")}
         </p>

@@ -15,12 +15,12 @@ export const StudioShell: FC = () => {
 
   return (
     <TooltipProvider>
-      <div className="bg-muted/40 flex min-h-dvh w-full justify-center">
-        <div className="bg-background relative flex h-dvh w-full max-w-2xl flex-col overflow-hidden md:border-x lg:max-w-none lg:border-x-0">
+      <div className="flex min-h-dvh w-full justify-center bg-muted/40">
+        <div className="relative flex h-dvh w-full max-w-2xl flex-col overflow-hidden bg-background md:border-x lg:max-w-none lg:border-x-0">
           {/* Keyed by route so each screen enters on its own; a reduced-motion preference turns the animation off globally. */}
           <div
             key={pathname}
-            className="animate-in fade-in-0 ltr:slide-in-from-right-4 rtl:slide-in-from-left-4 lg:ltr:slide-in-from-right-0 lg:rtl:slide-in-from-left-0 flex min-h-0 flex-1 flex-col duration-200"
+            className="flex min-h-0 flex-1 animate-in flex-col duration-200 fade-in-0 ltr:slide-in-from-right-4 lg:ltr:slide-in-from-right-0 rtl:slide-in-from-left-4 lg:rtl:slide-in-from-left-0"
           >
             <Outlet />
           </div>

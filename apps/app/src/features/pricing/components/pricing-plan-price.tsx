@@ -47,7 +47,7 @@ const PricingPlanPrice: FC<PricingPlanPriceProps> = ({
   const hasDiscount = discountedPriceIrr < basePriceIrr;
 
   return (
-    <div className="bg-night/22 flex flex-col gap-1.5 rounded-2xl p-4 shadow-[inset_0_0_0_1px_color-mix(in_oklch,var(--night-foreground)_7%,transparent)]">
+    <div className="flex flex-col gap-1.5 rounded-2xl bg-night/22 p-4 shadow-[inset_0_0_0_1px_color-mix(in_oklch,var(--night-foreground)_7%,transparent)]">
       <div className="flex flex-wrap items-baseline gap-2">
         <strong className="text-3xl leading-tight font-extrabold tracking-tight whitespace-nowrap">
           <span className="sr-only">
@@ -61,7 +61,7 @@ const PricingPlanPrice: FC<PricingPlanPriceProps> = ({
           <PaymentAmount amount={discountedPriceIrr} currency={currency} />
         </strong>
         {durationDays ? (
-          <span className="text-muted-foreground text-xs">
+          <span className="text-xs text-muted-foreground">
             {t("features.pricing.perDuration", {
               days: durationDays.toLocaleString("fa-IR"),
             })}
@@ -69,7 +69,7 @@ const PricingPlanPrice: FC<PricingPlanPriceProps> = ({
         ) : null}
       </div>
       {hasDiscount ? (
-        <div className="text-muted-foreground flex flex-wrap items-center gap-2.5 text-sm">
+        <div className="flex flex-wrap items-center gap-2.5 text-sm text-muted-foreground">
           <s className="whitespace-nowrap decoration-1">
             <span className="sr-only">
               {t("features.pricing.previousPrice")}:{" "}
@@ -77,7 +77,7 @@ const PricingPlanPrice: FC<PricingPlanPriceProps> = ({
             <PaymentAmount amount={basePriceIrr} currency={currency} />
           </s>
           {discountPercent !== null ? (
-            <span className="bg-accent-emerald/16 text-accent-emerald rounded-full px-2 py-0.5 text-xs font-bold">
+            <span className="rounded-full bg-accent-emerald/16 px-2 py-0.5 text-xs font-bold text-accent-emerald">
               {t("features.pricing.discountPercent", {
                 percent: discountPercent,
               })}

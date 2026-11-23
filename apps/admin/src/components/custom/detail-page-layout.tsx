@@ -54,7 +54,7 @@ export function DetailPageLayout({
       <div className="flex flex-wrap items-center justify-between gap-4">
         <nav
           aria-label="مسیر صفحه"
-          className="text-muted-foreground flex items-center gap-1.5 text-xs"
+          className="flex items-center gap-1.5 text-xs text-muted-foreground"
         >
           {breadcrumbs.map((crumb, idx) => (
             <React.Fragment key={crumb.label}>
@@ -62,12 +62,12 @@ export function DetailPageLayout({
               {crumb.href ? (
                 <Link
                   to={crumb.href}
-                  className="hover:text-foreground font-medium transition-colors"
+                  className="font-medium transition-colors hover:text-foreground"
                 >
                   {crumb.label}
                 </Link>
               ) : (
-                <span className="text-foreground font-semibold">
+                <span className="font-semibold text-foreground">
                   {crumb.label}
                 </span>
               )}
@@ -90,7 +90,7 @@ export function DetailPageLayout({
       </div>
 
       {/* Header with Title, Badges and Actions */}
-      <div className="border-border bg-card flex flex-wrap items-start justify-between gap-4 rounded-2xl border p-6 shadow-xs">
+      <div className="flex flex-wrap items-start justify-between gap-4 rounded-2xl border border-border bg-card p-6 shadow-xs">
         <div className="space-y-1.5">
           <div className="flex flex-wrap items-center gap-3">
             <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
@@ -101,7 +101,7 @@ export function DetailPageLayout({
             )}
           </div>
           {subtitle && (
-            <div className="text-muted-foreground font-mono text-xs">
+            <div className="font-mono text-xs text-muted-foreground">
               {subtitle}
             </div>
           )}
@@ -114,10 +114,10 @@ export function DetailPageLayout({
 
       {/* Main Content / Loading / Error */}
       {isLoading ? (
-        <div className="border-border bg-card flex h-80 items-center justify-center rounded-2xl border p-6">
+        <div className="flex h-80 items-center justify-center rounded-2xl border border-border bg-card p-6">
           <div className="flex flex-col items-center gap-3">
-            <Loader2 className="text-primary size-8 animate-spin" />
-            <p className="text-muted-foreground text-sm">
+            <Loader2 className="size-8 animate-spin text-primary" />
+            <p className="text-sm text-muted-foreground">
               {t("common.loading", {
                 defaultValue: "در حال دریافت اطلاعات...",
               })}
@@ -125,12 +125,12 @@ export function DetailPageLayout({
           </div>
         </div>
       ) : isError ? (
-        <div className="border-border bg-card flex h-80 items-center justify-center rounded-2xl border p-6">
+        <div className="flex h-80 items-center justify-center rounded-2xl border border-border bg-card p-6">
           <div className="flex flex-col items-center gap-3 text-center">
-            <span className="bg-destructive/10 text-destructive flex size-12 items-center justify-center rounded-2xl">
+            <span className="flex size-12 items-center justify-center rounded-2xl bg-destructive/10 text-destructive">
               <AlertCircle className="size-6" />
             </span>
-            <p className="text-foreground font-medium">
+            <p className="font-medium text-foreground">
               {errorMessage ||
                 t("common.error", { defaultValue: "خطا در بارگذاری اطلاعات" })}
             </p>

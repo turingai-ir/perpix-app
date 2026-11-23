@@ -15,7 +15,13 @@ import { useAppTranslate } from "@/shared/hooks";
 import { SHORTCUTS } from "../model/shortcuts";
 
 export type EditAction =
-  "split" | "trimStart" | "trimEnd" | "remove" | "earlier" | "later" | "undo";
+  | "split"
+  | "trimStart"
+  | "trimEnd"
+  | "remove"
+  | "earlier"
+  | "later"
+  | "undo";
 
 interface Tool {
   action: EditAction;
@@ -75,10 +81,10 @@ export const EditTools: FC<EditToolsProps> = ({
               if (event.detail > 0) event.currentTarget.blur();
             }}
             className={cn(
-              "focus-visible:ring-ring cursor-pointer rounded-xl font-medium transition-[background-color,transform] focus-visible:ring-2 focus-visible:outline-none active:scale-95 disabled:pointer-events-none disabled:opacity-35",
+              "cursor-pointer rounded-xl font-medium transition-[background-color,transform] focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none active:scale-95 disabled:pointer-events-none disabled:opacity-35",
               grid
-                ? "bg-muted/50 hover-capable:hover:bg-muted flex min-h-12 items-center gap-2 px-3 text-sm"
-                : "text-caption hover-capable:hover:bg-muted flex min-h-14 min-w-[3.1rem] flex-1 flex-col items-center justify-center gap-1 px-0.5",
+                ? "hover-capable:hover:bg-muted flex min-h-12 items-center gap-2 bg-muted/50 px-3 text-sm"
+                : "hover-capable:hover:bg-muted flex min-h-14 min-w-[3.1rem] flex-1 flex-col items-center justify-center gap-1 px-0.5 text-caption",
               danger ? "text-destructive" : "text-foreground",
             )}
           >
@@ -87,7 +93,7 @@ export const EditTools: FC<EditToolsProps> = ({
             {grid && shortcut && (
               <kbd
                 dir="ltr"
-                className="bg-background text-muted-foreground ms-auto rounded border px-1.5 py-0.5 text-xs font-normal"
+                className="ms-auto rounded border bg-background px-1.5 py-0.5 text-xs font-normal text-muted-foreground"
               >
                 {shortcut}
               </kbd>

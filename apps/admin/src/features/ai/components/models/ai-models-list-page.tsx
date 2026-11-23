@@ -127,11 +127,11 @@ export function AiModelsListPage() {
             <div className="space-y-0.5">
               <Link
                 to={modelDetailPath(item.uuid)}
-                className="text-foreground hover:text-primary block text-xs font-bold hover:underline"
+                className="block text-xs font-bold text-foreground hover:text-primary hover:underline"
               >
                 {item.display_name || item.name}
               </Link>
-              <code className="text-muted-foreground block font-mono text-[11px]">
+              <code className="block font-mono text-[11px] text-muted-foreground">
                 {item.name}
               </code>
               <CopyableUuid value={item.uuid} />
@@ -147,7 +147,7 @@ export function AiModelsListPage() {
         cell: (item) => (
           <div className="flex flex-col gap-1">
             <div className="flex flex-wrap gap-1">
-              <span className="text-muted-foreground text-[10px]">In:</span>
+              <span className="text-[10px] text-muted-foreground">In:</span>
               {Array.from(item.supported_inputs || []).map((inp, idx) => (
                 <Badge
                   key={idx}
@@ -159,7 +159,7 @@ export function AiModelsListPage() {
               ))}
             </div>
             <div className="flex flex-wrap gap-1">
-              <span className="text-muted-foreground text-[10px]">Out:</span>
+              <span className="text-[10px] text-muted-foreground">Out:</span>
               {Array.from(item.supported_outputs || []).map((out, idx) => (
                 <Badge
                   key={idx}
@@ -191,7 +191,7 @@ export function AiModelsListPage() {
                   {USDMICRO_UNIT_LABEL}
                 </span>
               </span>
-              <span className="text-muted-foreground text-[11px]">
+              <span className="text-[11px] text-muted-foreground">
                 ≈ {formatTokensFromUsdmicro(item.min_cost)} تا{" "}
                 {formatTokensFromUsdmicro(item.max_cost)} توکن
               </span>
@@ -278,7 +278,7 @@ export function AiModelsListPage() {
     <div className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-8 sm:py-8">
       {/* Header */}
       <div>
-        <div className="text-muted-foreground mb-1.5 flex items-center gap-2 text-xs">
+        <div className="mb-1.5 flex items-center gap-2 text-xs text-muted-foreground">
           <Cpu aria-hidden="true" className="size-4" />
           <span>{t("overview.admin", { defaultValue: "پنل مدیریت" })}</span>
           <span>/</span>
@@ -288,12 +288,12 @@ export function AiModelsListPage() {
         </div>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-foreground text-xl font-bold tracking-tight sm:text-2xl">
+            <h1 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
               {t("features.ai.models.pageTitle", {
                 defaultValue: "مدل‌های هوش مصنوعی (AI Models)",
               })}
             </h1>
-            <p className="text-muted-foreground mt-1 text-xs sm:text-sm">
+            <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
               {t("features.ai.models.pageDesc", {
                 defaultValue:
                   "مدیریت رجیستری مدل‌های هوش مصنوعی، انواع ورودی/خروجی و اتصال به ارائه‌دهندگان",
@@ -330,7 +330,7 @@ export function AiModelsListPage() {
       </div>
 
       {/* Filters Bar */}
-      <div className="bg-card flex flex-col gap-3 rounded-xl border p-4 shadow-sm sm:flex-row sm:items-center">
+      <div className="flex flex-col gap-3 rounded-xl border bg-card p-4 shadow-sm sm:flex-row sm:items-center">
         <div className="w-full sm:w-72">
           <SearchInput
             value={search || ""}

@@ -23,7 +23,7 @@ export const EditorPageView: FC = () => {
   }
 
   return (
-    <div className="bg-background flex h-dvh w-full flex-col">
+    <div className="flex h-dvh w-full flex-col bg-background">
       {imageSource ? (
         <div className="relative h-full w-full flex-1">
           <ImageEditor

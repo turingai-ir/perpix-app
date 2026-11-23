@@ -90,13 +90,15 @@
   /* Light-catching edge (white hairline) and a gentle backdrop saturation lift. */
   --glass-saturate: 125%;
   --glass-edge-light: oklch(1 0 0 / 40%);
-  --glass-shine: inset 0 1px 0 oklch(1 0 0 / 55%), inset 0 -1px 0 oklch(1 0 0 / 15%);
+  --glass-shine:
+    inset 0 1px 0 oklch(1 0 0 / 55%), inset 0 -1px 0 oklch(1 0 0 / 15%);
   --liquid-tint: var(--violet-brand);
   --liquid-tint-foreground: var(--night-foreground);
   --liquid-scrim: color-mix(in oklch, var(--night) 22%, transparent);
   --glass-border: color-mix(in oklch, var(--neutral-9) 36%, transparent);
   --glass-highlight: oklch(1 0 0 / 76%);
-  --glass-shadow: 0 24px 64px -32px color-mix(in oklch, var(--shadow-ink) 30%, transparent);
+  --glass-shadow: 0 24px 64px -32px
+    color-mix(in oklch, var(--shadow-ink) 30%, transparent);
   --selection: var(--violet-5);
   --selection-foreground: var(--violet-12);
 
@@ -130,9 +132,12 @@
     0 24px 64px -16px color-mix(in oklch, var(--shadow-ink) 34%, transparent);
 
   /* Glass top-edge highlight (inset 1px) in three strengths; utilities inset-shadow-highlight-sm|highlight|highlight-lg. */
-  --highlight-sm: inset 0 1px 0 color-mix(in oklch, var(--night-foreground) 8%, transparent);
-  --highlight: inset 0 1px 0 color-mix(in oklch, var(--night-foreground) 12%, transparent);
-  --highlight-lg: inset 0 1px 0 color-mix(in oklch, var(--night-foreground) 18%, transparent);
+  --highlight-sm: inset 0 1px 0
+    color-mix(in oklch, var(--night-foreground) 8%, transparent);
+  --highlight: inset 0 1px 0
+    color-mix(in oklch, var(--night-foreground) 12%, transparent);
+  --highlight-lg: inset 0 1px 0
+    color-mix(in oklch, var(--night-foreground) 18%, transparent);
 
   /* Motion budget (mobile-first, CSS only): tap feedback, overlay enter/exit, sheet slide, page.
      Exits are shorter than enters. Easing roles live in theme.css (ease-enter|exit|spring). */
@@ -164,11 +169,13 @@
 
   --glass-border: color-mix(in oklch, var(--neutral-11) 26%, transparent);
   --glass-highlight: oklch(0.94 0.02 295 / 12%);
-  --glass-shadow: 0 24px 64px -32px color-mix(in oklch, var(--shadow-ink) 72%, transparent);
+  --glass-shadow: 0 24px 64px -32px
+    color-mix(in oklch, var(--shadow-ink) 72%, transparent);
   --glass-surface: color-mix(in oklch, var(--card) 88%, transparent);
   --liquid-scrim: color-mix(in oklch, var(--night) 55%, transparent);
   --glass-edge-light: oklch(1 0 0 / 14%);
-  --glass-shine: inset 0 1px 0 oklch(1 0 0 / 16%), inset 0 -1px 0 oklch(1 0 0 / 5%);
+  --glass-shine:
+    inset 0 1px 0 oklch(1 0 0 / 16%), inset 0 -1px 0 oklch(1 0 0 / 5%);
   --image-accent-soft: color-mix(in srgb, var(--image-accent) 16%, transparent);
   --video-accent-soft: color-mix(in srgb, var(--video-accent) 14%, transparent);
   --selection: var(--violet-7);

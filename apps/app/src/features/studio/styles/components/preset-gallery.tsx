@@ -30,7 +30,7 @@ export function PresetGallery({
     );
   if (onRetry) {
     return (
-      <div role="status" className="gap-group flex flex-wrap items-center">
+      <div role="status" className="flex flex-wrap items-center gap-group">
         <p className="text-body">{t("features.studio.styles.loadError")}</p>
         <Button variant="outline" onClick={onRetry}>
           {t("features.studio.styles.retry")}
@@ -40,7 +40,7 @@ export function PresetGallery({
   }
   if (!system.length && !mine.length) {
     return (
-      <p className="text-muted-foreground text-body">
+      <p className="text-body text-muted-foreground">
         {t("features.studio.styles.empty")}
       </p>
     );
@@ -51,11 +51,11 @@ export function PresetGallery({
   ].filter((group) => group.presets.length);
 
   return (
-    <div className="gap-block flex flex-col">
+    <div className="flex flex-col gap-block">
       {groups.map(({ title, presets }) => (
         <section key={title} aria-label={title} className="space-y-group">
           <h2 className="text-headline font-semibold">{title}</h2>
-          <div className="gap-group flex flex-wrap">
+          <div className="flex flex-wrap gap-group">
             {presets.map((preset) => (
               <Button
                 key={preset.uuid}

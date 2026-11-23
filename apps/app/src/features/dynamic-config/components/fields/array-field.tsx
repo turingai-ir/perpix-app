@@ -132,7 +132,7 @@ const ObjectArrayField: FC<{
   return (
     <div className="flex w-full flex-col gap-3">
       <div className="flex items-center justify-between gap-2">
-        <span className="text-muted-foreground text-sm font-normal">
+        <span className="text-sm font-normal text-muted-foreground">
           {label}
         </span>
         <Button
@@ -150,7 +150,7 @@ const ObjectArrayField: FC<{
       {value.map((_, index) => (
         <div
           key={`${fieldName}-${index}`}
-          className="border-input flex w-full flex-col gap-3 rounded-lg border p-3"
+          className="flex w-full flex-col gap-3 rounded-lg border border-input p-3"
         >
           <div className="flex items-center justify-between gap-2">
             <span className="text-sm font-medium">
@@ -197,7 +197,7 @@ const EnumArrayField: FC<{
 
   return (
     <div className="flex w-full flex-col gap-2">
-      <span className="text-muted-foreground text-sm font-normal">{label}</span>
+      <span className="text-sm font-normal text-muted-foreground">{label}</span>
       {hint ? <p className={HINT_CLASS_NAME}>{hint}</p> : null}
       <div className="flex flex-wrap gap-2">
         {itemsProperty.enum
@@ -205,7 +205,7 @@ const EnumArrayField: FC<{
           .map((option) => (
             <label
               key={String(option)}
-              className="border-input flex min-h-8 items-center gap-2 rounded-lg border px-2.5 text-sm"
+              className="flex min-h-8 items-center gap-2 rounded-lg border border-input px-2.5 text-sm"
             >
               <Checkbox
                 checked={selectedValues.has(String(option))}
@@ -241,7 +241,7 @@ const TextArrayField: FC<{
     name={fieldName}
     render={({ field }) => (
       <FormItem className="flex w-full flex-col gap-2">
-        <FormLabel className="text-muted-foreground text-sm font-normal">
+        <FormLabel className="text-sm font-normal text-muted-foreground">
           {label}
         </FormLabel>
         {hint ? <p className={HINT_CLASS_NAME}>{hint}</p> : null}

@@ -32,29 +32,29 @@ export function PwaInstallIosDialog({
         </DialogHeader>
 
         <div className="grid gap-3">
-          <div className="bg-muted/60 flex items-start gap-3 rounded-lg p-3">
-            <span className="bg-background ring-border flex size-8 shrink-0 items-center justify-center rounded-full ring-1">
+          <div className="flex items-start gap-3 rounded-lg bg-muted/60 p-3">
+            <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-background ring-1 ring-border">
               <ShareIcon className="size-4" />
             </span>
             <div className="grid gap-1">
               <p className="font-medium">
                 {t("features.pwaInstall.ios.steps.share.title")}
               </p>
-              <p className="text-muted-foreground text-sm">
+              <p className="text-sm text-muted-foreground">
                 {t("features.pwaInstall.ios.steps.share.description")}
               </p>
             </div>
           </div>
 
-          <div className="bg-muted/60 flex items-start gap-3 rounded-lg p-3">
-            <span className="bg-background ring-border flex size-8 shrink-0 items-center justify-center rounded-full ring-1">
+          <div className="flex items-start gap-3 rounded-lg bg-muted/60 p-3">
+            <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-background ring-1 ring-border">
               <SquarePlusIcon className="size-4" />
             </span>
             <div className="grid gap-1">
               <p className="font-medium">
                 {t("features.pwaInstall.ios.steps.addToHome.title")}
               </p>
-              <p className="text-muted-foreground text-sm">
+              <p className="text-sm text-muted-foreground">
                 {t("features.pwaInstall.ios.steps.addToHome.description")}
               </p>
             </div>

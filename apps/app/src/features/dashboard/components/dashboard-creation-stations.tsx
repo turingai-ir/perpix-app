@@ -39,11 +39,11 @@ export function DashboardCreationStations({
           </span>
           <h1
             id="creation-choice-title"
-            className="text-foreground mt-1.5 text-[clamp(2rem,4vw,3.35rem)] font-bold tracking-tighter"
+            className="mt-1.5 text-[clamp(2rem,4vw,3.35rem)] font-bold tracking-tighter text-foreground"
           >
             {t("pages.root.dashboard.choice.title")}
           </h1>
-          <p className="text-muted-foreground mt-2 text-sm leading-loose">
+          <p className="mt-2 text-sm leading-loose text-muted-foreground">
             {t("pages.root.dashboard.choice.description")}
           </p>
         </div>
@@ -74,7 +74,7 @@ export function DashboardCreationStations({
                 <strong className="block text-xl font-bold">
                   {t(`pages.root.dashboard.choice.${mode}.title`)}
                 </strong>
-                <small className="text-muted-foreground text-subhead mt-1.5 block leading-relaxed">
+                <small className="mt-1.5 block text-subhead leading-relaxed text-muted-foreground">
                   {t(`pages.root.dashboard.choice.${mode}.description`)}
                 </small>
               </span>
@@ -85,23 +85,23 @@ export function DashboardCreationStations({
                 {examples.map((example) => (
                   <i
                     key={example}
-                    className="border-foreground/8 bg-foreground/5 text-foreground/80 inset-shadow-highlight-sm rounded-full border px-2.5 py-1.5 text-xs whitespace-nowrap not-italic"
+                    className="rounded-full border border-foreground/8 bg-foreground/5 px-2.5 py-1.5 text-xs whitespace-nowrap text-foreground/80 not-italic inset-shadow-highlight-sm"
                   >
                     {example}
                   </i>
                 ))}
               </span>
-              <span className="text-foreground text-body z-1 col-span-full mt-auto flex min-h-13 items-center justify-between gap-3 rounded-xl bg-linear-135 from-[color-mix(in_srgb,var(--choice-accent)_28%,transparent)] to-[color-mix(in_srgb,var(--choice-accent)_15%,transparent)] px-4 font-bold shadow-[inset_0_1px_color-mix(in_oklch,var(--night-foreground)_13%,transparent),inset_0_0_0_1px_color-mix(in_srgb,var(--choice-accent)_18%,transparent)]">
+              <span className="z-1 col-span-full mt-auto flex min-h-13 items-center justify-between gap-3 rounded-xl bg-linear-135 from-[color-mix(in_srgb,var(--choice-accent)_28%,transparent)] to-[color-mix(in_srgb,var(--choice-accent)_15%,transparent)] px-4 text-body font-bold text-foreground shadow-[inset_0_1px_color-mix(in_oklch,var(--night-foreground)_13%,transparent),inset_0_0_0_1px_color-mix(in_srgb,var(--choice-accent)_18%,transparent)]">
                 {t(`pages.root.dashboard.choice.${mode}.action`)}
                 <ArrowUpLeft
                   aria-hidden="true"
                   className="hover-capable:group-hover:-translate-x-0.75 hover-capable:group-hover:translate-y-0.75 size-4.5 transition-transform duration-200 motion-reduce:transition-none"
                 />
               </span>
-              <span className="text-muted-foreground z-1 col-span-full flex items-center gap-1.5 text-xs leading-relaxed">
+              <span className="z-1 col-span-full flex items-center gap-1.5 text-xs leading-relaxed text-muted-foreground">
                 <ShieldCheck
                   aria-hidden="true"
-                  className="text-accent-emerald size-3.5 flex-none"
+                  className="size-3.5 flex-none text-accent-emerald"
                 />
                 {t("pages.root.dashboard.choice.trust")}
               </span>

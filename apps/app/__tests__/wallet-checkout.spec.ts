@@ -165,9 +165,7 @@ test.describe("Wallet checkout", () => {
       dialog.getByText("با این شارژ ۵٬۳۹۰ تومان تخفیف می‌گیری"),
     ).toBeVisible();
     await expect(
-      dialog.getByText(
-        "با شارژ ۱٬۰۰۰ توکن یا بیشتر، تخفیفت می‌شه ۱۳٬۴۷۵ تومان",
-      ),
+      dialog.getByText("با شارژ ۱٬۰۰۰ توکن یا بیشتر، تخفیفت می‌شه ۱۳٬۴۷۵ تومان"),
     ).toBeVisible();
     expect(quoted.at(-1)).toBe("500000");
   });

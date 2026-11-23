@@ -27,7 +27,7 @@ function RatioGlyph({ value }: { value: string }) {
       aria-hidden="true"
     >
       <span
-        className="border-primary bg-primary/13 block h-[15px] max-w-[25px] min-w-2 rounded-xs border-[1.5px]"
+        className="block h-[15px] max-w-[25px] min-w-2 rounded-xs border-[1.5px] border-primary bg-primary/13"
         style={{ aspectRatio: String(Math.min(2.1, Math.max(0.48, ratio))) }}
       />
     </span>
@@ -88,7 +88,7 @@ export function VideoFormatControl({
             : String(meta.defaultValue ?? options[0]);
         return (
           <FormItem className="grid content-start gap-1.5">
-            <FormLabel className="text-muted-foreground text-xs font-semibold">
+            <FormLabel className="text-xs font-semibold text-muted-foreground">
               {label}
             </FormLabel>
             <Popover open={open && !disabled} onOpenChange={setOpen}>
@@ -100,7 +100,7 @@ export function VideoFormatControl({
                       type="button"
                       disabled={disabled}
                       data-testid={`video-${fieldName}-control`}
-                      className="border-border bg-background text-foreground hover-capable:hover:border-primary/50 hover-capable:hover:bg-accent focus-visible:outline-ring [&>svg:last-child]:text-muted-foreground flex min-h-11 w-full items-center gap-2 rounded-lg border px-2.5 py-1.5 text-start transition-[border-color,background-color] duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 motion-reduce:transition-none [&>span:nth-child(2)]:flex-1 [&>span:nth-child(2)]:font-semibold [&>span:nth-child(2)]:tabular-nums"
+                      className="hover-capable:hover:border-primary/50 hover-capable:hover:bg-accent flex min-h-11 w-full items-center gap-2 rounded-lg border border-border bg-background px-2.5 py-1.5 text-start text-foreground transition-[border-color,background-color] duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-reduce:transition-none [&>span:nth-child(2)]:flex-1 [&>span:nth-child(2)]:font-semibold [&>span:nth-child(2)]:tabular-nums [&>svg:last-child]:text-muted-foreground"
                       aria-label={`${label}: ${optionLabel(value)}`}
                       onBlur={field.onBlur}
                     />
@@ -114,9 +114,9 @@ export function VideoFormatControl({
               <PopoverContent
                 align="start"
                 side="top"
-                className="border-border bg-popover text-popover-foreground shadow-modal w-[min(300px,calc(100vw-32px))] rounded-lg border p-3"
+                className="w-[min(300px,calc(100vw-32px))] rounded-lg border border-border bg-popover p-3 text-popover-foreground shadow-modal"
               >
-                <div className="text-muted-foreground px-0.5 pt-0.5 pb-2 text-xs font-bold">
+                <div className="px-0.5 pt-0.5 pb-2 text-xs font-bold text-muted-foreground">
                   {label}
                 </div>
                 <div className="grid max-h-65 grid-cols-3 gap-1.5 overflow-y-auto">
@@ -124,7 +124,7 @@ export function VideoFormatControl({
                     <button
                       key={option}
                       type="button"
-                      className="border-border bg-muted hover-capable:hover:border-primary/50 hover-capable:hover:bg-accent focus-visible:outline-ring data-[selected=true]:border-primary data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground [&>svg:last-child:not(:first-child)]:text-primary relative grid min-h-16 cursor-pointer content-center justify-items-center gap-1.5 rounded-md border px-1 py-1.5 text-xs tabular-nums transition-[border-color,background-color] duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 motion-reduce:transition-none [&>svg:last-child:not(:first-child)]:absolute [&>svg:last-child:not(:first-child)]:end-1.5 [&>svg:last-child:not(:first-child)]:top-1.5"
+                      className="hover-capable:hover:border-primary/50 hover-capable:hover:bg-accent relative grid min-h-16 cursor-pointer content-center justify-items-center gap-1.5 rounded-md border border-border bg-muted px-1 py-1.5 text-xs tabular-nums transition-[border-color,background-color] duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring data-[selected=true]:border-primary data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground motion-reduce:transition-none [&>svg:last-child:not(:first-child)]:absolute [&>svg:last-child:not(:first-child)]:end-1.5 [&>svg:last-child:not(:first-child)]:top-1.5 [&>svg:last-child:not(:first-child)]:text-primary"
                       data-selected={option === value}
                       aria-pressed={option === value}
                       onClick={() => {

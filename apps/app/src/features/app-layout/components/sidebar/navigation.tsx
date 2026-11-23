@@ -97,7 +97,7 @@ const AppLayoutSidebarNavigation: FC = () => {
           key={key}
           className={cn(
             "min-w-0",
-            key === "gallery" && "border-primary/10 mt-2.5 border-t pt-3.5",
+            key === "gallery" && "mt-2.5 border-t border-primary/10 pt-3.5",
           )}
         >
           <NavLink
@@ -109,12 +109,12 @@ const AppLayoutSidebarNavigation: FC = () => {
             <IconTile className={NAV_ICON_CLASS}>
               <Icon
                 aria-hidden
-                className="[&_.icon-accent]:stroke-foreground size-5"
+                className="size-5 [&_.icon-accent]:stroke-foreground"
               />
             </IconTile>
             <span className="truncate text-sm font-semibold">{label}</span>
             {badge ? (
-              <span className="border-accent-sky/20 bg-accent-sky/10 text-accent-sky ms-auto rounded-full border px-2 py-0.5 text-xs font-semibold">
+              <span className="ms-auto rounded-full border border-accent-sky/20 bg-accent-sky/10 px-2 py-0.5 text-xs font-semibold text-accent-sky">
                 {badge}
               </span>
             ) : null}

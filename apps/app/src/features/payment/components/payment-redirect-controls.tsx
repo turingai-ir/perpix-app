@@ -21,7 +21,7 @@ export function PaymentRedirectControls({
   return (
     <>
       <div className="space-y-2">
-        <p className="text-muted-foreground text-sm">
+        <p className="text-sm text-muted-foreground">
           {t("pages.payment.redirect.autoRedirect", {
             seconds: formatLocalizedNumber({ value: seconds }),
           })}

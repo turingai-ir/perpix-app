@@ -85,7 +85,7 @@ export const PricingFeature: FC = () => {
                     : "features.pricing.emptyTitle",
                 )}
               </h3>
-              <p className="text-muted-foreground text-sm">
+              <p className="text-sm text-muted-foreground">
                 {t(
                   isTopTier
                     ? "features.pricing.topTierDescription"

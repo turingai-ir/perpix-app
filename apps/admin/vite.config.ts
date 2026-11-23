@@ -2,10 +2,8 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import react from "@vitejs/plugin-react";
-import tailwindcss from "@tailwindcss/vite";
-import { defineConfig } from "vite";
-import legacy from "@vitejs/plugin-legacy";
+import { defineConfig, mergeConfig } from "vite";
+import { createViteConfig } from "@perpix/tooling/vite";
 
 const srcPath = fileURLToPath(new URL("./src", import.meta.url));
 const packageJson = JSON.parse(
@@ -16,31 +14,32 @@ const packageJson = JSON.parse(
 };
 const appRelease = `${packageJson.name}@${packageJson.version}`;
 
-export default defineConfig({
-  define: {
-    __APP_RELEASE__: JSON.stringify(appRelease),
-  },
-  plugins: [react(), tailwindcss(), legacy({})],
-  server: {
-    port: 5175,
-    watch: {
-      usePolling: process.platform === "linux",
-      interval: 300,
-      ignored: [
-        "**/.pnpm-store/**",
-        "**/node_modules/**",
-        "**/.agents/**",
-        "**/.codex/**",
-        "**/dist/**",
-      ],
+export default defineConfig(
+  mergeConfig(createViteConfig(), {
+    define: {
+      __APP_RELEASE__: JSON.stringify(appRelease),
     },
-  },
-  build: {
-    sourcemap: true,
-  },
-  resolve: {
-    alias: {
-      "@": path.resolve(srcPath),
+    server: {
+      port: 5175,
+      watch: {
+        usePolling: process.platform === "linux",
+        interval: 300,
+        ignored: [
+          "**/.pnpm-store/**",
+          "**/node_modules/**",
+          "**/.agents/**",
+          "**/.codex/**",
+          "**/dist/**",
+        ],
+      },
     },
-  },
-});
+    build: {
+      sourcemap: true,
+    },
+    resolve: {
+      alias: {
+        "@": path.resolve(srcPath),
+      },
+    },
+  }),
+);

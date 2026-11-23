@@ -70,7 +70,7 @@ export function FileDetailPage() {
     if (isVideo) return <Video className="size-5 text-rose-500" />;
     if (isAudio) return <Music className="size-5 text-emerald-500" />;
     if (isPdf) return <FileText className="size-5 text-blue-500" />;
-    return <File className="text-muted-foreground size-5" />;
+    return <File className="size-5 text-muted-foreground" />;
   };
 
   return (
@@ -146,7 +146,7 @@ export function FileDetailPage() {
             <CardContent>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
                 <div className="space-y-1">
-                  <span className="text-muted-foreground flex items-center gap-1.5 text-xs">
+                  <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
                     <HardDrive className="size-3.5" />
                     حجم فایل
                   </span>
@@ -158,7 +158,7 @@ export function FileDetailPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <span className="text-muted-foreground flex items-center gap-1.5 text-xs">
+                  <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
                     <File className="size-3.5" />
                     نوع محتوا (MIME)
                   </span>
@@ -168,11 +168,11 @@ export function FileDetailPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <span className="text-muted-foreground flex items-center gap-1.5 text-xs">
+                  <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
                     {file?.is_public ? (
                       <Globe className="size-3.5 text-blue-500" />
                     ) : (
-                      <Lock className="text-muted-foreground size-3.5" />
+                      <Lock className="size-3.5 text-muted-foreground" />
                     )}
                     سطح دسترسی
                   </span>
@@ -193,7 +193,7 @@ export function FileDetailPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <span className="text-muted-foreground flex items-center gap-1.5 text-xs">
+                  <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
                     <Clock className="size-3.5" />
                     زمان انقضا
                   </span>
@@ -205,7 +205,7 @@ export function FileDetailPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <span className="text-muted-foreground flex items-center gap-1.5 text-xs">
+                  <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
                     <User className="size-3.5" />
                     شناسه کاربر
                   </span>
@@ -215,7 +215,7 @@ export function FileDetailPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <span className="text-muted-foreground flex items-center gap-1.5 text-xs">
+                  <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
                     <Calendar className="size-3.5" />
                     تاریخ ثبت
                   </span>
@@ -255,7 +255,7 @@ export function FileDetailPage() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="bg-muted/20 flex min-h-[300px] items-center justify-center rounded-xl border p-4">
+              <div className="flex min-h-[300px] items-center justify-center rounded-xl border bg-muted/20 p-4">
                 {presignedUrls?.preview_url ? (
                   isImage ? (
                     <img
@@ -287,14 +287,14 @@ export function FileDetailPage() {
                     />
                   ) : (
                     <div className="space-y-3 py-10 text-center">
-                      <File className="text-muted-foreground mx-auto size-16" />
-                      <p className="text-muted-foreground text-sm">
+                      <File className="mx-auto size-16 text-muted-foreground" />
+                      <p className="text-sm text-muted-foreground">
                         پیش‌نمایش درون‌برنامه‌ای برای این فرمت پشتیبانی نمی‌شود.
                       </p>
                     </div>
                   )
                 ) : (
-                  <p className="text-muted-foreground text-sm">
+                  <p className="text-sm text-muted-foreground">
                     لینک پیش‌نمایش در دسترس نیست.
                   </p>
                 )}

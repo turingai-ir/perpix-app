@@ -76,7 +76,7 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
     <Dialog>
       <div
         className={cn(
-          "bg-background flex w-full items-center justify-center overflow-hidden rounded-lg border",
+          "flex w-full items-center justify-center overflow-hidden rounded-lg border bg-background",
           isError && !isMissing && "border-destructive/50 bg-destructive/5",
         )}
         style={{ aspectRatio }}
@@ -86,7 +86,7 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
             render={
               <button
                 type="button"
-                className="group focus-visible:ring-ring/50 relative h-full w-full cursor-zoom-in overflow-hidden text-start outline-none focus-visible:ring-3"
+                className="group relative h-full w-full cursor-zoom-in overflow-hidden text-start outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
                 aria-label={previewLabel}
               />
             }
@@ -114,7 +114,7 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
                   muted
                   onError={() => markMediaFailed(mediaUrl)}
                 />
-                <span className="bg-night/10 text-night-foreground absolute inset-0 flex items-center justify-center">
+                <span className="absolute inset-0 flex items-center justify-center bg-night/10 text-night-foreground">
                   <Video className="h-8 w-8 drop-shadow" />
                 </span>
               </>
@@ -144,7 +144,7 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
       </div>
 
       <DialogContent
-        className="bg-background/95 inset-s-0 top-0 flex h-dvh max-h-dvh max-w-none translate-x-0 translate-y-0 flex-col gap-3 rounded-none border-0 p-3 ring-0 sm:max-w-none rtl:translate-x-0"
+        className="inset-s-0 top-0 flex h-dvh max-h-dvh max-w-none translate-x-0 translate-y-0 flex-col gap-3 rounded-none border-0 bg-background/95 p-3 ring-0 sm:max-w-none rtl:translate-x-0"
         showCloseButton
       >
         <DialogTitle className="sr-only">{mediaLabel}</DialogTitle>
@@ -168,7 +168,7 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
               onError={() => markMediaFailed(mediaUrl)}
             />
           ) : (
-            // eslint-disable-next-line jsx-a11y/media-has-caption
+            // oxlint-disable-next-line jsx-a11y/media-has-caption
             <video
               className="max-h-full max-w-full rounded-lg"
               src={mediaUrl}
@@ -189,7 +189,7 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
                 className="h-11 gap-2 px-5 text-base"
                 onClick={() => navigate(`/editor/${fileId}`)}
               >
-                <ImageIcon className="text-success h-4 w-4" />
+                <ImageIcon className="h-4 w-4 text-success" />
                 <span>{t("pages.editor.edit")}</span>
               </Button>
             )}
@@ -221,7 +221,7 @@ const EmptyMediaPreview: FC<{ type: MediaType }> = ({ type }) => {
   const Icon = type === "image" ? ImageIcon : Video;
 
   return (
-    <div className="text-muted-foreground flex h-full w-full flex-col items-center justify-center gap-1">
+    <div className="flex h-full w-full flex-col items-center justify-center gap-1 text-muted-foreground">
       <Icon className="h-6 w-6 opacity-40" />
     </div>
   );

@@ -22,7 +22,7 @@ export function GalleryToolbar(props: Props) {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   return (
     <section
-      className="glass-blur border-glass-edge bg-glass-strong group/toolbar contrast-more:border-foreground/44 inset-shadow-highlight shadow-modal sticky top-10 z-20 mt-4 mb-6 flex flex-col gap-3 rounded-3xl border bg-[linear-gradient(135deg,color-mix(in_oklch,var(--night-foreground)_7%,transparent),transparent_42%)] p-3 max-md:top-9 max-md:mt-3 max-md:mb-4 max-md:rounded-2xl max-md:p-2.5 [&_button]:touch-manipulation"
+      className="glass-blur group/toolbar sticky top-10 z-20 mt-4 mb-6 flex flex-col gap-3 rounded-3xl border border-glass-edge bg-glass-strong bg-[linear-gradient(135deg,color-mix(in_oklch,var(--night-foreground)_7%,transparent),transparent_42%)] p-3 shadow-modal inset-shadow-highlight contrast-more:border-foreground/44 max-md:top-9 max-md:mt-3 max-md:mb-4 max-md:rounded-2xl max-md:p-2.5 [&_button]:touch-manipulation"
       aria-label={t("pages.gallery.title")}
     >
       <div className="flex min-w-0 items-center justify-between gap-3 max-md:flex-col-reverse max-md:items-stretch">
@@ -31,7 +31,7 @@ export function GalleryToolbar(props: Props) {
           onFilter={props.onFilter}
         />
         <p
-          className="border-foreground/8 bg-background/32 text-foreground/62 min-h-8 flex-none rounded-full border px-[0.7rem] py-[0.35rem] text-xs tabular-nums max-md:self-start"
+          className="min-h-8 flex-none rounded-full border border-foreground/8 bg-background/32 px-[0.7rem] py-[0.35rem] text-xs text-foreground/62 tabular-nums max-md:self-start"
           role="status"
         >
           {t("pages.gallery.studio.loaded", { count: props.count })}
@@ -47,7 +47,7 @@ export function GalleryToolbar(props: Props) {
       </div>
       <p
         id="gallery-search-hint"
-        className="text-muted-foreground max-h-0 overflow-hidden text-xs leading-normal opacity-0 transition-[max-height,opacity] duration-180 group-focus-within/toolbar:max-h-8 group-focus-within/toolbar:opacity-100 max-md:hidden"
+        className="max-h-0 overflow-hidden text-xs leading-normal text-muted-foreground opacity-0 transition-[max-height,opacity] duration-180 group-focus-within/toolbar:max-h-8 group-focus-within/toolbar:opacity-100 max-md:hidden"
       >
         {t("pages.gallery.studio.searchHint")}
       </p>

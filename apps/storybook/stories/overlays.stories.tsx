@@ -1,16 +1,47 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Button } from "@perpix/ui/components/button";
 import {
-  Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger,
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from "@perpix/ui/components/dialog";
 import {
-  Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger, type SheetSide,
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+  type SheetSide,
 } from "@perpix/ui/components/sheet";
-import { Popover, PopoverContent, PopoverDescription, PopoverTitle, PopoverTrigger } from "@perpix/ui/components/popover";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@perpix/ui/components/tooltip";
 import {
-  DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
-  DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuTrigger, DropdownMenuGroup,
+  Popover,
+  PopoverContent,
+  PopoverDescription,
+  PopoverTitle,
+  PopoverTrigger,
+} from "@perpix/ui/components/popover";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@perpix/ui/components/tooltip";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger,
+  DropdownMenuGroup,
 } from "@perpix/ui/components/dropdown-menu";
 
 const meta = {
@@ -56,7 +87,9 @@ export const SheetStory: Story = {
           <SheetContent side={side} closeLabel="بستن">
             <SheetHeader>
               <SheetTitle>تنظیمات زیرنویس</SheetTitle>
-              <SheetDescription>فونت، اندازه و رنگ را انتخاب کنید.</SheetDescription>
+              <SheetDescription>
+                فونت، اندازه و رنگ را انتخاب کنید.
+              </SheetDescription>
             </SheetHeader>
           </SheetContent>
         </Sheet>
@@ -98,8 +131,12 @@ export const MenuStory: Story = {
       <DropdownMenuContent>
         <DropdownMenuGroup>
           <DropdownMenuLabel>ویرایش</DropdownMenuLabel>
-          <DropdownMenuItem>تکثیر<DropdownMenuShortcut>Ctrl+D</DropdownMenuShortcut></DropdownMenuItem>
-          <DropdownMenuCheckboxItem defaultChecked>نمایش خط‌راهنما</DropdownMenuCheckboxItem>
+          <DropdownMenuItem>
+            تکثیر<DropdownMenuShortcut>Ctrl+D</DropdownMenuShortcut>
+          </DropdownMenuItem>
+          <DropdownMenuCheckboxItem defaultChecked>
+            نمایش خط‌راهنما
+          </DropdownMenuCheckboxItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem variant="destructive">حذف</DropdownMenuItem>

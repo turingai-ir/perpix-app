@@ -8,7 +8,11 @@ import {
 export class UserActionError extends Error {
   constructor(
     readonly kind:
-      "forbidden" | "not_found" | "validation" | "network" | "server",
+      | "forbidden"
+      | "not_found"
+      | "validation"
+      | "network"
+      | "server",
     message?: string,
   ) {
     super(message || kind);

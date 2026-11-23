@@ -47,7 +47,7 @@ export const DashboardPage: FC = () => {
         {hasPartialError ? (
           <div
             role="status"
-            className="border-warning/15 bg-warning/5 text-warning flex items-start gap-2 rounded-xl border px-4 py-3 text-xs leading-6"
+            className="flex items-start gap-2 rounded-xl border border-warning/15 bg-warning/5 px-4 py-3 text-xs leading-6 text-warning"
           >
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
             {t("pages.root.dashboard.partialError")}

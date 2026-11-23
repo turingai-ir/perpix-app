@@ -221,7 +221,7 @@ export function SubscriptionsListPage() {
         cell: (item) => {
           const isCopied = copiedId === item.uuid;
           return (
-            <div className="text-muted-foreground flex items-center gap-1.5 font-mono text-xs">
+            <div className="flex items-center gap-1.5 font-mono text-xs text-muted-foreground">
               <span title={item.uuid}>
                 {item.uuid.slice(0, 8)}…{item.uuid.slice(-4)}
               </span>
@@ -229,7 +229,7 @@ export function SubscriptionsListPage() {
                 type="button"
                 onClick={() => handleCopy(item.uuid)}
                 aria-label="کپی شناسه"
-                className="text-muted-foreground hover:text-foreground hover:bg-muted rounded p-1 transition-colors"
+                className="rounded p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
               >
                 {isCopied ? (
                   <Check className="size-3 text-emerald-600" />
@@ -249,7 +249,7 @@ export function SubscriptionsListPage() {
         cell: (item) => (
           <Link
             to={`/users/${item.user_uuid}`}
-            className="text-primary font-mono text-xs hover:underline"
+            className="font-mono text-xs text-primary hover:underline"
             title={item.user_uuid}
           >
             {item.user_uuid.slice(0, 8)}…{item.user_uuid.slice(-4)}
@@ -263,10 +263,10 @@ export function SubscriptionsListPage() {
         }),
         cell: (item) => (
           <div className="space-y-0.5">
-            <span className="text-foreground block text-xs font-semibold">
+            <span className="block text-xs font-semibold text-foreground">
               {item.plan_name || "بدون نام"}
             </span>
-            <span className="text-muted-foreground font-mono text-[10px]">
+            <span className="font-mono text-[10px] text-muted-foreground">
               {item.plan_uuid.slice(0, 8)}…
             </span>
           </div>
@@ -285,7 +285,7 @@ export function SubscriptionsListPage() {
           defaultValue: "تاریخ شروع",
         }),
         cell: (item) => (
-          <span className="text-muted-foreground text-xs whitespace-nowrap">
+          <span className="text-xs whitespace-nowrap text-muted-foreground">
             {formatDate(item.started_at)}
           </span>
         ),
@@ -304,7 +304,7 @@ export function SubscriptionsListPage() {
               className={cn(
                 "text-xs whitespace-nowrap",
                 isExpired
-                  ? "text-destructive font-medium"
+                  ? "font-medium text-destructive"
                   : "text-muted-foreground",
               )}
             >
@@ -337,7 +337,7 @@ export function SubscriptionsListPage() {
                 size="sm"
                 onClick={() => setDeactivatingSub(item)}
                 aria-label="غیرفعال‌سازی اشتراک"
-                className="text-destructive hover:bg-destructive/10 hover:text-destructive h-8 cursor-pointer gap-1.5 px-2.5 text-xs"
+                className="h-8 cursor-pointer gap-1.5 px-2.5 text-xs text-destructive hover:bg-destructive/10 hover:text-destructive"
               >
                 <Ban className="size-3.5" />
                 {t("features.subscriptions.actions.deactivate", {
@@ -356,7 +356,7 @@ export function SubscriptionsListPage() {
     <div className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-8 sm:py-8">
       {/* Header */}
       <div>
-        <div className="text-muted-foreground mb-1.5 flex items-center gap-2 text-xs">
+        <div className="mb-1.5 flex items-center gap-2 text-xs text-muted-foreground">
           <Sparkles aria-hidden="true" className="size-4" />
           <span>{t("overview.admin", { defaultValue: "پنل مدیریت" })}</span>
           <span>/</span>
@@ -373,7 +373,7 @@ export function SubscriptionsListPage() {
                 defaultValue: "مدیریت اشتراک کاربران",
               })}
             </h1>
-            <p className="text-muted-foreground mt-1 text-sm">
+            <p className="mt-1 text-sm text-muted-foreground">
               {t("features.subscriptions.description", {
                 defaultValue:
                   "مشاهده، فعال‌سازی، بررسی وضعیت و تاریخ انقضای اشتراک‌های کاربران",
@@ -394,7 +394,7 @@ export function SubscriptionsListPage() {
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="border-border bg-card space-y-4 rounded-xl border p-4 shadow-2xs">
+      <div className="space-y-4 rounded-xl border border-border bg-card p-4 shadow-2xs">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {/* Search */}
           <div>
@@ -491,8 +491,8 @@ export function SubscriptionsListPage() {
 
         {/* Active Filters and Reset */}
         {hasActiveFilters && (
-          <div className="border-border flex items-center justify-between border-t pt-3">
-            <span className="text-muted-foreground text-xs">
+          <div className="flex items-center justify-between border-t border-border pt-3">
+            <span className="text-xs text-muted-foreground">
               {t("features.subscriptions.filters.activeFiltersApplied", {
                 defaultValue: "فیلترها اعمال شده‌اند",
               })}
@@ -501,7 +501,7 @@ export function SubscriptionsListPage() {
               variant="ghost"
               size="sm"
               onClick={resetFilters}
-              className="text-muted-foreground hover:text-foreground h-8 cursor-pointer gap-1.5 text-xs"
+              className="h-8 cursor-pointer gap-1.5 text-xs text-muted-foreground hover:text-foreground"
             >
               <RotateCcw className="size-3.5" />
               {t("features.subscriptions.filters.reset", {
@@ -538,7 +538,7 @@ export function SubscriptionsListPage() {
           <form onSubmit={handleActivateSubmit}>
             <DialogHeader>
               <div className="flex items-center gap-2">
-                <Sparkles className="text-primary size-5" />
+                <Sparkles className="size-5 text-primary" />
                 <DialogTitle>
                   {t("features.subscriptions.activateModal.title", {
                     defaultValue: "فعال‌سازی دستی اشتراک",
@@ -557,7 +557,7 @@ export function SubscriptionsListPage() {
               <div className="space-y-1.5">
                 <label
                   htmlFor="activate-user-uuid"
-                  className="text-foreground text-xs font-medium"
+                  className="text-xs font-medium text-foreground"
                 >
                   {t("features.subscriptions.activateModal.userUuidLabel", {
                     defaultValue: "شناسه کاربری (User UUID):",
@@ -577,7 +577,7 @@ export function SubscriptionsListPage() {
               <div className="space-y-1.5">
                 <label
                   htmlFor="activate-plan-uuid"
-                  className="text-foreground text-xs font-medium"
+                  className="text-xs font-medium text-foreground"
                 >
                   {t("features.subscriptions.activateModal.planLabel", {
                     defaultValue: "انتخاب پلن اشتراکی:",

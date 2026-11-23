@@ -23,7 +23,7 @@ const PreviewStudio: FC = () => {
       className="relative mx-auto w-full max-w-7xl px-5 pb-24 lg:px-8"
     >
       <div className="mb-8">
-        <p className="text-primary mb-2 text-sm font-medium">
+        <p className="mb-2 text-sm font-medium text-primary">
           {t("pages.designPreview.studio.label")}
         </p>
         <h2 className="text-2xl font-semibold sm:text-3xl">
@@ -34,15 +34,15 @@ const PreviewStudio: FC = () => {
         {studioItems.map(({ icon: Icon, title, description }) => (
           <article
             key={title}
-            className="group border-border bg-card hover:border-primary/30 hover:bg-muted min-h-52 rounded-2xl border p-6 transition-colors"
+            className="group min-h-52 rounded-2xl border border-border bg-card p-6 transition-colors hover:border-primary/30 hover:bg-muted"
           >
-            <div className="border-border bg-foreground/5 text-primary mb-12 flex size-11 items-center justify-center rounded-xl border">
+            <div className="mb-12 flex size-11 items-center justify-center rounded-xl border border-border bg-foreground/5 text-primary">
               <Icon className="size-5" aria-hidden="true" />
             </div>
             <h3 className="text-xl font-medium">
               {t(`pages.designPreview.studio.${title}`)}
             </h3>
-            <p className="text-muted-foreground mt-2 text-sm leading-7">
+            <p className="mt-2 text-sm leading-7 text-muted-foreground">
               {t(`pages.designPreview.studio.${description}`)}
             </p>
           </article>

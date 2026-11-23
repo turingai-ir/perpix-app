@@ -77,7 +77,8 @@ export const useAiTaskResultPolling = (
       enabled: canPollResult,
       refetchInterval: (query) => {
         const resultMessage = query.state.data as
-          SchemaAiTaskMessageResponse | undefined;
+          | SchemaAiTaskMessageResponse
+          | undefined;
 
         // Must stay pure: TanStack calls this on every options update.
         if (isAiTaskMessageTerminal(resultMessage, generatedMediaField)) {

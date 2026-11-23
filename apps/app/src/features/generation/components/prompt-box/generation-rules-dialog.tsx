@@ -54,7 +54,7 @@ export const GenerationRulesDialog: FC = () => {
             </p>
           </section>
           <a
-            className="text-primary font-medium underline underline-offset-4"
+            className="font-medium text-primary underline underline-offset-4"
             href="https://perpixai.ir/terms/"
             rel="noreferrer"
             target="_blank"

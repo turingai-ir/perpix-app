@@ -94,7 +94,7 @@ export function AuditEventsListPage() {
         }),
         cell: (item) => (
           <div className="flex items-center gap-2">
-            <Activity className="text-primary size-4" />
+            <Activity className="size-4 text-primary" />
             {renderActionBadge(item.action)}
           </div>
         ),
@@ -107,9 +107,9 @@ export function AuditEventsListPage() {
         cell: (item) => (
           <Link
             to={`/users/${item.actor_uuid}`}
-            className="text-primary hover:text-primary/80 flex items-center gap-1.5 font-mono text-xs font-semibold hover:underline"
+            className="flex items-center gap-1.5 font-mono text-xs font-semibold text-primary hover:text-primary/80 hover:underline"
           >
-            <User className="text-muted-foreground size-3.5" />
+            <User className="size-3.5 text-muted-foreground" />
             {item.actor_uuid.slice(0, 8)}...
           </Link>
         ),
@@ -122,9 +122,9 @@ export function AuditEventsListPage() {
         cell: (item) => (
           <Link
             to={`/users/${item.user_uuid}`}
-            className="text-primary hover:text-primary/80 flex items-center gap-1.5 font-mono text-xs font-semibold hover:underline"
+            className="flex items-center gap-1.5 font-mono text-xs font-semibold text-primary hover:text-primary/80 hover:underline"
           >
-            <User className="text-muted-foreground size-3.5" />
+            <User className="size-3.5 text-muted-foreground" />
             {item.user_uuid.slice(0, 8)}...
           </Link>
         ),
@@ -135,7 +135,7 @@ export function AuditEventsListPage() {
           defaultValue: "شناسه منبع",
         }),
         cell: (item) => (
-          <span className="text-muted-foreground font-mono text-xs">
+          <span className="font-mono text-xs text-muted-foreground">
             {item.resource_uuid ? `${item.resource_uuid.slice(0, 8)}...` : "—"}
           </span>
         ),
@@ -147,7 +147,7 @@ export function AuditEventsListPage() {
         }),
         cell: (item) => (
           <span
-            className="text-foreground block max-w-sm truncate text-xs"
+            className="block max-w-sm truncate text-xs text-foreground"
             title={item.reason || ""}
           >
             {item.reason || "—"}
@@ -181,7 +181,7 @@ export function AuditEventsListPage() {
     <div className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-8 sm:py-8">
       {/* Header */}
       <div>
-        <div className="text-muted-foreground mb-1.5 flex items-center gap-2 text-xs">
+        <div className="mb-1.5 flex items-center gap-2 text-xs text-muted-foreground">
           <ShieldAlert aria-hidden="true" className="size-4" />
           <span>{t("overview.admin", { defaultValue: "پنل مدیریت" })}</span>
           <span>/</span>
@@ -197,12 +197,12 @@ export function AuditEventsListPage() {
         </div>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-foreground text-xl font-bold tracking-tight sm:text-2xl">
+            <h1 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
               {t("features.security.audit.pageTitle", {
                 defaultValue: "رویدادهای امنیتی و ممیزی (Audit Log)",
               })}
             </h1>
-            <p className="text-muted-foreground mt-1 text-xs sm:text-sm">
+            <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
               {t("features.security.audit.pageDesc", {
                 defaultValue:
                   "ثبت دقیق کلیه اقدامات حساس، تغییرات وضعیت کاربران و نشست‌ها برای پیگیری‌های نظارتی",
@@ -213,7 +213,7 @@ export function AuditEventsListPage() {
       </div>
 
       {/* Filters Bar */}
-      <div className="bg-card flex flex-col gap-3 rounded-xl border p-4 shadow-sm sm:flex-row sm:items-center">
+      <div className="flex flex-col gap-3 rounded-xl border bg-card p-4 shadow-sm sm:flex-row sm:items-center">
         <div className="w-full sm:w-72">
           <SearchInput
             value={search || ""}

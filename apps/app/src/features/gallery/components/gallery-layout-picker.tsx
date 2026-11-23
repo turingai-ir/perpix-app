@@ -12,7 +12,7 @@ export function GalleryLayoutPicker({
 }) {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   return (
-    <div className="border-foreground/8 bg-muted/42 flex flex-none gap-1 rounded-2xl border p-[0.2rem]">
+    <div className="flex flex-none gap-1 rounded-2xl border border-foreground/8 bg-muted/42 p-[0.2rem]">
       <Button
         variant={compact ? "ghost" : "secondary"}
         className="size-11 rounded-xl"

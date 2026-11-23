@@ -3,7 +3,7 @@ import path from "path";
 import { execFileSync } from "child_process";
 
 import openapiTS, { astToString } from "openapi-typescript";
-import prettier from "prettier";
+import { formatSource } from "@perpix/tooling/format-source";
 
 import { adminApiSchema } from "./admin-schema";
 import { makeBinaryTransform, makeJsonCycleTransform } from "./transform";
@@ -221,16 +221,8 @@ const generateClient = async (
   const enumMaps = renderEnumMaps(
     await collectEnumMaps(generatedJsonFileFullPath),
   );
-  let output = [astToString(ast), enumMaps].filter(Boolean).join("\n\n");
-  try {
-    const prettierConfig = await prettier.resolveConfig(outputFilePath);
-    output = await prettier.format(output, {
-      ...prettierConfig,
-      filepath: outputFilePath,
-    });
-  } catch (err) {
-    console.warn("Prettier format skipped for generated client:", err);
-  }
+  const source = [astToString(ast), enumMaps].filter(Boolean).join("\n\n");
+  const output = await formatSource(outputFilePath, source);
 
   await fs.mkdir(path.dirname(outputFilePath), { recursive: true });
   await fs.writeFile(outputFilePath, output, "utf-8");

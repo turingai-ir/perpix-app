@@ -51,7 +51,7 @@ export function VideoOutputItem({ fileId, index = 0 }: Props) {
       <div
         role="group"
         aria-label={label}
-        className="border-border bg-background shadow-night/10 min-w-0 overflow-hidden rounded-2xl border shadow-[0_12px_30px]"
+        className="min-w-0 overflow-hidden rounded-2xl border border-border bg-background shadow-[0_12px_30px] shadow-night/10"
       >
         <VideoOutputHeader>
           <VideoOutputTitle>
@@ -68,7 +68,7 @@ export function VideoOutputItem({ fileId, index = 0 }: Props) {
         <VideoOutputScreen unavailable={!previewUrl || hasMediaError}>
           {previewUrl && !hasMediaError ? (
             // Generated videos do not include a captions track in the file contract.
-            // eslint-disable-next-line jsx-a11y/media-has-caption
+            // oxlint-disable-next-line jsx-a11y/media-has-caption
             <video
               key={mediaKey}
               ref={player}

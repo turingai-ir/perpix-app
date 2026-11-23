@@ -34,28 +34,28 @@ export function GenerationFocusState({
 
   return (
     <section
-      className="animate-reveal bg-card mx-auto mb-2.5 grid w-[calc(100%-1rem)] grid-cols-[2.5rem_minmax(0,1fr)] gap-3 rounded-2xl border border-[color-mix(in_srgb,var(--primary)_25%,var(--border))] px-4 py-3.5 motion-reduce:animate-none"
+      className="mx-auto mb-2.5 grid w-[calc(100%-1rem)] animate-reveal grid-cols-[2.5rem_minmax(0,1fr)] gap-3 rounded-2xl border border-[color-mix(in_srgb,var(--primary)_25%,var(--border))] bg-card px-4 py-3.5 motion-reduce:animate-none"
       data-media={media}
       role="status"
       aria-live="polite"
     >
       <div
-        className="text-primary grid size-10 place-items-center rounded-xl bg-[color-mix(in_srgb,var(--primary)_12%,var(--card))] [&_svg]:block [&_svg]:size-5"
+        className="grid size-10 place-items-center rounded-xl bg-[color-mix(in_srgb,var(--primary)_12%,var(--card))] text-primary [&_svg]:block [&_svg]:size-5"
         aria-hidden="true"
       >
         {media === "video" ? <Clapperboard /> : <Sparkles />}
       </div>
       <div className="min-w-0">
-        <strong className="text-foreground block text-sm leading-relaxed">
+        <strong className="block text-sm leading-relaxed text-foreground">
           {t(`${translationKey}.${phase}`)}
         </strong>
-        <span className="text-muted-foreground mt-1 flex items-baseline gap-1.5 text-xs leading-[1.8] [&_svg]:mt-1 [&_svg]:size-3.5 [&_svg]:flex-none [&_svg]:self-start">
+        <span className="mt-1 flex items-baseline gap-1.5 text-xs leading-[1.8] text-muted-foreground [&_svg]:mt-1 [&_svg]:size-3.5 [&_svg]:flex-none [&_svg]:self-start">
           <LockKeyhole aria-hidden="true" />
           {t(`${translationKey}.lockedHint`)}
         </span>
       </div>
       <ol
-        className="text-muted-foreground text-caption col-span-full mt-1.5 grid grid-cols-3 p-0"
+        className="col-span-full mt-1.5 grid grid-cols-3 p-0 text-caption text-muted-foreground"
         aria-label={t(`${translationKey}.progressLabel`)}
       >
         {phases.map((item, index) => {
@@ -65,14 +65,14 @@ export function GenerationFocusState({
             <li
               key={item}
               className={cn(
-                "after:bg-border relative flex min-w-0 flex-col items-center gap-1.5 after:absolute after:start-[calc(50%+1rem)] after:top-4 after:h-px after:w-[calc(100%-2rem)] after:content-[''] last:after:hidden",
+                "relative flex min-w-0 flex-col items-center gap-1.5 after:absolute after:start-[calc(50%+1rem)] after:top-4 after:h-px after:w-[calc(100%-2rem)] after:bg-border after:content-[''] last:after:hidden",
                 getStepClassName(index, activeIndex),
               )}
               aria-current={isActive ? "step" : undefined}
             >
               <span
                 data-step-marker
-                className="border-border bg-card relative z-[1] grid size-8 place-items-center rounded-full border tabular-nums [&_svg]:block [&_svg]:size-4"
+                className="relative z-[1] grid size-8 place-items-center rounded-full border border-border bg-card tabular-nums [&_svg]:block [&_svg]:size-4"
                 aria-hidden="true"
               >
                 {isComplete ? <Check /> : null}

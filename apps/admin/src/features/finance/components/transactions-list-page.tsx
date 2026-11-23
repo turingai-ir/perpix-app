@@ -112,7 +112,7 @@ export function TransactionsListPage() {
         cell: (tx) => {
           const isCopied = copiedId === tx.uuid;
           return (
-            <div className="text-muted-foreground flex items-center gap-1.5 font-mono text-xs">
+            <div className="flex items-center gap-1.5 font-mono text-xs text-muted-foreground">
               <span title={tx.uuid}>
                 {tx.uuid.slice(0, 8)}…{tx.uuid.slice(-4)}
               </span>
@@ -120,7 +120,7 @@ export function TransactionsListPage() {
                 type="button"
                 onClick={() => handleCopy(tx.uuid)}
                 aria-label="کپی شناسه"
-                className="text-muted-foreground hover:text-foreground hover:bg-muted rounded p-1 transition-colors"
+                className="rounded p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
               >
                 {isCopied ? (
                   <Check className="size-3.5 text-emerald-600" />
@@ -140,7 +140,7 @@ export function TransactionsListPage() {
         cell: (tx) => (
           <Link
             to={`/finance/wallets/${tx.wallet_uuid}`}
-            className="text-primary font-mono text-xs hover:underline"
+            className="font-mono text-xs text-primary hover:underline"
             title={tx.wallet_uuid}
           >
             {tx.wallet_uuid.slice(0, 8)}…
@@ -155,7 +155,7 @@ export function TransactionsListPage() {
         cell: (tx) => (
           <Link
             to={`/users/${tx.user_uuid}`}
-            className="text-primary font-mono text-xs hover:underline"
+            className="font-mono text-xs text-primary hover:underline"
             title={tx.user_uuid}
           >
             {tx.user_uuid.slice(0, 8)}…
@@ -253,7 +253,7 @@ export function TransactionsListPage() {
           defaultValue: "تاریخ",
         }),
         cell: (tx) => (
-          <span className="text-muted-foreground text-xs whitespace-nowrap">
+          <span className="text-xs whitespace-nowrap text-muted-foreground">
             {formatDate(tx.created_at)}
           </span>
         ),
@@ -266,7 +266,7 @@ export function TransactionsListPage() {
     <div className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-8 sm:py-8">
       {/* Header */}
       <div>
-        <div className="text-muted-foreground mb-1.5 flex items-center gap-2 text-xs">
+        <div className="mb-1.5 flex items-center gap-2 text-xs text-muted-foreground">
           <Receipt aria-hidden="true" className="size-4" />
           <span>{t("overview.admin", { defaultValue: "پنل مدیریت" })}</span>
           <span>/</span>
@@ -274,7 +274,7 @@ export function TransactionsListPage() {
             {t("features.finance.menuTitle", { defaultValue: "مالی" })}
           </span>
           <span>/</span>
-          <span className="text-foreground font-medium">
+          <span className="font-medium text-foreground">
             {t("features.finance.transactions.title", {
               defaultValue: "تراکنش‌ها",
             })}
@@ -285,7 +285,7 @@ export function TransactionsListPage() {
             defaultValue: "تراکنش‌های کیف پول",
           })}
         </h1>
-        <p className="text-muted-foreground mt-1 text-sm">
+        <p className="mt-1 text-sm text-muted-foreground">
           {t("features.finance.transactions.description", {
             defaultValue:
               "مشاهده و پیگیری سوابق تراکنش‌های شارژ، مصرف و بازگشت اعتبار",
@@ -294,7 +294,7 @@ export function TransactionsListPage() {
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="border-border bg-card space-y-3 rounded-2xl border p-4 shadow-xs">
+      <div className="space-y-3 rounded-2xl border border-border bg-card p-4 shadow-xs">
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <SearchInput
@@ -361,7 +361,7 @@ export function TransactionsListPage() {
 
         {/* Active Filters Clear Button */}
         {hasActiveFilters && (
-          <div className="border-border/60 flex items-center justify-between border-t pt-2.5 text-xs">
+          <div className="flex items-center justify-between border-t border-border/60 pt-2.5 text-xs">
             <span className="text-muted-foreground">
               {t("features.finance.transactions.filters.activeFilters", {
                 defaultValue: "فیلترها اعمال شده‌اند",
@@ -371,7 +371,7 @@ export function TransactionsListPage() {
               variant="ghost"
               size="sm"
               onClick={resetFilters}
-              className="text-muted-foreground hover:text-foreground h-7 gap-1 text-xs"
+              className="h-7 gap-1 text-xs text-muted-foreground hover:text-foreground"
             >
               <RotateCcw className="size-3" />
               {t("common.resetFilters", {

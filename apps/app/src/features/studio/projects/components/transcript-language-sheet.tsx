@@ -27,7 +27,7 @@ export function TranscriptLanguageSheet({
       title={t("features.studio.clips.language.title")}
       description={t("features.studio.clips.language.description")}
     >
-      <fieldset className="gap-group flex flex-col">
+      <fieldset className="flex flex-col gap-group">
         <legend className="sr-only">
           {t("features.studio.clips.language.title")}
         </legend>
@@ -35,7 +35,7 @@ export function TranscriptLanguageSheet({
           <label
             key={value}
             htmlFor={`studio-language-${value}`}
-            className="text-body rounded-control flex items-center gap-3 border p-3"
+            className="flex items-center gap-3 rounded-control border p-3 text-body"
           >
             <input
               id={`studio-language-${value}`}

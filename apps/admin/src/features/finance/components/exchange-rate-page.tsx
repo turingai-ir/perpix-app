@@ -163,12 +163,12 @@ export function ExchangeRatePage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight">
-            <TrendingUp className="text-primary size-6" />
+            <TrendingUp className="size-6 text-primary" />
             {t("features.finance.exchangeRate.title", {
               defaultValue: "نرخ ارز و گزارش‌های مالی",
             })}
           </h1>
-          <p className="text-muted-foreground mt-1 text-sm">
+          <p className="mt-1 text-sm text-muted-foreground">
             {t("features.finance.exchangeRate.description", {
               defaultValue:
                 "مشاهدهٔ آخرین نرخ برابری ارز، بروزرسانی دستی و شاخص‌های مالی سیستم",
@@ -183,9 +183,9 @@ export function ExchangeRatePage() {
           className="cursor-pointer gap-2 shadow-xs"
         >
           {isRefreshingRate ? (
-            <Loader2 className="text-primary size-4 animate-spin" />
+            <Loader2 className="size-4 animate-spin text-primary" />
           ) : (
-            <RefreshCw className="text-primary size-4" />
+            <RefreshCw className="size-4 text-primary" />
           )}
           {t("features.finance.exchangeRate.refreshButton", {
             defaultValue: "بروزرسانی نرخ ارز",
@@ -196,11 +196,11 @@ export function ExchangeRatePage() {
       {/* Currency Rate Cards Grid */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         {/* USD to IRR Card */}
-        <Card className="border-border from-primary/5 via-card to-card bg-linear-to-bl shadow-xs">
+        <Card className="border-border bg-linear-to-bl from-primary/5 via-card to-card shadow-xs">
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
-              <span className="text-muted-foreground flex items-center gap-1.5 text-xs font-semibold">
-                <DollarSign className="text-primary size-4" />
+              <span className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
+                <DollarSign className="size-4 text-primary" />
                 {t("features.finance.exchangeRate.usdToIrr", {
                   defaultValue: "نرخ ۱ دلار آمریکا (USD)",
                 })}
@@ -215,7 +215,7 @@ export function ExchangeRatePage() {
           </CardHeader>
           <CardContent className="space-y-2">
             {isRateLoading ? (
-              <div className="text-muted-foreground flex items-center gap-2 py-3 text-sm">
+              <div className="flex items-center gap-2 py-3 text-sm text-muted-foreground">
                 <Loader2 className="size-4 animate-spin" />
                 {t("common.table.loading", {
                   defaultValue: "در حال دریافت...",
@@ -224,17 +224,17 @@ export function ExchangeRatePage() {
             ) : (
               <>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-foreground font-mono text-2xl font-extrabold sm:text-3xl">
+                  <span className="font-mono text-2xl font-extrabold text-foreground sm:text-3xl">
                     {rateValue ? faNumber(rateValue) : "—"}
                   </span>
-                  <span className="text-muted-foreground text-sm font-semibold">
+                  <span className="text-sm font-semibold text-muted-foreground">
                     ریال
                   </span>
                 </div>
                 {rateValue > 0 && (
-                  <p className="text-muted-foreground text-xs">
+                  <p className="text-xs text-muted-foreground">
                     معادل{" "}
-                    <span className="text-foreground font-mono font-semibold">
+                    <span className="font-mono font-semibold text-foreground">
                       {faNumber(Math.round(rateValue / 10))}
                     </span>{" "}
                     تومان
@@ -249,8 +249,8 @@ export function ExchangeRatePage() {
         <Card className="border-border shadow-xs">
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
-              <span className="text-muted-foreground flex items-center gap-1.5 text-xs font-semibold">
-                <ArrowRightLeft className="text-primary size-4" />
+              <span className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
+                <ArrowRightLeft className="size-4 text-primary" />
                 {t("features.finance.exchangeRate.unitRatio", {
                   defaultValue: "واحد محاسباتی میکرودلار",
                 })}
@@ -262,16 +262,16 @@ export function ExchangeRatePage() {
           </CardHeader>
           <CardContent className="space-y-2">
             <div className="flex items-baseline gap-2">
-              <span className="text-foreground font-mono text-2xl font-extrabold sm:text-3xl">
+              <span className="font-mono text-2xl font-extrabold text-foreground sm:text-3xl">
                 ۱,۰۰۰,۰۰۰
               </span>
-              <span className="text-muted-foreground text-sm font-semibold">
+              <span className="text-sm font-semibold text-muted-foreground">
                 میکرودلار / USD
               </span>
             </div>
-            <p className="text-muted-foreground text-xs">
+            <p className="text-xs text-muted-foreground">
               همهٔ مبالغ پنل به میکرودلار است. هر توکن (واحد اپ کاربر) ={" "}
-              <span className="text-foreground font-mono font-semibold">
+              <span className="font-mono font-semibold text-foreground">
                 {formatUsdmicro(USDMICRO_PER_TOKEN)}
               </span>{" "}
               میکرودلار
@@ -283,8 +283,8 @@ export function ExchangeRatePage() {
         <Card className="border-border shadow-xs">
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
-              <span className="text-muted-foreground flex items-center gap-1.5 text-xs font-semibold">
-                <Clock className="text-primary size-4" />
+              <span className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
+                <Clock className="size-4 text-primary" />
                 {t("features.finance.exchangeRate.lastUpdate", {
                   defaultValue: "آخرین استعلام و بروزرسانی",
                 })}
@@ -292,10 +292,10 @@ export function ExchangeRatePage() {
             </div>
           </CardHeader>
           <CardContent className="space-y-2">
-            <div className="text-foreground text-lg font-bold">
+            <div className="text-lg font-bold text-foreground">
               {exchangeRate?.date ? formatDate(exchangeRate.date) : "—"}
             </div>
-            <p className="text-muted-foreground text-xs">
+            <p className="text-xs text-muted-foreground">
               مبدا:{" "}
               <span className="font-mono font-semibold">
                 {exchangeRate?.from_currency || "USD"}
@@ -311,9 +311,9 @@ export function ExchangeRatePage() {
 
       {/* Quick Calculator Widget */}
       <Card className="border-border shadow-xs">
-        <CardHeader className="border-border border-b pb-3">
+        <CardHeader className="border-b border-border pb-3">
           <CardTitle className="flex items-center gap-2 text-base font-semibold">
-            <ArrowRightLeft className="text-primary size-4" />
+            <ArrowRightLeft className="size-4 text-primary" />
             {t("features.finance.exchangeRate.calculatorTitle", {
               defaultValue: "تبدیل و محاسبه‌گر سریع ارز",
             })}
@@ -324,7 +324,7 @@ export function ExchangeRatePage() {
             <div className="space-y-1.5">
               <label
                 htmlFor="usd-calc-input"
-                className="text-muted-foreground text-xs font-medium"
+                className="text-xs font-medium text-muted-foreground"
               >
                 {t("features.finance.exchangeRate.amountUsdmicro", {
                   defaultValue: "مبلغ (میکرودلار):",
@@ -337,29 +337,29 @@ export function ExchangeRatePage() {
               />
             </div>
 
-            <div className="bg-muted/40 border-border rounded-xl border p-3">
-              <div className="text-muted-foreground mb-1 text-xs">
+            <div className="rounded-xl border border-border bg-muted/40 p-3">
+              <div className="mb-1 text-xs text-muted-foreground">
                 معادل به ریال:
               </div>
-              <div className="text-foreground truncate font-mono text-base font-bold">
+              <div className="truncate font-mono text-base font-bold text-foreground">
                 {rateValue > 0 ? `${faNumber(calculatedIrr)} ریال` : "—"}
               </div>
             </div>
 
-            <div className="bg-muted/40 border-border rounded-xl border p-3">
-              <div className="text-muted-foreground mb-1 text-xs">
+            <div className="rounded-xl border border-border bg-muted/40 p-3">
+              <div className="mb-1 text-xs text-muted-foreground">
                 معادل به تومان:
               </div>
-              <div className="text-foreground truncate font-mono text-base font-bold">
+              <div className="truncate font-mono text-base font-bold text-foreground">
                 {rateValue > 0 ? `${faNumber(calculatedToman)} تومان` : "—"}
               </div>
             </div>
 
-            <div className="bg-muted/40 border-border rounded-xl border p-3">
-              <div className="text-muted-foreground mb-1 text-xs">
+            <div className="rounded-xl border border-border bg-muted/40 p-3">
+              <div className="mb-1 text-xs text-muted-foreground">
                 معادل توکن (اپ کاربر):
               </div>
-              <div className="text-foreground truncate font-mono text-base font-bold">
+              <div className="truncate font-mono text-base font-bold text-foreground">
                 {formatTokensFromUsdmicro(parsedCalcUsdmicro)} توکن
               </div>
             </div>
@@ -369,15 +369,15 @@ export function ExchangeRatePage() {
 
       {/* Reports Section */}
       <div className="space-y-4 pt-4">
-        <div className="border-border flex flex-col justify-between gap-3 border-b pb-4 sm:flex-row sm:items-center">
+        <div className="flex flex-col justify-between gap-3 border-b border-border pb-4 sm:flex-row sm:items-center">
           <div>
             <h2 className="flex items-center gap-2 text-lg font-bold">
-              <Layers className="text-primary size-5" />
+              <Layers className="size-5 text-primary" />
               {t("features.finance.reports.title", {
                 defaultValue: "گزارش‌های آماری مالی",
               })}
             </h2>
-            <p className="text-muted-foreground mt-0.5 text-xs">
+            <p className="mt-0.5 text-xs text-muted-foreground">
               {t("features.finance.reports.description", {
                 defaultValue:
                   "بررسی حجم و آمار تفکیکی پرداخت‌ها، تراکنش‌ها و موجودی سیستم",
@@ -386,7 +386,7 @@ export function ExchangeRatePage() {
           </div>
 
           <div className="flex items-center gap-2">
-            <Calendar className="text-muted-foreground size-4" />
+            <Calendar className="size-4 text-muted-foreground" />
             <Select
               value={daysRange}
               onChange={(e) => setDaysRange(e.target.value)}
@@ -402,7 +402,7 @@ export function ExchangeRatePage() {
         </div>
 
         {/* Report Tab Selector */}
-        <div className="border-border flex items-center gap-2 overflow-x-auto border-b pb-2">
+        <div className="flex items-center gap-2 overflow-x-auto border-b border-border pb-2">
           <Button
             variant={reportTab === "payments" ? "default" : "outline"}
             size="sm"
@@ -547,20 +547,20 @@ function ReportBucketTable({
 
   return (
     <Card className="border-border shadow-xs">
-      <CardHeader className="border-border flex flex-row items-center justify-between border-b px-4 py-3">
+      <CardHeader className="flex flex-row items-center justify-between border-b border-border px-4 py-3">
         <CardTitle className="text-sm font-semibold">{title}</CardTitle>
-        <span className="text-muted-foreground font-mono text-xs">
+        <span className="font-mono text-xs text-muted-foreground">
           {items.length ? `${faNumber(items.length)} مورد` : ""}
         </span>
       </CardHeader>
       <CardContent className="p-0">
         {isLoading ? (
-          <div className="text-muted-foreground flex items-center justify-center gap-2 p-8 text-sm">
-            <Loader2 className="text-primary size-4 animate-spin" />
+          <div className="flex items-center justify-center gap-2 p-8 text-sm text-muted-foreground">
+            <Loader2 className="size-4 animate-spin text-primary" />
             در حال دریافت آمار...
           </div>
         ) : items.length === 0 ? (
-          <div className="text-muted-foreground p-8 text-center text-xs">
+          <div className="p-8 text-center text-xs text-muted-foreground">
             داده‌ای در این بازه زمانی یافت نشد.
           </div>
         ) : (
@@ -602,7 +602,7 @@ function ReportBucketTable({
                           amountClassName="text-primary font-semibold"
                         />
                       </TableCell>
-                      <TableCell className="text-muted-foreground text-left font-mono text-xs">
+                      <TableCell className="text-left font-mono text-xs text-muted-foreground">
                         {b.amount_irr ? `${faNumber(b.amount_irr)} ریال` : "—"}
                       </TableCell>
                     </TableRow>

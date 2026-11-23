@@ -13,10 +13,20 @@ minimumReleaseAgeExclude:
   - motion-dom@14.4.0
   - motion@14.4.0
   - shadcn@4.22.1
-  - '@turbo/darwin-64@2.11.13'
-  - '@turbo/darwin-arm64@2.11.13'
-  - '@turbo/linux-64@2.11.13'
-  - '@turbo/linux-arm64@2.11.13'
-  - '@turbo/windows-64@2.11.13'
-  - '@turbo/windows-arm64@2.11.13'
+  - "@turbo/darwin-64@2.11.13"
+  - "@turbo/darwin-arm64@2.11.13"
+  - "@turbo/linux-64@2.11.13"
+  - "@turbo/linux-arm64@2.11.13"
+  - "@turbo/windows-64@2.11.13"
+  - "@turbo/windows-arm64@2.11.13"
   - turbo@2.11.13
+
+catalog:
+  oxlint: 1.94.0
+  oxfmt: 0.79.0
+  vite: 8.3.5
+  "@vitejs/plugin-react": 6.2.1
+  "@tailwindcss/vite": 4.3.4
+  "@oxc-node/core": 1.0.2
+  tsrs: 7.1.0-beta.tsrs4
+  vitest: 5.1.1

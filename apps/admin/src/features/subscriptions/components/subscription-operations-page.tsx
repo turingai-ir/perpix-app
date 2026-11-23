@@ -155,7 +155,7 @@ export function SubscriptionOperationsPage() {
               type="button"
               onClick={() => handleCopy(item.user_uuid)}
               aria-label="کپی شناسه کاربر"
-              className="text-muted-foreground hover:text-foreground hover:bg-muted rounded p-1 transition-colors"
+              className="rounded p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
             >
               {copiedId === item.user_uuid ? (
                 <Check className="size-3 text-emerald-600" />
@@ -172,7 +172,7 @@ export function SubscriptionOperationsPage() {
           defaultValue: "انجام‌دهنده (مدیر / سیستم)",
         }),
         cell: (item) => (
-          <div className="text-muted-foreground flex items-center gap-1.5 font-mono text-xs">
+          <div className="flex items-center gap-1.5 font-mono text-xs text-muted-foreground">
             <span title={item.actor_uuid}>
               {item.actor_uuid.slice(0, 8)}…{item.actor_uuid.slice(-4)}
             </span>
@@ -180,7 +180,7 @@ export function SubscriptionOperationsPage() {
               type="button"
               onClick={() => handleCopy(item.actor_uuid)}
               aria-label="کپی شناسه مدیر"
-              className="text-muted-foreground hover:text-foreground hover:bg-muted rounded p-1 transition-colors"
+              className="rounded p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
             >
               {copiedId === item.actor_uuid ? (
                 <Check className="size-3 text-emerald-600" />
@@ -197,7 +197,7 @@ export function SubscriptionOperationsPage() {
           defaultValue: "زمان ثبت",
         }),
         cell: (item) => (
-          <span className="text-muted-foreground text-xs whitespace-nowrap">
+          <span className="text-xs whitespace-nowrap text-muted-foreground">
             {formatDate(item.created_at)}
           </span>
         ),
@@ -210,7 +210,7 @@ export function SubscriptionOperationsPage() {
     <div className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-8 sm:py-8">
       {/* Header */}
       <div>
-        <div className="text-muted-foreground mb-1.5 flex items-center gap-2 text-xs">
+        <div className="mb-1.5 flex items-center gap-2 text-xs text-muted-foreground">
           <History aria-hidden="true" className="size-4" />
           <span>{t("overview.admin", { defaultValue: "پنل مدیریت" })}</span>
           <span>/</span>
@@ -233,7 +233,7 @@ export function SubscriptionOperationsPage() {
                 defaultValue: "سوابق عملیات و گزارش‌های اشتراک",
               })}
             </h1>
-            <p className="text-muted-foreground mt-1 text-sm">
+            <p className="mt-1 text-sm text-muted-foreground">
               {t("features.subscriptions.operations.description", {
                 defaultValue:
                   "رهگیری تغییرات وضعیت، فعال‌سازی‌های مدیر و گزارش‌های تجمیعی پلن‌ها",
@@ -241,7 +241,7 @@ export function SubscriptionOperationsPage() {
             </p>
           </div>
 
-          <div className="border-border bg-card flex items-center gap-2 rounded-xl border p-1">
+          <div className="flex items-center gap-2 rounded-xl border border-border bg-card p-1">
             <Button
               variant={activeTab === "logs" ? "default" : "ghost"}
               size="sm"
@@ -293,16 +293,16 @@ export function SubscriptionOperationsPage() {
       {/* Tab 2: Statistical Reports */}
       {activeTab === "reports" && (
         <div className="space-y-6">
-          <div className="border-border flex items-center justify-between border-b pb-4">
+          <div className="flex items-center justify-between border-b border-border pb-4">
             <h2 className="flex items-center gap-2 text-base font-bold">
-              <Layers className="text-primary size-4" />
+              <Layers className="size-4 text-primary" />
               {t("features.subscriptions.operations.reportsTitle", {
                 defaultValue: "گزارش‌های دوره‌ای اشتراک‌ها",
               })}
             </h2>
 
             <div className="flex items-center gap-2">
-              <Calendar className="text-muted-foreground size-4" />
+              <Calendar className="size-4 text-muted-foreground" />
               <Select
                 value={daysRange}
                 onChange={(e) => setDaysRange(e.target.value)}
@@ -364,20 +364,20 @@ function SubscriptionBucketTable({
 
   return (
     <Card className="border-border shadow-xs">
-      <CardHeader className="border-border flex flex-row items-center justify-between border-b px-4 py-3">
+      <CardHeader className="flex flex-row items-center justify-between border-b border-border px-4 py-3">
         <CardTitle className="text-sm font-semibold">{title}</CardTitle>
-        <span className="text-muted-foreground font-mono text-xs">
+        <span className="font-mono text-xs text-muted-foreground">
           {items.length ? `${faNumber(items.length)} مورد` : ""}
         </span>
       </CardHeader>
       <CardContent className="p-0">
         {isLoading ? (
-          <div className="text-muted-foreground flex items-center justify-center gap-2 p-8 text-sm">
-            <Loader2 className="text-primary size-4 animate-spin" />
+          <div className="flex items-center justify-center gap-2 p-8 text-sm text-muted-foreground">
+            <Loader2 className="size-4 animate-spin text-primary" />
             در حال دریافت گزارش...
           </div>
         ) : items.length === 0 ? (
-          <div className="text-muted-foreground p-8 text-center text-xs">
+          <div className="p-8 text-center text-xs text-muted-foreground">
             داده‌ای در این بازه زمانی یافت نشد.
           </div>
         ) : (
@@ -419,7 +419,7 @@ function SubscriptionBucketTable({
                           amountClassName="text-primary font-semibold"
                         />
                       </TableCell>
-                      <TableCell className="text-muted-foreground text-left font-mono text-xs">
+                      <TableCell className="text-left font-mono text-xs text-muted-foreground">
                         {b.amount_irr ? `${faNumber(b.amount_irr)} ریال` : "—"}
                       </TableCell>
                     </TableRow>

@@ -55,12 +55,12 @@ export function AiModelsOrderDialog({
       <DialogContent className="max-h-[90vh] max-w-lg overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <ListOrdered className="text-primary size-5" />
+            <ListOrdered className="size-5 text-primary" />
             ترتیب نمایش مدل‌ها
           </DialogTitle>
           <DialogDescription>
-            کاربر مدل‌ها را به همین ترتیب از بالا به پایین می‌بیند. جابه‌جایی در
-            یک نوع، جای مدل‌های نوع‌های دیگر را تغییر نمی‌دهد.
+            کاربر مدل‌ها را به همین ترتیب از بالا به پایین می‌بیند. جابه‌جایی در یک
+            نوع، جای مدل‌های نوع‌های دیگر را تغییر نمی‌دهد.
           </DialogDescription>
         </DialogHeader>
 
@@ -143,7 +143,7 @@ function OrderList({
 
   if (isLoading || error) {
     return (
-      <p className="text-muted-foreground py-6 text-center text-sm">
+      <p className="py-6 text-center text-sm text-muted-foreground">
         {error
           ? "بارگذاری مدل‌ها ناموفق بود."
           : t("common.loading", { defaultValue: "در حال بارگذاری..." })}
@@ -154,7 +154,7 @@ function OrderList({
   return (
     <>
       {rows.length === 0 ? (
-        <p className="text-muted-foreground py-6 text-center text-sm">
+        <p className="py-6 text-center text-sm text-muted-foreground">
           مدلی از این نوع وجود ندارد.
         </p>
       ) : (
@@ -162,16 +162,16 @@ function OrderList({
           {rows.map((model, index) => (
             <li
               key={model.uuid}
-              className="bg-card flex items-center gap-3 rounded-lg border p-2.5"
+              className="flex items-center gap-3 rounded-lg border bg-card p-2.5"
             >
-              <span className="bg-muted text-muted-foreground flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-bold">
+              <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-bold text-muted-foreground">
                 {(index + 1).toLocaleString("fa-IR")}
               </span>
               <div className="min-w-0 flex-1">
-                <div className="text-foreground truncate text-sm font-semibold">
+                <div className="truncate text-sm font-semibold text-foreground">
                   {model.display_name || model.name}
                 </div>
-                <code className="text-muted-foreground font-mono text-[11px]">
+                <code className="font-mono text-[11px] text-muted-foreground">
                   {model.name}
                 </code>
               </div>

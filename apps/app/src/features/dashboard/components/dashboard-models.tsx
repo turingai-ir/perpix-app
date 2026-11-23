@@ -52,7 +52,7 @@ export function DashboardModels({ isLoading, models }: DashboardModelsProps) {
                 to={path}
                 className={DASHBOARD_MODEL_CARD_CLASS}
               >
-                <span className="border-foreground/9 bg-night/22 inset-shadow-highlight-sm shadow-overlay flex size-11 flex-none items-center justify-center overflow-hidden rounded-lg border">
+                <span className="flex size-11 flex-none items-center justify-center overflow-hidden rounded-lg border border-foreground/9 bg-night/22 shadow-overlay inset-shadow-highlight-sm">
                   {model.icon_url ? (
                     <img
                       src={model.icon_url}
@@ -62,20 +62,20 @@ export function DashboardModels({ isLoading, models }: DashboardModelsProps) {
                       className="h-full w-full object-cover"
                     />
                   ) : (
-                    <OutputIcon className="text-accent-pink h-5 w-5" />
+                    <OutputIcon className="h-5 w-5 text-accent-pink" />
                   )}
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="text-foreground block truncate text-sm font-semibold">
+                  <span className="block truncate text-sm font-semibold text-foreground">
                     {model.display_name || model.name}
                   </span>
-                  <span className="text-muted-foreground mt-1 block truncate text-xs">
+                  <span className="mt-1 block truncate text-xs text-muted-foreground">
                     {t("pages.root.dashboard.models.fromPrice", {
                       price: minimumCost,
                     })}
                   </span>
                 </span>
-                <ArrowUpLeft className="text-muted-foreground group-hover:text-foreground h-4 w-4 transition" />
+                <ArrowUpLeft className="h-4 w-4 text-muted-foreground transition group-hover:text-foreground" />
               </Link>
             );
           })}

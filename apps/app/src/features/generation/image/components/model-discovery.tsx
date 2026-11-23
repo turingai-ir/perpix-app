@@ -53,7 +53,7 @@ export const ImageModelDiscovery: FC<ImageModelDiscoveryProps> = ({
             aria-label={t("common.chooseModel")}
             onPointerDown={handlePointerDown}
             onKeyDown={handleKeyDown}
-            className="bg-muted/40 hover:bg-muted/60 h-11 w-full max-w-full justify-start gap-3 rounded-xl px-3 transition-colors"
+            className="h-11 w-full max-w-full justify-start gap-3 rounded-xl bg-muted/40 px-3 transition-colors hover:bg-muted/60"
           />
         }
       >
@@ -69,7 +69,7 @@ export const ImageModelDiscovery: FC<ImageModelDiscoveryProps> = ({
         <span dir="ltr" className="min-w-0 flex-1 truncate text-start">
           {selected?.display_name ?? selected?.name ?? t("common.chooseModel")}
         </span>
-        <ChevronDown className="text-muted-foreground size-4 shrink-0" />
+        <ChevronDown className="size-4 shrink-0 text-muted-foreground" />
       </PopoverTrigger>
       <PopoverContent
         ref={popoverRef}
@@ -81,7 +81,7 @@ export const ImageModelDiscovery: FC<ImageModelDiscoveryProps> = ({
         initialFocus={() =>
           openedWithTouch.current ? popoverRef.current : true
         }
-        className="border-border max-h-(--available-height) w-[min(460px,calc(100vw-2rem))] overflow-hidden rounded-2xl border p-1.5 shadow-2xl"
+        className="max-h-(--available-height) w-[min(460px,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-border p-1.5 shadow-2xl"
       >
         <Command className="h-auto min-h-0">
           <CommandInput
@@ -109,9 +109,9 @@ export const ImageModelDiscovery: FC<ImageModelDiscoveryProps> = ({
                   value={`${item.display_name} ${item.name}`}
                   disabled={disabled}
                   onSelect={() => handleSelectModel(item.uuid)}
-                  className="data-[selected=true]:border-primary/30 data-[selected=true]:bg-primary/5 my-1 cursor-pointer gap-3 rounded-xl border border-transparent p-3"
+                  className="my-1 cursor-pointer gap-3 rounded-xl border border-transparent p-3 data-[selected=true]:border-primary/30 data-[selected=true]:bg-primary/5"
                 >
-                  <span className="bg-muted flex size-11 shrink-0 items-center justify-center rounded-xl">
+                  <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-muted">
                     <ImageModelLogo
                       name={item.name}
                       displayName={item.display_name}
@@ -122,13 +122,13 @@ export const ImageModelDiscovery: FC<ImageModelDiscoveryProps> = ({
                     <span dir="ltr" className="block text-start font-semibold">
                       {item.display_name ?? item.name}
                     </span>
-                    <span className="text-muted-foreground mt-1 block text-xs leading-5 sm:whitespace-nowrap">
+                    <span className="mt-1 block text-xs leading-5 text-muted-foreground sm:whitespace-nowrap">
                       {t(
                         `pages.generation.image.studio.modelStrengths.${strength}`,
                       )}
                     </span>
                     {!allowed && (
-                      <span className="text-muted-foreground flex items-center gap-1 text-xs">
+                      <span className="flex items-center gap-1 text-xs text-muted-foreground">
                         <LockKeyhole className="size-3" />
                         {t("common.upgradeRequired")}
                       </span>
@@ -136,7 +136,7 @@ export const ImageModelDiscovery: FC<ImageModelDiscoveryProps> = ({
                   </span>
                   {active && (
                     <Check
-                      className="text-primary size-4 shrink-0"
+                      className="size-4 shrink-0 text-primary"
                       aria-label={t("pages.generation.image.studio.selected")}
                     />
                   )}

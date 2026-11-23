@@ -39,9 +39,9 @@ const ProfileText: FC<ProfileTextProps> = ({ title, subtitle, badge }) => (
     <span className="w-full truncate text-xs font-bold">{title}</span>
     <small
       className={cn(
-        "text-muted-foreground w-full truncate text-xs",
+        "w-full truncate text-xs text-muted-foreground",
         badge &&
-          "border-primary/25 bg-primary/13 text-primary w-fit max-w-full rounded-full border px-2 py-0.5",
+          "w-fit max-w-full rounded-full border border-primary/25 bg-primary/13 px-2 py-0.5 text-primary",
       )}
     >
       {subtitle}
@@ -76,7 +76,7 @@ const AppLayoutSidebarUserProfileMenu: FC<UserProfileMenuProps> = ({
             size="lg"
             className={cn(
               GLASS_PRESS_CLASS,
-              "group/profile border-primary/20 from-primary/13 text-foreground [&_[data-slot=avatar]]:border-primary/30 [&_[data-slot=avatar]]:bg-primary/14 inset-shadow-highlight shadow-overlay h-auto min-h-14 w-full justify-start gap-3 rounded-2xl border bg-linear-120 to-(--video-accent-soft) px-2.5 py-2 backdrop-blur-lg [&_[data-slot=avatar]]:border",
+              "group/profile h-auto min-h-14 w-full justify-start gap-3 rounded-2xl border border-primary/20 bg-linear-120 from-primary/13 to-(--video-accent-soft) px-2.5 py-2 text-foreground shadow-overlay inset-shadow-highlight backdrop-blur-lg [&_[data-slot=avatar]]:border [&_[data-slot=avatar]]:border-primary/30 [&_[data-slot=avatar]]:bg-primary/14",
             )}
           />
         }
@@ -87,21 +87,21 @@ const AppLayoutSidebarUserProfileMenu: FC<UserProfileMenuProps> = ({
           subtitle={planName}
         />
         <ChevronsUpDown
-          className="text-muted-foreground size-4 flex-none transition-transform duration-200 group-data-popup-open/profile:rotate-180 motion-reduce:transition-none"
+          className="size-4 flex-none text-muted-foreground transition-transform duration-200 group-data-popup-open/profile:rotate-180 motion-reduce:transition-none"
           aria-hidden="true"
         />
       </DropdownMenuTrigger>
       <DropdownMenuContent
         positionerClassName="z-70"
-        className="border-primary/25 shadow-modal z-70 w-(--anchor-width) min-w-56 rounded-2xl border bg-[radial-gradient(circle_at_85%_0%,var(--ambient-brand),transparent_58%)] p-2 backdrop-blur-xl"
+        className="z-70 w-(--anchor-width) min-w-56 rounded-2xl border border-primary/25 bg-[radial-gradient(circle_at_85%_0%,var(--ambient-brand),transparent_58%)] p-2 shadow-modal backdrop-blur-xl"
         side="top"
         align="end"
         sideOffset={8}
         finalFocus={!isIosGuideOpen}
       >
         <DropdownMenuGroup>
-          <DropdownMenuLabel className="border-primary/12 from-primary/13 rounded-xl border bg-linear-110 to-(--video-accent-soft) p-2.5">
-            <div className="[&_[data-slot=avatar]]:border-primary/30 [&_[data-slot=avatar]]:bg-primary/14 flex items-center gap-2.5 [&_[data-slot=avatar]]:border">
+          <DropdownMenuLabel className="rounded-xl border border-primary/12 bg-linear-110 from-primary/13 to-(--video-accent-soft) p-2.5">
+            <div className="flex items-center gap-2.5 [&_[data-slot=avatar]]:border [&_[data-slot=avatar]]:border-primary/30 [&_[data-slot=avatar]]:bg-primary/14">
               <AppLayoutSidebarUserAvatar />
               <ProfileText
                 title={t("pages.app.layout.sidebar.user.membership")}
@@ -148,7 +148,7 @@ const AppLayoutSidebarUserProfileMenu: FC<UserProfileMenuProps> = ({
           <DropdownMenuItem
             className={cn(
               MENU_ITEM_CLASS,
-              "text-destructive data-highlighted:bg-destructive/12 [&_[data-slot=icon-tile]]:border-destructive/25 [&_[data-slot=icon-tile]]:bg-destructive/10 [&_[data-slot=icon-tile]]:text-destructive mt-1",
+              "mt-1 text-destructive data-highlighted:bg-destructive/12 [&_[data-slot=icon-tile]]:border-destructive/25 [&_[data-slot=icon-tile]]:bg-destructive/10 [&_[data-slot=icon-tile]]:text-destructive",
             )}
             disabled={isSignOutPending}
             onClick={handleSignOut}

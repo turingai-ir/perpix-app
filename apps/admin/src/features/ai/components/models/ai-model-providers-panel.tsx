@@ -112,17 +112,17 @@ export function AiModelProvidersPanel({
       <CardHeader className="flex flex-row items-center justify-between gap-3">
         <div>
           <CardTitle className="flex items-center gap-2 text-base">
-            <Layers className="text-primary size-4" />
+            <Layers className="size-4 text-primary" />
             {t("features.ai.models.providersTitle", {
               defaultValue: "ارائه‌دهندگان مدل",
             })}
             <Badge variant="muted">{orderedLinks.length}</Badge>
           </CardTitle>
-          <p className="text-muted-foreground mt-1 text-xs">
-            برای هر حالت، درخواست به بالاترین ردیفی می‌رود که هم فعال باشد و هم
-            آن حالت در «حالت‌های Workflow»ش روشن باشد. اتصالی که حالتش خاموش است
-            در اولویت‌بندی نادیده گرفته می‌شود و اگر هیچ اتصالی روشن نباشد،
-            درخواست رد می‌شود.
+          <p className="mt-1 text-xs text-muted-foreground">
+            برای هر حالت، درخواست به بالاترین ردیفی می‌رود که هم فعال باشد و هم آن
+            حالت در «حالت‌های Workflow»ش روشن باشد. اتصالی که حالتش خاموش است در
+            اولویت‌بندی نادیده گرفته می‌شود و اگر هیچ اتصالی روشن نباشد، درخواست
+            رد می‌شود.
           </p>
         </div>
         <Button
@@ -137,7 +137,7 @@ export function AiModelProvidersPanel({
 
       <CardContent>
         {orderedLinks.length === 0 ? (
-          <div className="text-muted-foreground flex flex-col items-center gap-2 rounded-lg border border-dashed py-10 text-sm">
+          <div className="flex flex-col items-center gap-2 rounded-lg border border-dashed py-10 text-sm text-muted-foreground">
             <Plug className="size-6" />
             این مدل هنوز به هیچ ارائه‌دهنده‌ای متصل نیست.
           </div>
@@ -149,21 +149,21 @@ export function AiModelProvidersPanel({
               return (
                 <li
                   key={link.provider_uuid}
-                  className="bg-card flex flex-wrap items-center gap-3 rounded-lg border p-3"
+                  className="flex flex-wrap items-center gap-3 rounded-lg border bg-card p-3"
                 >
-                  <span className="bg-muted text-muted-foreground flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-bold">
+                  <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-bold text-muted-foreground">
                     {index + 1}
                   </span>
 
                   <div className="min-w-0 flex-1 space-y-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-foreground text-sm font-semibold">
+                      <span className="text-sm font-semibold text-foreground">
                         {provider?.display_name ||
                           provider?.name ||
                           link.provider_uuid.slice(0, 8)}
                       </span>
                       {provider?.display_name && (
-                        <code className="text-muted-foreground font-mono text-[11px]">
+                        <code className="font-mono text-[11px] text-muted-foreground">
                           {provider.name}
                         </code>
                       )}
@@ -176,7 +176,7 @@ export function AiModelProvidersPanel({
                           <Badge variant="default">اولویت اول</Badge>
                         )}
                     </div>
-                    <div className="text-muted-foreground flex flex-wrap items-center gap-1.5 text-[11px]">
+                    <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-muted-foreground">
                       <span dir="ltr">priority: {link.priority}</span>
                       {Array.from(link.workflow_modes ?? []).map((mode) => (
                         <Badge

@@ -78,7 +78,7 @@ export function ConfirmDialog({
         <DialogHeader>
           <div className="flex items-center gap-3">
             {variant === "destructive" && (
-              <span className="bg-destructive/15 text-destructive flex size-9 shrink-0 items-center justify-center rounded-xl">
+              <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-destructive/15 text-destructive">
                 <AlertTriangle className="size-5" />
               </span>
             )}
@@ -94,7 +94,7 @@ export function ConfirmDialog({
             <div className="space-y-1.5">
               <label
                 htmlFor="confirm-reason"
-                className="text-foreground text-xs font-medium"
+                className="text-xs font-medium text-foreground"
               >
                 {reasonLabel ||
                   t("common.confirmDialog.reasonLabel", {
@@ -117,10 +117,10 @@ export function ConfirmDialog({
           )}
 
           {confirmRequirement && (
-            <div className="border-destructive/20 bg-destructive/5 space-y-1.5 rounded-xl border p-3">
+            <div className="space-y-1.5 rounded-xl border border-destructive/20 bg-destructive/5 p-3">
               <label
                 htmlFor="confirm-requirement"
-                className="text-destructive text-xs font-medium"
+                className="text-xs font-medium text-destructive"
               >
                 {confirmRequirement.promptLabel}
               </label>

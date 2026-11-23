@@ -14,9 +14,9 @@ export function PasswordSecurity() {
       className="grid grid-cols-1 overflow-hidden md:grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)]"
       aria-labelledby="password-security-title"
     >
-      <div className="text-night-foreground inset-shadow-highlight relative overflow-hidden bg-[radial-gradient(ellipse_at_100%_0,rgb(205_126_245/22%),transparent_58%),linear-gradient(145deg,oklch(0.2_0.07_295/93%),oklch(0.28_0.05_230/82%))] p-6 sm:p-8">
+      <div className="relative overflow-hidden bg-[radial-gradient(ellipse_at_100%_0,rgb(205_126_245/22%),transparent_58%),linear-gradient(145deg,oklch(0.2_0.07_295/93%),oklch(0.28_0.05_230/82%))] p-6 text-night-foreground inset-shadow-highlight sm:p-8">
         <span
-          className="border-night-foreground/24 bg-night-foreground/9 inset-shadow-highlight-lg relative z-1 grid size-14 place-items-center rounded-2xl border"
+          className="relative z-1 grid size-14 place-items-center rounded-2xl border border-night-foreground/24 bg-night-foreground/9 inset-shadow-highlight-lg"
           aria-hidden="true"
         >
           <LockKeyhole className="size-6" strokeWidth={1.7} />
@@ -28,17 +28,17 @@ export function PasswordSecurity() {
           >
             {t("features.auth.changePassword.title")}
           </h2>
-          <p className="text-night-foreground/80 mt-3 text-sm leading-7">
+          <p className="mt-3 text-sm leading-7 text-night-foreground/80">
             {t("features.auth.changePassword.description")}
           </p>
         </div>
         <KeyRound
           aria-hidden="true"
-          className="text-night-foreground/8 absolute -bottom-10 -left-10 size-52 -rotate-24"
+          className="absolute -bottom-10 -left-10 size-52 -rotate-24 text-night-foreground/8"
           strokeWidth={0.6}
         />
       </div>
-      <div className="border-primary/16 bg-card/60 [&_[data-slot=input]]:bg-muted/38 [&_[data-slot=input]]:inset-shadow-highlight-sm min-w-0 border-t bg-[radial-gradient(ellipse_at_5%_5%,var(--ambient-brand),transparent_58%),radial-gradient(ellipse_at_90%_110%,var(--ambient-media),transparent_58%)] p-6 sm:p-8 md:border-s md:border-t-0 [&_[data-slot=input]]:h-12 [&_[data-slot=input]]:rounded-lg [&_[data-slot=input]]:border-[color-mix(in_srgb,var(--primary)_15%,var(--border))]">
+      <div className="min-w-0 border-t border-primary/16 bg-card/60 bg-[radial-gradient(ellipse_at_5%_5%,var(--ambient-brand),transparent_58%),radial-gradient(ellipse_at_90%_110%,var(--ambient-media),transparent_58%)] p-6 sm:p-8 md:border-s md:border-t-0 [&_[data-slot=input]]:h-12 [&_[data-slot=input]]:rounded-lg [&_[data-slot=input]]:border-[color-mix(in_srgb,var(--primary)_15%,var(--border))] [&_[data-slot=input]]:bg-muted/38 [&_[data-slot=input]]:inset-shadow-highlight-sm">
         <ChangePasswordForm />
       </div>
     </SettingsPanel>

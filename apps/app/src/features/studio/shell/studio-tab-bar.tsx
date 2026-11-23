@@ -12,7 +12,7 @@ export const StudioTabBar: FC = () => {
   return (
     <nav
       aria-label={t("features.studio.shell.tabs.label")}
-      className="bg-background/95 flex shrink-0 border-t pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden"
+      className="flex shrink-0 border-t bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden"
     >
       {STUDIO_TABS.map(({ to, labelKey, icon: Icon, end }) => (
         <NavLink
@@ -22,7 +22,7 @@ export const StudioTabBar: FC = () => {
           replace
           className={({ isActive }) =>
             cn(
-              "focus-visible:ring-ring flex min-h-14 flex-1 flex-col items-center justify-center gap-1 text-xs font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset active:scale-[0.97]",
+              "flex min-h-14 flex-1 flex-col items-center justify-center gap-1 text-xs font-medium transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-inset active:scale-[0.97]",
               isActive ? "text-primary" : "text-muted-foreground",
             )
           }

@@ -29,20 +29,20 @@ export const ProjectCard: FC<ProjectCardProps> = ({
   const warning = days <= EXPIRY_WARNING_DAYS;
 
   return (
-    <li className="bg-card hover-capable:hover:border-primary/40 flex items-center gap-1 rounded-2xl border p-1.5 transition-colors">
+    <li className="hover-capable:hover:border-primary/40 flex items-center gap-1 rounded-2xl border bg-card p-1.5 transition-colors">
       <button
         type="button"
         onClick={() => onOpen(project)}
-        className="focus-visible:ring-ring flex min-h-16 min-w-0 flex-1 cursor-pointer items-center gap-3 rounded-xl p-1.5 text-start transition-transform focus-visible:ring-2 focus-visible:outline-none active:scale-[0.98]"
+        className="flex min-h-16 min-w-0 flex-1 cursor-pointer items-center gap-3 rounded-xl p-1.5 text-start transition-transform focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none active:scale-[0.98]"
       >
-        <span className="bg-muted text-muted-foreground flex aspect-[9/16] h-14 shrink-0 items-center justify-center rounded-lg">
+        <span className="flex aspect-[9/16] h-14 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
           <Clapperboard className="size-5" aria-hidden />
         </span>
         <span className="flex min-w-0 flex-1 flex-col gap-1">
           <span className="truncate text-sm font-semibold">
             {project.title}
           </span>
-          <span className="text-muted-foreground flex items-center gap-2 text-xs">
+          <span className="flex items-center gap-2 text-xs text-muted-foreground">
             <span>{relativeTime(project.updated_at, now)}</span>
             <span
               className={cn(

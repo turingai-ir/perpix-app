@@ -7,9 +7,9 @@ export const GalleryState: FC<{
   icon: ReactNode;
   title: string;
 }> = ({ description, icon, title }) => (
-  <div className="text-muted-foreground flex min-h-80 w-full flex-col items-center justify-center gap-2 rounded-lg border border-dashed p-6 text-center">
+  <div className="flex min-h-80 w-full flex-col items-center justify-center gap-2 rounded-lg border border-dashed p-6 text-center text-muted-foreground">
     {icon}
-    <div className="text-foreground text-sm font-medium">{title}</div>
+    <div className="text-sm font-medium text-foreground">{title}</div>
     <Muted className="max-w-md">{description}</Muted>
   </div>
 );

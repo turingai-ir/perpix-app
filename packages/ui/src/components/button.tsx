@@ -7,13 +7,14 @@ import { cn } from "@perpix/ui/lib/utils";
  * plain = text-only. Coarse pointers get 44px+ targets; tap feedback via `pressable`.
  */
 const buttonVariants = cva(
-  "pressable focus-ring relative inline-flex shrink-0 items-center justify-center gap-2 rounded-control text-body font-semibold whitespace-nowrap select-none transition-[filter,background-color] duration-(--duration-press) data-disabled:pointer-events-none data-disabled:opacity-45 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4.5",
+  "relative inline-flex shrink-0 pressable items-center justify-center gap-2 rounded-control text-body font-semibold whitespace-nowrap focus-ring transition-[filter,background-color] duration-(--duration-press) select-none data-disabled:pointer-events-none data-disabled:opacity-45 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4.5",
   {
     variants: {
       variant: {
         glass: "glass hover:brightness-105",
         tinted: "glass-tinted hover:brightness-110",
-        destructive: "glass-tinted glass-tint-destructive text-destructive-foreground hover:brightness-110",
+        destructive:
+          "glass-tinted text-destructive-foreground glass-tint-destructive hover:brightness-110",
         plain: "text-primary hover:bg-foreground/6",
       },
       size: {

@@ -60,7 +60,7 @@ export function ImageSettingsFields({
               {changed && (
                 <Badge
                   variant="outline"
-                  className="border-primary/28 text-foreground h-auto rounded-md bg-[color-mix(in_srgb,var(--primary)_18%,var(--card))] px-1.5 py-0.5"
+                  className="h-auto rounded-md border-primary/28 bg-[color-mix(in_srgb,var(--primary)_18%,var(--card))] px-1.5 py-0.5 text-foreground"
                 >
                   {t("pages.generation.image.studio.settings.changed")}
                 </Badge>
@@ -89,8 +89,8 @@ export function ImageSettingsFields({
           className={SETTINGS_CARD_CLASS}
           aria-label={t("pages.generation.image.studio.settings.basic")}
         >
-          <h3 className="text-subhead mb-4 flex items-center gap-2 font-semibold text-[color-mix(in_srgb,var(--foreground)_92%,var(--primary))]">
-            <Sparkles aria-hidden="true" className="text-primary size-4" />
+          <h3 className="mb-4 flex items-center gap-2 text-subhead font-semibold text-[color-mix(in_srgb,var(--foreground)_92%,var(--primary))]">
+            <Sparkles aria-hidden="true" className="size-4 text-primary" />
             {t("pages.generation.image.studio.settings.basic")}
           </h3>
           <div className="flex flex-col gap-3">
@@ -104,7 +104,7 @@ export function ImageSettingsFields({
           onOpenChange={onProfessionalOpenChange}
           className={SETTINGS_CARD_CLASS}
         >
-          <CollapsibleTrigger className="group/disclosure bg-background/70 hover-capable:hover:border-[color-mix(in_srgb,var(--foreground)_22%,var(--border))] focus-visible:outline-ring contrast-more:border-foreground flex min-h-12 w-full cursor-pointer items-center gap-2.5 rounded-xl border border-[color-mix(in_srgb,var(--foreground)_12%,var(--border))] px-2.5 py-2 text-start font-semibold transition-[border-color,background-color] duration-200 focus-visible:outline-2 focus-visible:outline-offset-4 data-panel-open:border-[color-mix(in_srgb,var(--primary)_40%,var(--border))] data-panel-open:bg-[color-mix(in_srgb,var(--primary)_9%,var(--background))] motion-reduce:transition-none">
+          <CollapsibleTrigger className="group/disclosure hover-capable:hover:border-[color-mix(in_srgb,var(--foreground)_22%,var(--border))] flex min-h-12 w-full cursor-pointer items-center gap-2.5 rounded-xl border border-[color-mix(in_srgb,var(--foreground)_12%,var(--border))] bg-background/70 px-2.5 py-2 text-start font-semibold transition-[border-color,background-color] duration-200 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring data-panel-open:border-[color-mix(in_srgb,var(--primary)_40%,var(--border))] data-panel-open:bg-[color-mix(in_srgb,var(--primary)_9%,var(--background))] motion-reduce:transition-none contrast-more:border-foreground">
             <SlidersHorizontal
               aria-hidden="true"
               className="size-4 flex-none"
@@ -117,7 +117,7 @@ export function ImageSettingsFields({
               className="ms-auto size-4 flex-none transition-transform duration-200 group-data-panel-open/disclosure:rotate-180 motion-reduce:transition-none"
             />
           </CollapsibleTrigger>
-          <p className="text-muted-foreground mx-2.5 mt-2.5 mb-4 text-xs leading-loose">
+          <p className="mx-2.5 mt-2.5 mb-4 text-xs leading-loose text-muted-foreground">
             {t("pages.generation.image.studio.settings.professionalHint")}
           </p>
           <CollapsibleContent>

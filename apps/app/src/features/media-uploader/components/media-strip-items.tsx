@@ -73,7 +73,7 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
   return (
     <div
       className={cn(
-        "group bg-background relative flex shrink-0 items-center justify-center overflow-hidden rounded-lg border",
+        "group relative flex shrink-0 items-center justify-center overflow-hidden rounded-lg border bg-background",
         presentation === "composer"
           ? "size-20"
           : presentation === "video-dock"
@@ -91,7 +91,7 @@ export const MediaPreviewItem: FC<MediaPreviewItemProps> = ({
               render={
                 <button
                   type="button"
-                  className="focus-visible:ring-primary/60 size-full overflow-hidden rounded-lg outline-none focus-visible:ring-2"
+                  className="size-full overflow-hidden rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
                   aria-label={t(
                     presentation === "video-dock"
                       ? `features.mediaUploader.videoDock.preview.${previewType}`
@@ -215,7 +215,7 @@ export const LocalMediaPreviewItem: FC<LocalMediaPreviewItemProps> = ({
   return (
     <div
       className={cn(
-        "group bg-background relative flex shrink-0 items-center justify-center overflow-hidden rounded-lg border",
+        "group relative flex shrink-0 items-center justify-center overflow-hidden rounded-lg border bg-background",
         presentation === "composer"
           ? "size-20"
           : presentation === "video-dock"
@@ -239,7 +239,7 @@ export const LocalMediaPreviewItem: FC<LocalMediaPreviewItemProps> = ({
       {previewType === "audio" ? <AudioPreviewButton file={item.file} /> : null}
 
       {isUploading && (
-        <div className="bg-night/45 text-night-foreground absolute inset-0 z-10 flex flex-col items-center justify-center gap-1 backdrop-blur-[1px]">
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-1 bg-night/45 text-night-foreground backdrop-blur-[1px]">
           <LoaderCircle className="h-5 w-5 animate-spin" />
           <span className="text-caption font-medium whitespace-nowrap">
             {t("common.uploading")}
@@ -248,10 +248,10 @@ export const LocalMediaPreviewItem: FC<LocalMediaPreviewItemProps> = ({
       )}
 
       {isError && (
-        <div className="bg-background/85 absolute inset-0 z-10 flex flex-col items-center justify-center gap-1 p-2 text-center backdrop-blur-[1px]">
-          <AlertCircle className="text-destructive h-5 w-5" />
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-1 bg-background/85 p-2 text-center backdrop-blur-[1px]">
+          <AlertCircle className="h-5 w-5 text-destructive" />
           <span
-            className="text-destructive text-caption whitespace-normal"
+            className="text-caption whitespace-normal text-destructive"
             title={t(item.errorKey ?? "common.error")}
           >
             {t("common.error")}

@@ -48,9 +48,9 @@ export const UserFileCard: FC<UserFileCardProps> = ({
       type="button"
       aria-pressed={isSelected}
       className={cn(
-        "group focus-visible:ring-ring/50 bg-background relative flex min-w-0 flex-col overflow-hidden rounded-lg border text-start transition-colors outline-none focus-visible:ring-3 disabled:cursor-default",
+        "group relative flex min-w-0 flex-col overflow-hidden rounded-lg border bg-background text-start transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-default",
         isSelected
-          ? "border-primary ring-primary/20 ring-2"
+          ? "border-primary ring-2 ring-primary/20"
           : "hover:border-primary/40",
       )}
       disabled={
@@ -58,7 +58,7 @@ export const UserFileCard: FC<UserFileCardProps> = ({
       }
       onClick={() => onSelect(file.uuid)}
     >
-      <div className="bg-muted relative aspect-square w-full overflow-hidden">
+      <div className="relative aspect-square w-full overflow-hidden bg-muted">
         {!isPreviewError && previewUrl && previewType === "image" ? (
           <img
             loading="lazy"
@@ -80,7 +80,7 @@ export const UserFileCard: FC<UserFileCardProps> = ({
 
         {!isPreviewError && previewUrl && previewType === "audio" ? (
           <div className="flex h-full w-full items-center justify-center">
-            <FileAudio className="text-muted-foreground h-8 w-8" />
+            <FileAudio className="h-8 w-8 text-muted-foreground" />
           </div>
         ) : null}
 
@@ -95,7 +95,7 @@ export const UserFileCard: FC<UserFileCardProps> = ({
         <span
           aria-hidden="true"
           className={cn(
-            "bg-primary text-primary-foreground pointer-events-none absolute top-2 right-2 flex h-6 w-6 items-center justify-center rounded-full motion-safe:transition-opacity motion-safe:duration-150",
+            "pointer-events-none absolute top-2 right-2 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground motion-safe:transition-opacity motion-safe:duration-150",
             isSelected ? "opacity-100" : "opacity-0",
           )}
         >
@@ -104,7 +104,7 @@ export const UserFileCard: FC<UserFileCardProps> = ({
       </div>
       <div className="flex min-w-0 flex-col gap-0.5 p-2">
         <span className="truncate text-xs font-medium">{fileName}</span>
-        <span className="text-muted-foreground text-caption truncate">
+        <span className="truncate text-caption text-muted-foreground">
           {formatFileSize(file.file_size)}
         </span>
         <FileFacts file={file} forGeneration />
@@ -124,7 +124,7 @@ const UserFileFallback: FC<{ previewType: MediaPreviewType }> = ({
         : ImageIcon;
 
   return (
-    <div className="text-muted-foreground flex h-full w-full items-center justify-center">
+    <div className="flex h-full w-full items-center justify-center text-muted-foreground">
       <Icon className="h-8 w-8 opacity-60" />
     </div>
   );

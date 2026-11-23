@@ -75,7 +75,7 @@ export const GenerationPromptBox: FC<GenerationPromptBoxProps> = ({
       data-generation-composer-card
       className={
         primaryActionLabel
-          ? "border-night-foreground/10 bg-night/88 shadow-modal ring-night-foreground/5 supports-[backdrop-filter]:bg-night/72 w-full min-w-0 rounded-3xl border p-4 ring-1 backdrop-blur-2xl sm:p-5"
+          ? "w-full min-w-0 rounded-3xl border border-night-foreground/10 bg-night/88 p-4 shadow-modal ring-1 ring-night-foreground/5 backdrop-blur-2xl supports-[backdrop-filter]:bg-night/72 sm:p-5"
           : "w-full min-w-0 overflow-hidden px-2"
       }
     >
@@ -87,7 +87,7 @@ export const GenerationPromptBox: FC<GenerationPromptBoxProps> = ({
         >
           {primaryActionLabel && promptBox.composerIntentBlocked && (
             <div
-              className="border-primary/25 bg-primary/7 text-foreground rounded-xl border px-3 py-2 text-sm leading-6"
+              className="rounded-xl border border-primary/25 bg-primary/7 px-3 py-2 text-sm leading-6 text-foreground"
               role="status"
             >
               {t("pages.generation.image.chat.referenceNeedsModel")}
@@ -110,7 +110,7 @@ export const GenerationPromptBox: FC<GenerationPromptBoxProps> = ({
           {promptBox.isPromptFieldVisible && primaryActionLabel && (
             <div
               data-generation-prompt-surface
-              className="border-border/70 bg-muted/15 focus-within:border-primary/45 focus-within:bg-muted/25 focus-within:ring-primary/10 flex min-w-0 flex-wrap items-start gap-3 rounded-2xl border px-3 py-2 transition-colors focus-within:ring-2"
+              className="flex min-w-0 flex-wrap items-start gap-3 rounded-2xl border border-border/70 bg-muted/15 px-3 py-2 transition-colors focus-within:border-primary/45 focus-within:bg-muted/25 focus-within:ring-2 focus-within:ring-primary/10"
             >
               {extraContent?.({
                 dynamicForm: promptBox.dynamicForm,

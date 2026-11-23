@@ -27,7 +27,7 @@ export const ModelSelectItem = ({
       <span className="flex min-w-0 items-center gap-2">
         <span className="truncate">{model.display_name ?? model.name}</span>
         {!isAllowed && (
-          <span className="bg-warning/10 text-caption text-warning ms-auto inline-flex shrink-0 items-center gap-1 rounded-sm px-1.5 py-0.5">
+          <span className="ms-auto inline-flex shrink-0 items-center gap-1 rounded-sm bg-warning/10 px-1.5 py-0.5 text-caption text-warning">
             <Lock className="size-3" />
             {upgradeLabel}
           </span>

@@ -20,7 +20,7 @@ export function SubscriptionRequiredStep({
   return (
     <div className="space-y-6">
       <header className="pe-12">
-        <div className="bg-destructive/10 text-destructive mb-4 flex size-11 items-center justify-center rounded-2xl">
+        <div className="mb-4 flex size-11 items-center justify-center rounded-2xl bg-destructive/10 text-destructive">
           <AlertCircle aria-hidden="true" className="size-5" />
         </div>
         <WalletChargeTitle className="text-xl font-semibold">

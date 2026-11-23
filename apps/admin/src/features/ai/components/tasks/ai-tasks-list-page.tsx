@@ -126,7 +126,7 @@ export function AiTasksListPage() {
           <div className="space-y-0.5">
             <Link
               to={`/ai/tasks/${item.uuid}`}
-              className="text-primary font-mono text-xs font-semibold hover:underline"
+              className="font-mono text-xs font-semibold text-primary hover:underline"
             >
               {item.uuid}
             </Link>
@@ -148,7 +148,7 @@ export function AiTasksListPage() {
         cell: (item) => (
           <Link
             to={`/users/${item.user_uuid}`}
-            className="text-muted-foreground hover:text-foreground font-mono text-xs"
+            className="font-mono text-xs text-muted-foreground hover:text-foreground"
           >
             {item.user_uuid.slice(0, 8)}...
           </Link>
@@ -160,7 +160,7 @@ export function AiTasksListPage() {
           defaultValue: "تاریخ ثبت",
         }),
         cell: (item) => (
-          <span className="text-muted-foreground text-xs" dir="ltr">
+          <span className="text-xs text-muted-foreground" dir="ltr">
             {new Date(item.created_at).toLocaleString("fa-IR")}
           </span>
         ),
@@ -171,7 +171,7 @@ export function AiTasksListPage() {
           defaultValue: "آخرین بروزرسانی",
         }),
         cell: (item) => (
-          <span className="text-muted-foreground text-xs" dir="ltr">
+          <span className="text-xs text-muted-foreground" dir="ltr">
             {new Date(item.updated_at).toLocaleString("fa-IR")}
           </span>
         ),
@@ -209,7 +209,7 @@ export function AiTasksListPage() {
     <div className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-8 sm:py-8">
       {/* Header */}
       <div>
-        <div className="text-muted-foreground mb-1.5 flex items-center gap-2 text-xs">
+        <div className="mb-1.5 flex items-center gap-2 text-xs text-muted-foreground">
           <Bot aria-hidden="true" className="size-4" />
           <span>{t("overview.admin", { defaultValue: "پنل مدیریت" })}</span>
           <span>/</span>
@@ -221,12 +221,12 @@ export function AiTasksListPage() {
         </div>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-foreground text-xl font-bold tracking-tight sm:text-2xl">
+            <h1 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
               {t("features.ai.tasks.pageTitle", {
                 defaultValue: "مدیریت وظایف هوش مصنوعی",
               })}
             </h1>
-            <p className="text-muted-foreground mt-1 text-xs sm:text-sm">
+            <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
               {t("features.ai.tasks.pageDesc", {
                 defaultValue:
                   "مشاهده و بررسی صف وظایف پردازشی کاربران، پیام‌ها و گزارش‌های روزانه",
@@ -237,7 +237,7 @@ export function AiTasksListPage() {
       </div>
 
       {/* Tabs */}
-      <div className="border-border bg-card flex w-fit items-center gap-2 rounded-xl border p-1">
+      <div className="flex w-fit items-center gap-2 rounded-xl border border-border bg-card p-1">
         <Button
           variant={activeTab === "list" ? "default" : "ghost"}
           size="sm"
@@ -263,7 +263,7 @@ export function AiTasksListPage() {
       {activeTab === "list" && (
         <div className="space-y-4">
           {/* Filters Bar */}
-          <div className="bg-card flex flex-col gap-3 rounded-xl border p-4 shadow-sm sm:flex-row sm:items-center">
+          <div className="flex flex-col gap-3 rounded-xl border bg-card p-4 shadow-sm sm:flex-row sm:items-center">
             <div className="w-full sm:w-72">
               <SearchInput
                 value={search || ""}
@@ -355,11 +355,11 @@ export function AiTasksListPage() {
               </CardHeader>
               <CardContent>
                 {isReportsLoading ? (
-                  <div className="text-muted-foreground py-6 text-center text-sm">
+                  <div className="py-6 text-center text-sm text-muted-foreground">
                     در حال دریافت آمار...
                   </div>
                 ) : typesReport.length === 0 ? (
-                  <div className="text-muted-foreground py-6 text-center text-sm">
+                  <div className="py-6 text-center text-sm text-muted-foreground">
                     داده‌ای برای نمایش موجود نیست.
                   </div>
                 ) : (
@@ -395,11 +395,11 @@ export function AiTasksListPage() {
               </CardHeader>
               <CardContent>
                 {isReportsLoading ? (
-                  <div className="text-muted-foreground py-6 text-center text-sm">
+                  <div className="py-6 text-center text-sm text-muted-foreground">
                     در حال دریافت آمار...
                   </div>
                 ) : dailyReport.length === 0 ? (
-                  <div className="text-muted-foreground py-6 text-center text-sm">
+                  <div className="py-6 text-center text-sm text-muted-foreground">
                     داده‌ای برای نمایش موجود نیست.
                   </div>
                 ) : (
@@ -413,7 +413,7 @@ export function AiTasksListPage() {
                             className="flex items-center justify-between rounded-lg border p-2.5 text-xs"
                           >
                             <span
-                              className="text-muted-foreground font-mono"
+                              className="font-mono text-muted-foreground"
                               dir="ltr"
                             >
                               {b.key}

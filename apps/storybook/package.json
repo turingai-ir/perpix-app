@@ -5,13 +5,16 @@
   "scripts": {
     "dev": "storybook dev -p 6006",
     "build": "storybook build -o dist",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsrs --noEmit",
+    "lint": "oxlint .",
+    "lint:fix": "oxlint --fix .",
+    "format": "oxfmt --write .",
+    "format:check": "oxfmt --check ."
   },
   "devDependencies": {
     "@perpix/ui": "workspace:*",
     "@phosphor-icons/react": "^2.1.10",
     "@storybook/react-vite": "11.0.0-beta.3",
-    "@tailwindcss/vite": "^4.3.4",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "lucide-react": "^1.68.0",
@@ -19,7 +22,10 @@
     "react-dom": "^19.3.1",
     "storybook": "11.0.0-beta.3",
     "tailwindcss": "^4.3.4",
-    "typescript": "~6.0.3",
-    "vite": "^8.3.5"
+    "vite": "catalog:",
+    "@perpix/tooling": "workspace:*",
+    "oxlint": "catalog:",
+    "oxfmt": "catalog:",
+    "tsrs": "catalog:"
   }
 }

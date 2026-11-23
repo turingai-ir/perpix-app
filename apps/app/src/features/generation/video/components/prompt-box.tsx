@@ -53,7 +53,7 @@ export const GenerationVideoPromptBox: FC<Props> = (props) => {
 
   return (
     <div
-      className="border-border bg-card text-foreground [&_:is(button,input,textarea,summary):focus-visible]:outline-ring flex h-full min-h-0 flex-col overflow-hidden rounded-xl border max-[950px]:h-auto [&_:is(button,input,textarea,summary):focus-visible]:outline-2 [&_:is(button,input,textarea,summary):focus-visible]:outline-offset-3 [&_button]:touch-manipulation [&_form]:flex [&_form]:min-h-0 [&_form]:min-w-0 [&_form]:flex-1 [&_form]:flex-col [&_input]:text-base [&_textarea]:text-base"
+      className="flex h-full min-h-0 flex-col overflow-hidden rounded-xl border border-border bg-card text-foreground max-[950px]:h-auto [&_:is(button,input,textarea,summary):focus-visible]:outline-2 [&_:is(button,input,textarea,summary):focus-visible]:outline-offset-3 [&_:is(button,input,textarea,summary):focus-visible]:outline-ring [&_button]:touch-manipulation [&_form]:flex [&_form]:min-h-0 [&_form]:min-w-0 [&_form]:flex-1 [&_form]:flex-col [&_input]:text-base [&_textarea]:text-base"
       data-generation-composer-card
     >
       <Form {...dynamicForm.form}>
@@ -86,7 +86,7 @@ export const GenerationVideoPromptBox: FC<Props> = (props) => {
               />
             </div>
             {studio.isPromptFieldVisible && (
-              <div className="border-border bg-background focus-within:border-primary/60 [&_textarea]:caret-primary grid min-w-0 gap-2.5 rounded-lg border p-4 transition-[border-color,box-shadow] duration-150 focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--primary)_12%,transparent)] motion-reduce:transition-none [&_label]:text-xs [&_label]:leading-relaxed [&_textarea]:max-h-55 [&_textarea]:min-h-28 [&_textarea]:resize-y [&_textarea]:rounded-none [&_textarea]:border-0 [&_textarea]:bg-transparent [&_textarea]:px-0 [&_textarea]:pt-2.5 [&_textarea]:pb-0 [&_textarea]:leading-loose [&_textarea]:shadow-none [&_textarea:focus]:border-0 [&_textarea:focus]:shadow-none [&_textarea:focus-visible]:outline-0">
+              <div className="grid min-w-0 gap-2.5 rounded-lg border border-border bg-background p-4 transition-[border-color,box-shadow] duration-150 focus-within:border-primary/60 focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--primary)_12%,transparent)] motion-reduce:transition-none [&_label]:text-xs [&_label]:leading-relaxed [&_textarea]:max-h-55 [&_textarea]:min-h-28 [&_textarea]:resize-y [&_textarea]:rounded-none [&_textarea]:border-0 [&_textarea]:bg-transparent [&_textarea]:px-0 [&_textarea]:pt-2.5 [&_textarea]:pb-0 [&_textarea]:leading-loose [&_textarea]:caret-primary [&_textarea]:shadow-none [&_textarea:focus]:border-0 [&_textarea:focus]:shadow-none [&_textarea:focus-visible]:outline-0">
                 <PromptTextarea
                   dynamicForm={dynamicForm}
                   disabled={isFormBusy}

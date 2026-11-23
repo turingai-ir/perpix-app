@@ -88,7 +88,7 @@ export function DataTable<T>({
   return (
     <div
       className={cn(
-        "border-border bg-card overflow-hidden rounded-2xl border shadow-xs",
+        "overflow-hidden rounded-2xl border border-border bg-card shadow-xs",
         className,
       )}
     >
@@ -114,8 +114,8 @@ export function DataTable<T>({
             <TableRow>
               <TableCell colSpan={columns.length} className="h-56 text-center">
                 <div className="flex flex-col items-center justify-center gap-3">
-                  <Loader2 className="text-primary size-7 animate-spin" />
-                  <p className="text-muted-foreground text-sm">
+                  <Loader2 className="size-7 animate-spin text-primary" />
+                  <p className="text-sm text-muted-foreground">
                     {t("common.table.loading", {
                       defaultValue: "در حال بارگذاری داده‌ها...",
                     })}
@@ -127,16 +127,16 @@ export function DataTable<T>({
             <TableRow>
               <TableCell colSpan={columns.length} className="h-56 text-center">
                 <div className="flex flex-col items-center justify-center gap-3 p-4">
-                  <span className="bg-destructive/10 text-destructive flex size-12 items-center justify-center rounded-2xl">
+                  <span className="flex size-12 items-center justify-center rounded-2xl bg-destructive/10 text-destructive">
                     <ShieldAlert className="size-6" />
                   </span>
                   <div>
-                    <p className="text-foreground font-semibold">
+                    <p className="font-semibold text-foreground">
                       {t("common.fetchErrors.forbidden", {
                         defaultValue: "عدم دسترسی",
                       })}
                     </p>
-                    <p className="text-muted-foreground mt-1 text-xs">
+                    <p className="mt-1 text-xs text-muted-foreground">
                       {t("common.table.forbiddenHint", {
                         defaultValue:
                           "شما مجوزهای لازم برای مشاهده این اطلاعات را ندارید.",
@@ -150,11 +150,11 @@ export function DataTable<T>({
             <TableRow>
               <TableCell colSpan={columns.length} className="h-56 text-center">
                 <div className="flex flex-col items-center justify-center gap-3 p-4">
-                  <span className="bg-destructive/10 text-destructive flex size-12 items-center justify-center rounded-2xl">
+                  <span className="flex size-12 items-center justify-center rounded-2xl bg-destructive/10 text-destructive">
                     <AlertCircle className="size-6" />
                   </span>
                   <div>
-                    <p className="text-foreground font-medium">
+                    <p className="font-medium text-foreground">
                       {errorMessage ||
                         t("common.table.error", {
                           defaultValue: "خطا در دریافت اطلاعات",
@@ -181,10 +181,10 @@ export function DataTable<T>({
             <TableRow>
               <TableCell colSpan={columns.length} className="h-56 text-center">
                 <div className="flex flex-col items-center justify-center gap-3 p-4">
-                  <span className="bg-muted text-muted-foreground flex size-12 items-center justify-center rounded-2xl">
+                  <span className="flex size-12 items-center justify-center rounded-2xl bg-muted text-muted-foreground">
                     <Inbox className="size-6" />
                   </span>
-                  <p className="text-muted-foreground text-sm">
+                  <p className="text-sm text-muted-foreground">
                     {emptyMessage ||
                       t("common.table.empty", {
                         defaultValue: "موردی برای نمایش وجود ندارد",
@@ -212,8 +212,8 @@ export function DataTable<T>({
         !isLoading &&
         !isError &&
         !isForbidden && (
-          <div className="border-border bg-card/50 flex flex-wrap items-center justify-between gap-4 border-t px-4 py-3 text-xs sm:px-6">
-            <div className="text-muted-foreground flex items-center gap-2">
+          <div className="flex flex-wrap items-center justify-between gap-4 border-t border-border bg-card/50 px-4 py-3 text-xs sm:px-6">
+            <div className="flex items-center gap-2 text-muted-foreground">
               <span>
                 {t("common.table.showingItems", {
                   from: faNumber(currentStart),
@@ -250,7 +250,7 @@ export function DataTable<T>({
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="text-muted-foreground font-medium">
+              <span className="font-medium text-muted-foreground">
                 {t("common.table.pageOf", {
                   current: faNumber(pagination.page),
                   total: faNumber(totalPages),

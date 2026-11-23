@@ -107,8 +107,8 @@ export const ProjectsHome: FC = () => {
         <ErrorSection onRetry={() => void projects.refetch()} />
       ) : projects.data.length === 0 ? (
         <div className="flex h-full min-h-64 flex-col items-center justify-center gap-3 text-center">
-          <Clapperboard className="text-muted-foreground size-12" aria-hidden />
-          <p className="text-muted-foreground max-w-64 text-sm">
+          <Clapperboard className="size-12 text-muted-foreground" aria-hidden />
+          <p className="max-w-64 text-sm text-muted-foreground">
             {t("features.studio.projects.empty")}
           </p>
         </div>
@@ -127,7 +127,7 @@ export const ProjectsHome: FC = () => {
           </ul>
           <div ref={sentinel} className="flex h-10 items-center justify-center">
             {isFetchingNextPage && (
-              <Loader2 className="text-muted-foreground size-5 animate-spin" />
+              <Loader2 className="size-5 animate-spin text-muted-foreground" />
             )}
           </div>
         </>

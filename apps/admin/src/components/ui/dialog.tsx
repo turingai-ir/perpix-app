@@ -33,14 +33,14 @@ const DialogPopup = React.forwardRef<
       <DialogPrimitive.Popup
         ref={ref}
         className={cn(
-          "bg-card text-card-foreground border-border relative w-full max-w-lg rounded-2xl border p-6 shadow-xl transition-all duration-200 data-[ending-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0",
+          "relative w-full max-w-lg rounded-2xl border border-border bg-card p-6 text-card-foreground shadow-xl transition-all duration-200 data-[ending-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0",
           className,
         )}
         {...props}
       >
         {children}
         {showCloseButton && (
-          <DialogPrimitive.Close className="text-muted-foreground hover:text-foreground hover:bg-muted focus:ring-ring absolute top-4 left-4 rounded-md p-1 transition-colors focus:ring-2 focus:outline-none">
+          <DialogPrimitive.Close className="absolute top-4 left-4 rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus:ring-2 focus:ring-ring focus:outline-none">
             <X className="size-4" />
             <span className="sr-only">Close</span>
           </DialogPrimitive.Close>
@@ -100,7 +100,7 @@ const DialogDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Description
     ref={ref}
-    className={cn("text-muted-foreground text-sm", className)}
+    className={cn("text-sm text-muted-foreground", className)}
     {...props}
   />
 ));

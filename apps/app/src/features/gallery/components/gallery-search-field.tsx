@@ -12,9 +12,9 @@ export function GallerySearchField({
 }) {
   const { t } = useAppTranslate(APP_I18_KEYS.RESOURCES.MAIN);
   return (
-    <div className="border-foreground/10 bg-background/56 focus-within:border-primary/55 focus-within:bg-background/74 relative flex min-w-0 flex-1 items-center rounded-2xl border transition-[border-color,box-shadow,background-color] duration-160 focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--primary)_12%,transparent)] max-md:col-span-full">
+    <div className="relative flex min-w-0 flex-1 items-center rounded-2xl border border-foreground/10 bg-background/56 transition-[border-color,box-shadow,background-color] duration-160 focus-within:border-primary/55 focus-within:bg-background/74 focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--primary)_12%,transparent)] max-md:col-span-full">
       <Search
-        className="text-muted-foreground pointer-events-none absolute start-3 size-4"
+        className="pointer-events-none absolute start-3 size-4 text-muted-foreground"
         aria-hidden="true"
       />
       <input

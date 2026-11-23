@@ -9,7 +9,7 @@ export const AccountBlock: FC<ComponentProps<"section">> = ({
 }) => (
   <section
     className={cn(
-      "bg-night-foreground/6 rounded-xl p-4 shadow-[inset_0_0_0_1px_color-mix(in_oklch,var(--night-foreground)_8%,transparent)]",
+      "rounded-xl bg-night-foreground/6 p-4 shadow-[inset_0_0_0_1px_color-mix(in_oklch,var(--night-foreground)_8%,transparent)]",
       className,
     )}
     {...props}
@@ -22,7 +22,7 @@ export const AccountLabel: FC<ComponentProps<"small">> = ({
   ...props
 }) => (
   <small
-    className={cn("text-night-foreground/65 text-xs", className)}
+    className={cn("text-xs text-night-foreground/65", className)}
     {...props}
   />
 );
@@ -34,7 +34,7 @@ export const AccountUnit: FC<ComponentProps<"em">> = ({
 }) => (
   <em
     className={cn(
-      "text-night-foreground/65 text-xs font-semibold not-italic",
+      "text-xs font-semibold text-night-foreground/65 not-italic",
       className,
     )}
     {...props}

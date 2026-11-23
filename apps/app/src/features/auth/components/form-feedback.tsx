@@ -5,7 +5,7 @@ import { Button } from "@/shared/ui/button";
 
 export const FormAlert: FC<{ message: string | null }> = ({ message }) =>
   message ? (
-    <p role="alert" className="text-destructive text-sm">
+    <p role="alert" className="text-sm text-destructive">
       {message}
     </p>
   ) : null;

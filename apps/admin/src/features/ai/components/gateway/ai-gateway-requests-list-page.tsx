@@ -83,7 +83,7 @@ export function AiGatewayRequestsListPage() {
         cell: (item) => (
           <Link
             to={`/ai/gateway-requests/${item.uuid}`}
-            className="text-primary font-mono text-xs font-semibold hover:underline"
+            className="font-mono text-xs font-semibold text-primary hover:underline"
           >
             {item.uuid.slice(0, 8)}...
           </Link>
@@ -102,7 +102,7 @@ export function AiGatewayRequestsListPage() {
           defaultValue: "مدل",
         }),
         cell: (item) => (
-          <span className="text-foreground text-xs font-medium">
+          <span className="text-xs font-medium text-foreground">
             {item.model_name || item.model_uuid || "-"}
           </span>
         ),
@@ -113,7 +113,7 @@ export function AiGatewayRequestsListPage() {
           defaultValue: "ارائه‌دهنده",
         }),
         cell: (item) => (
-          <span className="text-muted-foreground font-mono text-xs">
+          <span className="font-mono text-xs text-muted-foreground">
             {item.provider_name || item.provider_uuid || "-"}
           </span>
         ),
@@ -158,7 +158,7 @@ export function AiGatewayRequestsListPage() {
           defaultValue: "زمان ثبت",
         }),
         cell: (item) => (
-          <span className="text-muted-foreground text-xs" dir="ltr">
+          <span className="text-xs text-muted-foreground" dir="ltr">
             {new Date(item.created_at).toLocaleString("fa-IR")}
           </span>
         ),
@@ -197,7 +197,7 @@ export function AiGatewayRequestsListPage() {
     <div className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-8 sm:py-8">
       {/* Header */}
       <div>
-        <div className="text-muted-foreground mb-1.5 flex items-center gap-2 text-xs">
+        <div className="mb-1.5 flex items-center gap-2 text-xs text-muted-foreground">
           <Cpu aria-hidden="true" className="size-4" />
           <span>{t("overview.admin", { defaultValue: "پنل مدیریت" })}</span>
           <span>/</span>
@@ -209,12 +209,12 @@ export function AiGatewayRequestsListPage() {
         </div>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-foreground text-xl font-bold tracking-tight sm:text-2xl">
+            <h1 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
               {t("features.ai.gateway.pageTitle", {
                 defaultValue: "درخواست‌های AI Gateway",
               })}
             </h1>
-            <p className="text-muted-foreground mt-1 text-xs sm:text-sm">
+            <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
               {t("features.ai.gateway.pageDesc", {
                 defaultValue:
                   "مدیریت و نظارت بر کلیه فراخوانی‌های Gateway به ارائه‌دهندگان هوش مصنوعی",
@@ -225,7 +225,7 @@ export function AiGatewayRequestsListPage() {
       </div>
 
       {/* Tabs */}
-      <div className="border-border bg-card flex w-fit items-center gap-2 rounded-xl border p-1">
+      <div className="flex w-fit items-center gap-2 rounded-xl border border-border bg-card p-1">
         <Button
           variant={activeTab === "list" ? "default" : "ghost"}
           size="sm"
@@ -253,7 +253,7 @@ export function AiGatewayRequestsListPage() {
       {activeTab === "list" && (
         <div className="space-y-4">
           {/* Filters Bar */}
-          <div className="bg-card flex flex-col gap-3 rounded-xl border p-4 shadow-sm sm:flex-row sm:items-center">
+          <div className="flex flex-col gap-3 rounded-xl border bg-card p-4 shadow-sm sm:flex-row sm:items-center">
             <div className="w-full sm:w-72">
               <SearchInput
                 value={search || ""}
@@ -358,7 +358,7 @@ export function AiGatewayRequestsListPage() {
               </CardHeader>
               <CardContent className="space-y-2">
                 {isReportsLoading ? (
-                  <p className="text-muted-foreground text-xs">
+                  <p className="text-xs text-muted-foreground">
                     در حال بارگذاری...
                   </p>
                 ) : (
@@ -396,7 +396,7 @@ export function AiGatewayRequestsListPage() {
               </CardHeader>
               <CardContent className="space-y-2">
                 {isReportsLoading ? (
-                  <p className="text-muted-foreground text-xs">
+                  <p className="text-xs text-muted-foreground">
                     در حال بارگذاری...
                   </p>
                 ) : (
@@ -426,7 +426,7 @@ export function AiGatewayRequestsListPage() {
               </CardHeader>
               <CardContent className="space-y-2">
                 {isReportsLoading ? (
-                  <p className="text-muted-foreground text-xs">
+                  <p className="text-xs text-muted-foreground">
                     در حال بارگذاری...
                   </p>
                 ) : (
@@ -456,7 +456,7 @@ export function AiGatewayRequestsListPage() {
               </CardHeader>
               <CardContent className="space-y-2">
                 {isReportsLoading ? (
-                  <p className="text-muted-foreground text-xs">
+                  <p className="text-xs text-muted-foreground">
                     در حال بارگذاری...
                   </p>
                 ) : (
@@ -466,7 +466,7 @@ export function AiGatewayRequestsListPage() {
                       className="flex items-center justify-between text-xs"
                     >
                       <span
-                        className="text-muted-foreground font-mono"
+                        className="font-mono text-muted-foreground"
                         dir="ltr"
                       >
                         {b.key}

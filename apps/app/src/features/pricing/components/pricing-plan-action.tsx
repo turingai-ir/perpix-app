@@ -6,7 +6,11 @@ import { useAppTranslate } from "@/shared/hooks";
 import { APP_I18_KEYS } from "@/shared/i18n";
 
 export type PricingPlanActionKind =
-  "buy" | "upgrade" | "renew" | "current" | "lower";
+  | "buy"
+  | "upgrade"
+  | "renew"
+  | "current"
+  | "lower";
 
 type PricingPlanActionProps = {
   kind: PricingPlanActionKind;
@@ -51,7 +55,7 @@ const PricingPlanAction: FC<PricingPlanActionProps> = ({
     return (
       <div
         role="status"
-        className="border-accent-sky/40 bg-accent-sky/15 text-accent-sky flex min-h-11 items-center justify-center gap-2 rounded-xl border px-4 text-sm font-bold"
+        className="flex min-h-11 items-center justify-center gap-2 rounded-xl border border-accent-sky/40 bg-accent-sky/15 px-4 text-sm font-bold text-accent-sky"
       >
         <CircleCheck className="size-4" aria-hidden="true" />
         {t("features.pricing.yourPlan")}
@@ -62,7 +66,7 @@ const PricingPlanAction: FC<PricingPlanActionProps> = ({
   return (
     <div className="space-y-3">
       {showConfirm ? (
-        <p role="status" className="text-muted-foreground text-xs leading-6">
+        <p role="status" className="text-xs leading-6 text-muted-foreground">
           {t("features.pricing.confirmNotice")}
         </p>
       ) : null}

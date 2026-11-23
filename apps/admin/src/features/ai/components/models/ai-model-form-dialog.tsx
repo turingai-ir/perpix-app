@@ -165,7 +165,7 @@ function AiModelFormContent({
     <form onSubmit={handleSubmit} className="space-y-4 py-2 text-sm">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label className="text-foreground mb-1 block text-xs font-semibold">
+          <label className="mb-1 block text-xs font-semibold text-foreground">
             {t("features.ai.models.name", {
               defaultValue: "نام شناسه (کد مدل)",
             })}{" "}
@@ -181,7 +181,7 @@ function AiModelFormContent({
         </div>
 
         <div>
-          <label className="text-foreground mb-1 block text-xs font-semibold">
+          <label className="mb-1 block text-xs font-semibold text-foreground">
             {t("features.ai.models.displayName", {
               defaultValue: "نام نمایشی",
             })}
@@ -195,7 +195,7 @@ function AiModelFormContent({
       </div>
 
       <div>
-        <label className="text-foreground mb-1 block text-xs font-semibold">
+        <label className="mb-1 block text-xs font-semibold text-foreground">
           {t("features.ai.models.description", {
             defaultValue: "توضیحات مدل",
           })}
@@ -209,7 +209,7 @@ function AiModelFormContent({
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label className="text-foreground mb-1 block text-xs font-semibold">
+          <label className="mb-1 block text-xs font-semibold text-foreground">
             {t("features.ai.models.modelOwner", {
               defaultValue: "شرکت صاحب امتیاز",
             })}
@@ -229,7 +229,7 @@ function AiModelFormContent({
         </div>
 
         <div>
-          <label className="text-foreground mb-1 block text-xs font-semibold">
+          <label className="mb-1 block text-xs font-semibold text-foreground">
             {t("features.ai.models.iconUrl", {
               defaultValue: "آدرس آیکون (URL)",
             })}
@@ -245,7 +245,7 @@ function AiModelFormContent({
 
       {/* Supported Inputs */}
       <div>
-        <label className="text-foreground mb-1.5 block text-xs font-semibold">
+        <label className="mb-1.5 block text-xs font-semibold text-foreground">
           {t("features.ai.models.supportedInputs", {
             defaultValue: "ورودی‌های پشتیبانی‌شده",
           })}
@@ -271,7 +271,7 @@ function AiModelFormContent({
 
       {/* Supported Outputs */}
       <div>
-        <label className="text-foreground mb-1.5 block text-xs font-semibold">
+        <label className="mb-1.5 block text-xs font-semibold text-foreground">
           {t("features.ai.models.supportedOutputs", {
             defaultValue: "خروجی‌های پشتیبانی‌شده",
           })}
@@ -296,7 +296,7 @@ function AiModelFormContent({
       </div>
 
       <div>
-        <label className="text-foreground mb-1 block text-xs font-semibold">
+        <label className="mb-1 block text-xs font-semibold text-foreground">
           {t("features.ai.models.tags", {
             defaultValue: "برچسب‌ها (با کاما جدا کنید)",
           })}
@@ -315,7 +315,7 @@ function AiModelFormContent({
           id="model-active-toggle"
           checked={isActive}
           onChange={(e) => setIsActive(e.target.checked)}
-          className="text-primary focus:ring-primary size-4 rounded border-gray-300"
+          className="size-4 rounded border-gray-300 text-primary focus:ring-primary"
         />
         <label
           htmlFor="model-active-toggle"
@@ -333,7 +333,7 @@ function AiModelFormContent({
         </summary>
         <div className="space-y-4 pt-3">
           {isEditing && initialModel && (
-            <p className="text-muted-foreground text-[11px]" dir="ltr">
+            <p className="text-[11px] text-muted-foreground" dir="ltr">
               cost range: {initialModel.min_cost ?? "-"} –{" "}
               {initialModel.max_cost ?? "-"} (read-only, from provider links)
             </p>
@@ -431,7 +431,7 @@ export function AiModelFormDialog({
           />
         )}
         {open && isEditing && !model && (
-          <p className="text-muted-foreground py-6 text-center text-sm">
+          <p className="py-6 text-center text-sm text-muted-foreground">
             {error
               ? t("features.ai.models.loadError", {
                   defaultValue:

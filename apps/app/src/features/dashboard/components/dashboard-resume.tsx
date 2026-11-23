@@ -27,7 +27,7 @@ export function DashboardResume({ task }: DashboardResumeProps) {
 
   return (
     <Link to={path} className={RESUME_CARD_CLASS}>
-      <span className="border-night-foreground/10 relative flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border bg-linear-to-br from-(--image-accent-soft) to-transparent text-(--image-accent)">
+      <span className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-night-foreground/10 bg-linear-to-br from-(--image-accent-soft) to-transparent text-(--image-accent)">
         <MediaIcon className="h-5 w-5" aria-hidden="true" />
         {isActive ? (
           <CircleDashed
@@ -40,15 +40,15 @@ export function DashboardResume({ task }: DashboardResumeProps) {
         <span className="block text-xs text-(--image-accent)">
           {t("pages.root.dashboard.resume.eyebrow")}
         </span>
-        <span className="text-foreground mt-1 block truncate text-sm font-semibold sm:text-base">
+        <span className="mt-1 block truncate text-sm font-semibold text-foreground sm:text-base">
           {t(`pages.root.dashboard.resume.${isVideo ? "video" : "image"}`)}
         </span>
       </span>
-      <span className="text-muted-foreground hidden text-xs sm:block">
+      <span className="hidden text-xs text-muted-foreground sm:block">
         {t(`common.taskStatus.${resolveStatusKey(status)}`)}
       </span>
       <ArrowUpLeft
-        className="text-muted-foreground group-hover:text-foreground h-5 w-5 transition group-hover:-translate-x-1 group-hover:translate-y-1"
+        className="h-5 w-5 text-muted-foreground transition group-hover:-translate-x-1 group-hover:translate-y-1 group-hover:text-foreground"
         aria-hidden="true"
       />
     </Link>

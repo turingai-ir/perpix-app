@@ -52,7 +52,7 @@ const VideoPreviewButton: FC<{ file?: File; src?: string }> = ({
 
   return (
     <div className="relative h-full w-full">
-      {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+      {/* oxlint-disable-next-line jsx-a11y/media-has-caption */}
       <video
         ref={videoRef}
         src={videoSrc}
@@ -64,7 +64,7 @@ const VideoPreviewButton: FC<{ file?: File; src?: string }> = ({
       />
       <button
         type="button"
-        className="bg-primary/90 text-primary-foreground hover:bg-primary focus-visible:ring-ring/50 absolute inset-0 m-auto flex h-10 w-10 cursor-pointer items-center justify-center rounded-full shadow-sm transition-colors outline-none focus-visible:ring-3 disabled:pointer-events-none disabled:opacity-50"
+        className="absolute inset-0 m-auto flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-primary/90 text-primary-foreground shadow-sm transition-colors outline-none hover:bg-primary focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50"
         aria-label={isPlaying ? "Pause video" : "Play video"}
         disabled={!videoSrc}
         onClick={handleTogglePlayback}

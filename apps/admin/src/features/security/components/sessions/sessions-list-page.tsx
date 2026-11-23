@@ -126,9 +126,9 @@ export function SessionsListPage() {
         cell: (item) => (
           <Link
             to={`/users/${item.user_uuid}`}
-            className="text-primary hover:text-primary/80 flex items-center gap-1.5 font-mono text-xs font-semibold hover:underline"
+            className="flex items-center gap-1.5 font-mono text-xs font-semibold text-primary hover:text-primary/80 hover:underline"
           >
-            <User className="text-muted-foreground size-3.5" />
+            <User className="size-3.5 text-muted-foreground" />
             {item.user_uuid.slice(0, 8)}...
           </Link>
         ),
@@ -139,7 +139,7 @@ export function SessionsListPage() {
           defaultValue: "شناسه نشست",
         }),
         cell: (item) => (
-          <span className="text-muted-foreground font-mono text-xs">
+          <span className="font-mono text-xs text-muted-foreground">
             {item.uuid.slice(0, 12)}...
           </span>
         ),
@@ -179,7 +179,7 @@ export function SessionsListPage() {
           defaultValue: "زمان لغو",
         }),
         cell: (item) => (
-          <span className="text-muted-foreground text-xs" dir="ltr">
+          <span className="text-xs text-muted-foreground" dir="ltr">
             {item.revoked_at
               ? new Date(item.revoked_at).toLocaleString("fa-IR")
               : "—"}
@@ -221,7 +221,7 @@ export function SessionsListPage() {
     <div className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-8 sm:py-8">
       {/* Header */}
       <div>
-        <div className="text-muted-foreground mb-1.5 flex items-center gap-2 text-xs">
+        <div className="mb-1.5 flex items-center gap-2 text-xs text-muted-foreground">
           <Shield aria-hidden="true" className="size-4" />
           <span>{t("overview.admin", { defaultValue: "پنل مدیریت" })}</span>
           <span>/</span>
@@ -237,12 +237,12 @@ export function SessionsListPage() {
         </div>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-foreground text-xl font-bold tracking-tight sm:text-2xl">
+            <h1 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
               {t("features.security.sessions.pageTitle", {
                 defaultValue: "مدیریت نشست‌های کاربران",
               })}
             </h1>
-            <p className="text-muted-foreground mt-1 text-xs sm:text-sm">
+            <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
               {t("features.security.sessions.pageDesc", {
                 defaultValue:
                   "مشاهده کلیه نشست‌های فعال، منقضی یا لغو شده و قابلیت پایان دادن اجباری به نشست",
@@ -253,7 +253,7 @@ export function SessionsListPage() {
       </div>
 
       {/* Tabs */}
-      <div className="border-border bg-card flex w-fit items-center gap-2 rounded-xl border p-1">
+      <div className="flex w-fit items-center gap-2 rounded-xl border border-border bg-card p-1">
         <Button
           variant={activeTab === "list" ? "default" : "ghost"}
           size="sm"
@@ -281,7 +281,7 @@ export function SessionsListPage() {
       {activeTab === "list" && (
         <div className="space-y-4">
           {/* Filters Bar */}
-          <div className="bg-card flex flex-col gap-3 rounded-xl border p-4 shadow-sm sm:flex-row sm:items-center">
+          <div className="flex flex-col gap-3 rounded-xl border bg-card p-4 shadow-sm sm:flex-row sm:items-center">
             <div className="w-full sm:w-72">
               <SearchInput
                 value={search || ""}
@@ -370,11 +370,11 @@ export function SessionsListPage() {
             </CardHeader>
             <CardContent>
               {isReportsLoading ? (
-                <div className="text-muted-foreground py-6 text-center text-sm">
+                <div className="py-6 text-center text-sm text-muted-foreground">
                   در حال دریافت گزارش...
                 </div>
               ) : reports.length === 0 ? (
-                <div className="text-muted-foreground py-6 text-center text-sm">
+                <div className="py-6 text-center text-sm text-muted-foreground">
                   داده‌ای برای نمایش موجود نیست.
                 </div>
               ) : (
@@ -385,7 +385,7 @@ export function SessionsListPage() {
                       className="flex items-center justify-between rounded-lg border p-3 text-xs"
                     >
                       <div className="flex items-center gap-2">
-                        <Calendar className="text-muted-foreground size-4" />
+                        <Calendar className="size-4 text-muted-foreground" />
                         <span className="font-mono" dir="ltr">
                           {b.key}
                         </span>

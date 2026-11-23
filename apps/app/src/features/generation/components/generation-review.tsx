@@ -15,22 +15,22 @@ export const GenerationReview: FC<{ trackingCode: string }> = ({
   const { t } = useAppTranslate();
   return (
     <div
-      className="bg-muted/40 flex flex-col gap-3 rounded-2xl border p-4 sm:p-5"
+      className="flex flex-col gap-3 rounded-2xl border bg-muted/40 p-4 sm:p-5"
       data-generation-review=""
       role="status"
     >
       <div className="flex items-start gap-3">
-        <span className="bg-background/75 flex size-10 shrink-0 items-center justify-center rounded-xl">
-          <ShieldCheck aria-hidden="true" className="text-primary size-5" />
+        <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-background/75">
+          <ShieldCheck aria-hidden="true" className="size-5 text-primary" />
         </span>
         <div className="flex flex-col gap-1">
           <p className="text-sm leading-6 font-semibold">
             {t("common.generationReview.title")}
           </p>
-          <p className="text-muted-foreground text-sm leading-6">
+          <p className="text-sm leading-6 text-muted-foreground">
             {t("common.generationReview.description")}
           </p>
-          <p className="text-muted-foreground text-xs leading-5">
+          <p className="text-xs leading-5 text-muted-foreground">
             {t("common.generationReview.notCharged")}
           </p>
           <TrackingCode code={trackingCode} />

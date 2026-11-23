@@ -73,7 +73,7 @@ export const StudioScreen: FC<StudioScreenProps> = ({
               <ArrowRight className="size-5 ltr:rotate-180 rtl:rotate-0" />
             </Button>
           )}
-          <h1 className="font-heading min-w-0 flex-1 truncate px-2 text-lg font-semibold lg:text-xl">
+          <h1 className="min-w-0 flex-1 truncate px-2 font-heading text-lg font-semibold lg:text-xl">
             {title}
           </h1>
           {actions}

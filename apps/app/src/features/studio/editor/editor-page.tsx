@@ -72,7 +72,7 @@ const SaveBadge: FC<{ state: SaveState; onRetry: () => void }> = ({
     return (
       <span
         role="status"
-        className="text-destructive text-footnote flex items-center gap-1.5"
+        className="flex items-center gap-1.5 text-footnote text-destructive"
       >
         <TriangleAlert className="size-4 shrink-0" aria-hidden />
         {t("features.studio.editor.save.conflict")}
@@ -84,7 +84,7 @@ const SaveBadge: FC<{ state: SaveState; onRetry: () => void }> = ({
       <Button
         variant="ghost"
         size="sm"
-        className="text-destructive min-h-11 gap-1.5"
+        className="min-h-11 gap-1.5 text-destructive"
         onClick={onRetry}
       >
         <RotateCw className="size-4" aria-hidden />
@@ -95,7 +95,7 @@ const SaveBadge: FC<{ state: SaveState; onRetry: () => void }> = ({
   return (
     <span
       role="status"
-      className="text-muted-foreground flex min-h-11 items-center gap-1.5 px-2 text-xs"
+      className="flex min-h-11 items-center gap-1.5 px-2 text-xs text-muted-foreground"
     >
       {state === "saved" ? (
         <Check className="size-4" aria-hidden />
@@ -436,7 +436,7 @@ const ProjectEditor: FC<{ projectUuid: string }> = ({ projectUuid }) => {
         <Skeleton className="m-4 h-64" aria-hidden />
       ) : project.isError ? (
         isMissing(project.error) ? (
-          <p className="text-muted-foreground py-10 text-center text-sm">
+          <p className="py-10 text-center text-sm text-muted-foreground">
             {t("features.studio.projects.errors.missing")}
           </p>
         ) : (
@@ -445,7 +445,7 @@ const ProjectEditor: FC<{ projectUuid: string }> = ({ projectUuid }) => {
           </div>
         )
       ) : timeline.durationMs === 0 ? (
-        <p className="text-muted-foreground py-10 text-center text-sm">
+        <p className="py-10 text-center text-sm text-muted-foreground">
           {t("features.studio.editor.noClips")}
         </p>
       ) : (
@@ -465,8 +465,8 @@ const ProjectEditor: FC<{ projectUuid: string }> = ({ projectUuid }) => {
                 }
               />
               {missingLocalVideo && (
-                <div className="gap-group flex flex-wrap items-center justify-center p-2">
-                  <p className="text-muted-foreground text-footnote">
+                <div className="flex flex-wrap items-center justify-center gap-group p-2">
+                  <p className="text-footnote text-muted-foreground">
                     {t("features.studio.localVideo.missing")}
                   </p>
                   <Button
@@ -486,7 +486,7 @@ const ProjectEditor: FC<{ projectUuid: string }> = ({ projectUuid }) => {
                   />
                 </div>
               )}
-              <div className="gap-group flex flex-wrap justify-center pb-2">
+              <div className="flex flex-wrap justify-center gap-group pb-2">
                 {editableWords.length > 0 && (
                   <Button
                     variant="outline"
@@ -549,7 +549,7 @@ const ProjectEditor: FC<{ projectUuid: string }> = ({ projectUuid }) => {
               {pending && (
                 <p
                   role="status"
-                  className="text-muted-foreground flex items-center justify-center gap-2 py-1 text-xs"
+                  className="flex items-center justify-center gap-2 py-1 text-xs text-muted-foreground"
                 >
                   <Loader2 className="size-3.5 animate-spin" aria-hidden />
                   {t("features.studio.editor.subtitlesPending")}
@@ -565,14 +565,14 @@ const ProjectEditor: FC<{ projectUuid: string }> = ({ projectUuid }) => {
                 disabled={disabled}
                 onAction={onAction}
               />
-              <p className="text-muted-foreground text-xs leading-6">
+              <p className="text-xs leading-6 text-muted-foreground">
                 {t("features.studio.editor.tools.hint")}
               </p>
-              <dl className="text-muted-foreground grid grid-cols-[auto_1fr] items-center gap-x-3 gap-y-1.5 text-xs">
+              <dl className="grid grid-cols-[auto_1fr] items-center gap-x-3 gap-y-1.5 text-xs text-muted-foreground">
                 <dt>
                   <kbd
                     dir="ltr"
-                    className="bg-muted rounded border px-1.5 py-0.5"
+                    className="rounded border bg-muted px-1.5 py-0.5"
                   >
                     Space
                   </kbd>
@@ -581,7 +581,7 @@ const ProjectEditor: FC<{ projectUuid: string }> = ({ projectUuid }) => {
                 <dt>
                   <kbd
                     dir="ltr"
-                    className="bg-muted rounded border px-1.5 py-0.5"
+                    className="rounded border bg-muted px-1.5 py-0.5"
                   >
                     ← →
                   </kbd>

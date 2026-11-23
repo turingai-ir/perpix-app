@@ -28,19 +28,19 @@ export const GenerationFailure: FC<GenerationFailureProps> = ({
   trackingCode,
 }) => (
   <div
-    className="border-destructive/30 bg-destructive/5 flex flex-col gap-3 rounded-2xl border p-4 sm:p-5"
+    className="flex flex-col gap-3 rounded-2xl border border-destructive/30 bg-destructive/5 p-4 sm:p-5"
     role="alert"
   >
     <div className="flex items-start gap-3">
-      <span className="bg-background/75 flex size-10 shrink-0 items-center justify-center rounded-xl">
-        <AlertCircle aria-hidden="true" className="text-destructive size-5" />
+      <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-background/75">
+        <AlertCircle aria-hidden="true" className="size-5 text-destructive" />
       </span>
       <div className="flex flex-col gap-1">
         <p className="text-sm leading-6 font-semibold">{title}</p>
-        <p className="text-muted-foreground text-sm leading-6">{description}</p>
+        <p className="text-sm leading-6 text-muted-foreground">{description}</p>
         {hint ? <p className="text-sm leading-6">{hint}</p> : null}
         {notice ? (
-          <p className="text-muted-foreground text-xs leading-5">{notice}</p>
+          <p className="text-xs leading-5 text-muted-foreground">{notice}</p>
         ) : null}
         {trackingCode ? <TrackingCode code={trackingCode} /> : null}
       </div>

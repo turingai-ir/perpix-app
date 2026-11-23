@@ -38,7 +38,9 @@ export const A_Studio: Story = {
         <Button variant="plain" size="icon-sm" aria-label="واگرد">
           <ArrowCounterClockwiseIcon aria-hidden />
         </Button>
-        <p className="flex-1 truncate text-body font-semibold">پروژهٔ تبلیغ پاییز</p>
+        <p className="flex-1 truncate text-body font-semibold">
+          پروژهٔ تبلیغ پاییز
+        </p>
         <Button variant="tinted" size="sm">
           <DownloadSimpleIcon aria-hidden />
           خروجی
@@ -46,7 +48,13 @@ export const A_Studio: Story = {
       </GlassSurface>
       <GlassSurface className="absolute end-3 top-24 flex flex-col gap-1 p-1">
         {tools.map(({ icon: Icon, label }) => (
-          <Button key={label} variant="plain" size="icon-sm" aria-label={label} className="text-foreground">
+          <Button
+            key={label}
+            variant="plain"
+            size="icon-sm"
+            aria-label={label}
+            className="text-foreground"
+          >
             <Icon aria-hidden />
           </Button>
         ))}
@@ -80,7 +88,9 @@ export const B_Minimal: Story = {
     <div className="mx-auto flex max-w-md flex-col gap-section p-inset-lg">
       <header className="flex items-center justify-between">
         <h2 className="text-title-3 font-semibold">پروژه‌ها</h2>
-        <Button variant="tinted" size="sm">پروژهٔ جدید</Button>
+        <Button variant="tinted" size="sm">
+          پروژهٔ جدید
+        </Button>
       </header>
       <ul className="divide-y divide-border overflow-hidden rounded-card border border-border bg-card">
         {rows.map(({ icon: Icon, title, meta: info }) => (
@@ -92,15 +102,25 @@ export const B_Minimal: Story = {
               <p className="text-body font-medium">{title}</p>
               <p className="text-footnote text-muted-foreground">{info}</p>
             </div>
-            <CaretLeftIcon aria-hidden className="size-4 text-muted-foreground ltr:rotate-180" />
+            <CaretLeftIcon
+              aria-hidden
+              className="size-4 text-muted-foreground ltr:rotate-180"
+            />
           </li>
         ))}
       </ul>
       <section className="flex flex-col gap-block rounded-overlay border border-border bg-card p-inset-lg shadow-raised">
         <h3 className="text-headline font-semibold">پروژه حذف شود؟</h3>
-        <p className="text-body text-muted-foreground">این کار قابل بازگشت نیست.</p>
+        <p className="text-body text-muted-foreground">
+          این کار قابل بازگشت نیست.
+        </p>
         <div className="flex justify-end gap-group">
-          <Button variant="plain" className="border border-border bg-card text-foreground">انصراف</Button>
+          <Button
+            variant="plain"
+            className="border border-border bg-card text-foreground"
+          >
+            انصراف
+          </Button>
           <Button variant="destructive">حذف</Button>
         </div>
       </section>
@@ -132,7 +152,10 @@ export const D_LiquidGlass: Story = {
     <div className="relative mx-auto h-[48rem] max-w-md overflow-hidden rounded-overlay bg-background">
       <div className="grid grid-cols-2 gap-2 p-2 pt-20 pb-28">
         {tiles.map((tile, index) => (
-          <div key={tile} className={`${tile} ${index % 3 === 0 ? "aspect-[3/4]" : "aspect-square"} rounded-card`} />
+          <div
+            key={tile}
+            className={`${tile} ${index % 3 === 0 ? "aspect-[3/4]" : "aspect-square"} rounded-card`}
+          />
         ))}
       </div>
       <GlassSurface className="absolute inset-x-3 top-3 flex items-center gap-group rounded-full p-1.5 ps-4">
@@ -149,7 +172,9 @@ export const D_LiquidGlass: Story = {
         <span className="size-12 shrink-0 rounded-control bg-(image:--brand-gradient)" />
         <div className="flex-1">
           <p className="text-body font-semibold">در حال ساخت ویدیو…</p>
-          <p className="text-footnote text-muted-foreground">۶۰٪ · حدود ۲۰ ثانیه</p>
+          <p className="text-footnote text-muted-foreground">
+            ۶۰٪ · حدود ۲۰ ثانیه
+          </p>
         </div>
         <Button size="icon-sm" className="rounded-full" aria-label="توقف">
           <PauseIcon aria-hidden />
@@ -161,7 +186,11 @@ export const D_LiquidGlass: Story = {
             key={label}
             className={`flex flex-col items-center gap-0.5 rounded-full px-4 py-1.5 text-caption ${active ? "bg-foreground/10 font-semibold text-primary" : "text-muted-foreground"}`}
           >
-            <Icon aria-hidden weight={active ? "fill" : "regular"} className="size-5" />
+            <Icon
+              aria-hidden
+              weight={active ? "fill" : "regular"}
+              className="size-5"
+            />
             {label}
           </span>
         ))}
@@ -175,12 +204,20 @@ export const C_Bento: Story = {
   name: "C · Bento + Aurora",
   render: () => (
     <div className="relative mx-auto max-w-md overflow-hidden p-inset-lg">
-      <div aria-hidden className="absolute -top-16 -start-10 size-64 rounded-full bg-accent-violet/40 blur-3xl" />
-      <div aria-hidden className="absolute top-40 -end-16 size-64 rounded-full bg-accent-pink/30 blur-3xl" />
+      <div
+        aria-hidden
+        className="absolute -start-10 -top-16 size-64 rounded-full bg-accent-violet/40 blur-3xl"
+      />
+      <div
+        aria-hidden
+        className="absolute -end-16 top-40 size-64 rounded-full bg-accent-pink/30 blur-3xl"
+      />
       <div className="relative grid grid-cols-2 gap-3">
         <GlassSurface className="col-span-2 flex items-center justify-between p-inset-lg">
           <div>
-            <p className="text-footnote text-muted-foreground">اعتبار باقی‌مانده</p>
+            <p className="text-footnote text-muted-foreground">
+              اعتبار باقی‌مانده
+            </p>
             <p className="text-title-1 font-bold">۱۲۰</p>
           </div>
           <Button variant="tinted" size="sm">

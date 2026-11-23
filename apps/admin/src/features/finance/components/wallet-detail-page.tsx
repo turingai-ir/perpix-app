@@ -123,7 +123,7 @@ export function WalletDetailPage() {
       cell: (tx) => {
         const isCopied = copiedField === tx.transaction_uuid;
         return (
-          <div className="text-muted-foreground flex items-center gap-1.5 font-mono text-xs">
+          <div className="flex items-center gap-1.5 font-mono text-xs text-muted-foreground">
             <span title={tx.transaction_uuid}>
               {tx.transaction_uuid.slice(0, 8)}…{tx.transaction_uuid.slice(-4)}
             </span>
@@ -133,7 +133,7 @@ export function WalletDetailPage() {
                 handleCopy(tx.transaction_uuid, tx.transaction_uuid)
               }
               aria-label="کپی شناسه"
-              className="text-muted-foreground hover:text-foreground hover:bg-muted rounded p-1 transition-colors"
+              className="rounded p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
             >
               {isCopied ? (
                 <Check className="size-3 text-emerald-600" />
@@ -211,7 +211,7 @@ export function WalletDetailPage() {
         defaultValue: "تاریخ",
       }),
       cell: (tx) => (
-        <span className="text-muted-foreground text-xs whitespace-nowrap">
+        <span className="text-xs whitespace-nowrap text-muted-foreground">
           {formatDate(tx.created_at)}
         </span>
       ),
@@ -240,7 +240,7 @@ export function WalletDetailPage() {
       })}
       title={
         <div className="flex items-center gap-2">
-          <Wallet className="text-primary size-6" />
+          <Wallet className="size-6 text-primary" />
           <span>
             {wallet?.name || t("common.wallet", { defaultValue: "کیف پول" })}
           </span>
@@ -299,9 +299,9 @@ export function WalletDetailPage() {
         <div className="space-y-6">
           {/* Wallet Overview Card */}
           <Card>
-            <CardHeader className="border-border/60 border-b pb-4">
+            <CardHeader className="border-b border-border/60 pb-4">
               <CardTitle className="flex items-center gap-2 text-base font-semibold">
-                <DollarSign className="text-primary size-4" />
+                <DollarSign className="size-4 text-primary" />
                 {t("features.finance.wallets.overviewTitle", {
                   defaultValue: "اطلاعات موجودی و حساب",
                 })}
@@ -311,7 +311,7 @@ export function WalletDetailPage() {
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
                 {/* Balance */}
                 <div className="space-y-1 sm:col-span-2">
-                  <span className="text-muted-foreground text-xs">
+                  <span className="text-xs text-muted-foreground">
                     {t("features.finance.wallets.balanceMicro", {
                       defaultValue: "موجودی (میکرودلار)",
                     })}
@@ -326,7 +326,7 @@ export function WalletDetailPage() {
 
                 {/* User Link */}
                 <div className="space-y-1">
-                  <span className="text-muted-foreground flex items-center gap-1 text-xs">
+                  <span className="flex items-center gap-1 text-xs text-muted-foreground">
                     <User className="size-3" />
                     {t("features.finance.wallets.owner", {
                       defaultValue: "صاحب کیف پول",
@@ -335,7 +335,7 @@ export function WalletDetailPage() {
                   <div className="flex items-center gap-2">
                     <Link
                       to={`/users/${wallet.user_uuid}`}
-                      className="text-primary font-mono text-sm hover:underline"
+                      className="font-mono text-sm text-primary hover:underline"
                     >
                       {wallet.user_uuid.slice(0, 8)}…
                       {wallet.user_uuid.slice(-4)}
@@ -344,7 +344,7 @@ export function WalletDetailPage() {
                       type="button"
                       onClick={() => handleCopy("user_uuid", wallet.user_uuid)}
                       aria-label="کپی شناسه کاربر"
-                      className="text-muted-foreground hover:text-foreground hover:bg-muted rounded p-1 transition-colors"
+                      className="rounded p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                     >
                       {copiedField === "user_uuid" ? (
                         <Check className="size-3 text-emerald-600" />
@@ -357,13 +357,13 @@ export function WalletDetailPage() {
 
                 {/* Created At */}
                 <div className="space-y-1">
-                  <span className="text-muted-foreground flex items-center gap-1 text-xs">
+                  <span className="flex items-center gap-1 text-xs text-muted-foreground">
                     <Calendar className="size-3" />
                     {t("features.finance.wallets.createdAt", {
                       defaultValue: "تاریخ افتتاح",
                     })}
                   </span>
-                  <p className="text-foreground text-sm">
+                  <p className="text-sm text-foreground">
                     {formatDate(wallet.created_at)}
                   </p>
                 </div>
@@ -375,7 +375,7 @@ export function WalletDetailPage() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="flex items-center gap-2 text-lg font-semibold">
-                <Receipt className="text-primary size-4" />
+                <Receipt className="size-4 text-primary" />
                 {t("features.finance.wallets.txHistory", {
                   defaultValue: "سوابق تراکنش‌های این کیف پول",
                 })}
@@ -427,7 +427,7 @@ export function WalletDetailPage() {
             </DialogHeader>
 
             <div className="space-y-4 py-2">
-              <div className="border-border bg-muted/40 space-y-2 rounded-xl border p-3 text-xs">
+              <div className="space-y-2 rounded-xl border border-border bg-muted/40 p-3 text-xs">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">شناسه کاربر:</span>
                   <span dir="ltr" className="font-mono font-medium">
@@ -448,7 +448,7 @@ export function WalletDetailPage() {
               <div className="space-y-1.5">
                 <label
                   htmlFor="charge-amount-detail"
-                  className="text-foreground text-xs font-medium"
+                  className="text-xs font-medium text-foreground"
                 >
                   {t("features.finance.wallets.amountLabel", {
                     defaultValue: "مبلغ شارژ (میکرودلار):",
@@ -467,7 +467,7 @@ export function WalletDetailPage() {
               <div className="space-y-1.5">
                 <label
                   htmlFor="charge-reason-detail"
-                  className="text-foreground text-xs font-medium"
+                  className="text-xs font-medium text-foreground"
                 >
                   {t("features.finance.wallets.reasonLabel", {
                     defaultValue: "علت یا شماره پیگیری (اختیاری):",
@@ -489,7 +489,7 @@ export function WalletDetailPage() {
                   type="checkbox"
                   checked={isConfirmed}
                   onChange={(e) => setIsConfirmed(e.target.checked)}
-                  className="border-border mt-0.5 rounded"
+                  className="mt-0.5 rounded border-border"
                   disabled={isCharging}
                 />
                 <label

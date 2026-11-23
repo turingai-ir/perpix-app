@@ -90,7 +90,7 @@ export function GalleryViewer({
           mediaType={mediaType}
           onClose={onClose}
         />
-        <div className="border-night-foreground/7 bg-night-foreground/[1.5%] inset-shadow-highlight-sm relative flex min-h-0 flex-1 items-center justify-center overflow-hidden rounded-[clamp(20px,3vw,32px)] border bg-[radial-gradient(circle_at_50%_35%,color-mix(in_oklch,var(--night-foreground)_4%,transparent),transparent_54%)] max-md:rounded-2xl">
+        <div className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden rounded-[clamp(20px,3vw,32px)] border border-night-foreground/7 bg-night-foreground/[1.5%] bg-[radial-gradient(circle_at_50%_35%,color-mix(in_oklch,var(--night-foreground)_4%,transparent),transparent_54%)] inset-shadow-highlight-sm max-md:rounded-2xl">
           <motion.div
             data-gallery-viewer-media
             data-dragging={swipe.isDragging}
@@ -121,7 +121,7 @@ export function GalleryViewer({
           onMove={move}
           onToggleZoom={() => setZoomed(!zoomed)}
         />
-        <p className="text-caption text-night-foreground/45 hidden text-center md:block">
+        <p className="hidden text-center text-caption text-night-foreground/45 md:block">
           {t("pages.gallery.studio.viewerHint")}
         </p>
       </DialogContent>

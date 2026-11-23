@@ -48,7 +48,7 @@ export function SettingHelpPopover({
       <button
         ref={anchorRef}
         type="button"
-        className="border-border bg-background text-muted-foreground hover:border-primary/40 hover:text-primary focus-visible:ring-ring flex min-h-9 shrink-0 cursor-help items-center gap-1.5 rounded-lg border px-2.5 text-xs transition-colors outline-none focus-visible:ring-2"
+        className="flex min-h-9 shrink-0 cursor-help items-center gap-1.5 rounded-lg border border-border bg-background px-2.5 text-xs text-muted-foreground transition-colors outline-none hover:border-primary/40 hover:text-primary focus-visible:ring-2 focus-visible:ring-ring"
         aria-label={t("pages.generation.image.studio.settings.help", {
           field: label,
         })}
@@ -67,27 +67,27 @@ export function SettingHelpPopover({
         side="top"
         align="end"
         sideOffset={8}
-        className="border-border bg-popover w-[min(320px,calc(100vw-2rem))] gap-2 rounded-xl border p-4 shadow-2xl"
+        className="w-[min(320px,calc(100vw-2rem))] gap-2 rounded-xl border border-border bg-popover p-4 shadow-2xl"
         initialFocus={false}
       >
         <div className="flex items-center gap-2 text-sm font-semibold">
-          <Lightbulb aria-hidden="true" className="text-primary size-4" />
+          <Lightbulb aria-hidden="true" className="size-4 text-primary" />
           {label}
         </div>
         <div>
-          <p className="text-foreground/70 text-caption mb-1 font-medium">
+          <p className="mb-1 text-caption font-medium text-foreground/70">
             {t("pages.generation.image.studio.settings.effect")}
           </p>
-          <p className="text-muted-foreground text-xs leading-6">
+          <p className="text-xs leading-6 text-muted-foreground">
             {description}
           </p>
         </div>
         {example && (
-          <div className="bg-primary/7 border-primary/15 rounded-lg border p-3">
-            <p className="text-primary text-caption mb-1 font-semibold">
+          <div className="rounded-lg border border-primary/15 bg-primary/7 p-3">
+            <p className="mb-1 text-caption font-semibold text-primary">
               {t("pages.generation.image.studio.settings.example")}
             </p>
-            <p className="text-foreground/80 text-xs leading-6">{example}</p>
+            <p className="text-xs leading-6 text-foreground/80">{example}</p>
           </div>
         )}
       </PopoverContent>

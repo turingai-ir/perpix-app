@@ -18,7 +18,7 @@ export function FileFacts({
   const expiring =
     forGeneration && Number.isFinite(expires) && expires <= now + 60 * 60_000;
   return (
-    <div className="text-muted-foreground space-y-0.5 text-xs">
+    <div className="space-y-0.5 text-xs text-muted-foreground">
       {facts?.width && facts.height ? (
         <p>
           {t("features.fileManager.facts.size", {

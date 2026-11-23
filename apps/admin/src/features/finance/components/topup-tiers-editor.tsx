@@ -30,7 +30,7 @@ export function TopupTiersEditor({ tiers, profitPercent, onChange }: Props) {
 
   return (
     <div className="space-y-3">
-      <div className="text-muted-foreground grid grid-cols-[1fr_1fr_1fr_auto] gap-3 text-xs font-semibold">
+      <div className="grid grid-cols-[1fr_1fr_1fr_auto] gap-3 text-xs font-semibold text-muted-foreground">
         <span>
           {t("features.finance.topupPolicy.tierFrom", {
             defaultValue: "از مبلغ شارژ (میکرودلار)",

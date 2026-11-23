@@ -55,8 +55,8 @@ export function PaymentMobileList({ payments, onOpenDetails }: Props) {
                 .format("YYYY/MM/DD")}
             </span>
           </div>
-          <div className="border-border mt-4 grid grid-cols-1 gap-2 border-t pt-3 [&>button]:mt-1 [&>button]:min-h-11">
-            <span className="text-muted-foreground text-xs">
+          <div className="mt-4 grid grid-cols-1 gap-2 border-t border-border pt-3 [&>button]:mt-1 [&>button]:min-h-11">
+            <span className="text-xs text-muted-foreground">
               {t("pages.profile.finance.trackingId")}
             </span>
             <bdi

@@ -82,7 +82,7 @@ export function OverviewPage() {
   return (
     <div>
       <main className="mx-auto max-w-7xl space-y-7 px-5 py-8 sm:px-8 sm:py-10">
-        <div className="text-muted-foreground flex items-center gap-2 text-xs">
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <LayoutDashboard aria-hidden="true" className="size-4" />
           {t("overview.admin")}
           <span>/</span>
@@ -93,7 +93,7 @@ export function OverviewPage() {
             <h1 className="text-3xl font-bold tracking-tight">
               {t("overview.title")}
             </h1>
-            <p className="text-muted-foreground mt-3 text-sm">
+            <p className="mt-3 text-sm text-muted-foreground">
               {t("overview.description")}
             </p>
           </div>
@@ -105,7 +105,7 @@ export function OverviewPage() {
               id="period"
               value={data.days}
               onChange={(event) => data.setDays(Number(event.target.value))}
-              className="border-border bg-card h-10 rounded-lg border px-3 text-sm"
+              className="h-10 rounded-lg border border-border bg-card px-3 text-sm"
             >
               {[7, 30, 90].map((days) => (
                 <option key={days} value={days}>
@@ -139,10 +139,10 @@ export function OverviewPage() {
                   </span>
                   <ArrowUpLeft
                     aria-hidden="true"
-                    className="text-muted-foreground size-4 transition-transform group-hover:-translate-x-0.5 group-hover:-translate-y-0.5"
+                    className="size-4 text-muted-foreground transition-transform group-hover:-translate-x-0.5 group-hover:-translate-y-0.5"
                   />
                 </div>
-                <p className="text-muted-foreground text-sm">
+                <p className="text-sm text-muted-foreground">
                   {t(`overview.${key}`)}
                 </p>
                 <p className="mt-3 text-3xl font-bold tabular-nums">
@@ -152,7 +152,7 @@ export function OverviewPage() {
                       ? "—"
                       : number(query.data?.total_count ?? 0)}
                 </p>
-                <p className="text-muted-foreground mt-3 text-xs">
+                <p className="mt-3 text-xs text-muted-foreground">
                   {t(query.isError ? "overview.error" : "overview.inPeriod")}
                 </p>
               </>
@@ -163,7 +163,7 @@ export function OverviewPage() {
                 <Link
                   key={key}
                   to={href}
-                  className="group border-border bg-card hover:border-primary/40 rounded-2xl border p-5 transition-all hover:shadow-md"
+                  className="group rounded-2xl border border-border bg-card p-5 transition-all hover:border-primary/40 hover:shadow-md"
                 >
                   {content}
                 </Link>
@@ -173,7 +173,7 @@ export function OverviewPage() {
             return (
               <section
                 key={key}
-                className="border-border bg-card rounded-2xl border p-5"
+                className="rounded-2xl border border-border bg-card p-5"
               >
                 {content}
               </section>
@@ -190,7 +190,7 @@ export function OverviewPage() {
               void data.daily.refetch();
             }}
           >
-            <p className="text-muted-foreground mb-5 text-xs">
+            <p className="mb-5 text-xs text-muted-foreground">
               {t("overview.dailyHint")}
             </p>
             <div
@@ -202,17 +202,17 @@ export function OverviewPage() {
                   key={item.key}
                   className="flex h-full min-w-9 flex-1 flex-col items-center justify-end gap-2"
                 >
-                  <span className="text-muted-foreground text-xs">
+                  <span className="text-xs text-muted-foreground">
                     {number(item.count)}
                   </span>
                   <div
                     title={`${date(item.key)}: ${number(item.count)}`}
-                    className="bg-primary/80 w-full max-w-12 rounded-t-md"
+                    className="w-full max-w-12 rounded-t-md bg-primary/80"
                     style={{
                       height: `${Math.max(2, (item.count / maximum) * 145)}px`,
                     }}
                   />
-                  <span className="text-muted-foreground text-[10px] whitespace-nowrap">
+                  <span className="text-[10px] whitespace-nowrap text-muted-foreground">
                     {date(item.key)}
                   </span>
                 </div>
@@ -239,7 +239,7 @@ export function OverviewPage() {
                     </span>
                     <span className="font-medium">{number(item.count)}</span>
                   </div>
-                  <div className="bg-muted h-2 overflow-hidden rounded-full">
+                  <div className="h-2 overflow-hidden rounded-full bg-muted">
                     <div
                       className={
                         [
@@ -271,7 +271,7 @@ export function OverviewPage() {
         >
           <div className="overflow-x-auto">
             <table className="w-full min-w-[620px] text-right text-sm">
-              <thead className="text-muted-foreground border-b text-xs">
+              <thead className="border-b text-xs text-muted-foreground">
                 <tr>
                   {(["id", "type", "amount", "status", "date"] as const).map(
                     (key) => (
@@ -286,7 +286,7 @@ export function OverviewPage() {
                 {Array.from(data.payments.data?.items ?? []).map((payment) => (
                   <tr
                     key={payment.uuid}
-                    className="border-border border-b last:border-0"
+                    className="border-b border-border last:border-0"
                   >
                     <td
                       className="px-3 py-5 font-mono text-xs"
@@ -301,19 +301,19 @@ export function OverviewPage() {
                     </td>
                     <td className="px-3 py-5 tabular-nums">
                       {number(payment.total_irr)}{" "}
-                      <span className="text-muted-foreground text-xs">
+                      <span className="text-xs text-muted-foreground">
                         {t("overview.rial")}
                       </span>
                     </td>
                     <td className="px-3 py-5">
-                      <span className="bg-muted inline-flex rounded-full px-3 py-1 text-xs">
+                      <span className="inline-flex rounded-full bg-muted px-3 py-1 text-xs">
                         {t(
                           `overview.statusLabels.${payment.financial_status}`,
                           { defaultValue: payment.financial_status },
                         )}
                       </span>
                     </td>
-                    <td className="text-muted-foreground px-3 py-5">
+                    <td className="px-3 py-5 text-muted-foreground">
                       {date(payment.created_at)}
                     </td>
                   </tr>
@@ -322,7 +322,7 @@ export function OverviewPage() {
             </table>
           </div>
         </ReportPanel>
-        <p className="text-muted-foreground text-center text-xs">
+        <p className="text-center text-xs text-muted-foreground">
           {t("overview.footer")}
         </p>
       </main>

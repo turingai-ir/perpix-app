@@ -89,7 +89,7 @@ export function ImageResultCard({
     });
   };
   return (
-    <article className="animate-message-arrival relative isolate mr-auto mb-0 ml-0 w-full max-w-3xl origin-[50%_20%] motion-reduce:animate-none">
+    <article className="relative isolate mr-auto mb-0 ml-0 w-full max-w-3xl origin-[50%_20%] animate-message-arrival motion-reduce:animate-none">
       <header
         className="mb-3 flex min-h-13 w-full flex-wrap items-center justify-between gap-2.5"
         dir="rtl"
@@ -98,7 +98,7 @@ export function ImageResultCard({
           className="flex min-w-0 items-center gap-2.5 text-sm font-bold"
           dir="rtl"
         >
-          <span className="bg-night aspect-square w-8 flex-none overflow-hidden rounded-md border border-[color-mix(in_srgb,var(--border)_75%,var(--primary)_25%)]">
+          <span className="aspect-square w-8 flex-none overflow-hidden rounded-md border border-[color-mix(in_srgb,var(--border)_75%,var(--primary)_25%)] bg-night">
             <img
               src="/android-chrome-512x512.png"
               alt=""
@@ -121,7 +121,7 @@ export function ImageResultCard({
         {images.map((fileId, index) => (
           <div
             key={fileId}
-            className="[&>div]:border-foreground/9 [&>div]:bg-night shadow-modal relative w-full overflow-hidden rounded-2xl max-sm:max-w-full! max-sm:rounded-lg [&>div]:rounded-2xl"
+            className="relative w-full overflow-hidden rounded-2xl shadow-modal max-sm:max-w-full! max-sm:rounded-lg [&>div]:rounded-2xl [&>div]:border-foreground/9 [&>div]:bg-night"
             style={
               images.length === 1
                 ? {
@@ -158,7 +158,7 @@ export function ImageResultCard({
                 }
                 className={cn(
                   OVERLAY_ACTION_CLASS,
-                  "hover-capable:hover:bg-night/90 supports-[not(backdrop-filter:blur(1px))]:bg-card border-night-foreground/12 bg-night/78 top-2.5 backdrop-blur-[14px] backdrop-saturate-125",
+                  "hover-capable:hover:bg-night/90 top-2.5 border-night-foreground/12 bg-night/78 backdrop-blur-[14px] backdrop-saturate-125 supports-[not(backdrop-filter:blur(1px))]:bg-card",
                 )}
                 onClick={() => onToggleComparison(getComparisonItem(fileId))}
               >

@@ -52,7 +52,7 @@ export function SearchInput({
     <div className={cn("relative flex items-center", className)}>
       <Search
         aria-hidden="true"
-        className="text-muted-foreground pointer-events-none absolute right-3 size-4"
+        className="pointer-events-none absolute right-3 size-4 text-muted-foreground"
       />
       <Input
         value={localValue}
@@ -66,7 +66,7 @@ export function SearchInput({
           type="button"
           onClick={handleClear}
           aria-label="پاک کردن جستجو"
-          className="text-muted-foreground hover:text-foreground hover:bg-muted absolute left-2.5 rounded-full p-0.5 transition-colors focus:outline-none"
+          className="absolute left-2.5 rounded-full p-0.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus:outline-none"
         >
           <X className="size-3.5" />
         </button>

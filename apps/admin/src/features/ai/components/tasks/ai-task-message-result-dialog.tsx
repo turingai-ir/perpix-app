@@ -113,13 +113,13 @@ export function AiTaskMessageResultDialog({
             <Skeleton className="h-32 w-full" />
           </div>
         ) : error ? (
-          <div className="border-destructive/20 bg-destructive/10 text-destructive rounded-lg border p-4 text-sm">
+          <div className="rounded-lg border border-destructive/20 bg-destructive/10 p-4 text-sm text-destructive">
             {error instanceof Error
               ? error.message
               : "خطا در دریافت نتیجه پیام"}
           </div>
         ) : !result ? (
-          <div className="text-muted-foreground py-6 text-center text-sm">
+          <div className="py-6 text-center text-sm text-muted-foreground">
             {t("features.ai.tasks.noResult", {
               defaultValue: "نتیجه‌ای برای این پیام یافت نشد.",
             })}
@@ -127,9 +127,9 @@ export function AiTaskMessageResultDialog({
         ) : (
           <div className="space-y-4 py-2 text-sm">
             {/* Status and Role */}
-            <div className="bg-muted/40 grid grid-cols-2 gap-4 rounded-lg border p-3">
+            <div className="grid grid-cols-2 gap-4 rounded-lg border bg-muted/40 p-3">
               <div>
-                <span className="text-muted-foreground block text-xs">
+                <span className="block text-xs text-muted-foreground">
                   {t("features.ai.tasks.taskStatus", {
                     defaultValue: "وضعیت وظیفه",
                   })}
@@ -163,7 +163,7 @@ export function AiTaskMessageResultDialog({
               </div>
 
               <div>
-                <span className="text-muted-foreground block text-xs">
+                <span className="block text-xs text-muted-foreground">
                   نقش پیام (Role):
                 </span>
                 <div className="mt-1">{renderRoleBadge(result.role)}</div>
@@ -171,7 +171,7 @@ export function AiTaskMessageResultDialog({
             </div>
 
             {/* Model Info */}
-            <div className="bg-card flex items-center justify-between rounded-lg border p-3 text-xs">
+            <div className="flex items-center justify-between rounded-lg border bg-card p-3 text-xs">
               <span className="text-muted-foreground">
                 {t("features.ai.tasks.modelUuid", {
                   defaultValue: "شناسه مدل انتخابی",
@@ -186,7 +186,7 @@ export function AiTaskMessageResultDialog({
             {/* Message Content */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-foreground flex items-center gap-1.5 text-xs font-semibold">
+                <span className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
                   <MessageSquare className="size-3.5 text-blue-500" />
                   محتوای پیام خروجی:
                 </span>
@@ -207,7 +207,7 @@ export function AiTaskMessageResultDialog({
                 )}
               </div>
               <div
-                className="bg-muted/30 max-h-60 overflow-y-auto rounded-lg border p-3 text-xs leading-relaxed whitespace-pre-wrap select-text"
+                className="max-h-60 overflow-y-auto rounded-lg border bg-muted/30 p-3 text-xs leading-relaxed whitespace-pre-wrap select-text"
                 dir="auto"
               >
                 {result.message || (
@@ -222,7 +222,7 @@ export function AiTaskMessageResultDialog({
             {result.ai_model_config &&
               Object.keys(result.ai_model_config).length > 0 && (
                 <div>
-                  <span className="text-muted-foreground mb-1 block text-xs font-semibold">
+                  <span className="mb-1 block text-xs font-semibold text-muted-foreground">
                     {t("features.ai.tasks.modelConfig", {
                       defaultValue: "پیکربندی مدل (AI Model Config)",
                     })}

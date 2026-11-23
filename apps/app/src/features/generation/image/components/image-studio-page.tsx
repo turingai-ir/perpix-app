@@ -98,7 +98,7 @@ const GenerationImageSession: FC = () => {
               <div data-generation-intro className={STUDIO_INTRO_CLASS}>
                 <span
                   data-slot="eyebrow"
-                  className="border-primary/20 bg-primary/5 text-primary inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold"
+                  className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-semibold text-primary"
                 >
                   <Sparkles className="size-3.5" aria-hidden="true" />
                   {t("pages.generation.image.studio.eyebrow")}
@@ -106,7 +106,7 @@ const GenerationImageSession: FC = () => {
                 <h1 className="text-3xl leading-tight font-bold tracking-tight sm:text-5xl">
                   {t("pages.generation.image.studio.headline")}
                 </h1>
-                <p className="text-muted-foreground max-w-lg text-sm leading-7 sm:text-base">
+                <p className="max-w-lg text-sm leading-7 text-muted-foreground sm:text-base">
                   {t("pages.generation.image.studio.intro")}
                 </p>
               </div>
@@ -117,7 +117,7 @@ const GenerationImageSession: FC = () => {
               className={cn(
                 STUDIO_DOCK_CLASS,
                 !shouldShowIntro &&
-                  "from-background via-background/95 bg-linear-to-t to-transparent max-sm:bg-none",
+                  "bg-linear-to-t from-background via-background/95 to-transparent max-sm:bg-none",
               )}
             >
               <ImageComparison

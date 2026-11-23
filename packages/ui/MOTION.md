@@ -19,24 +19,24 @@ library. GSAP belongs to the canvas studio and never to `packages/ui`.
 
 The values live in `src/styles/tokens.css` and `theme.css`. Use the tokens, never raw values.
 
-| Use | Duration | Easing |
-|---|---|---|
-| Tap feedback | `--duration-tap` 100ms | `--ease-enter` |
-| Hover or colour change | `--duration-press` 150ms | `--ease-enter` |
-| Any layer closing | `--duration-exit` 160ms | `--ease-exit` |
-| Menu, popover, dialog opening | `--duration-enter` 260ms | `--ease-enter` (out-quint) |
-| Sheet or drawer | `--duration-sheet` 320ms | `--ease-spring` (`linear()` spring, ~3% overshoot) |
-| Page change | `--duration-page` 380ms | `--ease-enter` |
+| Use                           | Duration                 | Easing                                             |
+| ----------------------------- | ------------------------ | -------------------------------------------------- |
+| Tap feedback                  | `--duration-tap` 100ms   | `--ease-enter`                                     |
+| Hover or colour change        | `--duration-press` 150ms | `--ease-enter`                                     |
+| Any layer closing             | `--duration-exit` 160ms  | `--ease-exit`                                      |
+| Menu, popover, dialog opening | `--duration-enter` 260ms | `--ease-enter` (out-quint)                         |
+| Sheet or drawer               | `--duration-sheet` 320ms | `--ease-spring` (`linear()` spring, ~3% overshoot) |
+| Page change                   | `--duration-page` 380ms  | `--ease-enter`                                     |
 
 ## Utilities
 
-| Class | For |
-|---|---|
-| `motion-fade` | Backdrops and scrims |
-| `motion-pop` | Menu, popover, tooltip, dialog (scale and fade from the anchor) |
+| Class          | For                                                                  |
+| -------------- | -------------------------------------------------------------------- |
+| `motion-fade`  | Backdrops and scrims                                                 |
+| `motion-pop`   | Menu, popover, tooltip, dialog (scale and fade from the anchor)      |
 | `motion-sheet` | Sheets, sliding from `data-side`, with spring enter and drag support |
-| `pressable` | Tap feedback on buttons and tappable rows |
-| `focus-ring` | Visible keyboard focus (an outline, so it survives forced colours) |
+| `pressable`    | Tap feedback on buttons and tappable rows                            |
+| `focus-ring`   | Visible keyboard focus (an outline, so it survives forced colours)   |
 
 These utilities work with Base UI's `data-starting-style` and `data-ending-style`, so a component
 needs no JavaScript for its enter and exit motion.

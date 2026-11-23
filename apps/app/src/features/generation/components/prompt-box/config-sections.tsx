@@ -11,7 +11,7 @@ export const PromptModeSection: FC<{
   disabled?: boolean;
   dynamicForm: DynamicConfigForm;
 }> = ({ disabled, dynamicForm }) => (
-  <div className="border-border/40 flex w-full justify-center border-b pt-1 pb-3 [&_[data-slot=scroll-area]]:mx-auto [&_[data-slot=scroll-area]]:w-fit [&_[data-slot=scroll-area]]:max-w-full">
+  <div className="flex w-full justify-center border-b border-border/40 pt-1 pb-3 [&_[data-slot=scroll-area]]:mx-auto [&_[data-slot=scroll-area]]:w-fit [&_[data-slot=scroll-area]]:max-w-full">
     <DynamicPromptConfigField
       dynamicForm={dynamicForm}
       fieldName="mode"
@@ -28,7 +28,7 @@ export const PromptFullWidthFieldsSection: FC<{
   if (fieldNames.length === 0) return null;
 
   return (
-    <div className="border-border/60 flex w-full flex-col gap-4 border-t pt-4 pb-2">
+    <div className="flex w-full flex-col gap-4 border-t border-border/60 pt-4 pb-2">
       {fieldNames.map((fieldName) => (
         <DynamicPromptConfigField
           key={fieldName}
