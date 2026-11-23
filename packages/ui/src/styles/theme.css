@@ -41,6 +41,9 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-glass-edge-light: var(--glass-edge-light);
+  --color-glass-border: var(--glass-border);
+  --color-glass-highlight: var(--glass-highlight);
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
@@ -146,6 +149,10 @@
  * reduced transparency, increased contrast and forced colours. A `data-canvas-busy` ancestor turns
  * every glass layer flat while the studio plays, scrubs or drags.
  */
+@utility border-glass-edge-light {
+  border-color: var(--glass-edge-light);
+}
+
 @utility glass-flat {
   background-color: var(--liquid-fill-flat);
   border: 1px solid var(--glass-edge-light);

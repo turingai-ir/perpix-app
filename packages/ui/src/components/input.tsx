@@ -10,7 +10,7 @@ function Input({ className, type = "text", ...props }: InputProps) {
       data-slot="input"
       type={type}
       className={cn(
-        "border-glass-edge-light flex h-10 w-full rounded-control border glass bg-card/50 px-3.5 py-2 text-body text-foreground focus-ring transition-all duration-150 outline-none placeholder:text-muted-foreground/75 focus:bg-card/80 disabled:cursor-not-allowed disabled:opacity-45 pointer-coarse:h-11 pointer-coarse:text-base",
+        "flex h-10 w-full rounded-control border border-glass-edge-light bg-card/50 px-3.5 py-2 text-body text-foreground focus-ring backdrop-blur-md transition-all duration-150 outline-none placeholder:text-muted-foreground/75 focus:bg-card/80 disabled:cursor-not-allowed disabled:opacity-45 pointer-coarse:h-11 pointer-coarse:text-base",
         className,
       )}
       {...props}
