@@ -1,0 +1,39 @@
+/*
+ * Native-app feel: removes the browser behaviours that make a web page feel like a website on a
+ * phone. Loaded by globals.css for every app. See the perpix-ui-kit skill, section "Native feel".
+ */
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+    /* No rubber-band of the whole document and no browser pull-to-refresh. */
+    overscroll-behavior: none;
+  }
+
+  body {
+    min-height: 100dvh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Taps fire immediately (no double-tap zoom delay); chrome text is not selectable by long-press. */
+  :where(a, button, [role="button"], [role="tab"], [role="menuitem"], [role="option"], label, summary) {
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* Links and images do not open the iOS long-press preview; drag ghosts are off. */
+  :where(a, img) {
+    -webkit-touch-callout: none;
+    -webkit-user-drag: none;
+  }
+
+  /* iOS zooms into inputs under 16px; keep form text at least 16px on touch screens. */
+  @media (pointer: coarse) {
+    :where(input, select, textarea) {
+      font-size: max(1rem, 1em);
+    }
+  }
+}

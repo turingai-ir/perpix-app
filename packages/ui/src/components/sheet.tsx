@@ -1,8 +1,9 @@
-import type { ComponentProps } from "react";
+import { useRef, type ComponentProps, type RefObject } from "react";
 import { Dialog as SheetPrimitive } from "@base-ui/react/dialog";
-import { XIcon } from "lucide-react";
+import { XIcon } from "@phosphor-icons/react";
 import { cn } from "@perpix/ui/lib/utils";
 import { Button } from "@perpix/ui/components/button";
+import { useSheetDrag } from "@perpix/ui/hooks/use-sheet-drag";
 
 /* Sheet = a Base UI dialog that slides from an edge. `bottom` is the mobile default. */
 type SheetSide = "bottom" | "top" | "inline-start" | "inline-end";
@@ -32,13 +33,27 @@ type SheetContentProps = SheetPrimitive.Popup.Props & {
   closeLabel?: string;
 };
 
+/* Grab handle of a bottom sheet: swipe down to dismiss (touch-action none keeps the page still). */
+function SheetGrabber({ sheetRef }: { sheetRef: RefObject<HTMLDivElement | null> }) {
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const handlers = useSheetDrag(sheetRef, () => closeRef.current?.click());
+  return (
+    <div aria-hidden className="-mx-inset-lg -mt-inset-lg flex shrink-0 cursor-grab touch-none justify-center pt-3 pb-2" {...handlers}>
+      <span className="h-1.5 w-10 rounded-full bg-foreground/25" />
+      <SheetPrimitive.Close ref={closeRef} hidden tabIndex={-1} />
+    </div>
+  );
+}
+
 function SheetContent({ className, children, side = "bottom", closeLabel, ...props }: SheetContentProps) {
+  const sheetRef = useRef<HTMLDivElement>(null);
   return (
     <SheetPrimitive.Portal>
       <SheetPrimitive.Backdrop data-slot="sheet-overlay" className="glass-scrim motion-fade fixed inset-0 z-50" />
       <SheetPrimitive.Popup
         data-slot="sheet-content"
         data-side={side}
+        ref={sheetRef}
         className={cn(
           "glass motion-sheet fixed z-50 flex flex-col gap-block overflow-y-auto overscroll-contain p-inset-lg outline-none",
           sideClasses[side],
@@ -46,9 +61,7 @@ function SheetContent({ className, children, side = "bottom", closeLabel, ...pro
         )}
         {...props}
       >
-        {side === "bottom" ? (
-          <span aria-hidden className="mx-auto -mt-2 h-1.5 w-10 shrink-0 rounded-full bg-foreground/25" />
-        ) : null}
+        {side === "bottom" ? <SheetGrabber sheetRef={sheetRef} /> : null}
         {children}
         {closeLabel ? (
           <SheetPrimitive.Close

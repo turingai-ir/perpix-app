@@ -1,6 +1,6 @@
 import type { ComponentProps } from "react";
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
-import { XIcon } from "lucide-react";
+import { XIcon } from "@phosphor-icons/react";
 import { cn } from "@perpix/ui/lib/utils";
 import { Button } from "@perpix/ui/components/button";
 

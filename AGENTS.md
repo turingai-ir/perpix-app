@@ -38,10 +38,13 @@
 
 Choose the skills relevant to the component or review from `.agents/skills/`.
 
-- **Shared components and themes** — Use `better-ui` for surfaces and component states, `glassmorphism` for translucent surfaces, and `better-colors` for semantic tokens. In Storybook, inspect the same component in light and dark themes over its intended backdrops. Provide a solid surface when transparency is reduced or blur is unavailable.
-- **Interaction and motion** — Use `animate` for interaction design and `gsap-web` for coordinated timelines. Use the workspace GSAP imports and scope cleanup to the component with `useGSAP`. Storybook is the preview for shared components. Standalone CDN demos in the skill are examples. Respect reduced motion and keep controls usable throughout the transition.
-- **Performance review** — Use `review-animations` to evaluate transitions. Profile representative interactions on a mobile viewport, especially large blurred surfaces and scroll effects. Use `vercel-react-best-practices` for React rendering issues.
-- **Accessibility** — Use `better-accessibility` for keyboard operation, focus management, accessible names and state announcements. Use `better-colors` to measure contrast against the rendered backdrop. Exercise RTL and responsive states with `perpix-responsive-qa`.
+- **PerPix UI standard (always first)** — Read `perpix-ui-kit` before any work in `packages/ui`, Storybook, or a screen migrating to `@perpix/ui`. Motion rules live in `packages/ui/MOTION.md`.
+
+- **Shared components and themes** — Use `better-ui` for surfaces and component states, and `better-colors` for semantic tokens. In Storybook, inspect the same component in light and dark themes over its intended backdrops. Provide a solid surface when transparency is reduced or blur is unavailable.
+- **Interaction and motion** — Use `animate` for interaction design; UI motion is CSS-only per `packages/ui/MOTION.md`. `gsap-web` is only for the canvas studio's seekable timelines (never in `packages/ui`): use the workspace GSAP imports and scope cleanup with `useGSAP`. Respect reduced motion and keep controls usable throughout the transition.
+- **Performance review** — Use `review-animations` to evaluate transitions. Profile representative interactions on a mobile viewport, especially large blurred surfaces and scroll effects.
+- **React** — Use `vercel-composition-patterns` for component APIs and `vercel-react-best-practices` for rendering performance (skip its Next.js-only rules).
+- **Accessibility** — Use `accessibility` for a WCAG 2.2 audit and `better-accessibility` for keyboard operation, focus management, accessible names and state announcements. Use `better-colors` to measure contrast against the rendered backdrop. Exercise RTL and responsive states with `perpix-responsive-qa`.
 
 ## Styling
 

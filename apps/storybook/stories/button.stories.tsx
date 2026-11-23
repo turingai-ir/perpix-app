@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { PlusIcon } from "lucide-react";
+import { PlusIcon } from "@phosphor-icons/react";
 import { Button } from "@perpix/ui/components/button";
 
 const meta = {

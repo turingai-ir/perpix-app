@@ -1,6 +1,13 @@
 {
   "version": 2,
   "skills": {
+    "accessibility": {
+      "source": "addyosmani/web-quality-skills",
+      "commit": "afa8da942115f2961fdbfa80807ea0b232ff6c00",
+      "sourceType": "github",
+      "skillPath": "skills/accessibility/SKILL.md",
+      "computedHash": "c668809f5df57feb87cc06f1bc37fb340d1d92e26bacb6edbeab9258d22e76a5"
+    },
     "better-accessibility": {
       "source": "jakubkrehel/skills",
       "sourceType": "github",
@@ -12,12 +19,6 @@
       "sourceType": "github",
       "skillPath": "skills/better-colors/SKILL.md",
       "computedHash": "eaf1b10b3d4d23169a750b75e09c689892b4273f558c5a99ea685551df2c5ce6"
-    },
-    "better-interface": {
-      "source": "jakubkrehel/skills",
-      "sourceType": "github",
-      "skillPath": "skills/better-interface/SKILL.md",
-      "computedHash": "f19a0e91f4dc5f53329ad9940e70b7a7b9b8b9772ca3b5ade52325a667c026d6"
     },
     "better-layout": {
       "source": "jakubkrehel/skills",
@@ -43,25 +44,6 @@
       "skillPath": "skills/better-writing/SKILL.md",
       "computedHash": "8378e6578d61178cba4bfe0a2811fdd85620d73b0a0165d290637b96a8a8a9fa"
     },
-    "break": {
-      "source": "jakubkrehel/skills",
-      "sourceType": "github",
-      "skillPath": "skills/break/SKILL.md",
-      "computedHash": "47aa1905bd1cd1d06806fbe003d3b0d6dc44ed9fd82e4ca096d3da5c9cd1098d"
-    },
-    "explain-interface": {
-      "source": "jakubkrehel/skills",
-      "sourceType": "github",
-      "skillPath": "skills/explain-interface/SKILL.md",
-      "computedHash": ""
-    },
-    "glassmorphism": {
-      "source": "iart-ai/web-animation-skills",
-      "commit": "ed3a045192679b24d32090ee7a983871311ababd",
-      "sourceType": "github",
-      "skillPath": "skills/glassmorphism/SKILL.md",
-      "computedHash": "52c31c76c1ce3c52485ed43c3dc36796c833972a0f916215392c2b611209a2dc"
-    },
     "gsap-web": {
       "source": "iart-ai/web-animation-skills",
       "commit": "ed3a045192679b24d32090ee7a983871311ababd",
@@ -69,36 +51,32 @@
       "skillPath": "skills/gsap-web/SKILL.md",
       "computedHash": "acd6638268c8bf2d9b0eb935472659dfbc0f072a5237d486e462235b32045177"
     },
-    "interface-review": {
-      "source": "jakubkrehel/skills",
-      "sourceType": "github",
-      "skillPath": "skills/interface-review/SKILL.md",
-      "computedHash": ""
-    },
-    "security-audit": {
-      "source": "cloudflare/security-audit-skill",
-      "sourceType": "github",
-      "skillPath": "skills/security-audit/SKILL.md",
-      "computedHash": ""
-    },
     "variant": {
       "source": "jakubkrehel/skills",
       "sourceType": "github",
       "skillPath": "skills/variant/SKILL.md",
       "computedHash": "5e73bf30b2fe991e6113e4742bddcd5f12e9f6ef0f88aaadf7b746a53fa71b28"
     },
+    "vercel-composition-patterns": {
+      "source": "vercel-labs/agent-skills",
+      "commit": "5a37a6329fbad3666c3207392a6a7c0110e92efb",
+      "sourceType": "github",
+      "skillPath": "skills/composition-patterns/SKILL.md",
+      "computedHash": "f711ed8b16162eaa712abbcdbbae6c926f86c57e60127735fecc3ad0dd85b3fa"
+    },
     "vercel-react-best-practices": {
       "source": "vercel-labs/agent-skills",
-      "commit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "commit": "5a37a6329fbad3666c3207392a6a7c0110e92efb",
       "sourceType": "github",
       "skillPath": "skills/react-best-practices/SKILL.md",
       "computedHash": "7991ed4fbecdac23f47c1a40c243e00a212a9e7f3604db93959b3ae11dffe299"
     },
-    "xss-cross-site-scripting": {
-      "source": "yaklang/hack-skills",
+    "web-design-guidelines": {
+      "source": "vercel-labs/agent-skills",
+      "commit": "5a37a6329fbad3666c3207392a6a7c0110e92efb",
       "sourceType": "github",
-      "skillPath": "skills/xss-cross-site-scripting/SKILL.md",
-      "computedHash": ""
+      "skillPath": "skills/web-design-guidelines/SKILL.md",
+      "computedHash": "5994e4cfd86144903d2ba750f862b9e36af15e3297aac983679e347b99f6cb71"
     }
   }
 }

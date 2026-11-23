@@ -148,9 +148,12 @@
  */
 @utility glass-flat {
   background-color: var(--liquid-fill-flat);
-  border: 1px solid var(--color-glass-edge);
-  box-shadow: var(--highlight), var(--elevation-raised);
+  border: 1px solid var(--glass-edge-light);
+  box-shadow: var(--glass-shine), var(--elevation-raised);
   color: var(--foreground);
+  /* Secondary text on translucent glass sits closer to the foreground so it keeps 4.5:1 over
+     saturated backdrops. */
+  --muted-foreground: color-mix(in oklch, var(--foreground) 80%, transparent);
 
   @media (prefers-reduced-transparency: reduce) {
     background-color: var(--card);
@@ -170,7 +173,7 @@
   @apply glass-flat;
   @supports (backdrop-filter: blur(1px)) {
     background-color: var(--liquid-fill);
-    backdrop-filter: blur(var(--glass-blur));
+    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   }
   @media (prefers-reduced-transparency: reduce), (prefers-contrast: more), (forced-colors: active) {
     background-color: var(--card);
@@ -243,7 +246,13 @@
 }
 @utility motion-sheet {
   --sheet-from: translateY(100%);
-  transition: transform var(--duration-sheet) var(--ease-spring);
+  /* `translate` carries the finger offset while dragging (useSheetDrag); `transform` the enter/exit. */
+  transition:
+    transform var(--duration-sheet) var(--ease-spring),
+    translate var(--duration-sheet) var(--ease-spring);
+  &[data-dragging] {
+    transition: none;
+  }
   &[data-side="top"] {
     --sheet-from: translateY(-100%);
   }
@@ -435,5 +444,47 @@
       0, 0.04 1.6%, 0.17 3.8%, 0.39 7%, 0.66 11.2%, 0.86 15.6%, 0.97 20.4%, 1.02 25.6%,
       1.03 30.8%, 1.02 38%, 1.005 50%, 1
     );
+  }
+}
+
+/*
+ * Page transitions (View Transitions API; React Router `viewTransition`, or startViewTransition()).
+ * A short cross-fade with a slight rise; shared elements opt in with `view-transition-name`.
+ * Browsers without the API just swap instantly.
+ */
+::view-transition-old(root) {
+  animation: var(--duration-exit) var(--ease-exit) both vt-fade-out;
+}
+::view-transition-new(root) {
+  animation: var(--duration-page) var(--ease-enter) both vt-fade-in;
+}
+::view-transition-group(*) {
+  animation-duration: var(--duration-page);
+  animation-timing-function: var(--ease-enter);
+}
+@keyframes vt-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes vt-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: var(--duration-exit);
+  }
+  ::view-transition-new(root) {
+    animation-name: vt-fade-in-flat;
+  }
+}
+@keyframes vt-fade-in-flat {
+  from {
+    opacity: 0;
   }
 }
