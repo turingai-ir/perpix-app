@@ -8,6 +8,17 @@ const preview: Preview = {
     theme: {
       toolbar: { title: "Theme", items: ["light", "dark"], dynamicTitle: true },
     },
+    backdrop: {
+      toolbar: {
+        title: "Backdrop",
+        items: [
+          { value: "mesh", title: "Liquid Mesh", icon: "photo" },
+          { value: "photo", title: "Canvas Grid", icon: "grid" },
+          { value: "plain", title: "Plain Solid", icon: "circle" },
+        ],
+        dynamicTitle: true,
+      },
+    },
     direction: {
       toolbar: {
         title: "Direction",
@@ -16,7 +27,7 @@ const preview: Preview = {
       },
     },
   },
-  initialGlobals: { theme: "light", direction: "rtl" },
+  initialGlobals: { theme: "light", backdrop: "mesh", direction: "rtl" },
   parameters: { layout: "fullscreen" },
   decorators: [
     (Story, { globals }) => {
@@ -26,7 +37,10 @@ const preview: Preview = {
       root.dir = globals.direction;
       root.lang = "fa";
       return (
-        <main className="story-preview">
+        <main
+          className="story-preview"
+          data-backdrop={globals.backdrop ?? "mesh"}
+        >
           <Story />
         </main>
       );

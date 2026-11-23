@@ -1,7 +1,64 @@
 .story-preview {
   font-family: var(--font-sans);
   min-height: 100vh;
-  padding: 3rem 1rem;
+  padding: 3rem 1.5rem;
   background: var(--background);
   color: var(--foreground);
+  transition: background-color 0.2s ease;
+}
+
+/* Liquid Glass requires rich backdrops to refract and showcase blur, highlights, and saturation */
+.story-preview[data-backdrop="mesh"] {
+  background:
+    radial-gradient(
+      ellipse 65% 55% at 15% 20%,
+      oklch(0.6358 0.2659 330.2744 / 35%) 0%,
+      transparent 65%
+    ),
+    radial-gradient(
+      ellipse 70% 60% at 85% 75%,
+      oklch(0.6757 0.1475 237.589 / 35%) 0%,
+      transparent 65%
+    ),
+    radial-gradient(
+      ellipse 55% 50% at 50% 45%,
+      oklch(0.5435 0.2248 307.3128 / 30%) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 40% 40% at 75% 20%,
+      oklch(0.5367 0.1657 253.6122 / 25%) 0%,
+      transparent 60%
+    ),
+    var(--background);
+  background-attachment: fixed;
+}
+
+.story-preview[data-backdrop="photo"] {
+  background:
+    radial-gradient(
+      circle at 50% 40%,
+      oklch(0.5435 0.2248 307.3128 / 20%),
+      transparent 70%
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 39px,
+      color-mix(in srgb, var(--border) 45%, transparent) 39px,
+      color-mix(in srgb, var(--border) 45%, transparent) 40px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 39px,
+      color-mix(in srgb, var(--border) 45%, transparent) 39px,
+      color-mix(in srgb, var(--border) 45%, transparent) 40px
+    ),
+    var(--background);
+  background-attachment: fixed;
+}
+
+.story-preview[data-backdrop="plain"] {
+  background: var(--background);
 }
