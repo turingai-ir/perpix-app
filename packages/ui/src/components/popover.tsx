@@ -35,12 +35,12 @@ function PopoverContent({
         align={align}
         sideOffset={sideOffset}
         alignOffset={alignOffset}
-        collisionPadding={8}
+        collisionPadding={12}
       >
         <PopoverPrimitive.Popup
           data-slot="popover-content"
           className={cn(
-            "relative w-72 max-w-(--available-width) motion-pop rounded-overlay glass p-inset outline-none",
+            "relative isolate max-h-[calc(100dvh-2.5rem)] w-72 max-w-[calc(100vw-1.5rem)] motion-pop overflow-y-auto overscroll-contain rounded-overlay glass p-inset outline-none",
             className,
           )}
           {...props}

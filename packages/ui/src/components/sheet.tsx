@@ -10,8 +10,8 @@ type SheetSide = "bottom" | "top" | "inline-start" | "inline-end";
 
 const sideClasses: Record<SheetSide, string> = {
   bottom:
-    "inset-x-0 bottom-0 max-h-[90svh] rounded-t-panel pb-[max(env(safe-area-inset-bottom),1.5rem)]",
-  top: "inset-x-0 top-0 max-h-[90svh] rounded-b-panel pt-[max(env(safe-area-inset-top),1.5rem)]",
+    "inset-x-0 bottom-0 max-h-[92dvh] rounded-t-panel pb-[max(env(safe-area-inset-bottom),1.5rem)]",
+  top: "inset-x-0 top-0 max-h-[92dvh] rounded-b-panel pt-[max(env(safe-area-inset-top),1.5rem)]",
   "inline-start": "inset-y-0 start-0 w-[min(85vw,24rem)] rounded-e-panel",
   "inline-end": "inset-y-0 end-0 w-[min(85vw,24rem)] rounded-s-panel",
 };
@@ -45,10 +45,10 @@ function SheetGrabber({
   return (
     <div
       aria-hidden
-      className="-mx-inset-lg -mt-inset-lg flex shrink-0 cursor-grab touch-none justify-center pt-3 pb-2"
+      className="-mx-inset-lg -mt-inset-lg flex shrink-0 cursor-grab touch-none items-center justify-center pt-3.5 pb-2.5 active:cursor-grabbing"
       {...handlers}
     >
-      <span className="h-1.5 w-10 rounded-full bg-foreground/25" />
+      <span className="h-1.5 w-11 rounded-full bg-foreground/25 transition-colors group-active:bg-foreground/45" />
       <SheetPrimitive.Close ref={closeRef} hidden tabIndex={-1} />
     </div>
   );
@@ -73,7 +73,7 @@ function SheetContent({
         data-side={side}
         ref={sheetRef}
         className={cn(
-          "fixed z-50 flex motion-sheet flex-col gap-block overflow-y-auto overscroll-contain glass p-inset-lg outline-none",
+          "fixed isolate z-50 flex motion-sheet flex-col gap-block overflow-y-auto overscroll-contain glass p-inset-lg outline-none",
           sideClasses[side],
           className,
         )}

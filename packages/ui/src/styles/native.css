@@ -3,6 +3,13 @@
  * phone. Loaded by globals.css for every app. See the perpix-ui-kit skill, section "Native feel".
  */
 @layer base {
+  :root {
+    --sat: env(safe-area-inset-top, 0px);
+    --sab: env(safe-area-inset-bottom, 0px);
+    --sal: env(safe-area-inset-left, 0px);
+    --sar: env(safe-area-inset-right, 0px);
+  }
+
   html {
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
@@ -45,4 +52,25 @@
       font-size: max(1rem, 1em);
     }
   }
+}
+
+/* Safe area utilities for mobile notches, dynamic island and home indicators */
+@utility pt-safe {
+  padding-top: max(env(safe-area-inset-top, 0px), 1rem);
+}
+
+@utility pb-safe {
+  padding-bottom: max(env(safe-area-inset-bottom, 0px), 1rem);
+}
+
+@utility px-safe {
+  padding-left: max(env(safe-area-inset-left, 0px), 1rem);
+  padding-right: max(env(safe-area-inset-right, 0px), 1rem);
+}
+
+@utility p-safe {
+  padding-top: max(env(safe-area-inset-top, 0px), 1rem);
+  padding-bottom: max(env(safe-area-inset-bottom, 0px), 1rem);
+  padding-left: max(env(safe-area-inset-left, 0px), 1rem);
+  padding-right: max(env(safe-area-inset-right, 0px), 1rem);
 }

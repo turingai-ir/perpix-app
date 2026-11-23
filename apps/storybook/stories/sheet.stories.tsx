@@ -37,12 +37,45 @@ export const BottomSheet: Story = {
         <SheetHeader>
           <SheetTitle>تنظیمات قالب زیرنویس</SheetTitle>
           <SheetDescription>
-            فونت، اندازه و افکت انیمیشن کلمات را انتخاب و تست کنید.
+            برای بستن می‌توانید دستگیره بالا را به سمت پایین بکشید (Swipe down to
+            dismiss).
           </SheetDescription>
         </SheetHeader>
         <div className="flex flex-col gap-group py-inset">
-          <Button variant="glass">تغییر استایل فونت وزیرمتن</Button>
-          <Button variant="glass">تنظیم فاصله خطوط و رنگ پس‌زمینه</Button>
+          <Button variant="glass" className="justify-start">
+            استایل فونت وزیرمتن با وزن نیمه‌پر (SemiBold)
+          </Button>
+          <Button variant="glass" className="justify-start">
+            انیمیشن کلمات به سبک تیک‌تاک (Pop Animation)
+          </Button>
+          <Button variant="glass" className="justify-start">
+            رنگ گرادیان بنفش-سرخابی برند پرپیکس
+          </Button>
+        </div>
+        <div className="flex flex-col gap-group">
+          <Button variant="brand">اعمال روی تمام کلیپ‌ها</Button>
+        </div>
+      </SheetContent>
+    </Sheet>
+  ),
+};
+
+export const DestructiveConfirmationSheet: Story = {
+  render: () => (
+    <Sheet>
+      <SheetTrigger render={<Button variant="destructive" />}>
+        تایید حذف در موبایل (Bottom Sheet Action)
+      </SheetTrigger>
+      <SheetContent side="bottom" closeLabel="بستن">
+        <SheetHeader>
+          <SheetTitle>حذف لایه زیرنویس فعلی</SheetTitle>
+          <SheetDescription>
+            در طراحی‌های بومی موبایل، تاییدیه‌های مهم و حذف به صورت Bottom Sheet
+            در دسترس انگشت شست قرار می‌گیرند.
+          </SheetDescription>
+        </SheetHeader>
+        <div className="flex flex-col gap-group py-2">
+          <Button variant="destructive">تایید حذف قطعی لایه</Button>
         </div>
       </SheetContent>
     </Sheet>

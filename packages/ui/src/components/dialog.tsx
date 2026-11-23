@@ -46,7 +46,7 @@ function DialogContent({
       <DialogPrimitive.Popup
         data-slot="dialog-content"
         className={cn(
-          "fixed start-1/2 top-1/2 z-50 grid w-[calc(100%-2rem)] max-w-sm motion-pop -translate-1/2 gap-section rounded-panel glass p-inset-lg outline-none rtl:translate-x-1/2",
+          "fixed top-1/2 left-1/2 isolate z-50 grid max-h-[calc(100dvh-2.5rem)] w-[calc(100%-2rem)] max-w-sm motion-pop -translate-x-1/2 -translate-y-1/2 gap-section overflow-y-auto overscroll-contain rounded-panel glass p-inset-lg outline-none",
           className,
         )}
         {...props}
@@ -60,7 +60,7 @@ function DialogContent({
               <Button
                 variant="glass"
                 size="icon-sm"
-                className="absolute end-3 top-3"
+                className="absolute end-3 top-3 pointer-coarse:end-2 pointer-coarse:top-2"
               />
             }
           >

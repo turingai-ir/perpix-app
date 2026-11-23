@@ -69,6 +69,9 @@ export function useSheetDrag(
     const state = drag.current;
     const sheet = sheetRef.current;
     if (!state || state.pointerId !== event.pointerId || !sheet) return;
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
     drag.current = null;
     sheet.removeAttribute("data-dragging");
     const delta = event.clientY - state.startY;
@@ -80,6 +83,7 @@ export function useSheetDrag(
     const dismiss = delta > distance || flicked;
     if (dismiss) {
       onDismiss();
+      setTimeout(() => setOffset(0), 350);
       return;
     }
     setOffset(0);

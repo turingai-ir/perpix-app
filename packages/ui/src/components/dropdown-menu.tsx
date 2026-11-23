@@ -4,7 +4,7 @@ import { CheckIcon } from "@phosphor-icons/react";
 import { cn } from "@perpix/ui/lib/utils";
 
 const itemClasses =
-  "relative flex min-h-9 cursor-default items-center gap-2 rounded-control px-3 text-body outline-none select-none pointer-coarse:min-h-11 data-disabled:pointer-events-none data-disabled:opacity-50 data-highlighted:bg-foreground/8 [&_svg]:size-4 [&_svg]:shrink-0";
+  "relative flex min-h-9 cursor-default items-center gap-2 rounded-control px-3 text-body outline-none select-none pointer-coarse:min-h-11 data-disabled:pointer-events-none data-disabled:opacity-50 data-highlighted:bg-foreground/8 active:bg-foreground/12 active:scale-[0.98] transition-transform duration-75 [&_svg]:size-4 [&_svg]:shrink-0";
 
 function DropdownMenu(props: MenuPrimitive.Root.Props) {
   return <MenuPrimitive.Root data-slot="dropdown-menu" {...props} />;
@@ -31,12 +31,12 @@ function DropdownMenuContent({
         side={side}
         align={align}
         sideOffset={sideOffset}
-        collisionPadding={8}
+        collisionPadding={12}
       >
         <MenuPrimitive.Popup
           data-slot="dropdown-menu-content"
           className={cn(
-            "relative max-w-(--available-width) min-w-52 motion-pop rounded-overlay glass p-1.5 outline-none",
+            "relative isolate max-h-[calc(100dvh-2.5rem)] max-w-[calc(100vw-1.5rem)] min-w-52 motion-pop overflow-y-auto overscroll-contain rounded-overlay glass p-1.5 outline-none",
             className,
           )}
           {...props}
