@@ -2,7 +2,6 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import {
   Tabs,
   TabsContent,
-  TabsIndicator,
   TabsList,
   TabsTrigger,
 } from "@perpix/ui/components/tabs";
@@ -64,7 +63,7 @@ export const Default: Story = {
           <TabsTrigger value="export">خروجی</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="captions" className="space-y-4 pt-1">
+        <TabsContent value="captions" className="min-h-[240px] space-y-4 pt-1">
           <div className="relative overflow-hidden rounded-control border border-glass-edge-light bg-night/85 p-4 text-center shadow-raised">
             <p className="text-headline font-bold tracking-wide text-white">
               «ساخت و تدوین خودکار ویدیو با پرپیکس»
@@ -99,7 +98,7 @@ export const Default: Story = {
           </div>
         </TabsContent>
 
-        <TabsContent value="audio" className="space-y-4 pt-1">
+        <TabsContent value="audio" className="min-h-[240px] space-y-4 pt-1">
           <div className="space-y-3.5">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
@@ -134,7 +133,7 @@ export const Default: Story = {
           </div>
         </TabsContent>
 
-        <TabsContent value="export" className="space-y-4 pt-1">
+        <TabsContent value="export" className="min-h-[240px] space-y-4 pt-1">
           <div className="space-y-3.5">
             <div className="space-y-1.5">
               <span className="block text-body font-medium text-foreground">
@@ -204,12 +203,11 @@ export const WithSlidingIndicator: Story = {
 
       <Tabs defaultValue="all" className="w-full">
         <TabsList className="grid w-full grid-cols-3">
-          <TabsIndicator />
           <TabsTrigger value="all">همه پروژه‌ها</TabsTrigger>
           <TabsTrigger value="processing">در حال پردازش</TabsTrigger>
           <TabsTrigger value="completed">تکمیل شده</TabsTrigger>
         </TabsList>
-        <TabsContent value="all" className="space-y-3 pt-2">
+        <TabsContent value="all" className="min-h-[140px] space-y-3 pt-2">
           <div className="flex items-center justify-between rounded-control border border-glass-edge-light bg-card/40 p-3.5 shadow-raised">
             <div className="space-y-1">
               <span className="block text-body font-semibold text-foreground">
@@ -237,7 +235,10 @@ export const WithSlidingIndicator: Story = {
             </Badge>
           </div>
         </TabsContent>
-        <TabsContent value="processing" className="space-y-3 pt-2">
+        <TabsContent
+          value="processing"
+          className="min-h-[140px] space-y-3 pt-2"
+        >
           <div className="flex items-center justify-between rounded-control border border-glass-edge-light bg-card/40 p-3.5 shadow-raised">
             <div className="space-y-1">
               <span className="block text-body font-semibold text-foreground">
@@ -252,7 +253,7 @@ export const WithSlidingIndicator: Story = {
             </Badge>
           </div>
         </TabsContent>
-        <TabsContent value="completed" className="space-y-3 pt-2">
+        <TabsContent value="completed" className="min-h-[140px] space-y-3 pt-2">
           <div className="flex items-center justify-between rounded-control border border-glass-edge-light bg-card/40 p-3.5 shadow-raised">
             <div className="space-y-1">
               <span className="block text-body font-semibold text-foreground">

@@ -5,7 +5,20 @@ function Tabs(props: TabsPrimitive.Root.Props) {
   return <TabsPrimitive.Root data-slot="tabs" {...props} />;
 }
 
-function TabsList({ className, ...props }: TabsPrimitive.List.Props) {
+type TabsListProps = TabsPrimitive.List.Props & {
+  /**
+   * Whether to automatically render the sliding pill indicator.
+   * Defaults to `true` for authentic Apple HIG smooth sliding.
+   */
+  indicator?: boolean;
+};
+
+function TabsList({
+  className,
+  children,
+  indicator = true,
+  ...props
+}: TabsListProps) {
   return (
     <TabsPrimitive.List
       data-slot="tabs-list"
@@ -14,7 +27,10 @@ function TabsList({ className, ...props }: TabsPrimitive.List.Props) {
         className,
       )}
       {...props}
-    />
+    >
+      {indicator && <TabsIndicator />}
+      {children}
+    </TabsPrimitive.List>
   );
 }
 
@@ -37,7 +53,7 @@ function TabsTrigger({ className, ...props }: TabsPrimitive.Tab.Props) {
     <TabsPrimitive.Tab
       data-slot="tabs-trigger"
       className={cn(
-        "relative z-10 inline-flex pressable items-center justify-center rounded-full border border-transparent px-4 py-1.5 text-body font-medium whitespace-nowrap text-muted-foreground focus-ring transition-all duration-200 outline-none hover:text-foreground disabled:pointer-events-none disabled:opacity-50 pointer-coarse:min-h-10 pointer-coarse:px-5",
+        "relative z-10 inline-flex pressable items-center justify-center rounded-full border border-transparent px-4 py-1.5 text-body font-medium whitespace-nowrap text-muted-foreground focus-ring transition-colors duration-150 outline-none hover:text-foreground disabled:pointer-events-none disabled:opacity-50 pointer-coarse:min-h-10 pointer-coarse:px-5",
         "data-active:font-semibold data-active:text-foreground",
         "data-active:border-glass-edge-light data-active:bg-card/95 data-active:shadow-raised",
         "group-has-[[data-slot=tabs-indicator]]/tabs-list:data-active:border-transparent group-has-[[data-slot=tabs-indicator]]/tabs-list:data-active:bg-transparent group-has-[[data-slot=tabs-indicator]]/tabs-list:data-active:shadow-none",
@@ -52,10 +68,20 @@ function TabsContent({ className, ...props }: TabsPrimitive.Panel.Props) {
   return (
     <TabsPrimitive.Panel
       data-slot="tabs-content"
-      className={cn("mt-inset motion-pop focus-ring outline-none", className)}
+      className={cn(
+        "mt-inset focus-ring transition-opacity duration-150 ease-out outline-none data-[starting-style]:opacity-0",
+        className,
+      )}
       {...props}
     />
   );
 }
 
-export { Tabs, TabsContent, TabsIndicator, TabsList, TabsTrigger };
+export {
+  Tabs,
+  TabsContent,
+  TabsIndicator,
+  TabsList,
+  TabsTrigger,
+  type TabsListProps,
+};
