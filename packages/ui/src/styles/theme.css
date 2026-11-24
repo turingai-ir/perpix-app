@@ -16,6 +16,10 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+  --color-magenta-brand: var(--magenta-brand);
+  --color-violet-brand: var(--violet-brand);
+  --color-blue-brand: var(--blue-brand);
+  --color-cyan-brand: var(--cyan-brand);
   --color-accent-violet: var(--accent-violet);
   --color-accent-pink: var(--accent-pink);
   --color-accent-gold: var(--accent-gold);
@@ -75,6 +79,31 @@
     50%,
     100% {
       opacity: 0;
+    }
+  }
+  --animate-indeterminate-progress: indeterminate-progress 1.6s ease-in-out
+    infinite;
+  @keyframes indeterminate-progress {
+    0% {
+      inset-inline-start: -40%;
+      width: 40%;
+    }
+    50% {
+      inset-inline-start: 25%;
+      width: 60%;
+    }
+    100% {
+      inset-inline-start: 100%;
+      width: 40%;
+    }
+  }
+  --animate-shimmer: shimmer 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  @keyframes shimmer {
+    0% {
+      inset-inline-start: -100%;
+    }
+    100% {
+      inset-inline-start: 100%;
     }
   }
 }
@@ -180,7 +209,8 @@
   @apply glass-flat;
   @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
     background-color: var(--liquid-fill);
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    -webkit-backdrop-filter: blur(var(--glass-blur))
+      saturate(var(--glass-saturate));
     backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   }
   @media (prefers-reduced-transparency: reduce),
@@ -258,7 +288,8 @@
   box-shadow: var(--glass-outline-shine, inset 0 1px 0 oklch(1 0 0 / 20%));
   color: var(--foreground);
   @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    -webkit-backdrop-filter: blur(var(--glass-blur))
+      saturate(var(--glass-saturate));
     backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   }
   &:hover {
