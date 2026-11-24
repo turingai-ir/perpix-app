@@ -1,7 +1,9 @@
+import type { ReactNode } from "react";
 import { Button as ButtonPrimitive } from "@base-ui/react/button";
 import { cva, type VariantProps } from "class-variance-authority";
 import { CircleNotchIcon } from "@phosphor-icons/react";
 import { cn } from "@perpix/ui/lib/utils";
+import { triggerHaptic, type HapticFeedbackType } from "@perpix/ui/lib/haptic";
 
 /*
  * Glass buttons (control radius: works for both B2C and dense B2B screens).
@@ -32,9 +34,9 @@ const buttonVariants = cva(
         tinted: "glass-tinted hover:brightness-110 active:brightness-95",
         brand: "glass-brand hover:brightness-110 active:brightness-95",
         success:
-          "glass-tinted text-success-foreground glass-tint-success hover:brightness-110 active:brightness-95",
+          "glass-tinted glass-tint-success hover:brightness-110 active:brightness-95",
         destructive:
-          "glass-tinted text-destructive-foreground glass-tint-destructive hover:brightness-110 active:brightness-95",
+          "glass-tinted glass-tint-destructive hover:brightness-110 active:brightness-95",
         outline: "glass-outline active:brightness-95",
         subtle: "glass-subtle active:brightness-95",
         plain: "text-primary hover:bg-foreground/6 active:bg-foreground/10",
@@ -64,7 +66,12 @@ const buttonVariants = cva(
 
 type ButtonProps = ButtonPrimitive.Props &
   VariantProps<typeof buttonVariants> & {
+    /** Whether the button is in an active loading state with a spinner */
     loading?: boolean;
+    /** Optional text replacement to display while loading */
+    loadingText?: ReactNode;
+    /** Physical haptic feedback on tap; defaults to calibrated feedback for brand, tinted & destructive */
+    haptic?: HapticFeedbackType | boolean;
   };
 
 function Button({
@@ -73,10 +80,29 @@ function Button({
   shape,
   size,
   loading = false,
+  loadingText,
   disabled,
   children,
+  haptic,
+  onClick,
   ...props
 }: ButtonProps) {
+  const handleClick: ButtonPrimitive.Props["onClick"] = (event) => {
+    if (haptic !== false) {
+      if (typeof haptic === "string") {
+        triggerHaptic(haptic);
+      } else if (
+        haptic === true ||
+        variant === "brand" ||
+        variant === "tinted" ||
+        variant === "destructive"
+      ) {
+        triggerHaptic(variant === "destructive" ? "medium" : "light");
+      }
+    }
+    onClick?.(event);
+  };
+
   return (
     <ButtonPrimitive
       data-slot="button"
@@ -86,6 +112,7 @@ function Button({
       data-loading={loading ? "" : undefined}
       aria-busy={loading ? "true" : undefined}
       disabled={disabled || loading}
+      onClick={handleClick}
       className={cn(buttonVariants({ variant, shape, size }), className)}
       {...props}
     >
@@ -95,7 +122,7 @@ function Button({
           className="shrink-0 animate-spin text-current"
         />
       ) : null}
-      {children}
+      {loading && loadingText ? loadingText : children}
     </ButtonPrimitive>
   );
 }

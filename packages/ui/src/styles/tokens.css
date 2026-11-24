@@ -92,6 +92,14 @@
   --glass-edge-light: oklch(1 0 0 / 45%);
   --glass-shine:
     inset 0 1px 0 oklch(1 0 0 / 60%), inset 0 -1px 0 oklch(1 0 0 / 12%);
+  --glass-tint-border: oklch(1 0 0 / 28%);
+  --glass-tint-shine: inset 0 1px 0 oklch(1 0 0 / 38%);
+  --glass-brand-border: oklch(1 0 0 / 38%);
+  --glass-brand-shine:
+    inset 0 1px 0 oklch(1 0 0 / 50%), inset 0 -1px 0 oklch(0 0 0 / 22%);
+  --glass-outline-shine: inset 0 1px 0 oklch(1 0 0 / 30%);
+  --glass-subtle-border: oklch(1 0 0 / 14%);
+  --glass-subtle-shine: inset 0 1px 0 oklch(1 0 0 / 20%);
   --liquid-tint: var(--violet-brand);
   --liquid-tint-foreground: var(--night-foreground);
   --liquid-scrim: color-mix(in oklch, var(--night) 24%, transparent);
@@ -158,6 +166,8 @@
   --card: var(--neutral-2);
   --popover: var(--neutral-3);
   --muted: var(--neutral-4);
+  /* Refined dark-mode border: gentle subtle separation instead of harsh contrast */
+  --border: color-mix(in oklch, var(--foreground) 10%, transparent);
   --primary-foreground: var(--violet-1);
   --destructive-foreground: var(--red-1);
   --success-foreground: var(--green-1);
@@ -168,8 +178,8 @@
   --secondary: var(--violet-4);
   --accent: var(--violet-5);
 
-  --glass-border: color-mix(in oklch, var(--neutral-11) 26%, transparent);
-  --glass-highlight: oklch(0.94 0.02 295 / 16%);
+  --glass-border: color-mix(in oklch, var(--neutral-12) 12%, transparent);
+  --glass-highlight: oklch(0.94 0.02 295 / 12%);
   --glass-shadow:
     0 24px 56px -16px oklch(0 0 0 / 65%), 0 2px 8px -1px oklch(0 0 0 / 40%);
   --liquid-fill: color-mix(in oklch, var(--card) 66%, transparent);
@@ -177,9 +187,18 @@
   --glass-saturate: 130%;
   --glass-surface: color-mix(in oklch, var(--card) 88%, transparent);
   --liquid-scrim: color-mix(in oklch, var(--night) 55%, transparent);
-  --glass-edge-light: oklch(1 0 0 / 16%);
+  /* Refined whisper hairline edge and specular top shine for dark glass surfaces */
+  --glass-edge-light: oklch(1 0 0 / 10%);
   --glass-shine:
-    inset 0 1px 0 oklch(1 0 0 / 22%), inset 0 -1px 0 oklch(1 0 0 / 6%);
+    inset 0 1px 0 oklch(1 0 0 / 12%), inset 0 -1px 0 oklch(1 0 0 / 3%);
+  --glass-tint-border: oklch(1 0 0 / 14%);
+  --glass-tint-shine: inset 0 1px 0 oklch(1 0 0 / 16%);
+  --glass-brand-border: oklch(1 0 0 / 16%);
+  --glass-brand-shine:
+    inset 0 1px 0 oklch(1 0 0 / 18%), inset 0 -1px 0 oklch(0 0 0 / 35%);
+  --glass-outline-shine: inset 0 1px 0 oklch(1 0 0 / 10%);
+  --glass-subtle-border: oklch(1 0 0 / 7%);
+  --glass-subtle-shine: inset 0 1px 0 oklch(1 0 0 / 8%);
   --image-accent-soft: color-mix(in srgb, var(--image-accent) 16%, transparent);
   --video-accent-soft: color-mix(in srgb, var(--video-accent) 14%, transparent);
   --selection: var(--violet-7);

@@ -29,15 +29,28 @@ function DialogOverlay({
   );
 }
 
+type DialogSize = "sm" | "default" | "lg" | "xl" | "full";
+
+const sizeClasses: Record<DialogSize, string> = {
+  sm: "max-w-sm",
+  default: "max-w-md",
+  lg: "max-w-lg",
+  xl: "max-w-xl",
+  full: "max-w-[calc(100vw-2rem)] sm:max-w-3xl",
+};
+
 type DialogContentProps = DialogPrimitive.Popup.Props & {
   /** Accessible, localized label for the corner close button; omit to hide the button. */
   closeLabel?: string;
+  /** Max-width size profile for the modal. Defaults to "sm". */
+  size?: DialogSize;
 };
 
 function DialogContent({
   className,
   children,
   closeLabel,
+  size = "sm",
   ...props
 }: DialogContentProps) {
   return (
@@ -46,7 +59,8 @@ function DialogContent({
       <DialogPrimitive.Popup
         data-slot="dialog-content"
         className={cn(
-          "fixed top-1/2 left-1/2 isolate z-50 grid max-h-[calc(100dvh-2.5rem)] w-[calc(100%-2rem)] max-w-sm motion-pop -translate-x-1/2 -translate-y-1/2 gap-section overflow-y-auto overscroll-contain rounded-panel glass p-inset-lg outline-none",
+          "fixed top-1/2 left-1/2 isolate z-50 flex flex-col max-h-[calc(100dvh-2.5rem)] w-[calc(100%-2rem)] motion-pop -translate-x-1/2 -translate-y-1/2 gap-section overflow-y-auto has-([data-slot=dialog-body]):overflow-hidden overscroll-contain rounded-panel glass p-inset-lg outline-none",
+          sizeClasses[size],
           className,
         )}
         {...props}
@@ -76,7 +90,20 @@ function DialogHeader({ className, ...props }: ComponentProps<"div">) {
   return (
     <div
       data-slot="dialog-header"
-      className={cn("flex flex-col gap-group pe-8", className)}
+      className={cn("flex shrink-0 flex-col gap-group pe-8", className)}
+      {...props}
+    />
+  );
+}
+
+function DialogBody({ className, ...props }: ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="dialog-body"
+      className={cn(
+        "flex-1 overflow-y-auto overscroll-contain no-scrollbar -mx-inset-lg px-inset-lg py-1",
+        className,
+      )}
       {...props}
     />
   );
@@ -86,7 +113,7 @@ function DialogFooter({ className, ...props }: ComponentProps<"div">) {
   return (
     <div
       data-slot="dialog-footer"
-      className={cn("flex flex-col gap-group *:w-full", className)}
+      className={cn("flex shrink-0 flex-col gap-group pt-2 *:w-full", className)}
       {...props}
     />
   );
@@ -117,6 +144,7 @@ function DialogDescription({
 
 export {
   Dialog,
+  DialogBody,
   DialogClose,
   DialogContent,
   DialogDescription,
@@ -125,4 +153,6 @@ export {
   DialogOverlay,
   DialogTitle,
   DialogTrigger,
+  type DialogContentProps,
+  type DialogSize,
 };

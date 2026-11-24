@@ -19,6 +19,7 @@
   }
 
   body {
+    min-height: 100vh;
     min-height: 100dvh;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -73,4 +74,44 @@
   padding-bottom: max(env(safe-area-inset-bottom, 0px), 1rem);
   padding-left: max(env(safe-area-inset-left, 0px), 1rem);
   padding-right: max(env(safe-area-inset-right, 0px), 1rem);
+}
+
+@utility mb-safe {
+  margin-bottom: max(env(safe-area-inset-bottom, 0px), 1rem);
+}
+
+@utility mt-safe {
+  margin-top: max(env(safe-area-inset-top, 0px), 1rem);
+}
+
+/*
+ * Hide ugly scrollbars on touch bars, pill carousels and horizontal lists while
+ * retaining full momentum touch scroll.
+ */
+@utility no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Native carousel and swipe list snap utilities */
+@utility scroll-snap-x {
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+}
+
+@utility scroll-snap-center {
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+}
+
+@utility scroll-snap-start {
+  scroll-snap-align: start;
+}
+
+@utility snap-none {
+  scroll-snap-type: none !important;
 }

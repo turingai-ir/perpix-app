@@ -193,17 +193,17 @@ export const LoadingStates: Story = {
   name: "وضعیت در حال بارگذاری (Loading)",
   render: () => (
     <div className="flex flex-wrap items-center justify-center gap-group">
-      <Button variant="brand" loading>
-        در حال تولید ویدیو...
+      <Button variant="brand" loading loadingText="در حال آماده‌سازی مدل AI...">
+        شروع تولید ویدیو
       </Button>
-      <Button variant="tinted" loading>
+      <Button variant="tinted" loading loadingText="در حال ذخیره‌سازی...">
         ذخیره تغییرات
       </Button>
       <Button variant="glass" loading>
         پردازش هوش مصنوعی
       </Button>
-      <Button variant="destructive" loading>
-        در حال حذف...
+      <Button variant="destructive" loading loadingText="در حال پاک‌سازی...">
+        حذف پروژه
       </Button>
       <Button
         variant="glass"

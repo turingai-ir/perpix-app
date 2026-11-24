@@ -129,17 +129,27 @@ export { Popover, PopoverContent, PopoverTrigger };
 - All user-visible text comes in through props (`closeLabel`, `label`, `placeholder`). The kit has no i18n, API calls, stores, routing, feature flags or business logic.
 - An icon-only control requires an accessible-label prop.
 
-### 3.4 Existing components: reuse them before adding
+### 3.4 Available components and feature contracts
 
-| Component | Notes |
+| Component | Features & Complete Contract |
 |---|---|
-| `button` | Variants: `glass` (default), `tinted` (primary), `destructive`, `plain` (text). Sizes: `sm`, `default`, `lg`, `icon-sm`, `icon`, `icon-lg` |
-| `glass-surface` | `intensity`: `soft` or `flat` |
-| `dialog` | Centered glass modal, `glass-scrim`, `closeLabel` |
-| `sheet` | `side`: `bottom` (mobile default), `top`, `inline-start`, `inline-end`. Bottom sheets have a grabber and swipe-to-dismiss |
-| `popover`, `tooltip`, `dropdown-menu` | Glass, `motion-pop` from the trigger |
-
-Planned next, in this order: Input, Select, Switch, Tabs, Toast, then TabBar and TopBar. Build each one to this standard.
+| `button` | Variants: `glass`, `tinted` (primary), `brand` (hero gradient), `success`, `destructive`, `outline`, `subtle`, `plain`. Shapes: `rounded`, `pill`. Sizes: `xs`–`xl`, `icon-xs`–`icon-xl`. Features: `loading`, `loadingText`, `haptic` (light/medium), coarse-pointer 44px hit targets. |
+| `glass-surface` | `intensity`: `soft` (Liquid Glass blur) or `flat` (no blur for playing canvas/busy). Floating chrome container. |
+| `toast` | Stacked deck collapse (`stacked`), pause on hover, visual countdown bar (`ToastProgress`), exit transitions (`data-[ending-style]`), drop-in `<Toaster />`, and imperative API: `toast()`, `toast.success()`, `toast.error()`, `toast.warning()`, `toast.info()`, `toast.promise()`, `toast.dismiss()`. |
+| `input` | Clearable button slot (`clearable`, `onClear`), password reveal eye toggle (`showPasswordToggle` on `type="password"`), neutral `helperText` alongside destructive `errorText`, symmetrical `startIcon` / `endIcon` slots, 44px touch targets. |
+| `avatar` | Outer wrapper `rounded-full`, automatic initials generator (`name` prop) supporting Persian/Arabic and Latin, status dots (`online`, `busy`, `away`, `offline`), `AvatarGroup` with logical crescent overlap (`[&>*+*]:-ms-2.5`). |
+| `badge` | Status dots (`dot`, `dotVariant`), removable chips (`removable`, `onRemove`) with 44px coarse hit target, interactive pressable chip styling (`interactive`), numeric `count` with localized Persian numerals and `overflowCount` (`+۹۹`). |
+| `dialog` | Centered glass modal, `glass-scrim`, `closeLabel`, dedicated `DialogBody` scroll container with pinned header/footer, `overscroll-contain`. |
+| `sheet` | `side`: `bottom` (mobile default), `top`, `inline-start`, `inline-end`. Dedicated `SheetBody`, swipe-to-dismiss grabber (`SheetGrabber` with 44px touch height). |
+| `tabs` | Sliding pill indicator (`TabsIndicator`), horizontal drag-to-scroll via `useDragScroll`, `snap-none` during active drag, frosted edge dissolution masks (`getMaskImage`), floating glass nav arrows, 44px touch targets. |
+| `checkbox` | Base UI checkbox, tactile haptics, tri-state indeterminate mode (`MinusIcon`), 44px coarse hit target. |
+| `switch` | Base UI switch, tactile haptics, sliding thumb with 44px coarse hit target expansion. |
+| `slider` | Base UI slider, live value bubble (`showValueBubble`), tactile step haptics, 44px coarse touch area. |
+| `select` | Base UI select, custom dropdown popup with checked indicators at `end-2.5`, 44px item height on mobile (`pointer-coarse:min-h-11`). |
+| `dropdown-menu` | Base UI menu, items with icons, checked state (`DropdownMenuCheckboxItem`), destructive variant, shortcut slot (`DropdownMenuShortcut`). |
+| `popover` | Base UI popover, glass overlay with spring animation (`motion-pop`), collision padding. |
+| `tooltip` | Base UI tooltip, night surface (`bg-night`), hidden on mobile touch devices (`pointer-coarse:hidden`). |
+| `direction-provider` | Direction context for synchronous RTL and LTR subtrees. |
 
 ## 4. Icons
 - Use `@phosphor-icons/react` with the `XIcon` names (`XIcon`, `CheckIcon`, `CaretLeftIcon`). Do not use lucide or inline SVG for UI icons.

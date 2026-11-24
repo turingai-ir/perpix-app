@@ -2,8 +2,10 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Button } from "@perpix/ui/components/button";
 import {
   Sheet,
+  SheetBody,
   SheetContent,
   SheetDescription,
+  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -52,9 +54,51 @@ export const BottomSheet: Story = {
             رنگ گرادیان بنفش-سرخابی برند پرپیکس
           </Button>
         </div>
-        <div className="flex flex-col gap-group">
+        <SheetFooter>
           <Button variant="brand">اعمال روی تمام کلیپ‌ها</Button>
-        </div>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
+  ),
+};
+
+export const LongScrollableWithPinnedHeaderFooter: Story = {
+  render: () => (
+    <Sheet>
+      <SheetTrigger render={<Button variant="glass" />}>
+        لیست طولانی با بدنه اسکرولی (Long Content Sheet)
+      </SheetTrigger>
+      <SheetContent side="bottom" closeLabel="بستن">
+        <SheetHeader>
+          <SheetTitle>انتخاب پالت رنگ و انیمیشن</SheetTitle>
+          <SheetDescription>
+            دستگیره بالا و دکمه‌های پایین ثابت می‌مانند؛ لیست طولانی در بدنه اسکرول
+            می‌خورد.
+          </SheetDescription>
+        </SheetHeader>
+        <SheetBody className="flex flex-col gap-2 py-2">
+          {Array.from({ length: 15 }, (_, i) => (
+            <div
+              key={i}
+              className="flex items-center justify-between p-3 rounded-control glass-subtle"
+            >
+              <div className="flex flex-col">
+                <span className="font-medium text-body">
+                  قالب پریست شماره {i + 1}
+                </span>
+                <span className="text-caption text-muted-foreground">
+                  سرعت انیمیشن: {100 + i * 20}ms | کنتراست شیشه: عالی
+                </span>
+              </div>
+              <Button size="sm" variant="tinted">
+                انتخاب
+              </Button>
+            </div>
+          ))}
+        </SheetBody>
+        <SheetFooter>
+          <Button variant="brand">ذخیره و اعمال نهایی</Button>
+        </SheetFooter>
       </SheetContent>
     </Sheet>
   ),

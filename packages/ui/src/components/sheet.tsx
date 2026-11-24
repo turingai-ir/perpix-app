@@ -45,7 +45,7 @@ function SheetGrabber({
   return (
     <div
       aria-hidden
-      className="-mx-inset-lg -mt-inset-lg flex shrink-0 cursor-grab touch-none items-center justify-center pt-3.5 pb-2.5 active:cursor-grabbing"
+      className="-mx-inset-lg -mt-inset-lg flex shrink-0 cursor-grab touch-none items-center justify-center pt-3.5 pb-2.5 active:cursor-grabbing pointer-coarse:min-h-11"
       {...handlers}
     >
       <span className="h-1.5 w-11 rounded-full bg-foreground/25 transition-colors group-active:bg-foreground/45" />
@@ -73,7 +73,7 @@ function SheetContent({
         data-side={side}
         ref={sheetRef}
         className={cn(
-          "fixed isolate z-50 flex motion-sheet flex-col gap-block overflow-y-auto overscroll-contain glass p-inset-lg outline-none",
+          "fixed isolate z-50 flex motion-sheet flex-col gap-block overflow-y-auto has-([data-slot=sheet-body]):overflow-hidden overscroll-contain glass p-inset-lg outline-none",
           sideClasses[side],
           className,
         )}
@@ -105,7 +105,20 @@ function SheetHeader({ className, ...props }: ComponentProps<"div">) {
   return (
     <div
       data-slot="sheet-header"
-      className={cn("flex flex-col gap-group pe-8", className)}
+      className={cn("flex shrink-0 flex-col gap-group pe-8", className)}
+      {...props}
+    />
+  );
+}
+
+function SheetBody({ className, ...props }: ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="sheet-body"
+      className={cn(
+        "flex-1 overflow-y-auto overscroll-contain no-scrollbar -mx-inset-lg px-inset-lg py-1",
+        className,
+      )}
       {...props}
     />
   );
@@ -115,7 +128,7 @@ function SheetFooter({ className, ...props }: ComponentProps<"div">) {
   return (
     <div
       data-slot="sheet-footer"
-      className={cn("mt-auto flex flex-col gap-group", className)}
+      className={cn("mt-auto flex shrink-0 flex-col gap-group pt-2", className)}
       {...props}
     />
   );
@@ -146,6 +159,7 @@ function SheetDescription({
 
 export {
   Sheet,
+  SheetBody,
   SheetClose,
   SheetContent,
   SheetDescription,

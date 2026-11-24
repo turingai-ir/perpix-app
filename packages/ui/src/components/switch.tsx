@@ -1,14 +1,19 @@
 import { Switch as SwitchPrimitive } from "@base-ui/react/switch";
 import { cn } from "@perpix/ui/lib/utils";
+import { triggerHaptic } from "@perpix/ui/lib/haptic";
 
 type SwitchProps = SwitchPrimitive.Root.Props;
 
-function Switch({ className, ...props }: SwitchProps) {
+function Switch({ className, onCheckedChange, ...props }: SwitchProps) {
   return (
     <SwitchPrimitive.Root
       data-slot="switch"
+      onCheckedChange={(checked, event) => {
+        triggerHaptic("selection");
+        onCheckedChange?.(checked, event);
+      }}
       className={cn(
-        "peer inline-flex h-6 w-11 shrink-0 pressable cursor-pointer items-center rounded-full glass p-0.5 focus-ring transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-50 pointer-coarse:h-7 pointer-coarse:w-13 data-checked:border-primary/50 data-checked:bg-primary data-checked:shadow-[0_0_14px_-2px_var(--primary)]",
+        "peer relative inline-flex h-6 w-11 shrink-0 pressable cursor-pointer items-center rounded-full glass p-0.5 focus-ring transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-50 pointer-coarse:h-7 pointer-coarse:w-13 pointer-coarse:before:absolute pointer-coarse:before:-inset-2 pointer-coarse:before:min-h-[44px] pointer-coarse:before:min-w-[44px] pointer-coarse:before:content-[''] data-checked:border-primary/50 data-checked:bg-primary data-checked:shadow-[0_0_14px_-2px_var(--primary)]",
         className,
       )}
       {...props}

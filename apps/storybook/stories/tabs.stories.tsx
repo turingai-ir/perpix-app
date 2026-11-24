@@ -35,8 +35,8 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   render: () => (
-    <GlassSurface className="w-full space-y-4 rounded-overlay border border-glass-edge-light p-5 shadow-overlay sm:p-6">
-      <div className="flex items-center justify-between border-b border-glass-edge-light pb-3">
+    <GlassSurface className="w-full space-y-4 rounded-overlay p-5 shadow-overlay sm:p-6">
+      <div className="flex items-center justify-between border-b border-border/50 pb-3">
         <div className="flex items-center gap-3">
           <div className="flex size-9 items-center justify-center rounded-full glass text-primary shadow-xs">
             <FilmSlateIcon className="size-4.5" weight="duotone" />
@@ -64,7 +64,7 @@ export const Default: Story = {
         </TabsList>
 
         <TabsContent value="captions" className="min-h-[240px] space-y-4 pt-1">
-          <div className="relative overflow-hidden rounded-control border border-glass-edge-light bg-night/85 p-4 text-center shadow-raised">
+          <div className="relative overflow-hidden rounded-control border border-border/50 bg-night/85 p-4 text-center shadow-raised">
             <p className="text-headline font-bold tracking-wide text-white">
               «ساخت و تدوین خودکار ویدیو با پرپیکس»
             </p>
@@ -122,7 +122,7 @@ export const Default: Story = {
               </div>
               <Slider defaultValue={[60]} min={0} max={100} />
             </div>
-            <div className="flex items-center justify-between rounded-control border border-glass-edge-light bg-muted/40 p-3">
+            <div className="flex items-center justify-between rounded-control border border-border/50 bg-muted/40 p-3">
               <span className="text-footnote text-muted-foreground">
                 استاندارد خروجی صوتی:
               </span>
@@ -163,7 +163,7 @@ export const Default: Story = {
                 </Badge>
               </div>
             </div>
-            <div className="flex items-center justify-between rounded-control border border-glass-edge-light bg-muted/40 p-3 text-footnote text-muted-foreground">
+            <div className="flex items-center justify-between rounded-control border border-border/50 bg-muted/40 p-3 text-footnote text-muted-foreground">
               <span>کدک و بیت‌ریت:</span>
               <span className="font-mono text-foreground">H.264 / 28 Mbps</span>
             </div>
@@ -181,8 +181,8 @@ export const Default: Story = {
 export const WithSlidingIndicator: Story = {
   name: "با نشانگر متحرک (With Sliding Indicator)",
   render: () => (
-    <GlassSurface className="w-full space-y-4 rounded-overlay border border-glass-edge-light p-5 shadow-overlay sm:p-6">
-      <div className="flex items-center justify-between border-b border-glass-edge-light pb-3">
+    <GlassSurface className="w-full space-y-4 rounded-overlay p-5 shadow-overlay sm:p-6">
+      <div className="flex items-center justify-between border-b border-border/50 pb-3">
         <div className="flex items-center gap-3">
           <div className="flex size-9 items-center justify-center rounded-full glass text-primary shadow-xs">
             <FolderSimpleIcon className="size-4.5" weight="duotone" />
@@ -208,7 +208,7 @@ export const WithSlidingIndicator: Story = {
           <TabsTrigger value="completed">تکمیل شده</TabsTrigger>
         </TabsList>
         <TabsContent value="all" className="min-h-[140px] space-y-3 pt-2">
-          <div className="flex items-center justify-between rounded-control border border-glass-edge-light bg-card/40 p-3.5 shadow-raised">
+          <div className="flex items-center justify-between rounded-control border border-border/50 bg-card/40 p-3.5 shadow-raised">
             <div className="space-y-1">
               <span className="block text-body font-semibold text-foreground">
                 پروژه تبلیغاتی نوروز ۱۴۰۵
@@ -221,7 +221,7 @@ export const WithSlidingIndicator: Story = {
               آماده دانلود
             </Badge>
           </div>
-          <div className="flex items-center justify-between rounded-control border border-glass-edge-light bg-card/40 p-3.5 shadow-raised">
+          <div className="flex items-center justify-between rounded-control border border-border/50 bg-card/40 p-3.5 shadow-raised">
             <div className="space-y-1">
               <span className="block text-body font-semibold text-foreground">
                 پادکست گفت‌وگو قسمت ۱۲
@@ -239,7 +239,7 @@ export const WithSlidingIndicator: Story = {
           value="processing"
           className="min-h-[140px] space-y-3 pt-2"
         >
-          <div className="flex items-center justify-between rounded-control border border-glass-edge-light bg-card/40 p-3.5 shadow-raised">
+          <div className="flex items-center justify-between rounded-control border border-border/50 bg-card/40 p-3.5 shadow-raised">
             <div className="space-y-1">
               <span className="block text-body font-semibold text-foreground">
                 پادکست گفت‌وگو قسمت ۱۲
@@ -254,7 +254,7 @@ export const WithSlidingIndicator: Story = {
           </div>
         </TabsContent>
         <TabsContent value="completed" className="min-h-[140px] space-y-3 pt-2">
-          <div className="flex items-center justify-between rounded-control border border-glass-edge-light bg-card/40 p-3.5 shadow-raised">
+          <div className="flex items-center justify-between rounded-control border border-border/50 bg-card/40 p-3.5 shadow-raised">
             <div className="space-y-1">
               <span className="block text-body font-semibold text-foreground">
                 پروژه تبلیغاتی نوروز ۱۴۰۵
@@ -267,6 +267,47 @@ export const WithSlidingIndicator: Story = {
               <DownloadSimpleIcon className="size-3.5" weight="bold" />
               دانلود
             </Button>
+          </div>
+        </TabsContent>
+      </Tabs>
+    </GlassSurface>
+  ),
+};
+
+export const ScrollableOverflow: Story = {
+  name: "تب‌های اسکرول‌خور (Drag-to-Scroll & Liquid Glass Fade)",
+  render: () => (
+    <GlassSurface className="w-full max-w-sm space-y-4 rounded-overlay p-4 shadow-overlay">
+      <div>
+        <h3 className="text-headline font-semibold text-foreground">
+          فیلتر ابزارهای استودیو (عرض ۳۹۰px)
+        </h3>
+        <p className="text-footnote text-muted-foreground">
+          قابلیت کشیدن با ماوس (Drag to Pan)، محو شدن نرم شیشه‌ای در لبه‌های ادامه
+          دار (Liquid Glass Edge Fade)، و دکمه‌های ناوبری شناور در دسکتاپ.
+        </p>
+      </div>
+
+      <Tabs defaultValue="captions" className="w-full">
+        <TabsList scrollable className="w-full">
+          <TabsTrigger value="all">همه</TabsTrigger>
+          <TabsTrigger value="captions">زیرنویس خودکار</TabsTrigger>
+          <TabsTrigger value="audio">تنظیمات صدا</TabsTrigger>
+          <TabsTrigger value="color">فیلتر و رنگ</TabsTrigger>
+          <TabsTrigger value="translate">ترجمه هوشمند</TabsTrigger>
+          <TabsTrigger value="tiktok">انیمیشن تیک‌تاک</TabsTrigger>
+          <TabsTrigger value="effects">افکت‌های تصویری</TabsTrigger>
+          <TabsTrigger value="export">خروجی نهایی</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="captions" className="pt-2">
+          <div className="rounded-control border border-border/50 bg-card/40 p-3 text-body">
+            پیکربندی هوش مصنوعی برای تولید زیرنویس کلمه به کلمه.
+          </div>
+        </TabsContent>
+        <TabsContent value="translate" className="pt-2">
+          <div className="rounded-control border border-border/50 bg-card/40 p-3 text-body">
+            ترجمه همزمان به انگلیسی، عربی و ترکی استانبولی.
           </div>
         </TabsContent>
       </Tabs>

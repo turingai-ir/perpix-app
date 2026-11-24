@@ -178,18 +178,21 @@
 }
 @utility glass {
   @apply glass-flat;
-  @supports (backdrop-filter: blur(1px)) {
+  @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
     background-color: var(--liquid-fill);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
     backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   }
   @media (prefers-reduced-transparency: reduce),
     (prefers-contrast: more),
     (forced-colors: active) {
     background-color: var(--card);
+    -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }
   [data-canvas-busy] & {
     background-color: var(--liquid-fill-flat);
+    -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }
 }
@@ -197,12 +200,12 @@
 @utility glass-tinted {
   @apply glass;
   color: var(--liquid-tint-foreground);
-  border-color: oklch(1 0 0 / 28%);
+  border-color: var(--glass-tint-border, oklch(1 0 0 / 22%));
   box-shadow:
-    inset 0 1px 0 oklch(1 0 0 / 38%),
+    var(--glass-tint-shine, inset 0 1px 0 oklch(1 0 0 / 28%)),
     var(--glass-shadow);
   background-color: var(--glass-tint, var(--liquid-tint));
-  @supports (backdrop-filter: blur(1px)) {
+  @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
     background-color: color-mix(
       in srgb,
       var(--glass-tint, var(--liquid-tint)) 76%,
@@ -211,10 +214,12 @@
   }
   @media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
     background-color: var(--glass-tint, var(--liquid-tint));
+    -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }
   [data-canvas-busy] & {
     background-color: var(--glass-tint, var(--liquid-tint));
+    -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }
   @media (forced-colors: active) {
@@ -232,12 +237,11 @@
   @apply glass;
   background-image: var(--brand-gradient);
   color: var(--night-foreground);
-  border-color: oklch(1 0 0 / 38%);
+  border-color: var(--glass-brand-border, oklch(1 0 0 / 26%));
   box-shadow:
-    inset 0 1px 0 oklch(1 0 0 / 50%),
-    inset 0 -1px 0 oklch(0 0 0 / 22%),
+    var(--glass-brand-shine, inset 0 1px 0 oklch(1 0 0 / 30%)),
     var(--glass-shadow);
-  @supports (backdrop-filter: blur(1px)) {
+  @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
     background-color: transparent;
   }
   @media (forced-colors: active) {
@@ -251,9 +255,10 @@
   @apply glass-flat;
   background-color: color-mix(in oklch, var(--card) 20%, transparent);
   border: 1px solid var(--glass-edge-light);
-  box-shadow: inset 0 1px 0 oklch(1 0 0 / 30%);
+  box-shadow: var(--glass-outline-shine, inset 0 1px 0 oklch(1 0 0 / 20%));
   color: var(--foreground);
-  @supports (backdrop-filter: blur(1px)) {
+  @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
     backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   }
   &:hover {
@@ -263,10 +268,11 @@
 /* Low-contrast frosted glass for inspector toolbars */
 @utility glass-subtle {
   background-color: color-mix(in oklch, var(--card) 45%, transparent);
-  border: 1px solid oklch(1 0 0 / 14%);
-  box-shadow: inset 0 1px 0 oklch(1 0 0 / 20%);
+  border: 1px solid var(--glass-subtle-border, oklch(1 0 0 / 10%));
+  box-shadow: var(--glass-subtle-shine, inset 0 1px 0 oklch(1 0 0 / 12%));
   color: var(--muted-foreground);
-  @supports (backdrop-filter: blur(1px)) {
+  @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+    -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 0.75));
     backdrop-filter: blur(calc(var(--glass-blur) * 0.75));
   }
   &:hover {
@@ -546,6 +552,15 @@
   animation-duration: var(--duration-page);
   animation-timing-function: var(--ease-enter);
 }
+@keyframes toast-countdown {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
 @keyframes vt-fade-out {
   to {
     opacity: 0;

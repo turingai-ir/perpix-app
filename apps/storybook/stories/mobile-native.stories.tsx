@@ -14,6 +14,7 @@ import {
 } from "@phosphor-icons/react";
 import { Button } from "@perpix/ui/components/button";
 import { GlassSurface } from "@perpix/ui/components/glass-surface";
+import { triggerHaptic } from "@perpix/ui/lib/haptic";
 import {
   Sheet,
   SheetClose,
@@ -104,7 +105,10 @@ function MobileAppExperienceView() {
                     key={style}
                     variant={selectedStyle === style ? "tinted" : "glass"}
                     className="justify-between text-body"
-                    onClick={() => setSelectedStyle(style)}
+                    onClick={() => {
+                      triggerHaptic("selection");
+                      setSelectedStyle(style);
+                    }}
                   >
                     <span>{style}</span>
                     {selectedStyle === style ? (
@@ -223,25 +227,35 @@ function MobileAppExperienceView() {
           </div>
         </GlassSurface>
 
-        {/* Quick Action Chips */}
+        {/* Quick Action Chips (Horizontal native snap carousel with no scrollbar) */}
         <div className="space-y-2">
           <h3 className="text-headline font-semibold text-muted-foreground">
             ابزارهای سریع لمسی
           </h3>
-          <div className="grid grid-cols-2 gap-2.5">
+          <div className="flex gap-2.5 overflow-x-auto overscroll-x-contain no-scrollbar scroll-snap-x pb-1 -mx-4 px-4">
             <Button
               variant="glass"
-              className="h-16 flex-col items-center justify-center gap-1 rounded-control text-footnote"
+              className="h-16 min-w-[130px] shrink-0 scroll-snap-start flex-col items-center justify-center gap-1 rounded-control text-footnote"
+              onClick={() => triggerHaptic("light")}
             >
               <SparkleIcon size={20} className="text-primary" />
               <span>برش سکوت‌ها</span>
             </Button>
             <Button
               variant="glass"
-              className="h-16 flex-col items-center justify-center gap-1 rounded-control text-footnote"
+              className="h-16 min-w-[155px] shrink-0 scroll-snap-start flex-col items-center justify-center gap-1 rounded-control text-footnote"
+              onClick={() => triggerHaptic("light")}
             >
               <VideoCameraIcon size={20} className="text-cyan-500" />
               <span>تنظیم کادر عمودی (۹:۱۶)</span>
+            </Button>
+            <Button
+              variant="glass"
+              className="h-16 min-w-[130px] shrink-0 scroll-snap-start flex-col items-center justify-center gap-1 rounded-control text-footnote"
+              onClick={() => triggerHaptic("light")}
+            >
+              <SparkleIcon size={20} className="text-accent-pink" />
+              <span>ترجمه همزمان</span>
             </Button>
           </div>
         </div>
@@ -285,7 +299,10 @@ function MobileAppExperienceView() {
                 ? "font-semibold text-primary"
                 : "text-muted-foreground"
             }`}
-            onClick={() => setActiveTab("home")}
+            onClick={() => {
+              triggerHaptic("selection");
+              setActiveTab("home");
+            }}
           >
             <HouseIcon
               size={22}
@@ -301,7 +318,10 @@ function MobileAppExperienceView() {
                 ? "font-semibold text-primary"
                 : "text-muted-foreground"
             }`}
-            onClick={() => setActiveTab("studio")}
+            onClick={() => {
+              triggerHaptic("selection");
+              setActiveTab("studio");
+            }}
           >
             <VideoCameraIcon
               size={22}
@@ -317,7 +337,10 @@ function MobileAppExperienceView() {
                 ? "font-semibold text-primary"
                 : "text-muted-foreground"
             }`}
-            onClick={() => setActiveTab("projects")}
+            onClick={() => {
+              triggerHaptic("selection");
+              setActiveTab("projects");
+            }}
           >
             <FolderSimpleIcon
               size={22}
@@ -333,7 +356,10 @@ function MobileAppExperienceView() {
                 ? "font-semibold text-primary"
                 : "text-muted-foreground"
             }`}
-            onClick={() => setActiveTab("profile")}
+            onClick={() => {
+              triggerHaptic("selection");
+              setActiveTab("profile");
+            }}
           >
             <UserIcon
               size={22}

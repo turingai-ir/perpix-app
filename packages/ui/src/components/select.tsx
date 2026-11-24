@@ -8,16 +8,24 @@ function Select<Value = string, Multiple extends boolean | undefined = false>(
   return <SelectPrimitive.Root data-slot="select" {...props} />;
 }
 
+type SelectTriggerProps = SelectPrimitive.Trigger.Props & {
+  /** Visual error state. Sets border to destructive. */
+  error?: boolean;
+};
+
 function SelectTrigger({
   className,
   children,
+  error = false,
   ...props
-}: SelectPrimitive.Trigger.Props) {
+}: SelectTriggerProps) {
   return (
     <SelectPrimitive.Trigger
       data-slot="select-trigger"
+      data-error={error ? "" : undefined}
       className={cn(
         "flex h-10 w-full items-center justify-between rounded-control glass px-3.5 py-2 text-body focus-ring disabled:cursor-not-allowed disabled:opacity-50 pointer-coarse:h-11 [&_svg]:size-4 [&_svg]:shrink-0",
+        error && "border-destructive text-destructive focus-ring-destructive",
         className,
       )}
       {...props}
@@ -124,13 +132,28 @@ function SelectSeparator({
   );
 }
 
+function SelectEmpty({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="select-empty"
+      className={cn(
+        "py-4 text-center text-footnote text-muted-foreground",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
 export {
   Select,
   SelectContent,
+  SelectEmpty,
   SelectGroup,
   SelectItem,
   SelectLabel,
   SelectSeparator,
   SelectTrigger,
   SelectValue,
+  type SelectTriggerProps,
 };

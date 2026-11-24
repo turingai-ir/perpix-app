@@ -38,3 +38,28 @@ function SliderDemo() {
 export const Default: Story = {
   render: () => <SliderDemo />,
 };
+
+function SliderBubbleDemo() {
+  const [val, setVal] = useState(75);
+  return (
+    <div className="w-full space-y-5 rounded-card glass p-6">
+      <div className="flex justify-between text-footnote">
+        <span className="text-muted-foreground">میزان شفافیت شیشه (با حباب شناور)</span>
+        <span className="font-semibold text-primary">{val}٪</span>
+      </div>
+      <Slider
+        value={val}
+        showValueBubble
+        formatValue={(v) => `${v}٪`}
+        onValueChange={(newVal) => typeof newVal === "number" && setVal(newVal)}
+        min={0}
+        max={100}
+      />
+    </div>
+  );
+}
+
+export const WithValueBubble: Story = {
+  name: "حباب مقدار شناور (Live Value Bubble)",
+  render: () => <SliderBubbleDemo />,
+};
