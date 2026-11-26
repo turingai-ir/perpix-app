@@ -452,24 +452,63 @@ for (const surface of [
   });
 }
 
-for (const viewport of [
+for (const [index, viewport] of [
   { width: 375, height: 812 },
   { width: 768, height: 1024 },
   { width: 1440, height: 900 },
-]) {
+].entries()) {
   test(`office entrance reveals the dashboard at ${viewport.width}px`, async ({
     page,
   }) => {
     await page.setViewportSize(viewport);
-    await page.addInitScript(() =>
-      localStorage.setItem("perpix:boot-splash", "on"),
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    await page.addInitScript(
+      (value) => {
+        localStorage.setItem("perpix:boot-splash", "on");
+        Math.random = () => value;
+      },
+      (index + 0.5) / brandEntrances.length,
     );
     await mockDashboardApi(page);
     await page.goto("/");
     await expect(page.locator("[data-office-screen]")).toBeVisible();
-    await expect(page.locator("[data-boot-splash]")).toHaveCount(0, {
-      timeout: 10_000,
+
+    const splash = page.locator("[data-boot-splash]");
+    const brand = page.locator("[data-brand-entrance]");
+    await expect(brand).toHaveAttribute(
+      "data-brand-entrance",
+      brandEntrances[index].name,
+    );
+    await expect(splash).toHaveAttribute("open", "");
+    const frozen = await brand.evaluate((element) => {
+      const animations = element.getAnimations({ subtree: true });
+      return (
+        animations.length > 0 &&
+        animations.every(
+          ({ playState, currentTime }) =>
+            playState === "paused" && currentTime === 0,
+        )
+      );
     });
+    expect(frozen, "all logo layers wait for the splash at time zero").toBe(
+      true,
+    );
+
+    await expect(splash).toHaveCount(0, { timeout: 10_000 });
+    await expect
+      .poll(() =>
+        brand.evaluate((element) =>
+          element
+            .getAnimations({ subtree: true })
+            .some(
+              ({ playState, currentTime }) =>
+                playState === "running" &&
+                typeof currentTime === "number" &&
+                currentTime > 0,
+            ),
+        ),
+      )
+      .toBe(true);
     await expect(page).toHaveURL("/");
     await expect(
       page.getByRole("heading", { name: "چی می‌خوای بسازی؟" }),
@@ -747,8 +786,9 @@ test("centers the neon slogan in the header across screen sizes", async ({
 
   const header = page.locator("header");
   const slogan = page.locator("[data-header-slogan]");
-  const menu = header.locator("button");
+  const menu = header.getByRole("button", { name: /نوار کناری/ });
   await expect(slogan).toHaveAttribute("aria-label", "پرپیکس می‌تونه!");
+  await page.evaluate(() => document.fonts.ready.then(() => undefined));
   if ((await menu.getAttribute("aria-expanded")) === "true") {
     await menu.click();
   }
@@ -782,6 +822,28 @@ test("centers the neon slogan in the header across screen sizes", async ({
         { message: `slogan layout at ${viewport.name}` },
       )
       .toEqual({ centered: true, clearOfMenu: true });
+
+    const words = await slogan.locator("[data-text]").evaluateAll((elements) =>
+      elements.map((element) => {
+        const range = document.createRange();
+        range.selectNodeContents(element);
+        const { left, right } = range.getBoundingClientRect();
+        const box = element.getBoundingClientRect();
+        return {
+          left,
+          right,
+          fits: left >= box.left - 1 && right <= box.right + 1,
+        };
+      }),
+    );
+    expect(
+      words.map(({ fits }) => fits),
+      `word bounds at ${viewport.name}`,
+    ).toEqual([true, true]);
+    expect(words[1].right, `RTL word gap at ${viewport.name}`).toBeLessThan(
+      words[0].left,
+    );
+
     await header.screenshot({
       path: test.info().outputPath(`${viewport.name}-header.png`),
       animations: "disabled",
