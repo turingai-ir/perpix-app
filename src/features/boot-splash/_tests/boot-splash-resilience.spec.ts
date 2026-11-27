@@ -4,16 +4,19 @@ import { mockAnonymousSession } from "../../../../__tests__/support/auth-session
 
 const splash = "[data-boot-splash]";
 
-async function holdInitialRoute(page: Page) {
+async function holdSessionCheck(page: Page) {
+  let started = false;
   let release = () => {};
   const held = new Promise<void>((resolve) => {
     release = resolve;
   });
-  await page.route("**/src/pages/auth/login/page.tsx*", async (route) => {
+  // Stall the login loader without blocking the JavaScript that mounts the splash.
+  await page.route("**/api/v1/auth/csrf", async (route) => {
+    started = true;
     await held;
-    await route.continue().catch(() => {});
+    await route.fallback().catch(() => {});
   });
-  return release;
+  return { release, hasStarted: () => started };
 }
 
 test.beforeEach(async ({ page }) => {
@@ -24,22 +27,26 @@ test.beforeEach(async ({ page }) => {
 });
 
 for (const action of ["button", "escape"] as const) {
-  test(`the ${action} exit works while the initial route is still pending`, async ({
+  test(`the ${action} exit works while the login session check is pending`, async ({
     page,
   }) => {
     await page.clock.install();
     await page.clock.pauseAt(new Date(Date.now() + 1000));
-    const release = await holdInitialRoute(page);
+    const { release, hasStarted } = await holdSessionCheck(page);
     try {
       await page.goto("/auth/login", { waitUntil: "domcontentloaded" });
-      await expect(page.locator(splash)).toBeVisible();
+      const entrance = page.locator(splash);
+      await expect(entrance).toBeVisible();
+      await expect.poll(hasStarted).toBe(true);
+      await expect(entrance).toHaveAttribute("data-leaving", "false");
       if (action === "button")
         await page
           .getByRole("button", { name: "ورود به پرپیکس", exact: true })
           .click();
       else await page.keyboard.press("Escape");
+      await expect(entrance).toHaveAttribute("data-skip", "true");
       await page.clock.runFor(250);
-      await expect(page.locator(splash)).toHaveCount(0, { timeout: 2000 });
+      await expect(entrance).toHaveCount(0, { timeout: 2000 });
       expect(
         await page.evaluate(() => document.querySelector("dialog:modal")),
       ).toBeNull();
@@ -49,20 +56,23 @@ for (const action of ["button", "escape"] as const) {
   });
 }
 
-test("a stalled initial route cannot keep the entrance modal open indefinitely", async ({
+test("a stalled login session check cannot keep the entrance modal open indefinitely", async ({
   page,
 }) => {
   await page.clock.install();
   await page.clock.pauseAt(new Date(Date.now() + 1000));
-  const release = await holdInitialRoute(page);
+  const { release, hasStarted } = await holdSessionCheck(page);
   try {
     await page.goto("/auth/login", { waitUntil: "domcontentloaded" });
-    await expect(page.locator(splash)).toBeVisible();
+    const entrance = page.locator(splash);
+    await expect(entrance).toBeVisible();
+    await expect.poll(hasStarted).toBe(true);
+    await expect(entrance).toHaveAttribute("data-leaving", "false");
     await page.clock.runFor(10_000);
-    await expect(page.locator(splash)).toHaveAttribute("data-skip", "true");
+    await expect(entrance).toHaveAttribute("data-skip", "true");
     // Let React's timer-triggered passive effects settle before the short fade.
     await page.clock.resume();
-    await expect(page.locator(splash)).toHaveCount(0, { timeout: 2000 });
+    await expect(entrance).toHaveCount(0, { timeout: 2000 });
   } finally {
     release();
   }

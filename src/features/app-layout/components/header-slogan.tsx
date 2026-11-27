@@ -6,7 +6,7 @@ import { cn } from "@/shared/lib/utils";
 
 /* A clipped copy of each word creates a brief electric streak without moving the text. */
 const WORD_CLASS =
-  "relative inline-block after:pointer-events-none after:absolute after:inset-0 after:text-white after:opacity-0 after:content-[attr(data-text)] after:[clip-path:inset(32%_0_48%_0)] after:[text-shadow:0_0_8px_#fff,0_0_16px_#49ccff] after:animate-electric-flash after:[animation-play-state:paused] group-data-[motion=running]/slogan:after:[animation-play-state:running] motion-reduce:after:animate-none";
+  "relative after:pointer-events-none after:absolute after:inset-0 after:text-white after:opacity-0 after:content-[attr(data-text)] after:[clip-path:inset(32%_0_48%_0)] after:[text-shadow:0_0_8px_#fff,0_0_16px_#49ccff] after:animate-electric-flash after:[animation-play-state:paused] group-data-[motion=running]/slogan:after:[animation-play-state:running] motion-reduce:after:animate-none";
 
 const PIXEL_CLASS =
   "size-[3px] flex-none min-[481px]:size-1 bg-[#cf58ff] shadow-[0_0_7px_#d946ef,5px_5px_0_rgb(49_184_247/60%)] last:bg-[#47c8ff] last:shadow-[0_0_7px_#38bdf8,-5px_-5px_0_rgb(201_66_238/60%)]";
